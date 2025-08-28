@@ -59,13 +59,14 @@ public class FacturaController(IFacturaService service) : BaseApiController
     }
 
     [HttpPut("Cancel/{id}")]
-    public async Task<IActionResult> Cancel(int id, ApiRequest data)
+    public async Task<IActionResult> Cancel(int id, FacturaDtos.CancelFacturaDto data)
     {
+        var json = DataConverters.SerializeObjectCustom<FacturaDtos.CancelFacturaDto>(data);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await service.CancelAsync(parameters);
         return Ok(response);

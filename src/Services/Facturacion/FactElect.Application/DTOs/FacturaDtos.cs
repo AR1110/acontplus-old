@@ -190,6 +190,16 @@ public static class FacturaDtos
         decimal Cuota,
         bool Entrada
     );
+
+    // Cancel
+    public readonly record struct CancelFacturaDto(
+        IReadOnlyList<InfoAdicionalCancelDto> InfoAdicional
+    );
+
+    public readonly record struct InfoAdicionalCancelDto(
+        string Nombre,
+        string Valor
+    );
 }
 
 
