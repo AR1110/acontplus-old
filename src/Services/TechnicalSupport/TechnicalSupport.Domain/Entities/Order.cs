@@ -30,7 +30,7 @@ public class Order : BaseEntity
     [Column(TypeName = "numeric(18,5), not null")]
     public decimal? Total { get; set; }
 
-    [MaxLength(500)] public string Obs { get; set; }
+    [MaxLength(500)] public string? Obs { get; set; }
 
     public required OrderStatus OrderStatus { get; set; }
     public int OrderStatusId { get; set; }

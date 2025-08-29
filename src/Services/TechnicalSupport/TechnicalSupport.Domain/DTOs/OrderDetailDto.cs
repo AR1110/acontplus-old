@@ -8,6 +8,6 @@ public class OrderDetailDto
     public int DeviceId { get; set; }
     public string? DeviceSerie { get; set; }
     public string? DeviceWarranty { get; set; }
-    public string Obs { get; set; }
+    public string? Obs { get; set; }
     public Guid Uuid { get; set; }
 }

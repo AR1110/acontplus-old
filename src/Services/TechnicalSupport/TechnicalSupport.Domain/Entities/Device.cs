@@ -6,7 +6,7 @@ namespace TechnicalSupport.Domain.Entities;
 [Table("Device", Schema = "TechnicalSupport")]
 public class Device : BaseEntity
 {
-    [Required][MaxLength(300)] public string Name { get; set; }
+    [Required][MaxLength(300)] public required string Name { get; set; }
 
     public required Modelo Modelo { get; set; }
     public int ModeloId { get; set; }
@@ -14,5 +14,5 @@ public class Device : BaseEntity
     [MaxLength(100)] public string? Color { get; set; }
 
     public ICollection<DeviceCustomer> Customers { get; set; } = new List<DeviceCustomer>();
-    public DeviceSpecs Specs { get; set; }
+    public required DeviceSpecs Specs { get; set; }
 }
