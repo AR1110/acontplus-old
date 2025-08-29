@@ -1,8 +1,6 @@
-﻿using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class ProductionAreaService(RestaurantContext context) : IProductionAreaService
+public class ProductionAreaRepository(RestaurantContext context) : IProductionAreaRepository
 {
     public async Task<ApiResponse> AddAsync(ProductionArea productionArea)
     {

@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Entities;
+using Restaurant.Domain.Entities;
 
-namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IFloorService
+public interface IFloorRepository
 {
     Task<ApiResponse> AddAsync(Floor floor);
     Task<ApiResponse> DeleteAsync(int userId, int id);

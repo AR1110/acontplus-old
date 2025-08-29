@@ -22,20 +22,6 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", request.UserRoleId },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
-        };
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Item_Update", parameters);
-    }
-
-    public async Task<ApiResponse> DeleteAsync(int id, ApiRequest request)
-    {
-        var parameters = new Dictionary<string, object> { { "userRoleId", request.UserRoleId }, { "id", id } };
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Item_Update_Cancel", request.Data);
-    }
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Item_Update", parameters);
 }

@@ -1,9 +1,6 @@
-﻿using Common.Core.Abstractions;
-using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class IngredientService(IAdoRepository adoRepository, RestaurantContext context) : IIngredientService
+public class IngredientRepository(IAdoRepository adoRepository, RestaurantContext context) : IIngredientRepository
 {
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
@@ -22,14 +19,8 @@ public class IngredientService(IAdoRepository adoRepository, RestaurantContext c
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> AddAsync(ApiRequest data)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", data.UserRoleId }, { "json", DataConverters.SerializeDictionary(data.Data) }
-        };
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
-    }
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.SpExecuteAsync<ApiResponse>("Restaurant.Ingredient_Insert", parameters);
 
     public async Task<ApiResponse> UpdateAsync(int id, Ingredient ingredient)
     {

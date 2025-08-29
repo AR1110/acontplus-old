@@ -1,8 +1,6 @@
-﻿using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class FloorService(RestaurantContext context) : IFloorService
+public class FloorRepository(RestaurantContext context) : IFloorRepository
 {
     public async Task<ApiResponse> AddAsync(Floor floor)
     {

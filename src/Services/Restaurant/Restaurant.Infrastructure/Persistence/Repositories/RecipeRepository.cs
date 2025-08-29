@@ -1,9 +1,6 @@
-﻿using Common.Core.Abstractions;
-using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class RecipeServiceService(IAdoRepository adoRepository, RestaurantContext context) : IRecipeService
+public class RecipeRepository(IAdoRepository adoRepository, RestaurantContext context) : IRecipeRepository
 {
     public async Task<ApiResponse> GetAsync()
     {

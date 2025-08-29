@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class OrderController(IOrderService orderService) : BaseApiController
+public class OrderController(IOrderRepository orderService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -16,21 +17,29 @@ public class OrderController(IOrderService orderService) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateOrderDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await orderService.AddAsync(data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateOrderDto>(data)) }
+        };
+        return Ok(await orderService.AddAsync(parameters));
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-
-        return Ok(await orderService.PutAsync(id, data));
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateOrderDto>(data)) }
+        };
+        return Ok(await orderService.PutAsync(parameters));
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         if (id == 0) return BadRequest("Id Incorrecto");

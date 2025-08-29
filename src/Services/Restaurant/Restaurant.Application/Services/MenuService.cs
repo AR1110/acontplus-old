@@ -12,14 +12,6 @@ public class MenuService(IAdoRepository repository) : IMenuService
             : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> PutAsync(int id, ApiRequest request)
-    {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", request.UserRoleId },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
-        };
-        return await repository.SpExecuteAsync<ApiResponse>("Restaurant.Menu_Update", parameters);
-    }
+    public async Task<ApiResponse> PutAsync(Dictionary<string, object> parameters) =>
+        await repository.SpExecuteAsync<ApiResponse>("Restaurant.Menu_Update", parameters);
 }

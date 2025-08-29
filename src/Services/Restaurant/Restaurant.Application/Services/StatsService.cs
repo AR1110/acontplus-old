@@ -1,11 +1,6 @@
-﻿using Common.Core.Abstractions;
+using Common.Core.Abstractions;
 
 namespace Restaurant.Application.Services;
-
-public interface IStatsService
-{
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-}
 
 public class StatsService(IAdoRepository adoRepository) : IStatsService
 {

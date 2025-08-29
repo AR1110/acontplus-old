@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs;
 using Restaurant.Domain.Entities;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class IngredientController(IIngredientService ingredientService) : BaseApiController
+public class IngredientController(IIngredientRepository ingredientService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -14,29 +15,37 @@ public class IngredientController(IIngredientService ingredientService) : BaseAp
         return Ok(await ingredientService.GetAsync(parameters));
     }
 
-    [HttpGet("GetById/{id}")]
-    public async Task<IActionResult> GetById(int id)
-    {
-        return Ok(await ingredientService.GetByIdAsync(id));
-    }
+    [HttpGet("GetById/{id:int}")]
+    public async Task<IActionResult> GetById(int id) => Ok(await ingredientService.GetByIdAsync(id));
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateIngredientRequestDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await ingredientService.AddAsync(data));
+        var userRoleId = User.GetClaimValue<int>("userRoleId");
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", userRoleId },
+            { "json", DataConverters.SerializeObjectCustom<CreateIngredientRequestDto>(data) }
+        };
+        return Ok(await ingredientService.AddAsync(parameters));
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] Ingredient ingredient)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateIngredientDto data)
     {
-        ingredient.UpdatedByUserId = User.GetUserId();
+        var ingredient = new Ingredient
+        {
+            ProductId = data.ProductId,
+            Summary = data.Summary,
+            IngredientTypeId = data.IngredientTypeId,
+            Quantity = data.Quantity,
+            Unit = data.Unit,
+            Content = data.Content,
+            UpdatedByUserId = User.GetUserId()
+        };
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        return Ok(await ingredientService.DeleteAsync(User.GetUserId(), id));
-    }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id) => Ok(await ingredientService.DeleteAsync(User.GetUserId(), id));
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.DTOs;
 
 namespace Restaurant.Api.Controllers;
 
@@ -15,9 +15,15 @@ public class MenuController(IMenuService menuService) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateMenuDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await menuService.PutAsync(id, data));
+        var userRoleId = User.GetClaimValue<int>("userRoleId");
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", userRoleId },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateMenuDto>(data)) }
+        };
+        return Ok(await menuService.PutAsync(parameters));
     }
 }

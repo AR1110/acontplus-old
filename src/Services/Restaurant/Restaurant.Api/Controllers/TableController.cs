@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Domain.Entities;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class TableController(IAppTableService tableService) : BaseApiController
+public class TableController(IAppTableRepository tableService) : BaseApiController
 {
     [HttpGet("GetByEstab/{codEstab}")]
     public async Task<IActionResult> GetByEstab(string codEstab)

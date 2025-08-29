@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Entities;
+using Restaurant.Domain.Entities;
 
-namespace Restaurant.Application.Interfaces;
+namespace Restaurant.Domain.Repositories;
 
-public interface IProductionAreaService
+public interface IProductionAreaRepository
 {
     Task<ApiResponse> AddAsync(ProductionArea productionArea);
     Task<ApiResponse> DeleteAsync(int userId, int id);

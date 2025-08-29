@@ -1,8 +1,6 @@
-﻿using Restaurant.Domain.Entities;
+namespace Restaurant.Infrastructure.Persistence.Repositories;
 
-namespace Restaurant.Application.Services;
-
-public class AppTableService(RestaurantContext context) : IAppTableService
+public class AppTableRepository(RestaurantContext context) : IAppTableRepository
 {
     public async Task<ApiResponse> GetByEstabAsync(string codEstab)
     {

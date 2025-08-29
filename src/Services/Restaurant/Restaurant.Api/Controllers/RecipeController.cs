@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Restaurant.Domain.Entities;
+using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 
-public class RecipeController(IRecipeService recipeService) : BaseApiController
+public class RecipeController(IRecipeRepository recipeService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get()

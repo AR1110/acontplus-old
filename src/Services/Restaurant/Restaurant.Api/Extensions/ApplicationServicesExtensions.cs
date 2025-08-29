@@ -1,9 +1,9 @@
-﻿using System.IO.Compression;
-using System.Threading.RateLimiting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Restaurant.Infrastructure.Persistence;
 using Scrutor;
+using System.IO.Compression;
+using System.Threading.RateLimiting;
 
 namespace Restaurant.Api.Extensions;
 
@@ -71,7 +71,10 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Restaurant.Application.Services"
+            "Restaurant.Application.Services",
+            "Restaurant.Infrastructure.Persistence.Repositories",
+            "Common.S3Application.Services",
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan
@@ -80,21 +83,7 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        );
-
-        string[] trascientNameSpaces =
-        [
-            "Common.S3Application.Services",
-            "Common.Infrastructure.Repository.Implementations"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
+        ); 
 
         services.AddTransient<S3ObjectCustom>();
         return services;
