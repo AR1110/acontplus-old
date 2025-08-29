@@ -12,17 +12,12 @@ public class StockFisicoService(IAdoRepository _repository) : IStockFisicoServic
 
             return null;
         }
-
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(ApiRequest request)
+    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", request.UserRoleId }, { "json", DataConverters.SerializeDictionary(request.Data) }
-        };
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Insert", parameters);
+      return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Insert", parameters);
     }
 
     public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
