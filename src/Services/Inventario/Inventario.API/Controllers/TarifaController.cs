@@ -1,4 +1,7 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Inventario.API.Dtos;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Inventario.API.Controllers;
 
 public class TarifaController(ITarifaService tarifaService) : BaseApiController
 {
@@ -7,22 +10,22 @@ public class TarifaController(ITarifaService tarifaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, 
+            { "json", SqlStringParam.Sanitize(json) }
         };
 
         var response = await tarifaService.GetAsync(parameters);
         return Ok(response);
     }
 
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] TarifaDto tarifaDto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<TarifaDto>(tarifaDto)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
