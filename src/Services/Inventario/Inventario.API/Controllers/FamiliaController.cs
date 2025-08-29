@@ -13,24 +13,24 @@ public class FamiliaController(IFamiliaService familiaService) : BaseApiControll
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest request)
+    public async Task<IActionResult> Post([FromBody] FamiliaDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FamiliaDto>(dto)) }
         };
         return Ok(await familiaService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest request)
+    public async Task<IActionResult> Put(int id, [FromBody] FamiliaDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FamiliaDto>(dto)) }
         };
         return Ok(await familiaService.UpdateAsync(parameters));
     }
