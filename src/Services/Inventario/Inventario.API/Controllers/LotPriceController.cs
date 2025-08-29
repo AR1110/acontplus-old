@@ -1,4 +1,7 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Inventario.Application.DTOs;
+
+namespace Inventario.API.Controllers;
 
 public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController
 {
@@ -16,12 +19,12 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
     }
 
     [HttpPut]
-    public async Task<ActionResult> Put(ApiRequest request)
+    public async Task<ActionResult> Put([FromBody] LotPriceDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<LotPriceDto>(dto)) }
         };
         var response = await lotPriceService.UpdateAsync(parameters);
         if (response == null) return NoContent();
