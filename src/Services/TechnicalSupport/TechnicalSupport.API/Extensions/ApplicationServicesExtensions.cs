@@ -1,6 +1,7 @@
-﻿using System.IO.Compression;
 using Common.Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.ResponseCompression;
+using System.IO.Compression;
+using TechnicalSupport.Infrastructure.Persistence.Repositories;
 
 namespace TechnicalSupport.API.Extensions;
 
@@ -34,15 +35,15 @@ public static class ApplicationServicesExtensions
             });
 
         services.AddScoped<IAdoRepository, AdoRepository>();
-        services.AddScoped<IBrandService, BrandService>();
-        services.AddScoped<ICategoryService, CategoryService>();
-        services.AddScoped<IDeviceSpecService, DeviceSpecService>();
-        services.AddScoped<IDeviceService, DeviceService>();
-        services.AddScoped<IModeloService, ModeloService>();
-        services.AddScoped<IOrderService, OrderService>();
-        services.AddScoped<IOrderDetailService, OrderDetailService>();
-        services.AddScoped<IOrderMaintenanceService, OrderMaintenanceService>();
-        services.AddScoped<ISerieService, SerieService>();
+        services.AddScoped<IBrandRepository, BrandRepository>();
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IDeviceSpecRepository, DeviceSpecRepository>();
+        services.AddScoped<IDeviceRepository, DeviceRepository>();
+        services.AddScoped<IModeloRepository, ModeloRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+        services.AddScoped<IOrderMaintenanceRepository, OrderMaintenanceRepository>();
+        services.AddScoped<ISerieRepository, SerieRepository>();
         services.AddScoped<IStatsService, StatsService>();
 
         return services;

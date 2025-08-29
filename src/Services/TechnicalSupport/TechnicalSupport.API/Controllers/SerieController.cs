@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class SerieController : BaseApiController
 {
-    private readonly ISerieService _serieService;
+    private readonly ISerieRepository _serieService;
 
-    public SerieController(ISerieService serieService)
+    public SerieController(ISerieRepository serieService)
     {
         _serieService = serieService;
     }

@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class OrderDetailController : BaseApiController
 {
-    private readonly IOrderDetailService _orderDetailService;
+    private readonly IOrderDetailRepository _orderDetailService;
 
-    public OrderDetailController(IOrderDetailService orderDetailService)
+    public OrderDetailController(IOrderDetailRepository orderDetailService)
     {
         _orderDetailService = orderDetailService;
     }

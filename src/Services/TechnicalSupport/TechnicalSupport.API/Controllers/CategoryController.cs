@@ -1,11 +1,11 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class CategoryController : BaseApiController
 {
     private const string CompanyId = "companyId";
-    private readonly ICategoryService _categoryService;
+    private readonly ICategoryRepository _categoryService;
 
-    public CategoryController(ICategoryService categoryService)
+    public CategoryController(ICategoryRepository categoryService)
     {
         _categoryService = categoryService;
     }
