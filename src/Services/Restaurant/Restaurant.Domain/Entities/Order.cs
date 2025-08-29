@@ -6,11 +6,11 @@ public class Order : BaseEntity
     public Guid Uuid { get; set; }
     public int EstablecimientoId { get; set; }
     public int PuntoEmisionId { get; set; }
-    public AppTable AppTable { get; set; }
+    public required AppTable AppTable { get; set; }
     public int? TableId { get; set; }
     public int Sequence { get; set; }
 
-    [Required][MaxLength(18)] public string Serie { get; set; }
+    [Required][MaxLength(18)] public required string Serie { get; set; }
 
     public int CustomerCompanyId { get; set; }
 
@@ -26,10 +26,10 @@ public class Order : BaseEntity
     [Column(TypeName = "numeric(18,5), not null")]
     public decimal Total { get; set; }
 
-    [MaxLength(500)] public string Obs { get; set; }
+    [MaxLength(500)] public string? Obs { get; set; }
 
     public bool Divided { get; set; }
     public bool Finished { get; set; }
     public int? TaxPercentId { get; set; }
-    public List<OrderItem> OrderItems { get; set; }
+    public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 }

@@ -35,13 +35,15 @@ public class IngredientController(IIngredientRepository ingredientService) : Bas
     {
         var ingredient = new Ingredient
         {
+            Id = id,
             ProductId = data.ProductId,
             Summary = data.Summary,
             IngredientTypeId = data.IngredientTypeId,
             Quantity = data.Quantity,
             Unit = data.Unit,
             Content = data.Content,
-            UpdatedByUserId = User.GetUserId()
+            UpdatedByUserId = User.GetUserId(),
+            IngredientType = null
         };
         return Ok(await ingredientService.UpdateAsync(id, ingredient));
     }
