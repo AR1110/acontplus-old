@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class BrandController : BaseApiController
 {
-    private readonly IBrandService _brandService;
+    private readonly IBrandRepository _brandService;
 
-    public BrandController(IBrandService brandService)
+    public BrandController(IBrandRepository brandService)
     {
         _brandService = brandService;
     }

@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class OrderMaintenanceController : BaseApiController
 {
-    private readonly IOrderMaintenanceService _service;
+    private readonly IOrderMaintenanceRepository _service;
 
-    public OrderMaintenanceController(IOrderMaintenanceService service)
+    public OrderMaintenanceController(IOrderMaintenanceRepository service)
     {
         _service = service;
     }

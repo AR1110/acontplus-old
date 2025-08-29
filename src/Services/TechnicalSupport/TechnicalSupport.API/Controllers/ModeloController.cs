@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class ModeloController : BaseApiController
 {
-    private readonly IModeloService _modeloService;
+    private readonly IModeloRepository _modeloService;
 
-    public ModeloController(IModeloService modeloService)
+    public ModeloController(IModeloRepository modeloService)
     {
         _modeloService = modeloService;
     }

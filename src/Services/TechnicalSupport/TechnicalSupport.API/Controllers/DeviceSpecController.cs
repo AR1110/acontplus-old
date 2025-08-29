@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class DeviceSpecController : BaseApiController
 {
-    private readonly IDeviceSpecService _service;
+    private readonly IDeviceSpecRepository _service;
 
-    public DeviceSpecController(IDeviceSpecService service)
+    public DeviceSpecController(IDeviceSpecRepository service)
     {
         _service = service;
     }
