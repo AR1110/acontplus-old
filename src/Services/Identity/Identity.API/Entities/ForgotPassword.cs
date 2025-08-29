@@ -3,7 +3,7 @@
 [Table("ForgotPassword", Schema = "Seguridad")]
 public class ForgotPassword : BaseEntity
 {
-    [Required][MaxLength(100)] public string Email { get; set; }
+    [Required][MaxLength(100)] public required string Email { get; set; }
 
     [Required] public Guid Token { get; set; } = Guid.NewGuid();
 
