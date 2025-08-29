@@ -1,4 +1,7 @@
-﻿namespace Inventario.API.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
+using Inventario.Application.DTOs;
+
+namespace Inventario.API.Controllers;
 
 public class MarcaController(IMarcaService marcaService) : BaseApiController
 {
@@ -15,12 +18,12 @@ public class MarcaController(IMarcaService marcaService) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] MarcaDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<MarcaDto>(dto)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
@@ -30,13 +33,13 @@ public class MarcaController(IMarcaService marcaService) : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateMarcaDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateMarcaDto>(dto)) },
             { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
         };
 
