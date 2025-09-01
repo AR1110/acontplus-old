@@ -1,4 +1,4 @@
-﻿namespace Ventas.API.Services;
+namespace Ventas.Application.Services;
 
 public class AprobacionDocService(IAdoRepository AdoRepository) : IAprobacionDocService
 {

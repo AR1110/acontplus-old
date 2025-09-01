@@ -1,4 +1,4 @@
-﻿using Ventas.API.Models;
+using Ventas.Application.DTOs;
 
 namespace Ventas.API.Controllers;
 
@@ -39,7 +39,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
 
 
     [HttpPost]
-    public async Task<IActionResult> Insert([FromBody] Cliente data)
+    public async Task<IActionResult> Insert([FromBody] ClienteDto data)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -49,7 +49,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] Cliente data)
+    public async Task<IActionResult> Update(int id, [FromBody] ClienteDto data)
     {
         var parameters = new Dictionary<string, object>
         {

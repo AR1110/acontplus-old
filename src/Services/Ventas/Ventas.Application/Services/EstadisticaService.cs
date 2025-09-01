@@ -1,6 +1,6 @@
-﻿using System.Data;
+using System.Data;
 
-namespace Ventas.API.Services;
+namespace Ventas.Application.Services;
 
 public interface IEstadisticaService
 {

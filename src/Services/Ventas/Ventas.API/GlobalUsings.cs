@@ -1,4 +1,4 @@
-﻿global using Common.Core.Abstractions;
+global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.Data;
@@ -10,5 +10,5 @@ global using Microsoft.AspNetCore.Mvc;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
 global using Ventas.API.Extensions;
-global using Ventas.API.Interfaces;
-global using Ventas.API.Services;
+global using Ventas.Application.Interfaces;
+global using Ventas.Application.Services;

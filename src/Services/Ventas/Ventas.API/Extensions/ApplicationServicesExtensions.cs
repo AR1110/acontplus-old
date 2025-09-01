@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 
@@ -33,7 +33,7 @@ public static class ApplicationServicesExtensions
         string[] nameSpaces =
         [
             "Common.Infrastructure.Repository.Implementations",
-            "Ventas.API.Services"
+            "Ventas.Application.Services"
         ];
 
         services.Scan(scan => scan
@@ -43,7 +43,6 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-
 
         return services;
     }

@@ -1,19 +1,10 @@
-﻿using System.Data;
+using System.Data;
 
-namespace Ventas.API.Services;
+namespace Ventas.Application.Services;
 
-public interface IEmpleadoService
+public class ClienteService(IAdoRepository adoRepository) : IClienteService
 {
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
-
-public class EmpleadoService(IAdoRepository adoRepository) : IEmpleadoService
-{
-    private const string ModuleName = "Ventas.Empleado_";
+    private const string ModuleName = "Ventas.Cliente_";
 
     public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
     {
@@ -27,11 +18,27 @@ public class EmpleadoService(IAdoRepository adoRepository) : IEmpleadoService
 
     public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, withTableNames: false);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get_Id", parameters, withTableNames: false);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
             ? new ApiResponse { Code = "0", Message = "Data not found" }
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+    }
+
+    public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Data_Form", parameters, false);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
+            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
     public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
@@ -43,8 +50,8 @@ public class EmpleadoService(IAdoRepository adoRepository) : IEmpleadoService
             : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
+        throw new NotImplementedException();
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Ventas.API.Models;
+namespace Ventas.Application.DTOs;
 
-public class Cliente
+public class ClienteDto
 {
     public int idCliente { get; set; }
     public int idTipoClienteProveedor { get; set; }

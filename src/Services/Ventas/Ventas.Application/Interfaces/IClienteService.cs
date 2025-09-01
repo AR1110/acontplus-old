@@ -1,4 +1,4 @@
-﻿namespace Ventas.API.Interfaces;
+namespace Ventas.Application.Interfaces;
 
 public interface IClienteService
 {
