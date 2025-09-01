@@ -1,4 +1,6 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Ventas.Application.DTOs;
+
+namespace Ventas.API.Controllers;
 
 public class NotaEntregaController : BaseApiController
 {
@@ -33,25 +35,25 @@ public class NotaEntregaController : BaseApiController
     }
 
     [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(ApiRequest data)
+    public async Task<IActionResult> Insert(CreateNotaEntregaDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateNotaEntregaDto>(data)) }
         };
         var response = await _svc.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest request)
+    public async Task<IActionResult> Update(int id, UpdateNotaEntregaDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateNotaEntregaDto>(request)) }
         };
         var response = await _svc.UpdateAsync(parameters);
         return Ok(response);
@@ -59,25 +61,25 @@ public class NotaEntregaController : BaseApiController
 
 
     [HttpPut("Cancel/{id}")]
-    public async Task<IActionResult> Delete(int id, ApiRequest request)
+    public async Task<IActionResult> Delete(int id, UpdateNotaEntregaDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateNotaEntregaDto>(request)) }
         };
         var response = await _svc.CancelAsync(parameters);
         return Ok(response);
     }
 
     [HttpPost("ConvertToDoc")]
-    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+    public async Task<IActionResult> ConvertToDoc(NotaEntregaConvertToDocDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<NotaEntregaConvertToDocDto>(request)) }
         };
         var response = await _svc.ConvertToDocAsync(parameters);
         return Ok(response);
