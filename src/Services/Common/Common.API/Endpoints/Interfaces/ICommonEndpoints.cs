@@ -1,5 +1,3 @@
-﻿using Common.API.Dtos;
-
 namespace Common.API.Endpoints.Interfaces;
 
 public interface ICommonEndpoints

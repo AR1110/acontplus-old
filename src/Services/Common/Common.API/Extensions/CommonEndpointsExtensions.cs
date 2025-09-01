@@ -1,4 +1,3 @@
-﻿using Common.API.Dtos;
 using Common.API.Endpoints.Interfaces;
 
 namespace Common.API.Extensions;
