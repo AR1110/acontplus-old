@@ -42,7 +42,7 @@ public static class ApplicationServicesExtensions
         string[] scopedNameSpaces =
         [
             "Common.API.Endpoints.Implementations",
-            "Common.API.Services"
+            "Common.Application.Services"
         ];
 
         services.Scan(scan => scan
