@@ -22,7 +22,7 @@ BEGIN
            ,@idEntidad              INT
            ,@result                 VARCHAR(MAX)
 
-    -- Control de transacciones
+    --> Control de transacciones
     DECLARE @startedTransaction BIT = 0;
 
     --> Data Json
@@ -212,45 +212,31 @@ BEGIN
         --> Recuperacion de variables
         SELECT TOP 1 @idCliente = ISNULL(idCliente,0),@idPuntoEmision = idPuntoEmision FROM @tbComprobante  
 
+        --> Validando Informacion 
+        IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
+            BEGIN
+                SET @message = 'Error en la info Factura';
+            END 
 
-        --> Customer Company
-        BEGIN 
-            IF @idCliente = 0
-                BEGIN
-                    EXEC Ventas.InsertCompanyCustomer @userRoleId ,@json ,@errorCode = @errorCode OUT ,@errorMessage = @errorMessage OUT , @idCliente = @idCliente OUT
+        IF NOT EXISTS(SELECT 1 FROM @tblDetails) 
+            BEGIN
+                SET @message = 'Error en los detalles';
+            END
 
-                    IF (@errorCode <> 0)
-                        BEGIN
-                            SET @errorMessage = 'sp Acontplus.Ventas.InsertCompanyCustomer response: ' + ISNULL(@errorMessage, '');
-                            THROW 50001, @errorMessage, 1;
-                        END
-                END
-        END 
-        --> End Customer Company
-        
-        --> DocumentoElectronico
-        BEGIN
-            DECLARE @jsonDocElectronico VARCHAR(MAX)
-                   ,@CustomerId INT
+        IF NOT EXISTS(SELECT 1 FROM @payment) 
+            BEGIN
+                SET @message = 'Error en la forma de pago';
+            END
+           
+        IF NOT EXISTS(SELECT 1 FROM @tbTaxes) 
+            BEGIN
+                SET @message = 'Error en los impuestos';
+            END
 
-            SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WHERE codigoSri = '01'
-
-            SELECT TOP 1 @CustomerId = CustomerId FROM dbo.Cliente WHERE idCliente = @idCliente
-
-            SET @jsonDocElectronico = JSON_MODIFY(@json, '$.versionComp', '1.1.0');
-
-            SET @jsonDocElectronico = JSON_MODIFY(@jsonDocElectronico,'$.CustomerId',@CustomerId)
-            
-            EXEC FactElect.InsertDocumentoElectronico @userRoleId ,@jsonDocElectronico ,@errorCode = @errorCode OUT ,@errorMessage = @errorMessage OUT , @idDocumentoElectronico = @idDocumentoElectronico OUT
-
-            IF (@errorCode <> 0)
-                BEGIN
-                    SET @errorMessage = 'sp Acontplus.FactElect.InsertDocumentoElectronico response: ' + ISNULL(@errorMessage, '');
-                    THROW 50001, @errorMessage, 1;
-                END
-        END 
-        --> End DocumentoElectronico
-
+        IF @message IS NOT NULL
+            BEGIN;
+                THROW 50002, @message, 1;
+            END
 
         --> Transaccion Principal.
         IF @@TRANCOUNT = 0
@@ -307,46 +293,6 @@ BEGIN
 			        FROM Compra.InfoAdicional infoAdd WITH (NOLOCK)
 			        INNER JOIN @historyInfoAdicional h ON h.idInfoAdicional = infoAdd.idInfoAdicional
                 END
-
-            --> Actualizacion del secuencial
-            BEGIN
-                DECLARE @idConfiguracionDocumento INT
-
-                SELECT TOP 1 @idConfiguracionDocumento = idConfiguracionDocumento FROM  ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
-
-                EXEC Config.UpdateConfiguracionDocumento @userRoleId ,@idConfiguracionDocumento ,@json ,@errorCode = @errorCode OUT ,@errorMessage = @errorMessage OUT
-
-                IF (@errorCode <> 0)
-                    BEGIN
-                        SET @errorMessage = 'sp Acontplus.Config.UpdateConfiguracionDocumento response: ' + ISNULL(@errorMessage, '');
-                        THROW 50001, @errorMessage, 1;
-                    END
-            END
-
-            --> Invetario
-            BEGIN 
-                IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
-			        BEGIN
-                        EXEC Inventario.InsertTransaccion @userRoleId ,@json ,@errorCode = @errorCode OUT ,@errorMessage = @errorMessage OUT
-
-                        IF (@errorCode <> 0)
-                            BEGIN
-                                SET @errorMessage = 'sp Acontplus.Inventario.InsertTransaccion response: ' + ISNULL(@errorMessage, '');
-                                THROW 50001, @errorMessage, 1;
-                            END    
-                    END
-            END
-
-            --> Contabilidad
-            BEGIN
-                EXEC Contabilidad.InsertCuentaPorCobrar @userRoleId ,@json ,@errorCode = @errorCode OUT ,@errorMessage = @errorMessage OUT
-
-                IF (@errorCode <> 0)
-                    BEGIN
-                        SET @errorMessage = 'sp Acontplus.Contabilidad.InsertCuentaPorCobrar response: ' + ISNULL(@errorMessage, '');
-                        THROW 50001, @errorMessage, 1;
-                    END
-            END 
 
         IF (@@ROWCOUNT > 0)
 			    BEGIN

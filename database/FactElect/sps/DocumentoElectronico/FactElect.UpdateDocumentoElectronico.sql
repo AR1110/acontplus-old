@@ -7,10 +7,10 @@ GO
 -- =============================================
 CREATE OR ALTER PROCEDURE FactElect.InsertDocumentoElectronico
      @userRoleId INT
+    ,@id INT 
     ,@json NVARCHAR(MAX)
     ,@errorCode INT = 0 OUTPUT
     ,@errorMessage NVARCHAR(MAX) = '' OUTPUT
-    ,@idDocumentoElectronico INT = 0 OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -22,9 +22,7 @@ BEGIN
     DECLARE @result VARCHAR(MAX) ,@code VARCHAR(50) ,@message VARCHAR(MAX)
 
     --> Documento Electronico 
-	DECLARE @fechaEmision DATETIME ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@nroDocumento INT
-           ,@idEstadoServicio INT ,@idUsuario INT ,@serieComprobante VARCHAR(100) ,@idPuntoEmision INT ,@idTipoDocumento INT
-           ,@idEntidad INT 
+	DECLARE @fechaEmision DATETIME ,@claveAcceso NVARCHAR(50) ,@idEstadoServicio INT ,@idUsuario INT ,@idEntidad INT ,@codDoc VARCHAR(5) ,@customerId INT
 
     --> Control de transacciones
     DECLARE @startedTransaction BIT = 0;
@@ -59,7 +57,7 @@ BEGIN
         --> Variables
         SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @idPuntoEmision = idPuntoEmision ,@idTipoDocumento = idTipoDocumento ,@fechaEmision = fechaEmision, @idUsuario = idUsuario FROM @tbComprobante
+        SELECT TOP 1 @fechaEmision = fechaEmision, @idUsuario = idUsuario ,@CustomerId = CustomerId FROM @tbComprobante
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1
 		
@@ -72,18 +70,14 @@ BEGIN
                                 ,(CONVERT(NVARCHAR, FORMAT(@fechaEmision, 'dd/MM/yyyy'),106))
                                 ,en.ruc
                                 ,es.estab + pe.ptoEmi
-                                ,FORMAT(cd.ultimaSecuencia, 'D9')
+                                ,FORMAT(de.nroDocumento, 'D9')
                               )
-              ,@isAutomatic        = es.autoSriAuth
-              ,@serieComprobante   = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
-              ,@nroDocumento       = cd.ultimaSecuencia
-        FROM dbo.ConfiguracionDocumento cd
-        INNER JOIN dbo.TipoDocumento    td ON td.idTipoDocumento   = cd.idTipoDocumento
-        INNER JOIN dbo.PuntoEmision     pe ON pe.idPuntoEmision    = cd.idPuntoEmision
+        FROM DocumentoElectronico       de
+        INNER JOIN dbo.TipoDocumento    td ON td.idTipoDocumento   = de.idTipoDocumento
+        INNER JOIN dbo.PuntoEmision     pe ON pe.idPuntoEmision    = de.idPuntoEmision
         INNER JOIN Sri.Establecimiento  es ON es.idEstablecimiento = pe.idEstablecimiento
         INNER JOIN dbo.Entidad          en ON en.idEntidad         = es.idEntidad
-        WHERE cd.idPuntoEmision  = @idPuntoEmision
-          AND cd.idTipoDocumento = @idTipoDocumento;
+        WHERE de.idDocumentoElectronico = @id
 
         --> Validando Informacion 
         IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
@@ -91,70 +85,46 @@ BEGIN
                 SET @message = 'Error en la info tributaria';
             END
 
-        IF EXISTS (SELECT 1 FROM Config.v_ConfigDocumento WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND codDocSri = '01' AND autoSriAuth = 1)
+        IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE claveAcceso = @claveAcceso AND idDocumentoElectronico != @id)
+			BEGIN
+				SET @message = 'Error critico esta clave de acceso ya existe';
+			END
+
+        IF EXISTS (SELECT 1 FROM FactElect.v_DocElectronico WITH (NOLOCK) WHERE idDocumentoElectronico = @id AND codEstado IN (4,3,6,8))
             BEGIN
-                IF NOT EXISTS (SELECT 1 FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad)
-                    BEGIN
-                        SET @message = 'No tienes configurada ninguna firma electrónica.';
-			        END
-
-                IF (SELECT DATEDIFF(DAY, fechaCaducidad, GETDATE()) FROM dbo.FirmaElectronica WITH (NOLOCK) WHERE idEntidad = @idEntidad) = 0
-                    BEGIN
-                        SET @message = 'Su firma ha caducado no puede realizar comprobantes electrónicos';
-                    END 
+                SET @message = 'El Documento tiene un proceso en el Sri';
             END
-
-        IF @nroDocumento IS NULL
-			BEGIN
-                SET @message = 'No existe una configuracion de secuencial para este Punto de Emision';
-			END
-
-		IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE nroDocumento = @nroDocumento AND idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento)
-			BEGIN
-                SET @message = 'El Comprobante: ' + @serieComprobante + ' ya se encuentra registrada';
-			END
-
-		IF @claveAcceso IS NULL
-			BEGIN
-                SET @message = 'Error critico la clave de Acceso no se genero correctamente';
-			END
-
-		IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WITH (NOLOCK) WHERE claveAcceso = @claveAcceso)
-			BEGIN
-                SET @message = 'Error critico esta clave de acceso ya se encuentra registrada';
-			END
 
         IF @message IS NOT NULL
             BEGIN;
                 THROW 50002, @message, 1;
-            END 
+            END
 
-        --> TRANSACCION
+        --> Transaccion
         IF @@TRANCOUNT = 0
             BEGIN
                 BEGIN TRANSACTION;
                 SET @startedTransaction = 1;
             END
 
-		    INSERT INTO dbo.DocumentoElectronico
-                  (idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEstadoServicio,serieComprobante)
-            SELECT idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,CustomerId,@nroDocumento,@claveAcceso,@isAutomatic,idUsuario,@idEstadoServicio,@serieComprobante
-            FROM @tbComprobante
+            UPDATE DocumentoElectronico WITH (ROWLOCK)
+               SET claveAcceso      = @claveAcceso
+                  ,customerId       = @customerId
+                  ,fechaEmision     = @fechaEmision
+                  ,idEstadoServicio = @idEstadoServicio
+            WHERE idDocumentoElectronico = @id
 
-            SET @idDocumentoElectronico = SCOPE_IDENTITY()
-
-            SET @result = (SELECT @idDocumentoElectronico as id FOR JSON PATH)
 
         IF (@@ROWCOUNT > 0)
 			BEGIN
 				SET @code = '0';
-				SET @message = 'Registrado Exitosamente';
+				SET @message = 'Actualizado Exitosamente';
 			END
 		ELSE
 			BEGIN
 				SET @code = '50001';
 				SET @errorCode = 5001
-                SET @errorMessage = 'No se pudo registrar'
+                SET @errorMessage = 'No se pudo Actualizar'
 				SET @message = @errorMessage;
 			END
  
@@ -184,7 +154,7 @@ BEGIN
                 )
                 VALUES
                 (
-                    'DocumentoElectronico/Insert'
+                    'DocumentoElectronico/Update'
                    ,ERROR_NUMBER()
                    ,ERROR_SEVERITY()
                    ,ERROR_STATE()
