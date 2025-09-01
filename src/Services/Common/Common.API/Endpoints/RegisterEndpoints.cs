@@ -1,3 +1,4 @@
+using Common.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Common.API.Endpoints;
@@ -9,15 +10,14 @@ public static class RegisterEndpoints
         builder.MapGet("/dashboard", async (
                 IDashboardService dashboardService,
                 IUserContext userContext,
-                ILogger<IDashboardService> logger,
-                string? json = null) =>
+                ILogger<IDashboardService> logger) =>
             {
                 try
                 {
                     var response = await dashboardService.GetAsync(new Dictionary<string, object>
                     {
                         { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                        { "json", SqlStringParam.Sanitize(json ?? "") }
+                        { "json", "{}" }
                     });
                     return Results.Ok(response);
                 }
@@ -39,56 +39,22 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapPost("/emailqueue", async (
-                IEmailQueueService emailQueueService,
-                IUserContext userContext,
-                ILogger<IEmailQueueService> logger,
-                [FromBody] ApiRequest apiRequest) =>
-            {
-                try
-                {
-                    if (apiRequest == null)
-                        return Results.BadRequest(new { error = "ApiRequest cannot be null" });
-
-                    apiRequest.UserRoleId = userContext.GetClaimValue<int>("userRoleId");
-                    var result = await emailQueueService.SendAsync(apiRequest);
-                    return Results.Ok(result);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, "Error creating email queue entry");
-                    return Results.Problem("An error occurred while creating email queue entry", statusCode: 500);
-                }
-            })
-            .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Create email queue entry";
-                operation.Description = "Adds a new email to the queue for processing";
-                return operation;
-            })
-            .WithTags("Email Queue")
-            .Produces<ApiResponse>(200)
-            .Produces(400)
-            .Produces(401)
-            .Produces(500);
-
         builder.MapPost("/notificacion", async (
                 INotificationService notificationService,
                 IUserContext userContext,
                 IHttpContextAccessor httpContextAccessor,
                 ILogger<INotificationService> logger,
-                [FromBody] string json) =>
+                [FromBody] CreateNotificationDto createNotificationDto) =>
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(json))
-                        return Results.BadRequest(new { error = "JSON parameter cannot be null or empty" });
+                    if (createNotificationDto == null)
+                        return Results.BadRequest(new { error = "CreateNotificationDto cannot be null" });
 
                     var parameters = new Dictionary<string, object>
                     {
                         { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                        { "json", SqlStringParam.Sanitize(json) },
+                        { "json", DataConverters.SerializeObjectCustom<CreateNotificationDto>(createNotificationDto) },
                         { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
                     };
                     var result = await notificationService.AddAsync(parameters);
@@ -145,14 +111,25 @@ public static class RegisterEndpoints
                 IUserManualService userManualService,
                 IUserContext userContext,
                 ILogger<IUserManualService> logger,
-                string? json = null) =>
+                int? menuId = null,
+                string? textSearch = null,
+                int pageIndex = 1,
+                int pageSize = 10) =>
             {
                 try
                 {
+                    var getUserManualDto = new GetUserManualDto
+                    {
+                        MenuId = menuId ?? 0,
+                        TextSearch = textSearch ?? string.Empty,
+                        PageIndex = pageIndex,
+                        PageSize = pageSize
+                    };
+
                     var parameters = new Dictionary<string, object>
                     {
                         { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                        { "json", SqlStringParam.Sanitize(json ?? "") }
+                        { "json", DataConverters.SerializeObjectCustom<GetUserManualDto>(getUserManualDto) }
                     };
                     var result = await userManualService.GetAsync(parameters);
                     return Results.Ok(result);
@@ -179,14 +156,21 @@ public static class RegisterEndpoints
                 IUserReleaseReadService userReleaseReadService,
                 IUserContext userContext,
                 ILogger<IUserReleaseReadService> logger,
-                [FromBody] ApiRequest apiRequest) =>
+                [FromBody] CreateUserReleaseReadDto createUserReleaseReadDto) =>
             {
                 try
                 {
-                    if (apiRequest == null)
-                        return Results.BadRequest(new { error = "ApiRequest cannot be null" });
+                    if (createUserReleaseReadDto == null)
+                        return Results.BadRequest(new { error = "CreateUserReleaseReadDto cannot be null" });
 
-                    apiRequest.UserRoleId = userContext.GetClaimValue<int>("userRoleId");
+                    var apiRequest = new ApiRequest
+                    {
+                        UserRoleId = userContext.GetClaimValue<int>("userRoleId"),
+                        Data = new Dictionary<string, object>
+                        {
+                            { "releases", createUserReleaseReadDto.Releases }
+                        }
+                    };
                     var result = await userReleaseReadService.AddAsync(apiRequest);
                     return Results.Ok(result);
                 }
@@ -214,17 +198,17 @@ public static class RegisterEndpoints
                 IUserContext userContext,
                 IHttpContextAccessor httpContextAccessor,
                 ILogger<IWhatsappMessageService> logger,
-                [FromBody] WhatsappMessageDto whatsappMessageDto) =>
+                [FromBody] CreateWhatsAppMessageDto createWhatsAppMessageDto) =>
             {
                 try
                 {
-                    if (whatsappMessageDto == null)
-                        return Results.BadRequest(new { error = "WhatsappMessageDto cannot be null" });
+                    if (createWhatsAppMessageDto == null)
+                        return Results.BadRequest(new { error = "CreateWhatsAppMessageDto cannot be null" });
 
                     var parameters = new Dictionary<string, object>
                     {
                         { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                        { "json", DataConverters.SerializeObjectCustom<WhatsappMessageDto>(whatsappMessageDto) },
+                        { "json", DataConverters.SerializeObjectCustom<CreateWhatsAppMessageDto>(createWhatsAppMessageDto) },
                         { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
                     };
                     var result = await whatsappMessageService.AddAsync(parameters);
