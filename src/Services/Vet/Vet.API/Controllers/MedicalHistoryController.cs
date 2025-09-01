@@ -1,6 +1,6 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
-public class MedicalHistoryController(IMedicalHistoryService historyService) : BaseApiController
+public class MedicalHistoryController(IMedicalHistoryRepository historyService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

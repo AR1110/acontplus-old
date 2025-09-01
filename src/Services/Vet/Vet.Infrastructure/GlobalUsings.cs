@@ -1,0 +1,9 @@
+global using Common.Core.Abstractions;
+global using Common.Core.Models;
+global using Common.Core.Validation;
+global using Common.Data;
+global using Common.Infrastructure.Context;
+global using Common.Infrastructure.Entity;
+global using Microsoft.EntityFrameworkCore;
+global using Vet.Domain.Entities;
+global using Vet.Domain.Repositories;

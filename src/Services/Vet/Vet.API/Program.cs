@@ -1,5 +1,5 @@
-﻿using System.Runtime.InteropServices;
 using Serilog;
+using System.Runtime.InteropServices;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()

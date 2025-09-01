@@ -1,6 +1,6 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
-public class HealthCheckController(IHealthCheckService healthCheckService) : BaseApiController
+public class HealthCheckController(IHealthCheckRepository healthCheckService) : BaseApiController
 {
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] HealthCheck healthCheck)

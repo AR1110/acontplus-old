@@ -1,7 +1,9 @@
-﻿using System.IO.Compression;
 using Common.Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
+using System.IO.Compression;
+using Vet.Infrastructure.Persistence;
+using Vet.Infrastructure.Persistence.Repositories;
 
 namespace Vet.API.Extensions;
 
@@ -36,12 +38,12 @@ public static class ApplicationServicesExtensions
             );
 
         services.AddScoped<IAdoRepository, AdoRepository>();
-        services.AddScoped<IBehaviorTestService, BehaviorTestService>();
-        services.AddScoped<IBreedService, BreedService>();
-        services.AddScoped<IHealthCheckService, HealthCheckService>();
-        services.AddScoped<IMedicalHistoryService, MedicalHistoryService>();
-        services.AddScoped<IPetService, PetService>();
-        services.AddScoped<IPetTypeService, PetTypeService>();
+        services.AddScoped<IBehaviorTestRepository, BehaviorTestRepository>();
+        services.AddScoped<IBreedRepository, BreedRepository>();
+        services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
+        services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>();
+        services.AddScoped<IPetRepository, PetRepository>();
+        services.AddScoped<IPetTypeRepository, PetTypeRepository>();
         services.AddScoped<IStatsService, StatsService>();
 
         return services;

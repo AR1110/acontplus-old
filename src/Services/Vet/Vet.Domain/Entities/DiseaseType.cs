@@ -1,0 +1,11 @@
+namespace Vet.Domain.Entities;
+
+[Table("DiseaseType", Schema = "Vet")]
+public class DiseaseType : BaseEntity
+{
+    [Required][MaxLength(5)] public string Code { get; set; }
+
+    [Required][MaxLength(100)] public string Name { get; set; }
+
+    [MaxLength(500)] public string Description { get; set; }
+}

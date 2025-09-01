@@ -1,6 +1,6 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
-public class BreedController(IBreedService breedService) : BaseApiController
+public class BreedController(IBreedRepository breedService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get()

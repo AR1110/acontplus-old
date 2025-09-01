@@ -1,6 +1,6 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
-public class PetTypeController(IPetTypeService petTypeService) : BaseApiController
+public class PetTypeController(IPetTypeRepository petTypeService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get()
