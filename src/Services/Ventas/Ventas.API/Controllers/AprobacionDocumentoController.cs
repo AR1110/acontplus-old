@@ -1,4 +1,6 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Ventas.Application.DTOs;
+
+namespace Ventas.API.Controllers;
 
 public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {
@@ -13,25 +15,25 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     }
 
     [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    public async Task<IActionResult> Insert(CreateAprobacionDocumentoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateAprobacionDocumentoDto>(request)) }
         };
         var response = await svc.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest request)
+    public async Task<IActionResult> Update(int id, UpdateAprobacionDocumentoDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateAprobacionDocumentoDto>(request)) }
         };
         var response = await svc.UpdateAsync(parameters);
         return Ok(response);
@@ -55,12 +57,12 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     }
 
     [HttpPost("ConvertToDoc")]
-    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+    public async Task<IActionResult> ConvertToDoc(ConvertToDocumentDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ConvertToDocumentDto>(request)) }
         };
         var response = await svc.ConvertToDocAsync(parameters);
         return Ok(response);
