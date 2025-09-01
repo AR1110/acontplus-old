@@ -1,47 +1,49 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Ventas.Application.DTOs;
+
+namespace Ventas.API.Controllers;
 
 public class EmpresaController(IEmpresaService _svc) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
-        return Ok(await _svc.GetAsync(parameters));
-    }
+    return Ok(await _svc.GetAsync(parameters));
+  }
 
 
-    [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpPost]
+  public async Task<IActionResult> Post(CreateEmpresaDto request)
+  {
+    var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateEmpresaDto>(request)) }
         };
-        return Ok(await _svc.AddAsync(parameters));
-    }
+    return Ok(await _svc.AddAsync(parameters));
+  }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpPut("{id}")]
+  public async Task<IActionResult> Put(int id, UpdateEmpresaDto request)
+  {
+    var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateEmpresaDto>(request)) }
         };
-        return Ok(await _svc.UpdateAsync(parameters));
-    }
+    return Ok(await _svc.UpdateAsync(parameters));
+  }
 
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var parameters = new Dictionary<string, object>
+  [HttpDelete("{id}")]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-        return Ok(await _svc.DeleteAsync(parameters));
-    }
+    return Ok(await _svc.DeleteAsync(parameters));
+  }
 }
