@@ -1,4 +1,6 @@
-﻿namespace Ventas.API.Controllers;
+﻿using Ventas.Application.DTOs;
+
+namespace Ventas.API.Controllers;
 
 public class ProformaController(IProformaService svc) : BaseApiController
 {
@@ -13,25 +15,25 @@ public class ProformaController(IProformaService svc) : BaseApiController
     }
 
     [HttpPost("Insert")]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    public async Task<IActionResult> Insert(CreateProformaDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateProformaDto>(request)) }
         };
 
         return Ok(await svc.AddAsync(parameters));
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> Update(int id, ApiRequest request)
+    public async Task<IActionResult> Update(int id, UpdateProformaDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateProformaDto>(request)) }
         };
 
         return Ok(await svc.UpdateAsync(parameters));
@@ -56,12 +58,12 @@ public class ProformaController(IProformaService svc) : BaseApiController
     }
 
     [HttpPost("ConvertToDoc")]
-    public async Task<IActionResult> ConvertToDoc(ApiRequest request)
+    public async Task<IActionResult> ConvertToDoc(ProformaConvertToDocDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProformaConvertToDocDto>(request)) }
         };
 
         return Ok(await svc.ConvertToDoc(parameters));
