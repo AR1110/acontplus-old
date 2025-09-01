@@ -1,4 +1,5 @@
-﻿using Serilog;
+using Common.API.Endpoints;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()

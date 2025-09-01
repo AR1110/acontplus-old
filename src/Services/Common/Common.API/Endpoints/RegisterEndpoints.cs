@@ -1,0 +1,254 @@
+using Microsoft.AspNetCore.Mvc;
+
+namespace Common.API.Endpoints;
+
+public static class RegisterEndpoints
+{
+    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder builder)
+    {
+        builder.MapGet("/dashboard", async (
+                IDashboardService dashboardService,
+                IUserContext userContext,
+                ILogger<IDashboardService> logger,
+                string? json = null) =>
+            {
+                try
+                {
+                    var response = await dashboardService.GetAsync(new Dictionary<string, object>
+                    {
+                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "json", SqlStringParam.Sanitize(json ?? "") }
+                    });
+                    return Results.Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error retrieving dashboard data");
+                    return Results.Problem("An error occurred while retrieving dashboard data", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Get dashboard data";
+                operation.Description = "Retrieves dashboard information for the authenticated user";
+                return operation;
+            })
+            .WithTags("Dashboard")
+            .Produces<ApiResponse>(200)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapPost("/emailqueue", async (
+                IEmailQueueService emailQueueService,
+                IUserContext userContext,
+                ILogger<IEmailQueueService> logger,
+                [FromBody] ApiRequest apiRequest) =>
+            {
+                try
+                {
+                    if (apiRequest == null)
+                        return Results.BadRequest(new { error = "ApiRequest cannot be null" });
+
+                    apiRequest.UserRoleId = userContext.GetClaimValue<int>("userRoleId");
+                    var result = await emailQueueService.SendAsync(apiRequest);
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error creating email queue entry");
+                    return Results.Problem("An error occurred while creating email queue entry", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Create email queue entry";
+                operation.Description = "Adds a new email to the queue for processing";
+                return operation;
+            })
+            .WithTags("Email Queue")
+            .Produces<ApiResponse>(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapPost("/notificacion", async (
+                INotificationService notificationService,
+                IUserContext userContext,
+                IHttpContextAccessor httpContextAccessor,
+                ILogger<INotificationService> logger,
+                [FromBody] string json) =>
+            {
+                try
+                {
+                    if (string.IsNullOrWhiteSpace(json))
+                        return Results.BadRequest(new { error = "JSON parameter cannot be null or empty" });
+
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "json", SqlStringParam.Sanitize(json) },
+                        { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
+                    };
+                    var result = await notificationService.AddAsync(parameters);
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error creating notification");
+                    return Results.Problem("An error occurred while creating notification", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Create notification";
+                operation.Description = "Creates a new notification for the authenticated user";
+                return operation;
+            })
+            .WithTags("Notificacion")
+            .Produces<ApiResponse>(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapGet("/release", async (
+                IReleaseService releaseService,
+                IUserContext userContext,
+                ILogger<IReleaseService> logger) =>
+            {
+                try
+                {
+                    var result = await releaseService.GetAsync(userContext.GetClaimValue<int>("userRoleId"));
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error retrieving release information");
+                    return Results.Problem("An error occurred while retrieving release information", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Get release information";
+                operation.Description = "Retrieves release notes and version information";
+                return operation;
+            })
+            .WithTags("Release")
+            .Produces<ApiResponse>(200)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapGet("/usermanual", async (
+                IUserManualService userManualService,
+                IUserContext userContext,
+                ILogger<IUserManualService> logger,
+                string? json = null) =>
+            {
+                try
+                {
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "json", SqlStringParam.Sanitize(json ?? "") }
+                    };
+                    var result = await userManualService.GetAsync(parameters);
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error retrieving user manual");
+                    return Results.Problem("An error occurred while retrieving user manual", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Get user manual";
+                operation.Description = "Retrieves user manual content and documentation";
+                return operation;
+            })
+            .WithTags("User Manual")
+            .Produces<ApiResponse>(200)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapPost("/userrelease", async (
+                IUserReleaseReadService userReleaseReadService,
+                IUserContext userContext,
+                ILogger<IUserReleaseReadService> logger,
+                [FromBody] ApiRequest apiRequest) =>
+            {
+                try
+                {
+                    if (apiRequest == null)
+                        return Results.BadRequest(new { error = "ApiRequest cannot be null" });
+
+                    apiRequest.UserRoleId = userContext.GetClaimValue<int>("userRoleId");
+                    var result = await userReleaseReadService.AddAsync(apiRequest);
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error marking release as read");
+                    return Results.Problem("An error occurred while marking release as read", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Mark release as read";
+                operation.Description = "Marks a release as read by the authenticated user";
+                return operation;
+            })
+            .WithTags("User Release")
+            .Produces<ApiResponse>(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(500);
+
+        builder.MapPost("/whatsappmessage", async (
+                IWhatsappMessageService whatsappMessageService,
+                IUserContext userContext,
+                IHttpContextAccessor httpContextAccessor,
+                ILogger<IWhatsappMessageService> logger,
+                [FromBody] WhatsappMessageDto whatsappMessageDto) =>
+            {
+                try
+                {
+                    if (whatsappMessageDto == null)
+                        return Results.BadRequest(new { error = "WhatsappMessageDto cannot be null" });
+
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "json", DataConverters.SerializeObjectCustom<WhatsappMessageDto>(whatsappMessageDto) },
+                        { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
+                    };
+                    var result = await whatsappMessageService.AddAsync(parameters);
+                    return Results.Ok(result);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Error sending WhatsApp message");
+                    return Results.Problem("An error occurred while sending WhatsApp message", statusCode: 500);
+                }
+            })
+            .RequireAuthorization()
+            .WithOpenApi(operation =>
+            {
+                operation.Summary = "Send WhatsApp message";
+                operation.Description = "Sends a WhatsApp message through the system";
+                return operation;
+            })
+            .WithTags("WhatsApp Message")
+            .Produces<ApiResponse>(200)
+            .Produces(400)
+            .Produces(401)
+            .Produces(500);
+
+        return builder;
+    }
+}

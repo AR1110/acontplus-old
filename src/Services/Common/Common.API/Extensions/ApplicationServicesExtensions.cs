@@ -1,7 +1,8 @@
+using System.IO.Compression;
+using Common.API.Endpoints;
 using Common.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
 
 namespace Common.API.Extensions;
 
@@ -31,18 +32,11 @@ public static class ApplicationServicesExtensions
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddOpenApi();
 
-        //services.ConfigureHttpJsonOptions(options =>
-        //{
-        //    options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-        //    options.SerializerOptions.PropertyNameCaseInsensitive = true;
-        //    options.SerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-        //    options.SerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-        //});
-
         string[] scopedNameSpaces =
         [
-            "Common.API.Endpoints.Implementations",
-            "Common.Application.Services"
+            "Common.Application.Services",
+            "Common.Infrastructure.Repository.Implementations",
+            "Common.Services.Extensions"
         ];
 
         services.Scan(scan => scan
@@ -51,19 +45,6 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        );
-        string[] nameTrascientSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(nameTrascientSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
         );
 
         return services;
