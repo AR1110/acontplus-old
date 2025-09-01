@@ -4,11 +4,11 @@ namespace Vet.Domain.Entities;
 public class MedicalHistory : BaseEntity
 {
     [Required] public DateTime Date { get; set; }
-    public Pet Pet { get; set; }
+    public required Pet Pet { get; set; }
     public int PetId { get; set; }
-    [MaxLength(300)] public string Observations { get; set; }
-    public List<HealthCheck> HealthChecks { get; set; }
-    public List<BehaviorTest> BehaviorTests { get; set; }
+    [MaxLength(300)] public string? Observations { get; set; }
+    public ICollection<HealthCheck> HealthChecks { get; set; } = new List<HealthCheck>();
+    public ICollection<BehaviorTest> BehaviorTests { get; set; } = new List<BehaviorTest>();
     public int? EstablecimientoId { get; set; }
 
     [Column(TypeName = "numeric(4,2), null")]
