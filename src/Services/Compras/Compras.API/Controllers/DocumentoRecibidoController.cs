@@ -132,7 +132,6 @@ public class DocumentoRecibidoController(
         return Ok(await docRecibidoSvc.UploadXmlAsync(parameters));
     }
 
-    // * Task: 735 - Migrate DocumentoRecibido from ApiRequest to DTO's
     [HttpPost("Post")]
     public async Task<IActionResult> Post(DocumentoRecibidoDto documentoRecibido)
     {
@@ -144,7 +143,6 @@ public class DocumentoRecibidoController(
         return Ok(await docRecibidoSvc.AddAsync(parameters));
     }
 
-    // * Task: 735 - Migrate DocumentoRecibido from ApiRequest to DTO's
     [HttpPut("Put/{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] DocumentoRecibidoDto documentoRecibido)
     {

@@ -15,7 +15,6 @@ public class ProveedorController(IProveedorRepository _proveedorService) : BaseA
         return Ok(await _proveedorService.GetAsync(parameters));
     }
 
-    // UserStories: Migración de ApiRequest a DTOs en Servicios de AcontPlus
     [HttpPost]
     public async Task<IActionResult> Post(ProveedorDto proveedorDto)
     {
