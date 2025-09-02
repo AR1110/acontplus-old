@@ -5,6 +5,8 @@ namespace Common.API.Endpoints;
 
 public static class RegisterEndpoints
 {
+    private const string UserRoleIdClaim = "userRoleId";
+
     public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder builder)
     {
         builder.MapGet("/dashboard", async (
@@ -53,7 +55,7 @@ public static class RegisterEndpoints
 
                     var parameters = new Dictionary<string, object>
                     {
-                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "userRoleId", UserRoleIdClaim },
                         { "json", DataConverters.SerializeObjectCustom<CreateNotificationDto>(createNotificationDto) },
                         { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
                     };
@@ -86,7 +88,7 @@ public static class RegisterEndpoints
             {
                 try
                 {
-                    var result = await releaseService.GetAsync(userContext.GetClaimValue<int>("userRoleId"));
+                    var result = await releaseService.GetAsync(userContext.GetClaimValue<int>(UserRoleIdClaim));
                     return Results.Ok(result);
                 }
                 catch (Exception ex)
@@ -128,7 +130,7 @@ public static class RegisterEndpoints
 
                     var parameters = new Dictionary<string, object>
                     {
-                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                        { "userRoleId", userContext.GetClaimValue<int>(UserRoleIdClaim) },
                         { "json", DataConverters.SerializeObjectCustom<GetUserManualDto>(getUserManualDto) }
                     };
                     var result = await userManualService.GetAsync(parameters);
@@ -163,15 +165,15 @@ public static class RegisterEndpoints
                     if (createUserReleaseReadDto == null)
                         return Results.BadRequest(new { error = "CreateUserReleaseReadDto cannot be null" });
 
-                    var apiRequest = new ApiRequest
+                    var parameters = new Dictionary<string, object>
                     {
-                        UserRoleId = userContext.GetClaimValue<int>("userRoleId"),
-                        Data = new Dictionary<string, object>
+                        { "userRoleId", userContext.GetClaimValue<int>(UserRoleIdClaim) },
                         {
-                            { "releases", createUserReleaseReadDto.Releases }
+                            "json",
+                            DataConverters.SerializeObjectCustom<CreateUserReleaseReadDto>(createUserReleaseReadDto)
                         }
                     };
-                    var result = await userReleaseReadService.AddAsync(apiRequest);
+                    var result = await userReleaseReadService.AddAsync(parameters);
                     return Results.Ok(result);
                 }
                 catch (Exception ex)
@@ -207,8 +209,11 @@ public static class RegisterEndpoints
 
                     var parameters = new Dictionary<string, object>
                     {
-                        { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                        { "json", DataConverters.SerializeObjectCustom<CreateWhatsAppMessageDto>(createWhatsAppMessageDto) },
+                        { "userRoleId", userContext.GetClaimValue<int>(UserRoleIdClaim) },
+                        {
+                            "json",
+                            DataConverters.SerializeObjectCustom<CreateWhatsAppMessageDto>(createWhatsAppMessageDto)
+                        },
                         { "fromMobile", httpContextAccessor.HttpContext?.Items["FromMobile"] as bool? ?? false }
                     };
                     var result = await whatsappMessageService.AddAsync(parameters);

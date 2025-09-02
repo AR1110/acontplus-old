@@ -6,7 +6,7 @@ namespace Common.Domain.Entities;
 [Table("MaritalStatus", Schema = "Common")]
 public class MaritalStatus : BaseEntity
 {
-    [Required][MaxLength(5)] public string Code { get; set; }
+    [Required][MaxLength(5)] public required string Code { get; set; }
 
-    [Required][MaxLength(50)] public string Name { get; set; }
+    [Required][MaxLength(50)] public required string Name { get; set; }
 }

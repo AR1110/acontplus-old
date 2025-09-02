@@ -2,5 +2,5 @@ namespace Common.Application.Interfaces;
 
 public interface IUserReleaseReadService
 {
-    Task<ApiResponse> AddAsync(ApiRequest apiRequest);
+    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
 }
