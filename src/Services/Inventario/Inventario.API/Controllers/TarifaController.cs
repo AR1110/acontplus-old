@@ -1,6 +1,3 @@
-﻿using Inventario.API.Dtos;
-using Microsoft.AspNetCore.Mvc;
-
 namespace Inventario.API.Controllers;
 
 public class TarifaController(ITarifaService tarifaService) : BaseApiController
@@ -10,7 +7,7 @@ public class TarifaController(ITarifaService tarifaService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, 
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) }
         };
 

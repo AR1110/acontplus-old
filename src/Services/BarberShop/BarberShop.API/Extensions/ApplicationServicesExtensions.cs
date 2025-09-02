@@ -1,7 +1,7 @@
-﻿using System.IO.Compression;
 using BarberShop.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace BarberShop.Api.Extensions;
 

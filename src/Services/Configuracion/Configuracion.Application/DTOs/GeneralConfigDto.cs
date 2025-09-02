@@ -1,13 +1,13 @@
 namespace Configuracion.Application.DTOs
 {
-  public class GeneralConfigDto
-  {
-    public record UpdateGeneralConfigDto
+    public class GeneralConfigDto
     {
-      public int IdSistema { get; set; }
-      public required string JsonConfig { get; set; }
-    }
+        public record UpdateGeneralConfigDto
+        {
+            public int IdSistema { get; set; }
+            public required string JsonConfig { get; set; }
+        }
 
-  }
+    }
 }
 

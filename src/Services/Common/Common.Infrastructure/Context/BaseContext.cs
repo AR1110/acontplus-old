@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace Common.Infrastructure.Context;
 
 public abstract class BaseContext : DbContext

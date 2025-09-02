@@ -1,5 +1,3 @@
-using Contabilidad.Domain.Entities;
-
 namespace Contabilidad.Domain.Repositories;
 
 public interface ICategoryRepository

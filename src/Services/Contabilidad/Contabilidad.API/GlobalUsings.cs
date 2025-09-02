@@ -1,11 +1,10 @@
-global using Common.Core.Models;
 global using Common.Data;
 global using Common.Logging;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
 global using Common.Services.Middleware;
-global using Contabilidad.Application.DTOs;
 global using Contabilidad.API.Extensions;
+global using Contabilidad.Application.DTOs;
 global using Contabilidad.Domain.Entities;
 global using Contabilidad.Infrastructure.Persistence;
 global using Microsoft.AspNetCore.Mvc;

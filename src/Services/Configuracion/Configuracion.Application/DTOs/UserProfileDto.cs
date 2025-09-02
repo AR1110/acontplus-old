@@ -2,5 +2,5 @@ namespace Configuracion.Application.DTOs;
 
 public record UserProfileDto
 {
-  public string? Perfil { get; set; }
+    public string? Perfil { get; set; }
 }

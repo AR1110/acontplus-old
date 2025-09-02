@@ -1,7 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+using Inventario.Domain.Repositories;
+
+namespace Inventario.API.Controllers;
 
 public class SubcategoryPhotoController(
-    ISubcategoryPhotoService subcategoryPhoto,
+    ISubcategoryPhotoRepository subcategoryPhoto,
     IS3StorageService storageService,
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController

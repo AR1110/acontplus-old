@@ -1,5 +1,3 @@
-﻿global using System.ComponentModel.DataAnnotations;
-global using System.Data;
 global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
@@ -9,3 +7,5 @@ global using Configuracion.Application.Interfaces.Printing;
 global using Configuracion.Application.Interfaces.Sri;
 global using Configuracion.Application.Interfaces.WizardConfig;
 global using Configuracion.Domain.Models;
+global using System.ComponentModel.DataAnnotations;
+global using System.Data;

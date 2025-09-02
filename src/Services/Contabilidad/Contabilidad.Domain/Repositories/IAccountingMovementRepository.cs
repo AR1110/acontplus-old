@@ -1,5 +1,3 @@
-using Common.Core.Models;
-
 namespace Contabilidad.Domain.Repositories;
 
 public interface IAccountingMovementRepository

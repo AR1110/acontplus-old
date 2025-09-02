@@ -1,7 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+using Inventario.Domain.Repositories;
+
+namespace Inventario.API.Controllers;
 
 public class ProductPhotoController(
-    IProductPhotoService productPhoto,
+    IProductPhotoRepository productPhoto,
     IS3StorageService storageService,
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController

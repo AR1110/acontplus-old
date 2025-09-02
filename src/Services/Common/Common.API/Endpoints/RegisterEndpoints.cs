@@ -1,4 +1,3 @@
-using Common.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Common.API.Endpoints;

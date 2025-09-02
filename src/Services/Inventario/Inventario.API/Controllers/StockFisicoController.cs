@@ -1,4 +1,6 @@
-﻿namespace Inventario.API.Controllers;
+using Inventario.Infrastructure.Persistence;
+
+namespace Inventario.API.Controllers;
 
 public class StockFisicoController(InventarioContext context, IStockFisicoService stockFisico) : BaseApiController
 {
@@ -69,13 +71,13 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     [HttpPost]
     public async Task<IActionResult> PostStockFisico(StockFisicoDto stockFisicoDto)
     {
-      var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
       {
           { "userRoleId", User.GetClaimValue<int>("userRoleId") },
           { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<StockFisicoDto>(stockFisicoDto)) }
       };
 
-      return Ok(await stockFisico.AddAsync(parameters));
+        return Ok(await stockFisico.AddAsync(parameters));
     }
 
     // DELETE: api/StockFisico/5

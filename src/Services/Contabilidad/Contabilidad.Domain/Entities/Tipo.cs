@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace Contabilidad.Domain.Entities;
 
 [Table("Tipo", Schema = "Contabilidad")]

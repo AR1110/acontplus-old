@@ -1,6 +1,7 @@
-﻿using System.IO.Compression;
+using Inventario.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Inventario.API.Extensions;
 
@@ -34,7 +35,10 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Inventario.API.Services"
+            "Inventario.Application.Services",
+            "Inventario.Infrastructure.Repositories",
+            "Common.S3Application.Services",
+            "Common.Infrastructure.Repository.Implementations"
         ];
 
         services.Scan(scan => scan
@@ -43,20 +47,6 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        );
-
-        string[] trascientNameSpaces =
-        [
-            "Common.S3Application.Services",
-            "Common.Infrastructure.Repository.Implementations"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
         );
 
         services.AddTransient<S3ObjectCustom>();

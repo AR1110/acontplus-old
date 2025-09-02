@@ -1,6 +1,3 @@
-using Common.Core.Base;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Contabilidad.Domain.Entities;
 
 [Table("Category", Schema = "Contabilidad")]

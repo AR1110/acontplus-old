@@ -1,5 +1,4 @@
 using Common.FactElect.Models.Documents;
-using FactElect.Application.DTOs;
 
 namespace FactElect.Application.Interfaces;
 

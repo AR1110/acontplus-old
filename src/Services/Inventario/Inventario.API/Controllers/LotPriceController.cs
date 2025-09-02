@@ -1,6 +1,3 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Inventario.Application.DTOs;
-
 namespace Inventario.API.Controllers;
 
 public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController

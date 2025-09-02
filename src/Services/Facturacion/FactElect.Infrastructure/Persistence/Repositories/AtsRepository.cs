@@ -1,7 +1,7 @@
-﻿using System.Data;
 using Common.Core.Abstractions;
 using Common.Core.Models;
 using FactElect.Domain.Repositories;
+using System.Data;
 
 namespace FactElect.Infrastructure.Persistence.Repositories;
 

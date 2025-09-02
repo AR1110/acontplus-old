@@ -1,7 +1,7 @@
-﻿using System.Data;
 using BarberShop.Domain.Repositories;
 using Common.Core.Abstractions;
 using Common.Infrastructure.Repository.Implementations;
+using System.Data;
 
 namespace BarberShop.Infrastructure.Persistence.Repositories;
 

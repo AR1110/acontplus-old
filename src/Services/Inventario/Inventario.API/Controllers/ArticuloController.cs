@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class ArticuloController(
     S3ObjectCustom s3ObjectCustom,

@@ -83,7 +83,7 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        ); 
+        );
 
         services.AddTransient<S3ObjectCustom>();
         return services;

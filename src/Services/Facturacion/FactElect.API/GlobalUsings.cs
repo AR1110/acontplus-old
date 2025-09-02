@@ -1,11 +1,9 @@
-﻿global using System.Data;
 global using Common.Core.Enums;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.Data;
 global using Common.FactElect.Interfaces.Services;
 global using Common.FactElect.Models.Validation;
-global using Common.FactElect.Services.Documents;
 global using Common.Logging;
 global using Common.Services.Configuration;
 global using Common.Services.Extensions;
@@ -26,3 +24,4 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
 global using Newtonsoft.Json.Serialization;
+global using System.Data;

@@ -1,7 +1,7 @@
-﻿using System.IO.Compression;
 using Configuracion.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Configuracion.API.Extensions;
 

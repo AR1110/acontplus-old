@@ -1,5 +1,5 @@
-﻿using System.Data;
 using Common.Core.Models;
+using System.Data;
 
 namespace FactElect.Domain.Repositories;
 

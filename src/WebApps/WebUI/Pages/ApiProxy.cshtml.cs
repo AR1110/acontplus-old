@@ -1,9 +1,9 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 
 namespace WebUI.Pages;
 

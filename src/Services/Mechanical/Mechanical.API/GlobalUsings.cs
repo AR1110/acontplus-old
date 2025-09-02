@@ -1,4 +1,3 @@
-global using Common.Core.Models;
 global using Common.Data;
 global using Common.Logging;
 global using Common.Services.Configuration;

@@ -10,13 +10,13 @@ namespace Compras.Application.DTOs
 
         public required DateTime FechaEmision { get; set; }
 
-        
+
         public required decimal TotalSinImpuestos { get; set; }
 
-        
+
         public required decimal PorcentajeDescuento { get; set; }
 
-        
+
         public required decimal ImporteTotal { get; set; }
 
         [MaxLength(300, ErrorMessage = "La observación no puede exceder los 300 caracteres.")]

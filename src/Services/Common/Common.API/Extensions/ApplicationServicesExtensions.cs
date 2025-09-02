@@ -1,8 +1,7 @@
-using System.IO.Compression;
-using Common.API.Endpoints;
 using Common.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Common.API.Extensions;
 

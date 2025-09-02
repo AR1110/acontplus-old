@@ -1,4 +1,3 @@
-﻿using System.IO.Compression;
 using Common.Logging;
 using Common.Services.Configuration;
 using Common.Services.Extensions;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Serilog;
+using System.IO.Compression;
 
 // 1. Optional: Create a bootstrap logger for early startup issues
 //    This captures logs from WebApplication.CreateBuilder() itself.

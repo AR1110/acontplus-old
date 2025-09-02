@@ -1,10 +1,10 @@
-global using Common.Infrastructure.Context;
-global using Microsoft.EntityFrameworkCore;
-global using Compras.Domain.Repositories;
 global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
 global using Common.Data;
+global using Common.Infrastructure.Context;
+global using Compras.Domain.Repositories;
+global using Microsoft.EntityFrameworkCore;
 global using System.Data;
 global using System.Text;
 global using System.Xml;

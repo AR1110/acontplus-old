@@ -8,7 +8,7 @@ namespace Compras.Application.DTOs
 
         public required DateTime FechaVencimiento { get; set; }
 
-        
+
         public required decimal Descuento { get; set; }
 
         public int? SubcategoryId { get; set; }

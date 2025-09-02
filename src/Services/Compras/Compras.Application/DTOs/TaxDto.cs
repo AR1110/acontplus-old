@@ -11,19 +11,19 @@ namespace Compras.Application.DTOs
         public int TaxPercentId { get; init; }
 
         [Required]
-        
+
         public decimal Percent { get; init; }
 
         [Required]
-        
+
         public decimal TaxBase { get; init; }
 
         [Required]
-        
+
         public decimal TaxValue { get; init; }
 
         [Required]
-        
+
         public decimal Discount { get; init; }
     }
 }

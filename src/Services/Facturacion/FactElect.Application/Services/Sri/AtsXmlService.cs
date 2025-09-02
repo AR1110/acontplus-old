@@ -1,6 +1,5 @@
 using Common.FactElect.Models.Documents;
 using Common.Utilities.Format;
-using FactElect.Application.DTOs;
 using System.Xml;
 
 namespace FactElect.Application.Services.Sri;

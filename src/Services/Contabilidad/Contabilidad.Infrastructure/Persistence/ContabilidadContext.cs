@@ -1,7 +1,5 @@
-using System.Reflection;
-using Common.Infrastructure.Context;
 using Common.Infrastructure.Entity;
-using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Contabilidad.Infrastructure.Persistence;
 

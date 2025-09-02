@@ -1,5 +1,5 @@
-using System.Reflection;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Contabilidad.Infrastructure.Persistence;
 

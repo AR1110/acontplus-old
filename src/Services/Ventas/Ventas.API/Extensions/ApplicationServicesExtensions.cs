@@ -1,6 +1,6 @@
-using System.IO.Compression;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Ventas.API.Extensions;
 

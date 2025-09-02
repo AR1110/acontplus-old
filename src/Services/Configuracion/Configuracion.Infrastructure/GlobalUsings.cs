@@ -1,4 +1,3 @@
-﻿global using System.Data;
 global using Common.Core.Abstractions;
 global using Common.Core.Models;
 global using Common.Core.Validation;
@@ -12,3 +11,4 @@ global using Configuracion.Domain.Repositories;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Configuration;
+global using System.Data;

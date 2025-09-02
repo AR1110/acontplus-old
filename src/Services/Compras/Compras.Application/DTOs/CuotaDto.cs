@@ -11,7 +11,7 @@ namespace Compras.Application.DTOs
         public required DateTime FechaVencimiento { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "El valor de la cuota debe ser mayor o igual a cero.")]
-        
+
         public required decimal Cuota { get; set; }
 
         public required bool Entrada { get; set; }

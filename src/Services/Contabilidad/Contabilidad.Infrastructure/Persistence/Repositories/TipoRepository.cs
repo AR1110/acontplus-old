@@ -1,5 +1,4 @@
 using Contabilidad.Domain.Repositories;
-using Contabilidad.Infrastructure.Persistence;
 
 namespace Contabilidad.Infrastructure.Persistence.Repositories;
 
