@@ -48,13 +48,13 @@ public class FacturaCompraController(IFacturaCompraRepository _svc) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    public async Task<IActionResult> Insert(FacturaCompraDto facturaCompraDto)
     {
 
         var parameters = new Dictionary<string, object>
     {
       { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(request.Data)) }
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(facturaCompraDto)) }
     };
         return Ok(await _svc.AddAsync(parameters));
     }

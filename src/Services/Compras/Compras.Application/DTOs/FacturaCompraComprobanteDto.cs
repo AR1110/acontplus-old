@@ -4,6 +4,7 @@ namespace Compras.Application.DTOs
 {
     public record FacturaCompraComprobanteDto : CompraBaseDto
     {
+        public required int IdFacturaCompra { get; set; }
         public required int IdSustentoTributario { get; set; }
 
         [MaxLength(100)]
