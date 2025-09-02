@@ -20,17 +20,9 @@ public class StockFisicoService(IAdoRepository _repository) : IStockFisicoServic
         return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, ApiRequest request)
+    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        // _context.StockFisicos.Add(stockFisico);
-        // await _context.SaveChangesAsync(); 
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", request.UserRoleId },
-            { "id", id },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
-        };
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Update", request.Data);
+        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Update", parameters);
     }
 
     //public async Task<LegacyApiResponse> DeleteAsync(int id)

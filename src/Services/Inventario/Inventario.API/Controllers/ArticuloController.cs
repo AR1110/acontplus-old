@@ -30,7 +30,7 @@ public class ArticuloController(
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
 
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
@@ -38,7 +38,7 @@ public class ArticuloController(
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data)) },
             { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
             { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
         };
@@ -64,12 +64,12 @@ public class ArticuloController(
     [HttpPost("PostByApp")]
     public async Task<IActionResult> PostByApp(string json)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
 
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data)) },
             { "s3ObjectKey", "" },
             { "s3ObjectUrl", "" }
         };
@@ -80,12 +80,12 @@ public class ArticuloController(
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonConvert.DeserializeObject<UpdateArticuloDto>(json);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateArticuloDto>(data)) }
         };
         return Ok(await articuloService.UpdateAsync(parameters));
     }
