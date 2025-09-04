@@ -236,7 +236,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
   ngOnInit(): void {
     try {
       this.getLoadData().subscribe((response) => {
-        let mainDataForm = {} as any;
+        let mainDataForm: any;
         let dataCompanyCustomer = {} as any;
         if (Array.isArray(response)) {
           mainDataForm = response[0];
@@ -374,8 +374,6 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
   get birthDateCtrl() {
     return this.customerForm.get('birthDate');
   }
-
-  copyTradeName() {}
 
   onKeyDownGovernmentId($event?: Event) {
     if ($event) {
