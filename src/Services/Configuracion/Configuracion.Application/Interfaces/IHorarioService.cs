@@ -2,6 +2,6 @@
 
 public interface IHorarioService
 {
-    Task<LegacyApiResponse> GetAsync(int userRoleId, int turnoId);
-    Task<LegacyApiResponse> GetDaysAsync();
+    Task<LegacySpResponse> GetAsync(int userRoleId, int turnoId);
+    Task<LegacySpResponse> GetDaysAsync();
 }

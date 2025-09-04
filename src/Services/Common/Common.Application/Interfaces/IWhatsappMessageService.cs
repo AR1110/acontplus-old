@@ -2,5 +2,5 @@ namespace Common.Application.Interfaces;
 
 public interface IWhatsappMessageService
 {
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
 }

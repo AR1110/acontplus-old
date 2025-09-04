@@ -6,8 +6,8 @@ public interface ICuentaPorCobrarRepository
     Task<object> GetAsync(Dictionary<string, object> parameters);
 
     // Cuota
-    Task<ApiResponse> UpdateCuotaAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateCuotaAsync(Dictionary<string, object> parameters);
 
     // Garante
-    Task<ApiResponse> AddGaranteAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddGaranteAsync(Dictionary<string, object> parameters);
 }

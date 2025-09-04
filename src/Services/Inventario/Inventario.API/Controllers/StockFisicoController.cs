@@ -1,5 +1,3 @@
-using Inventario.Infrastructure.Persistence;
-
 namespace Inventario.API.Controllers;
 
 public class StockFisicoController(InventarioContext context, IStockFisicoService stockFisico) : BaseApiController

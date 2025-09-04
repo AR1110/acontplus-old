@@ -4,16 +4,16 @@ public class HorarioDao
 {
     private readonly IConfiguration _config;
     private readonly string _connectionStrings = string.Empty;
-    protected LegacyApiResponse _gr;
+    protected LegacySpResponse _gr;
 
     public HorarioDao(IConfiguration config)
     {
         _config = config;
         _connectionStrings = _config.GetConnectionString("DefaultConnection");
-        _gr = new LegacyApiResponse();
+        _gr = new LegacySpResponse();
     }
 
-    public async Task<LegacyApiResponse> ReadHorarioAsync(int idRol, int idTurno)
+    public async Task<LegacySpResponse> ReadHorarioAsync(int idRol, int idTurno)
     {
         var listar = new List<HorarioViewModel>();
         try
@@ -69,7 +69,7 @@ public class HorarioDao
         return _gr;
     }
 
-    public async Task<LegacyApiResponse> ListDiaAsycn()
+    public async Task<LegacySpResponse> ListDiaAsycn()
     {
         var listar = new List<HorarioViewModel>();
         try

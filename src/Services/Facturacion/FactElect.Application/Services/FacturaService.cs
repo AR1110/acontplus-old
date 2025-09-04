@@ -2,36 +2,36 @@
 
 public class FacturaService(IAdoRepository repository) : IFacturaService
 {
-    private const string _nameSchema = "Ventas.Factura_";
+    private const string ModuleName = "Ventas.Factura_";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync(_nameSchema + "Get", parameters, false, false);
+        var ds = await repository.GetDataSetAsync(ModuleName + "Get", parameters);
         if (DataValidation.DataSetIsNull(ds)) return null;
 
-        return DataConverters.DataSetToJson(ds, true);
+        return DataConverters.DataSetToJson(ds);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync(_nameSchema + "Get_Id", parameters, false);
+        var ds = await repository.GetDataSetAsync(ModuleName + "Get_Id", parameters);
         if (ds.Tables[0].Rows.Count == 0) return null;
 
-        return DataConverters.DataSetToJson(ds, true);
+        return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Insert", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>(ModuleName + "Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Update", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>(ModuleName + "Update", parameters);
     }
 
-    public async Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> CancelAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>(_nameSchema + "Cancel", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>(ModuleName + "Cancel", parameters);
     }
 }

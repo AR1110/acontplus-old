@@ -14,8 +14,13 @@ public class LotPriceService(IAdoRepository _repository) : ILotPriceService
     }
 
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters, false);
+        var commandOptions = new CommandOptionsDto
+        {
+            CommandTimeout = 0
+        };
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Update", parameters,
+            commandOptions);
     }
 }

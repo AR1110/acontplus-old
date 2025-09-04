@@ -5,7 +5,7 @@ class CommonService {
         "mainService",
         "FileSaver",
         "formulario",
-        "modalService",  
+        "modalService",
         "articuloService",
         "empleadoService",
         "ventaService",
@@ -17,7 +17,7 @@ class CommonService {
         mS,
         FileSaver,
         form,
-        _modalSvc,    
+        _modalSvc,
         articuloSvc,
         empleadoSvc,
         ventaSvc,
@@ -29,7 +29,7 @@ class CommonService {
         this.FileSaver = FileSaver;
         this.form = form;
 
-        this._modalSvc = _modalSvc;    
+        this._modalSvc = _modalSvc;
         this.articuloSvc = articuloSvc;
         this.empleadoSvc = empleadoSvc;
         this.ventaSvc = ventaSvc;
@@ -151,7 +151,7 @@ class CommonService {
         });
     }
 
-    //En uso 
+    //En uso
     getEstabAsign(json = {}) {
         return this.mS.getData('get', 'Config/EstabAsig/?json=' + JSON.stringify(json)).then(response => {
             if (response.code === "0") {
@@ -179,7 +179,7 @@ class CommonService {
                 data: response
             }) => response || []);
     }
-    //Buscador Empleado 
+    //Buscador Empleado
     querySearchEmpleado(textSearch) {
         if (!textSearch && textSearch.length < 2) return []
 
@@ -223,7 +223,7 @@ class CommonService {
     }
 
     /**
-     * 
+     *
      * @param {*} id (idCliente)
      * @returns data;
      */
@@ -244,8 +244,8 @@ class CommonService {
         }
     }
 
- 
-  
+
+
 
     //--------------------------------------------------REPORTE----------------------------------
     async getReport(params) {
@@ -261,7 +261,7 @@ class CommonService {
                 return this.mS.getFile(method, url, parameters, true);
             }
             await this.mS.getFile(method, url, parameters, true).then(response => {
- 
+
 
                 if (formatType === "pdf") {
                     let fileName = '';
@@ -286,7 +286,7 @@ class CommonService {
                          link.setAttribute('download', fileName);
                          document.body.appendChild(link);
                          link.click();
-                         document.body.removeChild(link);    
+                         document.body.removeChild(link);
                     } else {
                         // Ajuste horizontal
                         let x = parseInt((screen.width - 1200) / 2);
@@ -302,9 +302,9 @@ class CommonService {
                     screenY=${y}
                     screenX=${x}`
                         )
-                        setTimeout(function () { 
+                        setTimeout(function () {
                             if(newWindow && newWindow.document){
-                                newWindow.document.title = fileName; 
+                                newWindow.document.title = fileName;
                             }
                         }, 1000);
                     }
@@ -362,9 +362,9 @@ class CommonService {
         }
     }
     /**
-     * 
-     * 
-     * @param {*} parameters 
+     *
+     *
+     * @param {*} parameters
      */
 
     async askToPrint({
@@ -411,7 +411,7 @@ class CommonService {
     }
 
     getPrinter(parameters) {
-        try { 
+        try {
             let newParams = Object.assign(JSON.parse(parameters), { getUrlPrintServer: true });
             let url = `Config/Print/?json=${JSON.stringify(newParams)}`
             this.mS.getData('get', url).then(
@@ -500,7 +500,7 @@ class CommonService {
     }
 
     /**
-     * 
+     *
      * @param {Array} param0 arr
      * @param {String} param1 fileExtension
      * @param {String} param2 fileName
@@ -536,14 +536,14 @@ class CommonService {
         }
 
     }
- 
 
 
-    //Permiso para editar o anular Doc. Venta  
+
+    //Permiso para editar o anular Doc. Venta
     /**
-     * NO USAR 
-     * @param {*} codigoAccion 
-     * @returns 
+     * NO USAR
+     * @param {*} codigoAccion
+     * @returns
      */
     async checkHasPermissionToEditOrDelete(codigoAccion) {
         let jsonParams = {
@@ -571,9 +571,9 @@ class CommonService {
 
 
     /**
-     * NO USAR 
-     * @param {*} codigoAccion 
-     * @returns 
+     * NO USAR
+     * @param {*} codigoAccion
+     * @returns
      */
     async requestAuthorizationKey(codigoAccion) {
         let textMotivo = codigoAccion === 'E' ? 'Editar' : 'Anular';
@@ -619,9 +619,9 @@ class CommonService {
 
 
     /**
-     * NO USAR 
-     * @param {*} codigoAccion 
-     * @returns 
+     * NO USAR
+     * @param {*} codigoAccion
+     * @returns
      */
     updateRequestKey(codigoAccion) {
         this.mS.getData('put', 'Config/Solicitud/Put/' + JSON.stringify({
@@ -634,7 +634,7 @@ class CommonService {
 
 
 
-    //========================================END POINT EXTERNOS================== 
+    //========================================END POINT EXTERNOS==================
     checkClientSRIByRUC = function (identificacion) {
         return this.mS.getData('get', 'Consultas/GetRucSRI?Ruc=' + identificacion).then(response => {
             return response;

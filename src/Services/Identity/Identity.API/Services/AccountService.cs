@@ -1,4 +1,8 @@
-﻿namespace Identity.API.Services;
+﻿using System.Data;
+using Acontplus.Core.DTOs.Requests;
+using Acontplus.Utilities.Data;
+
+namespace Identity.API.Services;
 
 public class AccountService(IAdoRepository repository) : IAccountService
 {
@@ -11,30 +15,36 @@ public class AccountService(IAdoRepository repository) : IAccountService
             });
     }
 
-    public async Task<ApiResponse> AuthenticateAsync(AccessAuthorization accessAuthorization)
+    public async Task<SpResponse> AuthenticateAsync(AccessAuthorization accessAuthorization)
     {
         var query = @"UPDATE Seguridad.AccessAuthorization SET IsActive = CAST(0 AS BIT)
                                 ,IsDeleted = CAST(1 AS BIT)
                                 ,UpdatedAt = GETUTCDATE()
                             WHERE Uuid = @uuid AND code = @code";
+
+        var commandOptions = new CommandOptionsDto
+        {
+            CommandTimeout = 0,
+            CommandType = CommandType.Text
+        };
         var response = await repository.ExecuteNonQueryAsync(query,
             new Dictionary<string, object>
             {
                 { "uuid", accessAuthorization.Uuid }, { "code", accessAuthorization.Code }
-            }, false);
+            }, commandOptions);
 
         return response == 0
-            ? new ApiResponse { Code = "0", Message = "Código no válido" }
-            : new ApiResponse { Code = "1", Message = "Código válido" };
+            ? new SpResponse { Code = "0", Message = "Código no válido" }
+            : new SpResponse { Code = "1", Message = "Código válido" };
     }
 
-    public async Task<ApiResponse> LoginAsync(string username, string password)
+    public async Task<SpResponse> LoginAsync(string username, string password)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Seguridad.Login_Start",
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Seguridad.Login_Start",
             new Dictionary<string, object> { { "username", username }, { "password", password } });
     }
 
-    public async Task<ApiResponse> RequestAccessAsync(RequestAccessDto accessAuthorization)
+    public async Task<SpResponse> RequestAccessAsync(RequestAccessDto accessAuthorization)
     {
         var response = await repository.ExecuteNonQueryAsync("Seguridad.AccessAuthorization_Insert",
             new Dictionary<string, object>
@@ -44,20 +54,20 @@ public class AccountService(IAdoRepository repository) : IAccountService
                 { "fromMobile", accessAuthorization.FromMobile }
             });
         return response == 0
-            ? new ApiResponse { Code = "0", Message = "Código no válido" }
-            : new ApiResponse { Code = "1", Message = "Código válido" };
+            ? new SpResponse { Code = "0", Message = "Código no válido" }
+            : new SpResponse { Code = "1", Message = "Código válido" };
     }
 
-    public async Task<ApiResponse> LoginAppAsync(string username, string password)
+    public async Task<SpResponse> LoginAppAsync(string username, string password)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("App.Account_Login",
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("App.Account_Login",
             new Dictionary<string, object> { { "username", username }, { "password", password } }
         );
     }
 
-    public async Task<ApiResponse> LoginRestaurantAsync(string username, string password)
+    public async Task<SpResponse> LoginRestaurantAsync(string username, string password)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Seguridad.Login_Restaurant",
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Seguridad.Login_Restaurant",
             new Dictionary<string, object> { { "username", username }, { "password", password } });
     }
 }

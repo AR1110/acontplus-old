@@ -2,15 +2,15 @@
 
 public interface IWhatsappUsageService
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
 }
 
 public class WhatsappUsageService(IAdoRepository adoRepository) : IWhatsappUsageService
 {
     private const string ModuleName = "Config.WhatsappUsage_";
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Get", parameters, false);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Get", parameters);
     }
 }

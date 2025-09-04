@@ -2,11 +2,11 @@
 
 public class GuiaRemisionService(IAdoRepository repository) : IGuiaRemisionService
 {
-    private const string nameSp = "Logistica.GuiaRemision_";
+    private const string ModuleName = "Logistica.GuiaRemision_";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync($"{nameSp}Get", parameters);
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get", parameters);
         if (ds.Tables.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
@@ -14,24 +14,24 @@ public class GuiaRemisionService(IAdoRepository repository) : IGuiaRemisionServi
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync($"{nameSp}Get_Id", parameters);
+        var ds = await repository.GetDataSetAsync($"{ModuleName}Get_Id", parameters);
         if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
     }
 }

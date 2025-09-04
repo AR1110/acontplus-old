@@ -2,8 +2,8 @@ namespace TechnicalSupport.Domain.Repositories;
 
 public interface IBrandRepository
 {
-    public Task<ApiResponse> AddAsync(Brand brand);
-    public Task<ApiResponse> DeleteAsync(int userId, int id);
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    public Task<ApiResponse> UpdateAsync(int id, Brand brand);
+    public Task<SpResponse> AddAsync(Brand brand);
+    public Task<SpResponse> DeleteAsync(int userId, int id);
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<SpResponse> UpdateAsync(int id, Brand brand);
 }

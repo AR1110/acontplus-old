@@ -1,3 +1,5 @@
+using OrderDto = TechnicalSupport.Domain.DTOs.OrderDto;
+
 namespace TechnicalSupport.API.Controllers;
 
 public class OrderController : BaseApiController

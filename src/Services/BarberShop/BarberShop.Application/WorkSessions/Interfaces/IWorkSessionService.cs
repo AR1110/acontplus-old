@@ -3,8 +3,8 @@
 public interface IWorkSessionService
 {
     Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationDto paginationDto);
-    Task<ApiResponse> GetWorkSessionByIdAsync(int id);
-    Task<ApiResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto);
-    Task<ApiResponse> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto);
-    Task<ApiResponse> DeleteWorkSessionAsync(int id);
+    Task<SpResponse> GetWorkSessionByIdAsync(int id);
+    Task<SpResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto);
+    Task<SpResponse> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto);
+    Task<SpResponse> DeleteWorkSessionAsync(int id);
 }

@@ -1,4 +1,4 @@
-﻿using Configuracion.API.Endpoints.Interfaces;
+﻿using Acontplus.Core.Abstractions.Context;
 
 namespace Configuracion.API.Endpoints.Implementations;
 

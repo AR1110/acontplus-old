@@ -1,5 +1,6 @@
-﻿using Common.Services.Middleware;
-using Restaurant.Api.Extensions;
+﻿
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -25,13 +26,14 @@ try
     var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Add services to the container.
     builder.Services.AddApplicationServices(builder.Configuration);
+    builder.Services.AddRestaurantServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     builder.Services.AddCors(options =>
     {
@@ -54,7 +56,7 @@ try
 
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
     app.UseHttpsRedirection();
 

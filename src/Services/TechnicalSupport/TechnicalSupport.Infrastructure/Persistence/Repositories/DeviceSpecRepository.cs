@@ -11,27 +11,27 @@ public class DeviceSpecRepository : IDeviceSpecRepository
         _context = context;
     }
 
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         throw new NotImplementedException();
     }
 
-    public Task<ApiResponse> AddAsync(DeviceSpecs data)
+    public Task<SpResponse> AddAsync(DeviceSpecs data)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, DeviceSpecs data)
+    public async Task<SpResponse> UpdateAsync(int id, DeviceSpecs data)
     {
         var itemFounded = await _context.DeviceSpecs.FindAsync(id);
         if (itemFounded == null)
-            return new ApiResponse { Code = "0", Message = "No se encontró registro de especificaciones" };
+            return new SpResponse { Code = "0", Message = "No se encontró registro de especificaciones" };
 
         itemFounded.Specs = data.Specs;
         itemFounded.UpdatedByUserId = data.UpdatedByUserId;
         itemFounded.IsActive = data.IsActive;
         _context.Update(itemFounded);
         await _context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Especificaciones actualizado exitosamente " };
+        return new SpResponse { Code = "1", Message = "Especificaciones actualizado exitosamente " };
     }
 }

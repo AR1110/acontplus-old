@@ -1,9 +1,4 @@
-﻿using BarberShop.Domain.Repositories;
-using Common.Core.Models;
-using Common.Infrastructure.Repository.Implementations;
-using Microsoft.Extensions.Logging;
-
-namespace BarberShop.Infrastructure.Persistence.Repositories;
+﻿namespace BarberShop.Infrastructure.Persistence.Repositories;
 
 public class WorkSessionRepository(BarberShopContext context, ILogger<BaseRepository<WorkSession>> logger = null)
     : BaseRepository<WorkSession>(context, logger), IWorkSessionRepository

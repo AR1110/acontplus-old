@@ -1,1 +1,1 @@
-global using Common.Core.Base;
+global using Acontplus.Core.Domain.Common.Entities;

@@ -1,4 +1,6 @@
-﻿namespace Identity.API.Entities;
+﻿using Acontplus.Utilities.Time;
+
+namespace Identity.API.Entities;
 
 [Table("ForgotPassword", Schema = "Seguridad")]
 public class ForgotPassword : BaseEntity

@@ -12,15 +12,15 @@ public class OrderDetailRepository : IOrderDetailRepository
         _context = context;
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}_Insert", parameters);
+        return await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{_module}_Insert", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         if (await _context.OrderMaintenances.AnyAsync(x => x.OrderDetailId == id && !x.IsDeleted))
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "No se puede eliminar, este equipo ya tiene mantenimientos en curso"
@@ -30,16 +30,16 @@ public class OrderDetailRepository : IOrderDetailRepository
 
         _context.Remove(detailFound);
         await _context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(int id, Dictionary<string, object> parameters)
     {
-        return await _adoRepository.SpExecuteAsync<ApiResponse>($"{_module}_Update", parameters);
+        return await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{_module}_Update", parameters);
     }
 }

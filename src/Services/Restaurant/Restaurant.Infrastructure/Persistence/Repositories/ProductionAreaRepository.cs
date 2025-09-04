@@ -2,17 +2,17 @@ namespace Restaurant.Infrastructure.Persistence.Repositories;
 
 public class ProductionAreaRepository(RestaurantContext context) : IProductionAreaRepository
 {
-    public async Task<ApiResponse> AddAsync(ProductionArea productionArea)
+    public async Task<SpResponse> AddAsync(ProductionArea productionArea)
     {
         context.ProductionAreas.Add(productionArea);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Registrado correctamente!" };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         var productionArea = await context.ProductionAreas.FindAsync(id);
-        if (productionArea == null) return new ApiResponse { Code = "0", Message = "Floor not found" };
+        if (productionArea == null) return new SpResponse { Code = "0", Message = "Floor not found" };
 
         //var orderExists = await context.OrderItems
         //   .Join(context.Items,
@@ -38,30 +38,30 @@ public class ProductionAreaRepository(RestaurantContext context) : IProductionAr
         //}
 
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Eliminado correctamente!" };
     }
 
-    public async Task<ApiResponse> GetAllAsync()
+    public async Task<SpResponse> GetAllAsync()
     {
         var productionAreas = await context.ProductionAreas.Where(x => !x.IsDeleted).ToListAsync();
         return productionAreas.Count > 0
-            ? new ApiResponse { Code = "1", Payload = productionAreas }
-            : new ApiResponse { Code = "0", Message = "Not found!" };
+            ? new SpResponse { Code = "1", Payload = productionAreas }
+            : new SpResponse { Code = "0", Message = "Not found!" };
     }
 
-    public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
+    public async Task<SpResponse> GetByEstabAsync(int establecimientoId)
     {
         var productionAreas = await context.ProductionAreas
             .Where(x => !x.IsDeleted && x.EstablecimientoId == establecimientoId).ToListAsync();
         return productionAreas.Count > 0
-            ? new ApiResponse { Code = "1", Payload = productionAreas }
-            : new ApiResponse { Code = "0", Message = "Not found!" };
+            ? new SpResponse { Code = "1", Payload = productionAreas }
+            : new SpResponse { Code = "0", Message = "Not found!" };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, ProductionArea productionArea)
+    public async Task<SpResponse> UpdateAsync(int id, ProductionArea productionArea)
     {
         var productionAreaFound = await context.ProductionAreas.FindAsync(id);
-        if (productionAreaFound == null) return new ApiResponse { Code = "0", Message = "Floor not found" };
+        if (productionAreaFound == null) return new SpResponse { Code = "0", Message = "Floor not found" };
 
         productionAreaFound.Code = productionArea.Code;
         productionAreaFound.Description = productionArea.Description;
@@ -69,6 +69,6 @@ public class ProductionAreaRepository(RestaurantContext context) : IProductionAr
         productionAreaFound.UpdatedByUserId = productionArea.UpdatedByUserId;
         context.Update(productionAreaFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Actualizado correctamente!" };
     }
 }

@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Logging" />
-    <PackageReference Include="Acontplus.Common.Services" />
+    <PackageReference Include="Acontplus.Logging" />
+    <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>

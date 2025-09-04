@@ -1,4 +1,3 @@
-using Common.Infrastructure.Context;
 using System.Reflection;
 
 namespace Mechanical.Infrastructure.Persistence;

@@ -2,23 +2,20 @@ namespace Restaurant.Infrastructure.Persistence.Repositories;
 
 public class FloorRepository(RestaurantContext context) : IFloorRepository
 {
-    public async Task<ApiResponse> AddAsync(Floor floor)
+    public async Task<SpResponse> AddAsync(Floor floor)
     {
         var floorExist = FloorExistsCodeEstab(floor.Code, floor.CodEstab);
-        if (floorExist) return new ApiResponse { Code = "0", Message = "El código ya está en uso" };
-        if (floor.Rooms.Count > 0)
-            foreach (var item in floor.Rooms)
-                item.Id = 0;
+        if (floorExist) return new SpResponse { Code = "0", Message = "El código ya está en uso" };
 
         context.Floors.Add(floor);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Registrado correctamente!" };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         var floor = await context.Floors.FindAsync(id);
-        if (floor == null) return new ApiResponse { Code = "0", Message = "Floor not found" };
+        if (floor == null) return new SpResponse { Code = "0", Message = "Floor not found" };
 
         var orderExists = await context.Orders
             .Join(context.Tables,
@@ -36,35 +33,35 @@ public class FloorRepository(RestaurantContext context) : IFloorRepository
             .AnyAsync(f => f.floor.Id == id);
 
         if (orderExists)
-            return new ApiResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
+            return new SpResponse { Code = "0", Message = "No se puede eliminar ya existen ordenes registradas!" };
 
         context.Remove(floor);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Eliminado correctamente!" };
     }
 
-    public async Task<ApiResponse> GetAllAsync()
+    public async Task<SpResponse> GetAllAsync()
     {
         var floors = await context.Floors.Include(x => x.Rooms).Where(x => !x.IsDeleted).ToListAsync();
         return floors.Count > 0
-            ? new ApiResponse { Code = "1", Payload = floors }
-            : new ApiResponse { Code = "0", Message = "Not found!" };
+            ? new SpResponse { Code = "1", Payload = floors }
+            : new SpResponse { Code = "0", Message = "Not found!" };
     }
 
-    public async Task<ApiResponse> GetByEstabAsync(int establecimientoId)
+    public async Task<SpResponse> GetByEstabAsync(int establecimientoId)
     {
         var floors = await context.Floors.Include(x => x.Rooms)
                .ThenInclude(r => r.Tables)
             .Where(x => x.EstablecimientoId == establecimientoId && !x.IsDeleted).ToListAsync();
         return floors.Count > 0
-            ? new ApiResponse { Code = "1", Payload = floors }
-            : new ApiResponse { Code = "0", Message = "Not found!" };
+            ? new SpResponse { Code = "1", Payload = floors }
+            : new SpResponse { Code = "0", Message = "Not found!" };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, Floor floor)
+    public async Task<SpResponse> UpdateAsync(int id, Floor floor)
     {
         var floorFound = await context.Floors.FindAsync(id);
-        if (floorFound == null) return new ApiResponse { Code = "0", Message = "Floor not found" };
+        if (floorFound == null) return new SpResponse { Code = "0", Message = "Floor not found" };
 
         floorFound.Capacity = floor.Capacity;
         floorFound.Code = floor.Code;
@@ -73,7 +70,7 @@ public class FloorRepository(RestaurantContext context) : IFloorRepository
         floorFound.UpdatedByUserId = floor.UpdatedByUserId;
         context.Update(floorFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizado correctamente!" };
+        return new SpResponse { Code = "1", Message = "Actualizado correctamente!" };
     }
 
     private bool FloorExistsCodeEstab(string code, string codEstab)

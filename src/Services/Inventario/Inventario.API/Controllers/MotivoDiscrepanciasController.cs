@@ -1,5 +1,3 @@
-using Inventario.Infrastructure.Persistence;
-
 namespace Inventario.API.Controllers;
 
 public class MotivoDiscrepanciasController(InventarioContext context) : BaseApiController

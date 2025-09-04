@@ -2,9 +2,9 @@ namespace Contabilidad.Domain.Repositories;
 
 public interface IAccountRepository
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> AddAsync(Account account);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Account account);
 
-    Task<ApiResponse> UpdateAsync(int id, Account account);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
+    Task<SpResponse> UpdateAsync(int id, Account account);
+    Task<SpResponse> DeleteAsync(int userId, int id);
 }

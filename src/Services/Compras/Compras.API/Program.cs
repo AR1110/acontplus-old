@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()
@@ -20,12 +22,12 @@ try
 
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     builder.Services.AddApplicationServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddOpenApi();
@@ -38,9 +40,9 @@ try
 
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
-    app.UseMiddleware<MobileRequestMiddleware>();
+    app.UseAcontplusServices(builder.Environment);
 
     app.UseHttpsRedirection();
 

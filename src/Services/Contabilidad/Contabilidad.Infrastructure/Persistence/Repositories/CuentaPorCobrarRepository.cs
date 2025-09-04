@@ -1,5 +1,3 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.Infrastructure.Persistence.Repositories;
 
 public class CuentaPorCobrarRepository(IAdoRepository adoRepository) : ICuentaPorCobrarRepository
@@ -14,14 +12,14 @@ public class CuentaPorCobrarRepository(IAdoRepository adoRepository) : ICuentaPo
     }
 
     //Cuotas
-    public async Task<ApiResponse> UpdateCuotaAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateCuotaAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Contabilidad.CuotaPorCobrar_Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Contabilidad.CuotaPorCobrar_Update", parameters);
     }
 
     // Credito Garante
-    public async Task<ApiResponse> AddGaranteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddGaranteAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Ventas.CreditoGarante_Insert", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Ventas.CreditoGarante_Insert", parameters);
     }
 }

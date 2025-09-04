@@ -7,7 +7,7 @@ namespace Contabilidad.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddAccountingServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

@@ -1,12 +1,21 @@
-global using Common.Data;
-global using Common.Logging;
-global using Common.Services.Configuration;
-global using Common.Services.Extensions;
-global using Common.Services.Middleware;
+global using System.Text.Json;
+global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Utilities;
+global using Acontplus.Logging;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Authentication;
+global using Acontplus.Services.Extensions.Context;
+global using Acontplus.Services.Extensions.Middleware;
+global using Acontplus.Utilities.Data;
+
 global using Contabilidad.API.Extensions;
 global using Contabilidad.Application.DTOs;
 global using Contabilidad.Domain.Entities;
+global using Contabilidad.Domain.Repositories;
 global using Contabilidad.Infrastructure.Persistence;
+global using Contabilidad.Infrastructure.Persistence.Repositories;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json.Serialization;

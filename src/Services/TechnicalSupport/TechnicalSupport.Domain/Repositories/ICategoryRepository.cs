@@ -2,8 +2,8 @@ namespace TechnicalSupport.Domain.Repositories;
 
 public interface ICategoryRepository
 {
-    public Task<ApiResponse> AddAsync(Category category);
-    public Task<ApiResponse> DeleteAsync(int userId, int id);
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    public Task<ApiResponse> UpdateAsync(int id, Category category);
+    public Task<SpResponse> AddAsync(Category category);
+    public Task<SpResponse> DeleteAsync(int userId, int id);
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<SpResponse> UpdateAsync(int id, Category category);
 }

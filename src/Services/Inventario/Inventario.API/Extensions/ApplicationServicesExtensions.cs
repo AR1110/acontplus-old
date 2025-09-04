@@ -1,4 +1,3 @@
-using Inventario.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
@@ -7,7 +6,7 @@ namespace Inventario.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddInventoryServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

@@ -2,33 +2,33 @@ namespace Restaurant.Infrastructure.Persistence.Repositories;
 
 public class RecipeRepository(IAdoRepository adoRepository, RestaurantContext context) : IRecipeRepository
 {
-    public async Task<ApiResponse> GetAsync()
+    public async Task<SpResponse> GetAsync()
     {
         var recipes = await context.Recipes.ToListAsync();
         return recipes.Count > 0
-            ? new ApiResponse { Code = "1", Payload = recipes }
-            : new ApiResponse { Code = "1", Message = "Recipes not found!" };
+            ? new SpResponse { Code = "1", Payload = recipes }
+            : new SpResponse { Code = "1", Message = "Recipes not found!" };
     }
 
-    public async Task<ApiResponse> GetByIdAsync(int id)
+    public async Task<SpResponse> GetByIdAsync(int id)
     {
         var recipe = await context.Recipes.SingleOrDefaultAsync(x => x.Id == id);
         return recipe != null
-            ? new ApiResponse { Code = "1", Payload = recipe }
-            : new ApiResponse { Code = "1", Message = "Recipe not found!" };
+            ? new SpResponse { Code = "1", Payload = recipe }
+            : new SpResponse { Code = "1", Message = "Recipe not found!" };
     }
 
-    public async Task<ApiResponse> CreateAsync(Recipe recipe)
+    public async Task<SpResponse> CreateAsync(Recipe recipe)
     {
         await context.Recipes.AddAsync(recipe);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrada exitosamente", Payload = recipe };
+        return new SpResponse { Code = "1", Message = "Registrada exitosamente", Payload = recipe };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, Recipe recipe)
+    public async Task<SpResponse> UpdateAsync(int id, Recipe recipe)
     {
         var recipeFound = await context.Recipes.FindAsync(id);
-        if (recipeFound == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
+        if (recipeFound == null) return new SpResponse { Code = "1", Message = "Recipe not found!" };
 
         recipeFound.ItemId = recipe.ItemId;
         recipeFound.IngredientId = recipe.IngredientId;
@@ -43,25 +43,25 @@ public class RecipeRepository(IAdoRepository adoRepository, RestaurantContext co
         recipeFound.UpdatedByUserId = recipe.UpdatedByUserId;
         context.Update(recipeFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
+        return new SpResponse { Code = "1", Message = "Actualizado exitosamente" };
     }
 
-    public async Task<ApiResponse> RemoveAsync(int userId, int id)
+    public async Task<SpResponse> RemoveAsync(int userId, int id)
     {
         var recipe = await context.Recipes.FindAsync(id);
-        if (recipe == null) return new ApiResponse { Code = "1", Message = "Recipe not found!" };
+        if (recipe == null) return new SpResponse { Code = "1", Message = "Recipe not found!" };
 
         context.Remove(recipe);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public async Task<ApiResponse> GetByItem(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetByItem(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync("Restaurant.Recipe_Get_By_Item", parameters);
 
         return DataValidation.DataSetIsNull(ds, true)
-            ? new ApiResponse { Code = "0", Message = "Can't get data" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+            ? new SpResponse { Code = "0", Message = "Can't get data" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace FactElect.Application.DTOs.RetencionAts;
 
 public class RetencionAtsRetDto

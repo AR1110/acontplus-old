@@ -15,23 +15,23 @@ public class StockFisicoService(IAdoRepository _repository) : IStockFisicoServic
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Inventario.StockFisico_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.StockFisico_Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Inventario.StockFisico_Update", parameters);
     }
 
-    //public async Task<LegacyApiResponse> DeleteAsync(int id)
+    //public async Task<LegacySpResponse> DeleteAsync(int id)
     //{
 
     //    var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
     //    if (!DataValidation.DataTableIsNull(dt))
     //    {
-    //        _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacyApiResponse>(dt.Rows[0]));
+    //        _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacySpResponse>(dt.Rows[0]));
     //    }
     //    else
     //    {

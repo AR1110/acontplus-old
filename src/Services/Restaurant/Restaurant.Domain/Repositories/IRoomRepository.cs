@@ -4,9 +4,9 @@ namespace Restaurant.Domain.Repositories;
 
 public interface IRoomRepository
 {
-    Task<ApiResponse> AddAsync(Room room);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
-    Task<ApiResponse> GetAllAsync();
-    Task<ApiResponse> GetByEstabAsync(int establecimientoId);
-    Task<ApiResponse> UpdateAsync(int id, Room room);
+    Task<SpResponse> AddAsync(Room room);
+    Task<SpResponse> DeleteAsync(int userId, int id);
+    Task<SpResponse> GetAllAsync();
+    Task<SpResponse> GetByEstabAsync(int establecimientoId);
+    Task<SpResponse> UpdateAsync(int id, Room room);
 }

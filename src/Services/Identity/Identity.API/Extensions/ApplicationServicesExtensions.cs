@@ -2,12 +2,13 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
+using Acontplus.Persistence.SqlServer.Repositories;
 
 namespace Identity.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

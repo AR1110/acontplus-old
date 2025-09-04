@@ -1,10 +1,8 @@
 global using Common.API.Extensions;
 global using Common.Application.DTOs;
 global using Common.Application.Interfaces;
-global using Common.Core.Models;
-global using Common.Data;
-global using Common.Logging;
-global using Common.Services.Configuration;
-global using Common.Services.Extensions;
-global using Common.Services.Middleware;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Domain.Common.Entities;
+global using Acontplus.Utilities;
+global using Acontplus.Logging;
 global using Microsoft.EntityFrameworkCore;

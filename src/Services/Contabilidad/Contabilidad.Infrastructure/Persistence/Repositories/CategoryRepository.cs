@@ -1,42 +1,40 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.Infrastructure.Persistence.Repositories;
 
 public class CategoryRepository(ContabilidadContext context, IAdoRepository repository) : ICategoryRepository
 {
-    public async Task<ApiResponse> AddAsync(Category category)
+    public async Task<SpResponse> AddAsync(Category category)
     {
         if (await context.Categories.AnyAsync(x => x.Code == category.Code))
-            return new ApiResponse { Code = "0", Message = "Código ya existe" };
+            return new SpResponse { Code = "0", Message = "Código ya existe" };
 
         context.Categories.Add(category);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrado correctamente", Payload = category };
+        return new SpResponse { Code = "1", Message = "Registrado correctamente", Payload = category };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         var category = await context.Categories.FindAsync(id);
-        if (category == null) return new ApiResponse { Code = "0", Message = "Categoría no existe" };
+        if (category == null) return new SpResponse { Code = "0", Message = "Categoría no existe" };
 
         category.MarkAsDeleted(userId);
         context.Update(category);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Contabilidad.Category_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true)) return new ApiResponse { Code = "0", Message = "Data not found" };
+        if (DataValidation.DataSetIsNull(ds, true)) return new SpResponse { Code = "0", Message = "Data not found" };
 
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, Category category)
+    public async Task<SpResponse> UpdateAsync(int id, Category category)
     {
         var categoryFound = await context.Categories.FindAsync(id);
-        if (categoryFound == null) return new ApiResponse { Code = "0", Message = "Categoría no encontrada" };
+        if (categoryFound == null) return new SpResponse { Code = "0", Message = "Categoría no encontrada" };
 
         categoryFound.Code = category.Code;
         categoryFound.Name = category.Name;
@@ -45,6 +43,6 @@ public class CategoryRepository(ContabilidadContext context, IAdoRepository repo
         categoryFound.UpdatedByUserId = category.UpdatedByUserId;
         context.Update(categoryFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizado exitosamente" };
+        return new SpResponse { Code = "1", Message = "Actualizado exitosamente" };
     }
 }

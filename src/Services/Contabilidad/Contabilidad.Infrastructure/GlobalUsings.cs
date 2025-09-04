@@ -1,7 +1,11 @@
-global using Common.Core.Abstractions;
-global using Common.Core.Models;
-global using Common.Core.Validation;
-global using Common.Data;
-global using Common.Infrastructure.Context;
+global using System.Data;
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Persistence.SqlServer.Configurations;
+global using Acontplus.Utilities;
+global using Acontplus.Persistence.SqlServer.Context;
+global using Acontplus.Utilities.Data;
 global using Contabilidad.Domain.Entities;
+global using Contabilidad.Domain.Repositories;
 global using Microsoft.EntityFrameworkCore;

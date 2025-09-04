@@ -2,9 +2,9 @@
 
 public interface IPrinterRepository
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
     Task<Printer> GetByIdAsync(int id);
-    Task<ApiResponse> AddAsync(Printer printer);
-    Task<ApiResponse> UpdateAsync(int id, Printer printer);
-    Task<ApiResponse> DeleteAsync(int id, int userId);
+    Task<SpResponse> AddAsync(Printer printer);
+    Task<SpResponse> UpdateAsync(int id, Printer printer);
+    Task<SpResponse> DeleteAsync(int id, int userId);
 }

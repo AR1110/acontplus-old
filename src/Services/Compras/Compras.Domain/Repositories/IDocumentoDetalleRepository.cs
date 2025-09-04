@@ -2,6 +2,6 @@ namespace Compras.Domain.Repositories;
 
 public interface IDocumentoDetalleRepository
 {
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
 }

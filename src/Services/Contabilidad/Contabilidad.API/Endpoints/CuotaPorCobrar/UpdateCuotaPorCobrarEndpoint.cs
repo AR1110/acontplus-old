@@ -1,5 +1,3 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.API.Endpoints.CuotaPorCobrar;
 
 public static class UpdateCuotaPorCobrarEndpoint

@@ -1,4 +1,3 @@
-using Common.Infrastructure.Entity;
 using System.Reflection;
 
 namespace Contabilidad.Infrastructure.Persistence;

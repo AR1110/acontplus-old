@@ -1,4 +1,3 @@
-using Configuracion.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
@@ -7,7 +6,7 @@ namespace Configuracion.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddConfigurationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

@@ -2,6 +2,6 @@
 
 public interface IPrinterDocumentRepository
 {
-    Task<ApiResponse> AddAsync(PrinterDocument printerDocument);
-    Task<ApiResponse> UpdateAsync(int id, PrinterDocument printerDocument);
+    Task<SpResponse> AddAsync(PrinterDocument printerDocument);
+    Task<SpResponse> UpdateAsync(int id, PrinterDocument printerDocument);
 }

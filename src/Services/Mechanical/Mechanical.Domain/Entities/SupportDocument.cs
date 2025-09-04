@@ -1,4 +1,4 @@
-using Common.Core.Base;
+using Acontplus.Core.Domain.Common.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

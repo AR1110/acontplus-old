@@ -1,7 +1,5 @@
 namespace Configuracion.API.Controllers;
 
-using Configuracion.Application.DTOs;
-
 public class UserCustomerRequestController(IUserCustomerRequestService userCustomerRequestService) : BaseApiController
 {
     [HttpGet]

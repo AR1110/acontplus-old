@@ -1,10 +1,10 @@
 app.controller('retencionVentaCtrl', retencionVentaCtrl);
 
-retencionVentaCtrl.$inject = [    
+retencionVentaCtrl.$inject = [
     '$scope',
-    'mainService',    
-    "$filter",    
-    'commonService',        
+    'mainService',
+    "$filter",
+    'commonService',
     'modalService',
     'nombreModal',
     'toastService',
@@ -30,9 +30,9 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.cliente = {};
     $scope.pageIndex = 1;
     $scope.pageSize = 10000000;
-   
 
-        //Filtro        
+
+        //Filtro
     $scope.meses = form.meses();
     $scope.mes = $scope.meses[new Date().getMonth() + 1].numero;
     $scope.dataSearch = {};
@@ -45,7 +45,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
             let {MODAL_FILE_CTRL, MODAL_NUEVO} = _nombreModal.retencion_venta;
             let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_NUEVO['controller']];
             let template = MODAL_NUEVO['template'];
-            
+
             $scope.openModalParam({
                 controller,
                 template,
@@ -68,12 +68,12 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
                 id: item.idRetencionVenta,
                 codigoDocumento: TIPO_DOC.codigo
             })
-            
+
             if(!response.isComplete) return
-            
+
             let params = {
                 TIPO_REGISTRO: "DETALLE",
-                data: response,                
+                data: response,
             }
             hideLoader();
             $scope.openModalParam({
@@ -82,7 +82,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
                 params
             })
         } catch (error) {
-            
+
         }
     }
 
@@ -90,7 +90,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         try {
             showLoader();
             let {MODAL_FILE_CTRL, MODAL_EDITAR} = _nombreModal.retencion_venta;
-            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];        
+            let controller = (await import('./../../' + MODAL_FILE_CTRL))[MODAL_EDITAR['controller']];
             let template = MODAL_EDITAR['template'];
             let response = await _commonSvc.getDataTipoDocVenta({
                 id: item.idRetencionVenta,
@@ -98,10 +98,10 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
             })
             console.log(response)
             if(!response.isComplete) return
-            
+
             let params = {
                 TIPO_REGISTRO: "EDITAR",
-                data: response,                
+                data: response,
             }
             hideLoader();
             $scope.openModalParam({
@@ -111,7 +111,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
             })
         } catch (error) {
             hideLoader();
-            console.log(error)            
+            console.log(error)
         }finally{
             hideLoader();
         }
@@ -126,15 +126,15 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         })
     }
 
-  
+
 
     $scope.clienteSearch = (textSearch)=>{
         return _commonSvc.clienteSearch(textSearch)
     }
 
     //---------------------------------------------------FILTRO AVANZADO ----------------------------------------
-    $scope.openModalFiltroRetencionVenta = ()=> {            
-        $("#modalFiltroRetencionVenta").modal('show');            
+    $scope.openModalFiltroRetencionVenta = ()=> {
+        $("#modalFiltroRetencionVenta").modal('show');
     }
 
     $scope.clienteFiltro = {};
@@ -142,7 +142,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         if(form.campo($scope.clienteFiltro.nombreFiscal)){
             $scope.clienteFiltro  = {};
             $scope.dataSearch.byCliente = null;
-        } 
+        }
     }
 
     $scope.selectedClienteSearchFiltro = (item) => {
@@ -151,7 +151,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
 
     $scope.onChangeFechaFiltro =()=>{
         $scope.mes = new Date().getMonth() + 1;
-        $scope.dataSearch.tipoFecha = 'FE' //Por Defecto por fecha Emisión de la Factura Venta 
+        $scope.dataSearch.tipoFecha = 'FE' //Por Defecto por fecha Emisión de la Factura Venta
         $scope.getFechaInicioFinFilter($scope.mes)
     }
 
@@ -159,7 +159,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.getFechaInicioFinFilter = (mes)=> {
         let { fechaInicio, fechaFin } = form.getFechaInicioFinFilter(mes);
         $scope.dataSearch.fechaInicio = fechaInicio;
-        $scope.dataSearch.fechaFin = fechaFin;            
+        $scope.dataSearch.fechaFin = fechaFin;
     }
 
     $scope.dataUsuarioSearch = {}
@@ -174,10 +174,10 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         if(form.campo($scope.dataUsuarioFilter.nombreCompleto)){
             $scope.dataSearch.byUsuario = null;
         }
-    } 
+    }
 
-    $scope.selectedUsuarioSearchFilter = (item)=>{        
-        $scope.dataSearch.byUsuario = item.idUsuario;            
+    $scope.selectedUsuarioSearchFilter = (item)=>{
+        $scope.dataSearch.byUsuario = item.idUsuario;
     }
 
     $scope.filtrarRetencionVenta = ()=>{
@@ -221,13 +221,13 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         }
 
         $scope.getRetencionesVenta();
-        $("#modalFiltroRetencionVenta").modal('hide');           
+        $("#modalFiltroRetencionVenta").modal('hide');
     }
 
     $scope.getRetencionesVenta = ()=> {
         try {
             showLoader();
-            
+
             $scope.retencionesVenta  = []
             _mS.getData('get', '/RetencionVenta/Get?json=' + JSON.stringify($scope.dataSearch)).then(response => {
                 console.log(response)
@@ -235,26 +235,26 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
                     hideLoader();
                     console.log(response)
                     return
-                }                
-                
-                $scope.retencionesVenta = JSON.parse(response.data) || [];                
+                }
+
+                $scope.retencionesVenta = JSON.parse(response.data) || [];
                 $scope.copiaRetencionesVenta = JSON.parse(JSON.stringify($scope.retencionesVenta));
-                $scope.getTotalesColumna(); 
-                hideLoader();            
-            })          
+                $scope.getTotalesColumna();
+                hideLoader();
+            })
         } catch (error) {
             hideLoader();
             console.error(error)
-        }       
+        }
     }
 
-    $scope.initiload = ()=>{ 
+    $scope.initiload = ()=>{
         _commonSvc.getEstabAsign().then(response => {
-           
-            $scope.establecimientos = response; 
-            
-            if($scope.establecimientos.length>0){ 
-                let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;            
+
+            $scope.establecimientos = response;
+
+            if($scope.establecimientos.length>0){
+                let codEstab = $scope.establecimientos.length>0?$scope.establecimientos[0].codEstab: 0;
                 $scope.dataSearch.codEstab = codEstab;
                 $scope.getRetencionesVenta();
             }else{
@@ -264,8 +264,8 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         }).catch(err => {
             hideLoader();
             console.error(err);
-        })  
-        
+        })
+
         _commonSvc.getEstadoDocByCodDoc(TIPO_DOC.codigo).then(response=>{
             $scope.estadoPagos = response;
         })
@@ -294,10 +294,10 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
     $scope.filterLocalRVenta = ()=> {
         let retenciones = JSON.parse(JSON.stringify($scope.copiaRetencionesVenta));
         $scope.retencionesVenta = $filter("filter")(retenciones, $scope.textFilterLocal);
-        $scope.getTotalesColumna();            
+        $scope.getTotalesColumna();
     }
 
-    
+
     $scope.askToDelete = async (item)=> {
         let { isConfirmed } = await Swal.fire({
             icon: 'warning',
@@ -310,7 +310,7 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
         });
 
         if (isConfirmed) {
-            $scope.delete(item);                
+            $scope.delete(item);
         };
     }
 
@@ -322,20 +322,20 @@ function retencionVentaCtrl($scope, _mS, $filter, _commonSvc, _modalSvc, _nombre
             _mS.getData('delete', '/RetencionVenta/Delete?id=' + item.idRetencionVenta).then(response=>{
                 if (response.id == "0") {
                     hideLoader()
-                    form.sweetAlert('warning', response.message, response.titleSms);                    
+                    form.sweetAlert('warning', response.message, response.titleSms);
                 }
                 if (response.id == "1") {
                     hideLoader()
                     form.sweetAlert('success', response.message, response.titleSms, 1000);
-                    $scope.getRetencionesVenta();                    
+                    $scope.getRetencionesVenta();
                 }
             })
         } catch (error) {
             hideLoader()
-        }        
+        }
     }
 
-   
+
     $scope.getReport = function(){
         Swal.fire({
             icon:'info',

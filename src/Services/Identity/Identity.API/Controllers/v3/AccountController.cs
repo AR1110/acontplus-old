@@ -33,38 +33,42 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1:
+                {
+                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                    var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                    if (token == null || string.IsNullOrEmpty(token.Token))
+                        return BadRequest("Error al iniciar session");
+
+                    userData.ForEach(x => x.Token = token.Token);
+
+                    var loginHistory = new LoginHistory
                     {
-                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                        var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                        if (token == null || string.IsNullOrEmpty(token.Token))
-                            return BadRequest("Error al iniciar session");
-
-                        userData.ForEach(x => x.Token = token.Token);
-
-                        var loginHistory = new LoginHistory
-                        {
-                            CreatedByUserId = userData[0].UserId,
-                            UserRoleId = userData[0].UserRoleId,
-                            UserAgent = authRequest.UserAgent,
-                            Token = token.Token,
-                            TokenExpiration = token.Expires,
-                            FromMobile = fromMobile
-                        };
-                        await loginHistoryService.AddAsync(loginHistory);
-                        loginHistory.UserAgent = authRequest.UserAgent;
-                        await accountService.AddNotificationAsync(loginHistory);
-                        return Ok(ApiResponse.Success(
-                            message: "Login Correcto!",
-                            payload: JsonConvert.SerializeObject(userData,
-                                    new JsonSerializerSettings
-                                    {
-                                        ContractResolver =
-                                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                        Formatting = Formatting.Indented
-                                    })));
-                    }
+                        CreatedByUserId = userData[0].UserId,
+                        UserRoleId = userData[0].UserRoleId,
+                        UserAgent = authRequest.UserAgent,
+                        Token = token.Token,
+                        TokenExpiration = token.Expires,
+                        IsMobileRequest = fromMobile,
+                        Id = 0
+                    };
+                    await loginHistoryService.AddAsync(loginHistory);
+                    loginHistory.UserAgent = authRequest.UserAgent;
+                    await accountService.AddNotificationAsync(loginHistory);
+                    return Ok(new SpResponse
+                    {
+                        Code = "0",
+                        Message = "Login Correcto!",
+                        Payload = JsonConvert.SerializeObject(userData,
+                            new JsonSerializerSettings
+                            {
+                                ContractResolver =
+                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                Formatting = Formatting.Indented
+                            })
+                    });
+                }
             }
         }
         else
@@ -74,7 +78,8 @@ public class AccountController(
                 UserAgent = authRequest.UserAgent,
                 Username = authRequest.Username,
                 Password = authRequest.Password,
-                FromMobile = fromMobile
+                IsMobileRequest = fromMobile,
+                Id = 0
             };
             await loginFailedService.AddAsync(loginFailed);
         }
@@ -98,14 +103,23 @@ public class AccountController(
             UserAgent = userData.UserAgent,
             Token = token.Token,
             TokenExpiration = token.Expires,
-            FromMobile = fromMobile
+            IsMobileRequest = fromMobile,
+            Id = 0
         };
         await loginHistoryService.AddAsync(loginHistory);
         loginHistory.UserAgent = userData.UserAgent;
         await accountService.AddNotificationAsync(loginHistory);
         userData.Token = token.Token;
-        return Ok(ApiResponse.Success(
-            message: "Login Correcto!",
-            payload: JsonConvert.SerializeObject(userData, new JsonSerializerSettings { ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }, Formatting = Formatting.Indented })));
+        return Ok(new SpResponse
+        {
+            Code = "0",
+            Message = "Login Correcto!",
+            Payload = JsonConvert.SerializeObject(userData,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                    Formatting = Formatting.Indented
+                })
+        });
     }
 }

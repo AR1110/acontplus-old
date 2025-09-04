@@ -1,9 +1,11 @@
-﻿using Configuracion.API.Extensions.Endpoints;
+﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
+using Configuracion.API.Extensions.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-           .WriteTo.Console()
-           .CreateBootstrapLogger();
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
@@ -21,14 +23,15 @@ try
 
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Add services to the container.
 
     builder.Services.AddApplicationServices(builder.Configuration);
+    builder.Services.AddConfigurationServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     builder.Services.AddOpenApi();
 
@@ -40,9 +43,9 @@ try
 
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
-    app.UseMiddleware<MobileRequestMiddleware>();
+    app.UseAcontplusServices(builder.Environment);
 
     app.MapPrinterEndpoints();
 

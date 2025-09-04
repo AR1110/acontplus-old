@@ -2,8 +2,8 @@ namespace TechnicalSupport.Domain.Repositories;
 
 public interface IDeviceRepository
 {
-    public Task<ApiResponse> AddAsync(Device device);
-    public Task<ApiResponse> DeleteAsync(int id, int userId);
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    public Task<ApiResponse> UpdateAsync(int id, Device device);
+    public Task<SpResponse> AddAsync(Device device);
+    public Task<SpResponse> DeleteAsync(int id, int userId);
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<SpResponse> UpdateAsync(int id, Device device);
 }

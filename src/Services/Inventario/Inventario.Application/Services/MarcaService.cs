@@ -10,14 +10,14 @@ public class MarcaService : IMarcaService
         _repository = repository;
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
         if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
+            return new SpResponse { Code = "0", Message = "Sin registros", Payload = null };
 
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Listado exitosamente",
@@ -25,18 +25,18 @@ public class MarcaService : IMarcaService
         };
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "_Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Delete", parameters);
     }
 }

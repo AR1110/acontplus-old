@@ -2,8 +2,8 @@ namespace TechnicalSupport.Domain.Repositories;
 
 public interface ISerieRepository
 {
-    public Task<ApiResponse> AddAsync(Serie serie);
-    public Task<ApiResponse> DeleteAsync(int userId, int id);
-    public Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    public Task<ApiResponse> UpdateAsync(int id, Serie serie);
+    public Task<SpResponse> AddAsync(Serie serie);
+    public Task<SpResponse> DeleteAsync(int userId, int id);
+    public Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    public Task<SpResponse> UpdateAsync(int id, Serie serie);
 }

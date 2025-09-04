@@ -1,5 +1,4 @@
-﻿using Configuracion.API.Endpoints.Interfaces;
-using Configuracion.Domain.Repositories;
+﻿using Acontplus.Core.Abstractions.Context;
 
 namespace Configuracion.API.Endpoints.Implementations;
 
@@ -8,7 +7,7 @@ public class PrinterDocumentEndpoints(IPrinterDocumentRepository printerDocument
 {
     public async Task<IResult> CreatePrinterDocument(PrinterDocument printerDocument)
     {
-        printerDocument.UserId = userContext.GetUserId();
+        printerDocument.CreatedByUserId = userContext.GetUserId();
         printerDocument.CreatedByUserId = userContext.GetUserId();
         return Results.Ok(await printerDocumentService.AddAsync(printerDocument));
     }

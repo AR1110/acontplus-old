@@ -36,6 +36,7 @@ public class TokenCleanupAndArchivalService(
                     Token = x.Token,
                     TokenExpiration = x.TokenExpiration,
                     CreatedAt = x.CreatedAt,
+                    Id = 0,
                 }).ToList();
 
                 db.LoginHistoryArchives.AddRange(archived);

@@ -1,37 +1,37 @@
 namespace Compras.Infrastructure.Persistence.Repositories;
 
-public class FacturaCompraRepository(IAdoRepository _repository) : IFacturaCompraRepository
+public class FacturaCompraRepository(IAdoRepository adoRepository) : IFacturaCompraRepository
 {
-    private const string moduleName = "Compra.Factura_";
+    private const string ModuleName = "Compra.Factura_";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{moduleName}Get", parameters);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
         if (ds.Tables[0].Rows.Count == 0) return null;
 
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Insert", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
     }
 
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync($"{moduleName}Get_Id", parameters, false);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get_Id", parameters);
         if (ds.Tables[0].Rows.Count == 0) return null;
 
-        return DataConverters.DataSetToJson(ds, true);
+        return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Delete", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
     }
 }

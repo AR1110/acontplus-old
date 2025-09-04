@@ -1,7 +1,4 @@
-﻿using BarberShop.Application.Tickets.DTOs;
-using Common.Core.Models;
-
-namespace BarberShop.Api.Endpoints.Interfaces;
+﻿namespace BarberShop.Api.Endpoints.Interfaces;
 
 public interface ITicketEndpoints
 {

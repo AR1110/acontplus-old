@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.DTOs;
-using Restaurant.Domain.Entities;
-using Restaurant.Domain.Repositories;
 
 namespace Restaurant.Api.Controllers;
 

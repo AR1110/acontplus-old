@@ -1,5 +1,5 @@
 using Common.Domain.Entities;
-using Common.Notifications.Entities;
+using Acontplus.Notifications.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Common.Infrastructure.Persistence.Configurations;
@@ -26,13 +26,13 @@ public class EmailSenderConfiguration : BaseEntityTypeConfiguration<EmailSenderC
         builder.ToTable("EmailSenderConfig", "Config");
     }
 }
-public class EmailQueueConfiguration : BaseEntityTypeConfiguration<EmailQueue>
+public class EmailQueueConfiguration : BaseEntityTypeConfiguration<Email>
 {
-    public override void Configure(EntityTypeBuilder<EmailQueue> builder)
+    public override void Configure(EntityTypeBuilder<Email> builder)
     {
         base.Configure(builder);
 
-        builder.ToTable("EmailQueue", "Common");
+        builder.ToTable("Email", "Common");
     }
 }
 

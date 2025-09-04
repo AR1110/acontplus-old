@@ -1,13 +1,16 @@
-using Common.FactElect.Services.External;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
+using Acontplus.FactElect.Interfaces.Services;
+using Acontplus.FactElect.Services.Conversion;
+using Acontplus.FactElect.Services.Documents;
+using Acontplus.FactElect.Services.External;
 
 namespace Compras.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddComprasServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

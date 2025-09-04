@@ -1,7 +1,5 @@
 namespace TechnicalSupport.API.Controllers;
 
-using TechnicalSupport.Application.DTOs;
-
 public class OrderMaintenanceController : BaseApiController
 {
     private readonly IOrderMaintenanceRepository _service;

@@ -2,7 +2,7 @@
 
 public interface IItemService
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> GetByIdAsync(int id);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetByIdAsync(int id);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

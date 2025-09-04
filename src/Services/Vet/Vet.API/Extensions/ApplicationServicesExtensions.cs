@@ -1,7 +1,8 @@
-using Common.Infrastructure.Repository.Implementations;
+using Acontplus.Persistence.Common.Repositories;
 using Microsoft.AspNetCore.ResponseCompression;
 using Newtonsoft.Json;
 using System.IO.Compression;
+using Acontplus.Persistence.SqlServer.Repositories;
 using Vet.Infrastructure.Persistence;
 using Vet.Infrastructure.Persistence.Repositories;
 
@@ -9,7 +10,7 @@ namespace Vet.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddVetServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

@@ -1,3 +1,5 @@
+using Acontplus.Core.Abstractions.Context;
+using Acontplus.Utilities.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Common.API.Endpoints;
@@ -36,7 +38,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("Dashboard")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(401)
             .Produces(500);
 
@@ -75,7 +77,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("Notificacion")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(400)
             .Produces(401)
             .Produces(500);
@@ -104,7 +106,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("Release")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(401)
             .Produces(500);
 
@@ -149,7 +151,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("User Manual")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(401)
             .Produces(500);
 
@@ -189,7 +191,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("User Release")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(400)
             .Produces(401)
             .Produces(500);
@@ -232,7 +234,7 @@ public static class RegisterEndpoints
                 return operation;
             })
             .WithTags("WhatsApp Message")
-            .Produces<ApiResponse>(200)
+            .Produces<SpResponse>(200)
             .Produces(400)
             .Produces(401)
             .Produces(500);

@@ -1,6 +1,3 @@
-using Common.Core.Abstractions;
-using Common.Infrastructure.Repository.Implementations;
-using Mechanical.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -11,7 +8,7 @@ namespace Mechanical.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddMechanicalServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

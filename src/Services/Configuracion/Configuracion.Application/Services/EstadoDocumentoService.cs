@@ -9,11 +9,11 @@ public class EstadoDocumentoService : IEstadoDocumentoService
         _repository = repository;
     }
 
-    public async Task<LegacyApiResponse> GetAsync(string json)
+    public async Task<LegacySpResponse> GetAsync(string json)
     {
-        var data = new LegacyApiResponse();
-        var estados = await _repository.DynamicListAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
-            new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
+        var data = new LegacySpResponse();
+        var estados = await _repository.QueryAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
+            new Dictionary<string, object> { { "json", json } });
         if (estados.Count > 0)
         {
             data.code = "1";

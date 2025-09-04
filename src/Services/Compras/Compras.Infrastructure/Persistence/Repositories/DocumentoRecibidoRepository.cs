@@ -6,14 +6,14 @@ public class DocumentoRecibidoRepository(IAdoRepository repository) : IDocumento
 {
 
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Delete", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Delete", parameters);
     }
 
     public async Task<byte[]> DownloadAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters, withTableNames: false);
+        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
         {
@@ -24,18 +24,18 @@ public class DocumentoRecibidoRepository(IAdoRepository repository) : IDocumento
         return null;
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true)) return new ApiResponse { Code = "0", Message = "Data not found" };
+        if (DataValidation.DataSetIsNull(ds, true)) return new SpResponse { Code = "0", Message = "Data not found" };
 
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)
     {
         var xdoc = new XmlDocument();
-        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters, withTableNames: false);
+        var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         switch (dt.Rows.Count)
         {
@@ -51,28 +51,28 @@ public class DocumentoRecibidoRepository(IAdoRepository repository) : IDocumento
         }
     }
 
-    public async Task<ApiResponse> MigrateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> MigrateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Migrate", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Migrate", parameters);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Insert", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Update", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Update", parameters);
     }
 
-    public async Task<ApiResponse> UploadXmlAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UploadXmlAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Upload_Xml", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Upload_Xml", parameters);
     }
 
-    public async Task<ApiResponse> UpdateSubcategoryAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateSubcategoryAsync(Dictionary<string, object> parameters)
     {
-        return await repository.SpExecuteAsync<ApiResponse>("Recepcion.Documento_Update_Subcategory", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Recepcion.Documento_Update_Subcategory", parameters);
     }
 }

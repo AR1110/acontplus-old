@@ -1,6 +1,5 @@
-using Common.FactElect.Services.Documents.Mapping;
+using Acontplus.FactElect.Services.Documents.Mapping;
 using FactElect.API.Endpoints.Interfaces.Sri;
-using FactElect.Domain.Repositories;
 
 namespace FactElect.API.Endpoints.Implementations.Sri;
 

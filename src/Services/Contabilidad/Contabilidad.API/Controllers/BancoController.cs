@@ -1,5 +1,3 @@
-using Contabilidad.Infrastructure.Persistence.Repositories;
-
 namespace Contabilidad.API.Controllers;
 
 public class BancoController(IBancoService bancoService) : BaseApiController

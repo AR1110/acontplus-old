@@ -1,7 +1,5 @@
 ﻿using BarberShop.Api.Extensions;
 using BarberShop.Api.Extensions.Endpoints;
-using Common.Services.Configuration;
-using Common.Services.Middleware;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -22,12 +20,13 @@ try
         loggerConfiguration.ReadFrom.Services(services);
     });
 
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     builder.Services.AddApplicationServices(builder.Configuration);
+    builder.Services.AddBarberShopServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     var app = builder.Build();
 
@@ -38,7 +37,7 @@ try
 
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
     app.UseHttpsRedirection();
 

@@ -18,18 +18,18 @@ public class ArticuloFraccionadoService(IAdoRepository _repository) : IArticuloF
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Delete", parameters);
     }
 }

@@ -1,7 +1,4 @@
-using Common.Logging;
-using Common.Services.Configuration;
-using Common.Services.Extensions;
-using Common.Services.Middleware;
+using Acontplus.Logging;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -10,6 +7,10 @@ using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Serilog;
 using System.IO.Compression;
+using Acontplus.Services.Configuration;
+using Acontplus.Services.Extensions;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
 
 // 1. Optional: Create a bootstrap logger for early startup issues
 //    This captures logs from WebApplication.CreateBuilder() itself.
@@ -48,7 +49,7 @@ try
     const string corsPolicy = "OcelotCorsPolicy";
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Secure Environment Variable Retrieval (consider secret management for sensitive data)
@@ -60,7 +61,7 @@ try
     builder.Services.AddOcelot();
 
     // Identity Services (adapt to your specific authentication mechanism)
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     // CORS Configuration
     builder.Services.AddCors(options =>
@@ -99,7 +100,9 @@ try
 
     //app.UseMiddleware<RequestCountingMiddleware>();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
+
+    app.UseAcontplusServices(builder.Environment);
 
     app.UseRouting();
 

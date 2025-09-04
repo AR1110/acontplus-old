@@ -1,7 +1,5 @@
 namespace Configuracion.API.Controllers;
 
-using Configuracion.Application.DTOs;
-
 public class UserCustomerPermissionController(IUserCustomerPermissionService _svc)
     : BaseApiController
 {

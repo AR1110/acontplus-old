@@ -1,5 +1,3 @@
-using Common.FactElect.Models.Documents;
-
 namespace FactElect.Application.Interfaces;
 
 /// <summary>

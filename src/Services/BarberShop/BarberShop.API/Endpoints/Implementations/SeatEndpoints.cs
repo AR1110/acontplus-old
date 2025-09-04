@@ -1,8 +1,4 @@
-﻿using BarberShop.Api.Endpoints.Interfaces;
-using BarberShop.Application.Seats.Interfaces;
-using Common.Core.Models;
-
-namespace BarberShop.Api.Endpoints.Implementations;
+﻿namespace BarberShop.Api.Endpoints.Implementations;
 
 public class SeatEndpoints(IUserContext userContext, ISeatService seatService) : ISeatEndpoints
 {

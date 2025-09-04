@@ -1,7 +1,4 @@
-﻿using Configuracion.API.Endpoints.Interfaces;
-using Configuracion.Domain.Repositories;
-
-namespace Configuracion.API.Endpoints.Implementations;
+﻿namespace Configuracion.API.Endpoints.Implementations;
 
 public class PrinterEndpoints(IPrinterRepository printerService, IUserContext userContext) : IPrinterEndpoints
 {
@@ -26,7 +23,7 @@ public class PrinterEndpoints(IPrinterRepository printerService, IUserContext us
 
     public async Task<IResult> CreatePrinter(Printer printer)
     {
-        printer.UserId = userContext.GetUserId();
+        printer.CreatedByUserId = userContext.GetUserId();
         printer.CreatedByUserId = userContext.GetUserId();
         var result = await printerService.AddAsync(printer);
         return Results.Ok(result);

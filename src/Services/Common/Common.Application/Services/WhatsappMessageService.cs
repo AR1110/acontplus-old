@@ -4,8 +4,8 @@ public class WhatsappMessageService(IAdoRepository adoRepository) : IWhatsappMes
 {
     private const string ModuleName = "Common.WhatsAppMessage_";
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
     }
 }

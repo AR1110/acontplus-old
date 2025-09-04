@@ -9,8 +9,8 @@ public class StatsService : IStatsService
         _adoRepository = adoRepository;
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await _adoRepository.SpExecuteAsync<ApiResponse>("TechnicalSupport.Stats_Get", parameters);
+        return await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>("TechnicalSupport.Stats_Get", parameters);
     }
 }

@@ -1,8 +1,4 @@
-﻿using BarberShop.Application.Tickets.DTOs;
-using BarberShop.Application.Tickets.Interfaces;
-using BarberShop.Domain.Repositories;
-
-namespace BarberShop.Application.Tickets.Services;
+﻿namespace BarberShop.Application.Tickets.Services;
 
 public class TicketService(ITicketRepository ticketRepository) : ITicketService
 {
@@ -11,18 +7,18 @@ public class TicketService(ITicketRepository ticketRepository) : ITicketService
         throw new NotImplementedException();
     }
 
-    public async Task<ApiResponse> GetTicketByIdAsync(int id)
+    public async Task<SpResponse> GetTicketByIdAsync(int id)
     {
         var ticket = await ticketRepository.GetTicketByIdAsync(id);
-        return new ApiResponse(
+        return new SpResponse { Code =
             ticket is not null ? "1" : "0",
-            payload: ticket
-        );
+            Payload = ticket
+        };
     }
 
-    public async Task<ApiResponse> CreateTicketAsync(TicketDto ticketDto)
+    public async Task<SpResponse> CreateTicketAsync(TicketDto ticketDto)
     {
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Ticket creado exitosamente",
@@ -32,11 +28,11 @@ public class TicketService(ITicketRepository ticketRepository) : ITicketService
         };
     }
 
-    public async Task<ApiResponse> UpdateTicketAsync(int id, TicketDto ticketDto)
+    public async Task<SpResponse> UpdateTicketAsync(int id, TicketDto ticketDto)
     {
         var existingTicket = await ticketRepository.GetTicketByIdAsync(id);
         if (existingTicket == null)
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "Ticket no encontrado!"
@@ -45,7 +41,7 @@ public class TicketService(ITicketRepository ticketRepository) : ITicketService
         var updatedTicket = ObjectMapper.Map(ticketDto, existingTicket);
         await ticketRepository.UpdateTicketAsync(updatedTicket);
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Ticket actualizado exitosamente!",
@@ -53,10 +49,10 @@ public class TicketService(ITicketRepository ticketRepository) : ITicketService
         };
     }
 
-    public async Task<ApiResponse> DeleteTicketAsync(int id)
+    public async Task<SpResponse> DeleteTicketAsync(int id)
     {
         await ticketRepository.DeleteTicketAsync(id);
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Ticket eliminado exitosamente"

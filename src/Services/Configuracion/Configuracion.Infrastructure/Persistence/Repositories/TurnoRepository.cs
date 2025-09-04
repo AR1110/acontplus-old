@@ -1,12 +1,10 @@
-﻿using Newtonsoft.Json;
-
-namespace Configuracion.Infrastructure.Persistence.Repositories;
+﻿namespace Configuracion.Infrastructure.Persistence.Repositories;
 
 public class TurnoRepository : ITurnoRepository
 {
     private readonly IConfiguration _configuration;
     private readonly string _connectionStrings = string.Empty;
-    private readonly LegacyApiResponse _gr = new();
+    private readonly LegacySpResponse _gr = new();
     private readonly IAdoRepository _repository;
 
     public TurnoRepository(IAdoRepository respository, IConfiguration configuration)
@@ -18,12 +16,12 @@ public class TurnoRepository : ITurnoRepository
 
     public async Task<string> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Config.Turno_Get", parameters, withTableNames: false);
+        var ds = await _repository.GetDataSetAsync("Config.Turno_Get", parameters);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return !DataValidation.DataTableIsNull(dt) ? DataConverters.DataTableToJson(dt) : null;
     }
 
-    public async Task<LegacyApiResponse> CreateTurnoAsync(int idRol, Turno data)
+    public async Task<LegacySpResponse> CreateTurnoAsync(int idRol, Turno data)
     {
         await using (var con = new SqlConnection(_connectionStrings))
         {
@@ -32,7 +30,7 @@ public class TurnoRepository : ITurnoRepository
                 cmd.Parameters.AddWithValue("idRol", idRol);
                 cmd.Parameters.AddWithValue("descripcion", data.descripcion);
                 ////Horario del turno
-                var p = JsonConvert.SerializeObject(data.horario);
+                var p = JsonExtensions.SerializeOptimized(data.horario);
                 cmd.Parameters.Add(new SqlParameter("json", p));
                 cmd.CommandType = CommandType.StoredProcedure;
                 await con.OpenAsync();
@@ -52,7 +50,7 @@ public class TurnoRepository : ITurnoRepository
         return _gr;
     }
 
-    public async Task<LegacyApiResponse> UpdateTurnoAsync(int idRol, Turno data)
+    public async Task<LegacySpResponse> UpdateTurnoAsync(int idRol, Turno data)
     {
         try
         {
@@ -62,7 +60,7 @@ public class TurnoRepository : ITurnoRepository
             cmd.Parameters.AddWithValue("idTurno", data.idTurno);
             cmd.Parameters.AddWithValue("descripcion", data.descripcion);
             cmd.Parameters.AddWithValue("estado", data.estado);
-            var p = JsonConvert.SerializeObject(data.horario);
+            var p = JsonExtensions.SerializeOptimized(data.horario);
             cmd.Parameters.Add(new SqlParameter("json", p));
             cmd.CommandType = CommandType.StoredProcedure;
             await con.OpenAsync();
@@ -86,7 +84,7 @@ public class TurnoRepository : ITurnoRepository
         return _gr;
     }
 
-    public async Task<LegacyApiResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
+    public async Task<LegacySpResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
     {
         var listar = new List<TurnoViewModel>();
         await using (var con = new SqlConnection(_connectionStrings))
@@ -133,7 +131,7 @@ public class TurnoRepository : ITurnoRepository
         return _gr;
     }
 
-    public async Task<LegacyApiResponse> DeleteTurnoAsync(int idRol, int idTurno)
+    public async Task<LegacySpResponse> DeleteTurnoAsync(int idRol, int idTurno)
     {
         await using (var con = new SqlConnection(_connectionStrings))
         {

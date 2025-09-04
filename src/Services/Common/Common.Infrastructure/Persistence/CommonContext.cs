@@ -1,5 +1,5 @@
 using Common.Domain.Entities;
-using Common.Notifications.Entities;
+using Acontplus.Notifications.Entities;
 using System.Reflection;
 
 namespace Common.Infrastructure.Persistence;
@@ -7,7 +7,7 @@ namespace Common.Infrastructure.Persistence;
 public class CommonContext(DbContextOptions<CommonContext> options) : BaseContext(options)
 {
     public DbSet<Attachment> Attachments { get; set; }
-    public DbSet<EmailQueue> EmailQueues { get; set; }
+    public DbSet<Email> Emails { get; set; }
     public DbSet<HousingType> HousingTypes { get; set; }
     public DbSet<NotificationType> NotificationTypes { get; set; }
     public DbSet<Notification> Notifications { get; set; }
@@ -29,7 +29,7 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
                 modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
         }
 
-        // Force all string-based columns to non-unicode equivalent 
+        // Force all string-based columns to non-unicode equivalent
         // when no column type is explicitly set.
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())

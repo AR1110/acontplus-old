@@ -16,7 +16,7 @@ public static class SriEndpointsExtensions
                     await atsEndpoints.CheckValidationAsync(json, cancellationToken))
             .WithName("CheckValidationAsync")
             .WithSummary("Check Validation of ATS data")
-            .Produces<ApiResponse>()
+            .Produces<SpResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         atsGroup.MapGet("/periods",

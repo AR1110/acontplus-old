@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Configuracion.Infrastructure.Persistence;
 
 public class ConfigContext(DbContextOptions<ConfigContext> options) : BaseContext(options)

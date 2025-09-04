@@ -1,6 +1,6 @@
 ﻿namespace BarberShop.Application.WorkSessions.DTOs;
 
-public class WorkSessionDto : BaseDto
+public class WorkSessionDto
 {
     public int PuntoEmisionId { get; set; }
 
@@ -8,4 +8,6 @@ public class WorkSessionDto : BaseDto
 
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
+    public int CreatedByUserId { get; set; }
+    public int UpdatedByUserId { get; set; }
 }

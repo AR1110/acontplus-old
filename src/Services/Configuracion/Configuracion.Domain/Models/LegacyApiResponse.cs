@@ -1,6 +1,6 @@
 ﻿namespace Configuracion.Domain.Models;
 
-public class LegacyApiResponse
+public class LegacySpResponse
 {
     public string code { get; set; }
     public dynamic data { get; set; }

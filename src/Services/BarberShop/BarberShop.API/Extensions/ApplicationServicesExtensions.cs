@@ -1,5 +1,3 @@
-using BarberShop.Infrastructure.Persistence;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
 
@@ -7,7 +5,7 @@ namespace BarberShop.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddBarberShopServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

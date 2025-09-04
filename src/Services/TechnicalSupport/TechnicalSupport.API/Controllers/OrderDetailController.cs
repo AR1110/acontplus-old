@@ -1,5 +1,3 @@
-using TechnicalSupport.Application.DTOs;
-
 namespace TechnicalSupport.API.Controllers;
 
 public class OrderDetailController : BaseApiController

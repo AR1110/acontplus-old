@@ -1,6 +1,12 @@
-﻿global using BarberShop.Application.WorkSessions.DTOs;
+﻿global using Acontplus.Core.DTOs.Requests;
+global using BarberShop.Application.WorkSessions.DTOs;
 global using BarberShop.Application.WorkSessions.Interfaces;
 global using BarberShop.Domain.Entities;
-global using Common.Core.DTOs;
-global using Common.Core.Models;
-global using Common.Data;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Utilities;
+global using Acontplus.Utilities.Mapping;
+global using BarberShop.Application.Seats.DTOs;
+global using BarberShop.Application.Seats.Interfaces;
+global using BarberShop.Application.Tickets.DTOs;
+global using BarberShop.Application.Tickets.Interfaces;
+global using BarberShop.Domain.Repositories;

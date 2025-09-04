@@ -1,20 +1,14 @@
-﻿namespace Identity.API.Services;
+﻿using Acontplus.Utilities.Data;
 
-public class UserService : IUserService
+namespace Identity.API.Services;
+
+public class UserService(IAdoRepository repository) : IUserService
 {
-    private readonly IAdoRepository _repository;
-
-    public UserService(IAdoRepository repository)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        _repository = repository;
-    }
-
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
-    {
-        var ds = await _repository.GetDataSetAsync("Seguridad.User_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds))
-            return new ApiResponse { Code = "0", Message = "No se encontraron datos" };
-
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        var ds = await repository.GetDataSetAsync("Seguridad.User_Get", parameters);
+        return DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "0", Message = "No se encontraron datos" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

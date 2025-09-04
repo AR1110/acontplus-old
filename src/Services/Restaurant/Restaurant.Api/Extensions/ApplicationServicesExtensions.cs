@@ -4,12 +4,13 @@ using Restaurant.Infrastructure.Persistence;
 using Scrutor;
 using System.IO.Compression;
 using System.Threading.RateLimiting;
+using Acontplus.S3Application.Models;
 
 namespace Restaurant.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddRestaurantServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

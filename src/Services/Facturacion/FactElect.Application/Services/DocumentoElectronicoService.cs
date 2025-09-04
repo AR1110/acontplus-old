@@ -2,43 +2,43 @@
 
 public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocumentoElectronicoService
 {
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get", parameters, false);
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
-            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
-    public async Task<ApiResponse> GetByStatusAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetByStatusAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_GetByStatus", parameters, false);
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_GetByStatus", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
-            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
 
     //Eliminar el método GetDataFormAsync y su implementación en la interfaz IDocumentoElectronicoService
-    public async Task<ApiResponse> GetDataFormAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetDataFormAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Data_Form", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
-            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
-    public async Task<ApiResponse> GetFiltersAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetFiltersAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Filters", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
-            : new ApiResponse { Code = "0", Message = "No se encontraron datos" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
     }
 
     public async Task<FileModel> GetXmlSriAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Xml", parameters, withTableNames: false);
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Xml", parameters);
         var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         switch (dt.Rows.Count)
         {
@@ -57,8 +57,8 @@ public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocume
         }
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("FactElect.Doc_Elect_Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("FactElect.Doc_Elect_Update", parameters);
     }
 }

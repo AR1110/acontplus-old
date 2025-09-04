@@ -1,6 +1,3 @@
-using Contabilidad.Domain.Repositories;
-using System.Text.Json;
-
 namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController

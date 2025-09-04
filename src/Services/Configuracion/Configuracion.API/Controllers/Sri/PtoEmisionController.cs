@@ -1,7 +1,5 @@
 namespace Configuracion.API.Controllers.Sri;
 
-using Configuracion.Application.DTOs.Sri;
-
 [Route("api/[controller]")]
 [ApiController]
 public class PtoEmisionController : ControllerBase

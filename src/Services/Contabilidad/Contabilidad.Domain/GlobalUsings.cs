@@ -1,5 +1,5 @@
-global using Common.Core.Base;
-global using Common.Core.Models;
+global using Acontplus.Core.Domain.Common.Entities;
+global using Acontplus.Core.DTOs.Responses;
 global using Contabilidad.Domain.Entities;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;

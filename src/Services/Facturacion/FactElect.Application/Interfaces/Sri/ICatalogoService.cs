@@ -2,5 +2,5 @@
 
 public interface ICatalogoService
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
 }

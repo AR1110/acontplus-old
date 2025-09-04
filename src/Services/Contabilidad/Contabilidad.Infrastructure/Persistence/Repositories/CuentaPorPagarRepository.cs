@@ -1,5 +1,3 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.Infrastructure.Persistence.Repositories;
 
 public class CuentaPorPagarRepository(IAdoRepository _repository) : ICuentaPorPagarRepository
@@ -8,8 +6,11 @@ public class CuentaPorPagarRepository(IAdoRepository _repository) : ICuentaPorPa
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var response = new ApiResponse();
-        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters, false);
+        var response = new SpResponse
+        {
+            Code = null
+        };
+        var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters);
         if (ds.Tables.Count == 0)
         {
             response.Code = "0";
@@ -18,25 +19,25 @@ public class CuentaPorPagarRepository(IAdoRepository _repository) : ICuentaPorPa
         else
         {
             response.Code = "1";
-            response.Payload = DataConverters.DataSetToJson(ds, true);
+            response.Payload = DataConverters.DataSetToJson(ds);
         }
 
         return response;
     }
 
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Delete", parameters);
     }
 }

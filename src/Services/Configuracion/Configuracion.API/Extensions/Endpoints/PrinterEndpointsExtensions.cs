@@ -1,6 +1,4 @@
-﻿using Configuracion.API.Endpoints.Interfaces;
-
-namespace Configuracion.API.Extensions.Endpoints;
+﻿namespace Configuracion.API.Extensions.Endpoints;
 
 public static class PrinterEndpointsExtensions
 {

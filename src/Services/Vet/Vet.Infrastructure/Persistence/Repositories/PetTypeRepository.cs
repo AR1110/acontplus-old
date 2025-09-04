@@ -2,45 +2,45 @@ namespace Vet.Infrastructure.Persistence.Repositories;
 
 public class PetTypeRepository(VetContext context) : IPetTypeRepository
 {
-    public async Task<ApiResponse> AddAsync(PetType petType)
+    public async Task<SpResponse> AddAsync(PetType petType)
     {
         context.PetTypes.Add(petType);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrado exitosamente", Payload = petType };
+        return new SpResponse { Code = "1", Message = "Registrado exitosamente", Payload = petType };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         var petType = await context.PetTypes.FindAsync(id);
-        if (petType == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para eliminar" };
+        if (petType == null) return new SpResponse { Code = "0", Message = "No se encontro raza para eliminar" };
 
         petType.MarkAsDeleted(userId);
         context.Update(petType);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public async Task<ApiResponse> GetAsync()
+    public async Task<SpResponse> GetAsync()
     {
         var response = await context.PetTypes.Where(x => !x.IsDeleted).ToListAsync();
-        if (response.Count > 0) return new ApiResponse { Code = "1", Payload = response };
+        if (response.Count > 0) return new SpResponse { Code = "1", Payload = response };
 
-        return new ApiResponse { Code = "0", Message = "No data!" };
+        return new SpResponse { Code = "0", Message = "No data!" };
     }
 
-    public async Task<ApiResponse> GetByIdAsync(int id)
+    public async Task<SpResponse> GetByIdAsync(int id)
     {
         var petType = await context.PetTypes.FindAsync(id);
-        if (petType == null) return new ApiResponse { Code = "0", Message = "No se encontro raza para actualizar" };
+        if (petType == null) return new SpResponse { Code = "0", Message = "No se encontro raza para actualizar" };
 
-        return new ApiResponse { Code = "1", Payload = petType };
+        return new SpResponse { Code = "1", Payload = petType };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, PetType petType)
+    public async Task<SpResponse> UpdateAsync(int id, PetType petType)
     {
         var petTypeFound = await context.PetTypes.FindAsync(id);
         if (petTypeFound == null)
-            return new ApiResponse { Code = "0", Message = "No se encontro raza para actualizar" };
+            return new SpResponse { Code = "0", Message = "No se encontro raza para actualizar" };
 
         petTypeFound.Code = petType.Code;
         petTypeFound.Name = petType.Name;
@@ -48,6 +48,6 @@ public class PetTypeRepository(VetContext context) : IPetTypeRepository
         petTypeFound.UpdatedByUserId = petType.UpdatedByUserId;
         context.Update(petTypeFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizado exitosamente", Payload = petType };
+        return new SpResponse { Code = "1", Message = "Actualizado exitosamente", Payload = petType };
     }
 }

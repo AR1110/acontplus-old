@@ -1,9 +1,10 @@
-﻿using Inventario.API.Extensions;
+﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-           .WriteTo.Console()
-           .CreateBootstrapLogger();
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
@@ -21,19 +22,21 @@ try
 
 
     builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.Limits.MaxRequestBufferSize = 1048576;
-    serverOptions.Limits.MaxRequestLineSize = 1048576;
-});
+    {
+        serverOptions.Limits.MaxRequestBufferSize = 1048576;
+        serverOptions.Limits.MaxRequestLineSize = 1048576;
+    });
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Add services to the container.
     builder.Services.AddApplicationServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddInventoryServices(builder.Configuration);
+
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     builder.Services.AddOpenApi();
 
@@ -45,9 +48,9 @@ try
 
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
-    app.UseMiddleware<MobileRequestMiddleware>();
+    app.UseAcontplusServices(builder.Environment);
 
     app.UseRouting();
 
@@ -71,4 +74,3 @@ finally
     // Ensure all buffered logs are flushed on application shutdown
     Log.CloseAndFlush();
 }
-

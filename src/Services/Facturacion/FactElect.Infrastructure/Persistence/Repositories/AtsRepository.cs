@@ -1,24 +1,29 @@
-using Common.Core.Abstractions;
-using Common.Core.Models;
+using Acontplus.Core.Abstractions.Persistence;
+using Acontplus.Core.DTOs.Requests;
 using FactElect.Domain.Repositories;
 using System.Data;
+using Acontplus.Core.DTOs.Responses;
 
 namespace FactElect.Infrastructure.Persistence.Repositories;
 
 public class AtsRepository(IAdoRepository adoRepository) : IAtsRepository
 {
-    private readonly string _moduleName = "FactElect.Ats_";
+    private const string ModuleName = "FactElect.Ats_";
 
-    public async Task<ApiResponse> CheckValidationAsync(Dictionary<string, object> parameters,
+    public async Task<SpResponse> CheckValidationAsync(Dictionary<string, object> parameters,
         CancellationToken cancellationToken)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{_moduleName}CheckValidation", parameters,
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}CheckValidation", parameters,
             cancellationToken: cancellationToken);
     }
 
     public async Task<DataSet> GetAsync(Dictionary<string, object> parameters, CancellationToken cancellationToken)
     {
-        return await adoRepository.GetDataSetAsync($"{_moduleName}Get", parameters, disableTimeout: true,
+        var commandOptions = new CommandOptionsDto
+        {
+            CommandTimeout = 0
+        };
+        return await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, commandOptions,
             cancellationToken: cancellationToken);
     }
 }

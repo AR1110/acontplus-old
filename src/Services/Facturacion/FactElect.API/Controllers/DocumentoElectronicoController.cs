@@ -44,7 +44,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     {
         var cacheKey = $"doc_elect_filters_data_${User.GetClaimValue<int>(UserRoleId)}";
 
-        if (_cache.TryGetValue(cacheKey, out ApiResponse cachedData))
+        if (_cache.TryGetValue(cacheKey, out SpResponse cachedData))
         {
             //_logger.LogInformation("Datos de filtros obtenidos desde caché");
             return Ok(cachedData);

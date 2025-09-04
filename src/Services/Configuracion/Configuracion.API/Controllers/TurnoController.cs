@@ -1,6 +1,4 @@
-﻿using Configuracion.Domain.Repositories;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class TurnoController(ITurnoRepository turnoSvc) : BaseApiController
 {

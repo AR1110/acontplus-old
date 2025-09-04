@@ -4,36 +4,36 @@ public class OrdenCompraRepository(IAdoRepository _repository) : IOrdenCompraRep
 {
     private const string nameSp = "Compra.Orden_";
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync($"{nameSp}Get", parameters);
 
         return DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "0", Message = "Can't get data" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+            ? new SpResponse { Code = "0", Message = "Can't get data" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Insert", parameters);
     }
 
-    public async Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync($"{nameSp}Get_Id", parameters);
 
         return DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "0", Message = "Can't get data" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+            ? new SpResponse { Code = "0", Message = "Can't get data" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{nameSp}Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{nameSp}Delete", parameters);
     }
 }

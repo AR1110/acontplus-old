@@ -2,8 +2,8 @@ namespace Contabilidad.Domain.Repositories;
 
 public interface ITipoRepository
 {
-    Task<ApiResponse> AddAsync(Tipo tipo);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(int id, Tipo tipo);
+    Task<SpResponse> AddAsync(Tipo tipo);
+    Task<SpResponse> DeleteAsync(int userId, int id);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(int id, Tipo tipo);
 }

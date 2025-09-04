@@ -1,43 +1,41 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.Infrastructure.Persistence.Repositories;
 
 public class SubcategoryRepository(ContabilidadContext context, IAdoRepository repository) : ISubcategoryRepository
 {
-    public async Task<ApiResponse> AddAsync(Subcategory subcategory)
+    public async Task<SpResponse> AddAsync(Subcategory subcategory)
     {
         if (await context.Subcategories.AnyAsync(x =>
                 x.CompanyId == subcategory.CompanyId & x.Code == subcategory.Code))
-            return new ApiResponse { Code = "0", Message = "Código ya existe" };
+            return new SpResponse { Code = "0", Message = "Código ya existe" };
 
         context.Subcategories.Add(subcategory);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Registrada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Registrada exitosamente" };
     }
 
-    public async Task<ApiResponse> DeleteAsync(int userId, int id)
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
     {
         var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
-        if (subcategory == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
+        if (subcategory == null) return new SpResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
         subcategory.MarkAsDeleted(userId);
         context.Update(subcategory);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Eliminada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Contabilidad.Subcategory_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true)) return new ApiResponse { Code = "0", Message = "Data not found" };
+        if (DataValidation.DataSetIsNull(ds, true)) return new SpResponse { Code = "0", Message = "Data not found" };
 
-        return new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(int id, Subcategory subcategory)
+    public async Task<SpResponse> UpdateAsync(int id, Subcategory subcategory)
     {
         var subcategoryFound = await context.Subcategories.FindAsync(id);
-        if (subcategoryFound == null) return new ApiResponse { Code = "0", Message = "Subcategoría no encontrada" };
+        if (subcategoryFound == null) return new SpResponse { Code = "0", Message = "Subcategoría no encontrada" };
 
         subcategoryFound.CategoryId = subcategory.CategoryId;
         subcategoryFound.Code = subcategory.Code;
@@ -46,6 +44,6 @@ public class SubcategoryRepository(ContabilidadContext context, IAdoRepository r
         subcategoryFound.UpdatedByUserId = subcategory.UpdatedByUserId;
         context.Update(subcategoryFound);
         await context.SaveChangesAsync();
-        return new ApiResponse { Code = "1", Message = "Actualizada exitosamente" };
+        return new SpResponse { Code = "1", Message = "Actualizada exitosamente" };
     }
 }

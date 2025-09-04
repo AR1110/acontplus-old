@@ -18,8 +18,8 @@ public class CompanyService : ICompanyService
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Update", parameters);
     }
 }

@@ -1,4 +1,4 @@
-namespace Configuracion.Application.DTOs.Sri;
+namespace Configuracion.Application.DTOs;
 
 public record CreatePtoEmisionDto
 {

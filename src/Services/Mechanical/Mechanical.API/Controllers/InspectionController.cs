@@ -1,4 +1,3 @@
-using Mechanical.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mechanical.API.Controllers;

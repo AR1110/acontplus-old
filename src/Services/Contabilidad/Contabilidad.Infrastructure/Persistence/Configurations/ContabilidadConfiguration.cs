@@ -1,4 +1,3 @@
-using Common.Infrastructure.Entity;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Contabilidad.Infrastructure.Persistence.Configurations;

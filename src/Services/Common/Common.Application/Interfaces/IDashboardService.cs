@@ -2,5 +2,5 @@ namespace Common.Application.Interfaces;
 
 public interface IDashboardService
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
 }

@@ -1,5 +1,3 @@
-using Inventario.Domain.Repositories;
-
 namespace Inventario.API.Controllers;
 
 public class SubcategoryPhotoController(
@@ -28,8 +26,11 @@ public class SubcategoryPhotoController(
     {
         try
         {
-            var data = new SubcategoryPhoto();
-            data.CreatedByUserId = User.GetUserId();
+            var data = new SubcategoryPhoto
+            {
+                CreatedByUserId = User.GetUserId(),
+                Id = 0
+            };
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -59,7 +60,10 @@ public class SubcategoryPhotoController(
     {
         try
         {
-            var data = new SubcategoryPhoto();
+            var data = new SubcategoryPhoto
+            {
+                Id = 0
+            };
             data = JsonConvert.DeserializeObject<SubcategoryPhoto>(json);
             data.UpdatedByUserId = User.GetUserId();
             if (file != null)

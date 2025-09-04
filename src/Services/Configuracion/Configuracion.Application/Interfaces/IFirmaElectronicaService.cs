@@ -2,9 +2,9 @@
 
 public interface IFirmaElectronicaService
 {
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
     Task<FileModel> DownloadAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateFileAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateFileAsync(Dictionary<string, object> parameters);
 }

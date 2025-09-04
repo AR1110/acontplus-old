@@ -1,5 +1,3 @@
-using Contabilidad.Domain.Repositories;
-
 namespace Contabilidad.API.Controllers;
 
 public class ComprobanteIngresoController(IComprobanteIngresoRepository comprobanteIngresoService) : BaseApiController

@@ -2,5 +2,5 @@ namespace Vet.Domain.Repositories;
 
 public interface IHealthCheckRepository
 {
-    Task<ApiResponse> UpdateAsync(int id, HealthCheck healthCheck);
+    Task<SpResponse> UpdateAsync(int id, HealthCheck healthCheck);
 }

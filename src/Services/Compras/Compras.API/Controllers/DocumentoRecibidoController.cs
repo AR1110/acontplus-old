@@ -1,3 +1,6 @@
+using Acontplus.FactElect.Interfaces.Services;
+using Acontplus.FactElect.Models.Documents;
+using Acontplus.FactElect.Services.Documents;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Compras.API.Controllers;
@@ -13,7 +16,6 @@ public class DocumentoRecibidoController(
     IXmlSriFileService xmlSriFileService)
     : BaseApiController
 {
-
     private const string UserRoleClaimType = "userRoleId";
 
     [HttpGet]
@@ -30,7 +32,10 @@ public class DocumentoRecibidoController(
     [HttpGet("GetId/{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var response = new ApiResponse();
+        var response = new SpResponse
+        {
+            Code = null
+        };
         var ceXml = new ComprobanteElectronico();
         var sms = string.Empty;
         var getXmlSriData = new DataXmlComprobante();
@@ -40,39 +45,42 @@ public class DocumentoRecibidoController(
 
         if (xdoc == null || !getXmlSriData.GetData(xdoc, ref ceXml, ref sms)) return Ok(response);
 
-        if (ceXml.codDoc is "01" or "04")
+        if (ceXml.CodDoc is "01" or "04")
         {
             var details = new Dictionary<string, object>
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "idDocumento", id },
-                { "jsonData", JsonConvert.SerializeObject(ceXml.detalles) },
-                { "impuestos", JsonConvert.SerializeObject(ceXml.impuestos) }
+                { "jsonData", JsonConvert.SerializeObject(ceXml.Detalles) },
+                { "impuestos", JsonConvert.SerializeObject(ceXml.Impuestos) }
             };
             await documentoTemp.AddAsync(details);
         }
 
-        return Ok(ApiResponse.Success(payload: ceXml));
+        return Ok(new SpResponse { Code = "1", Payload = ceXml });
     }
 
 
     [HttpPost("Read")]
     public async Task<IActionResult> Post(IFormFile file)
     {
-        var response = new ApiResponse();
+        var response = new SpResponse
+        {
+            Code = null
+        };
 
         if (file.ContentType != "text/plain")
-            return BadRequest(ApiResponse.Error("0", "Formato de archivo no soportado"));
+            return BadRequest(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
 
         var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
         if (!DataValidation.DataTableIsNull(dt))
         {
             var dsExistentDocument = await adoRepository.GetDataSetAsync("Recepcion.Documento_Check_Existence",
-                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } }, withTableNames: false);
+                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } });
 
             var dtExistent = dsExistentDocument.Tables.Count > 0 ? dsExistentDocument.Tables[0] : new DataTable();
             if (DataValidation.DataTableIsNull(dt))
-                return BadRequest(ApiResponse.Success(payload: DataConverters.DataTableToJson(dt)));
+                return BadRequest(new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) });
 
             if (dt.Rows.Count == dtExistent.Rows.Count)
             {
@@ -83,13 +91,13 @@ public class DocumentoRecibidoController(
             else
             {
                 var diff = (from row1 in dt.AsEnumerable()
-                            join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
-                            {
-                                Column1 = row2["claveAcceso"]
-                            } into gj
-                            from subRow2 in gj.DefaultIfEmpty()
-                            where subRow2 == null
-                            select row1).ToList();
+                    join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new
+                    {
+                        Column1 = row2["claveAcceso"]
+                    } into gj
+                    from subRow2 in gj.DefaultIfEmpty()
+                    where subRow2 == null
+                    select row1).ToList();
                 var filteredDataTable = diff.CopyToDataTable();
                 response.Code = "1";
                 response.Payload = DataConverters.DataTableToJson(filteredDataTable);
@@ -136,10 +144,13 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> Post(DocumentoRecibidoDto documentoRecibido)
     {
         var parameters = new Dictionary<string, object>
-      {
-        { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido)) }
-      };
+        {
+            { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+            {
+                "json",
+                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido))
+            }
+        };
         return Ok(await docRecibidoSvc.AddAsync(parameters));
     }
 
@@ -147,11 +158,14 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> Put(int id, [FromBody] DocumentoRecibidoDto documentoRecibido)
     {
         var parameters = new Dictionary<string, object>
-    {
-      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "idDocumento", id },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido)) }
-    };
+        {
+            { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+            { "idDocumento", id },
+            {
+                "json",
+                SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido))
+            }
+        };
         return Ok(await docRecibidoSvc.UpdateAsync(parameters));
     }
 
@@ -159,11 +173,13 @@ public class DocumentoRecibidoController(
     [HttpGet("Preview/{id}")]
     public async Task<IActionResult> Preview(int id)
     {
-        var response = new ApiResponse();
+        var response = new SpResponse
+        {
+            Code = null
+        };
 
         var ds = await adoRepository.GetDataSetAsync("Recepcion.Documento_Get_Id",
-            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } },
-            withTableNames: false);
+            new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
 
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
@@ -199,10 +215,10 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> Migrate(DocumentoRecibidoMigrateDto data)
     {
         var parameters = new Dictionary<string, object>
-    {
-        { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoMigrateDto>(data)) }
-    };
+        {
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoMigrateDto>(data)) }
+        };
         return Ok(await docRecibidoSvc.MigrateAsync(parameters));
     }
 
@@ -210,10 +226,10 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-    {
-      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-      { "idDocumento", id }
-    };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "idDocumento", id }
+        };
         return Ok(await docRecibidoSvc.DeleteAsync(parameters));
     }
 
@@ -221,10 +237,10 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> Download(int id)
     {
         var parameters = new Dictionary<string, object>
-    {
-      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-      { "id", id }
-    };
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id }
+        };
         var response = await docRecibidoSvc.DownloadAsync(parameters);
 
         return File(response, "text/xml");
@@ -234,10 +250,10 @@ public class DocumentoRecibidoController(
     public async Task<IActionResult> PutSubcategory([FromBody] DocumentoRecibidoCategoria data)
     {
         var parameters = new Dictionary<string, object>
-    {
-      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
-      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoCategoria>(data)) }
-    };
+        {
+            { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoCategoria>(data)) }
+        };
         return Ok(await docRecibidoSvc.UpdateSubcategoryAsync(parameters));
     }
 }

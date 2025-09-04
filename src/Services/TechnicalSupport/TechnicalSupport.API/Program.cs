@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()
@@ -19,12 +21,14 @@ try
     });
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     builder.Services.AddApplicationServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddTechnicalSupportServices(builder.Configuration);
+
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     builder.Services.AddOpenApi();
 
@@ -34,7 +38,7 @@ try
 
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
     app.UseResponseCompression();
 

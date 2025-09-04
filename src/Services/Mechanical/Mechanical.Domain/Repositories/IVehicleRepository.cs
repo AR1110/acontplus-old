@@ -2,9 +2,9 @@ namespace Mechanical.Domain.Repositories;
 
 public interface IVehicleRepository
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(int id);
-    Task<ApiResponse> UpdateStateAsync(int id, bool state);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> DeleteAsync(int id);
+    Task<SpResponse> UpdateStateAsync(int id, bool state);
 }

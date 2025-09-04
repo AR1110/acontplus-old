@@ -1,13 +1,11 @@
-using Common.Infrastructure.Repository.Implementations;
 using Microsoft.AspNetCore.ResponseCompression;
 using System.IO.Compression;
-using TechnicalSupport.Infrastructure.Persistence.Repositories;
 
 namespace TechnicalSupport.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddTechnicalSupportServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddAdvancedLoggingOptions(configuration);

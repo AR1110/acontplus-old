@@ -21,7 +21,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+            return Ok(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
 
         var signFile = new FileModel
         {
@@ -68,7 +68,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> UpdateSignature(int id, [FromForm] IFormFile file, [FromForm] string contrasenia)
     {
         if (file.ContentType != "application/x-pkcs12")
-            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+            return Ok(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
 
         var signFile = new FileModel
         {

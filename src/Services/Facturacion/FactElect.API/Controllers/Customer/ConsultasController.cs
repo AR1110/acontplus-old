@@ -1,4 +1,6 @@
-﻿namespace FactElect.API.Controllers.Customer;
+﻿using Acontplus.Utilities.Extensions;
+
+namespace FactElect.API.Controllers.Customer;
 
 public class ConsultasController(
     IRucService rucService,
@@ -10,31 +12,55 @@ public class ConsultasController(
     [HttpGet("GetRucSRI")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<RucModel> GetRucSri([FromQuery] RequestParams data)
+    public async Task<IActionResult> GetRucSri([FromQuery] RequestParams data)
     {
-        if (data.SriOnly) return await rucService.GetRucSriAsync(data.Ruc);
+        if (data.SriOnly)
+        {
+            var response = await rucService.GetRucSriAsync(data.Ruc);
+            if (response.IsSuccess)
+            {
+                return response.ToActionResult();
+            }
+        }
 
         var parameters = new Dictionary<string, object> { { "id", data.Ruc } };
         var dt = await customerService.GetByIdCardAsync(parameters);
 
-        if (!DataValidation.DataTableIsNull(dt)) return DataTableMapper.MapDataRowToModel<RucModel>(dt.Rows[0]);
+        if (!DataValidation.DataTableIsNull(dt))
+        {
+            return Ok(ApiResponse<ContribuyenteRucDto>.Success(
+                data: DataTableMapper.MapDataRowToModel<ContribuyenteRucDto>(dt.Rows[0])));
+        }
 
-        return await rucService.GetRucSriAsync(data.Ruc);
+        var sriResponse = await rucService.GetRucSriAsync(data.Ruc);
+        return sriResponse.ToActionResult();
     }
 
     [AllowAnonymous]
     [HttpGet("GetCedulaSri")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<CedulaModel> GetCedulaSri([FromQuery] RequestParams data)
+    public async Task<IActionResult> GetCedulaSri([FromQuery] RequestParams data)
     {
-        if (data.SriOnly) return await cedulaService.GetCedulaSriAsync(data.Ruc);
+        if (data.SriOnly)
+        {
+            var response = await rucService.GetRucSriAsync(data.Ruc);
+            if (response.IsSuccess)
+            {
+                return response.ToActionResult();
+            }
+        }
 
         var parameters = new Dictionary<string, object> { { "id", data.Ruc }, { "IDType", "05" } };
         var dt = await customerService.GetByIdCardAsync(parameters);
 
-        if (!DataValidation.DataTableIsNull(dt)) return DataTableMapper.MapDataRowToModel<CedulaModel>(dt.Rows[0]);
+        if (!DataValidation.DataTableIsNull(dt))
+        {
+            return Ok(ApiResponse<ContribuyenteCedulaDto>.Success(
+                data: DataTableMapper.MapDataRowToModel<ContribuyenteCedulaDto>(dt.Rows[0])));
+        }
 
-        return await cedulaService.GetCedulaSriAsync(data.Ruc);
+        var sriResponse = await rucService.GetRucSriAsync(data.Ruc);
+        return sriResponse.ToActionResult();
     }
 }

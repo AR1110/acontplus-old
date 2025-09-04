@@ -1,9 +1,4 @@
-﻿using BarberShop.Api.Endpoints.Interfaces;
-using BarberShop.Application.WorkSessions.DTOs;
-using BarberShop.Application.WorkSessions.Interfaces;
-using Common.Core.Models;
-
-namespace BarberShop.Api.Endpoints.Implementations;
+﻿namespace BarberShop.Api.Endpoints.Implementations;
 
 public class WorkSessionEndpoints(IUserContext userContext, IWorkSessionService workSessionService)
     : IWorkSessionEndpoints

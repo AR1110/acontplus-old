@@ -4,9 +4,9 @@ namespace Restaurant.Domain.Repositories;
 
 public interface IAppTableRepository
 {
-    Task<ApiResponse> GetByEstabAsync(string codEstab);
-    Task<ApiResponse> AddAsync(AppTable appTable);
-    Task<ApiResponse> UpdateAsync(int id, AppTable appTable);
-    Task<ApiResponse> UnassignAsync(int userId, int id);
-    Task<ApiResponse> DeleteAsync(int userId, int id);
+    Task<SpResponse> GetByEstabAsync(string codEstab);
+    Task<SpResponse> AddAsync(AppTable appTable);
+    Task<SpResponse> UpdateAsync(int id, AppTable appTable);
+    Task<SpResponse> UnassignAsync(int userId, int id);
+    Task<SpResponse> DeleteAsync(int userId, int id);
 }

@@ -3,7 +3,7 @@ namespace Inventario.API.Controllers;
 public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse>> Get(string json)
+    public async Task<ActionResult<SpResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {

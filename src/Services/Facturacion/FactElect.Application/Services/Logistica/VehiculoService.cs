@@ -4,36 +4,32 @@ public class VehiculoService(IAdoRepository adoRepository) : IVehiculoService
 {
     private const string ModuleName = "Logistica.Vehiculo_";
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
-    {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
-    }
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
-    {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Delete", parameters);
-    }
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, withTableNames: false);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
         var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
-            ? new ApiResponse { Code = "0", Message = "Data not found" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+            ? new SpResponse { Code = "0", Message = "Data not found" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
-    public async Task<ApiResponse> SearchAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> SearchAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Search", parameters, withTableNames: false);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Search", parameters);
         var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
         return DataValidation.DataTableIsNull(dt)
-            ? new ApiResponse { Code = "0", Message = "Data not found" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+            ? new SpResponse { Code = "0", Message = "Data not found" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
     }
 }

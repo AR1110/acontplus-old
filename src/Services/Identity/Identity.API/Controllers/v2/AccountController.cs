@@ -44,7 +44,8 @@ public class AccountController(
                 UserAgent = authRequest.UserAgent ?? HttpContext.Request.Headers.UserAgent.ToString(),
                 Username = authRequest.Username,
                 Password = authRequest.Password,
-                FromMobile = true
+                IsMobileRequest = true,
+                Id = 0
             };
             await loginFailedService.AddAsync(loginFailed);
             return BadRequest("Error al iniciar session");
@@ -56,14 +57,15 @@ public class AccountController(
             UserRoleId = userData[0].UserRoleId,
             UserAgent = authRequest.UserAgent ?? HttpContext.Request.Headers.UserAgent.ToString(),
             Token = token.Token,
-            TokenExpiration = token.Expires
+            TokenExpiration = token.Expires,
+            Id = 0
         };
 
         await loginHistoryService.AddAsync(loginHistory);
         loginHistory.UserAgent = authRequest.UserAgent;
         await accountService.AddNotificationAsync(loginHistory);
         user.Token = token.Token;
-        return Ok(ApiResponse.Success(payload: user, message: "Login Correcto"));
+        return Ok(new SpResponse { Code = "0", Payload = user, Message = "Login Correcto" });
     }
 
     [AllowAnonymous]
@@ -81,12 +83,13 @@ public class AccountController(
             UserAgent = userData.UserAgent ?? HttpContext.Request.Headers.UserAgent.ToString(),
             Token = token.Token,
             TokenExpiration = token.Expires,
-            FromMobile = true
+            IsMobileRequest = true,
+            Id = 0
         };
         await loginHistoryService.AddAsync(loginHistory);
         loginHistory.UserAgent = userData.UserAgent;
         await accountService.AddNotificationAsync(loginHistory);
         userData.Token = token.Token;
-        return Ok(ApiResponse.Success(payload: userData, message: "Login Correcto"));
+        return Ok(new SpResponse { Code = "0", Payload = userData, Message = "Login Correcto" });
     }
 }

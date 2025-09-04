@@ -12,25 +12,25 @@ public class CompraNoHabitualRepository(IAdoRepository _repository) : ICompraNoH
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{moduleName}Insert", parameters);
     }
 
     //public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     //{
     //    var ds = await _repository.GetDataSetAsync("Compra.Liquidacion_Get_Id", parameters, true);
     //    if (ds.Tables[0].Rows.Count == 0) { return null; }
-    //    return DataConverters.DataSetToJSON(ds, true);
+    //    return DataConverters.DataSetToJson(ds);
     //}
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{moduleName}Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>($"{moduleName}Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>($"{moduleName}Delete", parameters);
     }
 }

@@ -1,3 +1,5 @@
+using Acontplus.Persistence.SqlServer.Utilities;
+
 namespace Vet.API.Controllers;
 
 public class PetController(IPetRepository petService) : BaseApiController
@@ -42,7 +44,7 @@ public class PetController(IPetRepository petService) : BaseApiController
 
 
     [HttpGet("search")]
-    public async Task<ActionResult<ApiResponse>> Search(string json)
+    public async Task<ActionResult<SpResponse>> Search(string json)
     {
         var parameters = new Dictionary<string, object>
         {

@@ -1,5 +1,3 @@
-using Inventario.Domain.Repositories;
-
 namespace Inventario.API.Controllers;
 
 public class ProductPhotoController(
@@ -23,8 +21,11 @@ public class ProductPhotoController(
     [HttpPost("{productId}")]
     public async Task<IActionResult> Post(int productId, IFormFile file)
     {
-        var data = new ProductPhoto();
-        data.CreatedByUserId = User.GetUserId();
+        var data = new ProductPhoto
+        {
+            CreatedByUserId = User.GetUserId(),
+            Id = 0
+        };
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -43,7 +44,10 @@ public class ProductPhotoController(
     [HttpPost("Put/{id}")]
     public async Task<IActionResult> Put(int id, string json, IFormFile file)
     {
-        var data = new ProductPhoto();
+        var data = new ProductPhoto
+        {
+            Id = 0
+        };
         data = JsonConvert.DeserializeObject<ProductPhoto>(json);
         data.UpdatedByUserId = User.GetUserId();
         if (file != null)

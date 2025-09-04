@@ -9,13 +9,13 @@ public class SubFamiliaService : ISubFamiliaService
         _repository = repository;
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync("Inventario.Subfamilia_Get", parameters, withTableNames: false);
+        var ds = await _repository.GetDataSetAsync("Inventario.Subfamilia_Get", parameters);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
-        if (dt.Rows.Count == 0) return new ApiResponse { Code = "0", Message = "Sin registros", Payload = null };
+        if (dt.Rows.Count == 0) return new SpResponse { Code = "0", Message = "Sin registros", Payload = null };
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Listado exitosamente",
@@ -23,18 +23,18 @@ public class SubFamiliaService : ISubFamiliaService
         };
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.Subfamilia_Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Inventario.Subfamilia_Insert", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>("Almacen.SubFamilia_Update_Cancel", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Almacen.SubFamilia_Update_Cancel", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>("Inventario.Subfamilia_Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Inventario.Subfamilia_Update", parameters);
     }
 }

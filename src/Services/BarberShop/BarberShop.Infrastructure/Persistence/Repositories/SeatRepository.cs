@@ -1,8 +1,4 @@
-﻿using BarberShop.Domain.Repositories;
-using Common.Core.Models;
-using Common.Infrastructure.Repository.Implementations;
-
-namespace BarberShop.Infrastructure.Persistence.Repositories;
+﻿namespace BarberShop.Infrastructure.Persistence.Repositories;
 
 public class SeatRepository(BarberShopContext context) : BaseRepository<Seat>(context), ISeatRepository
 {

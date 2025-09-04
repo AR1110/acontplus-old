@@ -2,9 +2,9 @@ namespace Mechanical.Domain.Repositories;
 
 public interface ISupportRepository
 {
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateStateAsync(int id, int SupportStatusId);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateStateAsync(int id, int SupportStatusId);
 }
