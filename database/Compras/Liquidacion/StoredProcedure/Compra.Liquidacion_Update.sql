@@ -389,7 +389,7 @@ BEGIN
                           ,CustomerId   = @customerId
                     WHERE idTransaccion = @idTransaccion
 
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
+                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
 
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 				        BEGIN

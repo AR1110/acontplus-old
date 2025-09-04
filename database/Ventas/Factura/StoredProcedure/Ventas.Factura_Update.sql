@@ -461,7 +461,7 @@ BEGIN
                                   ,CustomerId   = @customerId
                             WHERE idTransaccion = @idTransaccion
 
-                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
+                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
                         END 
                     ELSE 
                         BEGIN

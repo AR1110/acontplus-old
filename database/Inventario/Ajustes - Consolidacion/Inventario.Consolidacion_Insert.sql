@@ -187,8 +187,8 @@ BEGIN
 
             --> Transaccion
             INSERT INTO Inventario.Transaccion
-                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
-            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante 
+                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante,fechaRegistro)
+            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante,fechaEmision
             FROM @tbComprobante 
 
             SET @idTransaccion = SCOPE_IDENTITY()

@@ -7,7 +7,8 @@ SELECT tr.idTransaccion
 	  ,tr.idDocumento
 	  ,tr.idUsuario
       ,tr.serieComprobante                                                          as nroDocumento
-      ,tr.fechaEmision                                                              as fechaRegistro
+      ,tr.fechaEmision                                                              
+      ,tr.fechaRegistro                                                             
       ,dt.idTransaccionDetalle
       ,dt.AjusteId                                                                  as particion
       ,dt.estado

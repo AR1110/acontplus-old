@@ -78,7 +78,6 @@ BEGIN
                     -- TRAN 
                     UPDATE dt SET   
                            dt.estado = 0
-                          ,dt.cantidadTransaccion = 0
                     FROM Inventario.TransaccionDetalle    dt WITH (ROWLOCK)
                     INNER JOIN Inventario.Transaccion     it WITH (ROWLOCK) ON it.idTransaccion     = dt.idTransaccion
                     WHERE it.idDocumento = @idDocumento 

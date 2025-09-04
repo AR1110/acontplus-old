@@ -62,7 +62,9 @@ BEGIN
 
 			UPDATE Inventario.Transaccion WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
                     
-            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, AjusteId = NULL ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
+            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, AjusteId = NULL WHERE idTransaccion = @idTransaccion
+
+            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET AjusteId = NULL WHERE AjusteId = @idTransaccion
            
             EXEC dbo.Transaccion_Handler_Init @codTran, @codDoc, @id, DEFAULT
 

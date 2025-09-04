@@ -199,7 +199,6 @@ BEGIN
 
             UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) 
                SET estado = 0
-                 ,cantidadTransaccion = 0
             WHERE idTransaccion IN( SELECT idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento AND idDocumento = @id )
 
             INSERT INTO Inventario.TransaccionDetalle 

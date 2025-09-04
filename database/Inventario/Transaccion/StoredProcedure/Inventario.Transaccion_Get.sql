@@ -50,8 +50,8 @@ BEGIN
 
 	        SET @params = '@idArticulo     INT
 				          ,@idBodega       INT
-				          ,@fechaI         DATETIME2
-				          ,@fechaF         DATETIME2
+				          ,@fechaInicio    DATETIME2
+				          ,@fechaFin       DATETIME2
 				          ,@idEntidad      INT
 				          ,@particion      INT
 				          ,@codTransaccion VARCHAR(2)'
@@ -126,7 +126,7 @@ BEGIN
 
 	        IF @checkBoxFecha = 1
 		        BEGIN
-			        SET @sql = @sql + 'AND CAST(fechaRegistro as date) BETWEEN CAST(@fechaI as date) AND CAST(@fechaF as date) '
+			        SET @sql = @sql + 'AND CAST(fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 		        END
 
 	        IF @checkBoxUltimaConsolidacion = 1
@@ -151,8 +151,8 @@ BEGIN
 		                            ,@idArticulo     = @byArticulo
 		                            ,@idEntidad      = @idEntidad
 		                            ,@idBodega       = @byBodega
-		                            ,@fechaI         = @fechaInicio
-		                            ,@fechaF         = @fechaFin
+		                            ,@fechaInicio    = @fechaInicio
+		                            ,@fechaFin       = @fechaFin
 		                            ,@particion      = @byParticion
 		                            ,@codTransaccion = @codTransaccion
 

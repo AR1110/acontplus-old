@@ -175,6 +175,8 @@ BEGIN
 
             UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
 
+            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET AjusteId = NULL WHERE AjusteId = @idTransaccion
+
             INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
 				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
 			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion * @valor,precioCosto,precioCostoFraccionado,precioUnitario,total
