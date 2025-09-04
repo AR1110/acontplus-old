@@ -47,7 +47,7 @@
             // fechaFin: fS.formatDateMoment(new Date()),
 
         }
-        $scope.recordsQuantity = [5,10, 25, 50, 100];
+        $scope.recordsQuantity = [5, 10, 25, 50, 100];
 
         $scope.tiposDoc = []
 
@@ -75,15 +75,15 @@
             }
         }
 
-        function refresh(){
+        function refresh() {
             getList()
         }
 
 
-        function getList(){
+        function getList() {
             try {
 
-                if ( $scope.dataSearch.nroSecuencial) {
+                if ($scope.dataSearch.nroSecuencial) {
                     if (
                         !fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                     ) {
@@ -102,13 +102,13 @@
                     });
                 }
 
-                showLoader();
+
                 let params = {
                     pageIndex: $scope.dataSearch.pageIndex,
                     pageSize: $scope.dataSearch.pageSize,
                     ckFecha: $scope.dataSearch.ckFecha,
-                    fechaInicio:fS.formatDateMoment( $scope.dataSearch.fechaInicio),
-                    fechaFin:  fS.formatDateMoment($scope.dataSearch.fechaFin),
+                    fechaInicio: fS.formatDateMoment($scope.dataSearch.fechaInicio),
+                    fechaFin: fS.formatDateMoment($scope.dataSearch.fechaFin),
                     nroSecuencial: fS.validAndFormatedRangeSequential(
                         $scope.dataSearch.nroSecuencial
                     ),
@@ -139,7 +139,7 @@
         initLoad();
         function initLoad() {
             try {
-                showLoader();
+
                 consolidacionInvSvc.getDataForm().then(response => {
                     mainDataForm = response;
                     let { estabs } = response;
@@ -157,7 +157,7 @@
                     })
                     .finally(() => hideLoader())
             } catch (error) {
-                hideLoader();
+
                 console.log(error)
             }
         }
@@ -165,7 +165,7 @@
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
             $scope.dataSearch.fechaFin = item.endDate
-             getList()
+            getList()
         }
 
         $scope.pagechanged = function () {
@@ -239,7 +239,7 @@
         $scope.openModalEditar = async (item) => {
             try {
 
-                showLoader();
+
                 consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
                     if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
                         modalSvc.openModalCustom({
@@ -255,7 +255,7 @@
                         }).result.then(result => {
 
                             if (result !== null && typeof result === 'object') {
-                               refresh()
+                                refresh()
                             }
                         })
 
@@ -264,7 +264,7 @@
                     console.log(error)
                 }).finally(() => hideLoader());
             } catch (error) {
-                hideLoader();
+
                 console.log(error)
             }
         }
@@ -273,7 +273,7 @@
         $scope.openModalDuplicar = async (item) => {
             try {
 
-                showLoader();
+
                 consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
                     if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
                         modalSvc.openModalCustom({
@@ -289,7 +289,7 @@
                         }).result.then(result => {
 
                             if (result !== null && typeof result === 'object') {
-                               refresh()
+                                refresh()
                             }
                         })
 
@@ -298,7 +298,7 @@
                     console.log(error)
                 }).finally(() => hideLoader());
             } catch (error) {
-                hideLoader();
+
                 console.log(error)
             }
         }
@@ -320,7 +320,7 @@
 
             if (isConfirmed) {
                 try {
-                    showLoader();
+
                     consolidacionInvSvc.anular(item.idConsolidacionInventario).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
@@ -334,7 +334,7 @@
                     }).finally(() => hideLoader())
                 } catch (error) {
                     console.log(error)
-                    hideLoader();
+
                 }
             }
         }
@@ -405,10 +405,12 @@
             enableCellEdit: false,
         }
 
-        function getDataTipoDoc(){
+        $scope.isEnabledDate = true;
+
+        function getDataTipoDoc() {
             let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento);
             if (dataDoc) {
-               return dataDoc;
+                return dataDoc;
             }
             return dataDoc;
         }
@@ -416,9 +418,12 @@
         $scope.onChangeTipoDocumento = async () => {
             let dataDoc = getDataTipoDoc();
             let dataMovimiento = {};
+            $scope.isEnabledDate = false;
 
             if (dataDoc.codigo == 'CI') {
-                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A')
+                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A');
+                $scope.isEnabledDate = true;
+
             }
 
             if (dataDoc.codigo == 'BI') {
@@ -433,6 +438,8 @@
             if (dataMovimiento) {
                 $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
             }
+            loadValidateDate();
+
 
         }
 
@@ -459,48 +466,48 @@
                 }
                 console.log('afterCellEdit', rowEntity, colDef, newValue, oldValue);
 
-                if(colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue && getDataTipoDoc().codigo === 'BI') {
-                     articuloSvc.checkNotificationStock({
-                    idArticulo: rowEntity.idArticulo,
-                    cantidad: newValue * rowEntity.conversion,
-                    idBodega: rowEntity.idBodega,
-                    idMedida: rowEntity.idMedida
-                }).then(async responseApi => { 
+                if (colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue && getDataTipoDoc().codigo === 'BI') {
+                    articuloSvc.checkNotificationStock({
+                        idArticulo: rowEntity.idArticulo,
+                        cantidad: newValue * rowEntity.conversion,
+                        idBodega: rowEntity.idBodega,
+                        idMedida: rowEntity.idMedida
+                    }).then(async responseApi => {
 
-                    let { code, message, titleSms } = responseApi;
+                        let { code, message, titleSms } = responseApi;
 
-                    // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
-                    if (code === "1") {
-                        
-                         setTotalColumn(rowEntity);
-                        setTotalDetalle();
-                        return;
-                    }
+                        // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                        if (code === "1") {
 
-                    // Muestra un mensaje de advertencia y espera la confirmación del usuario.
-                    let { isConfirmed } = await Swal.fire({
-                        title: `<small>${titleSms}</small>`,
-                        icon: 'warning',
-                        html: `<small>${message}</small>`,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    });
-
-                    // Según la confirmación, realiza acciones adicionales.
-                    if (isConfirmed) {
-                        if (code === "0") {
-                            // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
-                            rowEntity[colDef.field] = oldValue;
-                             setTotalColumn(rowEntity);
-                        setTotalDetalle();
-                            $("#custom-template-md-autocomplete-articulo").focus();
+                            setTotalColumn(rowEntity);
+                            setTotalDetalle();
+                            return;
                         }
-                        if (code === "2") {
-                             setTotalColumn(rowEntity);
-                        setTotalDetalle();
+
+                        // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                        let { isConfirmed } = await Swal.fire({
+                            title: `<small>${titleSms}</small>`,
+                            icon: 'warning',
+                            html: `<small>${message}</small>`,
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                        });
+
+                        // Según la confirmación, realiza acciones adicionales.
+                        if (isConfirmed) {
+                            if (code === "0") {
+                                // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                                rowEntity[colDef.field] = oldValue;
+                                setTotalColumn(rowEntity);
+                                setTotalDetalle();
+                                $("#custom-template-md-autocomplete-articulo").focus();
+                            }
+                            if (code === "2") {
+                                setTotalColumn(rowEntity);
+                                setTotalDetalle();
+                            }
                         }
-                    }
-                }) 
+                    })
                     return
                 }
 
@@ -600,7 +607,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento()
+                    $scope.onChangeTipoDocumento();
                 }
 
                 if (params.tipoRegistro === 3) {
@@ -625,7 +632,7 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento()
+                    $scope.onChangeTipoDocumento();
                 }
 
                 setColumnDefs();
@@ -633,6 +640,31 @@
             } catch (error) {
                 console.log(error)
             }
+        }
+
+        function loadValidateDate() {
+            const hoy = new Date();
+
+            const yyyy = hoy.getFullYear();
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+            $scope.minFecha = `${yyyy}-${mm}-${dd}`;
+
+            const fechaMax = new Date();
+            fechaMax.setDate(fechaMax.getDate() + 30);
+            const yyyyMax = fechaMax.getFullYear();
+            const mmMax = String(fechaMax.getMonth() + 1).padStart(2, '0');
+            const ddMax = String(fechaMax.getDate()).padStart(2, '0');
+            $scope.maxFecha = `${yyyyMax}-${mmMax}-${ddMax}`;
+        }
+
+        function isValidDateRange(fecha) {
+            if (!fecha) return false;
+            const fechaSeleccionada = new Date(fecha);
+            const minDate = new Date($scope.minFecha);
+            const maxDate = new Date($scope.maxFecha);
+
+            return fechaSeleccionada >= minDate && fechaSeleccionada <= maxDate;
         }
 
         function setDefaultTipoDoc() {
@@ -645,6 +677,7 @@
             if (dataMovimiento) {
                 $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
             }
+            loadValidateDate();
         }
 
         function setColumnDefs() {
@@ -1008,12 +1041,12 @@
         }
 
         function resetQuantityZero() {
-            
-                    for (let item of $scope.gridOptions.data) {
-                        item.cantidad =0;
-                        setTotalColumn(item);
-                    }
-                    setTotalDetalle(); 
+
+            for (let item of $scope.gridOptions.data) {
+                item.cantidad = 0;
+                setTotalColumn(item);
+            }
+            setTotalDetalle();
         }
 
         function addRow() {
@@ -1181,6 +1214,11 @@
                 return
             }
 
+            if (!isValidDateRange($scope.data.fechaEmision)) {
+                tS.toastr('warning', `La fecha debe estar entre ${$scope.minFecha} y ${$scope.maxFecha}.`);
+                return;
+            }
+
             if ($scope.gridOptions.data.length === 0) {
                 tS.toastr('warning', 'Ingrese al menos un articulo en el Detalle');
                 return
@@ -1206,11 +1244,11 @@
                 }
 
                 if (isRegister()) {
-                    showLoader();
+
                     serieComprobante = await consolidacionInvSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision,
                     })
-                    hideLoader();
+
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
                     titleSwal = '<small>Guardar el documento <b>' + documento + '</b> </small>';
                     confirmButtonText = 'Guardar';
@@ -1242,7 +1280,7 @@
                     detalles: $scope.gridOptions.data,
                     itemsDeleted
                 })
-                showLoader();
+
                 if (isUpdate()) {
                     consolidacionInvSvc.put($scope.data.idConsolidacionInventario, dataMapeado)
                         .then($scope.successResponse)
@@ -1260,7 +1298,7 @@
                 }
 
             } catch (error) {
-                hideLoader();
+
                 console.log(error)
             }
         }
@@ -1457,7 +1495,7 @@
 
         function getArticles() {
             try {
-                showLoader();
+
                 $scope.articulosNotFounded = [];
                 importedExcel = false;
 
@@ -1482,7 +1520,7 @@
                     console.log(error)
                 }).finally(() => hideLoader())
             } catch (error) {
-                hideLoader();
+
                 console.log(error)
             }
         }

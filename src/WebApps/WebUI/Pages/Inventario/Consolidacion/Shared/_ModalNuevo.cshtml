@@ -65,7 +65,8 @@
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" name="fechaEmision" ng-model="data.fechaEmision"
-                        class="form-control border-select">
+                        class="form-control border-select" min="{{minFecha}}" max="{{maxFecha}}"
+                        ng-disabled="!isEnabledDate">
                 </div>
             </div>
 
