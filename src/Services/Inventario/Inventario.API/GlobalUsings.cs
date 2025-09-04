@@ -1,6 +1,5 @@
 global using Acontplus.Core.DTOs.Responses;
 global using Acontplus.Core.Validation;
-global using Acontplus.Utilities;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Utilities;
 global using Acontplus.S3Application.Interfaces;
@@ -19,4 +18,3 @@ global using Inventario.Infrastructure.Persistence;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Newtonsoft.Json;
-global using Newtonsoft.Json.Serialization;

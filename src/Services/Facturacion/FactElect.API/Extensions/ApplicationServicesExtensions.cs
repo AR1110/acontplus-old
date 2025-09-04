@@ -1,14 +1,13 @@
-using Microsoft.AspNetCore.ResponseCompression;
-using Scrutor;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
-using Acontplus.FactElect.Interfaces.Services;
 using Acontplus.FactElect.Services.Authentication;
 using Acontplus.FactElect.Services.Conversion;
 using Acontplus.FactElect.Services.External;
 using Acontplus.FactElect.Services.Validation;
 using Acontplus.Utilities.Time;
 using FactElect.Application.Services.Sri;
+using Microsoft.AspNetCore.ResponseCompression;
+using Scrutor;
+using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace FactElect.API.Extensions;
 
@@ -40,13 +39,7 @@ public static class ApplicationServicesExtensions
 
         services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddControllers();
         services.ConfigureHttpJsonOptions(options =>
         {
             options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());

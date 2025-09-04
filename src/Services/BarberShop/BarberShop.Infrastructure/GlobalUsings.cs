@@ -1,12 +1,12 @@
-﻿global using System.Data;
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.DTOs.Requests;
 global using Acontplus.Core.DTOs.Responses;
 global using Acontplus.Persistence.Common.Repositories;
-global using BarberShop.Domain.Entities;
-global using Acontplus.Persistence.SqlServer.Context;
 global using Acontplus.Persistence.SqlServer.Configurations;
+global using Acontplus.Persistence.SqlServer.Context;
+global using BarberShop.Domain.Entities;
 global using BarberShop.Domain.Repositories;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.Extensions.Logging;
+global using System.Data;

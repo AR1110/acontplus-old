@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Tickets.Services;
+namespace BarberShop.Application.Tickets.Services;
 
 public class TicketService(ITicketRepository ticketRepository) : ITicketService
 {
@@ -10,7 +10,9 @@ public class TicketService(ITicketRepository ticketRepository) : ITicketService
     public async Task<SpResponse> GetTicketByIdAsync(int id)
     {
         var ticket = await ticketRepository.GetTicketByIdAsync(id);
-        return new SpResponse { Code =
+        return new SpResponse
+        {
+            Code =
             ticket is not null ? "1" : "0",
             Payload = ticket
         };

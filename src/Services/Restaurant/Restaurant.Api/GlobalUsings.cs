@@ -1,4 +1,3 @@
-global using Acontplus.Utilities;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Utilities;
 global using Acontplus.Services.Configuration;

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Application.DTOs;
 
 namespace Restaurant.Api.Controllers;
 

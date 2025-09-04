@@ -1,5 +1,5 @@
-using Common.Domain.Entities;
 using Acontplus.Notifications.Entities;
+using Common.Domain.Entities;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Common.Infrastructure.Persistence.Configurations;

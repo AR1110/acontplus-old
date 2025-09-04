@@ -1,8 +1,8 @@
 using Acontplus.Persistence.SqlServer.Configurations;
+using Acontplus.Persistence.SqlServer.Context;
 using Loyalty.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using Acontplus.Persistence.SqlServer.Context;
 
 namespace Loyalty.Infrastructure.Persistence.Configurations;
 

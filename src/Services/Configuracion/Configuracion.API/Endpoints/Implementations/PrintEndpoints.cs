@@ -1,5 +1,3 @@
-﻿using Acontplus.Core.Abstractions.Context;
-
 namespace Configuracion.API.Endpoints.Implementations;
 
 public class PrintEndpoints(

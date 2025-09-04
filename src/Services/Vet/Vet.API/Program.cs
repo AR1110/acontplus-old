@@ -1,7 +1,7 @@
-using Serilog;
-using System.Runtime.InteropServices;
 using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Middleware;
+using Serilog;
+using System.Runtime.InteropServices;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()

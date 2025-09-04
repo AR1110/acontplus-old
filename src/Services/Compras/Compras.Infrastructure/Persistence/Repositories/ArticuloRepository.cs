@@ -1,5 +1,3 @@
-using Acontplus.Core.DTOs.Requests;
-
 namespace Compras.Infrastructure.Persistence.Repositories;
 
 public class ArticuloRepository(IAdoRepository adoRepository) : IArticuloRepository

@@ -1,5 +1,3 @@
-using Ventas.Application.DTOs;
-
 namespace Ventas.API.Controllers;
 
 public class EmpresaController(IEmpresaService _svc) : BaseApiController

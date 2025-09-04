@@ -1,5 +1,3 @@
-﻿using Ventas.Application.DTOs;
-
 namespace Ventas.API.Controllers;
 
 public class NotaEntregaController : BaseApiController

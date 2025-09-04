@@ -1,5 +1,3 @@
-﻿using Acontplus.Core.Abstractions.Context;
-
 namespace FactElect.API.Endpoints.Implementations.RetencionAts;
 
 public class DocSustentoEndpoints(IDocSustentoService docSustentoService, IUserContext userContext)

@@ -1,5 +1,3 @@
-using Acontplus.Core.Abstractions.Persistence;
-
 namespace Common.Application.Services;
 
 public class NotificationService(IAdoRepository adoRepository) : INotificationService
