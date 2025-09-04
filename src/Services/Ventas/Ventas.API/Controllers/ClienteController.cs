@@ -1,3 +1,5 @@
+using Acontplus.Core.Extensions;
+
 namespace Ventas.API.Controllers;
 
 public class ClienteController(IClienteService clienteService) : BaseApiController
@@ -41,7 +43,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", JsonConvert.SerializeObject(data) }
+            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", JsonExtensions.SerializeOptimized(data) }
         };
         return Ok(await clienteService.AddAsync(parameters));
     }
@@ -52,7 +54,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
         var parameters = new Dictionary<string, object>
         {
             { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
-            { "json", JsonConvert.SerializeObject(data) }
+            { "json", JsonExtensions.SerializeOptimized(data) }
         };
         return Ok(await clienteService.UpdateAsync(parameters));
     }

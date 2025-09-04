@@ -1,3 +1,4 @@
+using Acontplus.Core.Extensions;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Configuracion.API.Controllers;
@@ -29,7 +30,7 @@ public class FirmaElectronicaController(
             ContentType = file.ContentType,
             Content = FileData.GetFileByte(file)
         };
-        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+        var data = JsonExtensions.DeserializeOptimized<FirmaElectronica>(json);
 
         var cert = new X509Certificate2(signFile.Content, data.contrasenia,
                   X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
@@ -52,7 +53,7 @@ public class FirmaElectronicaController(
     [HttpPut("Put")]
     public async Task<IActionResult> Put(string json)
     {
-        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+        var data = JsonExtensions.DeserializeOptimized<FirmaElectronica>(json);
 
         var parameters = new Dictionary<string, object>
         {

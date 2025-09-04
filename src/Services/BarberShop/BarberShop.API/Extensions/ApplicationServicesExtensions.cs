@@ -49,9 +49,9 @@ public static class ApplicationServicesExtensions
 
         string[] trascientNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Acontplus.Persistence.SqlServer.Repositories",
             "BarberShop.Infrastructure.Persistence.Repositories",
-            "Common.Services.Extensions"
+            "Acontplus.Services.Extensions"
         ];
         services.Scan(scan => scan
             .FromApplicationDependencies()

@@ -63,8 +63,8 @@ public static class ApplicationServicesExtensions
         // Other services that can be transient
         string[] transientNamespaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions"
         ];
 
         // Register transient services

@@ -1,3 +1,4 @@
+using Acontplus.Core.Extensions;
 using Inventario.API.Dtos;
 
 namespace Inventario.API.Controllers;
@@ -32,7 +33,7 @@ public class ArticuloController(
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
+        var data = JsonExtensions.DeserializeOptimized<CreateArticuloDto>(json);
 
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
@@ -66,7 +67,7 @@ public class ArticuloController(
     [HttpPost("PostByApp")]
     public async Task<IActionResult> PostByApp(string json)
     {
-        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
+        var data = JsonExtensions.DeserializeOptimized<CreateArticuloDto>(json);
 
         var parameters = new Dictionary<string, object>
     {
@@ -82,7 +83,7 @@ public class ArticuloController(
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var data = JsonConvert.DeserializeObject<UpdateArticuloDto>(json);
+        var data = JsonExtensions.DeserializeOptimized<UpdateArticuloDto>(json);
         var parameters = new Dictionary<string, object>
     {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },

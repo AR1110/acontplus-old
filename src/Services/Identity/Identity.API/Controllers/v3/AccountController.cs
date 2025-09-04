@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Acontplus.Core.Extensions;
 
 namespace Identity.API.Controllers.v3;
 
@@ -28,7 +27,7 @@ public class AccountController(
 
         if (response.Code == "1")
         {
-            List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+            List<UserData> userData = JsonExtensions.DeserializeOptimized<List<UserData>>(response.Payload);
 
             switch (userData.Count)
             {
@@ -60,13 +59,7 @@ public class AccountController(
                         {
                             Code = "0",
                             Message = "Login Correcto!",
-                            Payload = JsonConvert.SerializeObject(userData,
-                                new JsonSerializerSettings
-                                {
-                                    ContractResolver =
-                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                    Formatting = Formatting.Indented
-                                })
+                            Payload = JsonExtensions.SerializeOptimized(userData)
                         });
                     }
             }
@@ -114,12 +107,7 @@ public class AccountController(
         {
             Code = "0",
             Message = "Login Correcto!",
-            Payload = JsonConvert.SerializeObject(userData,
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                    Formatting = Formatting.Indented
-                })
+            Payload = JsonExtensions.SerializeOptimized(userData)
         });
     }
 }

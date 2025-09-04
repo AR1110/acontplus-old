@@ -17,4 +17,4 @@ global using Inventario.Domain.Repositories;
 global using Inventario.Infrastructure.Persistence;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Newtonsoft.Json;
+

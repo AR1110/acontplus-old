@@ -1,4 +1,6 @@
-﻿namespace Identity.API.Controllers.v2;
+﻿using Acontplus.Core.Extensions;
+
+namespace Identity.API.Controllers.v2;
 
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiController]
@@ -23,7 +25,7 @@ public class AccountController(
 
         if (response.Code != "1" || string.IsNullOrEmpty(response.Payload)) return Ok(response);
 
-        List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+        List<UserData> userData = JsonExtensions.DeserializeOptimized<List<UserData>>(response.Payload);
 
         if (userData.Count != 1) return Ok(response);
 

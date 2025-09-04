@@ -76,7 +76,7 @@ public static class ApplicationServicesExtensions
             "Restaurant.Application.Services",
             "Restaurant.Infrastructure.Persistence.Repositories",
             "Common.S3Application.Services",
-            "Common.Infrastructure.Repository.Implementations"
+            "Acontplus.Persistence.SqlServer.Repositories"
         ];
 
         services.Scan(scan => scan

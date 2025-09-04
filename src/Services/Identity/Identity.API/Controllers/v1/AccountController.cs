@@ -1,5 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Acontplus.Core.Extensions;
 
 namespace Identity.API.Controllers.v1;
 
@@ -26,7 +25,7 @@ public class AccountController(
 
         if (response.Code == "1" && !string.IsNullOrEmpty(response.Payload))
         {
-            List<UserData> userData = Newtonsoft.Json.JsonConvert.DeserializeObject<List<UserData>>(response.Payload);
+            List<UserData> userData = JsonExtensions.DeserializeOptimized<List<UserData>>(response.Payload);
 
             if (authRequest.ReturnUrl == "/") authRequest.ReturnUrl = null;
 
@@ -65,13 +64,7 @@ public class AccountController(
                         {
                             Code = "0",
                             Message = "Login Correcto!",
-                            Payload = JsonConvert.SerializeObject(userData,
-                                new JsonSerializerSettings
-                                {
-                                    ContractResolver =
-                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                    Formatting = Formatting.Indented
-                                })
+                            Payload = JsonExtensions.SerializeOptimized(userData)
                         });
                     }
                 case 1 when userData[0].NeedAuthorization:
@@ -79,26 +72,14 @@ public class AccountController(
                     {
                         Code = "0",
                         Message = "Su ingreso requiere ser autenticado, espere la confirmación!",
-                        Payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
+                        Payload = JsonExtensions.SerializeOptimized(userData)
                     });
                 case > 1:
                     return Ok(new SpResponse
                     {
                         Code = "0",
                         Message = "Seleccione la empresa!",
-                        Payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
+                        Payload = JsonExtensions.SerializeOptimized(userData)
                     });
             }
         }
@@ -155,13 +136,7 @@ public class AccountController(
         {
             Code = "0",
             Message = "Login Correcto!",
-            Payload = JsonConvert.SerializeObject(userData,
-                new JsonSerializerSettings
-                {
-                    ContractResolver =
-                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                    Formatting = Formatting.Indented
-                })
+            Payload = JsonExtensions.SerializeOptimized(userData)
         });
     }
 

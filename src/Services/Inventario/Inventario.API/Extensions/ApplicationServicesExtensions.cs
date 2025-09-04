@@ -42,7 +42,7 @@ public static class ApplicationServicesExtensions
             "Inventario.Application.Services",
             "Inventario.Infrastructure.Repositories",
             "Common.S3Application.Services",
-            "Common.Infrastructure.Repository.Implementations"
+            "Acontplus.Persistence.SqlServer.Repositories"
         ];
 
         services.Scan(scan => scan

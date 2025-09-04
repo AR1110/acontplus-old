@@ -34,8 +34,8 @@ public static class ApplicationServicesExtensions
         string[] scopedNameSpaces =
         [
             "Common.Application.Services",
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions"
         ];
 
         services.Scan(scan => scan

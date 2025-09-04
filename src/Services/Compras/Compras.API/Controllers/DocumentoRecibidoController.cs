@@ -1,3 +1,4 @@
+using Acontplus.Core.Extensions;
 using Acontplus.FactElect.Interfaces.Services;
 using Acontplus.FactElect.Models.Documents;
 using Acontplus.FactElect.Services.Documents;
@@ -51,8 +52,8 @@ public class DocumentoRecibidoController(
             {
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") },
                 { "idDocumento", id },
-                { "jsonData", JsonConvert.SerializeObject(ceXml.Detalles) },
-                { "impuestos", JsonConvert.SerializeObject(ceXml.Impuestos) }
+                { "jsonData", JsonExtensions.SerializeOptimized(ceXml.Detalles) },
+                { "impuestos", JsonExtensions.SerializeOptimized(ceXml.Impuestos) }
             };
             await documentoTemp.AddAsync(details);
         }
@@ -76,7 +77,7 @@ public class DocumentoRecibidoController(
         if (!DataValidation.DataTableIsNull(dt))
         {
             var dsExistentDocument = await adoRepository.GetDataSetAsync("Recepcion.Documento_Check_Existence",
-                new Dictionary<string, object> { { "json", JsonConvert.SerializeObject(dt) } });
+                new Dictionary<string, object> { { "json", JsonExtensions.SerializeOptimized(dt) } });
 
             var dtExistent = dsExistentDocument.Tables.Count > 0 ? dsExistentDocument.Tables[0] : new DataTable();
             if (DataValidation.DataTableIsNull(dt))

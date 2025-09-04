@@ -14,6 +14,5 @@ global using Compras.Domain.Repositories;
 global using Compras.Infrastructure.Persistence;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Newtonsoft.Json;
 global using System.Data;
 global using System.Xml;

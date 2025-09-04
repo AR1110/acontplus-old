@@ -8,8 +8,6 @@ global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Newtonsoft.Json;
-global using Newtonsoft.Json.Serialization;
 global using TechnicalSupport.API.Extensions;
 global using TechnicalSupport.Application.DTOs;
 global using TechnicalSupport.Application.Interfaces;

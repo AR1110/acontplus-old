@@ -1,3 +1,5 @@
+using Acontplus.Core.Extensions;
+
 namespace Inventario.API.Controllers;
 
 public class SubcategoryPhotoController(
@@ -64,7 +66,7 @@ public class SubcategoryPhotoController(
             {
                 Id = 0
             };
-            data = JsonConvert.DeserializeObject<SubcategoryPhoto>(json);
+            data = JsonExtensions.DeserializeOptimized<SubcategoryPhoto>(json);
             data.UpdatedByUserId = User.GetUserId();
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file,

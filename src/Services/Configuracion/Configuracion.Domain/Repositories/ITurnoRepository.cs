@@ -1,4 +1,6 @@
-﻿namespace Configuracion.Domain.Repositories;
+using Configuracion.Domain.Models;
+
+namespace Configuracion.Domain.Repositories;
 
 public interface ITurnoRepository
 {

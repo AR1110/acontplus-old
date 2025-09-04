@@ -6,7 +6,7 @@ global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
 global using Microsoft.AspNetCore.Mvc;
-global using Newtonsoft.Json;
+
 global using Ventas.API.Extensions;
 global using Ventas.Application.DTOs;
 global using Ventas.Application.Interfaces;

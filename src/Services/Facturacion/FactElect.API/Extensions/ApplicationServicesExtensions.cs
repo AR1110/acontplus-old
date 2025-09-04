@@ -13,7 +13,7 @@ namespace FactElect.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddBillingServices(this IServiceCollection services,
         IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddAdvancedLoggingOptions(configuration);
@@ -77,8 +77,8 @@ public static class ApplicationServicesExtensions
 
         string[] transientNameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions",
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions",
             "FactElect.Infrastructure.Persistence.Repositories"
         ];
 

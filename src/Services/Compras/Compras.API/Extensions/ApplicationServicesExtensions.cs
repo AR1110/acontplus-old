@@ -44,7 +44,7 @@ public static class ApplicationServicesExtensions
         [
             "Compras.Application.Services",
             "Compras.Infrastructure.Persistence.Repositories",
-            "Common.Infrastructure.Repository.Implementations"
+            "Acontplus.Persistence.SqlServer.Repositories"
         ];
 
         services.Scan(scan => scan

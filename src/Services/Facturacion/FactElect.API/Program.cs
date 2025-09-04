@@ -27,7 +27,9 @@ try
 
     // Add services to the container.
 
-    builder.Services.AddApplicationServices(builder.Configuration, builder.Environment);
+    builder.Services.AddAcontplusServices(builder.Configuration);
+
+    builder.Services.AddBillingServices(builder.Configuration, builder.Environment);
 
     builder.Services.AddJwtAuthentication(builder.Configuration);
 

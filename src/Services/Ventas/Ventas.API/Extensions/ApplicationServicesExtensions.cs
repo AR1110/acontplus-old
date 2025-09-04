@@ -26,7 +26,7 @@ public static class ApplicationServicesExtensions
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
+            "Acontplus.Persistence.SqlServer.Repositories",
             "Ventas.Application.Services"
         ];
 

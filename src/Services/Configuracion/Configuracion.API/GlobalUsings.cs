@@ -27,4 +27,4 @@ global using Configuracion.Domain.Repositories;
 global using Configuracion.Infrastructure.Persistence;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Newtonsoft.Json;
+
