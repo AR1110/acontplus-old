@@ -1,8 +1,8 @@
 using Acontplus.Core.Abstractions.Persistence;
 using Acontplus.Core.DTOs.Requests;
+using Acontplus.Core.DTOs.Responses;
 using FactElect.Domain.Repositories;
 using System.Data;
-using Acontplus.Core.DTOs.Responses;
 
 namespace FactElect.Infrastructure.Persistence.Repositories;
 

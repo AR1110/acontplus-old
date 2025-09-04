@@ -1,5 +1,3 @@
-using Acontplus.Persistence.SqlServer.Utilities;
-
 namespace Vet.API.Controllers;
 
 public class PetController(IPetRepository petService) : BaseApiController

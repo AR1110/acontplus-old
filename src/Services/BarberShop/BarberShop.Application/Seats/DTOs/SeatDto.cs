@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Seats.DTOs;
+namespace BarberShop.Application.Seats.DTOs;
 
 public class SeatDto
 {
@@ -7,6 +7,6 @@ public class SeatDto
     public required string Code { get; set; }
     public required string Name { get; set; }
     public string? Description { get; set; }
-    public int CreatedByUserId  { get; set; }
+    public int CreatedByUserId { get; set; }
     public int UpdatedByUserId { get; set; }
 }

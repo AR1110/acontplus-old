@@ -8,67 +8,67 @@ public class ArticuloController(
     IArticuloService articuloService)
     : BaseApiController
 {
-  private const string BucketDirectory = "/articulos/";
+    private const string BucketDirectory = "/articulos/";
 
-  [HttpGet]
-  public async Task<IActionResult> Get(string json)
-  {
-    if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
+    [HttpGet]
+    public async Task<IActionResult> Get(string json)
+    {
+        if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
 
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
-    return Ok(await articuloService.GetAsync(parameters));
-  }
+        return Ok(await articuloService.GetAsync(parameters));
+    }
 
-  [HttpGet("{id}")]
-  public async Task<IActionResult> GetById(int id)
-  {
-    var parameters = new Dictionary<string, object> { { "id", id } };
-    return Ok(await articuloService.GetByIdAsync(parameters));
-  }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var parameters = new Dictionary<string, object> { { "id", id } };
+        return Ok(await articuloService.GetByIdAsync(parameters));
+    }
 
-  [HttpPost]
-  public async Task<IActionResult> Post(string json, IFormFile file)
-  {
-    var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
+    [HttpPost]
+    public async Task<IActionResult> Post(string json, IFormFile file)
+    {
+        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
 
-    if (file != null)
-      await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
+        if (file != null)
+            await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
 
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
     {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data!)) },
         { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
         { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
     };
-    var response = await articuloService.AddAsync(parameters);
+        var response = await articuloService.AddAsync(parameters);
 
-    switch (response.Code)
-    {
-      case "1" when file != null:
+        switch (response.Code)
         {
-          var s3Response = await storageService.UploadAsync(s3ObjectCustom);
+            case "1" when file != null:
+                {
+                    var s3Response = await storageService.UploadAsync(s3ObjectCustom);
 
-          break;
+                    break;
+                }
         }
+
+        return Ok(response);
     }
 
-    return Ok(response);
-  }
+    /**
+     * Se agrega este metódo porque ocurre un montón de problemas
+     * con métodos que aceptan argumentos de tipo archivo
+     */
+    [HttpPost("PostByApp")]
+    public async Task<IActionResult> PostByApp(string json)
+    {
+        var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
 
-  /**
-   * Se agrega este metódo porque ocurre un montón de problemas
-   * con métodos que aceptan argumentos de tipo archivo
-   */
-  [HttpPost("PostByApp")]
-  public async Task<IActionResult> PostByApp(string json)
-  {
-    var data = JsonConvert.DeserializeObject<CreateArticuloDto>(json);
-
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
     {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data!)) },
@@ -76,42 +76,42 @@ public class ArticuloController(
         { "s3ObjectUrl", "" }
     };
 
-    return Ok(await articuloService.AddAsync(parameters));
-  }
+        return Ok(await articuloService.AddAsync(parameters));
+    }
 
-  [HttpPut("{id}")]
-  public async Task<IActionResult> Put(int id, string json)
-  {
-    var data = JsonConvert.DeserializeObject<UpdateArticuloDto>(json);
-    var parameters = new Dictionary<string, object>
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, string json)
+    {
+        var data = JsonConvert.DeserializeObject<UpdateArticuloDto>(json);
+        var parameters = new Dictionary<string, object>
     {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },
         { "id", id },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateArticuloDto>(data!)) }
     };
 
-    return Ok(await articuloService.UpdateAsync(parameters));
-  }
+        return Ok(await articuloService.UpdateAsync(parameters));
+    }
 
-  [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete(int id)
-  {
-    var parameters = new Dictionary<string, object>
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var parameters = new Dictionary<string, object>
             { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
-    return Ok(await articuloService.DeleteAsync(parameters));
-  }
+        return Ok(await articuloService.DeleteAsync(parameters));
+    }
 
-  [HttpGet("Search")]
-  public async Task<IActionResult> Search(string json)
-  {
-    if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
+    [HttpGet("Search")]
+    public async Task<IActionResult> Search(string json)
+    {
+        if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
 
-    var parameters = new Dictionary<string, object>
+        var parameters = new Dictionary<string, object>
     {
         { "userRoleId", User.GetClaimValue<int>("userRoleId") },
         { "json", SqlStringParam.Sanitize(json) }
     };
 
-    return Ok(await articuloService.SearchAsync(parameters));
-  }
+        return Ok(await articuloService.SearchAsync(parameters));
+    }
 }

@@ -1,7 +1,8 @@
 global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.DTOs.Common;
 global using Acontplus.Core.DTOs.Responses;
 global using Acontplus.Core.Validation;
-global using Acontplus.Utilities;
+global using Acontplus.Utilities.Data;
 global using Configuracion.Application.Interfaces;
 global using Configuracion.Application.Interfaces.Printing;
 global using Configuracion.Application.Interfaces.Sri;
@@ -9,5 +10,3 @@ global using Configuracion.Application.Interfaces.WizardConfig;
 global using Configuracion.Domain.Models;
 global using System.ComponentModel.DataAnnotations;
 global using System.Data;
-global using Acontplus.Core.DTOs.Common;
-global using Acontplus.Utilities.Data;

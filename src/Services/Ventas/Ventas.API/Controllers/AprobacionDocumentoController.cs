@@ -1,8 +1,3 @@
-﻿using Acontplus.Persistence.SqlServer.Utilities;
-using Acontplus.Services.Extensions.Context;
-using Acontplus.Utilities.Data;
-using Ventas.Application.DTOs;
-
 namespace Ventas.API.Controllers;
 
 public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController

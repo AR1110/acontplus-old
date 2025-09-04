@@ -1,10 +1,9 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Restaurant.Infrastructure.Persistence;
+using Acontplus.S3Application.Models;
+using Acontplus.Utilities.Time;
 using Scrutor;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
-using Acontplus.S3Application.Models;
 
 namespace Restaurant.Api.Extensions;
 
@@ -15,13 +14,15 @@ public static class ApplicationServicesExtensions
     {
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddControllers();
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
+            options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        });
 
         services.AddOpenApi();
 

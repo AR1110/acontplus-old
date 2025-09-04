@@ -1,6 +1,8 @@
+using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace Configuracion.API.Extensions;
 
@@ -29,14 +31,15 @@ public static class ApplicationServicesExtensions
         services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddControllers();
 
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
+            options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        });
 
         // Services that should be scoped (have dependencies on ConfigContext)
         string[] scopedNamespaces =

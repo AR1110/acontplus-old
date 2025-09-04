@@ -1,5 +1,5 @@
-using Common.Domain.Entities;
 using Acontplus.Notifications.Entities;
+using Common.Domain.Entities;
 using System.Reflection;
 
 namespace Common.Infrastructure.Persistence;

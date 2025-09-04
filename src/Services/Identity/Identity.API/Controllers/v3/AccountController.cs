@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Identity.API.Controllers.v3;
@@ -33,42 +33,42 @@ public class AccountController(
             switch (userData.Count)
             {
                 case 1:
-                {
-                    userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
-
-                    var token = tokenService.CreateToken(userData.FirstOrDefault());
-
-                    if (token == null || string.IsNullOrEmpty(token.Token))
-                        return BadRequest("Error al iniciar session");
-
-                    userData.ForEach(x => x.Token = token.Token);
-
-                    var loginHistory = new LoginHistory
                     {
-                        CreatedByUserId = userData[0].UserId,
-                        UserRoleId = userData[0].UserRoleId,
-                        UserAgent = authRequest.UserAgent,
-                        Token = token.Token,
-                        TokenExpiration = token.Expires,
-                        IsMobileRequest = fromMobile,
-                        Id = 0
-                    };
-                    await loginHistoryService.AddAsync(loginHistory);
-                    loginHistory.UserAgent = authRequest.UserAgent;
-                    await accountService.AddNotificationAsync(loginHistory);
-                    return Ok(new SpResponse
-                    {
-                        Code = "0",
-                        Message = "Login Correcto!",
-                        Payload = JsonConvert.SerializeObject(userData,
-                            new JsonSerializerSettings
-                            {
-                                ContractResolver =
-                                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                                Formatting = Formatting.Indented
-                            })
-                    });
-                }
+                        userData.ForEach(x => x.UrlGateway = config["ApiGateways:Acontplus"]);
+
+                        var token = tokenService.CreateToken(userData.FirstOrDefault());
+
+                        if (token == null || string.IsNullOrEmpty(token.Token))
+                            return BadRequest("Error al iniciar session");
+
+                        userData.ForEach(x => x.Token = token.Token);
+
+                        var loginHistory = new LoginHistory
+                        {
+                            CreatedByUserId = userData[0].UserId,
+                            UserRoleId = userData[0].UserRoleId,
+                            UserAgent = authRequest.UserAgent,
+                            Token = token.Token,
+                            TokenExpiration = token.Expires,
+                            IsMobileRequest = fromMobile,
+                            Id = 0
+                        };
+                        await loginHistoryService.AddAsync(loginHistory);
+                        loginHistory.UserAgent = authRequest.UserAgent;
+                        await accountService.AddNotificationAsync(loginHistory);
+                        return Ok(new SpResponse
+                        {
+                            Code = "0",
+                            Message = "Login Correcto!",
+                            Payload = JsonConvert.SerializeObject(userData,
+                                new JsonSerializerSettings
+                                {
+                                    ContractResolver =
+                                        new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
+                                    Formatting = Formatting.Indented
+                                })
+                        });
+                    }
             }
         }
         else

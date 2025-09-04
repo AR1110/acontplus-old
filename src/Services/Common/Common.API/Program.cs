@@ -1,9 +1,9 @@
 using Acontplus.Services.Configuration;
+using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Middleware;
 using Common.API.Endpoints;
 using Serilog;
-using Acontplus.Services.Extensions;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()

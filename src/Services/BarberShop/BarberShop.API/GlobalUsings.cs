@@ -1,13 +1,13 @@
-﻿global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Core.Abstractions.Context;
 global using Acontplus.Core.DTOs.Requests;
 global using Acontplus.Core.DTOs.Responses;
-global using BarberShop.Application.Seats.DTOs;
 global using Acontplus.Logging;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Authentication;
 global using Acontplus.Services.Extensions.Middleware;
 global using BarberShop.Api.Endpoints.Interfaces;
+global using BarberShop.Application.Seats.DTOs;
 global using BarberShop.Application.Seats.Interfaces;
 global using BarberShop.Application.Tickets.DTOs;
 global using BarberShop.Application.Tickets.Interfaces;

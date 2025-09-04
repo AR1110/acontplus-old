@@ -1,8 +1,8 @@
+using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace Mechanical.API.Extensions;
 
@@ -24,13 +24,15 @@ public static class ApplicationServicesExtensions
 
         services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddControllers();
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
+            options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+        });
 
         services.AddDbContextPool<MechanicalContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
