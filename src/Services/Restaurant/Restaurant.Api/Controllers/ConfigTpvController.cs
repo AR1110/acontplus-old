@@ -9,7 +9,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     {
         var response =
             await configService.GetAsync(new Dictionary<string, object>
-                { { "idRol", User.GetClaimValue<int>("userRoleId") } });
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") } });
 
         return Ok(response);
     }
@@ -19,7 +19,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     {
         var response = await configService.AddAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -29,7 +29,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
     {
         var response = await configService.UpdateAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -40,7 +40,7 @@ public class ConfigTpvController(IConsumptionConfigService configService) : Base
         var response =
             await configService.DeleteAsync(new Dictionary<string, object>
             {
-                { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
+                { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
             });
         return Ok(response);
     }

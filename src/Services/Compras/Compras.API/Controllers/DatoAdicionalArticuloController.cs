@@ -10,7 +10,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloRepository da
     {
         var parameters = new Dictionary<string, object>
     {
-        { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
         { "json", SqlStringParam.Sanitize(json) }
     };
         return Ok(await datoAdicionalArticuloService.GetAsync(parameters));
@@ -21,7 +21,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloRepository da
     {
         var parameters = new Dictionary<string, object>
     {
-        { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
         { "idDocumento", id },
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<InfoAdicionalDto>(data)) }
     };
@@ -33,7 +33,7 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloRepository da
     {
         var parameters = new Dictionary<string, object>
       {
-          { "idUsuarioRol", User.GetClaimValue<int>(UserRoleClaimType) },
+          { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
           { "idInfoAdicional", idInfoAdicional }
       };
         return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));

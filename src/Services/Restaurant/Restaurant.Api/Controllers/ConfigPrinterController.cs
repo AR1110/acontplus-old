@@ -9,7 +9,7 @@ public class ConfigPrinterController(IConsumptionConfigService configService) : 
     {
         var response =
             await configService.GetPrinterAsync(
-                new Dictionary<string, object> { { "idRol", User.GetClaimValue<int>("userRoleId") } });
+                new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") } });
         return Ok(response);
     }
 
@@ -18,7 +18,7 @@ public class ConfigPrinterController(IConsumptionConfigService configService) : 
     {
         var response = await configService.AddPrinterAsync(
             new Dictionary<string, object>
-                { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "estado", estado } });
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "estado", estado } });
         return Ok(response);
     }
 }

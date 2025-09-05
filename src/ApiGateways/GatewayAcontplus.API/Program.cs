@@ -98,10 +98,6 @@ try
 
     app.UseResponseCompression();
 
-    //app.UseMiddleware<RequestCountingMiddleware>();
-
-    app.UseAcontplusExceptionHandling();
-
     app.UseAcontplusServices(builder.Environment);
 
     app.UseRouting();

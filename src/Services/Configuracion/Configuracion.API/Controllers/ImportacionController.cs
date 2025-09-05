@@ -14,7 +14,7 @@ public class ImportacionController(IImportacionService importacionService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "codImportacion", codImportacion },
             { "json", SqlStringParam.Sanitize(data.jsonParams) }
         };
@@ -26,7 +26,7 @@ public class ImportacionController(IImportacionService importacionService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(data.jsonParams) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(data.jsonParams) }
         };
         return Ok(await importacionService.AddAsync(codImportacion, parameters));
     }

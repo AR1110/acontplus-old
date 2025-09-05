@@ -25,13 +25,13 @@ public class StockFisicoService(IAdoRepository _repository) : IStockFisicoServic
         return await _repository.QuerySingleOrDefaultAsync<SpResponse>("Inventario.StockFisico_Update", parameters);
     }
 
-    //public async Task<LegacySpResponse> DeleteAsync(int id)
+    //public async Task<SpResponse> DeleteAsync(int id)
     //{
 
     //    var dt = await _repository.GetDataTableAsync("Inventario.StockFisico_Delete", null);
     //    if (!DataValidation.DataTableIsNull(dt))
     //    {
-    //        _response.Create("1", payload: DataTableMapper.MapDataRowToModel<LegacySpResponse>(dt.Rows[0]));
+    //        _response.Create("1", payload: DataTableMapper.MapDataRowToModel<SpResponse>(dt.Rows[0]));
     //    }
     //    else
     //    {

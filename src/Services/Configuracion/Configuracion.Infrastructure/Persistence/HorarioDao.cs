@@ -4,16 +4,19 @@ public class HorarioDao
 {
     private readonly IConfiguration _config;
     private readonly string _connectionStrings = string.Empty;
-    protected LegacySpResponse _gr;
+    protected SpResponse _gr;
 
     public HorarioDao(IConfiguration config)
     {
         _config = config;
         _connectionStrings = _config.GetConnectionString("DefaultConnection");
-        _gr = new LegacySpResponse();
+        _gr = new SpResponse
+        {
+            Code = "5001"
+        };
     }
 
-    public async Task<LegacySpResponse> ReadHorarioAsync(int idRol, int idTurno)
+    public async Task<SpResponse> ReadHorarioAsync(int userRoleId, int idTurno)
     {
         var listar = new List<HorarioViewModel>();
         try
@@ -22,7 +25,7 @@ public class HorarioDao
             {
                 using (var cmd = new SqlCommand("ASPHorarioRead", con))
                 {
-                    cmd.Parameters.AddWithValue("idRol", idRol);
+                    cmd.Parameters.AddWithValue("userRoleId", userRoleId);
                     cmd.Parameters.AddWithValue("idTurno", idTurno);
                     cmd.CommandType = CommandType.StoredProcedure;
                     await con.OpenAsync();
@@ -30,46 +33,46 @@ public class HorarioDao
                     {
                         while (reader.Read())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
-                            if (_gr.id == "1")
-                            {
-                                var item = new HorarioViewModel
-                                {
-                                    horario = new Horario
-                                    {
-                                        idHorario = reader.GetInt32(4),
-                                        apertura = reader.GetTimeSpan(5).ToString(),
-                                        cierre = reader.GetTimeSpan(6).ToString(),
-                                        estado = reader.GetBoolean(7)
-                                    },
-                                    diaSemana = reader.GetString(8),
-                                    diaLaborable = reader.GetString(9),
-                                    clase = reader.GetString(10)
-                                };
-                                listar.Add(item);
-                            }
+                            // _gr.id = reader.GetString(0);
+                            // _gr.typeNotify = reader.GetString(1);
+                            // _gr.message = reader.GetString(2);
+                            // _gr.titleSms = reader.GetString(3);
+                            // if (_gr.id == "1")
+                            // {
+                            //     var item = new HorarioViewModel
+                            //     {
+                            //         horario = new Horario
+                            //         {
+                            //             idHorario = reader.GetInt32(4),
+                            //             apertura = reader.GetTimeSpan(5).ToString(),
+                            //             cierre = reader.GetTimeSpan(6).ToString(),
+                            //             estado = reader.GetBoolean(7)
+                            //         },
+                            //         diaSemana = reader.GetString(8),
+                            //         diaLaborable = reader.GetString(9),
+                            //         clase = reader.GetString(10)
+                            //     };
+                            //     listar.Add(item);
+                            // }
                         }
                     }
                 }
             }
 
-            _gr.data = listar;
+            // _gr.data = listar;
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
-            _gr.typeNotify = "warning";
-            _gr.message = ex.Message;
-            _gr.titleSms = "Listar Horario";
+            // _gr.id = "0";
+            // _gr.typeNotify = "warning";
+            // _gr.message = ex.Message;
+            // _gr.titleSms = "Listar Horario";
         }
 
         return _gr;
     }
 
-    public async Task<LegacySpResponse> ListDiaAsycn()
+    public async Task<SpResponse> ListDiaAsycn()
     {
         var listar = new List<HorarioViewModel>();
         try
@@ -84,36 +87,36 @@ public class HorarioDao
                     {
                         while (reader.Read())
                         {
-                            _gr.id = reader.GetString(0);
-                            _gr.typeNotify = reader.GetString(1);
-                            _gr.message = reader.GetString(2);
-                            _gr.titleSms = reader.GetString(3);
-                            if (_gr.id == "1")
-                            {
-                                var item = new HorarioViewModel();
-                                item.horario = new Horario
-                                {
-                                    idDia = reader.GetInt32(4),
-                                    estado = reader.GetBoolean(5),
-                                    apertura = reader.GetString(6),
-                                    cierre = reader.GetString(7)
-                                };
-                                item.diaSemana = reader.GetString(8);
-                                listar.Add(item);
-                            }
+                            // _gr.id = reader.GetString(0);
+                            // _gr.typeNotify = reader.GetString(1);
+                            // _gr.message = reader.GetString(2);
+                            // _gr.titleSms = reader.GetString(3);
+                            // if (_gr.id == "1")
+                            // {
+                            //     var item = new HorarioViewModel();
+                            //     item.horario = new Horario
+                            //     {
+                            //         idDia = reader.GetInt32(4),
+                            //         estado = reader.GetBoolean(5),
+                            //         apertura = reader.GetString(6),
+                            //         cierre = reader.GetString(7)
+                            //     };
+                            //     item.diaSemana = reader.GetString(8);
+                            //     listar.Add(item);
+                            // }
                         }
                     }
                 }
             }
 
-            _gr.data = listar;
+            // _gr.data = listar;
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
-            _gr.typeNotify = "warning";
-            _gr.message = ex.Message;
-            _gr.titleSms = "Listar Dias de la Semana";
+            // _gr.id = "0";
+            // _gr.typeNotify = "warning";
+            // _gr.message = ex.Message;
+            // _gr.titleSms = "Listar Dias de la Semana";
         }
 
         return _gr;

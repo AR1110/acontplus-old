@@ -14,7 +14,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await transportistaService.GetAsync(parameters));
     }
@@ -24,7 +24,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "idTipoIdentificacion", data.idTipoIdentificacion },
             { "nroIdentificacion", data.nroIdentificacion },
             { "nombre", data.nombre }
@@ -37,7 +37,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             { "nroIdentificacion", data.nroIdentificacion },
             { "nombre", data.nombre }
@@ -49,7 +49,7 @@ public class TransportistaController(ITransportistaService transportistaService)
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await transportistaService.DeleteAsync(parameters));
     }
 }

@@ -10,7 +10,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var response = await service.GetAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) return NoContent();
 
@@ -51,7 +51,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
     {
         var response = await service.GetByIdAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
         if (response == null) return NoContent();
 

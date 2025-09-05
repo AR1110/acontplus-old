@@ -9,7 +9,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.GetAsync(parameters));
     }
@@ -20,7 +20,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.GetDataFormAsync(parameters));
     }
@@ -32,7 +32,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
 
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await clienteService.SearchAsync(parameters));
     }
@@ -43,7 +43,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", JsonExtensions.SerializeOptimized(data) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", JsonExtensions.SerializeOptimized(data) }
         };
         return Ok(await clienteService.AddAsync(parameters));
     }
@@ -53,7 +53,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", JsonExtensions.SerializeOptimized(data) }
         };
         return Ok(await clienteService.UpdateAsync(parameters));
@@ -63,7 +63,7 @@ public class ClienteController(IClienteService clienteService) : BaseApiControll
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await clienteService.DeleteAsync(parameters));
     }
 

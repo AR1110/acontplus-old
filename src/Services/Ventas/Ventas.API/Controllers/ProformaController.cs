@@ -7,7 +7,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await svc.GetAsync(parameters));
     }
@@ -42,7 +42,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
 
         return Ok(await svc.DeleteAsync(parameters));
     }
@@ -51,7 +51,7 @@ public class ProformaController(IProformaService svc) : BaseApiController
     public async Task<IActionResult> GetId(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await svc.GetByIdAsync(parameters));
     }
 

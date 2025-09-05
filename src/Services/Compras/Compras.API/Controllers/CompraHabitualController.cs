@@ -8,7 +8,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.GetAsync(parameters));
     }
@@ -18,7 +18,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
     {
-      { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
       { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraHabitualDto>(compraHabitualDto)) }
     };
         return Ok(await compraHabitualService.AddAsync(parameters));
@@ -29,7 +29,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.UpdateAsync(parameters));

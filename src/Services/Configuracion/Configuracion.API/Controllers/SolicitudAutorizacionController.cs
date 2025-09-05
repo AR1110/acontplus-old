@@ -44,7 +44,7 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _svc.GetAsync(parameters));
     }

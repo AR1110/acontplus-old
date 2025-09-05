@@ -4,13 +4,13 @@
     app.controller('kardexCtrl', kardexCtrl);
 
     kardexCtrl.$inject = [
-        '$scope', 
-        '$injector' 
+        '$scope',
+        '$injector'
     ];
 
     function kardexCtrl($scope, $injector) {
- 
-     
+
+
         let transaccionSvc = $injector.get('TransaccionService');
         let articuloSvc = $injector.get('articuloService');
         let modalSvc = $injector.get('modalService');
@@ -43,7 +43,7 @@
         $scope.dataArticulo = {};
         $scope.data = {};
 
-        //Rango Fechas 
+        //Rango Fechas
         let thisMoment = moment()
         let startOfMonth = moment(thisMoment).startOf('month')
         let endOfMonth = moment(thisMoment).endOf('month')
@@ -184,17 +184,17 @@
                 paginationSizeSelector: [50, 100],
                 // layout:"fitDataFill",
                 // layout: "fitDataStretch",
-                // layout:"fitColumns", 
+                // layout:"fitColumns",
                 layout: "fitDataFill",
 
-                //layout:"fitDataTable",           
+                //layout:"fitDataTable",
                 //renderHorizontal:"virtual",
                 // autoColumns:true,
                 columnHeaderVertAlign: "bottom",
-                // movableRows:true,              
+                // movableRows:true,
                 rowFormatter: function (row) {
                     if (row.getData().tipoDoc === 'CIV') {
-                        // row.getElement().classList().add(row.getData().style);                                        
+                        // row.getElement().classList().add(row.getData().style);
                         row.getElement().style.backgroundColor = "#fedf7e";
                     }
                     if (row.getData().style === 'table-danger') {
@@ -446,7 +446,7 @@
             }
         }
 
-        //Search Kardex 
+        //Search Kardex
         $scope.searchKardex = function () {
             if (!($scope.dataSearch.byArticulo > 0)) {
                 tS.toastr('warning', 'Seleccione el Articulo');
@@ -513,7 +513,7 @@
             if (!formatType) return
 
             let parameters = {
-                hasIdUsuarioRol: true,
+                hasUserRoleIdl: true,
                 reportParams: JSON.stringify({
                     codigo: "RK",
                     format: formatType,

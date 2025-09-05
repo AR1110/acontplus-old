@@ -7,7 +7,7 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await svc.GetAsync(parameters));
     }
@@ -42,7 +42,7 @@ public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiC
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await svc.DeleteAsync(parameters);
         return Ok(response);
     }

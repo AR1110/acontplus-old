@@ -45,7 +45,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
     $scope.dataArticulo = {};
     $scope.data = {};
 
-    //Rango Fechas 
+    //Rango Fechas
     let thisMoment = moment()
     let startOfMonth = moment(thisMoment).startOf('month')
     let endOfMonth = moment(thisMoment).endOf('month')
@@ -186,17 +186,17 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
             paginationSizeSelector: [50, 100],
             // layout:"fitDataFill",
             // layout: "fitDataStretch",
-            // layout:"fitColumns", 
+            // layout:"fitColumns",
             layout: "fitDataFill",
 
-            //layout:"fitDataTable",           
+            //layout:"fitDataTable",
             //renderHorizontal:"virtual",
             // autoColumns:true,
             columnHeaderVertAlign: "bottom",
-            // movableRows:true,              
+            // movableRows:true,
             rowFormatter: function (row) {
                 if (row.getData().tipoDoc === 'CIV') {
-                    // row.getElement().classList().add(row.getData().style);                                        
+                    // row.getElement().classList().add(row.getData().style);
                     row.getElement().style.backgroundColor = "#fedf7e";
                 }
                 if (row.getData().style === 'table-danger') {
@@ -448,7 +448,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         }
     }
 
-    //Search Kardex 
+    //Search Kardex
     $scope.searchKardex = function () {
         if (!($scope.dataSearch.byArticulo > 0)) {
             tS.toastr('warning', 'Seleccione el Articulo');
@@ -515,7 +515,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
         if (!formatType) return
 
         let parameters = {
-            hasIdUsuarioRol: true,
+            hasUserRoleIdl: true,
             reportParams: JSON.stringify({
                 codigo: "RK",
                 format: formatType,
@@ -621,7 +621,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
 
                     modalSvc.openModalCustom({
                         controller: ctrl,
-                        template: template, 
+                        template: template,
                         size: 'xl',
                         params: {
                             codDoc: "FC",
@@ -667,7 +667,7 @@ function modalKardexCtrl($scope, $injector, $uibModalInstance, params) {
                     })
                 }
 
-                 
+
             }
 
 

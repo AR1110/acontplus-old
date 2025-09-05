@@ -14,7 +14,7 @@ public class NotaEntregaController : BaseApiController
     {
         var response = await _svc.GetAsync(new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         if (response == null) return NoContent();
 
@@ -26,7 +26,7 @@ public class NotaEntregaController : BaseApiController
     {
         var response =
             await _svc.GetByIdAsync(new Dictionary<string, object>
-                { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
+                { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } });
         if (response == null) return NoContent();
 
         return Ok(new { code = "1", payload = response });

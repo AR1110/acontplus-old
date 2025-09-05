@@ -12,7 +12,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await documentoElectronicoService.GetAsync(parameters));
     }
@@ -22,7 +22,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await documentoElectronicoService.GetByStatusAsync(parameters));
     }
@@ -33,7 +33,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
         var parameters = new Dictionary<string, object>
         {
             {
-                "idUsuarioRol", User.GetClaimValue<int>(UserRoleId)
+                "userRoleId", User.GetClaimValue<int>(UserRoleId)
             }
         };
         return Ok(await documentoElectronicoService.GetDataFormAsync(parameters));
@@ -108,7 +108,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) },
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) },
             { "id", id }
         };
         var response = await documentoElectronicoService.GetXmlSriAsync(parameters);

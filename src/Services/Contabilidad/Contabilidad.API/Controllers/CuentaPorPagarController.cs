@@ -7,7 +7,7 @@ public class CuentaPorPagarController(ICuentaPorPagarRepository _svc) : BaseApiC
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
 
         return Ok(await _svc.GetAsync(parameters));
@@ -18,7 +18,7 @@ public class CuentaPorPagarController(ICuentaPorPagarRepository _svc) : BaseApiC
     {
         var parametros = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _svc.AddAsync(parametros));
     }
@@ -28,7 +28,7 @@ public class CuentaPorPagarController(ICuentaPorPagarRepository _svc) : BaseApiC
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "idCuentaPorPagar", id },
             { "json", SqlStringParam.Sanitize(data.cuotas) }
         };

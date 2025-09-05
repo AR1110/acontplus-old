@@ -9,7 +9,7 @@ public class DocRecDetailTempController(IDocRecDetailTempRepository detailTempSe
     {
         var parameters = new Dictionary<string, object>
     {
-      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
       { "idDocumento", idDocumento }, { "jsonData", "" }
     };
         return Ok(await detailTempService.GetAsync(parameters));
@@ -20,7 +20,7 @@ public class DocRecDetailTempController(IDocRecDetailTempRepository detailTempSe
     {
         var parameters = new Dictionary<string, object>
     {
-      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
       { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
         return Ok(await detailTempService.AddAsync(parameters));
@@ -31,7 +31,7 @@ public class DocRecDetailTempController(IDocRecDetailTempRepository detailTempSe
     {
         var parameters = new Dictionary<string, object>
     {
-      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
       { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
     };
         return Ok(await detailTempService.UpdateAsync(parameters));

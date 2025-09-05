@@ -4,7 +4,7 @@ namespace Configuracion.Application.DTOs;
 public record EstablishmentDto
 {
     public int? Id { get; set; }
-    public int? IdUsuarioRol { get; set; }
+    public int? userRoleId { get; set; }
     public int? DemoStepId { get; set; }
     public string? PtosEmi { get; set; }
     public string? Bodegas { get; set; }

@@ -7,7 +7,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     {
         var response = await companyCustomer.GetAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
@@ -45,7 +45,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     {
         var response = await companyCustomer.SearchAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }

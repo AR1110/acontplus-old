@@ -4,7 +4,6 @@ public class TurnoRepository : ITurnoRepository
 {
     private readonly IConfiguration _configuration;
     private readonly string _connectionStrings = string.Empty;
-    private readonly LegacySpResponse _gr = new();
     private readonly IAdoRepository _repository;
 
     public TurnoRepository(IAdoRepository respository, IConfiguration configuration)
@@ -21,77 +20,77 @@ public class TurnoRepository : ITurnoRepository
         return !DataValidation.DataTableIsNull(dt) ? DataConverters.DataTableToJson(dt) : null;
     }
 
-    public async Task<LegacySpResponse> CreateTurnoAsync(int idRol, Turno data)
+    public async Task<SpResponse> CreateTurnoAsync(int userRoleId, Turno data)
     {
-        await using (var con = new SqlConnection(_connectionStrings))
+        var response = new SpResponse
         {
-            await using (var cmd = new SqlCommand("ASPTurnoCreate", con))
-            {
-                cmd.Parameters.AddWithValue("idRol", idRol);
-                cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-                ////Horario del turno
-                var p = JsonExtensions.SerializeOptimized(data.horario);
-                cmd.Parameters.Add(new SqlParameter("json", p));
-                cmd.CommandType = CommandType.StoredProcedure;
-                await con.OpenAsync();
-                await using (var reader = await cmd.ExecuteReaderAsync())
-                {
-                    while (reader.Read())
-                    {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
-                    }
-                }
-            }
+            Code = "50001"
+        };
+        await using var con = new SqlConnection(_connectionStrings);
+        await using var cmd = new SqlCommand("ASPTurnoCreate", con);
+        cmd.Parameters.AddWithValue("userRoleId", userRoleId);
+        cmd.Parameters.AddWithValue("descripcion", data.Descripcion);
+        ////Horario del turno
+        var p = JsonExtensions.SerializeOptimized(data.Horarios);
+        cmd.Parameters.Add(new SqlParameter("json", p));
+        cmd.CommandType = CommandType.StoredProcedure;
+        await con.OpenAsync();
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (reader.Read())
+        {
+            response.Code = reader.GetString(0); // 0 -> Successful
+            response.Message = reader.GetString(1);
         }
 
-        return _gr;
+        return response;
     }
 
-    public async Task<LegacySpResponse> UpdateTurnoAsync(int idRol, Turno data)
+    public async Task<SpResponse> UpdateTurnoAsync(int userRoleId, Turno data)
     {
+        var response = new SpResponse
+        {
+            Code = "50001"
+        };
         try
         {
             await using var con = new SqlConnection(_connectionStrings);
             await using var cmd = new SqlCommand("ASPTurnoUpdate", con);
-            cmd.Parameters.AddWithValue("idRol", idRol);
-            cmd.Parameters.AddWithValue("idTurno", data.idTurno);
-            cmd.Parameters.AddWithValue("descripcion", data.descripcion);
-            cmd.Parameters.AddWithValue("estado", data.estado);
-            var p = JsonExtensions.SerializeOptimized(data.horario);
+            cmd.Parameters.AddWithValue("userRoleId", userRoleId);
+            cmd.Parameters.AddWithValue("idTurno", data.IdTurno);
+            cmd.Parameters.AddWithValue("descripcion", data.Descripcion);
+            cmd.Parameters.AddWithValue("estado", data.Estado);
+            var p = JsonExtensions.SerializeOptimized(data.Horarios);
             cmd.Parameters.Add(new SqlParameter("json", p));
             cmd.CommandType = CommandType.StoredProcedure;
             await con.OpenAsync();
             await using var reader = await cmd.ExecuteReaderAsync();
             while (reader.Read())
             {
-                _gr.id = reader.GetString(0);
-                _gr.typeNotify = reader.GetString(1);
-                _gr.message = reader.GetString(2);
-                _gr.titleSms = reader.GetString(3);
+                response.Code = reader.GetString(0); // 0 -> Successful
+                response.Message = reader.GetString(1);
             }
         }
         catch (Exception ex)
         {
-            _gr.id = "0";
-            _gr.typeNotify = "warning";
-            _gr.message = ex.Message;
-            _gr.titleSms = "Actualizar Turno";
+            response.Code = "50001"; // 0 -> Successful
+            response.Message = ex.Message;
         }
 
-        return _gr;
+        return response;
     }
 
-    public async Task<LegacySpResponse> ReadTurnoAsync(int idRol, int pageIndex, int pageSize)
+    public async Task<SpResponse> ReadTurnoAsync(int userRoleId, int pageIndex, int pageSize)
     {
+        var response = new SpResponse
+        {
+            Code = "50001"
+        };
         var listar = new List<TurnoViewModel>();
         await using (var con = new SqlConnection(_connectionStrings))
         {
             await using (var cmd = new SqlCommand("ASPTurnoRead", con))
             {
-                cmd.Parameters.AddWithValue("idRol", idRol);
+                cmd.Parameters.AddWithValue("userRoleId", userRoleId);
                 cmd.Parameters.AddWithValue("pageIndex", pageIndex);
                 cmd.Parameters.AddWithValue("pageSize", pageSize);
                 cmd.CommandType = CommandType.StoredProcedure;
@@ -100,44 +99,48 @@ public class TurnoRepository : ITurnoRepository
                 {
                     while (reader.Read())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
-                        switch (_gr.id)
-                        {
-                            case "1":
-                                {
-                                    var item = new TurnoViewModel
-                                    {
-                                        turno = new Turno
-                                        {
-                                            idTurno = reader.GetInt32(4),
-                                            descripcion = reader.GetString(5),
-                                            estado = reader.GetBoolean(6)
-                                        },
-                                        totalRecords = reader.GetInt32(7)
-                                    };
-                                    listar.Add(item);
-                                    break;
-                                }
-                        }
+                        // _gr.id = reader.GetString(0);
+                        // _gr.typeNotify = reader.GetString(1);
+                        // _gr.message = reader.GetString(2);
+                        // _gr.titleSms = reader.GetString(3);
+                        // switch (_gr.id)
+                        // {
+                        //     case "1":
+                        //     {
+                        //         var item = new TurnoViewModel
+                        //         {
+                        //             turno = new Turno
+                        //             {
+                        //                 idTurno = reader.GetInt32(4),
+                        //                 descripcion = reader.GetString(5),
+                        //                 estado = reader.GetBoolean(6)
+                        //             },
+                        //             totalRecords = reader.GetInt32(7)
+                        //         };
+                        //         listar.Add(item);
+                        //         break;
+                        //     }
+                        // }
                     }
                 }
             }
         }
 
-        _gr.data = listar;
-        return _gr;
+        // _gr.data = listar;
+        return response;
     }
 
-    public async Task<LegacySpResponse> DeleteTurnoAsync(int idRol, int idTurno)
+    public async Task<SpResponse> DeleteTurnoAsync(int userRoleId, int idTurno)
     {
+        var response = new SpResponse
+        {
+            Code = "50001"
+        };
         await using (var con = new SqlConnection(_connectionStrings))
         {
             await using (var cmd = new SqlCommand("ASPTurnoDelete", con))
             {
-                cmd.Parameters.AddWithValue("idRol", idRol);
+                cmd.Parameters.AddWithValue("userRoleId", userRoleId);
                 cmd.Parameters.AddWithValue("idTurno", idTurno);
                 cmd.CommandType = CommandType.StoredProcedure;
                 await con.OpenAsync();
@@ -145,16 +148,13 @@ public class TurnoRepository : ITurnoRepository
                 {
                     while (reader.Read())
                     {
-                        _gr.id = reader.GetString(0);
-                        _gr.typeNotify = reader.GetString(1);
-                        _gr.message = reader.GetString(2);
-                        _gr.titleSms = reader.GetString(3);
+                        response.Code = reader.GetString(0); // 0 -> Successful
+                        response.Message = reader.GetString(1);
                     }
                 }
             }
         }
 
-        _gr.titleSms = "Eliminar Turno";
-        return _gr;
+        return response;
     }
 }

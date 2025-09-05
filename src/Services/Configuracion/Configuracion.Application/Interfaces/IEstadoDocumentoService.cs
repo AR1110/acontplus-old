@@ -2,5 +2,5 @@
 
 public interface IEstadoDocumentoService
 {
-    Task<LegacySpResponse> GetAsync(string json);
+    Task<SpResponse> GetAsync(string json);
 }

@@ -7,7 +7,7 @@ public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await tiempoCreditoService.GetAsync(parameters));
     }
@@ -19,7 +19,7 @@ public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService)
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "fromMobile", fromMobile }
         };
@@ -31,7 +31,7 @@ public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await tiempoCreditoService.UpdateAsync(parameters));
@@ -41,7 +41,7 @@ public class TiempoCreditoController(ITiempoCreditoService tiempoCreditoService)
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await tiempoCreditoService.DeleteAsync(parameters));
     }
 }

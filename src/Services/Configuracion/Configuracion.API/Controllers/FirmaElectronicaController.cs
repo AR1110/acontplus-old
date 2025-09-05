@@ -13,7 +13,7 @@ public class FirmaElectronicaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await firmaElectronicaService.GetAsync(parameters));
     }

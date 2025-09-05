@@ -58,7 +58,7 @@
         $scope.cliente = {
 
         }
-        let idUsuarioRol = Number(decodeToken.userRoleId)
+        let userRoleId = Number(decodeToken.userRoleId)
 
         //---------------------------------Busqueda Avanzada ----------------------------------
         //========================Start Filters=================
@@ -85,7 +85,7 @@
         $scope.usuarioSearch = function (textSearch) {
             try {
                 let query = {
-                    idRol: idUsuarioRol,
+                    userRoleId: userRoleId,
                     busqueda: textSearch
                 }
 

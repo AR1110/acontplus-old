@@ -2,8 +2,8 @@
 
 public class Turno
 {
-    public int idTurno { get; set; }
-    public string descripcion { get; set; }
-    public bool estado { get; set; }
-    public List<Horario> horario { get; set; }
+    public int IdTurno { get; set; }
+    public string Descripcion { get; set; }
+    public bool Estado { get; set; }
+    public ICollection<Horario> Horarios { get; set; } =  new List<Horario>();
 }

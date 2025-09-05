@@ -7,7 +7,7 @@ public class ArticuloController(IArticuloRepository articuloService) : BaseApiCo
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "jsonData", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "jsonData", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloService.GetAsync(parameters));
     }

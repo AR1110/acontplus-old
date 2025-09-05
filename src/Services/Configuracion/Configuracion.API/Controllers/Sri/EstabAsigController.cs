@@ -9,7 +9,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     {
         var parameters = new Dictionary<string, object>
     {
-        { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
         { "json", json }
     };
         var response = await establecimientoAsignacionService.GetAsync(parameters);
@@ -21,7 +21,7 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     {
         var parameters = new Dictionary<string, object>
     {
-      { "idRol", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
       { "json", json }
     };
         return Ok(await establecimientoAsignacionService.GetDataFormAsync(parameters));

@@ -7,15 +7,15 @@ SendMailCtrl.$inject =  ['$scope', '$uibModalInstance', 'mainService', 'formular
 function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
     let {typeSend} = params
     $scope.data = params || {};
-    
-    let idUsuarioRol = Number(decodeToken.userRoleId)
+
+    let userRoleId = Number(decodeToken.userRoleId)
 
     $scope.correos = [];
-    // console.log($scope.data) 
-    // console.log(idUsuarioRol)
+    // console.log($scope.data)
+    // console.log(userRoleId)
     // console.log(typeSend)
     onInit();
-    function onInit() { 
+    function onInit() {
         if (("correo") in $scope.data && $scope.data.correo) {
             if ($scope.data.correo.includes(',')) {
                 $scope.correos = $scope.data.correo.split(',');
@@ -61,7 +61,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
             }
 
             fS.showLoaderSendEmail();
-           
+
             if (typeSend === 'N') {
                 url = 'Common/Notificacion/?json='
                 data = {
@@ -69,7 +69,7 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
                     serieComprobante: $scope.data.serieComprobante,
                     subject: $scope.data.subject,
                     params: $scope.data.json,
-                    idUsuarioRol,
+                    userRoleId,
                     receptor: $scope.correos.join('|')
                 }
 
@@ -113,20 +113,20 @@ function SendMailCtrl($scope, $uibModalInstance, mS, fS, params, decodeToken) {
     $scope.closeModal = function() {
         $uibModalInstance.close();
     }
-    
+
 
 }
 
 
 StatusEmail.$inject = ['$scope', '$uibModalInstance', 'mainService', 'commonService', 'toastService', 'formulario', 'params'];
- 
+
 function StatusEmail($scope, $uibModalInstance, mS, commonSvc, tS, fS, params) {
     $scope.data = params;
     $scope.estadoCorreos = [];
 
     $scope.typeSend = 'SRI';
 
-    
+
 
     onInit();
     function onInit() {

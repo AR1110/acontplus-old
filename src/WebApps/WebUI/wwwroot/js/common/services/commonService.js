@@ -190,7 +190,7 @@ class CommonService {
 
     //-------------------------------------Usuario--------------------------------
     /***
-     *  json = {busqueda, idRol}
+     *  json = {busqueda, userRoleId}
      */
     usuarioSearch(obj) {
         console.log(obj)

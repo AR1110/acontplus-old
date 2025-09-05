@@ -130,7 +130,7 @@ public class DocumentoRecibidoController(
 
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(json) },
             { "codDoc", dataComprobante.CodDoc },
             { "claveAcceso", dataComprobante.ClaveAcceso },
@@ -217,7 +217,7 @@ public class DocumentoRecibidoController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoMigrateDto>(data)) }
         };
         return Ok(await docRecibidoSvc.MigrateAsync(parameters));

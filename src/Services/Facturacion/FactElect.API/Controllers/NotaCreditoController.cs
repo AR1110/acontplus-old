@@ -7,7 +7,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await notaCreditoService.GetAsync(parameters));
     }
@@ -44,7 +44,7 @@ public class NotaCreditoController(INotaCreditoService notaCreditoService) : Bas
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await notaCreditoService.DeleteAsync(parameters));
     }
 }

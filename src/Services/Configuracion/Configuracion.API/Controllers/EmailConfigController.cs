@@ -7,7 +7,7 @@ public class EmailConfigController(IEmailConfigService emailConfigService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await emailConfigService.GetAsync(parameters));
     }
@@ -17,7 +17,7 @@ public class EmailConfigController(IEmailConfigService emailConfigService) : Bas
     {
         var parameters = new Dictionary<string, object>
       {
-          { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
+          { "userRoleId", User.GetClaimValue<int>("userRoleId") },
           { "idEmailConfig", id },
           { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateEmailConfigDto>(dto)) }
       };
