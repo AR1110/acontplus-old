@@ -11,7 +11,6 @@ global using Acontplus.Utilities.Format;
 global using Acontplus.Utilities.IO;
 global using Acontplus.Utilities.Mapping;
 global using Acontplus.Utilities.Services;
-global using Configuracion.API.Endpoints.Interfaces;
 global using Configuracion.API.Extensions;
 global using Configuracion.API.Helpers;
 global using Configuracion.Application.DTOs;

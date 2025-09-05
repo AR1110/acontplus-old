@@ -1,6 +1,5 @@
-﻿using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Middleware;
-using Configuracion.API.Extensions.Endpoints;
+﻿using Acontplus.Services.Extensions.Middleware;
+using Configuracion.API.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,19 +20,11 @@ try
         loggerConfiguration.ReadFrom.Services(services);
     });
 
-
     // Use AppConfiguration for loading settings
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    // Add services to the container.
-
-    builder.Services.AddApplicationServices(builder.Configuration);
     builder.Services.AddConfigurationServices(builder.Configuration);
-
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
@@ -43,11 +34,9 @@ try
 
     app.UseResponseCompression();
 
-    app.UseAcontplusExceptionHandling();
-
     app.UseAcontplusServices(builder.Environment);
 
-    app.MapPrinterEndpoints();
+    app.MapAllEndpoints();
 
     app.UseRouting();
 

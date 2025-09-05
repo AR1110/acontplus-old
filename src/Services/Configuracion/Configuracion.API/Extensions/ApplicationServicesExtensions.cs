@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
+using Acontplus.Services.Extensions.Authentication;
 
 namespace Configuracion.API.Extensions;
 
@@ -11,6 +12,12 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddConfigurationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
+        services.AddJwtAuthentication(configuration);
+
+        services.AddOpenApi();
+
         services.AddAdvancedLoggingOptions(configuration);
 
         services.AddHttpContextAccessor();
@@ -21,16 +28,6 @@ public static class ApplicationServicesExtensions
                 x => x.MigrationsAssembly("Configuracion.Infrastructure"));
         });
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
-
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
         services.AddControllers();
 
         services.ConfigureHttpJsonOptions(options =>
@@ -44,12 +41,13 @@ public static class ApplicationServicesExtensions
         // Services that should be scoped (have dependencies on ConfigContext)
         string[] scopedNamespaces =
         [
-            "Configuracion.API.Endpoints.Implementations",
             "Configuracion.Application.Services",
             "Configuracion.Application.Services.Printing",
             "Configuracion.Application.Services.Sri",
             "Configuracion.Application.Services.WizardConfig",
-            "Configuracion.Infrastructure.Persistence.Repositories"
+            "Configuracion.Infrastructure.Persistence.Repositories",
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions"
         ];
 
         // Register scoped services
@@ -59,21 +57,6 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime());
-
-        // Other services that can be transient
-        string[] transientNamespaces =
-        [
-            "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions"
-        ];
-
-        // Register transient services
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(transientNamespaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime());
 
         return services;
     }
