@@ -1,6 +1,6 @@
-﻿namespace Configuracion.API.Endpoints.PrinterDocumentEndpoints;
+namespace Configuracion.API.Endpoints.PrinterDocumentEndpoints;
 
-public static class RegisterEndpoints
+public static class RegisterPrintDocumentEndpoints
 {
     public static void MapPrinterDocumentEndpoints(this IEndpointRouteBuilder app)
     {
