@@ -4,9 +4,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-shift-add-edit-modal',
   imports: [],
   templateUrl: './shift-add-edit-modal.component.html',
-  styleUrl: './shift-add-edit-modal.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ShiftAddEditModalComponent {
-
-}
+export class ShiftAddEditModalComponent {}

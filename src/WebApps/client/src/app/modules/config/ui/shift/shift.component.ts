@@ -4,9 +4,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-shift',
   imports: [],
   templateUrl: './shift.component.html',
-  styleUrl: './shift.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ShiftComponent {
-
-}
+export class ShiftComponent {}
