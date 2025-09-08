@@ -4,11 +4,11 @@ import {
 } from "@accounting/comprobante-egreso/application/use-cases/get-comprobante-egreso-for-deletion.use-case";
 import {getValidId} from "@core/utils/utils";
 import Swal from "sweetalert2";
-import {instanceDecimal, minus} from "@core/utils/decimal.util";
 import {roundNumber} from "@core/utils/round-number.utils";
 import {
   AnularComprobanteEgresoUseCase
 } from "@accounting/comprobante-egreso/application/use-cases/anular-comprobante-egreso.use-case";
+import DecimalUtils from "@core/utils/decimal.util";
 
 @Directive({
   selector: '[appActionComprobanteEgresoAnular]'
@@ -22,7 +22,7 @@ export class ActionComprobanteEgresoAnularDirective {
   cantDocs = input(0)
   handleResult = output()
 
-  @HostListener('click', ['$event']) async onClick($event:MouseEvent){
+  @HostListener('click', ['$event']) async onClick(){
     if(!getValidId(this.id())){
       Swal.fire({
         icon: 'warning',
@@ -148,11 +148,11 @@ export class ActionComprobanteEgresoAnularDirective {
       if (!existeDato) {
         acc.push({
           idCuentaPorPagar: curr.idCuentaPorPagar,
-          abonoDoc: instanceDecimal<any>(curr.abonoDoc).toNumber(),
+          abonoDoc: curr.abonoDoc,
           abono,
         });
       } else {
-        existeDato.abono = instanceDecimal<any>(existeDato.abono).plus(curr.abono).toNumber();
+        existeDato.abono = DecimalUtils.addAsNumber(existeDato.abono, curr.abono);
       }
       return acc;
     }, []);
@@ -170,7 +170,7 @@ export class ActionComprobanteEgresoAnularDirective {
           abono,
         });
       } else {
-        existeDato.abono =  instanceDecimal<any>(existeDato.abono).plus(curr.abono);
+        existeDato.abono =  DecimalUtils.addAsNumber(existeDato.abono, curr.abono);
       }
       return acc;
     }, []);
@@ -178,12 +178,12 @@ export class ActionComprobanteEgresoAnularDirective {
     // Calcula los valores residuales y el estado de pago para cuentas por cobrar
     const tempCuentasPorPagar = cuentasAgrupado.map((item:any) => {
       //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
-      const valorResiduo = instanceDecimal<any>(item.abonoDoc).minus(item.abono).toNumber();
+      const valorResiduo = DecimalUtils.subtractAsNumber(item.abonoDoc, item.abono);
 
       //quitar cuando se haya validado bien tema de decimales en compras
       const abonoDocRounded = roundNumber(item.abonoDoc, 2);
       const abonoRounded = roundNumber(item.abono, 2)
-      const valorResiduoValidar = minus(abonoDocRounded, abonoRounded, 2);
+      const valorResiduoValidar = DecimalUtils.subtractAsNumber(abonoDocRounded, abonoRounded, 2);
 
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -194,7 +194,7 @@ export class ActionComprobanteEgresoAnularDirective {
 
     // Calcula los valores residuales y el estado de pago para cuotas por cobrar
     const tempCuotasPorCobrar = cuotasAgrupado.map((item:any) => {
-      const valorResiduo = instanceDecimal<any>(item.abonoCuota).minus(item.abono).toNumber()
+      const valorResiduo = DecimalUtils.subtractAsNumber(item.abonoCuota, item.abono)
 
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
