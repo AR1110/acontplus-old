@@ -110,19 +110,20 @@ BEGIN
     --> Configuraciones de politicas
     IF @tipo = 2
         BEGIN
-
             SET @tableNames = 'data'
 
-            DECLARE @LicenseTypeId INT
-                   ,@message       VARCHAR(500)
-                   ,@PolicyType    INT
-                   ,@startDate     DATETIME2
-                   ,@endDate       DATETIME2
-                   ,@isActive      BIT
-                   ,@codePolicy    VARCHAR(50)
-                   ,@codeApp       VARCHAR(50)
-                   ,@PolicyValue   VARCHAR(100)
+            DECLARE @LicenseTypeId           INT
+                   ,@message                 VARCHAR(500)
+                   ,@PolicyType              INT
+                   ,@startDate               DATETIME2
+                   ,@endDate                 DATETIME2
+                   ,@isActive                BIT
+                   ,@codePolicy              VARCHAR(50)
+                   ,@codeApp                 VARCHAR(50)
+                   ,@PolicyValue             VARCHAR(100)
                    ,@countTransaccionCompany INT
+                   ,@ruc                     VARCHAR(20)
+                   ,@codeLicense             VARCHAR(20)
 
             SELECT @codePolicy = codePolicy ,@codeApp = codeApp FROM OPENJSON(@json) WITH (codePolicy VARCHAR(20) ,codeApp VARCHAR(20))
 
@@ -131,6 +132,7 @@ BEGIN
             SELECT @LicenseTypeId = t5.LicenseTypeId
                   ,@startDate     = t2.StartDate
                   ,@endDate       = t2.EndDate
+                  ,@ruc           = t7.ruc
 	        FROM AcontplusAdmin.Sales.SuscripcionDetalle     t1 WITH (NOLOCK)
 	        INNER JOIN AcontplusAdmin.Sales.Suscripcion      t2 WITH (NOLOCK) ON t2.Id   = t1.SuscripcionId
 	        INNER JOIN AcontplusAdmin.Config.LicenciaDetalle t3 WITH (NOLOCK) ON t3.Id   = t1.LicenciaDetalleId
@@ -147,13 +149,20 @@ BEGIN
             --> validaciones por licencia donde controlamos los valores 
             SELECT TOP 1 @message     = t2.Description
                         ,@PolicyValue = t1.PolicyValue
+                        ,@codeLicense = t3.Code
             FROM AcontplusAdmin.Config.LicensePolicyConfiguration t1
             INNER JOIN AcontplusAdmin.Config.PolicyType           t2 ON t2.Id = t1.PolicyTypeId
             INNER JOIN AcontplusAdmin.Config.LicenseType          t3 ON t3.Id = t1.LicenseTypeId
             WHERE t1.LicenseTypeId = @LicenseTypeId
               AND t2.Code          = @codePolicy
-              AND t3.Code          = 'D'
 
+            IF @codeLicense != 'D'
+                BEGIN 
+                    IF @ruc NOT IN ('1717631848001','2200123962001')
+                        BEGIN
+                            SET @PolicyValue = -1;
+                        END
+                END 
 
             --> restrinccion de registro de documento electronicos
             IF @codePolicy = 'MAX_DOCUMENTS'
@@ -226,7 +235,7 @@ BEGIN
                 END
             ELSE
                 BEGIN
-                    IF @countTransaccionCompany < CAST(@PolicyValue AS INT)
+                    IF ISNULL(@countTransaccionCompany,0) < CAST(@PolicyValue AS INT)
                         SET @message = NULL
                 END
              

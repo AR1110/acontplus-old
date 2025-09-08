@@ -17,7 +17,7 @@ DECLARE @codTran VARCHAR(2), @codDoc VARCHAR(2), @documentoId INT;
 DECLARE @idTipoTransaccion INT, @idTipoDocumento INT, @idTransaccion INT;
 DECLARE @fechaTransaccion DATETIME2(7);
 DECLARE @idArticulo INT, @idBodega INT, @cantidadTransaccion NUMERIC(18,5) ,@estado BIT ;
-DECLARE @idTransaccionDetalle INT, @fechaConsolidacion DATETIME2(7);
+DECLARE @idTransaccionDetalle INT
 DECLARE @saldoAnterior NUMERIC(18,5);
 DECLARE @ErrorMessage NVARCHAR(4000);
 DECLARE @StartTime DATETIME2(7) = SYSDATETIME();
@@ -74,6 +74,17 @@ BEGIN
             BEGIN
             -- Begin transaction with proper isolation
             BEGIN TRANSACTION;
+
+            -- Optimized table variable for batch processing
+            DECLARE @ArticuloBodegaBatch TABLE (
+                RowNum INT IDENTITY(1,1) PRIMARY KEY
+               ,idTransaccionDetalle INT NOT NULL
+               ,idArticulo INT NOT NULL
+               ,idBodega INT NOT NULL
+               ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+               ,estado BIT NOT NULL
+               ,INDEX IX_ArticuloBodega_Lookup NONCLUSTERED (idArticulo, idBodega)
+            );
             
             -- Optimized cache lookups
             SELECT @idTipoTransaccion = idTipoTransaccion FROM @TipoTransaccionCache WHERE codigo = @codTran;
@@ -83,40 +94,31 @@ BEGIN
             -- SQL Server 2022+ optimized transaction lookup
             IF @codDoc = 'TB'
                 BEGIN
-                    SELECT TOP 1 @idTransaccion    = idTransaccion
-                                ,@fechaTransaccion = fechaEmision
-                    FROM Inventario.Transaccion WITH (INDEX(IX_Transaccion_enterprise_lookup))
-                    WHERE idTipoDocumento = @idTipoDocumento 
-                      AND idDocumento     = @documentoId;
+                    INSERT INTO @ArticuloBodegaBatch
+                          (idTransaccionDetalle,idArticulo,idBodega,cantidadTransaccion,estado)
+                    SELECT idTransaccionDetalle,idArticulo,idBodega,cantidadTransaccion,td.estado
+                    FROM Inventario.TransaccionDetalle td WITH (INDEX(IX_TransaccionDetalle_enterprise_perf))
+                    INNER JOIN Inventario.Transaccion  tr ON tr.idTransaccion = td.idTransaccion
+                    WHERE tr.idTipoDocumento = @idTipoDocumento 
+                      AND tr.idDocumento     = @documentoId
+                      AND td.estado = 1
                 END
             ELSE
                 BEGIN
                     SELECT TOP 1 @idTransaccion    = idTransaccion
-                                ,@fechaTransaccion = fechaEmision
+                                ,@fechaTransaccion = fechaRegistro
                     FROM Inventario.Transaccion WITH (INDEX(IX_Transaccion_enterprise_lookup))
                     WHERE idTipoDocumento   = @idTipoDocumento 
                       AND idTipoTransaccion = @idTipoTransaccion
                       AND idDocumento       = @documentoId;
-                END
 
-            -- Optimized table variable for batch processing
-            DECLARE @ArticuloBodegaBatch TABLE (
-                RowNum INT IDENTITY(1,1) PRIMARY KEY
-               ,idArticulo INT NOT NULL
-               ,idBodega INT NOT NULL
-               ,cantidadTransaccion NUMERIC(18,5) NOT NULL
-               ,estado BIT NOT NULL
-               ,INDEX IX_ArticuloBodega_Lookup NONCLUSTERED (idArticulo, idBodega)
-            );
-            
-            INSERT INTO @ArticuloBodegaBatch
-                  (idArticulo,idBodega,cantidadTransaccion,estado)
-            SELECT idArticulo,idBodega,cantidadTransaccion,estado
-            FROM Inventario.TransaccionDetalle WITH (INDEX(IX_TransaccionDetalle_enterprise_perf))
-            WHERE idTransaccion = @idTransaccion
-              AND deleted = 0
-              AND estado <> 2
-            ;
+                    INSERT INTO @ArticuloBodegaBatch
+                          (idTransaccionDetalle,idArticulo,idBodega,cantidadTransaccion,estado)
+                    SELECT idTransaccionDetalle,idArticulo,idBodega,cantidadTransaccion,estado
+                    FROM Inventario.TransaccionDetalle WITH (INDEX(IX_TransaccionDetalle_enterprise_perf))
+                    WHERE idTransaccion = @idTransaccion
+                      AND estado  = 1
+                END
 
             -- Process each article/warehouse combination with set-based operations
             DECLARE @MaxRows INT, @CurrentRow INT = 1;
@@ -124,14 +126,13 @@ BEGIN
 
             WHILE @CurrentRow <= @MaxRows
                 BEGIN
-                    SELECT @idArticulo = idArticulo ,@idBodega = idBodega ,@cantidadTransaccion = cantidadTransaccion ,@estado = estado FROM @ArticuloBodegaBatch WHERE RowNum = @CurrentRow;
+                    SELECT @idTransaccionDetalle = idTransaccionDetalle  ,@idArticulo = idArticulo ,@idBodega = idBodega ,@cantidadTransaccion = cantidadTransaccion ,@estado = estado FROM @ArticuloBodegaBatch WHERE RowNum = @CurrentRow;
 
                     --> Adjustment transactions
                     IF @codTran = 'A' 
                         BEGIN
                             --> Get latest adjustment transaction detail
                             SELECT TOP 1 @idTransaccionDetalle = td.idTransaccionDetalle
-                                        ,@fechaConsolidacion   = tr.fechaEmision
                             FROM Inventario.Transaccion              tr WITH (READCOMMITTED)
                             INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idTransaccion = tr.idTransaccion
                             INNER JOIN Inventario.TipoTransaccion    tt WITH (READCOMMITTED) ON tt.idTipoTransaccion = tr.idTipoTransaccion
@@ -139,7 +140,7 @@ BEGIN
                               AND td.idBodega = @idBodega
                               AND tt.codigo = 'A'
                               AND td.estado = 1
-                            ORDER BY tr.fechaEmision DESC;
+                            ORDER BY tr.fechaRegistro DESC;
 
                             --> Update affected transactions with proper window function
                             WITH CTE_TransaccionAfectadas AS
@@ -163,34 +164,24 @@ BEGIN
                             INNER JOIN CTE_TransaccionAfectadas af ON af.idTransaccionDetalle = td.idTransaccionDetalle;
 
                             -- Update stock reference
-                            UPDATE Inventario.Stock WITH (ROWLOCK)
-                            SET idTransaccionDetalle = @idTransaccionDetalle
-                            WHERE idArticulo = @idArticulo AND idBodega = @idBodega;
+                            UPDATE Inventario.Stock WITH (ROWLOCK) SET idTransaccionDetalle = @idTransaccionDetalle WHERE idArticulo = @idArticulo AND idBodega = @idBodega;
+
+                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET saldo = @cantidadTransaccion WHERE idTransaccionDetalle = @idTransaccionDetalle AND estado = 1
 
                             --> Calculate and update final stock
-                            UPDATE Inventario.Stock WITH (ROWLOCK)
-                            SET cantidad = Inventario.f_Stock(@idArticulo, @idBodega) 
-                            WHERE idBodega = @idBodega
-                              AND idArticulo = @idArticulo;
+                            UPDATE Inventario.Stock WITH (ROWLOCK) SET cantidad = Inventario.f_Stock(@idArticulo, @idBodega) WHERE idBodega = @idBodega AND idArticulo = @idArticulo;
 
                         END
                     --> Regular transactions
-                    ELSE IF @codTran <> 'A'
+                    ELSE 
                         BEGIN
                             --> Calculate and update final stock
-                            UPDATE Inventario.Stock WITH (ROWLOCK)
-                            SET cantidad = Inventario.f_Stock(@idArticulo, @idBodega) 
-                            WHERE idBodega = @idBodega
-                              AND idArticulo = @idArticulo;
+                            UPDATE Inventario.Stock WITH (ROWLOCK) SET cantidad = Inventario.f_Stock(@idArticulo, @idBodega) WHERE idBodega = @idBodega AND idArticulo = @idArticulo;
 
                             --> Get current stock and update transaction detail in one operation
                             SELECT @saldoAnterior = cantidad FROM Inventario.Stock WITH (READCOMMITTED) WHERE idBodega = @idBodega AND idArticulo = @idArticulo;
 
-                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET saldo = @saldoAnterior
-                            WHERE idTransaccion = @idTransaccion
-                              AND idBodega = @idBodega
-                              AND idArticulo = @idArticulo
-                              AND estado = 1;
+                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET saldo = @saldoAnterior WHERE idTransaccionDetalle = @idTransaccionDetalle AND estado = 1
                         END
 
                     -- Update article total stock
@@ -205,11 +196,7 @@ BEGIN
 
                     SET @CurrentRow = @CurrentRow + 1;
 
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET deleted = 1
-                    WHERE idTransaccion = @idTransaccion
-                      AND idBodega = @idBodega
-                      AND idArticulo = @idArticulo
-                      AND estado = 0;
+                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET deleted = 1 WHERE idTransaccionDetalle = @idTransaccionDetalle AND estado = 0
             END
 
             END CONVERSATION @RecvReqDlgHandle;

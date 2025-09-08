@@ -235,17 +235,10 @@ BEGIN
                           AND tr.idDocumento       = @idTransferenciaBodega
                             
                     )
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
-            FROM @tbTransaccionDetalle td
+                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion * IIF(tt.codigo = 'S',-1,1) ,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
+            FROM @tbTransaccionDetalle            td
+            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = td.idTipoTransaccion
 
-            UPDATE td SET td.cantidadTransaccion = td.cantidadTransaccion * -1
-            FROM Inventario.TransaccionDetalle    td
-            INNER JOIN Inventario.Transaccion     tr ON tr.idTransaccion     = td.idTransaccion
-            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
-            INNER JOIN Inventario.TipoDocumento   dt ON dt.idTipoDocumento   = tr.idTipoDocumento
-            WHERE dt.codigo = 'TB'
-              AND tt.codigo = 'S'
-              AND tr.idDocumento = @idTransferenciaBodega
 
 			UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
