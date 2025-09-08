@@ -32,21 +32,21 @@ CREATE OR ALTER VIEW Inventario.v_Articulo WITH SCHEMABINDING AS (
 		   ,a.fechaModificacion
 		   ,a.idMedida
 		   ,a.caducidad
-		,a.fechaCaducidad
-		,a.productoFraccionable fraccionado
-		,precioSinSubsidio = ISNULL(a.precioSinSubsidio, 0)
-		,observaciones = ISNULL(a.observaciones, '')
-		,colorRow = CASE WHEN a.stock <= 0                            THEN 'badge badge-danger'
-						 WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN 'badge badge-warning' 
-						 ELSE ''
-					END
-		,a.idUsuario
-		,(SELECT TOP 1 s3ObjectKey FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectKey
-		,(SELECT TOP 1 s3ObjectUrl FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectUrl
-		,ISNULL((SELECT TOP 1 Id          FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1),0) productPhotoId
-        ,ta.codigo as codTipoArticulo
-        ,fa.siglas as siglaFamilia
-        ,a.importacion
+		   ,a.fechaCaducidad
+		   ,a.productoFraccionable fraccionado
+		   ,precioSinSubsidio = ISNULL(a.precioSinSubsidio, 0)
+		   ,observaciones = ISNULL(a.observaciones, '')
+		   ,colorRow = CASE WHEN a.stock <= 0                            THEN 'badge badge-danger'
+						    WHEN a.stock > 0 AND a.stock < a.stockMinimo THEN 'badge badge-warning' 
+						    ELSE ''
+					   END
+		   ,a.idUsuario
+		   ,(SELECT TOP 1 s3ObjectKey FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectKey
+		   ,(SELECT TOP 1 s3ObjectUrl FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1) s3ObjectUrl
+		   ,ISNULL((SELECT TOP 1 Id          FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1),0) productPhotoId
+           ,ta.codigo as codTipoArticulo
+           ,fa.siglas as siglaFamilia
+           ,a.importacion
 	FROM dbo.Articulo            a WITH(NOLOCK)
 	INNER JOIN dbo.TipoIva      ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
 	 LEFT JOIN dbo.SubFamilia   sf WITH(NOLOCK) ON sf.idSubFamilia   = a.idSubFamilia
