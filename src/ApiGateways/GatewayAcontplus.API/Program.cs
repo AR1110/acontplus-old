@@ -2,6 +2,7 @@ using Acontplus.Logging;
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Infrastructure;
 using Acontplus.Services.Extensions.Middleware;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -60,6 +61,8 @@ try
 
     builder.Services.AddOcelot();
 
+    builder.Services.AddResponseCompressionServices();
+
     // Identity Services (adapt to your specific authentication mechanism)
     builder.Services.AddJwtAuthentication(builder.Configuration);
 
@@ -82,23 +85,13 @@ try
         .AddHealthChecks()
         .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
-    builder.Services.AddResponseCompression(options =>
-    {
-        options.EnableForHttps = true;
-        options.Providers.Add<BrotliCompressionProvider>();
-        options.Providers.Add<GzipCompressionProvider>();
-    });
-
-    builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-    builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
     var app = builder.Build();
 
     app.UseSerilogRequestLogging(); // Use Serilog for request logging
 
     app.UseResponseCompression();
 
-    app.UseAcontplusServices(builder.Environment);
+    app.UseAcontplusExceptionHandling();
 
     app.UseRouting();
 
@@ -109,6 +102,7 @@ try
 
     // Authentication and Authorization (adapt to your specific needs)
     app.UseAuthentication();
+
     app.UseAuthorization();
 
     // Default Route Redirect (consider a more elegant solution)

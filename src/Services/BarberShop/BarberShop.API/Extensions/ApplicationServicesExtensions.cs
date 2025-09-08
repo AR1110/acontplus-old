@@ -1,7 +1,7 @@
 using Scrutor;
 using System.IO.Compression;
 
-namespace BarberShop.Api.Extensions;
+namespace BarberShop.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -33,7 +33,7 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "BarberShop.Api.Endpoints.Implementations",
+            "BarberShop.API.Endpoints.Implementations",
             "BarberShop.Application.Seats.Services",
             "BarberShop.Application.Tickets.Services",
             "BarberShop.Application.WorkSessions.Services",

@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Api.Endpoints.Interfaces;
+namespace BarberShop.API.Endpoints.Interfaces;
 
 public interface ISeatEndpoints
 {
