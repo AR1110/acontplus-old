@@ -152,7 +152,7 @@ BEGIN
 
             SELECT idTipoTransaccion,codigo,descripcion FROM Inventario.TipoTransaccion WHERE codigo IN ('A','S','E') AND estado = 1
 
-            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI')
+            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OR')
 
             RETURN 
 		END
@@ -303,10 +303,10 @@ BEGIN
             IF @opcion = 6
                 BEGIN
 
-                     -- Crear tabla temporal para almacenar artículos sin consolidar
+                     -- Crear tabla temporal para almacenar artÃ­culos sin consolidar
 					CREATE TABLE #ArticulosSinConsolidar (idArticulo INT);
 
-					-- Insertar artículos que no están consolidados en la tabla temporal
+					-- Insertar artÃ­culos que no estÃ¡n consolidados en la tabla temporal
 					INSERT INTO #ArticulosSinConsolidar (idArticulo)
 					SELECT cd.idArticulo
 					FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
@@ -315,7 +315,7 @@ BEGIN
 					WHERE ci.idEntidad = @idEntidad 
 					AND ep.codigo = 'AC';
 
-					-- Agregar condiciones para filtrar artículos que no están en la tabla temporal
+					-- Agregar condiciones para filtrar artÃ­culos que no estÃ¡n en la tabla temporal
 					SET @sql += ' AND a.importacion = 1 
 									AND a.stock > 0
 									AND NOT EXISTS (
