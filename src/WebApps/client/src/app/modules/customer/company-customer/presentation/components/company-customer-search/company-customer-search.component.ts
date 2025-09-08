@@ -1,10 +1,14 @@
+import { CompanyCustomerAddEditDialogComponent } from '../company-customer-add-edit-dialog/company-customer-add-edit-dialog.component';
 import {
-  CdkOverlayOrigin,
-  FlexibleConnectedPositionStrategy,
-  Overlay,
-  OverlayModule,
-} from '@angular/cdk/overlay';
-import { AsyncPipe } from '@angular/common';
+  Observable,
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  finalize,
+  of,
+  startWith,
+  switchMap,
+} from 'rxjs';
 import {
   Component,
   computed,
@@ -16,35 +20,33 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { DialogService } from '@core/services/dialog.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ResponsiveService } from '@shared/services/responsive.service';
-import {
-  Observable,
-  catchError,
-  debounceTime,
-  distinctUntilChanged,
-  finalize,
-  of,
-  startWith,
-  switchMap,
-} from 'rxjs';
-import { CompanyCustomerUseCase } from '@company-customer/application/company-customer.use-case';
+import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 import {
   CompanyCustomerEntity,
   CompanyCustomerSearch,
 } from '@company-customer/domain/entities/company-customer.entity';
-import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
+import {
+  CdkOverlayOrigin,
+  FlexibleConnectedPositionStrategy,
+  Overlay,
+  OverlayModule,
+} from '@angular/cdk/overlay';
+import { CompanyCustomerUseCase } from '@company-customer/application/company-customer.use-case';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
+import { ResponsiveService } from '@shared/services/responsive.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DialogService } from '@core/services/dialog.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-company-customer-search',
@@ -89,6 +91,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   private readonly responsiveService = inject(ResponsiveService);
   private readonly companyCustomerUseCase = inject(CompanyCustomerUseCase);
   private readonly toasterService = inject(ToastrNotificationService);
+  private readonly dialogSvc = inject(DialogService);
   private readonly overlay = inject(Overlay);
 
   // Input properties
@@ -134,7 +137,6 @@ export class CompanyCustomerSearchComponent implements OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
       switchMap((term) => {
-        console.log('Search term:', term);
         if (term && typeof term !== 'string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
@@ -152,9 +154,9 @@ export class CompanyCustomerSearchComponent implements OnChanges {
             console.error('Company customer search error:', error);
             this.searchFailed.set(true);
             return of([]);
-          })
+          }),
         );
-      })
+      }),
     );
   }
 
@@ -170,11 +172,9 @@ export class CompanyCustomerSearchComponent implements OnChanges {
     if (!customer) return;
 
     if (this.isGetId()) {
-      this.companyCustomerUseCase
-        .getId(customer.idCliente || customer.id)
-        .subscribe((response) => {
-          this.customerSelected.emit(response);
-        });
+      this.companyCustomerUseCase.getId(customer.idCliente || customer.id).subscribe((response) => {
+        this.customerSelected.emit(response);
+      });
       return;
     }
 
@@ -216,9 +216,33 @@ export class CompanyCustomerSearchComponent implements OnChanges {
       !(this.id() > 0) &&
       this.validateIdentification(inputValue)
     ) {
-      // Here you would implement the code to lookup customer by identification
-      // and either select it or open the dialog to create a new one
-      // This is a placeholder for where that implementation would go
+      let codigoSri: null | string = null;
+      if (inputValue.length === 13) {
+        codigoSri = SRI_IDENTIFICATION_CODE.RUC;
+      }
+
+      //Numero de Cedula
+      if (inputValue.length === 10) {
+        codigoSri = SRI_IDENTIFICATION_CODE.CEDULA;
+      }
+
+      if (!codigoSri) return;
+
+      const params = {
+        dataOfSri: true,
+        numeroIdentificacion: inputValue,
+        codigoSri,
+      };
+      this.dialogSvc
+        .open(CompanyCustomerAddEditDialogComponent, {
+          size: 'xl',
+          data: params,
+        })
+        .subscribe((result) => {
+          if (result && typeof result === 'object') {
+            this.onSelectionChange(result);
+          }
+        });
     }
   }
 
@@ -282,8 +306,8 @@ export class CompanyCustomerSearchComponent implements OnChanges {
 
   // Format customer for display in autocomplete
   formatCustomer(customer: CompanyCustomerSearch | string): string {
-    if(typeof customer === 'string') {
-      return customer
+    if (typeof customer === 'string') {
+      return customer;
     }
     return customer?.name || '';
   }
