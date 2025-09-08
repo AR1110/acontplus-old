@@ -6,7 +6,7 @@ global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Authentication;
 global using Acontplus.Services.Extensions.Middleware;
-global using BarberShop.Api.Endpoints.Interfaces;
+global using BarberShop.API.Endpoints.Interfaces;
 global using BarberShop.Application.Seats.DTOs;
 global using BarberShop.Application.Seats.Interfaces;
 global using BarberShop.Application.Tickets.DTOs;
