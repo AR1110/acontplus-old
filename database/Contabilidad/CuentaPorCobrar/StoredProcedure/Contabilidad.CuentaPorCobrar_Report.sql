@@ -612,7 +612,7 @@ BEGIN
 						INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id			     = cl.CustomerId
                         INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
                          LEFT JOIN dbo.SubFamilia           sf WITH (NOLOCK) ON sf.idSubFamilia      = ar.idSubFamilia
-                        WHERE ar.idEntidad = @idEntidad
+                        WHERE ar.idEntidadÂ =Â @idEntidad
                           AND se.Estado     = 1  '
 
 			SELECT @ckFecha            = checkBoxFecha

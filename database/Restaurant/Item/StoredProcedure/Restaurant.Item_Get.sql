@@ -103,12 +103,12 @@ BEGIN
                                     FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 
                                )                                AS pvp
-                              ,ISNULL(a.codTipoArticulo, '')    AS codTipoArticulo
+                              ,ISNULL(a.codTipoArticulo,'''')   AS codTipoArticulo
                               ,COUNT(*) over()                  AS totalRecords
                               ,''ITEM''                         AS itemTypeCode
                               ,a.idMedida                       AS idMedida
                               ,a.siglaFamilia                   AS siglaFamilia
-                              ,f.descripcion                    AS categoria
+                              ,a.categoria                    
                         FROM Restaurant.Item            ri
                         INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
                         WHERE a.estado = 1
@@ -133,7 +133,7 @@ BEGIN
                     SET @sql = @sql + 'AND a.siglaFamilia NOT IN(''COM'') '
                 END  
 
-            SET @sql = @sql + ' ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
+            SET @sql = @sql + 'ORDER BY ri.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
             EXEC sp_executesql @sql
                               ,@params
