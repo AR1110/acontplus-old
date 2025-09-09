@@ -28,7 +28,7 @@ BEGIN
     DECLARE @idPuntoEmision INT ,@fechaEmision DATETIME2 ,@total NUMERIC(15,5) ,@observacion VARCHAR(150) ,@idEstadoDocumento INT ,@secuencial INT
     
     --> Transaccion 
-    DECLARE @idTipoDocumento INT ,@idTransaccion INT ,@serieComprobante VARCHAR(30) ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50)
+    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@serieComprobante VARCHAR(30) ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50)
 	
 	
     DECLARE @tbComprobante AS TABLE(
@@ -118,7 +118,7 @@ BEGIN
 
 		SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'AC'
 
-		SELECT TOP 1 @idTipoDocumento = td.idTipoDocumento  FROM dbo.TipoDocumento td WITH (NOLOCK) WHERE td.codigo = 'CIV'
+        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'CIV'
 
 		SELECT TOP 1 @secuencial = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
@@ -126,6 +126,11 @@ BEGIN
         FROM dbo.PuntoEmision          pe WITH (NOLOCK)
         INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
         WHERE pe.idPuntoEmision = @idPuntoEmision
+
+        IF @codTran = 'S'
+            BEGIN
+                SET @valor = -1
+            END 
 
         --> Validacion de informacion
         IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
@@ -179,7 +184,7 @@ BEGIN
 
             INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
 				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
-			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total
+			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion * @valor,precioCosto,precioCostoFraccionado,precioUnitario,total
             FROM @tblDetails
 
 			UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
