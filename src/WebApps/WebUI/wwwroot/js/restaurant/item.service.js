@@ -3,25 +3,92 @@
     app.factory('itemService', itemService);
     itemService.$inject = ['mainService'];
     function itemService(mS) {
+        var url = 'restaurant/item/';
+
         var service = {
-            search
+            search,
+            getByIdForOrderProduction
         };
         return service;
         function search(obj) {
-            var url = 'restaurant/items';
             let json = JSON.stringify({
                 tipo: 2,
                 textSearch: obj.textSearch,
             });
-            return mS.getData(`${url}?json=${json}`).then(response => {
-                console.log(response)
-                return response;
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
+                const results = {
+                    data: [],
+                    total: 0
+                }
+                if (response.code === "1") {
+                    const payload = JSON.parse(response.payload);
+                    const items = (payload.items || []).map(i => {
+                        return {
+                            "productId": i.idArticulo,
+                            "code": i.codigo,
+                            "stock": i.stock,
+                            "menuId": i.menuId,
+                            "summary": i.summary,
+                            "content": i.content,
+                        }
+
+                    });
+                    results.data = items;
+                }
+                return results;
             })
         }
-        function getItem(id) {
-            var url = configService.apiUrl + 'restaurant/items/' + id;
+        function getByIdForOrderProduction(menuId) {
+            let json = JSON.stringify({
+                tipo: 4,
+                menuId,
+            });
 
-            return $http.get(url, { headers: headers });
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
+                console.log('getByIdForOrderProduction response', response)
+                const results = {
+                    menu: {},
+                    components: []
+                }
+                if (response.code === "1") {
+                    const payload = JSON.parse(response.payload);
+                    const menu = payload.menu[0];
+                    results.components = (payload.components || []).map(c => {
+                        return {
+                            "idArticulo": c.idArticulo,
+                            "codigo": c.codigo,
+                            "codigoAuxiliar": c.codigoAuxiliar,
+                            "codigoBarra": c.codigoBarra,
+                            "descripcion": c.descripcion,
+                            "stock": c.stock,
+                            "precioCosto": c.precioCosto,
+                            "estado": c.estado,
+                            "iva": c.iva,
+                            "llevaInventario": c.llevaInventario,
+                            "idMedida": c.idMedida,
+                            "medida": c.medida,
+                            "conversion": c.conversion
+                        }
+
+                    });
+                    results.menu = {
+                        "idArticulo": menu.idArticulo,
+                        "codigo": menu.codigo,
+                        "codigoAuxiliar": menu.codigoAuxiliar,
+                        "codigoBarra": menu.codigoBarra,
+                        "descripcion": menu.descripcion,
+                        "stock": menu.stock,
+                        "precioCosto": menu.precioCosto,
+                        "estado": menu.estado,
+                        "iva": menu.iva,
+                        "llevaInventario": menu.llevaInventario,
+                        "idMedida": menu.idMedida,
+                        "medida": menu.medida,
+                        "conversion": menu.conversion
+                    }
+                }
+                return results;
+            });
         }
         function createItem(item) {
             var url = configService.apiUrl + 'restaurant/items';
