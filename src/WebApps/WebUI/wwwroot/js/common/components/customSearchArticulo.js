@@ -424,7 +424,7 @@ function searchComponent($scope, $element, $timeout, $document, $injector) {
     $ctrl.isLoadingMore = false;
     $ctrl.showDropdown = false;
 
-     function formatProduct(products) {
+    function formatProduct(products) {
         let results = [];
         if (products.length > 0) {
             products.unshift({
@@ -468,8 +468,8 @@ function searchComponent($scope, $element, $timeout, $document, $injector) {
             console.log(results)
             $ctrl.isLoading = false;
             $ctrl.loadMore();
-        }).finally(()=>{
-             $ctrl.isLoading = false;
+        }).finally(() => {
+            $ctrl.isLoading = false;
             $ctrl.loadMore();
         })
     };
@@ -492,7 +492,7 @@ function searchComponent($scope, $element, $timeout, $document, $injector) {
     // Escuchador para el campo de búsqueda con debounce
     $scope.$watch('$ctrl.searchTerm', function (newValue, oldValue) {
         // Al inicio, 'newValue' es `undefined`. La primera carga se activa cuando se define.
-        if (newValue !== undefined && newValue.length>2) {
+        if (newValue !== undefined && newValue.length > 2) {
             $ctrl.filterData(newValue);
         }
     });
@@ -739,3 +739,107 @@ app.component('productSearchComponent', {
     `,
     controller: productSearchComponent
 })
+
+
+
+// Define el componente de itemSearch
+app.component('itemSearch', {
+    bindings: {
+        onItemSelect: '&'
+    },
+    template: `
+            <div class="gac-form-control-container">
+                <input type="text"
+                       class="form-control rounded-pill p-3"
+                       placeholder="Buscar por código o nombre..."
+                       ng-model="$ctrl.searchText"
+                       ng-change="$ctrl.filterItemsWithDebounce()"
+                       ng-blur="$ctrl.hideDropdown()"
+                       ng-keydown="$ctrl.handleKeydown($event)"
+                       autocomplete="off">
+
+                <div class="gac-autocomplete-dropdown" ng-show="$ctrl.showDropdown && $ctrl.filteredItems.length > 0">
+                    <a href="#"
+                       class="gac-dropdown-item"
+                       ng-class="{ 'active': $index === $ctrl.highlightedIndex }"
+                       ng-repeat="item in $ctrl.filteredItems track by $index"
+                       ng-click="$ctrl.selectItem(item)">
+                        <h6>{{ item.codigo }} - {{ item.Summary }}</h6>
+                        <small>ID: {{item.idArticulo}} | Stock: {{item.stock}} | MenuID: {{item.MenuId}}</small>
+                    </a>
+                </div>
+            </div>
+        `,
+    controller: ['$timeout', function ($timeout) {
+        var $ctrl = this;
+        var searchTimeout;
+
+        $ctrl.searchText = '';
+        $ctrl.filteredItems = [];
+        $ctrl.selectedItem = null;
+        $ctrl.showDropdown = false;
+        $ctrl.highlightedIndex = -1;
+
+        $ctrl.filterItemsWithDebounce = function () {
+            $timeout.cancel(searchTimeout);
+
+            searchTimeout = $timeout(function () {
+                console.log("Realizando búsqueda para:", $ctrl.searchText);
+
+                var url = '/api/items';
+                if ($ctrl.searchText.length > 0) {
+                    url += '?search=' + encodeURIComponent($ctrl.searchText);
+                }
+
+                $http.get(url)
+                    .then(function (response) {
+                        $ctrl.filteredItems = response.data;
+                    })
+                    .catch(function (error) {
+                        console.error("Error al obtener datos:", error);
+                    });
+            }, 300);
+        };
+
+        $ctrl.selectItem = function (item) {
+            $ctrl.onItemSelect({ item: item });
+            $ctrl.searchText = item.Summary;
+            $ctrl.showDropdown = false;
+            $ctrl.filteredItems = [];
+            $ctrl.highlightedIndex = -1;
+        };
+
+        $ctrl.handleKeydown = function (event) {
+            const listSize = $ctrl.filteredItems.length;
+            if (listSize === 0) {
+                return;
+            }
+
+            if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                $ctrl.highlightedIndex = ($ctrl.highlightedIndex + 1) % listSize;
+            }
+            else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                $ctrl.highlightedIndex = ($ctrl.highlightedIndex - 1 + listSize) % listSize;
+            }
+            else if (event.key === 'Enter') {
+                event.preventDefault();
+                if ($ctrl.highlightedIndex > -1) {
+                    $ctrl.selectItem($ctrl.filteredItems[$ctrl.highlightedIndex]);
+                }
+            }
+            else if (event.key === 'Escape') {
+                $ctrl.showDropdown = false;
+            }
+        };
+
+        $ctrl.hideDropdown = function () {
+            $timeout(function () {
+                $ctrl.showDropdown = false;
+                $ctrl.highlightedIndex = -1;
+            }, 200);
+        };
+    }
+    ]
+});

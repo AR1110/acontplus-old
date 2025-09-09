@@ -7,7 +7,7 @@
 />
 
 <ng-template #body>
-  <div class="container-fluid vstack gap-2">
+  <div class="container-fluid vstack gap-5">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
       <div class="col">
         <mat-form-field class="w-100">
@@ -92,7 +92,6 @@
       [visibleColumns]="columns"
       [enablePagination]="false"
       [showSelectBox]="true"
-      [returnMultiple]="false"
       (rowSelected)="rowSelected($event)"
       (rowAllSelected)="rowAllSelected($event)"
     />

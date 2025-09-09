@@ -43,7 +43,7 @@
     })
 
     /**
-     * SubFamilias 
+     * SubFamilias
      */
     app.factory('subFamiliaService', function ($injector) {
 
@@ -123,7 +123,7 @@
 
 
     /**
-     * Marcas 
+     * Marcas
      */
     app.factory('marcaService', function ($injector) {
 
@@ -151,15 +151,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url  , {data}, true);
+            return mS.getData('post', url, { data }, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url   + id, {data}, true);
+            return mS.getData('put', url + id, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url  + id, null, true);
+            return mS.getData('delete', url + id, null, true);
         }
 
         service.listForSelect = function (query) {
@@ -183,7 +183,7 @@
     })
 
     /**
-     * Modelos 
+     * Modelos
      */
     app.factory('modeloService', function ($injector) {
 
@@ -213,15 +213,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url  , {data}, true);
+            return mS.getData('post', url, { data }, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url   + id, {data}, true);
+            return mS.getData('put', url + id, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url   + id, null, true);
+            return mS.getData('delete', url + id, null, true);
         }
 
 
@@ -232,7 +232,7 @@
 
 
     /**
-     * Modelos 
+     * Modelos
      */
     app.factory('medidaService', function ($injector) {
 
@@ -260,15 +260,15 @@
         }
 
         service.save = function (data) {
-            return mS.getData('post', url  , {data}, true);
+            return mS.getData('post', url, { data }, true);
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url  + id, {data}, true);
+            return mS.getData('put', url + id, { data }, true);
         }
 
         service.delete = function (id) {
-            return mS.getData('delete', url   + id, null, true);
+            return mS.getData('delete', url + id, null, true);
         }
 
 
@@ -277,7 +277,7 @@
 
 
     /**
-    * Modelos 
+    * Modelos
     */
     app.factory('tarifaService', function ($injector) {
 
@@ -311,7 +311,7 @@
         }
 
         service.update = function (id, data) {
-            return mS.getData('put', url   + id + '?json=' + JSON.stringify(data), null, true);
+            return mS.getData('put', url + id + '?json=' + JSON.stringify(data), null, true);
         }
 
         service.delete = function (id) {
@@ -384,8 +384,8 @@
 })(window.angular);
 
 /**
- * CONSOLIDACION INVENTARIO 
- * 
+ * CONSOLIDACION INVENTARIO
+ *
  */
 
 (function () {
@@ -413,15 +413,16 @@
         function getDataForm() {
             const json = JSON.stringify({ tipo: 2 })
             return mS.getData('get', `${url}?json=${json}`).then(response => {
+                console.log(response)
                 const data = {
                     estabs: [],
                     subFamilias: [],
                     config: {},
-                    tipoDocumento : [],
-                    tiposTransaccion : []
+                    tipoDocumento: [],
+                    tiposTransaccion: []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { ptoEmision,bodegas, subFamilia,decimales,tiposTransaccion,tipoDocumento } = response;
+                    const { ptoEmision, bodegas, subFamilia, decimales, tiposTransaccion, tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodegas,
@@ -526,7 +527,7 @@
 
 
             //     }
-            //     return { 
+            //     return {
             //         articulos,
             //         noVinculados
             //      };
@@ -586,8 +587,8 @@
         function headerTo(data) {
             return {
                 idPuntoEmision: data.idPuntoEmision,
-                idTipoDocumento : data.idTipoDocumento,
-                idTipoTransaccion : data.idTipoTransaccion,
+                idTipoDocumento: data.idTipoDocumento,
+                idTipoTransaccion: data.idTipoTransaccion,
                 fechaEmision: fS.formatDateMoment(data.fechaEmision),
                 total: fS.roundNumber(data.total, 5),
                 observacion: fS.isValidField(data.observacion),
@@ -690,8 +691,8 @@
                     fechaEmision: fS.formatDate(tempComprobante.fechaEmision),
                     observacion: tempComprobante.observacion,
                     total: tempComprobante.total,
-                    tipoDocumento : tempComprobante.tipoDocumento,
-                    movimiento : tempComprobante.movimiento 
+                    tipoDocumento: tempComprobante.tipoDocumento,
+                    movimiento: tempComprobante.movimiento
                 }
                 detalles = detalles.map((item, index) => {
                     return {
@@ -731,8 +732,8 @@
 
 
 /**
- * TRANSFERENCIA BODEGA 
- * 
+ * TRANSFERENCIA BODEGA
+ *
  */
 
 
@@ -823,7 +824,7 @@
                 return data;
             })
         }
-       
+
 
         function getProductsTransferenciaMasiva(obj) {
             let json = JSON.stringify({
@@ -843,17 +844,17 @@
 
                         const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
 
- 
+
                         return {
                             idArticulo: restItem.idArticulo,
-                            codigo: restItem.codigo, 
+                            codigo: restItem.codigo,
                             descripcion: restItem.descripcion,
                             cantidad: restItem.cantidad,
-                            precioCosto: restItem.precioCosto, 
-                            precioUnitario: dataMedida.precioUnitario, 
-                            precioCostoFraccionado: dataMedida.precioCostoFraccionado, 
+                            precioCosto: restItem.precioCosto,
+                            precioUnitario: dataMedida.precioUnitario,
+                            precioCostoFraccionado: dataMedida.precioCostoFraccionado,
                             idMedida: restItem.idMedida,
-                            nomMedida: restItem.nomMedida, 
+                            nomMedida: restItem.nomMedida,
                             medidas,
                             conversion: dataMedida.conversion,
                             total: fS.roundNumber(restItem.cantidad * restItem.precioCosto, 4),
@@ -863,7 +864,7 @@
                     })
                 }
 
-               return result;
+                return result;
             })
         }
 
