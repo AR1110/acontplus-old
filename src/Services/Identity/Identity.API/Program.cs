@@ -1,5 +1,4 @@
-﻿using Acontplus.ApiDocumentation;
-using Acontplus.Services.Extensions.Authentication;
+using Acontplus.ApiDocumentation;
 using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
@@ -25,20 +24,10 @@ try
     // Use AppConfiguration for loading settings
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
-    // Add services to the container.
-    builder.Services.AddApplicationServices(builder.Configuration);
 
     builder.Services.AddIdentityServices(builder.Configuration);
 
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddApiVersioningAndDocumentation();
-
-    builder.Services.AddOpenApi();
-
     var app = builder.Build();
-
-    app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
     {
@@ -46,11 +35,11 @@ try
         app.MapOpenApi();
     }
 
+    app.UseSerilogRequestLogging();
+
     app.UseResponseCompression();
 
     app.UseAcontplusExceptionHandling();
-
-    app.UseAcontplusServices(builder.Environment);
 
     app.UseRouting();
 

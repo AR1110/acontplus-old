@@ -1,7 +1,9 @@
+using Acontplus.ApiDocumentation;
 using Acontplus.Persistence.SqlServer.Repositories;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Infrastructure;
 using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
-using System.IO.Compression;
+using Identity.API.Persistence;
 using System.Text.Json.Serialization;
 
 namespace Identity.API.Extensions;
@@ -11,21 +13,14 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddJwtAuthentication(configuration);
+
+        services.AddResponseCompressionServices();
+
         services.AddAdvancedLoggingOptions(configuration);
 
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
-
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         services.AddControllers();
 
@@ -36,6 +31,10 @@ public static class ApplicationServicesExtensions
             options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         });
+
+        services.AddApiVersioningAndDocumentation();
+
+        services.AddOpenApi();
 
         services.AddHostedService<TokenCleanupAndArchivalService>();
         services.AddScoped<IAccountService, AccountService>();

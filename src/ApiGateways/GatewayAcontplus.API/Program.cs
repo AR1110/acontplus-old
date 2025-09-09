@@ -1,17 +1,14 @@
 using Acontplus.Logging;
 using Acontplus.Services.Configuration;
-using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Infrastructure;
 using Acontplus.Services.Extensions.Middleware;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Serilog;
-using System.IO.Compression;
 
 // 1. Optional: Create a bootstrap logger for early startup issues
 //    This captures logs from WebApplication.CreateBuilder() itself.

@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Endpoints.PrinterEndpoints;
+namespace Configuracion.API.Endpoints.PrinterEndpoints;
 
 public static class UpdateEndpoints
 {
@@ -15,7 +15,7 @@ public static class UpdateEndpoints
             async (int id, Printer printer, IPrinterRepository printerRepository, IUserContext userContext) =>
             {
                 printer.UpdatedByUserId = userContext.GetUserId();
-                var result = await printerRepository.UpdateAsync(id,  printer);
+                var result = await printerRepository.UpdateAsync(id, printer);
                 return Results.Ok(result);
             });
     }

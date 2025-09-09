@@ -6,7 +6,6 @@ global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Context;
 global using Acontplus.Services.Configuration;
-global using Acontplus.Services.Extensions;
 global using Asp.Versioning;
 global using Identity.API.Data;
 global using Identity.API.Dtos;

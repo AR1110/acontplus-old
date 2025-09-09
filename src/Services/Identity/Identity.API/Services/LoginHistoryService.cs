@@ -1,4 +1,6 @@
-﻿namespace Identity.API.Services;
+using Identity.API.Persistence;
+
+namespace Identity.API.Services;
 
 public class LoginHistoryService(ApplicationDbContext context) : ILoginHistoryService
 {
