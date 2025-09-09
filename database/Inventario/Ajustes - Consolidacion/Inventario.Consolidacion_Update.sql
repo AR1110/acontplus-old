@@ -28,12 +28,11 @@ BEGIN
     DECLARE @fechaEmision DATETIME2 ,@idEstadoDocumento INT 
 
     --> Transaccion 
-    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50) ,@valor INT = 1
+    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT
 
     DECLARE @tbComprobante AS TABLE(
          idConsolidacionInventario INT NOT NULL
         ,idTipoDocumento INT NOT NULL
-        ,idTipoTransaccion INT NOT NULL
         ,observacion VARCHAR(300) NULL
         ,total NUMERIC(18,5) NOT NULL
     )
@@ -70,8 +69,8 @@ BEGIN
         )
 
         INSERT INTO @tbComprobante 
-              (idConsolidacionInventario,idTipoDocumento,idTipoTransaccion,total,observacion)
-		SELECT @id                      ,idTipoDocumento,idTipoTransaccion,total,observacion
+              (idConsolidacionInventario,idTipoDocumento,total,observacion)
+		SELECT @id                      ,idTipoDocumento,total,observacion
 		FROM OPENJSON (@consolidacion) WITH 
         (
 		     idTipoDocumento   INT
@@ -108,27 +107,16 @@ BEGIN
 
         SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idDocumento = @id AND idTipoDocumento = @idTipoDocumento
 
-        SELECT TOP 1 @codDoc = td.codigo, @codTran = tt.codigo
-        FROM Inventario.Transaccion           tr WITH (NOLOCK) 
-        INNER JOIN Inventario.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
-        INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-        WHERE tr.idTransaccion = @idTransaccion
-
 	    SELECT TOP 1 @idEstadoDocumento = idEstadoDocumento ,@fechaEmision = fechaEmision FROM ConsolidacionInventario WITH (NOLOCK) WHERE idConsolidacionInventario = @id
 
-        IF @codTran = 'S'
-            BEGIN
-                SET @valor = -1
-            END
-
         --> Validacion de informacion
-        IF (SELECT COUNT(*) FROM @tbComprobante) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tbComprobante) 
             BEGIN
                 SELECT '0'code, 'Error en el comprobante'[message]
                 RETURN
             END 
 
-        IF (SELECT COUNT(*) FROM @tblDetails) = 0 
+        IF NOT EXISTS(SELECT 1 FROM @tblDetails)
             BEGIN
                 SELECT '0'code, 'Error en los detalles'[message]
                 RETURN
@@ -137,6 +125,12 @@ BEGIN
 	    IF (SELECT TOP 1 codigo FROM dbo.EstadoPago WHERE idEstadoPago = @idEstadoDocumento) = 'A'
             BEGIN
                 SELECT '0'code, 'El Documento se encuentra Anulado'[message]
+                RETURN
+            END
+
+        IF EXISTS (SELECT 1 FROM Inventario.TransaccionDetalle WHERE AjusteId = @idTransaccion)
+            BEGIN
+                SELECT '0'code,'No puedes editar este ajuste ya tiene movimietos vinculados.'[message]
                 RETURN
             END 
 
@@ -166,24 +160,15 @@ BEGIN
             WHERE idConsolidacionInventarioDetalle = 0
             ORDER BY orderIndex ASC
 
-            DELETE FROM ConsolidacionInventarioDetalle WHERE idConsolidacionInventario = @id AND estado = 0
-
             --> Transaccion
-            UPDATE Inventario.Transaccion WITH (ROWLOCK)
-               SET fechaEmision = @fechaEmision
-            WHERE idTransaccion = @idTransaccion
-
-            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
-
-            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET AjusteId = NULL WHERE AjusteId = @idTransaccion
-
             INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
 				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
-			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion * @valor,precioCosto,precioCostoFraccionado,precioUnitario,total
+			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total
             FROM @tblDetails
             WHERE estado = 1
+              AND cantidadTransaccion <> 0 
 
-            EXEC dbo.Transaccion_Handler_Init @codTran, @codDoc, @id, DEFAULT
+            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
 		COMMIT TRAN 
 		SELECT '1'code, 'Actualizado Correctamente'[message],@payload as payload

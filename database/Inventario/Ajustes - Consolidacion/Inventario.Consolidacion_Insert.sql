@@ -34,7 +34,6 @@ BEGIN
     DECLARE @tbComprobante AS TABLE(
          idPuntoEmision INT NOT NULL
         ,idTipoDocumento INT NOT NULL
-        ,idTipoTransaccion INT NOT NULL
         ,fechaEmision DATETIME2 NOT NULL
         ,observacion VARCHAR(300) NULL
         ,total NUMERIC(18,5) NOT NULL
@@ -47,6 +46,7 @@ BEGIN
         ,idArticulo INT NOT NULL
         ,idBodega INT NOT NULL
         ,idMedida INT NULL
+        ,MovementTypeId INT NOT NULL
         ,cantidad NUMERIC (18,5) NOT NULL
         ,cantidadTransaccion NUMERIC(18,5) NOT NULL
         ,precioUnitario NUMERIC (18,5) NOT NULL
@@ -74,13 +74,12 @@ BEGIN
 
         
         INSERT INTO @tbComprobante 
-              (idPuntoEmision,idTipoDocumento,idTipoTransaccion,fechaEmision,total,observacion)
-		SELECT idPuntoEmision,idTipoDocumento,idTipoTransaccion,fechaEmision,total,observacion
+              (idPuntoEmision,idTipoDocumento,fechaEmision,total,observacion)
+		SELECT idPuntoEmision,idTipoDocumento,fechaEmision,total,observacion
 		FROM OPENJSON (@consolidacion) WITH 
         (
 		     idPuntoEmision    INT 
 		    ,idTipoDocumento   INT
-            ,idTipoTransaccion INT
             ,fechaEmision      DATETIME2 
 		    ,total             NUMERIC(18,5) 
 		    ,observacion       VARCHAR(150) 
@@ -108,17 +107,13 @@ BEGIN
 	
         
         --> Variables
-        SELECT TOP 1 @fechaEmision      = tb.fechaEmision 
-                    ,@idPuntoEmision    = tb.idPuntoEmision 
-                    ,@codDoc            = td.codigo
-                    ,@codTran           = tt.codigo
-        FROM @tbComprobante                   tb
-        INNER JOIN Inventario.TipoDocumento   td ON td.idTipoDocumento   = tb.idTipoDocumento
-        INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tb.idTipoTransaccion
+        SELECT TOP 1 @fechaEmision = tb.fechaEmision ,@idPuntoEmision = tb.idPuntoEmision FROM @tbComprobante tb
 
 		SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'AC'
 
         SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WHERE codigo = 'CIV'
+
+        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = 'INV'
 
 		SELECT TOP 1 @secuencial = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
@@ -126,11 +121,6 @@ BEGIN
         FROM dbo.PuntoEmision          pe WITH (NOLOCK)
         INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
         WHERE pe.idPuntoEmision = @idPuntoEmision
-
-        IF @codTran = 'S'
-            BEGIN
-                SET @valor = -1
-            END 
 
         --> Validacion de informacion
         IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
@@ -176,20 +166,20 @@ BEGIN
 
             --> Transaccion
             INSERT INTO Inventario.Transaccion
-                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
-            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante 
+                   (fechaEmision,idTipoDocumento,idTipoTransaccion,idDocumento,idUsuario,idEntidad,serieComprobante)
+            SELECT  fechaEmision,idTipoDocumento,@idTipoTransaccion,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante 
             FROM @tbComprobante 
 
             SET @idTransaccion = SCOPE_IDENTITY()
 
-            INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
-				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
-			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion * @valor,precioCosto,precioCostoFraccionado,precioUnitario,total
+            INSERT INTO Inventario.TransaccionDetalle 
+				   (idTransaccion,MovementTypeId,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
+			SELECT @idTransaccion,MovementTypeId,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total
             FROM @tblDetails
 
 			UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 			
-            EXEC dbo.Transaccion_Handler_Init @codTran, @codDoc, @idConsolidacionInventario, DEFAULT
+            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente'[message],@payload as payload

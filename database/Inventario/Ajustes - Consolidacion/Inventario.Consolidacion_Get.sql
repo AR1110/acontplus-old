@@ -140,7 +140,7 @@ BEGIN
     IF @tipo = 2
 		BEGIN
             
-            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tiposTransaccion,tipoDocumento'
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento'
 
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			
@@ -150,7 +150,7 @@ BEGIN
 			
             SELECT * FROM Config.v_Sistema_Decimal WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL' 
 
-            SELECT idTipoTransaccion,codigo,descripcion FROM Inventario.TipoTransaccion WHERE codigo IN ('A','S','E') AND estado = 1
+            SELECT Id,Code,[Description] FROM Inventario.MovementType WHERE Code IN ('A','S','E') AND IsActive = 1
 
             SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OR')
 
@@ -436,5 +436,8 @@ BEGIN
             SELECT * FROM @tbDetail WHERE codigo NOT IN (SELECT codigo FROM Articulo WHERE idEntidad = @idEntidad AND estado = 1 AND llevaInventario = 1)
 
             RETURN 
-        END 
+        END
+
+    --> Detalle para anular y dar de baja en stock
+
 END

@@ -433,18 +433,17 @@ BEGIN
 
                     SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @docDestino
 
+                    --> Transaccion
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idDocumento,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                    FROM @tbComprobante 
+
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
                     --> Bienes
 					IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 						BEGIN 
-                            --> Transaccion
-                            INSERT INTO Inventario.Transaccion
-                                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                            SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idDocumento,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                            FROM @tbComprobante 
-
-                            SET @idTransaccion = SCOPE_IDENTITY()
-
-                            -->Detalles
                             INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
                                    (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total,estado)
 			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto,estado
