@@ -46,6 +46,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo WITH SCHEMABINDING AS (
 		   ,ISNULL((SELECT TOP 1 Id          FROM [Inventario].[ProductPhoto] ph WITH (NOLOCK) WHERE ph.ProductId = a.idArticulo AND IsDefault = 1),0) productPhotoId
            ,ta.codigo as codTipoArticulo
            ,fa.siglas as siglaFamilia
+           ,fa.descripcion as categoria
            ,a.importacion
 	FROM dbo.Articulo            a WITH(NOLOCK)
 	INNER JOIN dbo.TipoIva      ti WITH(NOLOCK) ON ti.idTipoIva      = a.idTipoIva 
