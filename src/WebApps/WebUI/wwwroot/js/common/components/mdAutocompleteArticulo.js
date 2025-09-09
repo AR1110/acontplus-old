@@ -119,7 +119,7 @@ class BaseSearchArticulo {
              */
             this.articuloSvc.getForSale(this.dataArticulo).then(async dataArticuloApi => {
 
-                //Cuando el articulo no lleva inventario 
+                //Cuando el articulo no lleva inventario
                 if (!dataArticuloApi.articulo.llevaInventario) {
                     hideLoader();
                     this.setItemArticuloEnDetalle({
@@ -136,7 +136,7 @@ class BaseSearchArticulo {
                     return
                 }
 
-                //Agregando validacion nueva el idMedida 07/10/2023 por emilio 
+                //Agregando validacion nueva el idMedida 07/10/2023 por emilio
                 this.articuloSvc.checkNotificationStock({
                     idArticulo: this.dataArticulo.idArticulo,
                     cantidad: -1,
@@ -182,7 +182,7 @@ class BaseSearchArticulo {
                 // this.setItemArticuloEnDetalle({
                 //     item: result
                 // })
-                // hideLoader();               
+                // hideLoader();
 
             }).catch(error => {
                 hideLoader();
@@ -238,7 +238,7 @@ class BaseSearchArticulo {
 }
 
 
-//Buscador de articulo general con pvp contado 
+//Buscador de articulo general con pvp contado
 class MdArticuloCtrl extends BaseSearchArticulo {
 
     static $inject = [
@@ -335,7 +335,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 
         if (json.busqueda.length < 2) return [];
 
-        // this.productsFound = Promise.resolve([]); 
+        // this.productsFound = Promise.resolve([]);
         this.productsFound = []
         return this.articuloSvc.search(json).then(articulos => {
             let results = this.formatProduct(articulos)
@@ -485,7 +485,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                     idPresentacion: response.idPresentacion,
                     presentacion: 'A'
                 }
-                //Funcion pasada como referencia desde el controlador                 
+                //Funcion pasada como referencia desde el controlador
                 this.validarGetDataArticulo();
             })
         } catch (error) {
@@ -516,7 +516,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
                     idPresentacion: response.idPresentacion,
                     presentacion: 'A'
                 }
-                //Funcion pasada como referencia desde el controlador                 
+                //Funcion pasada como referencia desde el controlador
                 this.validarGetDataArticulo();
             })
         } catch (error) {
@@ -526,7 +526,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
     }
 
     async previewImg($event, data) {
-        $event.stopPropagation(); 
+        $event.stopPropagation();
         this.productPhotoSvc.previewImg(data.idArticulo)
 
     }
@@ -534,7 +534,7 @@ class MdArticuloCtrl extends BaseSearchArticulo {
 }
 
 
-//Buscador Articulo 
+//Buscador Articulo
 class InputSearchBarcodeCtrl extends BaseSearchArticulo {
     static $inject = ['mainService', 'articuloService', '$scope', '$timeout', '$q', 'commonService', 'modalService', 'nombreModal', 'toastService']
     constructor(_mS, articuloSvc, $scope, $timeout, $q, _commonSvc, _modalSvc, _nombreModalConst, tS) {
@@ -592,11 +592,11 @@ app.component('mdAutocompleteArticuloComponent', {
 // ng - focus="$ctrl.focusDescripcionArticulo('#inputBarcode')"
 app.component("articuloSearchBarcode", {
     template: `<input  type="text" autocomplete="off"
-                       class="form-control border-select" 
-                       ng-model="$ctrl.searchText"  
-                       ng-enter="$ctrl.getDataArticuloByEnterCode()"     
+                       class="form-control border-select"
+                       ng-model="$ctrl.searchText"
+                       ng-enter="$ctrl.getDataArticuloByEnterCode()"
                        id="inputBarcode"
-                       placeholder="Ej: COMP1"> 
+                       placeholder="Ej: COMP1">
                 `,
     bindings: {
         tipoDoc: '=',
@@ -624,7 +624,7 @@ app.component("mdAutocompleteArticuloSimple", {
                 input-aria-labelledby="Articulos">
             <md-item-template>
                 <span class="small" md-highlight-text="$ctrl.searchTextSimple" md-highlight-flags="^i">{{item.descripcion}}</span>
-            </md-item-template>           
+            </md-item-template>
             </md-autocomplete>`,
     bindings: {
         tipoDoc: '=',
@@ -635,3 +635,6 @@ app.component("mdAutocompleteArticuloSimple", {
     },
     controller: MdArticuloCtrl
 })
+
+
+
