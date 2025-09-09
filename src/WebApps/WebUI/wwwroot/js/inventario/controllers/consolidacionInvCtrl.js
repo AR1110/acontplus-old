@@ -407,6 +407,8 @@
 
         $scope.isEnabledDate = true;
 
+        $scope.isSearchItem = false;
+
         function getDataTipoDoc() {
             let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento);
             if (dataDoc) {
@@ -419,6 +421,25 @@
             let dataDoc = getDataTipoDoc();
             let dataMovimiento = {};
             $scope.isEnabledDate = false;
+            $scope.isSearchItem = false;
+            if (dataDoc.codigo === 'OR') {
+                $scope.isSearchItem = true;
+
+                if ($scope.gridOptions.data.length === 0) return;
+
+                const { isConfirmed } = await Swal.fire({
+                    icon: 'warning',
+                    html: `Al cambiar el tipo de documento se eliminarán los artículos agregados.`,
+                    showConfirmButton: true,
+                    confirmButtonText: 'Aceptar'
+                });
+                if (isConfirmed) {
+                    $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
+                    $scope.gridOptions.data = [];
+                } else {
+                    $scope.data.idTipoDocumento = $scope.dataClone.idTipoDocumento;
+                }
+            }
 
             if (dataDoc.codigo == 'CI') {
                 dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A');
@@ -438,6 +459,7 @@
             if (dataMovimiento) {
                 $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
             }
+            $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
             loadValidateDate();
 
 
@@ -560,6 +582,7 @@
                     tipoDocumento,
                     tiposTransaccion,
                 } = mainDataForm;
+                console.log(mainDataForm)
                 $scope.establecimientos = estabs;
                 $scope.decimal = decimal;
                 $scope.tipoDocumento = tipoDocumento;

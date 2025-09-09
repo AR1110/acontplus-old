@@ -83,10 +83,15 @@
 
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
-                    abrir-modal-articulo="abrirModalArticulo(item)"
-                    set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
-                </md-autocomplete-articulo-component>
+                <section ng-if="isSearchItem">
+                    <item-search on-item-select="main.handleItemSelect(item)"></item-search>
+                </section>
+                <section ng-if="!isSearchItem">
+                    <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
+                        abrir-modal-articulo="abrirModalArticulo(item)"
+                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
+                    </md-autocomplete-articulo-component>
+                </section>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                 <button type="button" class="btn btn-outline-info btn-lg" ng-click="openModalAdvanced($event)"><i

@@ -452,29 +452,10 @@ BEGIN
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
                     --> Transaccion
-                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id)
-                        BEGIN
-                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
-
-                            UPDATE Inventario.Transaccion WITH (ROWLOCK)
-                               SET fechaEmision = @fechaEmision
-                                  ,CustomerId   = @customerId
-                            WHERE idTransaccion = @idTransaccion
-
-                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
-                        END 
-                    ELSE 
-                        BEGIN
-                            IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1 AND estado = 1)
-							    BEGIN 
-                                    INSERT INTO Inventario.Transaccion
-                                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@id,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                                    FROM @tbComprobante 
-
-                                    SET @idTransaccion = SCOPE_IDENTITY()
-                                END 
-                        END 
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,idFactura,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                    FROM @tbComprobante
 
                     --> Bienes
                     IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
@@ -484,7 +465,7 @@ BEGIN
 			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
                             FROM @tblDetails 
                             WHERE llevaInventario = 1
-                              AND estado = 1
+                              AND cantidadTransaccion <> 0
 
                             EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @id ,2
                         END 
@@ -500,7 +481,6 @@ BEGIN
                             FROM @tblDetails 
                             WHERE llevaInventario = 0
                               AND estado = 1
-
                         END 
 				END
             
