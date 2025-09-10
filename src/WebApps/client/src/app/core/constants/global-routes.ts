@@ -10,13 +10,14 @@ export enum GlobalRoutes {
   ConfigUserCustomer = 'config/user-customer',
   ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
   ConfigImportacion = 'config/excel-import',
-  FirmaElectronica='config/electronic-signature',
-  TiempoCredito='config/credit-time',
+  FirmaElectronica = 'config/electronic-signature',
+  TiempoCredito = 'config/credit-time',
+  ConfigTurno = 'config/shift',
   //Configuration End
 
   //Facturación start
   FactElectAts = 'billing/ats',
-  FactElectGuiaRemision='billing/guia-remision',
+  FactElectGuiaRemision = 'billing/guia-remision',
   //Facturacion end
 
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
@@ -55,8 +56,8 @@ export enum GlobalRoutes {
   Etiqueta = 'inventory/tags',
   ArticuloFraccionado = 'inventory/fracc-product',
   TransferenciaBodega = 'inventory/transferencia-bodega',
-  Bodega='inventory/warehouse',
-  InventarioConsolidacion='inventory/inventory-adjustment',
+  Bodega = 'inventory/warehouse',
+  InventarioConsolidacion = 'inventory/inventory-adjustment',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',
@@ -88,7 +89,7 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCajaReport = 'accounting/reports/movimiento-caja-report',
   ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
   ContabilidadCarteraCliente = 'accounting/reports/cartera-cliente',
-  ContabilidadPaymentsReport='accounting/reports/payments',
+  ContabilidadPaymentsReport = 'accounting/reports/payments',
 
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',

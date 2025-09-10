@@ -2,8 +2,8 @@
 
 namespace WebUI.Pages.Config.UserCustomer
 {
-    public class Index : PageModel
-    {
+  public class Index : PageModel
+  {
 
-    }
+  }
 }

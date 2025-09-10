@@ -12,6 +12,7 @@ import { CreditTimeComponent } from '@modules/config/ui/credit-time/credit-time.
 import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
 import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { ConfigHomeComponent } from './ui/config-home.component';
+import { ShiftComponent } from './ui/shift/shift.component';
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -120,6 +121,13 @@ export const routes: Routes = [
     component: CreditTimeComponent,
     data: {
       breadcrumb: 'Tiempo Crédito',
+    },
+  },
+  {
+    path: 'shift',
+    component: ShiftComponent,
+    data: {
+      breadcrumb: 'Turno',
     },
   },
 ];
