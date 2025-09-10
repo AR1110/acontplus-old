@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 export abstract class ShiftRepository {
   abstract list(params: any): Observable<ListShiftResponse>;
-  abstract create(params: any): Observable<ApiResponse>;
-  abstract update(params: any): Observable<ApiResponse>;
+  abstract create(params: ShiftList): Observable<ApiResponse>;
+  abstract update(params: ShiftList): Observable<ApiResponse>;
   abstract delete(params: Partial<ShiftList>): Observable<ApiResponse>;
 }

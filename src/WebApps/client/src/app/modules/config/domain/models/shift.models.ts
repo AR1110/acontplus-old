@@ -1,18 +1,18 @@
 export interface Shift {
-  id: string;
-  name: string;
-  startTime: string;
-  endTime: string;
-  isActive: boolean;
+  idTurno?: number;
+  descripcion: string;
+  estado: boolean;
+  idUsuario?: number;
+  idEntidad?: number;
 }
 
 export interface ShiftList {
   index: number;
-  id: string;
-  name: string;
-  startTime: string;
-  endTime: string;
-  isActive: boolean;
+  idTurno?: number;
+  descripcion: string;
+  estado: boolean;
+  idUsuario?: number;
+  idEntidad?: number;
   totalRecords: number;
 }
 
