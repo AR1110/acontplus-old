@@ -748,29 +748,35 @@ app.component('itemSearch', {
         onItemSelect: '&'
     },
     template: `
-            <div class="gac-form-control-container">
+           <div class="gac-form-control-container">
                 <input type="text"
                        class="form-control rounded-pill p-3"
                        placeholder="Buscar por código o nombre..."
                        ng-model="$ctrl.searchText"
                        ng-change="$ctrl.filterItemsWithDebounce()"
+                       ng-focus="$ctrl.showDropdown = true;"
                        ng-blur="$ctrl.hideDropdown()"
                        ng-keydown="$ctrl.handleKeydown($event)"
                        autocomplete="off">
 
-                <div class="gac-autocomplete-dropdown" ng-show="$ctrl.showDropdown && $ctrl.filteredItems.length > 0">
+                <div class="gac-autocomplete-dropdown"
+                     ng-show="$ctrl.showDropdown && $ctrl.filteredItems.length > 0"
+                     ng-mousedown="$ctrl.preventDropdownClose($event)"> <!-- Agregado: previene que se cierre el dropdown al hacer clic -->
                     <a href="#"
                        class="gac-dropdown-item"
                        ng-class="{ 'active': $index === $ctrl.highlightedIndex }"
                        ng-repeat="item in $ctrl.filteredItems track by $index"
                        ng-click="$ctrl.selectItem(item)">
-                        <h6>{{ item.codigo }} - {{ item.Summary }}</h6>
-                        <small>ID: {{item.idArticulo}} | Stock: {{item.stock}} | MenuID: {{item.MenuId}}</small>
+                        <div>
+                            <span class="gac-dropdown-item-code">{{ item.code }}</span> -
+                            <span class="gac-dropdown-item-summary">{{ item.summary }}</span>
+                        </div>
+                        <small class="gac-dropdown-item-content">{{item.content}} | Stock: {{item.stock}}</small>
                     </a>
                 </div>
             </div>
         `,
-    controller: ['$timeout', function ($timeout) {
+    controller: ['$timeout', '$element', '$scope', 'itemService', function ($timeout, $element, $scope, itemService) {
         var $ctrl = this;
         var searchTimeout;
 
@@ -784,16 +790,16 @@ app.component('itemSearch', {
             $timeout.cancel(searchTimeout);
 
             searchTimeout = $timeout(function () {
-                console.log("Realizando búsqueda para:", $ctrl.searchText);
+                $ctrl.filteredItems = [];
+                if (!($ctrl.searchText.length > 0)) return;
 
-                var url = '/api/items';
-                if ($ctrl.searchText.length > 0) {
-                    url += '?search=' + encodeURIComponent($ctrl.searchText);
-                }
-
-                $http.get(url)
-                    .then(function (response) {
+                itemService.search({
+                    textSearch: encodeURIComponent($ctrl.searchText)
+                })
+                    .then((response) => {
                         $ctrl.filteredItems = response.data;
+                        // $ctrl.showDropdown = $ctrl.filteredItems.length > 0;
+                        // $ctrl.highlightedIndex = -1;
                     })
                     .catch(function (error) {
                         console.error("Error al obtener datos:", error);
@@ -818,10 +824,12 @@ app.component('itemSearch', {
             if (event.key === 'ArrowDown') {
                 event.preventDefault();
                 $ctrl.highlightedIndex = ($ctrl.highlightedIndex + 1) % listSize;
+                $ctrl.scrollToHighlightedItem();
             }
             else if (event.key === 'ArrowUp') {
                 event.preventDefault();
                 $ctrl.highlightedIndex = ($ctrl.highlightedIndex - 1 + listSize) % listSize;
+                $ctrl.scrollToHighlightedItem();
             }
             else if (event.key === 'Enter') {
                 event.preventDefault();
@@ -836,9 +844,33 @@ app.component('itemSearch', {
 
         $ctrl.hideDropdown = function () {
             $timeout(function () {
-                $ctrl.showDropdown = false;
-                $ctrl.highlightedIndex = -1;
+                if (!$element.find('input')[0].contains(document.activeElement)) {
+                    $ctrl.showDropdown = false;
+                    $scope.$apply();
+                }
             }, 200);
+        };
+
+        // Nueva función para prevenir el cierre del dropdown
+        $ctrl.preventDropdownClose = function (event) {
+            event.preventDefault();
+        };
+
+        $ctrl.scrollToHighlightedItem = function () {
+            var dropdown = $element.find('.gac-autocomplete-dropdown')[0];
+            var highlightedItem = dropdown.querySelector('.gac-dropdown-item.active');
+            if (highlightedItem) {
+                var itemTop = highlightedItem.offsetTop;
+                var itemBottom = itemTop + highlightedItem.offsetHeight;
+                var dropdownScrollTop = dropdown.scrollTop;
+                var dropdownHeight = dropdown.offsetHeight;
+
+                if (itemBottom > dropdownScrollTop + dropdownHeight) {
+                    dropdown.scrollTop = itemBottom - dropdownHeight;
+                } else if (itemTop < dropdownScrollTop) {
+                    dropdown.scrollTop = itemTop;
+                }
+            }
         };
     }
     ]

@@ -419,10 +419,10 @@
                     subFamilias: [],
                     config: {},
                     tipoDocumento: [],
-                    tiposTransaccion: []
+                    tiposMovimiento: []
                 }
                 if (response !== null && typeof response === 'object') {
-                    const { ptoEmision, bodegas, subFamilia, decimales, tiposTransaccion, tipoDocumento } = response;
+                    const { ptoEmision, bodegas, subFamilia, decimales, tipoMovimientos, tipoDocumento } = response;
                     const dataToGroup = {
                         estabs: ptoEmision,
                         bodegas: bodegas,
@@ -432,7 +432,7 @@
                     data.subFamilias = subFamilia;
                     data.decimal = decimales[0];
                     data.tipoDocumento = tipoDocumento;
-                    data.tiposTransaccion = tiposTransaccion;
+                    data.tiposMovimiento = tipoMovimientos;
                 }
                 return data;
             })

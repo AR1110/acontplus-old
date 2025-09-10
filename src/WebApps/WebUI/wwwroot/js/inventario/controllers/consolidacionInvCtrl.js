@@ -374,9 +374,10 @@
         '$timeout',
         '$uibModalInstance',
         'uiGridConstants',
+        'itemService',
         'params'
     ];
-    function modalConsolidacionAddEditCtrl($injector, $scope, $timeout, $uibModalInstance, uiGridConstants, params) {
+    function modalConsolidacionAddEditCtrl($injector, $scope, $timeout, $uibModalInstance, uiGridConstants, itemSvc, params) {
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const articuloSvc = $injector.get('articuloService');
@@ -390,6 +391,7 @@
         $scope.establecimientos = [];
         $scope.puntosEmision = [];
         $scope.bodegas = [];
+        $scope.tiposMovimiento = [];
         $scope.data = {
             fechaEmision: new Date(),
             total: 0
@@ -417,47 +419,67 @@
             return dataDoc;
         }
 
+        function setConfigSubGrid(resetConfigSubGrid = false) {
+            if (resetConfigSubGrid) {
+                $scope.gridOptions.expandableRowTemplate = null;
+                $scope.gridOptions.expandableRowScope = null;
+                return;
+            }
+            $scope.gridOptions.expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions" style="height:140px;" ></div>';
+            $scope.gridOptions.expandableRowScope = {
+                subGridVariable: 'subGridScopeVariable'
+
+            };
+            console.log($scope.gridOptions)
+        }
+
         $scope.onChangeTipoDocumento = async () => {
             let dataDoc = getDataTipoDoc();
             let dataMovimiento = {};
             $scope.isEnabledDate = false;
             $scope.isSearchItem = false;
+            setConfigSubGrid(true);
             if (dataDoc.codigo === 'OR') {
                 $scope.isSearchItem = true;
 
-                if ($scope.gridOptions.data.length === 0) return;
+                if ($scope.gridOptions.data.length === 0) return setConfigSubGrid();
 
                 const { isConfirmed } = await Swal.fire({
                     icon: 'warning',
                     html: `Al cambiar el tipo de documento se eliminarán los artículos agregados.`,
                     showConfirmButton: true,
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Aceptar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    cancelButtonText: 'Cancelar'
                 });
                 if (isConfirmed) {
                     $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
                     $scope.gridOptions.data = [];
+                    setConfigSubGrid();
                 } else {
                     $scope.data.idTipoDocumento = $scope.dataClone.idTipoDocumento;
                 }
+                $scope.$apply();
             }
 
             if (dataDoc.codigo == 'CI') {
-                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A');
+                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'A');
                 $scope.isEnabledDate = true;
 
             }
 
             if (dataDoc.codigo == 'BI') {
-                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'S');
+                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'S');
                 resetQuantityZero();
             }
 
             if (dataDoc.codigo == 'EI') {
-                dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'E')
+                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'E')
             }
 
             if (dataMovimiento) {
-                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+                $scope.data.idTipoMovimiento = dataMovimiento.id;
             }
             $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
             loadValidateDate();
@@ -566,6 +588,22 @@
                 setTotalDetalle();
 
             })
+
+
+
+            gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                if (row.isExpanded) {
+                    row.entity.subGridOptions = {
+                        columnDefs: [
+                            { name: 'Employee Id', field: 'EmployeeID' },
+                            { name: 'Territory Description', field: 'TerritoryDescription' }
+                        ]
+                    };
+                    employeeservice.GetTerritories(row.entity.EmployeeID).then(function (data) {
+                        row.entity.subGridOptions.data = data.data;
+                    });
+                }
+            });
         }
         function setFocusSearchArticulo() {
             setTimeout(function () {
@@ -580,13 +618,13 @@
                     estabs,
                     decimal,
                     tipoDocumento,
-                    tiposTransaccion,
+                    tiposMovimiento,
                 } = mainDataForm;
                 console.log(mainDataForm)
                 $scope.establecimientos = estabs;
                 $scope.decimal = decimal;
                 $scope.tipoDocumento = tipoDocumento;
-                $scope.tipoTransaccion = tiposTransaccion;
+                $scope.tiposMovimiento = tiposMovimiento;
 
                 if (params.tipoRegistro === 1) {
                     let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
@@ -692,13 +730,13 @@
 
         function setDefaultTipoDoc() {
             let dataTipoDoc = $scope.tipoDocumento.find(t => t.codigo === 'CI')
-            let dataMovimiento = $scope.tipoTransaccion.find(t => t.codigo === 'A')
+            let dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'A')
             if (dataTipoDoc) {
                 $scope.data.idTipoDocumento = dataTipoDoc.idTipoDocumento;
             }
 
             if (dataMovimiento) {
-                $scope.data.idTipoTransaccion = dataMovimiento.idTipoTransaccion;
+                $scope.data.idTipoMovimiento = dataMovimiento.id;
             }
             loadValidateDate();
         }
@@ -1195,6 +1233,22 @@
             }
         }
 
+
+
+        $scope.handleItemSelect = function (item) {
+            console.log('handleItemSelect', item)
+            itemSvc.getByIdForOrderProduction(item.menuId).then(response => {
+                const { menu, components } = response;
+                console.log('getByIdForOrderProduction', response)
+                $scope.gridOptions.data.push(menu);
+
+            }).catch(error => {
+                console.log(error)
+            })
+
+
+        }
+
         const isUpdate = () => $scope.data.idConsolidacionInventario > 0;
         const isRegister = () => !($scope.data.idConsolidacionInventario > 0)
 
@@ -1213,7 +1267,7 @@
                 return
             }
 
-            if (!($scope.data.idTipoTransaccion > 0)) {
+            if (!($scope.data.idTipoMovimiento > 0)) {
                 tS.toastr('warning', 'Seleccione el Tipo de Movimiento');
                 return
             }
@@ -1309,7 +1363,7 @@
                         .then($scope.successResponse)
                         .catch(error => {
                             console.log(error);
-                        }).finally(() => hideLoader())
+                        })
                 }
 
                 if (isRegister()) {
@@ -1317,7 +1371,7 @@
                         .then($scope.successResponse)
                         .catch(error => {
                             console.log(error);
-                        }).finally(() => hideLoader())
+                        })
                 }
 
             } catch (error) {
@@ -1538,10 +1592,7 @@
                     if ($scope.articlesFounded.length > 50) {
                         // Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
                     }
-                }).catch(error => {
-                    hideLoader()
-                    console.log(error)
-                }).finally(() => hideLoader())
+                })
             } catch (error) {
 
                 console.log(error)

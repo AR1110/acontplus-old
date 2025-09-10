@@ -1240,7 +1240,7 @@ sticky header table
 }
 
 /* style item search */
-   .gac-container {
+  .gac-container {
             max-width: 600px;
         }
 
@@ -1264,16 +1264,8 @@ sticky header table
             background-color: #fff;
             max-height: 250px;
             overflow-y: auto;
-            border: 1px solid #ced4da; /* Borde para el dropdown */
-            overflow: hidden; /* Esto es clave para que border-radius funcione */
-        }
-
-        .gac-list-group {
-            display: flex;
-            flex-direction: column;
-            padding-left: 0;
-            margin-bottom: 0;
-            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding-bottom: 1rem;
         }
 
         .gac-dropdown-item {
@@ -1285,14 +1277,11 @@ sticky header table
             background-color: #fff;
             cursor: pointer;
             transition: background-color 0.2s;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             border-bottom: 1px solid rgba(0, 0, 0, .125);
         }
 
         .gac-dropdown-item:last-child {
-            border-bottom: none; /* Elimina el borde del último ítem */
+            border-bottom: none;
         }
 
         .gac-dropdown-item:hover,
@@ -1300,12 +1289,17 @@ sticky header table
             background-color: #e9ecef;
         }
 
-        .gac-dropdown-item h6 {
-            margin: 0;
+        .gac-dropdown-item-code {
+            color: #0056b3;
             font-weight: bold;
-            color: #333;
         }
 
-        .gac-dropdown-item small {
+        .gac-dropdown-item-summary {
+            font-weight: normal;
+            font-size: 1rem;
+        }
+
+        .gac-dropdown-item-content {
             color: #777;
+            font-size: 0.875rem;
         }
