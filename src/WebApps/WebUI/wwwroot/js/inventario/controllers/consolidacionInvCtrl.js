@@ -399,17 +399,30 @@
         $scope.dataClone = {};
         $scope.decimal = {};
 
+        $scope.isEnabledDate = true;
+
+        $scope.isSearchItem = false;
+
         let itemsDeleted = [];
         $scope.gridOptions = {
             enableColumnMenus: false,
             showColumnFooter: false,
             showGridFooter: true,
             enableCellEdit: false,
+            expandableRowTemplate: '<div ui-grid="row.entity.subGridOptions" style="height:140px;"></div>',
+            enableRowSelection: true,
+            //  expandableRowHeight: 150,
+            showExpandAllButton: false,
+            enableExpandable: true,
+            isRowExpandable: function (row) {
+                // row.entity es la fila completa
+                console.log('isRowExpandable', row);
+                return row.entity.subGridOptions && row.entity.subGridOptions.data.length > 0;
+                // solo se expande si tiene datos
+            },
         }
 
-        $scope.isEnabledDate = true;
 
-        $scope.isSearchItem = false;
 
         function getDataTipoDoc() {
             let dataDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento);
@@ -419,73 +432,185 @@
             return dataDoc;
         }
 
-        function setConfigSubGrid(resetConfigSubGrid = false) {
-            if (resetConfigSubGrid) {
-                $scope.gridOptions.expandableRowTemplate = null;
-                $scope.gridOptions.expandableRowScope = null;
-                return;
-            }
-            $scope.gridOptions.expandableRowTemplate = '<div ui-grid="row.entity.subGridOptions" style="height:140px;" ></div>';
-            $scope.gridOptions.expandableRowScope = {
-                subGridVariable: 'subGridScopeVariable'
 
-            };
-            console.log($scope.gridOptions)
-        }
-
-        $scope.onChangeTipoDocumento = async () => {
-            let dataDoc = getDataTipoDoc();
-            let dataMovimiento = {};
+        function resetFlags() {
             $scope.isEnabledDate = false;
             $scope.isSearchItem = false;
-            setConfigSubGrid(true);
+        }
+
+        async function handleDocumentoOR() {
+            $scope.isSearchItem = true;
+
+            if ($scope.gridOptions.data.length === 0) return setColumnDefs();
+
+            const isConfirmed = await Swal.fire({
+                icon: 'warning',
+                html: 'Al cambiar el tipo de documento se eliminarán los artículos agregados.',
+                showConfirmButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showCancelButton: true
+            }).then(result => result.isConfirmed);
+
+            if (isConfirmed) {
+                applyCambioDocumento();
+            } else {
+                revertCambioDocumento();
+            }
+
+            $scope.$apply();
+        }
+
+        function applyCambioDocumento() {
+            $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
+            $scope.gridOptions.data = [];
+            $scope.isSearchItem = true;
+            setColumnDefs();
+        }
+
+        function revertCambioDocumento() {
+            $scope.data.idTipoDocumento = $scope.dataClone.idTipoDocumento;
+            setColumnDefs();
+        }
+
+
+        function getMovimientoPorCodigo(codigo) {
+            let movimiento = null;
+
+            switch (codigo) {
+                case 'CI':
+                    movimiento = $scope.tiposMovimiento.find(t => t.code === 'A');
+                    $scope.isEnabledDate = true;
+                    break;
+                case 'BI':
+                    movimiento = $scope.tiposMovimiento.find(t => t.code === 'S');
+                    resetQuantityZero();
+                    break;
+                case 'EI':
+                    movimiento = $scope.tiposMovimiento.find(t => t.code === 'E');
+                    break;
+            }
+
+            return movimiento;
+        }
+
+
+        $scope.onChangeTipoDocumento = async () => {
+            const dataDoc = getDataTipoDoc();
+
+            resetFlags();
+            setColumnDefs();
+
+            // Manejo específico de tipo de documento 'OR'
             if (dataDoc.codigo === 'OR') {
-                $scope.isSearchItem = true;
-
-                if ($scope.gridOptions.data.length === 0) return setConfigSubGrid();
-
-                const { isConfirmed } = await Swal.fire({
-                    icon: 'warning',
-                    html: `Al cambiar el tipo de documento se eliminarán los artículos agregados.`,
-                    showConfirmButton: true,
-                    confirmButtonText: 'Aceptar',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false,
-                    cancelButtonText: 'Cancelar'
-                });
-                if (isConfirmed) {
-                    $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
-                    $scope.gridOptions.data = [];
-                    setConfigSubGrid();
-                } else {
-                    $scope.data.idTipoDocumento = $scope.dataClone.idTipoDocumento;
-                }
-                $scope.$apply();
+                await handleDocumentoOR();
             }
 
-            if (dataDoc.codigo == 'CI') {
-                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'A');
-                $scope.isEnabledDate = true;
-
-            }
-
-            if (dataDoc.codigo == 'BI') {
-                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'S');
-                resetQuantityZero();
-            }
-
-            if (dataDoc.codigo == 'EI') {
-                dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'E')
-            }
+            // Obtener tipo de movimiento según el código del documento
+            const dataMovimiento = getMovimientoPorCodigo(dataDoc.codigo);
 
             if (dataMovimiento) {
                 $scope.data.idTipoMovimiento = dataMovimiento.id;
             }
+
+            // Actualizar clone y validar fechas
             $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
             loadValidateDate();
-
-
         }
+
+
+        async function validarStockComponentes(rowEntity, oldValue, colDef) {
+            // 1. Construir array de componentes a validar
+            const components = rowEntity.components.map(c => ({
+                cantidad: rowEntity.cantidad * c.conversion,
+                idArticulo: c.idArticulo,
+                idBodega: rowEntity.idBodega,
+                idMedida: c.idMedida,
+                nombre: c.descripcion // opcional para mostrar
+            }));
+
+            // 2. Llamar al servicio para cada componente
+            const results = await Promise.all(
+                components.map(c =>
+                    articuloSvc.checkNotificationStock({
+                        idArticulo: c.idArticulo,
+                        cantidad: c.cantidad,
+                        idBodega: c.idBodega,
+                        idMedida: c.idMedida
+                    }).then(r => ({ ...r, ...c })) // unimos respuesta con datos del componente
+                )
+            );
+
+            // 3. Verificar si todos son code=1
+            const allCode1 = results.every(r => r.code === "1");
+            if (allCode1) {
+                // ✅ Todos OK
+                setTotalColumn(rowEntity);
+                setTotalDetalle();
+                return;
+            }
+
+            // 4. Armar tabla HTML con resultados distintos de code=1
+            let tableHtml = `
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th class="w-25">Componente</th>
+              <th width="100">Cant.</th>
+              <th>Mensaje</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${results.map(r => `
+              <tr>
+                <td>${r.nombre || r.descripcion}</td>
+                <td>${r.cantidad}</td>
+                <td>${r.message}</td>
+                <td>
+                  ${r.code === "1" ? "✔ Disponible" : r.code === "2" ? "⚠ Bajo stock" : "❌ Sin stock"}
+                </td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+    `;
+
+            // 5. Mostrar Swal con tabla y pedir confirmación
+            const { isConfirmed } = await Swal.fire({
+                title: 'Validación de stock',
+                html: tableHtml,
+                icon: 'warning',
+                width: 900,
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+                allowEscapeKey: false
+            });
+
+            // 6. Si el usuario confirma
+            if (isConfirmed) {
+                // recorre cada resultado y decide
+                for (const r of results) {
+                    if (r.code === "0") {
+                        // sin stock: revertir valor
+                        rowEntity[colDef.field] = oldValue;
+                        return; // cancelamos todo
+                    }
+                    // si es code=2 o 1 dejamos continuar
+                }
+                // todo ok o warnings → recalcular totales
+                setTotalColumn(rowEntity);
+                setTotalDetalle();
+            } else {
+                // usuario canceló → revertir
+                rowEntity[colDef.field] = oldValue;
+            }
+        }
+
+
 
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
@@ -502,7 +627,7 @@
                     // ev.stopPropagation();
                 }
             })
-            gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
+            gridApi.edit.on.afterCellEdit($scope, async (rowEntity, colDef, newValue, oldValue) => {
                 //Validar campos
                 if (["", null, undefined].includes(rowEntity[colDef.field])) {
                     rowEntity[colDef.field] = oldValue;
@@ -510,49 +635,60 @@
                 }
                 console.log('afterCellEdit', rowEntity, colDef, newValue, oldValue);
 
-                if (colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue && getDataTipoDoc().codigo === 'BI') {
-                    articuloSvc.checkNotificationStock({
-                        idArticulo: rowEntity.idArticulo,
-                        cantidad: newValue * rowEntity.conversion,
-                        idBodega: rowEntity.idBodega,
-                        idMedida: rowEntity.idMedida
-                    }).then(async responseApi => {
+                if (colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue) {
+                    if (getDataTipoDoc().codigo === "BI") {
+                        articuloSvc.checkNotificationStock({
+                            idArticulo: rowEntity.idArticulo,
+                            cantidad: newValue * rowEntity.conversion,
+                            idBodega: rowEntity.idBodega,
+                            idMedida: rowEntity.idMedida
+                        }).then(async responseApi => {
 
-                        let { code, message, titleSms } = responseApi;
+                            let { code, message, titleSms } = responseApi;
 
-                        // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
-                        if (code === "1") {
+                            // Si el código es "1", no hay problemas de stock, realiza cálculos totales.
+                            if (code === "1") {
 
-                            setTotalColumn(rowEntity);
-                            setTotalDetalle();
-                            return;
-                        }
-
-                        // Muestra un mensaje de advertencia y espera la confirmación del usuario.
-                        let { isConfirmed } = await Swal.fire({
-                            title: `<small>${titleSms}</small>`,
-                            icon: 'warning',
-                            html: `<small>${message}</small>`,
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                        });
-
-                        // Según la confirmación, realiza acciones adicionales.
-                        if (isConfirmed) {
-                            if (code === "0") {
-                                // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
-                                rowEntity[colDef.field] = oldValue;
                                 setTotalColumn(rowEntity);
                                 setTotalDetalle();
-                                $("#custom-template-md-autocomplete-articulo").focus();
+                                return;
                             }
-                            if (code === "2") {
-                                setTotalColumn(rowEntity);
-                                setTotalDetalle();
+
+                            // Muestra un mensaje de advertencia y espera la confirmación del usuario.
+                            let { isConfirmed } = await Swal.fire({
+                                title: `<small>${titleSms}</small>`,
+                                icon: 'warning',
+                                html: `<small>${message}</small>`,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                            });
+
+                            // Según la confirmación, realiza acciones adicionales.
+                            if (isConfirmed) {
+                                if (code === "0") {
+                                    // Si el código es "0", restaura el valor anterior y realiza cálculos totales.
+                                    rowEntity[colDef.field] = oldValue;
+                                    setTotalColumn(rowEntity);
+                                    setTotalDetalle();
+                                    $("#custom-template-md-autocomplete-articulo").focus();
+                                }
+                                if (code === "2") {
+                                    setTotalColumn(rowEntity);
+                                    setTotalDetalle();
+                                }
                             }
-                        }
-                    })
-                    return
+                        })
+                        return
+                    }
+
+                    //cuando es orden de produccion
+                    if (getDataTipoDoc().codigo === "OR") {
+                        await validarStockComponentes(rowEntity, oldValue, colDef);
+                        $scope.$apply();
+
+                        return
+
+                    }
                 }
 
                 if (colDef.field === "precioUnitario") {
@@ -591,20 +727,26 @@
 
 
 
-            gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                if (row.isExpanded) {
-                    row.entity.subGridOptions = {
-                        columnDefs: [
-                            { name: 'Employee Id', field: 'EmployeeID' },
-                            { name: 'Territory Description', field: 'TerritoryDescription' }
-                        ]
-                    };
-                    employeeservice.GetTerritories(row.entity.EmployeeID).then(function (data) {
-                        row.entity.subGridOptions.data = data.data;
-                    });
-                }
-            });
-        }
+            if (gridApi.expandable) {
+                gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                    if (row.isExpanded) {
+                        row.entity.subGridOptions = {
+                            columnDefs: [
+                                { name: 'Código', field: 'codigo' },
+                                { name: 'Descripción', field: 'descripcion' },
+                                { name: 'Medida', field: 'nombreMedida' },
+                                { name: 'Conversión', field: 'conversion' }
+                            ],
+                            disableRowExpandable: false,
+                        };
+                        row.entity.subGridOptions.data = row.entity.components;
+                        console.log('row.entity.components', row.entity)
+                        console.log(row.entity.components)
+
+                    }
+                });
+            }
+        };
         function setFocusSearchArticulo() {
             setTimeout(function () {
                 document.querySelector('#custom-template-md-autocomplete-articulo').focus();
@@ -796,7 +938,14 @@
                 width: '7%',
                 minWidth: '100'
             },
-            {
+            ($scope.isSearchItem ? {
+                name: "Medida",
+                field: "nombreMedida",
+                enableCellEdit: false,
+                allowCellFocus: false,
+                width: '8%',
+                minWidth: '100'
+            } : {
                 name: 'Medida',
                 field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
@@ -815,7 +964,7 @@
                 type: 'number',
                 width: '8%',
                 minWidth: '100'
-            },
+            }),
             // {
             //     name: 'Iva',
             //     field: 'nombreTipoIva',
@@ -912,6 +1061,11 @@
 
             if (isSetBodegaIdAll) {
                 for (let item of $scope.gridOptions.data) {
+
+                    if ($scope.isSearchItem) {
+                        item.cantidad = 0;
+                    }
+
                     item.idBodega = $scope.data.idBodega;
                 }
             }
@@ -1125,7 +1279,8 @@
                 idBodega: 0,
                 conversion: 0,
                 nota: null,
-                estado: true
+                estado: true,
+                components: []
             })
         }
 
@@ -1134,7 +1289,7 @@
 
             const dataMedida = medidas.find(m => m.defaultMedida);
 
-            entity.codigo = articulo.codigoArticulo;
+            entity.codigo = articulo.codigoArticulo || articulo.codigo;
             entity.idArticulo = articulo.idArticulo;
             entity.descripcion = articulo.descripcion;
             entity.porcentajeTipoIva = articulo.tarifa;
@@ -1154,6 +1309,14 @@
             entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
 
+            //cuando el documento es orden de produccion
+            if (articulo.components) {
+                entity.components = articulo.components || [];
+                entity.nombreMedida = articulo.nombreMedida;
+                entity.conversion = articulo.conversion;
+            }
+
+            console.log('entity', entity)
         }
 
 
@@ -1186,61 +1349,115 @@
             }, 10)
         }
 
+
+        async function showInventarioWarning() {
+            await Swal.fire({
+                icon: 'warning',
+                html: 'Este articulo no está configurado para llevar inventario'
+            });
+        }
+
+        async function askSumarCantidad() {
+            const { isConfirmed } = await Swal.fire({
+                text: "Desea sumar la cantidad del producto en el detalle?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si!',
+                cancelButtonText: 'No'
+            });
+            return isConfirmed;
+        }
+
+
+        function findArticuloIndex(idArticulo) {
+            return $scope.gridOptions.data.findIndex(item => item.idArticulo === idArticulo);
+        }
+
+        async function handleArticuloExistente(index) {
+            let entity = $scope.gridOptions.data[index];
+            let isConfirmed = await askSumarCantidad();
+
+            if (isConfirmed) {
+                entity.cantidad += 1;
+            }
+
+            return entity;
+        }
+
+        function handleArticuloNuevo(articulo, medidas) {
+            addRow();
+            let index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
+            let entity = $scope.gridOptions.data[index];
+            setItem(entity, articulo, medidas); // configurar fila
+            return entity;
+        }
+
+        function updateTotales(entity, index) {
+            setCountIndex();
+            setTotalColumn(entity);
+            setTotalDetalle();
+            focusColumnaCantidad(index);
+        }
+
+
+
+
         $scope.setItemArticuloEnDetalle = async function (item) {
             try {
-
                 const { articulo, medidas } = item;
+
                 if (!articulo.llevaInventario) {
-                    Swal.fire({
-                        icon: 'warning',
-                        html: 'Este articulo no esta configurado para llevar inventario'
-                    })
-                    return
+                    await showInventarioWarning();
+                    return;
                 }
-                let entity = {};
-                let index = $scope.gridOptions.data.findIndex(item => item.idArticulo === articulo.idArticulo);
+
+                let index = findArticuloIndex(articulo.idArticulo);
+                let entity;
+
                 if (index !== -1) {
-
-                    let { isConfirmed } = await Swal.fire({
-                        text: "Desea sumar la cantidad del producto en el detalle?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Si!',
-                        cancelButtonText: 'No'
-                    })
-                    if (isConfirmed) {
-                        entity = $scope.gridOptions.data[index];
-                        entity.cantidad = entity.cantidad + 1;
-                    }
+                    entity = await handleArticuloExistente(index);
                 } else {
-                    addRow();
-                    index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
-                    entity = $scope.gridOptions.data[index];
-                    setItem(entity, articulo, medidas); // item row
+                    entity = handleArticuloNuevo(articulo, medidas);
                 }
 
-
-                setCountIndex();
-                setTotalColumn(entity);
-                setTotalDetalle();
-
-                focusColumnaCantidad(index);
+                updateTotales(entity, index);
 
             } catch (error) {
-                console.log(error)
+                console.error(error);
             }
         }
 
 
 
+
         $scope.handleItemSelect = function (item) {
             console.log('handleItemSelect', item)
-            itemSvc.getByIdForOrderProduction(item.menuId).then(response => {
-                const { menu, components } = response;
-                console.log('getByIdForOrderProduction', response)
-                $scope.gridOptions.data.push(menu);
+            itemSvc.getByIdForOrderProduction(item.menuId).then(async response => {
+                console.log('response', response)
+                try {
+                    const { menu, components } = response;
+
+                    if (!menu.llevaInventario) {
+                        await showInventarioWarning();
+                        return;
+                    }
+
+                    let index = findArticuloIndex(menu.idArticulo);
+                    let entity;
+
+                    if (index !== -1) {
+                        entity = await handleArticuloExistente(index);
+                    } else {
+                        entity = handleArticuloNuevo(menu, menu.medidas);
+                    }
+
+                    updateTotales(entity, index);
+
+                } catch (error) {
+                    console.error(error);
+                }
 
             }).catch(error => {
                 console.log(error)
