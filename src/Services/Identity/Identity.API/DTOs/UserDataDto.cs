@@ -1,6 +1,6 @@
-﻿namespace Identity.API.Models;
+namespace Identity.API.DTOs;
 
-public class UserData
+public class UserDataDto
 {
     public dynamic? Actions { get; set; }
     public string? BusinessName { get; set; }

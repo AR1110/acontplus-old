@@ -1,8 +1,10 @@
-﻿namespace Identity.API.Services;
+using Identity.API.DTOs;
+
+namespace Identity.API.Services;
 
 public interface IJwtTokenService
 {
-    JwtResponse CreateToken(UserData data);
+    JwtResponseDto CreateToken(UserDataDto data);
 }
 
 public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
@@ -12,7 +14,7 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
     private readonly SymmetricSecurityKey _key = new(
         Encoding.UTF8.GetBytes(configuration["JwtSettings:SecurityKey"] ?? throw new InvalidOperationException()));
 
-    public JwtResponse CreateToken(UserData data)
+    public JwtResponseDto CreateToken(UserDataDto data)
     {
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256Signature);
         var expires = DateTime.UtcNow.AddMinutes(_exp);
@@ -41,6 +43,6 @@ public class JwtTokenService(IConfiguration configuration) : IJwtTokenService
 
 
         var token = new JwtSecurityTokenHandler().WriteToken(jwtOptions);
-        return new JwtResponse { Expires = expires, Token = token };
+        return new JwtResponseDto { Expires = expires, Token = token };
     }
 }

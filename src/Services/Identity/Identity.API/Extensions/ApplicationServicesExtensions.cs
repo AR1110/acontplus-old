@@ -4,6 +4,7 @@ using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Infrastructure;
 using Acontplus.Utilities.Time;
 using Identity.API.Persistence;
+using Microsoft.AspNetCore.Identity;
 using System.Text.Json.Serialization;
 
 namespace Identity.API.Extensions;
@@ -22,6 +23,33 @@ public static class ApplicationServicesExtensions
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+        // Add ASP.NET Core Identity
+        services.AddIdentity<AppUser, AppRole>(options =>
+        {
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequiredUniqueChars = 4;
+
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+
+            // User settings
+            options.User.RequireUniqueEmail = true;
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+
+            // SignIn settings
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
+
         services.AddControllers();
 
         services.ConfigureHttpJsonOptions(options =>
@@ -36,6 +64,7 @@ public static class ApplicationServicesExtensions
 
         services.AddOpenApi();
 
+        // Register services
         services.AddHostedService<TokenCleanupAndArchivalService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAdoRepository, AdoRepository>();
@@ -43,6 +72,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         return services;
     }

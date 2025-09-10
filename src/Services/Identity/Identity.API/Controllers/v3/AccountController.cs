@@ -1,4 +1,5 @@
 using Acontplus.Core.Extensions;
+using Identity.API.DTOs;
 
 namespace Identity.API.Controllers.v3;
 
@@ -27,7 +28,7 @@ public class AccountController(
 
         if (response.Code == "1")
         {
-            List<UserData> userData = JsonExtensions.DeserializeOptimized<List<UserData>>(response.Payload);
+            List<UserDataDto> userData = JsonExtensions.DeserializeOptimized<List<UserDataDto>>(response.Payload);
 
             switch (userData.Count)
             {
@@ -82,7 +83,7 @@ public class AccountController(
 
     [AllowAnonymous]
     [HttpPost("createToken")]
-    public async Task<IActionResult> CreateToken([FromBody] UserData userData)
+    public async Task<IActionResult> CreateToken([FromBody] UserDataDto userData)
     {
         var fromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
         userData.UrlGateway = config["ApiGateways:Acontplus"];

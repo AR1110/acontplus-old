@@ -1,6 +1,6 @@
-﻿namespace Identity.API.Models;
+namespace Identity.API.DTOs;
 
-public class JwtResponse
+public class JwtResponseDto
 {
     public required string Token { get; set; }
     public DateTime Expires { get; set; }

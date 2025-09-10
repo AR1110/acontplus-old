@@ -1,0 +1,144 @@
+using Microsoft.AspNetCore.Authorization;
+
+namespace Identity.API.Controllers.v3;
+
+[Route("api/v{version:apiVersion}/[controller]")]
+[ApiController]
+[ApiVersion("3.0")]
+[Authorize]
+public class UserProfileController(
+    IUserService userService,
+    ILogger<UserProfileController> logger) : ControllerBase
+{
+    [HttpGet("{userId:int}")]
+    public async Task<IActionResult> GetUserProfile(int userId)
+    {
+        try
+        {
+            var profile = await userService.GetUserProfileAsync(userId);
+            if (profile == null)
+            {
+                return NotFound($"Profile not found for user {userId}");
+            }
+
+            var appUser = await userService.GetUserByIdAsync(userId);
+            var profileDto = MapToDto(profile, appUser?.PhoneNumber);
+            return Ok(profileDto);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error retrieving profile for user {UserId}", userId);
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpPut("{userId:int}")]
+    public async Task<IActionResult> UpdateUserProfile(int userId, [FromBody] UserProfileUpdateDto updateDto)
+    {
+        try
+        {
+            var existingProfile = await userService.GetUserProfileAsync(userId);
+            var profileToUpdate = existingProfile ?? new UserProfile { AppUserId = userId, Id = 0 };
+
+            // Update phone number in Identity first so completion scoring includes it
+            if (!string.IsNullOrWhiteSpace(updateDto.PhoneNumber))
+            {
+                await userService.UpdateUserPhoneNumberAsync(userId, updateDto.PhoneNumber);
+            }
+
+            // Map from DTO to entity (excluding phone)
+            MapFromUpdateDto(updateDto, profileToUpdate);
+
+            var updatedProfile = await userService.CreateOrUpdateUserProfileAsync(userId, profileToUpdate);
+            var appUser = await userService.GetUserByIdAsync(userId);
+            var resultDto = MapToDto(updatedProfile, appUser?.PhoneNumber);
+
+            logger.LogInformation("Profile updated for user {UserId}",
+                userId);
+
+            return Ok(resultDto);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating profile for user {UserId}", userId);
+            return StatusCode(500, "Internal server error");
+        }
+    }
+
+    #region Private Helper Methods
+
+    private static UserProfileDto MapToDto(UserProfile profile, string? phoneNumber)
+    {
+        return new UserProfileDto
+        {
+            // Core Profile Properties
+            PreferredLanguage = profile.PreferredLanguage,
+            TimeZone = profile.TimeZone,
+            Theme = profile.Theme,
+            EmailNotifications = profile.EmailNotifications,
+            SmsNotifications = profile.SmsNotifications,
+            WhatsAppNotifications = profile.WhatsAppNotifications,
+
+            // Personal Information
+            FirstName = profile.FirstName,
+            LastName = profile.LastName,
+            PhoneNumber = phoneNumber,
+            DateOfBirth = profile.DateOfBirth,
+            Gender = profile.Gender.ToString(),
+            CustomerId = profile.CustomerId,
+
+            // Application Preferences
+            DefaultCurrency = profile.DefaultCurrency,
+            DateFormat = profile.DateFormat,
+            TimeFormat = profile.TimeFormat,
+            NumberFormat = profile.NumberFormat,
+            DefaultPageSize = profile.DefaultPageSize,
+            ShowAdvancedFeatures = profile.ShowAdvancedFeatures,
+
+            // Communication Preferences
+            ReceivePromotionalEmails = profile.ReceivePromotionalEmails,
+            ReceiveSystemUpdates = profile.ReceiveSystemUpdates,
+            ReceiveNewsletters = profile.ReceiveNewsletters,
+            PreferredContactMethod = profile.PreferredContactMethod,
+            PreferredContactTime = profile.PreferredContactTime,
+
+            // Status Information
+            LastLoginDate = profile.LastLoginDate
+        };
+    }
+
+    private static void MapFromUpdateDto(UserProfileUpdateDto updateDto, UserProfile profile)
+    {
+        // Core Profile Properties
+        if (updateDto.PreferredLanguage != null) profile.PreferredLanguage = updateDto.PreferredLanguage;
+        if (updateDto.TimeZone != null) profile.TimeZone = updateDto.TimeZone;
+        if (updateDto.Theme != null) profile.Theme = updateDto.Theme;
+        if (updateDto.EmailNotifications.HasValue) profile.EmailNotifications = updateDto.EmailNotifications.Value;
+        if (updateDto.SmsNotifications.HasValue) profile.SmsNotifications = updateDto.SmsNotifications.Value;
+        if (updateDto.WhatsAppNotifications.HasValue) profile.WhatsAppNotifications = updateDto.WhatsAppNotifications.Value;
+
+        // Personal Information
+        if (updateDto.FirstName != null) profile.FirstName = updateDto.FirstName;
+        if (updateDto.LastName != null) profile.LastName = updateDto.LastName;
+        // PhoneNumber handled via AppUser (Identity)
+        if (updateDto.DateOfBirth.HasValue) profile.DateOfBirth = updateDto.DateOfBirth;
+        if (updateDto.Gender != null)
+        {
+            if (Enum.TryParse<Acontplus.Core.Enums.Gender>(updateDto.Gender, true, out var gender))
+            {
+                profile.Gender = gender;
+            }
+        }
+        if (updateDto.CustomerId.HasValue) profile.CustomerId = updateDto.CustomerId;
+
+        // Application Preferences
+        if (updateDto.DefaultCurrency != null) profile.DefaultCurrency = updateDto.DefaultCurrency;
+        if (updateDto.DateFormat != null) profile.DateFormat = updateDto.DateFormat;
+        if (updateDto.TimeFormat != null) profile.TimeFormat = updateDto.TimeFormat;
+        if (updateDto.NumberFormat != null) profile.NumberFormat = updateDto.NumberFormat;
+        if (updateDto.DefaultPageSize.HasValue) profile.DefaultPageSize = updateDto.DefaultPageSize;
+        if (updateDto.ShowAdvancedFeatures.HasValue) profile.ShowAdvancedFeatures = updateDto.ShowAdvancedFeatures.Value;
+    }
+
+    #endregion
+}
