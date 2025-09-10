@@ -430,6 +430,7 @@
                 subGridVariable: 'subGridScopeVariable'
 
             };
+            console.log($scope.gridOptions)
         }
 
         $scope.onChangeTipoDocumento = async () => {
@@ -441,7 +442,7 @@
             if (dataDoc.codigo === 'OR') {
                 $scope.isSearchItem = true;
 
-                if ($scope.gridOptions.data.length === 0) return;
+                if ($scope.gridOptions.data.length === 0) return setConfigSubGrid();
 
                 const { isConfirmed } = await Swal.fire({
                     icon: 'warning',
@@ -587,6 +588,22 @@
                 setTotalDetalle();
 
             })
+
+
+
+            gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
+                if (row.isExpanded) {
+                    row.entity.subGridOptions = {
+                        columnDefs: [
+                            { name: 'Employee Id', field: 'EmployeeID' },
+                            { name: 'Territory Description', field: 'TerritoryDescription' }
+                        ]
+                    };
+                    employeeservice.GetTerritories(row.entity.EmployeeID).then(function (data) {
+                        row.entity.subGridOptions.data = data.data;
+                    });
+                }
+            });
         }
         function setFocusSearchArticulo() {
             setTimeout(function () {
