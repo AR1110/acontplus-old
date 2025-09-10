@@ -1,1 +1,31 @@
-<p>shift works!</p>
+<app-breadcrumb />
+
+<app-mat-dynamic-card>
+  <!-- #header region -->
+  <div class="row">
+    <div class="col-6">
+      <div class="d-flex flex-row gap-1">
+        <button
+          type="button"
+          mat-raised-button
+          id="buttonNew"
+          (click)="(null)"
+        >
+          <mat-icon>add</mat-icon>
+          Agregar Turno
+        </button>
+        <button
+          type="button"
+          mat-icon-button
+          (click)="(null)"
+        >
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <hr />
+
+  <!-- #body region -->
+  <div class="table-responsive"></div>
+</app-mat-dynamic-card>
