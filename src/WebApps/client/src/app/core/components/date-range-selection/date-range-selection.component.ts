@@ -7,23 +7,19 @@ import {
   model,
   output,
   Output,
-  ViewChild, AfterViewInit,
+  ViewChild,
+  AfterViewInit,
+  SimpleChanges,
+  OnChanges,
 } from '@angular/core';
 
-import { FormsModule } from '@angular/forms';
+import { addDay, format, monthEnd, monthStart, weekEnd, weekStart } from '@formkit/tempo';
+import { formatDateToString, zonaHorariaEcuador } from '@core/utils/date.util';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import {
-  addDay,
-  format,
-  monthEnd,
-  monthStart,
-  weekEnd,
-  weekStart,
-} from '@formkit/tempo';
-import { formatDateToString, zonaHorariaEcuador } from '@core/utils/date.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 declare let DateRangePicker: any;
 
@@ -32,7 +28,7 @@ declare let DateRangePicker: any;
   imports: [FormsModule, MatInputModule, MatFormFieldModule, MatCheckboxModule],
   templateUrl: './date-range-selection.component.html',
 })
-export class DateRangeSelectionComponent implements AfterViewInit {
+export class DateRangeSelectionComponent implements AfterViewInit, OnChanges {
   showInputMaterial = input(false);
   showMatSuffix = input(false);
   showMatPrefix = input(false);
@@ -46,10 +42,14 @@ export class DateRangeSelectionComponent implements AfterViewInit {
   @Input() to: string | null = null;
   @Input() inputGroupDateChecked = false;
   @Output() valueChangeRequiredDate = new EventEmitter<boolean>();
-  @Input() options = {
+  options = input<{ timePicker: boolean; format: string }>({
     timePicker: false,
     format: 'YYYY-MM-DD',
-  };
+  });
+  // = {
+  //   timePicker: false,
+  //   format: 'YYYY-MM-DD',
+  // };
 
   @Output() onChangeDateRange = new EventEmitter<{
     from: string;
@@ -66,12 +66,17 @@ export class DateRangeSelectionComponent implements AfterViewInit {
   });
 
   public uniqueId = `date-range${generateUuidv4()}`;
+  private selfDateRef: any;
 
   private getDateAddDay(day: number) {
     return addDay(this.currentDate, day);
   }
 
   ngAfterViewInit() {
+    this.setConfipgDateRange();
+  }
+
+  setConfipgDateRange = () => {
     const self = this;
     const rangos = {
       Hoy: [self.formatCurrentDate, self.formatCurrentDate],
@@ -96,7 +101,7 @@ export class DateRangeSelectionComponent implements AfterViewInit {
     const valorInput = document.getElementById(`${this.uniqueId}`) as any;
 
     (function (DateRangePicker) {
-      const drp = new DateRangePicker(
+      self.selfDateRef = new DateRangePicker(
         valorInput,
         {
           startDate: self.from ? self.from : undefined,
@@ -104,19 +109,19 @@ export class DateRangeSelectionComponent implements AfterViewInit {
           //minDate: '2021-07-15 15:00',
           //maxDate: '2021-08-16 15:00',
           //maxSpan: { "days": 9 },
-          //showDropdowns: true,
-          //minYear: 2020,
+          showDropdowns: true,
+          minYear: 2020,
           //maxYear: 2022,
-          //showWeekNumbers: true,
+          showWeekNumbers: true,
           //showISOWeekNumbers: true,
-          timePicker: self.options.timePicker,
+          timePicker: self.options().timePicker,
           //timePickerIncrement: 10,
-          //timePicker24Hour: true,
-          //timePickerSeconds: true,
+          timePicker24Hour: true,
+          timePickerSeconds: true,
           //showCustomRangeLabel: false,
           alwaysShowCalendars: true,
           opens: 'center',
-          //drops: 'up',
+          drops: 'auto',
           //singleDatePicker: true,
           //autoApply: true,
           //linkedCalendars: false,
@@ -133,7 +138,7 @@ export class DateRangeSelectionComponent implements AfterViewInit {
             cancelLabel: 'Cancelar',
             customRangeLabel: 'Rango Personalizado',
             separator: ' - ',
-            format: self.options.format,
+            format: self.options().format,
           },
         },
         function (start: any, end: any) {
@@ -151,6 +156,17 @@ export class DateRangeSelectionComponent implements AfterViewInit {
         // const endDate = ev.detail.startDate;
       });
     })(DateRangePicker);
+  };
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['options'] && !changes['options'].isFirstChange()) {
+      if (this.selfDateRef) {
+        console.log(this.selfDateRef);
+        this.selfDateRef.timePicker = this.options().timePicker;
+        this.selfDateRef.locale.format = this.options().format;
+        this.selfDateRef.updateElement();
+      }
+    }
   }
 
   onCheckboxClick(event: MouseEvent): void {
