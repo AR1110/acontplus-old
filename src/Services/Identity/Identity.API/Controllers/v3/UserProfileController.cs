@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
-
 namespace Identity.API.Controllers.v3;
 
 [Route("api/v{version:apiVersion}/[controller]")]

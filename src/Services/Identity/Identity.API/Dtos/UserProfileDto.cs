@@ -1,5 +1,3 @@
-using Identity.API.Entities;
-
 namespace Identity.API.DTOs;
 
 public class UserProfileDto

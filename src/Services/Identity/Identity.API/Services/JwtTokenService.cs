@@ -1,5 +1,3 @@
-using Identity.API.DTOs;
-
 namespace Identity.API.Services;
 
 public interface IJwtTokenService

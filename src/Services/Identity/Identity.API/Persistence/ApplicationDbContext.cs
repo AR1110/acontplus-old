@@ -19,7 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         // Apply all entity configurations from the current assembly
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 

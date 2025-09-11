@@ -1,5 +1,4 @@
 using Acontplus.Core.Extensions;
-using Identity.API.DTOs;
 
 namespace Identity.API.Controllers.v1;
 
@@ -63,7 +62,7 @@ public class AccountController(
                         await accountService.AddNotificationAsync(loginHistory);
                         return Ok(new SpResponse
                         {
-                            Code = "0",
+                            Code = "1",
                             Message = "Login Correcto!",
                             Payload = JsonExtensions.SerializeOptimized(userData)
                         });
@@ -71,14 +70,14 @@ public class AccountController(
                 case 1 when userData[0].NeedAuthorization:
                     return Ok(new SpResponse
                     {
-                        Code = "0",
+                        Code = "1",
                         Message = "Su ingreso requiere ser autenticado, espere la confirmación!",
                         Payload = JsonExtensions.SerializeOptimized(userData)
                     });
                 case > 1:
                     return Ok(new SpResponse
                     {
-                        Code = "0",
+                        Code = "1",
                         Message = "Seleccione la empresa!",
                         Payload = JsonExtensions.SerializeOptimized(userData)
                     });
@@ -135,7 +134,7 @@ public class AccountController(
 
         return Ok(new SpResponse
         {
-            Code = "0",
+            Code = "1",
             Message = "Login Correcto!",
             Payload = JsonExtensions.SerializeOptimized(userData)
         });
