@@ -1,5 +1,4 @@
 using Acontplus.Core.Extensions;
-using Identity.API.DTOs;
 
 namespace Identity.API.Controllers.v3;
 
@@ -58,7 +57,7 @@ public class AccountController(
                         await accountService.AddNotificationAsync(loginHistory);
                         return Ok(new SpResponse
                         {
-                            Code = "0",
+                            Code = "1",
                             Message = "Login Correcto!",
                             Payload = JsonExtensions.SerializeOptimized(userData)
                         });
@@ -106,7 +105,7 @@ public class AccountController(
         userData.Token = token.Token;
         return Ok(new SpResponse
         {
-            Code = "0",
+            Code = "1",
             Message = "Login Correcto!",
             Payload = JsonExtensions.SerializeOptimized(userData)
         });

@@ -1,5 +1,5 @@
-using System.Security.Cryptography;
 using Identity.API.Persistence;
+using System.Security.Cryptography;
 
 namespace Identity.API.Services;
 
@@ -33,7 +33,7 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task<RefreshToken> GenerateRefreshTokenAsync(int userId, string? ipAddress = null, string? userAgent = null, string? deviceInfo = null)
     {
         var tokenLifetimeMinutes = _configuration.GetValue<int>("JwtSettings:RefreshTokenExpirationInMinutes", 10080); // Default 7 days
-        
+
         var refreshToken = new RefreshToken
         {
             Token = GenerateSecureToken(),
@@ -50,7 +50,7 @@ public class RefreshTokenService : IRefreshTokenService
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Generated refresh token for user {UserId} from IP {IpAddress}", userId, ipAddress);
-        
+
         return refreshToken;
     }
 
@@ -95,7 +95,7 @@ public class RefreshTokenService : IRefreshTokenService
             _context.RefreshTokens.Update(refreshToken);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Revoked refresh token for user {UserId} from IP {IpAddress}", 
+            _logger.LogInformation("Revoked refresh token for user {UserId} from IP {IpAddress}",
                 refreshToken.AppUserId, ipAddress);
         }
     }
@@ -117,7 +117,7 @@ public class RefreshTokenService : IRefreshTokenService
             _context.RefreshTokens.UpdateRange(activeTokens);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Revoked {Count} refresh tokens for user {UserId}", 
+            _logger.LogInformation("Revoked {Count} refresh tokens for user {UserId}",
                 activeTokens.Count, userId);
         }
     }
@@ -125,9 +125,9 @@ public class RefreshTokenService : IRefreshTokenService
     public async Task CleanupExpiredTokensAsync()
     {
         var cutoffDate = DateTime.UtcNow.AddDays(-30); // Keep revoked tokens for 30 days for audit
-        
+
         var expiredTokens = await _context.RefreshTokens
-            .Where(rt => rt.Expires < DateTime.UtcNow && 
+            .Where(rt => rt.Expires < DateTime.UtcNow &&
                         (rt.Revoked == null || rt.Revoked < cutoffDate))
             .ToListAsync();
 
