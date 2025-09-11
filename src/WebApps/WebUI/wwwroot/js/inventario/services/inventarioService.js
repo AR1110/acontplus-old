@@ -571,15 +571,26 @@
         }
 
         function mapTo(obj) {
-            const { data, detalles, itemsDeleted } = obj;
+            const { data, detalles, itemsDeleted, tiposMovimiento, isOrderProduction } = obj;
+            console.log(tiposMovimiento)
 
             const consolidacion = headerTo(data);
-            const resultsItemsDeleted = detalleTo(itemsDeleted)
-            const resultsDetalle = detalleTo(detalles)
-            let mergeDetalles = [...resultsDetalle, ...resultsItemsDeleted]
+            const resultsItemsDeleted = detalleTo(itemsDeleted, tiposMovimiento, isOrderProduction)
+            const resultsDetalle = detalleTo(detalles, tiposMovimiento, isOrderProduction);
+            const components = detalles.map(item => (item.components || []).map(c => {
+
+                return {
+                    ...c,
+                    cantidad: item.cantidad,
+                    idBodega: item.idBodega,
+                }
+
+            })).flat();
+            const componentsMapped = componenteDetalleTo(components, tiposMovimiento)
+            let mergeDetalles = [...resultsDetalle, ...componentsMapped, ...resultsItemsDeleted]
             return {
                 consolidacion,
-                detalles: mergeDetalles
+                detalles: mergeDetalles,
             }
 
         }
@@ -595,8 +606,24 @@
             }
         }
 
-        function detalleTo(detalles) {
+        function detalleTo(detalles, tiposMovimiento, isOrderProduction) {
             let results = detalles.map((item, index) => {
+                let conversion = item.conversion || 1;
+                let cantidadTransaccion = fS.roundNumber(item.cantidad * (conversion), 5);
+                const components = (item.components || []);
+
+                let idTipoMovimiento = null;
+                if (components.length > 0 && tiposMovimiento && tiposMovimiento.length > 0) {
+                    const tipoMovimiento = tiposMovimiento.find(tipo => tipo.code === "E");
+                    if (tipoMovimiento) {
+                        idTipoMovimiento = tipoMovimiento.id;
+                    }
+                }
+
+                if (isOrderProduction) {
+                    cantidadTransaccion = (+cantidadTransaccion)
+                }
+
                 return {
                     idConsolidacionInventarioDetalle: item.idConsolidacionInventarioDetalle,
                     orderIndex: index + 1,
@@ -604,8 +631,8 @@
                     idBodega: item.idBodega,
                     idMedida: item.idMedida,
                     cantidad: item.cantidad,
-                    conversion: item.conversion,
-                    cantidadTransaccion: fS.roundNumber(item.cantidad * item.conversion, 5),
+                    conversion,
+                    cantidadTransaccion,
                     precioUnitario: item.precioUnitario,
                     precioCosto: item.precioCosto,
                     precioCostoFraccionado: item.precioCostoFraccionado,
@@ -613,6 +640,41 @@
                     nota: fS.isValidField(item.nota),
                     descripcion: item.descripcion,
                     estado: item.estado,
+                    movementTypeId: idTipoMovimiento
+                }
+            })
+            return results;
+        }
+
+        function componenteDetalleTo(components, tiposMovimiento) {
+            let results = components.map((item, index) => {
+                let cantidadTransaccion = fS.roundNumber(item.cantidad * item.conversion, 5);
+                let total = fS.roundNumber(item.cantidad * item.precioUnitario, 5);
+                let idTipoMovimiento = null;
+                if (tiposMovimiento && tiposMovimiento.length > 0) {
+                    const tipoMovimiento = tiposMovimiento.find(tipo => tipo.code === "S");
+                    if (tipoMovimiento) {
+                        idTipoMovimiento = tipoMovimiento.id;
+                    }
+                }
+
+                return {
+                    idConsolidacionInventarioDetalle: item.idConsolidacionInventarioDetalle,
+                    orderIndex: index + 1,
+                    idArticulo: item.idArticulo,
+                    idBodega: item.idBodega,
+                    idMedida: item.idMedida,
+                    cantidad: cantidadTransaccion,
+                    conversion: item.conversion,
+                    cantidadTransaccion: -cantidadTransaccion,
+                    precioUnitario: item.precioUnitario,
+                    precioCosto: item.precioCosto,
+                    precioCostoFraccionado: item.precioCostoFraccionado,
+                    total,
+                    nota: fS.isValidField(item.nota),
+                    descripcion: item.descripcion,
+                    estado: item.estado,
+                    movementTypeId: idTipoMovimiento
                 }
             })
             return results;

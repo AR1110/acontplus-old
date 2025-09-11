@@ -1572,7 +1572,9 @@
                 const dataMapeado = consolidacionInvSvc.mapTo({
                     data: $scope.data,
                     detalles: $scope.gridOptions.data,
-                    itemsDeleted
+                    itemsDeleted,
+                    tiposMovimiento: $scope.tiposMovimiento,
+                    isOrderProduction: $scope.isSearchItem
                 })
 
                 if (isUpdate()) {
