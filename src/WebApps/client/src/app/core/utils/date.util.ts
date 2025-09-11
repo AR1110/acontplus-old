@@ -10,10 +10,7 @@ interface ResultadoComparacionFechas {
   esMismoAnio: boolean;
 }
 
-export const isDatesEqual = function (
-  fecha1: Date,
-  fecha2: Date,
-): ResultadoComparacionFechas {
+export const isDatesEqual = function (fecha1: Date, fecha2: Date): ResultadoComparacionFechas {
   // Verificar si alguna fecha es null
   if (!fecha1 || !fecha2) {
     return {
@@ -61,10 +58,7 @@ export function ajustarFechaEmisionModificada<
   const fechaActual = new Date();
 
   if (fechaEmisionDocCreado) {
-    const dataFechaAnterior = isDatesEqual(
-      fechaEmisionModificada,
-      fechaEmisionDocCreado,
-    );
+    const dataFechaAnterior = isDatesEqual(fechaEmisionModificada, fechaEmisionDocCreado);
     if (dataFechaAnterior.esMismaFecha) {
       return fechaEmisionDocCreado;
     }

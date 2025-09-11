@@ -1,12 +1,10 @@
-import { DECIMALS } from '@core/constants/global.constants';
-import { roundNumber } from './round-number.utils';
 import { pricingCalculateUtil } from './pricing-calculate.util';
+import { DECIMALS } from '@core/constants/global.constants';
 import DecimalUtils, { plus } from './decimal.util';
-
-
+import { roundNumber } from './round-number.utils';
 
 export class TotalizadorUtil {
-  public  htmlTotales = '';
+  public htmlTotales = '';
 
   private totalizadores = {
     totalPrecioTotalSinImpuesto: 0,
@@ -17,8 +15,8 @@ export class TotalizadorUtil {
     totalPorcentajeDescuento: 0,
   };
 
-  constructor(){
-    this.htmlTotales = ''
+  constructor() {
+    this.htmlTotales = '';
     this.totalizadores = {
       totalPrecioTotalSinImpuesto: 0,
       totalIce: 0,
@@ -29,38 +27,64 @@ export class TotalizadorUtil {
     };
   }
 
-  private   calcularTotalesGenerales(items:any[]) {
-    return items.reduce((acc, item) => {
-      const totalSinImpuesto = pricingCalculateUtil.calcularTotalAntesDescuento(item.precioUnitario, item.cantidad);
-      const totalIce = item.cantidad * item.ice;
+  private calcularTotalesGenerales(items: any[]) {
+    return items.reduce(
+      (acc, item) => {
+        const totalSinImpuesto = pricingCalculateUtil.calcularTotalAntesDescuento(
+          item.precioUnitario,
+          item.cantidad,
+        );
+        const totalIce = item.cantidad * item.ice;
 
-      acc.totalIce += totalIce;
-      acc.totalPrecioTotalSinImpuesto = plus(acc.totalPrecioTotalSinImpuesto, roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS), DECIMALS.GENERAL);
-      acc.totalDescuento = plus(acc.totalDescuento, item.valorDescuento, DECIMALS.GENERAL);
-      acc.totalSinImpuesto = plus(acc.totalSinImpuesto, roundNumber(totalSinImpuesto, DECIMALS.DOS), DECIMALS.GENERAL);
+        acc.totalIce += totalIce;
+        acc.totalPrecioTotalSinImpuesto = plus(
+          acc.totalPrecioTotalSinImpuesto,
+          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS),
+          DECIMALS.GENERAL,
+        );
+        acc.totalDescuento = plus(acc.totalDescuento, item.valorDescuento, DECIMALS.GENERAL);
+        acc.totalSinImpuesto = plus(
+          acc.totalSinImpuesto,
+          roundNumber(totalSinImpuesto, DECIMALS.DOS),
+          DECIMALS.GENERAL,
+        );
 
-      return acc;
-    }, { ...this.totalizadores });
+        return acc;
+      },
+      { ...this.totalizadores },
+    );
   }
 
-  private   calcularTotalesPorTarifa(items:any[], codigoPorcentaje:string) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
-    return itemsFiltrados.reduce((acc, item) => {
-      acc.totalNetoIva = plus(acc.totalNetoIva, roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS), DECIMALS.GENERAL);
-      return acc;
-    }, { totalNetoIva: 0 });
+  private calcularTotalesPorTarifa(items: any[], codigoPorcentaje: string) {
+    const itemsFiltrados = items.filter((item) => item.codigoPorcentaje === codigoPorcentaje);
+    return itemsFiltrados.reduce(
+      (acc, item) => {
+        acc.totalNetoIva = plus(
+          acc.totalNetoIva,
+          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS),
+          DECIMALS.GENERAL,
+        );
+        return acc;
+      },
+      { totalNetoIva: 0 },
+    );
   }
 
-  private   calcularTotalIvaPorTarifa(items:any[], codigoPorcentaje:string, tarifa:number) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
-    return itemsFiltrados.reduce((acc, item) => {
-      const totalIva = item.valorImpuesto || pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa);
-      acc.totalIva = plus(acc.totalIva, roundNumber(totalIva, DECIMALS.DOS), DECIMALS.DOS);
-      return acc;
-    }, { totalIva: 0 });
+  private calcularTotalIvaPorTarifa(items: any[], codigoPorcentaje: string, tarifa: number) {
+    const itemsFiltrados = items.filter((item) => item.codigoPorcentaje === codigoPorcentaje);
+    return itemsFiltrados.reduce(
+      (acc, item) => {
+        const totalIva =
+          item.valorImpuesto ||
+          pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa);
+        acc.totalIva = plus(acc.totalIva, roundNumber(totalIva, DECIMALS.DOS), DECIMALS.DOS);
+        return acc;
+      },
+      { totalIva: 0 },
+    );
   }
 
-  private   construirHtmlTotales(totales:any) {
+  private construirHtmlTotales(totales: any) {
     return {
       htmlSubtotalImpuesto: `
             <tr>
@@ -79,19 +103,19 @@ export class TotalizadorUtil {
                 <td class="right font-weight-bold">
                     $${roundNumber(totales.importeTotal, DECIMALS.DOS)}
                 </td>
-            </tr>`
+            </tr>`,
     };
   }
 
-  public calcular(obj:any) {
+  public calcular(obj: any) {
     const items = obj.items as any[];
-    const tarifasImpuesto = obj.tarifasImpuesto as any[]
+    const tarifasImpuesto = obj.tarifasImpuesto as any[];
     const totalesGenerales = this.calcularTotalesGenerales(items);
     let htmlImpuestoTotal = '';
     let htmlIvaTotal = '';
 
     // Procesar cada tarifa de impuesto
-    tarifasImpuesto.forEach(tarifa => {
+    tarifasImpuesto.forEach((tarifa) => {
       const dataTotalNetoIva = this.calcularTotalesPorTarifa(items, tarifa.codigoPorcentaje);
 
       if (dataTotalNetoIva.totalNetoIva > 0) {
@@ -106,9 +130,16 @@ export class TotalizadorUtil {
                 </tr>`;
       }
 
-        if (tarifa.tarifa > 0) {
-            const valorImpuesto = pricingCalculateUtil.calculateTaxValue(dataTotalNetoIva.totalNetoIva, tarifa.tarifa);
-            this.totalizadores.sumTotalIva = plus(this.totalizadores.sumTotalIva, valorImpuesto, DECIMALS.DOS);
+      if (tarifa.tarifa > 0) {
+        const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
+          dataTotalNetoIva.totalNetoIva,
+          tarifa.tarifa,
+        );
+        this.totalizadores.sumTotalIva = DecimalUtils.addAsNumber(
+          this.totalizadores.sumTotalIva,
+          valorImpuesto,
+          DECIMALS.DOS,
+        );
 
         if (valorImpuesto > 0) {
           htmlIvaTotal += `
@@ -123,15 +154,22 @@ export class TotalizadorUtil {
     });
 
     // Calcular el importe total
-    const importeTotal = totalesGenerales.totalPrecioTotalSinImpuesto + this.totalizadores.sumTotalIva;
+    const importeTotal =
+      totalesGenerales.totalPrecioTotalSinImpuesto + this.totalizadores.sumTotalIva;
 
     // Calcular el porcentaje de descuento si hay descuentos
     if (totalesGenerales.totalDescuento > 0) {
-      this.totalizadores.totalPorcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(totalesGenerales.totalSinImpuesto, totalesGenerales.totalDescuento);
+      this.totalizadores.totalPorcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(
+        totalesGenerales.totalSinImpuesto,
+        totalesGenerales.totalDescuento,
+      );
     }
 
     // Construir HTML de totales finales
-    const { htmlSubtotalImpuesto, htmlTotal } = this.construirHtmlTotales({ ...totalesGenerales, importeTotal });
+    const { htmlSubtotalImpuesto, htmlTotal } = this.construirHtmlTotales({
+      ...totalesGenerales,
+      importeTotal,
+    });
 
     // Devolver resultados finales
     const resulData = {
@@ -145,14 +183,22 @@ export class TotalizadorUtil {
       htmlImpuestoTotal,
       htmlIvaTotal,
       htmlTotal,
-      importeTotal: roundNumber(importeTotal, DECIMALS.DOS)
+      importeTotal: roundNumber(importeTotal, DECIMALS.DOS),
     };
     this.generarHtmlTotales(resulData);
     return resulData;
   }
 
-  private   generarHtmlTotales(obj: any) {
-    const { htmlSubtotalImpuesto, htmlImpuestoTotal, totalDescuento, totalIce, irbpnr, htmlIvaTotal, htmlTotal } = obj;
+  private generarHtmlTotales(obj: any) {
+    const {
+      htmlSubtotalImpuesto,
+      htmlImpuestoTotal,
+      totalDescuento,
+      totalIce,
+      irbpnr,
+      htmlIvaTotal,
+      htmlTotal,
+    } = obj;
 
     this.htmlTotales = `<div class="table-responsive">
                             <table class="table table-clear table-sm small">

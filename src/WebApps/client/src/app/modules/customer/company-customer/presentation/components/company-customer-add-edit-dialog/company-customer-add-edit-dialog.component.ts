@@ -276,7 +276,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
             });
             this.updateFormControlNumeroIdentificacion(dataIdentificacion.codigoSri);
 
-            this.onKeyDownGovernmentId();
+            this.validateToSri();
           }
 
           return;
@@ -286,14 +286,12 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
           const dataIdentificacion = this.tiposIdentificacion().find(
             (ti: any) => ti.codigoSri === SRI_IDENTIFICATION_CODE.RUC,
           );
-
           if (dataIdentificacion) {
             this.customerForm.patchValue({
               idTipoIdentificacion: dataIdentificacion.idTipoIdentificacion,
             });
             this.setIdentificationTypeChange(dataIdentificacion.codigoSri);
           }
-
           this.customerForm.patchValue({
             idTiempoCredito:
               this.tiemposCredito().length > 0 ? this.tiemposCredito()[0].idTiempoCredito : 0,
