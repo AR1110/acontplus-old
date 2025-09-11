@@ -1,39 +1,35 @@
-import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { isApiResponse } from '@core/models/api-response';
-import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { isApiResponse } from '@core/models/api-response';
+import { FormsModule } from '@angular/forms';
 
-import { ProductSale } from '@inventory/product/domain/entities/product.model';
 import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
-import {
-  getCantidadStock,
-  mergeProductStock,
-} from '@inventory/domain/utils/product-stock.util';
 import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail,
 } from '@mechanical/domain/models/support-maintenance.model';
-import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
-import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
-import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
-import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
-import Swal from 'sweetalert2';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
-import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
-import { Tarifa } from '@inventory/domain/models/tarifa.model';
-import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
-import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
-import { MatIcon } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { DrawTaxTotalComponent } from '@shared/components/draw-tax-total/draw-tax-total.component';
+import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-maintenance.adapter';
+import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
+import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
+import { getCantidadStock, mergeProductStock } from '@inventory/domain/utils/product-stock.util';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
+import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
+import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { Tarifa } from '@inventory/domain/models/tarifa.model';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-support-maintenance-modal',
@@ -132,13 +128,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
   fechaLegible = '';
 
-  comboEditor = (
-    cell: any,
-    onRendered: any,
-    success: any,
-    cancel: any,
-    editorParams: any
-  ) => {
+  comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     const column: any = cell.getColumn().getField();
     const data: any = cell.getData();
     // const oldValue = cell.getOldValue();
@@ -165,9 +155,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxPercentId') {
-      const taxPercents = editorParams.filter(
-        (ti: any) => ti.idImpuesto === Number(data.taxId)
-      );
+      const taxPercents = editorParams.filter((ti: any) => ti.idImpuesto === Number(data.taxId));
 
       for (const ti of taxPercents) {
         const opt = document.createElement('option');
@@ -525,9 +513,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
         ...response.data,
       };
 
-      this.fechaLegible = new Date(this.data.fechaEmision).toLocaleDateString(
-        'es-ES'
-      );
+      this.fechaLegible = new Date(this.data.fechaEmision).toLocaleDateString('es-ES');
 
       this.estabs.set(response.estabs);
       this.taxPercents.set(response.tarifasImpuesto);
@@ -537,7 +523,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
       this.details.set(response.details);
       const dataEstab = this.estabs().find(
-        (e) => e.idEstablecimiento === this.data.establecimientoId
+        (e) => e.idEstablecimiento === this.data.establecimientoId,
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
@@ -594,18 +580,15 @@ export class SupportMaintenanceModalComponent implements OnInit {
   onResultSelectedProduct(response: any) {
     const tempDetails = structuredClone(this.details());
 
-    const product = response.product as ProductSale;
+    const product = response.product as any;
     const medidas = response.medidas as MedidaProducto[];
-    const consolidacionesFecha =
-      response.consolidacionesFecha as ConsolidacionBodega[];
+    const consolidacionesFecha = response.consolidacionesFecha as ConsolidacionBodega[];
 
     let row = this.getDataRowEmpty();
-    const dataTaxPercent = this.taxPercents().find(
-      (d) => d.codigo === product.codigoPorcentaje
-    );
+    const dataTaxPercent = this.taxPercents().find((d) => d.codigo === product.codigoPorcentaje);
 
     const findDataProduct = tempDetails.find(
-      (item) => item.llevaInventario && item.productId === product.idArticulo
+      (item) => item.llevaInventario && item.productId === product.idArticulo,
     );
 
     row.productId = product.idArticulo;
@@ -650,7 +633,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     if (product.llevaInventario) {
       let oldValue = 1;
       const productsDuplicated = structuredClone(tempDetails).filter(
-        (item) => item.llevaInventario && item.productId === product.idArticulo
+        (item) => item.llevaInventario && item.productId === product.idArticulo,
       );
 
       productsDuplicated.push({ ...row });
@@ -723,9 +706,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
   async onChangeBodega() {
     try {
-      const bodega = this.bodegas().find(
-        (item) => item.idBodega === this.data.bodegaId
-      );
+      const bodega = this.bodegas().find((item) => item.idBodega === this.data.bodegaId);
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -790,9 +771,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       //   return
       // }
 
-      const tarifa = this.feeds().find(
-        (item) => item.idTarifa === this.data.feeId
-      );
+      const tarifa = this.feeds().find((item) => item.idTarifa === this.data.feeId);
       const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
@@ -832,11 +811,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
    * @param {*} data  infrastructure row
    * @param {*} oldValue valor anterior de la columna
    */
-  setCalculoTotales(
-    column: any,
-    data: SupportMaintenanceDetail,
-    oldValue?: string | number
-  ) {
+  setCalculoTotales(column: any, data: SupportMaintenanceDetail, oldValue?: string | number) {
     const obj = this.salesDetailCalculationSvc.calculateColDef({
       data: data,
       column,
@@ -967,13 +942,10 @@ export class SupportMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (
-      this.details().some((row) => row.llevaInventario && row.quantity === 0)
-    ) {
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
+        message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
       });
       return;
     }
