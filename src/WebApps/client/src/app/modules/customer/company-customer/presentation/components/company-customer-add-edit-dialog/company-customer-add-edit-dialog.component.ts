@@ -286,7 +286,6 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
                 this.tiemposCredito().length > 0 ? this.tiemposCredito()[0].idTiempoCredito : 0,
             });
             this.updateFormControlNumeroIdentificacion(dataIdentificacion.codigoSri);
-
             this.validateToSri();
           }
 
