@@ -1,5 +1,3 @@
-using Acontplus.Utilities.Time;
-
 namespace Identity.API.Entities;
 
 [Table("ForgotPassword", Schema = "Seguridad")]

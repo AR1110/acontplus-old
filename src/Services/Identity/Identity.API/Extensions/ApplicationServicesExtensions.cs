@@ -1,12 +1,3 @@
-using Acontplus.ApiDocumentation;
-using Acontplus.Persistence.SqlServer.Repositories;
-using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Infrastructure;
-using Acontplus.Utilities.Time;
-using Identity.API.Persistence;
-using Microsoft.AspNetCore.Identity;
-using System.Text.Json.Serialization;
-
 namespace Identity.API.Extensions;
 
 public static class ApplicationServicesExtensions
@@ -49,8 +40,6 @@ public static class ApplicationServicesExtensions
         })
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
-
-        services.AddControllers();
 
         services.ConfigureHttpJsonOptions(options =>
         {

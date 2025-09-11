@@ -1,5 +1,5 @@
-using Acontplus.ApiDocumentation;
 using Acontplus.Services.Extensions.Middleware;
+using Identity.API.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -19,7 +19,6 @@ try
         loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
         loggerConfiguration.ReadFrom.Services(services);
     });
-
 
     // Use AppConfiguration for loading settings
     var configuration = ApplicationConfigurationBuilder.Load();
@@ -49,7 +48,8 @@ try
 
     app.UseAuthorization();
 
-    app.MapControllers();
+    // Map minimal API endpoints
+    app.MapAllIdentityEndpoints();
 
     await app.RunAsync();
 }

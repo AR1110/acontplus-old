@@ -1,7 +1,3 @@
-using Acontplus.Core.DTOs.Requests;
-using Acontplus.Utilities.Data;
-using System.Data;
-
 namespace Identity.API.Services;
 
 public class AccountService(IAdoRepository repository) : IAccountService
