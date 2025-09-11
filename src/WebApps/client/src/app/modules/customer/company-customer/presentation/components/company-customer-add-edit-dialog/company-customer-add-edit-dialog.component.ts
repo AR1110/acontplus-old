@@ -6,12 +6,12 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
+import { GetFormDataCompanyCustomerUseCase } from '@company-customer/application/get-form-data-company-customer.use-case';
 import {
   SEPARADORES_REGEX,
   SEPARATOR_KEY_CODE,
   SRI_IDENTIFICATION_CODE,
 } from '@core/constants/global.constants';
-import { GetFormDataCompanyCustomerUseCase } from '@company-customer/application/get-form-data-company-customer.use-case';
 import { UpdateCompanyCustomerUseCase } from '@company-customer/application/update-company-customer.use-case';
 import { CreateCompanyCustomerUseCase } from '@company-customer/application/create-company-customer.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -386,7 +386,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
     return this.customerForm.get('birthDate');
   }
 
-  validateToSri($event?: Event) {
+  public validateToSri($event?: Event) {
     if ($event) {
       $event.preventDefault();
     }
