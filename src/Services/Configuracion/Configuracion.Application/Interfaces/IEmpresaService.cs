@@ -1,4 +1,4 @@
-namespace Ventas.Application.Interfaces;
+namespace Configuracion.Application.Interfaces;
 
 public interface IEmpresaService
 {
