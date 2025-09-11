@@ -31,6 +31,7 @@ module.exports = tseslint.config(
         },
       ],
       "@typescript-eslint/consistent-type-definitions": "error",
+      "linebreak-style": ["error", "unix"],
     },
   },
   {
