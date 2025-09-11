@@ -1,7 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace Identity.API.Helpers;
+﻿namespace Identity.API.Helpers;
 
 public static class UserAgentHelper
 {

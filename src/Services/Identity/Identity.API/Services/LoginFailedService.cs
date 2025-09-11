@@ -1,5 +1,3 @@
-using Identity.API.Persistence;
-
 namespace Identity.API.Services;
 
 public class LoginFailedService(ApplicationDbContext context) : ILoginFailedService

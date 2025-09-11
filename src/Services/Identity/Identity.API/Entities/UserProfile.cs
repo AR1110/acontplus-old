@@ -1,5 +1,3 @@
-using Acontplus.Core.Enums;
-
 namespace Identity.API.Entities;
 
 [Table("UserProfile", Schema = "Auth")]
