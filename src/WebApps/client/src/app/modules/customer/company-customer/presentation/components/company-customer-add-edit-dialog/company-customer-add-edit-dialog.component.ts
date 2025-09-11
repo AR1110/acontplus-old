@@ -276,7 +276,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
             });
             this.updateFormControlNumeroIdentificacion(dataIdentificacion.codigoSri);
 
-            this.onKeyDownGovernmentId();
+            this.validateToSri();
           }
 
           return;
