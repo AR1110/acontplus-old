@@ -1,7 +1,3 @@
-using Acontplus.Utilities.Data;
-using Identity.API.Persistence;
-using Microsoft.AspNetCore.Identity;
-
 namespace Identity.API.Services;
 
 public class UserService : IUserService

@@ -1,66 +1,88 @@
-namespace Identity.API.Controllers.v3;
+namespace Identity.API.Endpoints.UserProfileEndpoints;
 
-[Route("api/v{version:apiVersion}/[controller]")]
-[ApiController]
-[ApiVersion("3.0")]
-[Authorize]
-public class UserProfileController(
-    IUserService userService,
-    ILogger<UserProfileController> logger) : ControllerBase
+public static class UserProfileEndpoints
 {
-    [HttpGet("{userId:int}")]
-    public async Task<IActionResult> GetUserProfile(int userId)
+    public static void MapUserProfileEndpoints(this IEndpointRouteBuilder app)
     {
-        try
+        // Create API version set for UserProfile
+        var apiVersionSet = app.NewApiVersionSet()
+            .HasApiVersion(new ApiVersion(3, 0))
+            .ReportApiVersions()
+            .Build();
+
+        var userProfileGroup = app.MapGroup("/api/v{version:apiVersion}/UserProfile")
+            .WithApiVersionSet(apiVersionSet)
+            .MapToApiVersion(new ApiVersion(3, 0))
+            .RequireAuthorization()
+            .WithTags("UserProfile V3")
+            .WithOpenApi();
+
+        // GET user profile by userId
+        userProfileGroup.MapGet("/{userId:int}", async (
+            int userId,
+            IUserService userService,
+            ILogger<IUserService> logger) =>
         {
-            var profile = await userService.GetUserProfileAsync(userId);
-            if (profile == null)
+            try
             {
-                return NotFound($"Profile not found for user {userId}");
+                var profile = await userService.GetUserProfileAsync(userId);
+                if (profile == null)
+                {
+                    return Results.NotFound($"Profile not found for user {userId}");
+                }
+
+                var appUser = await userService.GetUserByIdAsync(userId);
+                var profileDto = MapToDto(profile, appUser?.PhoneNumber);
+                return Results.Ok(profileDto);
             }
-
-            var appUser = await userService.GetUserByIdAsync(userId);
-            var profileDto = MapToDto(profile, appUser?.PhoneNumber);
-            return Ok(profileDto);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Error retrieving profile for user {UserId}", userId);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    [HttpPut("{userId:int}")]
-    public async Task<IActionResult> UpdateUserProfile(int userId, [FromBody] UserProfileUpdateDto updateDto)
-    {
-        try
-        {
-            var existingProfile = await userService.GetUserProfileAsync(userId);
-            var profileToUpdate = existingProfile ?? new UserProfile { AppUserId = userId, Id = 0 };
-
-            // Update phone number in Identity first so completion scoring includes it
-            if (!string.IsNullOrWhiteSpace(updateDto.PhoneNumber))
+            catch (Exception ex)
             {
-                await userService.UpdateUserPhoneNumberAsync(userId, updateDto.PhoneNumber);
+                logger.LogError(ex, "Error retrieving profile for user {UserId}", userId);
+                return Results.Problem("Internal server error", statusCode: 500);
             }
+        })
+        .WithSummary("Get user profile by ID")
+        .WithDescription("Retrieves a user profile for the specified user ID")
+        .WithName("GetUserProfile");
 
-            // Map from DTO to entity (excluding phone)
-            MapFromUpdateDto(updateDto, profileToUpdate);
-
-            var updatedProfile = await userService.CreateOrUpdateUserProfileAsync(userId, profileToUpdate);
-            var appUser = await userService.GetUserByIdAsync(userId);
-            var resultDto = MapToDto(updatedProfile, appUser?.PhoneNumber);
-
-            logger.LogInformation("Profile updated for user {UserId}",
-                userId);
-
-            return Ok(resultDto);
-        }
-        catch (Exception ex)
+        // PUT update user profile
+        userProfileGroup.MapPut("/{userId:int}", async (
+            int userId,
+            UserProfileUpdateDto updateDto,
+            IUserService userService,
+            ILogger<IUserService> logger) =>
         {
-            logger.LogError(ex, "Error updating profile for user {UserId}", userId);
-            return StatusCode(500, "Internal server error");
-        }
+            try
+            {
+                var existingProfile = await userService.GetUserProfileAsync(userId);
+                var profileToUpdate = existingProfile ?? new UserProfile { AppUserId = userId, Id = 0 };
+
+                // Update phone number in Identity first so completion scoring includes it
+                if (!string.IsNullOrWhiteSpace(updateDto.PhoneNumber))
+                {
+                    await userService.UpdateUserPhoneNumberAsync(userId, updateDto.PhoneNumber);
+                }
+
+                // Map from DTO to entity (excluding phone)
+                MapFromUpdateDto(updateDto, profileToUpdate);
+
+                var updatedProfile = await userService.CreateOrUpdateUserProfileAsync(userId, profileToUpdate);
+                var appUser = await userService.GetUserByIdAsync(userId);
+                var resultDto = MapToDto(updatedProfile, appUser?.PhoneNumber);
+
+                logger.LogInformation("Profile updated for user {UserId}", userId);
+
+                return Results.Ok(resultDto);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating profile for user {UserId}", userId);
+                return Results.Problem("Internal server error", statusCode: 500);
+            }
+        })
+        .WithSummary("Update user profile")
+        .WithDescription("Updates a user profile for the specified user ID")
+        .WithName("UpdateUserProfile");
     }
 
     #region Private Helper Methods

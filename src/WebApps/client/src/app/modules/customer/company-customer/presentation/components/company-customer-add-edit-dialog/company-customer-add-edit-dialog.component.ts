@@ -375,7 +375,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
     return this.customerForm.get('birthDate');
   }
 
-  onKeyDownGovernmentId($event?: Event) {
+  public validateToSri($event?: Event) {
     if ($event) {
       $event.preventDefault();
     }
