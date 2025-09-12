@@ -79,10 +79,7 @@
         }
 
 
-        $scope.canEdit = canEdit;
-        function canEdit(item) {
-            return item.codDoc !== docyType.OR
-        }
+        $scope.canEdit = isOrderProductionDoc;
 
         function getList() {
             try {
@@ -164,7 +161,7 @@
             getList()
         }
 
-        $scope.pagechanged = function () {
+        $scope.pageChanged = function () {
             getList()
         };
 
@@ -258,49 +255,57 @@
             }
         }
 
-
+        function isOrderProductionDoc(item) {
+            return item.codDoc === docyType.OP; // Ajusta el tipo correcto aquí
+        }
         $scope.openModalDuplicar = async (item) => {
             try {
+                let response;
+                const orderProduction = isOrderProductionDoc(item);
 
-                if (item.codDoc === docyType.OR) {
-
-                    console.log('editar orden producción')
-                    consolidacionInvSvc.getByIdForEditOrderProduction(item.id).then(response => {
-                        console.log(response)
-                    })
-                    return
+                // Elegir el método según tipo de documento
+                if (orderProduction) {
+                    console.log('Editar orden producción');
+                    response = await consolidacionInvSvc.getByIdForEditOrderProduction(item.id);
+                } else {
+                    response = await consolidacionInvSvc.getId(item.id);
                 }
 
+                // Validar respuesta antes de abrir modal
+                if (
+                    response &&
+                    response.comprobante &&
+                    Object.keys(response.comprobante).length > 0 &&
+                    Array.isArray(response.detalles) &&
+                    response.detalles.length > 0
+                ) {
+                    // Abrir modal
+                    const result = await modalSvc.openModalCustom({
+                        controller: modalConsolidacionAddEditCtrl,
+                        template: URL_TEMPLATE + '_ModalNuevo.cshtml',
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            tipoRegistro: 3,
+                            isDocOrderProduction: orderProduction
+                        },
+                        isRenderRazorPartial: true,
+                        windowClass: 'uibModalFullScreen'
+                    }).result;
 
-
-                consolidacionInvSvc.getId(item.id).then(response => {
-                    if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
-                        modalSvc.openModalCustom({
-                            controller: modalConsolidacionAddEditCtrl,
-                            template: URL_TEMPLATE + '_ModalNuevo.cshtml',
-                            size: 'xl',
-                            params: {
-                                data: response,
-                                tipoRegistro: 3
-                            },
-                            isRenderRazorPartial: true,
-                            windowClass: 'uibModalFullScreen'
-                        }).result.then(result => {
-
-                            if (result && typeof result === 'object') {
-                                refresh()
-                            }
-                        })
-
+                    // Si devuelve objeto, refrescar
+                    if (result && typeof result === 'object') {
+                        refresh();
                     }
-                }).catch(error => {
-                    console.log(error)
-                })
-            } catch (error) {
+                } else {
+                    console.warn('No hay datos válidos para abrir el modal');
+                }
 
-                console.log(error)
+            } catch (error) {
+                console.error('Error en openModalDuplicar:', error);
             }
-        }
+        };
+
 
 
 
@@ -381,6 +386,7 @@
         const tS = $injector.get('toastService');
         const fS = $injector.get('formulario');
         const articuloSvc = $injector.get('articuloService');
+        const docyType = $injector.get('DOC_TYPE')
 
         $scope.tipoDoc = {
             codigo: 'C'
@@ -401,7 +407,7 @@
 
         $scope.isEnabledDate = true;
 
-        $scope.isSearchItem = false;
+        $scope.isDocOrderProduction = false;
 
         let itemsDeleted = [];
         $scope.gridOptions = {
@@ -415,10 +421,7 @@
             showExpandAllButton: false,
             enableExpandable: true,
             isRowExpandable: function (row) {
-                // row.entity es la fila completa
-                console.log('isRowExpandable', row);
                 return row.entity.subGridOptions && row.entity.subGridOptions.data.length > 0;
-                // solo se expande si tiene datos
             },
         }
 
@@ -435,38 +438,13 @@
 
         function resetFlags() {
             $scope.isEnabledDate = false;
-            $scope.isSearchItem = false;
-        }
-
-        async function handleDocumentoOR() {
-            $scope.isSearchItem = true;
-
-            if ($scope.gridOptions.data.length === 0) return setColumnDefs();
-
-            const isConfirmed = await Swal.fire({
-                icon: 'warning',
-                html: 'Al cambiar el tipo de documento se eliminarán los artículos agregados.',
-                showConfirmButton: true,
-                confirmButtonText: 'Aceptar',
-                cancelButtonText: 'Cancelar',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showCancelButton: true
-            }).then(result => result.isConfirmed);
-
-            if (isConfirmed) {
-                applyCambioDocumento();
-            } else {
-                revertCambioDocumento();
-            }
-
-            $scope.$apply();
+            $scope.isDocOrderProduction = false;
         }
 
         function applyCambioDocumento() {
             $scope.dataClone.idTipoDocumento = $scope.data.idTipoDocumento;
             $scope.gridOptions.data = [];
-            $scope.isSearchItem = true;
+            $scope.isDocOrderProduction = true;
             setColumnDefs();
         }
 
@@ -480,17 +458,31 @@
             let movimiento = null;
 
             switch (codigo) {
-                case 'CI':
+                //Consolidacion Inventario
+                case docyType.CI:
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'A');
-                    $scope.isEnabledDate = true;
                     break;
-                case 'BI':
+
+                //Baja Inventario
+                case docyType.BI:
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'S');
-                    resetQuantityZero();
                     break;
+
+                //Entrada Inventario
                 case 'EI':
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'E');
                     break;
+
+                case docyType.OP:
+                    let movimientoEntrada = $scope.tiposMovimiento.find(t => t.code === 'E');
+                    let movimientoSalida = $scope.tiposMovimiento.find(t => t.code === 'S');
+
+                    movimiento = {
+                        idMovimientoEntrada: movimientoEntrada.id,
+                        idMovimientoSalida: movimientoSalida.id,
+                    }
+
+                    break
             }
 
             return movimiento;
@@ -498,21 +490,51 @@
 
 
         $scope.onChangeTipoDocumento = async () => {
+            if (isDuplicate() && $scope.isDocOrderProduction) {
+                Swal.fire({
+                    icon: 'warning',
+                    html: 'No puedes modificar el tipo documento cuando es orden de producción'
+                })
+                $scope.data.idTipoDocumento = $scope.dataClone.idTipoDocumento;
+                return
+            }
             const dataDoc = getDataTipoDoc();
 
             resetFlags();
             setColumnDefs();
 
             // Manejo específico de tipo de documento 'OR'
-            if (dataDoc.codigo === 'OR') {
-                await handleDocumentoOR();
+            if (dataDoc.codigo === docyType.OP) {
+                $scope.isDocOrderProduction = true;
+
+                if ($scope.gridOptions.data.length === 0) return setColumnDefs();
+
+                const isConfirmed = await Swal.fire({
+                    icon: 'warning',
+                    html: 'Al cambiar el tipo de documento se eliminarán los artículos agregados.',
+                    showConfirmButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showCancelButton: true
+                }).then(result => result.isConfirmed);
+
+                if (isConfirmed) {
+                    applyCambioDocumento();
+                } else {
+                    revertCambioDocumento();
+                }
+
+                $scope.$apply();
             }
 
-            // Obtener tipo de movimiento según el código del documento
-            const dataMovimiento = getMovimientoPorCodigo(dataDoc.codigo);
+            if (dataDoc.codigo === docyType.BI) {
+                resetQuantityZero();
+            }
 
-            if (dataMovimiento) {
-                $scope.data.idTipoMovimiento = dataMovimiento.id;
+            if (dataDoc.codigo === docyType.CI) {
+                $scope.isEnabledDate = true;
             }
 
             // Actualizar clone y validar fechas
@@ -633,10 +655,9 @@
                     rowEntity[colDef.field] = oldValue;
                     return
                 }
-                console.log('afterCellEdit', rowEntity, colDef, newValue, oldValue);
 
-                if (colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue) {
-                    if (getDataTipoDoc().codigo === "BI") {
+                if (colDef.field === "cantidad" && newValue >= 1 && newValue !== oldValue && newValue > oldValue) {
+                    if (getDataTipoDoc().codigo === docyType.BI) {
                         articuloSvc.checkNotificationStock({
                             idArticulo: rowEntity.idArticulo,
                             cantidad: newValue * rowEntity.conversion,
@@ -682,7 +703,7 @@
                     }
 
                     //cuando es orden de produccion
-                    if (getDataTipoDoc().codigo === "OR") {
+                    if (getDataTipoDoc().codigo === docyType.OP) {
                         await validarStockComponentes(rowEntity, oldValue, colDef);
                         $scope.$apply();
 
@@ -740,8 +761,6 @@
                             disableRowExpandable: false,
                         };
                         row.entity.subGridOptions.data = row.entity.components;
-                        console.log('row.entity.components', row.entity)
-                        console.log(row.entity.components)
 
                     }
                 });
@@ -752,6 +771,19 @@
                 document.querySelector('#custom-template-md-autocomplete-articulo').focus();
             }, 100);
         }
+        $scope.isDuplicate = isDuplicate;
+
+        function isNew() {
+            return params.tipoRegistro === 1;
+        }
+        function isEdit() {
+            return params.tipoRegistro === 2;
+        }
+        function isDuplicate() {
+            return params.tipoRegistro === 3;
+        }
+
+
 
         initiload();
         function initiload() {
@@ -762,13 +794,12 @@
                     tipoDocumento,
                     tiposMovimiento,
                 } = mainDataForm;
-                console.log(mainDataForm)
                 $scope.establecimientos = estabs;
                 $scope.decimal = decimal;
                 $scope.tipoDocumento = tipoDocumento;
                 $scope.tiposMovimiento = tiposMovimiento;
 
-                if (params.tipoRegistro === 1) {
+                if (isNew()) {
                     let dataEstab = $scope.establecimientos.find(item => item.defaultEstab);
                     if (dataEstab) {
                         $scope.data.codEstab = dataEstab.codEstab;
@@ -791,7 +822,7 @@
                     setDefaultTipoDoc()
                 }
 
-                if (params.tipoRegistro === 2) {
+                if (isEdit()) {
                     const { comprobante, detalles } = params.data;
                     let dataPuntoEmision = $scope.establecimientos.flatMap(e => e.puntosEmision).find(p => p.idPuntoEmision === comprobante.idPuntoEmision);
                     let dataEstab = $scope.establecimientos.find(e => e.codEstab === dataPuntoEmision.codEstab);
@@ -810,10 +841,12 @@
                     }
                     $scope.gridOptions.data = detalles;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento();
+                    $scope.isDocOrderProduction = params.isDocOrderProduction;
+                    //    $scope.onChangeTipoDocumento();
                 }
 
-                if (params.tipoRegistro === 3) {
+                //duplicar
+                if (isDuplicate()) {
                     const { comprobante, detalles } = params.data;
                     let dataPuntoEmision = $scope.establecimientos.flatMap(e => e.puntosEmision).find(p => p.idPuntoEmision === comprobante.idPuntoEmision);
                     let dataEstab = $scope.establecimientos.find(e => e.codEstab === dataPuntoEmision.codEstab);
@@ -821,7 +854,7 @@
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegas = dataEstab.bodegas;
 
-                    comprobante.idConsolidacionInventario = 0;
+                    comprobante.id = 0;
                     comprobante.fechaEmisionDocCreado = null;
                     comprobante.fechaEmision = new Date()
                     $scope.data = structuredClone(comprobante);
@@ -834,8 +867,9 @@
                         $scope.dataClone.idBodega = $scope.data.idBodega;
                     }
                     $scope.gridOptions.data = detalles;
+                    $scope.isDocOrderProduction = params.isDocOrderProduction;
                     setCountIndex();
-                    $scope.onChangeTipoDocumento();
+                    //  $scope.onChangeTipoDocumento();
                 }
 
                 setColumnDefs();
@@ -871,14 +905,9 @@
         }
 
         function setDefaultTipoDoc() {
-            let dataTipoDoc = $scope.tipoDocumento.find(t => t.codigo === 'CI')
-            let dataMovimiento = $scope.tiposMovimiento.find(t => t.code === 'A')
+            let dataTipoDoc = $scope.tipoDocumento.find(t => t.codigo === docyType.CI)
             if (dataTipoDoc) {
                 $scope.data.idTipoDocumento = dataTipoDoc.idTipoDocumento;
-            }
-
-            if (dataMovimiento) {
-                $scope.data.idTipoMovimiento = dataMovimiento.id;
             }
             loadValidateDate();
         }
@@ -938,7 +967,7 @@
                 width: '7%',
                 minWidth: '100'
             },
-            ($scope.isSearchItem ? {
+            ($scope.isDocOrderProduction ? {
                 name: "Medida",
                 field: "nombreMedida",
                 enableCellEdit: false,
@@ -1062,7 +1091,7 @@
             if (isSetBodegaIdAll) {
                 for (let item of $scope.gridOptions.data) {
 
-                    if ($scope.isSearchItem) {
+                    if ($scope.isDocOrderProduction) {
                         item.cantidad = 0;
                     }
 
@@ -1135,7 +1164,7 @@
             if (isConfirmed) {
                 let index = $scope.gridOptions.data.indexOf(entity);
                 $scope.gridOptions.data.splice(index, 1);
-                if (entity.idConsolidacionInventarioDetalle > 0) {
+                if (entity.id > 0) {
                     itemsDeleted.push({
                         ...entity,
                         estado: false
@@ -1251,6 +1280,7 @@
             }).then(result => {
                 if (result.isConfirmed) {
                     resetQuantityZero();
+                    $scope.$apply()
                 }
             })
         }
@@ -1266,7 +1296,7 @@
 
         function addRow() {
             $scope.gridOptions.data.push({
-                idConsolidacionInventarioDetalle: 0,
+                id: 0,
                 num: 1,
                 idArticulo: 0,
                 codigo: null,
@@ -1315,8 +1345,6 @@
                 entity.nombreMedida = articulo.nombreMedida;
                 entity.conversion = articulo.conversion;
             }
-
-            console.log('entity', entity)
         }
 
 
@@ -1433,11 +1461,9 @@
 
 
         $scope.handleItemSelect = function (item) {
-            console.log('handleItemSelect', item)
             itemSvc.getByIdForOrderProduction(item.menuId).then(async response => {
-                console.log('response', response)
                 try {
-                    const { menu, components } = response;
+                    const { menu } = response;
 
                     if (!menu.llevaInventario) {
                         await showInventarioWarning();
@@ -1466,8 +1492,8 @@
 
         }
 
-        const isUpdate = () => $scope.data.idConsolidacionInventario > 0;
-        const isRegister = () => !($scope.data.idConsolidacionInventario > 0)
+        const isUpdate = () => $scope.data.id > 0;
+        const isRegister = () => !($scope.data.id > 0)
 
         const isValidForm = () => {
             if (!fS.isValidField($scope.data.codEstab)) {
@@ -1481,11 +1507,6 @@
 
             if (!($scope.data.idTipoDocumento > 0)) {
                 tS.toastr('warning', 'Seleccione el Tipo de Documento');
-                return
-            }
-
-            if (!($scope.data.idTipoMovimiento > 0)) {
-                tS.toastr('warning', 'Seleccione el Tipo de Movimiento');
                 return
             }
 
@@ -1508,10 +1529,10 @@
                 return
             }
 
-            if (!isValidDateRange($scope.data.fechaEmision)) {
-                tS.toastr('warning', `La fecha debe estar entre ${$scope.minFecha} y ${$scope.maxFecha}.`);
-                return;
-            }
+            // if (!isValidDateRange($scope.data.fechaEmision)) {
+            //     tS.toastr('warning', `La fecha debe estar entre ${$scope.minFecha} y ${$scope.maxFecha}.`);
+            //     return;
+            // }
 
             if ($scope.gridOptions.data.length === 0) {
                 tS.toastr('warning', 'Ingrese al menos un articulo en el Detalle');
@@ -1526,16 +1547,9 @@
         $scope.onSave = async function () {
             try {
                 if (!isValidForm()) return
-
-                let documento;
-
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
 
-                let dataTipoDoc = $scope.tipoDocumento.find(t => t.idTipoDocumento === $scope.data.idTipoDocumento)
-
-                if (dataTipoDoc) {
-                    documento = dataTipoDoc.descripcion;
-                }
+                let { codigo, descripcion } = getDataTipoDoc();
 
                 if (isRegister()) {
 
@@ -1544,11 +1558,11 @@
                     })
 
                     if (!serieComprobante) throw "NO SE GENERÓ NÚMERO SECUENCIAL CORRECTAMENTE";
-                    titleSwal = '<small>Guardar el documento <b>' + documento + '</b> </small>';
+                    titleSwal = '<small>Guardar el documento <b>' + descripcion + '</b> </small>';
                     confirmButtonText = 'Guardar';
                     htmlSwal = `<small>Esta Ud. seguro de guardar este Documento N°. <b>${serieComprobante}</b></small>?`;
                 } else {
-                    titleSwal = '<small>Actualizar el documento <b>' + documento + '</b> </small>';
+                    titleSwal = '<small>Actualizar el documento <b>' + descripcion + '</b> </small>';
                     confirmButtonText = 'Actualizar';
                     htmlSwal = `<small>Esta Ud. seguro de actualizar este Documento</small>?`;
                 }
@@ -1568,17 +1582,37 @@
 
                 if (!isConfirmed) return
 
+                const dataMovimiento = getMovimientoPorCodigo(codigo);
+
+                let detalles = angular.copy($scope.gridOptions.data).map(item => {
+
+                    const components = (item.components || []).map(c => {
+                        return {
+                            ...c,
+                            cantidad: item.cantidad,
+                            idBodega: item.idBodega,
+                            movementTypeId: dataMovimiento.idMovimientoSalida
+                        }
+                    })
+
+                    return {
+                        ...item,
+                        movementTypeId: dataMovimiento.id || dataMovimiento.idMovimientoEntrada,
+                        components
+                    }
+                })
+
 
                 const dataMapeado = consolidacionInvSvc.mapTo({
                     data: $scope.data,
-                    detalles: $scope.gridOptions.data,
+                    detalles,
                     itemsDeleted,
-                    tiposMovimiento: $scope.tiposMovimiento,
-                    isOrderProduction: $scope.isSearchItem
+                    isDocOrderProduction: $scope.isDocOrderProduction
+
                 })
 
                 if (isUpdate()) {
-                    consolidacionInvSvc.put($scope.data.idConsolidacionInventario, dataMapeado)
+                    consolidacionInvSvc.put($scope.data.id, dataMapeado)
                         .then($scope.successResponse)
                         .catch(error => {
                             console.log(error);

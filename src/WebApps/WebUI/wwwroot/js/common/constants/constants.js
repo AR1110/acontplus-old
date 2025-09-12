@@ -468,7 +468,10 @@ app.constant('DOC_TYPE', {
     GR_SRI: '06',
     R_SRI: '07',
     LC_SRI: '03',
-    OR: 'OR'
+    OR: 'OR',
+    CI: 'CI',
+    OP: 'OP',
+    BI: 'BI'
 })
 app.constant('SRI_IDENTIFITION_CODE', {
     RUC: "04",

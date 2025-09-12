@@ -125,7 +125,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="canEdit(item)">
+                                                <md-menu-item ng-if="!canEdit(item)">
                                                     <md-button ng-click="openModalEditar(item)"
                                                         ng-disabled="item.anulada">
                                                         <span md-menu-align-target><i class="ti-pencil"></i>
@@ -187,7 +187,7 @@
                             </select>
                         </div>
                         <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                            ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                             class="pagination" boundary-links="true" rotate="false"></ul>
                     </div>
                 </div>
