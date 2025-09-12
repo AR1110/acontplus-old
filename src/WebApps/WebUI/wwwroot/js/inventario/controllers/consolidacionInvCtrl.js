@@ -20,12 +20,10 @@
     consolidacionInvCtrl.$inject = [
         '$scope',
         '$injector',
-        '$filter',
     ]
     function consolidacionInvCtrl(
         $scope,
         $injector,
-        $filter
     ) {
         modalSvc = $injector.get("modalService");
         commonSvc = $injector.get("commonService");
@@ -34,6 +32,7 @@
         fS = $injector.get("formulario");
         consolidacionInvSvc = $injector.get("consolidacionInvService");
         const nombreModalInventario = $injector.get('nombreModalInventario');
+        const docyType = $injector.get('DOC_TYPE')
 
         $scope.btnEditDisabled = false;
         $scope.dataSearch = {
@@ -80,6 +79,11 @@
         }
 
 
+        $scope.canEdit = canEdit;
+        function canEdit(item) {
+            return item.codDoc !== docyType.OR
+        }
+
         function getList() {
             try {
 
@@ -118,17 +122,10 @@
 
                 $scope.consolidaciones = [];
                 consolidacionInvSvc.getAll(params).then(response => {
-                    $scope.consolidaciones = response;
-                    $scope.dataSearch.totalRecords = $scope.consolidaciones.length > 0 ? $scope.consolidaciones[0].totalRecords : 0;
-                    $scope.cloneConsolidaciones = structuredClone($scope.consolidaciones);
-                    let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-                    $scope.total = fS.roundNumber(total, 5);
+                    $scope.consolidaciones = response.data;
+                    $scope.dataSearch.totalRecords = response.totalRecords;
+                    $scope.total = response.total;
                 })
-                    .catch(error => {
-                        $scope.dataSearch.totalRecords = 0;
-                        console.log(error)
-                    })
-                    .finally(() => hideLoader());
             } catch (error) {
                 console.log(error)
             }
@@ -155,7 +152,6 @@
                     .catch(error => {
                         console.log(error)
                     })
-                    .finally(() => hideLoader())
             } catch (error) {
 
                 console.log(error)
@@ -176,13 +172,6 @@
             $scope.dataSearch.pageIndex = 1;
             getList()
         };
-
-        $scope.getListaFilter = () => {
-            let consolidaciones = JSON.parse(JSON.stringify($scope.cloneConsolidaciones))
-            $scope.consolidaciones = $filter("filter")(consolidaciones, $scope.dataSearch.bySearch);
-            let total = $scope.consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
-            $scope.total = fS.roundNumber(total, 5);
-        }
 
         $scope.openModalParam = async ({ controller, template, size = 'xl', params }) => {
             modalSvc.openModalCustom({
@@ -225,7 +214,7 @@
                     template,
                     size: 'xl',
                     params: {
-                        id: item.idConsolidacionInventario
+                        id: item.id
                     },
                     isRenderRazorPartial: true,
                     windowClass: 'uibModalFullScreen'
@@ -240,7 +229,7 @@
             try {
 
 
-                consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
+                consolidacionInvSvc.getId(item.id).then(response => {
                     if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
                         modalSvc.openModalCustom({
                             controller: modalConsolidacionAddEditCtrl,
@@ -254,7 +243,7 @@
                             windowClass: 'uibModalFullScreen'
                         }).result.then(result => {
 
-                            if (result !== null && typeof result === 'object') {
+                            if (result && typeof result === 'object') {
                                 refresh()
                             }
                         })
@@ -262,7 +251,7 @@
                     }
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader());
+                })
             } catch (error) {
 
                 console.log(error)
@@ -273,8 +262,18 @@
         $scope.openModalDuplicar = async (item) => {
             try {
 
+                if (item.codDoc === docyType.OR) {
 
-                consolidacionInvSvc.getId(item.idConsolidacionInventario).then(response => {
+                    console.log('editar orden producción')
+                    consolidacionInvSvc.getByIdForEditOrderProduction(item.id).then(response => {
+                        console.log(response)
+                    })
+                    return
+                }
+
+
+
+                consolidacionInvSvc.getId(item.id).then(response => {
                     if (Object.keys(response.comprobante).length > 0 && response.detalles.length > 0) {
                         modalSvc.openModalCustom({
                             controller: modalConsolidacionAddEditCtrl,
@@ -288,7 +287,7 @@
                             windowClass: 'uibModalFullScreen'
                         }).result.then(result => {
 
-                            if (result !== null && typeof result === 'object') {
+                            if (result && typeof result === 'object') {
                                 refresh()
                             }
                         })
@@ -296,7 +295,7 @@
                     }
                 }).catch(error => {
                     console.log(error)
-                }).finally(() => hideLoader());
+                })
             } catch (error) {
 
                 console.log(error)
@@ -321,7 +320,7 @@
             if (isConfirmed) {
                 try {
 
-                    consolidacionInvSvc.anular(item.idConsolidacionInventario).then(response => {
+                    consolidacionInvSvc.anular(item.id).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -331,7 +330,7 @@
                         }
                     }).catch(error => {
                         console.log(error)
-                    }).finally(() => hideLoader())
+                    })
                 } catch (error) {
                     console.log(error)
 
@@ -342,7 +341,8 @@
         //Reporte
         $scope.getReport = function (item) {
             let dataParms = {
-                idConsolidacionInventario: item.idConsolidacionInventario,
+                idConsolidacionInventario: item.id,
+                id: item.id,
             }
             const parameters = {
                 reportParams: JSON.stringify({

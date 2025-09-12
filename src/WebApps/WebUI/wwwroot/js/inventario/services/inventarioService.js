@@ -399,6 +399,7 @@
         return {
             getDataForm,
             getAll,
+            getByIdForEditOrderProduction,
             getProducts,
             getProductsValidateImport,
             generateSerieComprobante,
@@ -446,13 +447,55 @@
             })
             return mS.getData('get', `${url}?json=${json}`).then(response => {
                 let consolidaciones = []
+                const results = {
+                    data: [],
+                    totalRecords: 0,
+                    total: 0
+                }
                 if (response !== null && typeof response === 'object') {
                     consolidaciones = response.consolidaciones;
                 }
-                return consolidaciones;
+                console.log(consolidaciones)
+                results.data = consolidaciones.map(item => {
+                    return {
+                        id: item.idConsolidacionInventario,
+                        fechaEmision: item.fechaEmision,
+                        observacion: item.observacion,
+                        total: item.total,
+                        nroDoc: item.nroDoc,
+                        nombreEstado: item.estadoDoc,
+                        codEstado: item.codEstado,
+                        nombreUsuario: item.usuario,
+                        rowStyle: item.style,
+                        nombreTipoDoc: item.tipoDocumento,
+                        codDoc: item.codDoc,
+                        totalRecords: item.totalRecords,
+                    }
+                })
+
+                const total = consolidaciones.map(val => val.total).reduce((acc, curr) => acc + curr, 0);
+
+                results.totalRecords = consolidaciones.length > 0 ? consolidaciones[0].totalRecords : 0;
+                results.total = fS.roundNumber(total, 5);
+                return results;
+
             })
         }
 
+
+        function getByIdForEditOrderProduction(id) {
+
+            const json = JSON.stringify({
+                id,
+                tipo: 7
+            })
+
+            return mS.getData('get', `${url}?json=${json}`).then(response => {
+
+                console.log(response)
+            })
+
+        }
 
         function mappedProductImportacion(products) {
             return products.map(item => {
