@@ -491,8 +491,54 @@
             })
 
             return mS.getData('get', `${url}?json=${json}`).then(response => {
+                const results = {
+                    comprobante: {},
+                    detalles: [],
+                }
+                if (response !== null && typeof response === 'object') {
+                    const comprobanteTemp = response.comprobante[0];
+                    const detallesTemp = response.detalles;
 
-                console.log(response)
+                    results.comprobante = {
+                        ...comprobanteTemp,
+                        fechaEmision: fS.formatDate(comprobanteTemp.fechaEmision),
+                        fechaEmisionDocCreado: fS.formatDate(comprobanteTemp.fechaEmision),
+                    }
+
+                    results.detalles = detallesTemp.map(item => {
+                        const { fraccionado, principal, ...restItem } = item;
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
+                        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+                        let precioCostoFraccionado = 0, conversion = 1;
+                        if (dataMedida) {
+                            restItem.conversion = dataMedida.conversion;
+                            restItem.medidas = medidas;
+                            precioCostoFraccionado = dataMedida.precioCostoFraccionado
+                            conversion = dataMedida.conversion;
+                        }
+                        return {
+                            idConsolidacionInventarioDetalle: restItem.idConsolidacionInventarioDetalle,
+                            idBodega: restItem.idBodega,
+                            idArticulo: restItem.idArticulo,
+                            idMedida: restItem.idMedida,
+                            descripcion: restItem.descripcion,
+                            cantidad: restItem.cantidad,
+                            precioCosto: restItem.precioCosto,
+                            precioUnitario: restItem.precioUnitario,
+                            precioCostoFraccionado,
+                            codigo: restItem.codigo,
+                            stock: restItem.stock,
+                            estado: restItem.estado,
+                            conversion,
+                            medidas,
+                            total: fS.roundNumber(restItem.cantidad * restItem.precioUnitario, 5)
+                        };
+
+                    })
+                }
+                return results;
             })
 
         }
