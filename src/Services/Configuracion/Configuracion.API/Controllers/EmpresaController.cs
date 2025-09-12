@@ -1,4 +1,4 @@
-namespace Ventas.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class EmpresaController(IEmpresaService _svc) : BaseApiController
 {

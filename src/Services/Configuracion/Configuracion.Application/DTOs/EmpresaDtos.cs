@@ -1,4 +1,4 @@
-namespace Ventas.Application.DTOs;
+namespace Configuracion.Application.DTOs;
 
 public record CreateEmpresaDto
 {

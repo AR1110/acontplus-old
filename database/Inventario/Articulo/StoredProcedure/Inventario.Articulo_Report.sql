@@ -342,6 +342,7 @@ BEGIN
             DECLARE @viewCostPrice BIT 
                    ,@checkboxPrecioCostoFiltro BIT
                    ,@tiposDocSelected VARCHAR(250)
+                    ,@timePicker BIT
 
 			SET @params =  '@idArticulo          INT
 	                       ,@idUsuario           INT
@@ -400,6 +401,7 @@ BEGIN
                   ,@codEstab                  = codEstab 
                   ,@rucClienteProveedor       = numeroIdentificacion
 			      ,@tiposDocSelected          = tiposDocSelected
+                  ,@timePicker                = timePicker
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo          BIT 
@@ -416,6 +418,7 @@ BEGIN
                ,idCliente                 INT
                ,numeroIdentificacion      VARCHAR(25)
                ,tiposDocSelected          VARCHAR(250)
+               ,timePicker                BIT
 			)
 
 
@@ -426,10 +429,38 @@ BEGIN
 			    SET @sql = @sql + 'AND tt.idTipoDocumento IN (SELECT value FROM STRING_SPLIT(@tiposDocSelected, '','')) '
 			END
 
-            IF @checkBoxFecha = 1
-	            BEGIN
-		            SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-	            END
+             IF @checkBoxFecha = 1
+			    BEGIN 
+				    SET @sql = @sql + '
+					    AND CAST(tt.fechaRegistro AS date) 
+						    BETWEEN CAST(@fechaInicio AS date) 
+						    AND CAST(@fechaFin AS date) 
+				    '
+
+				    IF @timePicker = 1 
+				    BEGIN 
+					    SET @sql = @sql + '
+						    AND CAST(tt.fechaRegistro AS time) 
+							    BETWEEN CAST(@fechaInicio AS time) 
+							    AND CAST(@fechaFin AS time) 
+					    '
+
+					    /* 
+					    -- Opción B: Si necesitas manejar rangos que cruzan medianoche,
+					    -- usa este bloque en lugar del anterior:
+					    SET @sql = @sql + '
+						    AND (
+							       (CAST(tt.fechaRegistro AS time) >= CAST(@fechaInicio AS time)
+								    AND CAST(tt.fechaRegistro AS time) <= ''23:59:59.9999999'')
+							    OR (CAST(tt.fechaRegistro AS time) >= ''00:00:00''
+								    AND CAST(tt.fechaRegistro AS time) <= CAST(@fechaFin AS time))
+							    )
+					    '
+					    */
+				    END
+			    END
+
+
 
 			IF @idArticulo > 0
 				BEGIN

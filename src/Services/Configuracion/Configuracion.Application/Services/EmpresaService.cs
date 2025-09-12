@@ -1,4 +1,4 @@
-namespace Ventas.Application.Services;
+namespace Configuracion.Application.Services;
 
 public class EmpresaService(IAdoRepository AdoRepository) : IEmpresaService
 {
