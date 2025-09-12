@@ -1,9 +1,6 @@
-﻿namespace Configuracion.Application.Services.Notifications;
+using Configuracion.Application.Interfaces.Notifications;
 
-public interface IWhatsappUsageService
-{
-    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-}
+namespace Configuracion.Application.Services.Notifications;
 
 public class WhatsappUsageService(IAdoRepository adoRepository) : IWhatsappUsageService
 {

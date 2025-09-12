@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace WebUI.Pages.Config.UserCustomer
 {
-  public class Index : PageModel
-  {
+    public class Index : PageModel
+    {
 
-  }
+    }
 }

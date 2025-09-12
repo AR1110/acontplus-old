@@ -1,12 +1,4 @@
-﻿namespace Configuracion.Application.Services;
-
-public interface ISolicitudService
-{
-    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
+namespace Configuracion.Application.Services;
 
 public class SolicitudService(IAdoRepository adoRepository) : ISolicitudService
 {
