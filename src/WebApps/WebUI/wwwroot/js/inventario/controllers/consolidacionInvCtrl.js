@@ -310,22 +310,25 @@
 
 
         $scope.askToDelete = async (item) => {
+            try {
 
-            let { isConfirmed } = await Swal.fire({
-                title: '<small>Anular Documento?</small>',
-                html: `<small>Este proceso no se puede revertir!</small>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, anular!',
-                cancelButtonText: 'No, cancelar'
-            })
+                const { detalles } = await consolidacionInvSvc.getDetailByIdForCancel(item.id);
 
-            if (isConfirmed) {
-                try {
+                let { isConfirmed } = await Swal.fire({
+                    title: '<small>Anular Documento?</small>',
+                    html: `<small>Este proceso no se puede revertir!</small>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si, anular!',
+                    cancelButtonText: 'No, cancelar'
+                })
 
-                    consolidacionInvSvc.anular(item.id).then(response => {
+                if (isConfirmed && detalles.length > 0) {
+                    consolidacionInvSvc.put(item.id, {
+                        detalles
+                    }).then(response => {
                         if (response.code === "0") {
                             fS.sweetAlert('warning', response.message, response.titleSms);
                         }
@@ -333,14 +336,44 @@
                             fS.sweetAlert('success', response.message, response.titleSms, 1000);
                             getList()
                         }
-                    }).catch(error => {
-                        console.log(error)
                     })
-                } catch (error) {
-                    console.log(error)
 
                 }
+
+            } catch (error) {
+                console.log(error)
             }
+
+            // let { isConfirmed } = await Swal.fire({
+            //     title: '<small>Anular Documento?</small>',
+            //     html: `<small>Este proceso no se puede revertir!</small>`,
+            //     icon: 'warning',
+            //     showCancelButton: true,
+            //     confirmButtonColor: '#3085d6',
+            //     cancelButtonColor: '#d33',
+            //     confirmButtonText: 'Si, anular!',
+            //     cancelButtonText: 'No, cancelar'
+            // })
+
+            // if (isConfirmed) {
+            //     try {
+
+            //         consolidacionInvSvc.anular(item.id).then(response => {
+            //             if (response.code === "0") {
+            //                 fS.sweetAlert('warning', response.message, response.titleSms);
+            //             }
+            //             if (response.code === "1") {
+            //                 fS.sweetAlert('success', response.message, response.titleSms, 1000);
+            //                 getList()
+            //             }
+            //         }).catch(error => {
+            //             console.log(error)
+            //         })
+            //     } catch (error) {
+            //         console.log(error)
+
+            //     }
+            // }
         }
 
         //Reporte

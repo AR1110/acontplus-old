@@ -407,6 +407,7 @@
                 getDataForm,
                 getAll,
                 getByIdForEditOrderProduction,
+                getDetailByIdForCancel,
                 getProducts,
                 getProductsValidateImport,
                 generateSerieComprobante,
@@ -650,6 +651,45 @@
                     console.log(results)
                     return results;
                 });
+            }
+
+            function getDetailByIdForCancel(id) {
+                const json = JSON.stringify({
+                    id,
+                    tipo: 8,
+                });
+                return mS.getData("get", `${url}?json=${json}`).then(response => {
+                    console.log(response)
+                    const results = {
+                        detalles: []
+                    };
+                    if (response !== null && typeof response === "object") {
+                        results.detalles = (response.detalles).map((d, index) => {
+                            return {
+                                orderIndex: index + 1,
+                                "idArticulo": d.idArticulo,
+                                "idBodega": d.idBodega,
+                                "idMedida": d.idMedida,
+                                "cantidad": d.cantidad,
+                                "precioUnitario": d.precioUnitario,
+                                "precioCosto": d.precioCosto,
+                                "total": d.total,
+                                "estado": d.estado,
+                                "cantidadTransaccion": d.cantidadTransaccion * (-1),
+                                "conversion": d.conversion,
+                                "precioCostoFraccionado": d.precioCostoFraccionado,
+                                "idTransaccion": d.idTransaccion,
+                                "movementTypeId": d.movementTypeId,
+                            }
+
+                        })
+                        return results;
+                    }
+
+                    throw new Error("Error get detail by id for cancel")
+
+
+                })
             }
 
             function mappedProductImportacion(products) {
