@@ -556,11 +556,13 @@
   </mat-card-content>
   <mat-card-actions class="d-flex gap-2">
     <div class="d-flex flex-row gap-1">
-      <app-report-buttons
-        [fileType]="FORMAT_REPORT.PDF"
-        text="Ver PDF"
-        (exportReport)="getReportPDF()"
-      ></app-report-buttons>
+      @if (isReporting) {
+        <app-report-buttons
+          [fileType]="FORMAT_REPORT.PDF"
+          text="Ver PDF"
+          (exportReport)="getReportPDF()"
+        />
+      }
 
       @if (isReporting) {
         <app-report-buttons
