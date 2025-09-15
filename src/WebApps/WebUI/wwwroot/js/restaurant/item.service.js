@@ -1,8 +1,8 @@
 (function () {
     'use strict';
     app.factory('itemService', itemService);
-    itemService.$inject = ['mainService'];
-    function itemService(mS) {
+    itemService.$inject = ['mainService', 'formulario'];
+    function itemService(mS, fS) {
         var url = 'restaurant/item/';
 
         var service = {
@@ -54,6 +54,11 @@
                     const payload = JSON.parse(response.payload);
                     const menu = payload.menu[0];
                     results.components = (payload.components || []).map(c => {
+
+                        const { fraccionado, principal } = c;
+
+                        const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
                         return {
                             "idArticulo": c.idArticulo,
                             "codigo": c.codigo,
@@ -61,30 +66,42 @@
                             "codigoBarra": c.codigoBarra,
                             "descripcion": c.descripcion,
                             "stock": c.stock,
-                            "precioCosto": c.precioCosto,
+                            precioCosto: c.precioCosto,
+                            precioUnitario: c.precioCosto,
+                            precioCostoFraccionado: c.precioCosto,
                             "estado": c.estado,
                             "iva": c.iva,
                             "llevaInventario": c.llevaInventario,
                             "idMedida": c.idMedida,
-                            "medida": c.medida,
-                            "conversion": c.conversion
+                            nombreMedida: c.medida,
+                            "conversion": c.conversion,
+                            medidas
                         }
 
                     });
+
+                    const { fraccionado, principal } = menu;
+
+                    const medidas = fS.processAndSortMeasures(principal, fraccionado);
+
                     results.menu = {
-                        "idArticulo": menu.idArticulo,
-                        "codigo": menu.codigo,
-                        "codigoAuxiliar": menu.codigoAuxiliar,
-                        "codigoBarra": menu.codigoBarra,
-                        "descripcion": menu.descripcion,
-                        "stock": menu.stock,
-                        "precioCosto": menu.precioCosto,
-                        "estado": menu.estado,
-                        "iva": menu.iva,
-                        "llevaInventario": menu.llevaInventario,
-                        "idMedida": menu.idMedida,
-                        "medida": menu.medida,
-                        "conversion": menu.conversion
+                        idArticulo: menu.idArticulo,
+                        codigo: menu.codigo,
+                        codigoAuxiliar: menu.codigoAuxiliar,
+                        codigoBarra: menu.codigoBarra,
+                        descripcion: menu.descripcion,
+                        stock: menu.stock,
+                        precioCosto: menu.precioCosto,
+                        precioCostoFraccionado: menu.precioCosto,
+                        precioUnitario: menu.precioCosto,
+                        estado: menu.estado,
+                        iva: menu.iva,
+                        llevaInventario: menu.llevaInventario,
+                        idMedida: menu.idMedida,
+                        nombreMedida: menu.medida,
+                        conversion: menu.conversion,
+                        medidas,
+                        components: results.components
                     }
                 }
                 return results;
