@@ -1,6 +1,3 @@
-using Acontplus.Core.DTOs.Responses;
-using Restaurant.Domain.Entities;
-
 namespace Restaurant.Domain.Repositories;
 
 public interface IFloorRepository

@@ -1,9 +1,4 @@
-﻿namespace Configuracion.Application.Services;
-
-public interface ITipoDocumentoService
-{
-    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-}
+namespace Configuracion.Application.Services;
 
 public class TipoDocumentoService(IAdoRepository adoRepository) : ITipoDocumentoService
 {

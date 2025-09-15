@@ -1,11 +1,4 @@
-﻿namespace Configuracion.Application.Services;
-
-public interface IUsuarioPermisoService
-{
-    Task<SpResponse> CheckAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
+namespace Configuracion.Application.Services;
 
 public class UsuarioPermisoService(IAdoRepository adoRepository) : IUsuarioPermisoService
 {
