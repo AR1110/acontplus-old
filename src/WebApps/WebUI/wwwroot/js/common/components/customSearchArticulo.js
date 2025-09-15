@@ -750,7 +750,7 @@ app.component('itemSearch', {
     template: `
            <div class="gac-form-control-container">
                 <input type="text"
-                       class="form-control rounded-pill p-3"
+                       class="form-control rounded-pill p-3 select-border"
                        placeholder="Buscar por código o nombre..."
                        ng-model="$ctrl.searchText"
                        ng-change="$ctrl.filterItemsWithDebounce()"

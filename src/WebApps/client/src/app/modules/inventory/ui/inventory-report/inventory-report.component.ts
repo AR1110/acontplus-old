@@ -166,11 +166,11 @@ export class InventoryReportComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.getDatFormReport();
-    // this.pS.getAction().subscribe((res) => {
-    //   this.isReporting = res?.reporte;
-    //   this.isSendingEmail = res?.enviarCorreo;
-    // });
+    this.getDatFormReport();
+    this.pS.getAction().subscribe((res) => {
+      this.isReporting = res?.reporte;
+      this.isSendingEmail = res?.enviarCorreo;
+    });
   }
 
   onNavChange($event: any) {

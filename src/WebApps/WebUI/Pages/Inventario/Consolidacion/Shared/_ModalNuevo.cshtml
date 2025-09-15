@@ -41,7 +41,8 @@
                 <div class="form-group">
                     <label for="tipoDocumento">Tipo Documento: <span class="text-danger">*</span></label>
                     <select id="tipoDocumento" name="tipoDocumento" class="form-control border-select"
-                        ng-model="data.idTipoDocumento" ng-change="onChangeTipoDocumento()">
+                        ng-model="data.idTipoDocumento" ng-change="onChangeTipoDocumento()"
+                        ng-disabled="isDuplicate() && isDocOrderProduction">
                         <option ng-value="item.idTipoDocumento" ng-repeat="item in tipoDocumento">
                             {{item.descripcion}}
                         </option>
@@ -49,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            @* <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="tiposMovimiento">Tipo Movimiento: <span class="text-danger">*</span></label>
                     <select disabled id="tiposMovimiento" name="tiposMovimiento" class="form-control border-select"
@@ -59,7 +60,7 @@
                         </option>
                     </select>
                 </div>
-            </div>
+            </div> *@
 
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
@@ -83,10 +84,10 @@
 
         <div class="row">
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <section ng-if="isSearchItem">
+                <section ng-if="isDocOrderProduction">
                     <item-search on-item-select="handleItemSelect(item)"></item-search>
                 </section>
-                <section ng-if="!isSearchItem">
+                <section ng-if="!isDocOrderProduction">
                     <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
                         abrir-modal-articulo="abrirModalArticulo(item)"
                         set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
@@ -94,8 +95,8 @@
                 </section>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <button type="button" class="btn btn-outline-info btn-lg" ng-click="openModalAdvanced($event)"><i
-                        class="ti-search"></i> Busqueda Avanzada</button>
+                <button type="button" class="btn btn-outline-info btn-lg" ng-click="openModalAdvanced($event)"
+                    ng-if="!isDocOrderProduction"><i class="ti-search"></i> Busqueda Avanzada</button>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                 <button type="button" class="btn btn-secondary" ng-click="resetQuantityZero()">
@@ -103,9 +104,18 @@
                 </button>
             </div>
         </div>
-        <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
-            ui-grid-expandable class="grid">
-        </div>
+
+        <section ng-if="isDocOrderProduction" class="mt-2">
+            <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                class="grid" ui-grid-expandable>
+            </div>
+        </section>
+        <section ng-if="!isDocOrderProduction" class="mt-2">
+            <div id="grid" ui-grid="gridOptions" ui-grid-edit ui-grid-resize-columns ui-grid-cellNav ui-grid-auto-resize
+                class="grid">
+            </div>
+        </section>
+
         <br />
         <!--Sub Totales -->
         <div class="row">
