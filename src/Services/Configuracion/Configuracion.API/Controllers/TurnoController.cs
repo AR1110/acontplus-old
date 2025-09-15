@@ -1,47 +1,61 @@
-﻿namespace Configuracion.API.Controllers;
+﻿using Microsoft.Data.SqlClient;
+
+namespace Configuracion.API.Controllers;
 
 public class TurnoController(ITurnoRepository turnoRepository) : BaseApiController
 {
-    [HttpGet]
-    public async Task<IActionResult> Get(string json)
+  [HttpGet]
+  public async Task<IActionResult> Get(string json)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
-        var response = await turnoRepository.GetAsync(parameters);
-        if (response == null) return BadRequest("No Data");
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(json) }
+    };
+    return Ok(await turnoRepository.GetAsync(parameters));
+  }
 
-        return Ok(response);
-    }
-
-    [HttpPost("Post")]
-    public async Task<IActionResult> Post([FromBody] Turno data)
+  [HttpPost]
+  public async Task<IActionResult> Post([FromBody] Turno data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var userRoleId = User.GetClaimValue<int>("userRoleId");
-        var res = await turnoRepository.CreateTurnoAsync(userRoleId, data);
-        return Ok(res);
-    }
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<Turno>(data)) }
+    };
 
-    [HttpGet("Get")]
-    public async Task<IActionResult> Get(int pageIndex, int pageSize)
-    {
-        var userRoleId = User.GetClaimValue<int>("userRoleId");
-        var res = await turnoRepository.ReadTurnoAsync(userRoleId, pageIndex, pageSize);
-        return Ok(res);
-    }
+    return Ok(await turnoRepository.AddAsync(parameters));
+  }
 
-    [HttpPost("Put")]
-    public async Task<IActionResult> Put([FromBody] Turno data)
-    {
-        var userRoleId = User.GetClaimValue<int>("userRoleId");
-        var res = await turnoRepository.UpdateTurnoAsync(userRoleId, data);
-        return Ok(res);
-    }
+  // [HttpGet("Get")]
+  // public async Task<IActionResult> Get(int pageIndex, int pageSize)
+  // {
+  //   var userRoleId = User.GetClaimValue<int>("userRoleId");
+  //   var res = await turnoRepository.ReadTurnoAsync(userRoleId, pageIndex, pageSize);
+  //   return Ok(res);
+  // }
 
-    [HttpPost("Delete")]
-    public async Task<IActionResult> Delete(int idTurno)
+  [HttpPut]
+  public async Task<IActionResult> Put(int id, [FromBody] Turno data)
+  {
+    var parameters = new Dictionary<string, object>
     {
-        var userRoleId = User.GetClaimValue<int>("userRoleId");
-        var res = await turnoRepository.DeleteTurnoAsync(userRoleId, idTurno);
-        return Ok(res);
-    }
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<Turno>(data)) }
+    };
+
+    return Ok(await turnoRepository.UpdateAsync(parameters));
+  }
+
+  [HttpDelete]
+  public async Task<IActionResult> Delete(int id)
+  {
+    var parameters = new Dictionary<string, object>
+    {
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "idTurno", id }
+    };
+    return Ok(await turnoRepository.DeleteAsync(parameters));
+  }
 }
