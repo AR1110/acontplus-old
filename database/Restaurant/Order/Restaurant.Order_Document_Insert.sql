@@ -273,7 +273,7 @@ BEGIN
                        FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
                       WHERE af.idArticulo = ISNULL(i.ProductId, m.ProductId) 
                         AND af.idMedida = oi.MedidaID
-                    ), 1) * oi.Quantity) * -1 AS ConversionQty
+                    ), 1) * oi.Quantity) * 1 AS ConversionQty
                 ,1 AS Constante
             FROM Restaurant.OrderItem oi WITH (NOLOCK)
                  INNER JOIN Restaurant.[Order] o WITH (NOLOCK) 
