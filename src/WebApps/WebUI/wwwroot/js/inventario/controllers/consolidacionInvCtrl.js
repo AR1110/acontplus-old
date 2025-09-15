@@ -80,6 +80,11 @@
 
 
         $scope.canEdit = isOrderProductionDoc;
+        $scope.canCancel = canCancel;
+
+        function canCancel(item) {
+            return item.codEstado !== 'A'
+        }
 
         function getList() {
             try {
@@ -1529,6 +1534,7 @@
         const isRegister = () => !($scope.data.id > 0)
 
         const isValidForm = () => {
+            const dataDoc = getDataTipoDoc()
             if (!fS.isValidField($scope.data.codEstab)) {
                 tS.toastr('warning', 'Seleccione el Establecimiento');
                 return
@@ -1560,6 +1566,18 @@
             } else {
                 console.log('Error al justar la fecha de Emisión')
                 return
+            }
+
+            if (dataDoc.codigo === docyType.OP) {
+                if (!($scope.gridOptions.data.every(
+                    d => d.components.length > 0
+                ))) {
+                    tS.toastr({
+                        type: 'warning',
+                        message: 'Un menu al menos tiene que tener un componente'
+                    })
+                    return
+                }
             }
 
             // if (!isValidDateRange($scope.data.fechaEmision)) {
@@ -1637,7 +1655,10 @@
 
 
                 const dataMapeado = consolidacionInvSvc.mapTo({
-                    data: $scope.data,
+                    data: {
+                        ...$scope.data,
+                        idTipoTransaccion: dataMovimiento.id || dataMovimiento.idMovimientoEntrada
+                    },
                     detalles,
                     itemsDeleted,
                     isDocOrderProduction: $scope.isDocOrderProduction
