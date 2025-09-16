@@ -140,8 +140,7 @@ BEGIN
 	--> DataForm
     IF @tipo = 2
 		BEGIN
-            
-            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento,tipoTransaccion'
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento,tiposTransaccion'
 
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			
@@ -153,7 +152,7 @@ BEGIN
 
             SELECT Id,Code,[Description] FROM Inventario.MovementType WHERE Code IN ('A','S','E') AND IsActive = 1
 
-            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OP') AND estado = 1
+            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI') AND estado = 1
 
             SELECT * FROM Inventario.TipoTransaccion WHERE estado = 1 AND codigo IN ('A','S','E')
 
