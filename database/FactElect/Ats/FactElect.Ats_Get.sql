@@ -107,8 +107,8 @@ BEGIN
 	    --> ENCABEZADO
         WITH Devoluciones AS
         (
-            SELECT nc.idFactura
-                  ,CAST(ISNULL(nc.subtotalsinImpuestos,0) AS NUMERIC(18,2)) AS subtotalsinImpuestos
+            SELECT es.idEntidad 
+                  ,SUM(CAST(ISNULL(nc.subtotalsinImpuestos,0) AS NUMERIC(18,2))) AS totalDevoluciones
             FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
             INNER JOIN dbo.NotaCredito          nc WITH (NOLOCK) ON nc.idDocumentoElectronico = de.idDocumentoElectronico
             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
@@ -117,32 +117,34 @@ BEGIN
             WHERE es.idEntidad = @idEntidad
               AND ss.codigo = 4 
               AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+            GROUP BY es.idEntidad 
         ),
         Ventas AS 
         (
             SELECT 'R'                                                                                                                      as TipoIdInformante
+                  ,en.idEntidad
                   ,en.Ruc                                                                                                                   as IdInformante
                   ,en.razonSocial
                   ,YEAR(@fromDate)                                                                                                          as anio
                   ,(REPLICATE('0',(2-LEN(MONTH(@fromDate))))+CONVERT(NVARCHAR(10),MONTH(@fromDate)))                                        as mes
                   ,'IVA'                                                                                                                    as codigoOperativo
                   ,es.codEstab
-                  ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)) - ISNULL(dv.subtotalsinImpuestos,0) ) as totalVentas
+                  ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)) ) as totalVentas
             FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
              LEFT JOIN dbo.Factura              fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
             INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
-             LEFT JOIN Devoluciones             dv WITH (NOLOCK) ON dv.idFactura              = fe.idFactura
             INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
             INNER JOIN dbo.Entidad              en WITH (NOLOCK) ON en.idEntidad              = es.idEntidad
             WHERE es.idEntidad = @idEntidad
               AND ss.codigo = 4 
               AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-            GROUP BY en.ruc, en.razonSocial, es.codEstab
+            GROUP BY en.idEntidad,en.ruc, en.razonSocial, es.codEstab
         ),
         EstablecimientosConteo AS
         (
-            SELECT TipoIdInformante
+            SELECT idEntidad
+                  ,TipoIdInformante
                   ,IdInformante
                   ,razonSocial
                   ,anio
@@ -151,7 +153,7 @@ BEGIN
                   ,COUNT(DISTINCT codEstab)  as numEstablecimientos
                   ,SUM(totalVentas)          as totalVentas
             FROM Ventas
-            GROUP BY TipoIdInformante, IdInformante, razonSocial, anio, mes, codigoOperativo
+            GROUP BY idEntidad,TipoIdInformante, IdInformante, razonSocial, anio, mes, codigoOperativo
         )
         SELECT TipoIdInformante
               ,IdInformante
@@ -160,8 +162,9 @@ BEGIN
               ,mes
               ,RIGHT('000' + CAST(numEstablecimientos AS VARCHAR(3)), 3) as numEstabRuc
               ,codigoOperativo
-              ,totalVentas
-        FROM EstablecimientosConteo;
+              ,totalVentas - ISNULL(dv.totalDevoluciones,0)              as totalVentas
+        FROM EstablecimientosConteo ec
+        INNER JOIN Devoluciones     dv ON dv.idEntidad = ec.idEntidad ;
 
         --> Compras Documentos Electronicos
         WITH DocumentosBase AS
@@ -1012,11 +1015,11 @@ BEGIN
  	      AND ss.codigo = 4;
 
 
-
+        --> Ventas por establecimiento
         WITH Devoluciones AS
         (
-            SELECT nc.idFactura
-                  ,CAST(ISNULL(nc.subtotalsinImpuestos,0) AS NUMERIC(18,2)) AS subtotalsinImpuestos
+            SELECT es.idEstablecimiento
+                  ,CAST(ISNULL(nc.subtotalsinImpuestos,0) AS NUMERIC(18,2)) AS totalDevolucion
             FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
             INNER JOIN dbo.NotaCredito          nc WITH (NOLOCK) ON nc.idDocumentoElectronico = de.idDocumentoElectronico
             INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
@@ -1025,24 +1028,28 @@ BEGIN
             WHERE es.idEntidad = @idEntidad
               AND ss.codigo = 4 
               AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+        ),
+        Ventas AS 
+        (
+            SELECT es.idEstablecimiento
+                  ,es.estab as codEstab
+                  ,0.00     as ivaComp
+                  ,SUM(CAST(ISNULL(fe.subtotalsinImpuestos,0) AS NUMERIC(18,2)) ) as totalVentas
+            FROM dbo.DocumentoElectronico       de WITH (NOLOCK) 
+             LEFT JOIN dbo.Factura              fe WITH (NOLOCK) ON fe.idDocumentoElectronico = de.idDocumentoElectronico
+            INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+            INNER JOIN FactElect.EstadoServicio ss WITH (NOLOCK) ON ss.idEstadoServicio       = de.idEstadoServicio
+            INNER JOIN Sri.Establecimiento      es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+            WHERE es.idEntidad = @idEntidad
+              AND ss.codigo = 4 
+              AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+            GROUP BY es.idEstablecimiento,es.estab
         )
-        SELECT ventasEstab = SUM(CAST(fe.subtotalsinImpuestos as numeric(18,2)) - ISNULL(dv.subtotalsinImpuestos,0))
-	          ,codEstab    = se.estab
-              ,ivaComp     = 0.00
-	        FROM Factura                        fe WITH (NOLOCK)
-             LEFT JOIN Devoluciones             dv WITH (NOLOCK) ON dv.idFactura              = fe.idFactura
-            INNER JOIN dbo.DocumentoElectronico de WITH (NOLOCK) ON de.idDocumentoElectronico = fe.idDocumentoElectronico
-	        INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-            INNER JOIN FactElect.EstadoServicio es WITH (NOLOCK) ON es.idEstadoServicio       = de.idEstadoServicio
-	        INNER JOIN Sri.Establecimiento      se WITH (NOLOCK) ON se.idEstablecimiento      = pe.idEstablecimiento
-	        WHERE se.idEntidad = @idEntidad
-	          AND fe.estado = 1
-	          AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-              AND es.codigo = 4
-	        GROUP BY se.estab
-
-        --> Ventas por establecimiento
-	    
+        SELECT ve.totalVentas - ISNULL(dv.totalDevolucion,0) as ventasEstab
+	          ,ve.codEstab
+              ,ve.ivaComp
+	    FROM Ventas            ve
+        LEFT JOIN Devoluciones dv ON dv.idEstablecimiento = ve.idEstablecimiento
 
     END TRY
     BEGIN CATCH

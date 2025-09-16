@@ -1,14 +1,13 @@
-USE [AcontPlus]
-GO
 
-/****** Object:  StoredProcedure [Inventario].[Kardex_Get]    Script Date: 3/2/2023 16:41:15 ******/
+USE [Acontplus]
+GO
+/****** Object:  StoredProcedure [Inventario].[Transaccion_Get]    Script Date: 9/15/2025 9:01:11 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE Inventario.Transaccion_Get 
+ALTER   PROCEDURE [Inventario].[Transaccion_Get] 
      @userRoleId INT
     ,@json VARCHAR(MAX)
     ,@tableNames VARCHAR(MAX) OUTPUT
@@ -74,10 +73,10 @@ BEGIN
 							  ,cantidadSalida  
 							  ,IIF(codTransaccion = ''S'',precioUnitario,0) as venta           
 							  ,totalSalida    
-							  ,cantidadTransaccion
-							  ,saldo
+							  ,IIF(estado = 1,cantidadTransaccion,0 )                                                                                     as cantidadTransaccion
+							  ,SUM(IIF(estado = 1, cantidadTransaccion,0)) OVER (PARTITION BY particion ORDER BY fechaRegistro, idTransaccionDetalle ASC) as saldo
 							  ,precioCosto
-                              ,CAST(saldo * precioCosto as numeric(18,2)) as totalGeneral
+							  ,CAST(precioCosto * (SUM(IIF(codTransaccion = ''S'', -1, 1) * IIF(estado = 1,cantidadTransaccion,0)) OVER (PARTITION BY particion ORDER BY fechaRegistro, idTransaccionDetalle ASC))  AS DECIMAL(20,2)) as totalGeneral
 						FROM v_InventarioTransaccion WITH(NOLOCK)
 						WHERE idArticulo = @idArticulo
 						  AND idBodega   = @idBodega '
@@ -106,7 +105,7 @@ BEGIN
 
             IF @estado = 0
                 BEGIN
-                    SET @sql = @sql + 'AND estado = 1 '
+                    SET @sql = @sql + 'AND estado IN (1,2) '
                 END
 
             ELSE 

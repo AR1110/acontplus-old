@@ -1,6 +1,6 @@
-USE Acontplus
+USE [Acontplus]
 GO
-
+/****** Object:  StoredProcedure [Restaurant].[Order_Document_Insert]    Script Date: 9/15/2025 4:47:03 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,7 +11,7 @@ GO
 -- Description:	sp for update order restaurant
 -- Restaurant.Order_Document_Insert
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.Order_Document_Insert
+ALTER   PROCEDURE [Restaurant].[Order_Document_Insert]
 @userRoleId INT
 ,@orderId   INT
 ,@json      NVARCHAR(MAX)
@@ -176,19 +176,13 @@ BEGIN
                 ,ij.discount
                 ,ij.total               
                 ,oi.MedidaId
-                ,ISNULL(CASE
-					WHEN o.CreatedAt >= (SELECT s.fechaConsolidacion FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId)
-						THEN
-							ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity) * -1
-				ELSE
-					0
-				END, 0) 
-
-                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
+                ,ij.Quantity
+                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = ISNULL(i.ProductId, m.ProductId) AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
                 ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
-			INNER JOIN Restaurant.v_Item i ON oi.ItemId = i.Id
+			LEFT JOIN Restaurant.Item i ON i.Id = oi.ItemId
+            LEFT JOIN Restaurant.Menu m ON m.Id = oi.MenuId
             JOIN (SELECT uuid, quantity, price, discount, total, taxValue FROM OPENJSON(@itemsToPay)
                     WITH (
                         uuid        UNIQUEIDENTIFIER '$.uuid',
@@ -201,6 +195,10 @@ BEGIN
             ) AS ij ON ij.uuid = oi.uuid
             WHERE oi.Deleted IS NULL
                 AND oi.[Enabled] = 1
+                 AND (
+                    (oi.ItemId IS NOT NULL AND oi.MenuId IS NULL)
+                 OR (oi.ItemId IS NULL AND oi.MenuId IS NOT NULL)
+                  )
             --- Insert Taxes---
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
             SELECT oi.Uuid
@@ -253,36 +251,41 @@ BEGIN
             INSERT INTO @tblItems(uuid, bodegaId, itemTypeId, menuId, itemId, taxId
                                   , taxPercentId, feeId, taxValue, quantity, cost
                                   , price, discount, total, medidaId, cantidadStock, cantidadTransaccion, envioSri)
-            SELECT oi.Uuid
-                ,BodegaId
-                ,itemTypeId
-                ,menuId
-                ,ItemId
-                ,TaxId
+            SELECT 
+                 oi.Uuid
+                ,oi.BodegaId
+                ,oi.ItemTypeId
+                ,oi.MenuId
+                ,oi.ItemId
+                ,oi.TaxId
                 ,oi.TaxPercentId
-                ,FeeId
-                ,TaxValue
-                ,Quantity
-                ,Cost
-                ,Price
+                ,oi.FeeId
+                ,oi.TaxValue
+                ,oi.Quantity
+                ,oi.Cost
+                ,oi.Price
                 ,oi.Discount
                 ,oi.Total
-                ,MedidaId
-                ,ISNULL(CASE
-					WHEN o.CreatedAt >= (SELECT s.fechaConsolidacion FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idBodega = oi.BodegaId)  
-						THEN
-							ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) * -1
-				ELSE
-					0
-				END,0) 
-               ,ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = i.ProductId AND idMedida = oi.MedidaID) * oi.Quantity , oi.Quantity) * -1
-               ,1
-           FROM Restaurant.OrderItem oi WITH (NOLOCK)
-                INNER JOIN Restaurant.[Order] o WITH (NOLOCK) ON oi.OrderId = o.ID
-			    INNER JOIN Restaurant.Item i WITH (NOLOCK) ON oi.ItemId = i.Id
-            WHERE OrderId = @orderId
-                AND oi.Deleted IS NULL
-                AND oi.[Enabled] = 1
+                ,oi.MedidaId
+                ,oi.Quantity
+                ,(ISNULL(
+                    (SELECT af.conversion 
+                       FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+                      WHERE af.idArticulo = ISNULL(i.ProductId, m.ProductId) 
+                        AND af.idMedida = oi.MedidaID
+                    ), 1) * oi.Quantity) * 1 AS ConversionQty
+                ,1 AS Constante
+            FROM Restaurant.OrderItem oi WITH (NOLOCK)
+                 INNER JOIN Restaurant.[Order] o WITH (NOLOCK) 
+                         ON oi.OrderId = o.ID
+                 LEFT JOIN Restaurant.Item i WITH (NOLOCK) 
+                        ON i.Id = oi.ItemId
+                 LEFT JOIN Restaurant.Menu m WITH (NOLOCK) 
+                        ON m.Id = oi.MenuId
+            WHERE oi.OrderId = @orderId
+              AND oi.Deleted IS NULL
+              AND oi.[Enabled] = 1
+              AND (oi.ItemId IS NOT NULL OR oi.MenuId IS NOT NULL);
             
             --- Insert Taxes---
             INSERT INTO @tblTaxes(uuid, taxId, taxPercentId, taxBase, taxValue)
@@ -670,35 +673,35 @@ BEGIN
             WHERE a.llevaInventario = 1
             
             --INSERT MENU ITEMS
-            INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
-            SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
-            FROM @tblItems i
-                INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
-                INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
-                INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
-                INNER JOIN Articulo a WITH (NOLOCK) ON ii.ProductId = a.idArticulo 
-            WHERE a.llevaInventario = 1
+            --INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
+            --SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
+            --FROM @tblItems i
+            --    INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
+            --    INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
+            --    INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
+            --    INNER JOIN Articulo a WITH (NOLOCK) ON ii.ProductId = a.idArticulo 
+            --WHERE a.llevaInventario = 1
 
             --INSERT INGREDIENTS ITMES
-            INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
-            SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
-            FROM @tblItems i
-                INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
-                INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
-                INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
-            WHERE a.llevaInventario = 1
+            --INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
+            --SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
+            --FROM @tblItems i
+            --    INNER JOIN Restaurant.Recipe r ON i.itemId = r.ItemId
+            --    INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+            --    INNER JOIN Inventario.v_Articulo a On ing.ProductId = a.idArticulo 
+            --WHERE a.llevaInventario = 1
 
              --INSERT MENU ITEMS INGREDIENTS
-            INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
-            SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
-            FROM @tblItems i
-                INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
-                INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
-                INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
-                 INNER JOIN Restaurant.Recipe r ON ii.Id = r.ItemId
-                INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
-                INNER JOIN Articulo a WITH (NOLOCK) ON ing.ProductId = a.idArticulo 
-            WHERE a.llevaInventario = 1
+            --INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
+            --SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
+            --FROM @tblItems i
+            --    INNER JOIN Restaurant.Menu m ON i.menuId = m.Id
+            --    INNER JOIN Restaurant.MenuItem mi ON m.Id = mi.MenuId
+            --    INNER JOIN Restaurant.Item ii ON mi.itemId = ii.Id
+            --     INNER JOIN Restaurant.Recipe r ON ii.Id = r.ItemId
+            --    INNER JOIN Restaurant.Ingredient ing WITH (NOLOCK) ON r.IngredientId = ing.Id
+            --    INNER JOIN Articulo a WITH (NOLOCK) ON ing.ProductId = a.idArticulo 
+            --WHERE a.llevaInventario = 1
 
             SET @codDocTran = (SELECT IIF(@codDoc = 'FV', 'FE', 'NE'))
             
@@ -720,7 +723,7 @@ BEGIN
 
                     INSERT INTO Inventario.TransaccionDetalle
                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,conversion,precioCostoFraccionado)
-			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,(cantidadTransaccion*-1),precioUnitario,precioCosto,precioTotalSinImpuesto
                            ,ISNULL((SELECT TOP 1 af.conversion
                              FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
                              WHERE af.idArticulo = tb.idArticulo

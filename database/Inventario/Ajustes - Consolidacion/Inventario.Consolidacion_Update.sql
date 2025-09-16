@@ -1,6 +1,6 @@
-USE [AcontPlus]
+USE [Acontplus]
 GO
-/****** Object:  StoredProcedure [dbo].[ASPConsolidacionInventarioUpdate]    Script Date: 12/8/2022 4:22:36 PM ******/
+/****** Object:  StoredProcedure [Inventario].[Consolidacion_Update]    Script Date: 9/15/2025 9:09:11 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,7 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Inventario.Consolidacion_Update @userRoleId INT ,@id INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE [Inventario].[Consolidacion_Update] @userRoleId INT ,@id INT,@json VARCHAR(MAX)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -22,24 +22,16 @@ BEGIN
 	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) 
     
     --> Data Json
-    DECLARE @consolidacion VARCHAR(MAX) ,@detalles VARCHAR(MAX)
+    DECLARE @detalles VARCHAR(MAX)
 
     --> Consolidacion
-    DECLARE @fechaEmision DATETIME2 ,@idEstadoDocumento INT 
+    DECLARE @fechaEmision DATETIME2 ,@idEstadoDocumento INT ,@idEstadoDocumentoAnulado INT 
 
     --> Transaccion 
-    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT
-
-    DECLARE @tbComprobante AS TABLE(
-         idConsolidacionInventario INT NOT NULL
-        ,idTipoDocumento INT NOT NULL
-        ,observacion VARCHAR(300) NULL
-        ,total NUMERIC(18,5) NOT NULL
-    )
+    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50) ,@valor INT = 1
 
     DECLARE @tblDetails AS TABLE (
          orderIndex INT NOT NULL
-        ,idConsolidacionInventarioDetalle INT NOT NULL
         ,idArticulo INT NOT NULL
         ,idBodega INT NOT NULL
         ,idMedida INT NULL
@@ -49,7 +41,7 @@ BEGIN
         ,precioCosto NUMERIC (18,5) NOT NULL
         ,total NUMERIC (18,5) NOT NULL
         ,nota VARCHAR(100) NULL
-        ,descripcion VARCHAR(255) NOT NULL 
+        ,descripcion VARCHAR(255) NULL 
         ,estado BIT NOT NULL
         ,conversion NUMERIC(15,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(15,5) NOT NULL
@@ -60,34 +52,19 @@ BEGIN
         SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         --> Data json
-		SELECT @consolidacion = consolidacion
-              ,@detalles      = detalles 
+		SELECT @detalles      = detalles 
         FROM OPENJSON (@json) WITH 
         (
-            consolidacion NVARCHAR(MAX) AS JSON
-           ,detalles      NVARCHAR(MAX) AS JSON
+            detalles      NVARCHAR(MAX) AS JSON
         )
 
-        INSERT INTO @tbComprobante 
-              (idConsolidacionInventario,idTipoDocumento,total,observacion)
-		SELECT @id                      ,idTipoDocumento,total,observacion
-		FROM OPENJSON (@consolidacion) WITH 
-        (
-		     idTipoDocumento   INT
-            ,idTipoTransaccion INT
-            ,fechaEmision      DATETIME2 
-		    ,total             NUMERIC(18,5) 
-		    ,observacion       VARCHAR(150) 
-		)
-
 		INSERT INTO @tblDetails
-              (orderIndex,idConsolidacionInventarioDetalle,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,estado,conversion,precioCostoFraccionado)
-		SELECT orderIndex,idConsolidacionInventarioDetalle,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,estado,conversion,precioCostoFraccionado 
+              (orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,estado,conversion,precioCostoFraccionado)
+		SELECT orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,estado,conversion,precioCostoFraccionado 
 		FROM OPENJSON (@detalles) WITH 
         (
 			 orderIndex                       INT            
-			,idConsolidacionInventarioDetalle INT
-            ,idArticulo                       INT           
+			,idArticulo                       INT           
 			,idBodega                         INT           
 			,idMedida                         INT           
 			,cantidad                         NUMERIC(15,5) 
@@ -103,20 +80,27 @@ BEGIN
 		)
         
         --> Variables
+        SELECT TOP 1 @idEstadoDocumentoAnulado = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
+
         SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.ConsolidacionInventario WITH (NOLOCK) WHERE idConsolidacionInventario =  @id
 
         SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idDocumento = @id AND idTipoDocumento = @idTipoDocumento
 
+        SELECT TOP 1 @codDoc = td.codigo, @codTran = tt.codigo
+        FROM Inventario.Transaccion           tr WITH (NOLOCK) 
+        INNER JOIN Inventario.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
+        INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+        WHERE tr.idTransaccion = @idTransaccion
+
 	    SELECT TOP 1 @idEstadoDocumento = idEstadoDocumento ,@fechaEmision = fechaEmision FROM ConsolidacionInventario WITH (NOLOCK) WHERE idConsolidacionInventario = @id
 
-        --> Validacion de informacion
-        IF NOT EXISTS(SELECT 1 FROM @tbComprobante) 
+        IF @codTran = 'S'
             BEGIN
-                SELECT '0'code, 'Error en el comprobante'[message]
-                RETURN
-            END 
+                SET @valor = -1
+            END
 
-        IF NOT EXISTS(SELECT 1 FROM @tblDetails)
+        --> Validacion de informacion
+        IF (SELECT COUNT(*) FROM @tblDetails) = 0 
             BEGIN
                 SELECT '0'code, 'Error en los detalles'[message]
                 RETURN
@@ -126,49 +110,17 @@ BEGIN
             BEGIN
                 SELECT '0'code, 'El Documento se encuentra Anulado'[message]
                 RETURN
-            END
-
-        IF EXISTS (SELECT 1 FROM Inventario.TransaccionDetalle WHERE AjusteId = @idTransaccion)
-            BEGIN
-                SELECT '0'code,'No puedes editar este ajuste ya tiene movimietos vinculados.'[message]
-                RETURN
             END 
 
 		BEGIN TRAN 
             --> Comprobante
-			UPDATE ci 
-               SET ci.observacion = tc.observacion
-                  ,ci.total       = tc.total
-            FROM ConsolidacionInventario ci WITH (ROWLOCK)
-            INNER JOIN @tbComprobante    tc ON tc.idConsolidacionInventario = ci.idConsolidacionInventario
+			UPDATE ConsolidacionInventario SET idEstadoDocumento = @idEstadoDocumentoAnulado,lastChange = dbo.ufnGetDateEcuador(),idUserUpdate = @idUsuario WHERE idConsolidacionInventario = @id
 
-            --> Detalles
-			UPDATE cd 
-               SET cd.idBodega     = js.idBodega
-				  ,cd.idMedida     = js.idMedida
-				  ,cd.cantidad     = js.cantidad
-				  ,cd.descripcion  = js.descripcion
-				  ,cd.precioActual = js.precioUnitario
-				  ,cd.estado       = js.estado
-			FROM ConsolidacionInventarioDetalle cd WITH (ROWLOCK)
-			INNER JOIN @tblDetails              js ON js.idConsolidacionInventarioDetalle = cd.idConsolidacionInventarioDetalle
+            UPDATE Inventario.Transaccion SET estado = 0 WHERE idTransaccion = @idTransaccion
 
-			INSERT INTO dbo.ConsolidacionInventarioDetalle
-				   (idConsolidacionInventario,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,precioActual)
-			SELECT @id                       ,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,precioUnitario
-			FROM @tblDetails 
-            WHERE idConsolidacionInventarioDetalle = 0
-            ORDER BY orderIndex ASC
+            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
 
-            --> Transaccion
-            INSERT INTO Inventario.TransaccionDetalle WITH(ROWLOCK)
-				   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total)
-			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioCosto,precioCostoFraccionado,precioUnitario,total
-            FROM @tblDetails
-            WHERE estado = 1
-              AND cantidadTransaccion <> 0 
-
-            EXEC dbo.Transaccion_Handler_Init @idTransaccion
+            EXEC dbo.Transaccion_Handler_Init @codTran, @codDoc, @id, DEFAULT
 
 		COMMIT TRAN 
 		SELECT '1'code, 'Actualizado Correctamente'[message],@payload as payload

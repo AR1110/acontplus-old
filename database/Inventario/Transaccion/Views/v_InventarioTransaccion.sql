@@ -2,15 +2,13 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW v_InventarioTransaccion WITH SCHEMABINDING AS (
 SELECT tr.idTransaccion
-      ,tr.idTipoTransaccion
-      ,tr.idTipoDocumento
+	  ,tr.idTipoTransaccion
+	  ,tr.idTipoDocumento
 	  ,tr.idDocumento
 	  ,tr.idUsuario
-      ,tr.serieComprobante                                                          as nroDocumento
-      ,tr.fechaEmision                                                              
-      ,tr.fechaRegistro                                                             
+      ,tr.serieComprobante as nroDocumento
+      ,tr.fechaEmision     as fechaRegistro
       ,dt.idTransaccionDetalle
-      ,dt.AjusteId                                                                  as particion
       ,dt.estado
       ,dt.idArticulo
 	  ,dt.idBodega
@@ -21,15 +19,28 @@ SELECT tr.idTransaccion
 	  ,dt.precioUnitario
 	  ,dt.precioCosto
       ,dt.precioCostoFraccionado
-      ,dt.saldo
-      ,ISNULL(CASE WHEN mt.Code = 'E' OR mt.Code = 'A' THEN dt.cantidad END, 0)   as cantidadEntrada
-	  ,ISNULL(CASE WHEN mt.Code = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
-      ,ISNULL(CASE WHEN mt.Code = 'E' OR mt.Code = 'A' THEN dt.total END, 0)      as totalEntrada
-      ,ISNULL(CASE WHEN mt.Code = 'S' THEN dt.total END, 0)                       as totalSalida 
+      ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
+	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
+      ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
+      ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.total END, 0)                       as totalSalida 
+      ,CASE WHEN td.codigo = 'CI' THEN tr.idDocumento 
+                                  ELSE (
+                                            SELECT max(tt.idDocumento)
+                                            FROM Inventario.Transaccion              tt WITH (NOLOCK)
+                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
+                                            INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
+                                            WHERE td.codigo = 'CI'
+                                              AND tt.fechaEmision <= tr.fechaEmision 
+                                              AND sd.estado = 1
+                                              AND sd.idBodega   = dt.idBodega
+                                              AND sd.idArticulo = dt.idArticulo
+                                             
+                                       ) 
+       END as particion
       ,ar.idSubFamilia
-	  ,mt.Code                                                                    as codMovimiento
-	  ,mt.[Description]                                                           as movimiento
-	  ,td.codigo                                                                  as codDoc
+	  ,tt.codigo                                                                    as codTransaccion
+	  ,tt.descripcion                                                               as transaccion
+	  ,td.codigo                                                                    as codDoc
 	  ,td.codigoSri
 	  ,td.descripcion                                                               as documento
 	  ,bo.codEstab
@@ -40,6 +51,7 @@ SELECT tr.idTransaccion
 	  ,ar.codigoBarra
 	  ,ar.descripcion                                                               as articulo
       ,sf.descripcion                                                               as subFamilia
+	
 	  ,us.nombreUsuario                                                             as usuario
 	  ,cu.BusinessName                                                              as clienteProveedor
       ,cu.IDCard                                                                    as rucClienteProveedor
@@ -47,10 +59,10 @@ SELECT tr.idTransaccion
       ,es.nombreComercial                                                           as establecimiento
       ,ta.descripcion                                                               as tarifa
 FROM Inventario.Transaccion              tr
+INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
 INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
 INNER JOIN dbo.Usuario                   us WITH (NOLOCK) ON us.idUsuario         = tr.idUsuario
 INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
-INNER JOIN Inventario.MovementType       mt WITH (NOLOCK) ON mt.Id                = dt.MovementTypeId
 INNER JOIN dbo.Articulo                  ar WITH (NOLOCK) ON ar.idArticulo        = dt.idArticulo
 INNER JOIN dbo.Medida                    me WITH (NOLOCK) ON me.idMedida          = dt.idMedida
 INNER JOIN dbo.Bodega                    bo WITH (NOLOCK) ON bo.idBodega          = dt.idBodega

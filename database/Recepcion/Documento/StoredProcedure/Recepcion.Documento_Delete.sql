@@ -32,7 +32,7 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
 
-        IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND complete = 1)
+        IF EXISTS(SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND xmlCompressed IS NOT NULL and codDoc IS NOT NULL)
 			 BEGIN
 				SELECT '0' code, 'Imposible eliminar, este archivo ya ha sido importado' as 'message'
 				RETURN

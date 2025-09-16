@@ -1,6 +1,7 @@
 USE [Acontplus]
 GO 
 
+--> CREACION DE TABLA PARA REGISTRAR MOVIMIENTOS DE CADA DETALLE DE LA TRANSACCION
 
 --CREATE TABLE Inventario.MovementType (
 --    Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL
@@ -13,32 +14,35 @@ GO
 --)
 
 --INSERT INTO Inventario.MovementType (Code,Description,IsActive)
---select idtipotransaccion,codigo,descripcion,estado from Inventario.TipoTransaccion
+--select codigo,descripcion,estado from Inventario.TipoTransaccion
+
+--> |||||| TIPO DE MOVIMIENTO PARA REGISTRAR EN LOS DETALLES ||||||||||
+
+--ALTER TABLE Inventario.TransaccionDetalle ADD MovementTypeId INT CONSTRAINT fk_MovementType_transacion FOREIGN KEY REFERENCES Inventario.MovementType(Id)
+
+--UPDATE td set td.MovementTypeId = (select top 1 mt.Id from Inventario.MovementType mt where mt.Code = tt.codigo)
+--from Inventario.TransaccionDetalle td
+--INNER JOIN Inventario.Transaccion tr ON tr.idTransaccion = td.idTransaccion
+--INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
 
 
---select * from Inventario.TipoTransaccion
+--> ||| LAS TRANSACCIONES SERAN DATOS UNICOS, SU MOVIMIENTO SERA EN LOS DETALLES DE CADA UNO, PROCESO PARA ACTUALIZAR Y BORRA EL DOBLE REGISTRO DE LAS TRANFERENCIAS 
 
---alter table Inventario.TipoTransaccion alter column codigo varchar(20)
+--ALTER TABLE Inventario.TransaccionDetalle ALTER COLUMN MovementTypeId INT NOT NULL
 
---UPDATE Inventario.TipoTransaccion SET codigo = 'VTA', descripcion = 'Ventas' WHERE idTipoTransaccion = 1 
---UPDATE Inventario.TipoTransaccion SET codigo = 'CMP', descripcion = 'Compras' WHERE idTipoTransaccion = 2 
---UPDATE Inventario.TipoTransaccion SET codigo = 'INV', descripcion = 'Movimiento de Inventario' WHERE idTipoTransaccion = 3 
-
-
---update dt set 
---       dt.idTransaccion = 
+--UPDATE dt SET 
+--       dt.idTransaccion  = 
 --       (
 --            SELECT TOP 1 sb.idTransaccion
 --            FROM Inventario.Transaccion sb
 --            inner join Inventario.tipotransaccion ss on ss.idTipoTransaccion = sb.idTipoTransaccion
 --            INNER JOIN Inventario.TipoDocumento   td on td.idTipoDocumento = sb.idTipoDocumento
 --            where sb.idDocumento = tr.idDocumento
---              and ss.codigo = 'CMP'
+--              and ss.codigo = 'E'
 --              and td.codigo = 'TB'
 --       )
 
 --FROM  inventario.transacciondetalle dt 
-
 --inner join inventario.transaccion    tr on tr.idTransaccion   = dt.idtransaccion
 --inner join  inventario.tipoDocumento td on td.idTipoDocumento = tr.idTipoDocumento
 --where td.codigo = 'TB'
@@ -48,17 +52,9 @@ GO
 --    select tr.idTransaccion from Inventario.Transaccion tr
 --    inner join Inventario.TipoTransaccion tt on tt.idTipoTransaccion = tr.idTipoTransaccion
 --    inner join Inventario.TipoDocumento   td on td.idTipoDocumento = tr.idTipoDocumento
---    where tt.codigo = 'VTA' AND td.codigo = 'TB'
+--    where tt.codigo = 'S' AND td.codigo = 'TB'
 --)
 
-
---update tr set tr.idTipoTransaccion = (select top 1 st.idTipoTransaccion from Inventario.TipoTransaccion st where st.codigo = 'INV')
---from Inventario.Transaccion tr
---inner join Inventario.TipoDocumento td on td.idTipoDocumento = tr.idTipoDocumento
---inner join Inventario.TipoTransaccion tt on tt.idTipoTransaccion = tr.idTipoTransaccion
---where td.codigo in ('CI','TB')
-
---ALTER TABLE Inventario.TransaccionDetalle ALTER COLUMN MovementTypeId INT NOT NULL
 
 --ALTER TABLE Inventario.TransaccionDetalle ADD AjusteId BIGINT CONSTRAINT fk_ajuste_kardex_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(idTransaccion)
 -- Id Ajuste
@@ -196,3 +192,15 @@ GO
 --UPDATE Inventario.TransaccionDetalle SET processed = 1
 
 --ALTER TABLE Inventario.TransaccionDetalle ALTER COLUMN processed BIT NOT NULL
+
+--alter table Inventario.TipoTransaccion alter column codigo varchar(20)
+
+SELECT * FROM Inventario.TipoTransaccion
+
+--update inventario.TipoTransaccion set codigo = 'E', descripcion = 'Entrada' where idTipoTransaccion = 1
+--update inventario.TipoTransaccion set codigo = 'S', descripcion = 'Salidas' where idTipoTransaccion = 2
+--update inventario.TipoTransaccion set codigo = 'A', descripcion = 'Ajustes' where idTipoTransaccion = 4
+
+--UPDATE Inventario.TipoTransaccion SET codigo = 'CMP', descripcion = 'Compras' WHERE idTipoTransaccion = 1
+--UPDATE Inventario.TipoTransaccion SET codigo = 'VTA', descripcion = 'Ventas' WHERE idTipoTransaccion = 2
+--UPDATE Inventario.TipoTransaccion SET codigo = 'INV', descripcion = 'Movimiento de Inventario' WHERE idTipoTransaccion = 4

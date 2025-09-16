@@ -27,7 +27,7 @@ BEGIN
     SET LANGUAGE SPANISH;
 
     --> Variables Globales
-    DECLARE @idEntidad INT ,@tipo INT ,@textSearch VARCHAR(20)
+    DECLARE @idEntidad INT ,@tipo INT ,@textSearch VARCHAR(20) ,@pageIndex INT ,@pageSize INT
 
     --> Data json
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT )
@@ -36,13 +36,11 @@ BEGIN
     SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     --> GET 
-    IF @tipo = 1
+    IF @tipo IN (1,2)
         BEGIN
             SET @tableNames = 'items'
 
-            DECLARE @pageIndex INT
-	               ,@pageSize INT
-	               ,@idSubFamilia INT
+            DECLARE @idSubFamilia INT
 	               ,@sql NVARCHAR(MAX)
 	               ,@params NVARCHAR(MAX)
 
@@ -103,12 +101,12 @@ BEGIN
                                     FOR JSON PATH, WITHOUT_ARRAY_WRAPPER
 
                                )                                AS pvp
-                              ,ISNULL(a.codTipoArticulo, '')    AS codTipoArticulo
+                              ,ISNULL(a.codTipoArticulo, '''')  AS codTipoArticulo
                               ,COUNT(*) over()                  AS totalRecords
                               ,''ITEM''                         AS itemTypeCode
                               ,a.idMedida                       AS idMedida
                               ,a.siglaFamilia                   AS siglaFamilia
-                              ,f.descripcion                    AS categoria
+                              ,a.categoria
                         FROM Restaurant.Item            ri
                         INNER JOIN Inventario.v_Articulo a ON a.idArticulo = ri.ProductId
                         WHERE a.estado = 1
@@ -154,34 +152,39 @@ BEGIN
     END
 
     --> Search de menus y combos
-    IF @tipo = 2
-        BEGIN
-            SET @tableNames = 'items'
+    --IF @tipo = 2
+    --    BEGIN
+    --        SET @tableNames = 'items'
 
-            SELECT ar.idArticulo
-                  ,ar.codigo
-                  ,ar.stock
-                  ,me.Id as MenuId
-                  ,me.Summary
-                  ,me.Content
-            FROM Restaurant.Menu    me
-            INNER JOIN dbo.Articulo ar ON ar.idArticulo = me.ProductId
-            WHERE ar.idEntidad = @idEntidad
-              AND ar.estado = 1
-              AND
-              (
-                   ar.descripcion LIKE '%'+@textSearch+'%'
-                OR ar.codigo      LIKE '%'+@textSearch+'%'
-                OR me.Summary     LIKE '%'+@textSearch+'%'
-                OR me.Content     LIKE '%'+@textSearch+'%'
-              )
-            RETURN 
-        END
+    --        SELECT @textSearch = textSearch FROM OPENJSON(@json) WITH (textSearch VARCHAR(20))
+
+    --        SELECT ar.idArticulo
+    --              ,ar.codigo
+    --              ,ar.stock
+    --              ,me.Id as MenuId
+    --              ,me.Summary
+    --              ,me.Content
+    --        FROM Restaurant.Menu    me
+    --        INNER JOIN dbo.Articulo ar ON ar.idArticulo = me.ProductId
+    --        WHERE ar.idEntidad = @idEntidad
+    --          AND ar.estado = 1
+    --          AND
+    --          (
+    --               ar.descripcion LIKE '%'+@textSearch+'%'
+    --            OR ar.codigo      LIKE '%'+@textSearch+'%'
+    --            OR me.Summary     LIKE '%'+@textSearch+'%'
+    --            OR me.Content     LIKE '%'+@textSearch+'%'
+    --          )
+    --        RETURN 
+    --    END
 
     -->
     IF @tipo = 3
          BEGIN
             SET @tableNames = 'items'
+
+            SELECT @pageSize = pageSize ,@pageIndex = pageIndex FROM OPENJSON(@json)WITH (pageSize INT ,pageIndex INT)
+
             SELECT m.*
                     , s3ObjectUrl		= a.s3ObjectUrl
 				    , stock				= a.stock
@@ -217,7 +220,7 @@ BEGIN
         BEGIN
             DECLARE @MenuId INT
 
-            SELECT @MenuId = MenuId FROM OPENJSON(@json) WITH (MenuId INT)
+            SELECT @MenuId = menuId FROM OPENJSON(@json) WITH (menuId INT)
 
             SET @tableNames = 'menu,components'
 
@@ -233,6 +236,36 @@ BEGIN
 				  ,llevaInventario
 				  ,a.idMedida
 				  ,a.medida
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida
+                              ,me.descripcion            as medida
+                              ,ar.precioCosto
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                              ,af.conversion
+                        FROM ArticuloFraccionado af WITH (NOLOCK) 
+                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = a.idArticulo 
+                        FOR JSON PATH
+
+                   ),'[]') as fraccionado 
+
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida 
+                              ,me.descripcion  as medida
+                              ,ar.precioCosto 
+                              ,ar.precioCosto  as precioUnitario
+                              ,ar.precioCosto  as precioCostoFraccionado
+                              ,1               as conversion
+                        FROM Articulo     ar WITH (NOLOCK) 
+                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
+                        WHERE ar.idArticulo = a.idArticulo 
+                        FOR JSON PATH
+
+                    ),'[]') as principal
 			FROM Restaurant.Menu me  
 			INNER JOIN Inventario.v_Articulo a on a.idArticulo = me.ProductId 
 			WHERE me.[Enabled] = 1
@@ -252,11 +285,41 @@ BEGIN
 				  ,ar.idMedida
 				  ,ar.medida
                   ,mi.Quantity as conversion
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida
+                              ,me.descripcion            as medida
+                              ,ar.precioCosto
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                              ,af.conversion
+                        FROM ArticuloFraccionado af WITH (NOLOCK) 
+                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = ar.idArticulo 
+                        FOR JSON PATH
+
+                   ),'[]') as fraccionado 
+
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida 
+                              ,me.descripcion  as medida
+                              ,sa.precioCosto 
+                              ,sa.precioCosto  as precioUnitario
+                              ,sa.precioCosto  as precioCostoFraccionado
+                              ,1               as conversion
+                        FROM Articulo     sa WITH (NOLOCK) 
+                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = sa.idMedida 
+                        WHERE sa.idArticulo = ar.idArticulo 
+                        FOR JSON PATH
+
+                    ),'[]') as principal
 			FROM Restaurant.MenuItem         mi
 			INNER JOIN Restaurant.Item       it ON it.id         = mi.ItemId 
 			INNER JOIN Inventario.v_Articulo ar on ar.idArticulo = it.ProductId 
 			WHERE mi.[Enabled] = 1
-			  AND mi.Id = @MenuId
+			  AND mi.MenuId = @MenuId
+              AND mi.Deleted IS NULL
 			  AND ar.llevaInventario = 1
 
             RETURN
