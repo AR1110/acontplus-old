@@ -42,7 +42,7 @@ export class ShiftComponent implements OnInit {
 
   getShifts() {
     this.shifts.set([]);
-    this.$shiftUseCase.listShifts({}).subscribe((response) => {
+    this.$shiftUseCase.listShifts({ pageIndex: 1, pageSize: 10 }).subscribe((response) => {
       this.shifts.set(response.data);
     });
   }

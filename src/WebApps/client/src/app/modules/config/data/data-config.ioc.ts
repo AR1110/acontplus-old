@@ -30,6 +30,8 @@ import { CompanyRepositoryImpl } from '@modules/config/data/company/company-repo
 import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
 import { CompanyRepository } from '@modules/config/domain/repositories/company.repository';
 import { PrinterWebRepository } from '@modules/config/data/printer/printer-web.repository';
+import { ShiftRepository } from '../domain/repositories/shift.repository';
+import { ShiftRepositoryImpl } from './shift/shift-repository.impl';
 import { Provider } from '@angular/core';
 
 const DATA_USER_CUSTOMER_IOC: Provider[] = [
@@ -99,6 +101,10 @@ export const DATA_CONFIG_IOC: Provider[] = [
   {
     provide: ContribuyenteRepository,
     useClass: ContribuyenteRepositoryImpl,
+  },
+  {
+    provide: ShiftRepository,
+    useClass: ShiftRepositoryImpl,
   },
 
   //user-customer

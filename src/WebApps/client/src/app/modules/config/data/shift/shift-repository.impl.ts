@@ -20,6 +20,8 @@ export class ShiftRepositoryImpl implements ShiftRepository {
   list(params: any): Observable<ListShiftResponse> {
     const JSON = ListShiftMapper.toJson(params);
 
+    console.log('JSON', JSON);
+
     return this._http
       .get<ApiResponse>(`${this._url}?json=${JSON}`)
       .pipe(map((response) => ListShiftMapper.fromJson(response)));
