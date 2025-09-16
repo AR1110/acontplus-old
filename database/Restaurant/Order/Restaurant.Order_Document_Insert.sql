@@ -1,6 +1,6 @@
-USE Acontplus
+USE [Acontplus]
 GO
-
+/****** Object:  StoredProcedure [Restaurant].[Order_Document_Insert]    Script Date: 15/9/2025 15:08:35 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,7 +11,7 @@ GO
 -- Description:	sp for update order restaurant
 -- Restaurant.Order_Document_Insert
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.Order_Document_Insert
+ALTER   PROCEDURE [Restaurant].[Order_Document_Insert]
 @userRoleId INT
 ,@orderId   INT
 ,@json      NVARCHAR(MAX)
@@ -273,7 +273,7 @@ BEGIN
                        FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
                       WHERE af.idArticulo = ISNULL(i.ProductId, m.ProductId) 
                         AND af.idMedida = oi.MedidaID
-                    ), 1) * oi.Quantity) * -1 AS ConversionQty
+                    ), 1) * oi.Quantity) * 1 AS ConversionQty
                 ,1 AS Constante
             FROM Restaurant.OrderItem oi WITH (NOLOCK)
                  INNER JOIN Restaurant.[Order] o WITH (NOLOCK) 
@@ -723,7 +723,7 @@ BEGIN
 
                     INSERT INTO Inventario.TransaccionDetalle
                            (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,conversion,precioCostoFraccionado)
-			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
+			        SELECT @idTransaccion,idArticulo,idBodega,medidaId,idTarifa,cantidadStock,(cantidadTransaccion*-1),precioUnitario,precioCosto,precioTotalSinImpuesto
                            ,ISNULL((SELECT TOP 1 af.conversion
                              FROM dbo.ArticuloFraccionado af WITH (NOLOCK)
                              WHERE af.idArticulo = tb.idArticulo

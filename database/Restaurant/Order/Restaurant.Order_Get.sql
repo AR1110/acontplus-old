@@ -1,4 +1,6 @@
-USE Acontplus
+USE [Acontplus]
+GO
+/****** Object:  StoredProcedure [Restaurant].[Order_Get]    Script Date: 15/9/2025 15:17:29 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,7 +12,7 @@ GO
 -- =============================================
 -- Restaurant.Order_Get 139, '{"tipo":1,"pageIndex":1,"pageSize":25,"startDate":"2023-09-05T17:18:46.886Z","endDate":"2023-09-05T17:18:46.886Z","customerCompanyId":0}', ''
 -- Restaurant.Order_Get 25, '{"id":102,"tipo":2}', ''
-CREATE OR ALTER PROCEDURE Restaurant.Order_Get @userRoleId INT ,@json NVARCHAR(MAX) ,@tableNames VARCHAR(500) OUT
+ALTER   PROCEDURE [Restaurant].[Order_Get] @userRoleId INT ,@json NVARCHAR(MAX) ,@tableNames VARCHAR(500) OUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -514,4 +516,3 @@ BEGIN
 
 
 END
-GO
