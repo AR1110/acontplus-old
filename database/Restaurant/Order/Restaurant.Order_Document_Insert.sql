@@ -177,7 +177,7 @@ BEGIN
                 ,ij.total               
                 ,oi.MedidaId
                 ,ij.Quantity
-                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = ISNULL(i.ProductId, m.ProductId) AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
+                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = ISNULL(i.ProductId, m.ProductId) AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * 1
                 ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
