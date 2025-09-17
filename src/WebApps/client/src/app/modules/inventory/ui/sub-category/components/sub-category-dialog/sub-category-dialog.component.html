@@ -1,9 +1,8 @@
-
 <app-mat-custom-dialog
   [title]="titleModal"
-[containerTemplate]="containerTemplate"
-[actionsTemplate]="actionsTemplate"
-(close)="onModalClose()"
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  (close)="onModalClose()"
 />
 <ng-template #containerTemplate>
   <div class="d-grid gap-2">
@@ -12,55 +11,86 @@
       <mat-select [(ngModel)]="data.idFamilia">
         <mat-option [value]="0">Ninguno</mat-option>
         @for (food of categorias(); track $index) {
-          <mat-option [value]="food.idFamilia">{{food.descripcion}}</mat-option>
+          <mat-option [value]="food.idFamilia">
+            {{ food.descripcion }}
+          </mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-
-    <mat-form-field class="w-100" appToUpperCase >
+    <mat-form-field
+      class="w-100"
+      appToUpperCase
+    >
       <mat-label>Descripción:</mat-label>
-      <input matInput placeholder="..."  [(ngModel)]="data.descripcion"
-             (blur)="generateSigla()">
+      <input
+        matInput
+        placeholder="..."
+        [(ngModel)]="data.descripcion"
+        (blur)="generateSigla()"
+      />
     </mat-form-field>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+    >
       <div class="col">
-        <mat-form-field class="w-100" >
+        <mat-form-field class="w-100">
           <mat-label>Siglas:</mat-label>
-          <input matInput placeholder="..."  appToUpperCase [(ngModel)]="data.siglas">
+          <input
+            matInput
+            placeholder="..."
+            appToUpperCase
+            [(ngModel)]="data.siglas"
+          />
         </mat-form-field>
       </div>
       <div class="col">
-        <mat-form-field class="w-100" >
+        <mat-form-field class="w-100">
           <mat-label>Monto objetivo:</mat-label>
-          <input type="number" matInput placeholder="..." [(ngModel)]="data.montoObjetivo" >
+          <input
+            type="number"
+            matInput
+            placeholder="..."
+            [(ngModel)]="data.montoObjetivo"
+          />
         </mat-form-field>
       </div>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+    >
       <div class="col">
-        <mat-form-field class="w-100" >
+        <mat-form-field class="w-100">
           <mat-label>Secuencia:</mat-label>
-          <input type="number" matInput placeholder="0"  [(ngModel)]="data.ultimoSecuencial">
+          <input
+            type="number"
+            matInput
+            placeholder="0"
+            [(ngModel)]="data.ultimoSecuencial"
+          />
         </mat-form-field>
       </div>
       <div class="col">
         <div class="form-group">
-          <label  >Imagen</label>
+          <label>Imagen</label>
           <app-upload-image
-            [imageUrl]="imageUrl()"
+            [imageUrlInput]="imageUrl()"
             (onSelected)="onSelected($event)"
           />
         </div>
       </div>
     </div>
-
   </div>
 </ng-template>
 <ng-template #actionsTemplate>
-  <button type="button" mat-flat-button (click)="save()">
-    <mat-icon>save</mat-icon> Guardar
+  <button
+    type="button"
+    mat-flat-button
+    (click)="save()"
+  >
+    <mat-icon>save</mat-icon>
+    Guardar
   </button>
 </ng-template>

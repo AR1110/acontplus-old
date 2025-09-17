@@ -6,59 +6,61 @@
 />
 
 <ng-template #body>
-  <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
-    <div class="row">
-      <div class="col">
-        <div class="form-group">
-          <label>Resumen</label>
-          <input
-            class="form-control form-control-lg"
-            formControlName="summary"
-            type="text"
-          />
-        </div>
-      </div>
-    </div>
-    <div class="row mt-3">
-      <div class="col-6">
-        <div class="form-group">
-          <label for="recipe">Receta</label>
-          <textarea
-            class="form-control"
-            formControlName="recipe"
-            id="recipe"
-            rows="6"
-          ></textarea>
-        </div>
-      </div>
-      <div class="col-6">
-        <div class="form-group">
-          <label for="instructions">Instrucciones</label>
-          <textarea
-            class="form-control"
-            formControlName="instructions"
-            id="instructions"
-            rows="6"
-          ></textarea>
-        </div>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-12 12">
-        <app-ingredient-search
-          (selectedOn)="onIngredientSelected($event)"
-          [(textSearch)]="ingredientSearch"
+  <form
+    (ngSubmit)="onSave()"
+    id="itemForm"
+    [formGroup]="itemForm"
+  >
+    <div class="vstack gap-1">
+      <mat-form-field>
+        <mat-label>Resumen</mat-label>
+        <input
+          type="text"
+          matInput
+          placeholder="..."
+          required=""
+          formControlName="summary"
         />
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <app-tabulator
-          [columnNames]="columns"
-          [options]="{ reactiveData: true }"
-          [tableData]="recipes()"
-          [theme]="'semantic-ui'"
-        ></app-tabulator>
+      </mat-form-field>
+
+      <app-ingredient-search
+        (selectedOn)="onIngredientSelected($event)"
+        [(textSearch)]="ingredientSearch"
+      />
+
+      <app-tabulator
+        [columnNames]="columns"
+        [tableData]="recipes()"
+        [theme]="'semantic-ui'"
+        [options]="{
+          layout: 'fitData',
+          minHeight: 50,
+        }"
+      ></app-tabulator>
+
+      <div
+        class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+      >
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Receta</mat-label>
+            <textarea
+              matInput
+              placeholder="..."
+              formControlName="recipe"
+            ></textarea>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Instrucciones</mat-label>
+            <textarea
+              matInput
+              placeholder="..."
+              formControlName="instructions"
+            ></textarea>
+          </mat-form-field>
+        </div>
       </div>
     </div>
   </form>
@@ -68,7 +70,7 @@
     type="submit"
     icon="save"
     variant="success"
-    text="Añadir producto"
+    text="Guardar"
     form="itemForm"
     [disabled]="itemForm.invalid"
   />
