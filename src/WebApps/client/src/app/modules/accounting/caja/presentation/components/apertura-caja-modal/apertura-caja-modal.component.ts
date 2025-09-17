@@ -1,4 +1,3 @@
-import { Component, inject, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -6,30 +5,35 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
 
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {PaymentTypeCode} from "@accounting/shared/enums/accounting.constants";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-apertura-caja-modal',
-    imports: [FormsModule, ReactiveFormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatSelectModule, ThemeButtonComponent,
-    MatCustomDialogComponent
-    ],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './apertura-caja-modal.component.html',
 })
 export class AperturaCajaModalComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>)
+  private dialogRef = inject(MatDialogRef<AperturaCajaModalComponent>);
   readonly params = inject<{ idCaja: number }>(MAT_DIALOG_DATA);
   private _controlCajaUseCase = inject(ControlCajaUseCase);
   private tS = inject(ToastrNotificationService);
@@ -49,8 +53,8 @@ export class AperturaCajaModalComponent implements OnInit {
     this._controlCajaUseCase.getDataForm().subscribe((response) => {
       const { formaPagos } = response as { formaPagos: any };
       this.entidadesFinanciera = formaPagos;
-      const dataEF = this.entidadesFinanciera.find(item=>item.codigo===PaymentTypeCode.EFE)
-      if(dataEF){
+      const dataEF = this.entidadesFinanciera.find((item) => item.codigo === PaymentTypeCode.EFE);
+      if (dataEF) {
         this.dataForm.get('idEntidadFinanciera')?.setValue(dataEF.idEntidadFinanciera);
       }
     });
@@ -66,12 +70,7 @@ export class AperturaCajaModalComponent implements OnInit {
         });
         return;
       }
-      if (
-        !(
-          typeof data.idEntidadFinanciera == 'number' &&
-          data.idEntidadFinanciera > 0
-        )
-      ) {
+      if (!(typeof data.idEntidadFinanciera == 'number' && data.idEntidadFinanciera > 0)) {
         this.tS.show({
           type: 'warning',
           message: 'Ingrese todos los campos requeridos!',
@@ -82,15 +81,15 @@ export class AperturaCajaModalComponent implements OnInit {
       if (data.idCaja && data.idCaja > 0) {
         this._controlCajaUseCase.post(data).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.show({
-              type: 'warning',
-              message: response.message,
+            Swal.fire({
+              icon: 'warning',
+              html: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.show({
-              type: 'success',
-              message: response.message,
+            Swal.fire({
+              icon: 'success',
+              html: response.message,
             });
             this.dialogRef.close(response);
           }

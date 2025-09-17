@@ -8,13 +8,26 @@ import {MatInputModule} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {FormsModule} from "@angular/forms";
-import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/application/store/inventory-adjustment.store";
-import {
-  InventoryAdjustmentListProductsUseCase
-} from "@inventory/inventory-adjustment/application/use-cases/inventory-adjustment-list-products.use-case";
+
 import {isValidField} from "@core/utils/utils";
 import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
 import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
+import {
+  InventoryAdjustmentService
+} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
+import {
+  ProductAutocompleteAdvancedComponent
+} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component";
+import {SupplierSearchComponent} from "@customer/ui/supplier/components/supplier-search/supplier-search.component";
+import {ExcelImportService} from "@modules/config/application/services/excel-import.service";
+import Swal from "sweetalert2";
+import {
+  ValidateImportedDataUseCase
+} from "@modules/config/application/use-cases/excel-import/validate-imported-data.use-case";
+import {
+  InventoryAdjustmentListProductsMapper
+} from "@inventory/inventory-adjustment/infrastructure/mappers/inventory-adjustment-list-products.mapper";
+import {InventoryAdjustmentListProductsDto} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
 
 @Component({
   selector: 'app-inventory-adjustment-search-advanced',
@@ -27,17 +40,24 @@ import {ColumnDefinition} from "@shared/models/mat-table-models/column-definitio
     MatIcon,
     MatIconButton,
     FormsModule,
-    MatDynamicTableComponent
+    MatDynamicTableComponent,
+    ProductAutocompleteAdvancedComponent,
+    SupplierSearchComponent
   ],
   templateUrl: './inventory-adjustment-search-advanced.component.html',
   styles: ``
 })
 export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentSearchAdvancedComponent>);
-  private params = inject(MAT_DIALOG_DATA);
-  $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
-  $listProducts = inject(InventoryAdjustmentListProductsUseCase)
+  private params = inject<{warehouseId:number}>(MAT_DIALOG_DATA);
+  private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);
+  private validateExcelUseCase = inject(ValidateImportedDataUseCase)
+  private _excelImportSvc = inject(ExcelImportService)
 
+  mainFormData = signal(this.inventoryAdjustmentSvc.inventoryAdjustmentStore.mainFormData)
+
+
+  infoImportExcel = signal(`Para consolidar los productos con un archivo de tipo Excel, debe tener las siguientes columnas en minúsculas: <em>codigo</em>, <em>cantidad</em>`);
 
 
   catalogs = signal([
@@ -49,7 +69,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
 
    ])
 
-  dataForm = {
+  searchAdvancedForm = {
      opcion: 0,
     rucProveedor: null,
     productId: 0,
@@ -61,6 +81,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
 
   dataSource = signal<any[]>([]);
   selectedRows = signal<any[]>([]);
+  productsNotFounded  = signal<any[]>([]);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'codigo', label: 'Usuario', type: 'string' },
@@ -74,61 +95,142 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   optionChange() {
-   this.dataForm.rucProveedor = null;
-   this.dataForm.productId = 0
-    if (this.dataForm.opcion === 6) {
-    // this.getArticles();
+   this.searchAdvancedForm.rucProveedor = null;
+   this.searchAdvancedForm.productId = 0;
+   this.searchAdvancedForm.subFamiliaId = 0;
+    if (this.searchAdvancedForm.opcion === 6) {
+     this.refresh();
     }
   }
 
 
   refresh(){
+    this.productsNotFounded.set([])
     this.listProducts()
+  }
+
+  productSelected(event:any){
+    this.searchAdvancedForm.productId = event.id;
+    this.refresh()
+  }
+
+  supplierSelected(event:any){
+    this.searchAdvancedForm.rucProveedor = event.identificacionComprador
+    this.refresh();
+  }
+
+  refreshNroDoc(){
+    if(isValidField(this.searchAdvancedForm.nroDocumento)){
+      this.refresh();
+    }
   }
 
   private listProducts(){
     const dataSearch = {
-      idArticulo: isValidField(this.dataForm.productId),
-      rucProveedor: isValidField(this.dataForm.rucProveedor),
-      opcion: this.dataForm.opcion,
-      idSubFamilia: isValidField(this.dataForm.subFamiliaId),
-      nroDocumento: isValidField(this.dataForm.nroDocumento),
-      idBodega: this.dataForm.opcion === 6 ?this.dataForm.bodegaId : null
+      idArticulo: isValidField(this.searchAdvancedForm.productId),
+      rucProveedor: isValidField(this.searchAdvancedForm.rucProveedor),
+      opcion: this.searchAdvancedForm.opcion,
+      idSubFamilia: isValidField(this.searchAdvancedForm.subFamiliaId),
+      nroDocumento: isValidField(this.searchAdvancedForm.nroDocumento),
+      idBodega: this.searchAdvancedForm.opcion === 6 ?this.params.warehouseId : null
     }
-    this.$listProducts.execute(dataSearch).subscribe(res => {
+    this.inventoryAdjustmentSvc.getProductListImported(dataSearch).subscribe(res => {
       console.log(res)
       this.dataSource.set(res.data);
     })
   }
 
   rowSelected(row:any){
+    console.log(row)
     const current = this.selectedRows();
     const exists = current.some(r => r.idArticulo === row.idArticulo);
     if (exists) {
-      this.selectedRows.set(current.filter(r => r.idArticulo !== row.idArticulo));
+      this.selectedRows.set([...current.filter(r => r.idArticulo !== row.idArticulo)]);
     } else {
       this.selectedRows.set([...current, row]);
     }
   }
 
   rowAllSelected(event:any){
+    console.log(event);
     this.selectedRows.set([...event]);
   }
-  onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  async onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
 
+      const rawData = await this._excelImportSvc.parseExcelFile(file);
+      const displayedColumns = Object.keys(rawData[0]).map(c => c.trim());
+      if (!(displayedColumns.includes("codigo") && displayedColumns.includes("cantidad"))) {
+        Swal.fire({
+          icon: 'error',
+          html: this.infoImportExcel()
+        })
+        return;
+      }
+      const params = {
+        code: 'EX',
+        data: {
+          product: rawData
+        }
+      }
+
+      this.validateExcelUseCase.execute(params).subscribe(res => {
+        if(res.code==="0") return;
+        const parseData = JSON.parse(res.payload as string)[0];
+
+        const ds = InventoryAdjustmentListProductsMapper.fromJson(parseData);
+        this.dataSource.set(ds.data);
+
+        this.productsNotFounded.set(parseData.noVinculados);
+      })
+      input.value = '';
+    }
+
+  }
+
+  showProductsNoVinculado() {
+    let html = `<div class="table-responsive" style="max-height: 400px;">
+                    <table class="table table-hover table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th><small>N°</small></th>
+                                <th><small>Código</small></th>
+                                <th><small>Cantidad</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+    let index = 1;
+    for (const item of this.productsNotFounded()) {
+      html += ` <tr>
+                        <td>${index++}</td>
+                        <td>${item.codigo}</td>
+                        <td>${item.cantidad}</td>
+                    </tr>
+                `
+    }
+    html += '</tbody></table></div>'
+    Swal.fire({
+      title: '<small>Artículo No Vinculados</small>',
+      icon: 'info',
+      html,
+      width: 700
+    })
 
   }
 
   ngOnInit(): void {
-      console.log(this.$inventoryAdjustmentStore.mainFormData())
+
   }
 
   applySelected(){
+    console.log(this.selectedRows())
     this.dialogRef.close({
       selectedRows: this.selectedRows(),
-      opcion: this.dataForm.opcion,
-      isExcelImport: this.dataForm.isExcelImport,
+      opcion: this.searchAdvancedForm.opcion,
+      isExcelImport: this.searchAdvancedForm.isExcelImport,
     });
   }
 

@@ -41,7 +41,8 @@
                 <div class="form-group">
                     <label for="fechaEmision">Fecha Emisión <span class="text-danger">*</span></label>
                     <input type="date" name="fechaEmision" ng-disabled="disabledInputFechaEmision"
-                        ng-model="data.fechaEmision" class="form-control border-select">
+                        ng-model="data.fechaEmision" class="form-control border-select" min="{{minFecha}}"
+                        max="{{maxFecha}}" ng-disabled="!isEnabledDate">
                 </div>
             </div>
 
@@ -49,7 +50,7 @@
                 <div class="form-group">
                     <label for="tipoDocumento">Tipo Documento: <span class="text-danger">*</span></label>
                     <select disabled id="tipoDocumento" name="tipoDocumento" class="form-control border-select"
-                        ng-model="data.idTipoDocumento" >
+                        ng-model="data.idTipoDocumento">
                         <option ng-value="item.idTipoDocumento" ng-repeat="item in tipoDocumento">
                             {{item.descripcion}}
                         </option>
@@ -72,17 +73,18 @@
             <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <div class="form-group">
                     <label for="bodegas">Bodega</label>
-                    <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="data.idBodega" ng-change="askToChangeBodega()">
+                    <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="data.idBodega"
+                        ng-change="askToChangeBodega()">
                         <option ng-value="item.idBodega" ng-repeat="item in bodegas">{{item.bodega}}</option>
                     </select>
-                </div>        
+                </div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-lg-5 col-md-5 col-sm-12 col-12">
-                 <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
-                    abrir-modal-articulo="abrirModalArticulo(item)"  
+                <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
+                    abrir-modal-articulo="abrirModalArticulo(item)"
                     set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)">
                 </md-autocomplete-articulo-component>
             </div>
@@ -101,7 +103,8 @@
         <div class="row justify-content-between mt-2">
             <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-8">
                 <div class="form-group">
-                    <textarea class="form-control border-select" placeholder="Observación" ng-model="data.observacion"></textarea>
+                    <textarea class="form-control border-select" placeholder="Observación"
+                        ng-model="data.observacion"></textarea>
                 </div>
             </div>
             <div class="col-lg-2">

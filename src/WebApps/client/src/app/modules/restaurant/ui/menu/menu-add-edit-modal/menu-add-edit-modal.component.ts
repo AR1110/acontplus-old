@@ -1,18 +1,18 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { MenuItemService } from '@restaurant/data/services/menu-item.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Menu, MenuType } from '@restaurant/domain/models/menu.model';
 import { MenuService } from '@restaurant/data/services/menu.service';
-import { MenuItemService } from '@restaurant/data/services/menu-item.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ItemSearchComponent } from '@restaurant/ui/item/item-search/item-search.component';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Item } from '@restaurant/domain/models/item.model';
 
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-menu-add-edit-modal',
@@ -38,7 +38,7 @@ export class MenuAddEditModalComponent implements OnInit {
   menuTypes: MenuType[] = [];
   modalIcon = 'add';
   modalTitle = 'Registrar Menu';
-  productsAdded: any[] = [];
+  productsAdded = signal<any[]>([]);
 
   itemSearch = '';
   placeholder = 'Buscar producto';
@@ -278,17 +278,15 @@ export class MenuAddEditModalComponent implements OnInit {
 
   getItems(id: number) {
     this._menuItemService.getByMenu(id, { tipo: 1 }).subscribe((response) => {
-      this.productsAdded = response.menuItems;
-      this.verifyUpdateCell(this.productsAdded);
+      this.productsAdded.set(response.menuItems);
+      this.verifyUpdateCell(this.productsAdded());
     });
   }
 
   verifyUpdateCell(productsAdded: any[]) {
     if (productsAdded.length > 0) {
       for (const product of productsAdded) {
-        const fee = JSON.parse(product.fees).find(
-          (x: any) => x.idTarifa == product.feeId,
-        );
+        const fee = JSON.parse(product.fees).find((x: any) => x.idTarifa == product.feeId);
         product.priceIVA = fee.precioConIva;
         product.price = fee.precioVenta;
       }
@@ -296,38 +294,36 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   getTarifaById(productId: number, newMenuItem: any) {
-    this._menuItemService
-      .getByMenu(0, { productId: productId, tipo: 2 })
-      .subscribe((response) => {
-        if (response) {
-          const newFees = response['tarifas'];
+    this._menuItemService.getByMenu(0, { productId: productId, tipo: 2 }).subscribe((response) => {
+      if (response) {
+        const newFees = response['tarifas'];
 
-          newFees.forEach((e: any) => {
-            if (e.precioPredeterminado) {
-              newMenuItem.feeId = e.idTarifa;
-              newMenuItem.priceIVA = e.precioConIva;
-              newMenuItem.price = e.precioVenta;
-            }
-          });
+        newFees.forEach((e: any) => {
+          if (e.precioPredeterminado) {
+            newMenuItem.feeId = e.idTarifa;
+            newMenuItem.priceIVA = e.precioConIva;
+            newMenuItem.price = e.precioVenta;
+          }
+        });
 
-          this.productsAdded.forEach((e) => {
-            if (this.validation.includes(e.price)) {
-              e.price = 0;
-            }
+        this.productsAdded().forEach((e) => {
+          if (this.validation.includes(e.price)) {
+            e.price = 0;
+          }
 
-            if (this.validation.includes(e.priceIVA)) {
-              e.priceIVA = 0;
-            }
-          });
+          if (this.validation.includes(e.priceIVA)) {
+            e.priceIVA = 0;
+          }
+        });
 
-          newMenuItem.fees = JSON.stringify(newFees);
-          this.productsAdded = [...this.productsAdded, newMenuItem];
-        }
-      });
+        newMenuItem.fees = JSON.stringify(newFees);
+        this.productsAdded.update((prev) => [...prev, newMenuItem]);
+      }
+    });
   }
 
   removeFromList(itemId: number) {
-    this.productsAdded = this.productsAdded.filter((x) => x.itemId !== itemId);
+    this.productsAdded.update((prev) => prev.filter((x) => x.itemId !== itemId));
   }
 
   ngOnInit() {
@@ -340,7 +336,7 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   onModalClose() {
-    this.productsAdded = [];
+    this.productsAdded.set([]);
     this._modalRef.close();
   }
 
@@ -349,25 +345,23 @@ export class MenuAddEditModalComponent implements OnInit {
 
     const dataToSave = {
       ...this.data,
-      menuItems: this.productsAdded,
+      menuItems: this.productsAdded(),
     };
 
-    this._menuService
-      .put(this.data.id, { data: dataToSave })
-      .subscribe((response) => {
-        this._tS.show({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-        if (response.code === '1') {
-          this._modalRef.close(response);
-        }
+    this._menuService.put(this.data.id, { data: dataToSave }).subscribe((response) => {
+      this._tS.show({
+        type: response.code === '1' ? 'success' : 'warning',
+        message: response.message,
       });
+      if (response.code === '1') {
+        this._modalRef.close(response);
+      }
+    });
   }
 
   onValidate(): boolean {
     let isValid = true;
-    if (this.productsAdded.length <= 0) {
+    if (this.productsAdded().length <= 0) {
       this._tS.show({
         type: 'warning',
         message: 'Debe agregar productos para crear el combo',
@@ -378,15 +372,13 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   generateDescription() {
-    this.data.summary = this.productsAdded
+    this.data.summary = this.productsAdded()
       .map((item) => item.quantity + ' ' + item.descripcion)
       .join(', ');
   }
 
   onItemSelected($event: Item) {
-    const itemExists = this.productsAdded.find(
-      (x: any) => x.productId === $event.productId,
-    );
+    const itemExists = this.productsAdded().find((x: any) => x.productId === $event.productId);
     if (itemExists) {
       return this._tS.show({
         type: 'warning',

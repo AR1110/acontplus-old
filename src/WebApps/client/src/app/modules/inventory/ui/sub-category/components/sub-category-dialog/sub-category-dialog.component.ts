@@ -1,21 +1,22 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { imgDefault, isValidField } from '@core/utils/utils';
-import { SubCategoryService } from '@inventory/data/services/sub-category.service';
-import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
-import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { NgxFileDropEntry } from 'ngx-file-drop';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
+import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { SubCategoryService } from '@inventory/data/services/sub-category.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatButton } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { imgDefault, isValidField } from '@core/utils/utils';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { ApiResponse } from '@core/models/api-response';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButton } from '@angular/material/button';
+import { NgxFileDropEntry } from 'ngx-file-drop';
+import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-sub-category-dialog',
@@ -43,7 +44,7 @@ export class SubCategoryDialogComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nueva SubCategoria';
-  categorias = signal<any[]>([])
+  categorias = signal<any[]>([]);
 
   files: NgxFileDropEntry[] = [];
   croppedImage: any;
@@ -70,7 +71,7 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private getDataForm() {
     this._productUseCase.getDataForm().subscribe((response) => {
-      this.categorias.set(response.categorias)
+      this.categorias.set(response.categorias);
     });
   }
   ngOnInit(): void {
@@ -99,15 +100,15 @@ export class SubCategoryDialogComponent implements OnInit {
 
   private successResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.show({
-        type: 'warning',
-        message: response.message,
+      Swal.fire({
+        icon: 'warning',
+        html: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.show({
-        type: 'success',
-        message: response.message,
+      Swal.fire({
+        icon: 'success',
+        html: response.message,
       });
       this.dialogRef.close({ isRefresh: true });
     }
@@ -159,9 +160,7 @@ export class SubCategoryDialogComponent implements OnInit {
       if (id > 0) {
         this.subCategorySvc.put(id, data).subscribe(this.successResponse);
       } else {
-        this.subCategorySvc
-          .post(data, this.selectedFile())
-          .subscribe(this.successResponse);
+        this.subCategorySvc.post(data, this.selectedFile()).subscribe(this.successResponse);
       }
     } catch (error) {
       console.log(error);
@@ -179,38 +178,34 @@ export class SubCategoryDialogComponent implements OnInit {
         .put(obj, this.data.subcategoryPhotoId, this.selectedFile())
         .subscribe((response) => {
           if (response.code === '0') {
-            this.tS.show({
-              type: 'warning',
-              message: response.message,
+            Swal.fire({
+              icon: 'warning',
+              html: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.show({
-              type: 'success',
-              message: response.message,
+            Swal.fire({
+              icon: 'success',
+              html: response.message,
             });
             this.isRefresh.set(true);
           }
         });
     }
-    if (
-      this.esEditar() &&
-      this.data.subcategoryPhotoId == 0 &&
-      this.selectedFile()
-    ) {
+    if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
       this.subCategoryPhotoSvc
         .post(this.params.idSubFamilia, this.selectedFile())
         .subscribe((response) => {
           if (response.code === '0') {
-            this.tS.show({
-              type: 'warning',
-              message: response.message,
+            Swal.fire({
+              icon: 'warning',
+              html: response.message,
             });
           }
           if (response.code === '1') {
-            this.tS.show({
-              type: 'success',
-              message: response.message,
+            Swal.fire({
+              icon: 'success',
+              html: response.message,
             });
             this.isRefresh.set(true);
           }

@@ -7,15 +7,16 @@ import {INVENTORY_PATHS} from "@inventory/domain/enums/inventory.enum";
 import {getNoLoader} from "@core/interceptors/loader.interceptor"; ;
 import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
 import {GroupedEstab} from "@core/models/estab.model";
-import {ProductDataForm, ProductSale, ProductSearch} from "@inventory/product/domain/entities/product.model";
+import {ProductDataForm, ProductSale, ProductSearch} from "@inventory/product/domain/entities/product.entity";
 import {MedidaProducto} from "@inventory/domain/models/measure.model";
-import {ProductMapper} from "@inventory/product/infrastructure/product/product.mapper";
-import {ProductDataFormMapper} from "@inventory/product/infrastructure/product/product-data-form.mapper";
-import {ProductSaveMapper} from "@inventory/product/infrastructure/product/product-save.mapper";
-import {ProductGetIdMapper} from "@inventory/product/infrastructure/product/product-get-id.mapper";
+import {ProductMapper} from "@inventory/product/infrastructure/product/mappers/product.mapper";
+import {ProductDataFormMapper} from "@inventory/product/infrastructure/product/mappers/product-data-form.mapper";
+import {ProductGetIdMapper} from "@inventory/product/infrastructure/product/mappers/product-get-id.mapper";
 import {
   ListProductWithPricesUseCaseMapper
 } from "@inventory/product/infrastructure/product/mappers/list-product-with-prices.mapper";
+import {SaveProductMapper} from "@inventory/product/infrastructure/product/mappers/save-product.mapper";
+import {GetProductPurchaseMapper} from "@inventory/product/infrastructure/product/mappers/get-product-purchase.mapper";
 
 
 
@@ -140,6 +141,17 @@ export class ProductRepositoryImpl implements ProductRepository{
     )
   }
 
+  getForPurchase(id: number) {
+    const params = {
+      json: GetProductPurchaseMapper.toJson(id)
+    }
+    return this._http.get<ApiResponse>(`${this._url}`, {
+      params
+    }).pipe(
+      map((response) => GetProductPurchaseMapper.fromJson(response))
+    )
+  }
+
 
   checkNotificationStock<T extends {
     idArticulo: number
@@ -151,9 +163,9 @@ export class ProductRepositoryImpl implements ProductRepository{
     const params = {
       json: JSON.stringify({ ...obj, tipo: 7 })
     }
-    return this._http.get(`${this._url}`, {
+    return this._http.get<ApiResponse>(`${this._url}`, {
       params
-    }).pipe(map((response: any) => ProductMapper.fromApiCheckStockNotificacion(response)))
+    }).pipe(map((response) => ProductMapper.fromApiCheckStockNotificacion(response)))
 
   }
 
@@ -187,7 +199,7 @@ export class ProductRepositoryImpl implements ProductRepository{
     return this._http.delete<ApiResponse>(`${this._url}${id}`)
   }
 
-  getId(id: number): Observable<ApiResponse> {
+  getId(id: number)  {
    return this._http.get<ApiResponse>(`${this._url}${id}`).pipe(
      map(response=>ProductGetIdMapper.fromJson(response))
    )
@@ -195,7 +207,7 @@ export class ProductRepositoryImpl implements ProductRepository{
 
 
    post<T>(obj: T, file?: Blob)  {
-    const data = ProductSaveMapper.toJson(obj)
+    const data = SaveProductMapper.toJson(obj)
      const paramsJson = JSON.stringify({data})
      const formData = new FormData();
     if(file){
@@ -203,7 +215,7 @@ export class ProductRepositoryImpl implements ProductRepository{
     }
     return  this._http.post<ApiResponse>(`${this._url}?json=${paramsJson}`, formData)
       .pipe(
-        map((response) => ProductSaveMapper.fromJson(response))
+        map((response) => SaveProductMapper.fromJson(response))
       )
   }
    put<T>(id: number, obj: T): Observable<ApiResponse> {
