@@ -414,6 +414,7 @@ function modalArticuloCtrl(
                     } else {
                         $scope.data.codigoAuxiliar = params.codigo;
                     }
+                    setPrecioCostoConIva();
                     return;
                 }
 
@@ -424,7 +425,7 @@ function modalArticuloCtrl(
 
                     //Disabled Column
                     for (let item of $scope.gridOptions.columnDefs) {
-                        if(["ganancia", "porcentajeUtilidad"].includes(item.field)){
+                        if (["ganancia", "porcentajeUtilidad"].includes(item.field)) {
                             item.visible = $scope.articlePermission.isUpdatePrice;
                         }
 
@@ -433,10 +434,10 @@ function modalArticuloCtrl(
                                 item.field
                             )
                         ) {
-                          //  item.visible = $scope.articlePermission.isUpdatePrice;
+                            //  item.visible = $scope.articlePermission.isUpdatePrice;
 
-                          item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
-                          item.enableCellEditOnFocus =    $scope.articlePermission.isUpdatePrice;
+                            item.enableCellEdit = $scope.articlePermission.isUpdatePrice;
+                            item.enableCellEditOnFocus = $scope.articlePermission.isUpdatePrice;
 
                         }
                         // if (item.field === "precioVenta") {
@@ -545,6 +546,8 @@ function modalArticuloCtrl(
 
 
                     $scope.showEstado = $scope.data.estado;
+
+                    setPrecioCostoConIva();
 
                 })
                 .catch((error) => {
@@ -709,6 +712,41 @@ function modalArticuloCtrl(
         return precioVenta - precioCosto;
     }
 
+    function getDataTipoIva() {
+        return $scope.tipoIvas.find(
+            (item) => item.idTipoIva === $scope.data.idTipoIva
+        );
+    }
+
+    function setPrecioCostoConIva() {
+        let precioConIva = pricingUtils.calcularPrecioConIva(
+            $scope.data.precioCosto || 0,
+            getDataTipoIva().porcentaje
+        );
+
+        $scope.data.precioCostoConIva = fS.roundNumber(
+            precioConIva,
+            $scope.decimal.nroPrecio
+        );
+    }
+
+
+    $scope.calculatePrecioCosto = calculatePrecioCosto;
+    function calculatePrecioCosto() {
+
+        const precioCosto = pricingUtils.calcularPrecioVenta(
+            $scope.data.precioCostoConIva,
+            getDataTipoIva().porcentaje
+        );
+
+        $scope.data.precioCosto = fS.roundNumber(
+            precioCosto,
+            $scope.decimal.nroPrecio
+        );
+
+    }
+
+
     function recalculateTarifaRegister() {
         if (
             [null, undefined, ""].includes($scope.data.precioCosto) ||
@@ -722,13 +760,10 @@ function modalArticuloCtrl(
             return;
         }
 
-        let dataIVA = $scope.tipoIvas.find(
-            (item) => item.idTipoIva === $scope.data.idTipoIva
-        );
         try {
             let index = 0;
             for (let val of $scope.gridOptions.data) {
-                $scope.gridOptions.data[index].porcentajeIva = dataIVA.porcentaje;
+                $scope.gridOptions.data[index].porcentajeIva = getDataTipoIva().porcentaje;
 
                 let precioVenta = pricingUtils.calcularPrecioVenta(
                     val.precioConIva,
@@ -767,6 +802,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     function recalculateTarifaUpdateArticle(opcionCalculate) {
@@ -829,6 +865,7 @@ function modalArticuloCtrl(
         } catch (error) {
             toastr.error(error);
         }
+        setPrecioCostoConIva();
     }
 
     //Calcular Tarifa al momento de agregar el articulo
@@ -1058,8 +1095,8 @@ function modalArticuloCtrl(
         }
     };
 
-    function verificarProductoFraccionado(dataRepository){
-        if(!($scope.data.idArticulo > 0) && $scope.data.productoFraccionable){
+    function verificarProductoFraccionado(dataRepository) {
+        if (!($scope.data.idArticulo > 0) && $scope.data.productoFraccionable) {
             Swal.fire({
                 icon: "warning",
                 html: `<small>¿Deseas fraccionar este articulo ahora?</small>`,
@@ -1070,17 +1107,17 @@ function modalArticuloCtrl(
                 if (result.isConfirmed) {
                     params.idArticulo = dataRepository.idArticulo;
                     initiload();
-                    setTimeout(()=>{
-                       $scope.$apply(()=>{
-                        $scope.activeTab = 4;
-                        $scope.step = 5;
-                       })
+                    setTimeout(() => {
+                        $scope.$apply(() => {
+                            $scope.activeTab = 4;
+                            $scope.step = 5;
+                        })
                     }, 1000)
-                }else{
+                } else {
                     setResponse(dataRepository)
                 }
             });
-        } else{
+        } else {
             setResponse(dataRepository)
         }
     }
@@ -1657,8 +1694,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 }
 
 
-                if(params.hasDataArticle && params.idArticulo>0){
-                   $scope.hasDataArticle = params.hasDataArticle
+                if (params.hasDataArticle && params.idArticulo > 0) {
+                    $scope.hasDataArticle = params.hasDataArticle
                     $scope.selectedArticuloChange(params);
                 }
 
@@ -1695,8 +1732,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
     }
 
 
-    $scope.recalculatePercentage = function(){
-        if(!($scope.data.precioCostoFraccionado>0)){
+    $scope.recalculatePercentage = function () {
+        if (!($scope.data.precioCostoFraccionado > 0)) {
             tS.toastr({
                 type: 'warning',
                 message: 'Ingrese precio costo fraccionado'
@@ -1706,7 +1743,7 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         let precioCosto = Number($scope.data.precioCostoFraccionado);
 
 
-        articuloPrincipalTarifa.forEach((item, index)=>{
+        articuloPrincipalTarifa.forEach((item, index) => {
             let precioVenta = pricingUtils.calcularPorcentajeUtilidad(
                 precioCosto,
                 item.porcentajeUtilidad
@@ -1724,12 +1761,12 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
                 precioConIva,
                 $scope.decimal.nroPrecio
             );
-            $scope.gridOptions.data[index].porcentajeUtilidad =  item.porcentajeUtilidad;
+            $scope.gridOptions.data[index].porcentajeUtilidad = item.porcentajeUtilidad;
 
 
 
-            let ganancia =  $scope.gridOptions.data[index].precioVenta - precioCosto;
-                $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
+            let ganancia = $scope.gridOptions.data[index].precioVenta - precioCosto;
+            $scope.gridOptions.data[index].ganancia = fS.roundNumber(ganancia, pricingUtils.precisionMaxima);
 
 
         })
@@ -1782,8 +1819,8 @@ function modalArticuloFraccionadoCtrl($scope, $uibModalInstance, $injector, $tim
         }
     }
 
-    $scope.onChangeConversion = function(){
-        if($scope.data.conversion>0){
+    $scope.onChangeConversion = function () {
+        if ($scope.data.conversion > 0) {
             let precioCostoFraccionado = Number($scope.data.conversion) * $scope.data.precioCosto;
             $scope.data.precioCostoFraccionado = fS.roundNumber(precioCostoFraccionado, 3)
         }
@@ -2024,8 +2061,6 @@ function ModalArticuloGeneralCtrl(
     $scope.refresh = refresh;
     $scope.askToSelect = askToSelect;
 
-    $scope.stocks =[]
-
 
 
 
@@ -2065,7 +2100,6 @@ function ModalArticuloGeneralCtrl(
                 $scope.articulos = articulos;
                 $scope.dataSearch.totalRecords = totalRecords;
                 $scope.tarifas = $scope.articulos.length > 0 ? $scope.articulos[0].tarifas : [];
-                $scope.stocks = $scope.articulos.length>0 ? $scope.articulos[0].stocks : [];
             }).catch((err) => {
                 console.log(err);
             });
@@ -2128,7 +2162,7 @@ function ModalArticuloGeneralCtrl(
 
     }
 
-    function getElementQty(){
+    function getElementQty() {
         return document.getElementById('cantidadInput');
     }
 
@@ -2174,7 +2208,7 @@ function ModalArticuloGeneralCtrl(
             didOpen: () => {
                 // Detectar la tecla Enter
                 const cantidadInputElement = getElementQty();
-                 cantidadInputElement.select()
+                cantidadInputElement.select()
                 cantidadInputElement.addEventListener('keydown', (event) => {
                     if (event.key === 'Enter') {
                         Swal.clickConfirm(); // Simula el clic en "Añadir y continuar"
@@ -2187,14 +2221,14 @@ function ModalArticuloGeneralCtrl(
 
             if (result.isConfirmed) {
                 params.refProductoVenta.onInventario({
-                   idArticulo: item.idArticulo,
-                   cantidad: cantidadInput
+                    idArticulo: item.idArticulo,
+                    cantidad: cantidadInput
                 });
 
             } else if (result.isDenied) {
                 params.refProductoVenta.onInventario({
-                   idArticulo: item.idArticulo,
-                   cantidad: cantidadInput
+                    idArticulo: item.idArticulo,
+                    cantidad: cantidadInput
                 });
                 $uibModalInstance.close();
             }
