@@ -75,7 +75,12 @@ BEGIN
             , NULL
             ,@userId
     FROM #MenuItem mi
-    WHERE mi.itemId NOT IN (SELECT ISNULL(rmi.ItemId, 0) FROM Restaurant.MenuItem rmi WHERE rmi.MenuId = @id)
+    WHERE mi.ItemId NOT IN (
+       SELECT ISNULL(rmi.ItemId,0)
+       FROM Restaurant.MenuItem rmi
+       WHERE rmi.MenuId=@id AND ISNULL(rmi.Deleted,0)=0
+    )
+
 
     --- VERIFY EXISTS ---
     SELECT rmi.* INTO #MenuItemExits

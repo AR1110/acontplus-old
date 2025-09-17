@@ -446,6 +446,8 @@
         $scope.isEnabledDate = true;
 
         $scope.isDocOrderProduction = false;
+        $scope.siglaFamilia = "RES";
+        $scope.cloneSiglaFamilia = $scope.siglaFamilia;
 
         let itemsDeleted = [];
         $scope.gridOptions = {
@@ -1376,6 +1378,7 @@
 
             entity.total = fS.roundNumber(entity.cantidad * dataMedida.precioUnitario, $scope.decimal.nroPrecio)
 
+            entity.uniqueId = articulo.uniqueId;
 
             //cuando el documento es orden de produccion
             if (articulo.components) {
@@ -1495,13 +1498,47 @@
             }
         }
 
+        $scope.onChangeTypeSearch = async function () {
+
+            if ($scope.gridOptions.data.length === 0) {
+                $scope.cloneSiglaFamilia = $scope.siglaFamilia;
+
+                return
+            }
+            const { isConfirmed } = await Swal.fire({
+                icon: 'warning',
+                title: 'Cambio de tipo de búsqueda',
+                html: 'Solo puedes realizar búsquedas de <b>Productos Terminados</b> o <b>Menús</b>, no combinados.<br>Si cambias, se borrará el detalle. ¿Desea continuar?',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, continuar',
+                cancelButtonText: 'No, cancelar'
+            });
+
+            if (!isConfirmed) {
+                // Si cancela, se revierte al valor anterior
+                $scope.siglaFamilia = $scope.cloneSiglaFamilia;
+                return;
+            }
+
+            // Si confirma, actualizamos el valor anterior
+            $scope.gridOptions.data = [];
+            $scope.cloneSiglaFamilia = $scope.siglaFamilia;
+            $scope.$apply();
+        };
 
 
 
         $scope.handleItemSelect = function (item) {
-            itemSvc.getByIdForOrderProduction(item.menuId).then(async response => {
+            itemSvc.getByIdForOrderProduction(item.productId).then(async response => {
                 try {
-                    const { menu } = response;
+                    const { menu, components } = response;
+                    if (!(components.length > 0)) {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: 'No posee ingredientes o componentes'
+                        })
+                        return
+                    }
 
                     if (!menu.llevaInventario) {
                         await showInventarioWarning();

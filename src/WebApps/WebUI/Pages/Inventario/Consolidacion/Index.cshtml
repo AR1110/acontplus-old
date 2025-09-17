@@ -125,13 +125,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="!canEdit(item)">
-                                                    <md-button ng-click="openModalEditar(item)"
-                                                        ng-disabled="item.anulada">
-                                                        <span md-menu-align-target><i class="ti-pencil"></i>
-                                                            Editar</span>
-                                                    </md-button>
-                                                </md-menu-item>
+
 
                                                 <md-menu-item ng-if="accion.crear">
                                                     <md-button ng-click="openModalDuplicar(item)"
