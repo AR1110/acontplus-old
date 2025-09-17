@@ -745,10 +745,13 @@ app.component('productSearchComponent', {
 // Define el componente de itemSearch
 app.component('itemSearch', {
     bindings: {
-        onItemSelect: '&'
+        onItemSelect: '&',
+        siglaFamilia: '='
     },
     template: `
-           <div class="gac-form-control-container">
+           <div class="form-group">
+            <label>Búsqueda</label>
+            <div class="gac-form-control-container">
                 <input type="text"
                        class="form-control rounded-pill p-3 select-border"
                        placeholder="Buscar por código o nombre..."
@@ -769,12 +772,14 @@ app.component('itemSearch', {
                        ng-click="$ctrl.selectItem(item)">
                         <div>
                             <span class="gac-dropdown-item-code">{{ item.code }}</span> -
-                            <span class="gac-dropdown-item-summary">{{ item.summary }}</span>
+                            <span class="gac-dropdown-item-summary">{{ item.description }}</span>
                         </div>
-                        <small class="gac-dropdown-item-content">{{item.content}} | Stock: {{item.stock}}</small>
+                        <small class="gac-dropdown-item-content">{{item.nombreSubFamilia}}</small>
                     </a>
                 </div>
             </div>
+
+           </div>
         `,
     controller: ['$timeout', '$element', '$scope', 'itemService', function ($timeout, $element, $scope, itemService) {
         var $ctrl = this;
@@ -792,9 +797,9 @@ app.component('itemSearch', {
             searchTimeout = $timeout(function () {
                 $ctrl.filteredItems = [];
                 if (!($ctrl.searchText.length > 0)) return;
-
                 itemService.search({
-                    textSearch: encodeURIComponent($ctrl.searchText)
+                    textSearch: encodeURIComponent($ctrl.searchText),
+                    siglaFamilia: $ctrl.siglaFamilia
                 })
                     .then((response) => {
                         $ctrl.filteredItems = response.data;

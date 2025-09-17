@@ -83,10 +83,24 @@
         </div>
 
         <div class="row">
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <section ng-if="isDocOrderProduction">
-                    <item-search on-item-select="handleItemSelect(item)"></item-search>
-                </section>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="row" ng-if="isDocOrderProduction">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+                        <div class="form-group">
+                            <label for="typeSearch">Tipo Búsqueda: <span class="text-danger">*</span></label>
+                            <select name="typeSearch" id="typeSearch" ng-model="siglaFamilia"
+                                class="form-control border-select" ng-change="onChangeTypeSearch()">
+                                <option value="RES">PRODUCTOS TERMINADOS</option>
+                                <option value="COM">MENUS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 col-lg-8 col-md-4 col-sm-12 col-12">
+                        <item-search on-item-select="handleItemSelect(item)" sigla-familia="siglaFamilia"></item-search>
+
+                    </div>
+                </div>
                 <section ng-if="!isDocOrderProduction">
                     <md-autocomplete-articulo-component tipo-doc="tipoDoc" placeholder="'Buscar Articulo'"
                         abrir-modal-articulo="abrirModalArticulo(item)"
@@ -94,11 +108,11 @@
                     </md-autocomplete-articulo-component>
                 </section>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <button type="button" class="btn btn-outline-info btn-lg" ng-click="openModalAdvanced($event)"
                     ng-if="!isDocOrderProduction"><i class="ti-search"></i> Busqueda Avanzada</button>
             </div>
-            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+            <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
                 <button type="button" class="btn btn-secondary" ng-click="resetQuantityZero()">
                     Cambiar cantidad a 0
                 </button>

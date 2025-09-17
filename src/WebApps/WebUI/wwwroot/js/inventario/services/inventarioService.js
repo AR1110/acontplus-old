@@ -422,7 +422,6 @@
             function getDataForm() {
                 const json = JSON.stringify({ tipo: 2 });
                 return mS.getData("get", `${url}?json=${json}`).then((response) => {
-                    console.log(response);
                     const data = {
                         estabs: [],
                         subFamilias: [],
@@ -469,7 +468,6 @@
                     if (response !== null && typeof response === "object") {
                         consolidaciones = response.consolidaciones;
                     }
-                    console.log(consolidaciones);
                     results.data = consolidaciones.map((item) => {
                         return {
                             id: item.idConsolidacionInventario,
@@ -550,6 +548,7 @@
                                 stock,
                                 estado,
                                 menuId,
+                                uniqueId
                             } = item;
                             const total = fS.roundNumber(cantidad * precioUnitario, 5);
 
@@ -583,15 +582,15 @@
                                 medidas,
                                 menuId,
                                 total,
-                                nombreMedida
+                                nombreMedida,
+                                uniqueId
                             };
 
 
                         })
-                        console.log(components)
 
                         results.detalles = response.menus.map((item) => {
-                            console.log(item)
+
                             const {
                                 fraccionado,
                                 principal,
@@ -608,6 +607,7 @@
                                 stock,
                                 estado,
                                 menuId,
+                                uniqueId
                             } = item;
                             const total = fS.roundNumber(cantidad * precioUnitario, 5);
 
@@ -621,11 +621,9 @@
                                 nombreMedida;
                             if (dataMedida) {
                                 precioCostoFraccionado = dataMedida.precioCostoFraccionado;
-                                console.log(dataMedida)
                                 conversion = dataMedida.conversion;
                                 nombreMedida = dataMedida.descripcion;
                             }
-                            console.log(nombreMedida)
                             return {
                                 id,
                                 idBodega,
@@ -644,11 +642,10 @@
                                 menuId,
                                 total,
                                 nombreMedida,
-                                components: components.filter(c => c.menuId === menuId)
+                                components: components.filter(c => c.uniqueId === uniqueId)
                             };
                         });
                     }
-                    console.log(results)
                     return results;
                 });
             }
@@ -659,7 +656,6 @@
                     tipo: 8,
                 });
                 return mS.getData("get", `${url}?json=${json}`).then(response => {
-                    console.log(response)
                     const results = {
                         detalles: []
                     };
@@ -874,6 +870,7 @@
                         descripcion: item.descripcion,
                         estado: item.estado,
                         movementTypeId: item.movementTypeId,
+                        uniqueId: item.uniqueId
                     };
                 });
                 return results;
@@ -904,6 +901,8 @@
                         descripcion: item.descripcion,
                         estado: item.estado,
                         movementTypeId: item.movementTypeId,
+                        uniqueId: item.uniqueId
+
                     };
                 });
             }

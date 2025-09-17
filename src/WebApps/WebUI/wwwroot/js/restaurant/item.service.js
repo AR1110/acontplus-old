@@ -14,6 +14,7 @@
             let json = JSON.stringify({
                 tipo: 2,
                 textSearch: obj.textSearch,
+                siglaFamilia: obj.siglaFamilia
             });
             return mS.getData('get', `${url}?json=${json}`).then(response => {
                 const results = {
@@ -24,12 +25,14 @@
                     const payload = JSON.parse(response.payload);
                     const items = (payload.items || []).map(i => {
                         return {
-                            "productId": i.idArticulo,
+                            "productId": i.productId,
+                            description: i.descripcion,
+                            nombreSubFamilia: i.subFamilia,
                             "code": i.codigo,
-                            "stock": i.stock,
-                            "menuId": i.menuId,
-                            "summary": i.summary,
-                            "content": i.content,
+                            //"stock": i.stock,
+                            //   "menuId": i.menuId,
+                            //  "summary": i.summary,
+                            //  "content": i.content,
                         }
 
                     });
@@ -38,10 +41,10 @@
                 return results;
             })
         }
-        function getByIdForOrderProduction(menuId) {
+        function getByIdForOrderProduction(productId) {
             let json = JSON.stringify({
                 tipo: 4,
-                menuId,
+                productId,
             });
 
             return mS.getData('get', `${url}?json=${json}`).then(response => {
@@ -75,7 +78,8 @@
                             "idMedida": c.idMedida,
                             nombreMedida: c.medida,
                             "conversion": c.conversion,
-                            medidas
+                            medidas,
+                            uniqueId: c.uniqueId
                         }
 
                     });
@@ -101,7 +105,8 @@
                         nombreMedida: menu.medida,
                         conversion: menu.conversion,
                         medidas,
-                        components: results.components
+                        components: results.components,
+                        uniqueId: menu.uniqueId
                     }
                 }
                 return results;
