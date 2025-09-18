@@ -1489,6 +1489,7 @@
                     entity = await handleArticuloExistente(index);
                 } else {
                     entity = handleArticuloNuevo(articulo, medidas);
+                    index = findArticuloIndex(articulo.idArticulo);
                 }
 
                 updateTotales(entity, index);
@@ -1552,6 +1553,7 @@
                         entity = await handleArticuloExistente(index);
                     } else {
                         entity = handleArticuloNuevo(menu, menu.medidas);
+                        index = findArticuloIndex(menu.idArticulo);
                     }
 
                     updateTotales(entity, index);

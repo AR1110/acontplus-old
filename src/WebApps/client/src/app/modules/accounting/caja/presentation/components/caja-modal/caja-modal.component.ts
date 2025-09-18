@@ -1,23 +1,19 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { User } from '@core/models/user.model';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { User } from '@core/models/user.model';
 
-import { Turno } from '@accounting/shared/models/turno.model';
-import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { Turno } from '@accounting/shared/models/turno.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatInputModule } from '@angular/material/input';
 import { ApiResponse } from '@core/models/api-response';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-caja-modal',
@@ -66,8 +62,8 @@ export class CajaModalComponent implements OnInit {
     this._cajaUseCase.getDataForm().subscribe((response) => {
       const { turnos, usuarios } = response as { turnos: any; usuarios: any };
 
-      this.usuarios.set(usuarios)
-      this.turnos.set(turnos)
+      this.usuarios.set(usuarios);
+      this.turnos.set(turnos);
 
       if (typeof this.params === 'object' && this.params.idCaja > 0) {
         this._cajaUseCase.getId(this.params.idCaja).subscribe((response) => {
@@ -92,15 +88,15 @@ export class CajaModalComponent implements OnInit {
 
   commonResponse = (response: ApiResponse) => {
     if (response.code === '0') {
-      this.tS.show({
-        type: 'warning',
-        message: response.message,
+      Swal.fire({
+        icon: 'warning',
+        html: response.message,
       });
     }
     if (response.code === '1') {
-      this.tS.show({
-        type: 'success',
-        message: response.message,
+      Swal.fire({
+        icon: 'success',
+        html: response.message,
       });
       this._dialogRef.close(response);
     }
@@ -127,9 +123,7 @@ export class CajaModalComponent implements OnInit {
       };
 
       if (data.idCaja && data.idCaja > 0) {
-        this._cajaUseCase
-          .update(data.idCaja, paramsToApi)
-          .subscribe(this.commonResponse);
+        this._cajaUseCase.update(data.idCaja, paramsToApi).subscribe(this.commonResponse);
       } else if (!(data.idCaja && data.idCaja > 0)) {
         this._cajaUseCase.create(paramsToApi).subscribe(this.commonResponse);
       }

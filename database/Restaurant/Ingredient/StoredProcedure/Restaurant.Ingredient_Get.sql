@@ -85,11 +85,12 @@ BEGIN
                 ri.Id,
                 ri.Summary,
                 ri.ProductId AS productId,
-                va.descripcion AS productDescription
+                va.descripcion AS productDescription,
+                va.codigo as code
             FROM Restaurant.Ingredient ri
             INNER JOIN Inventario.v_Articulo va 
                 ON va.idArticulo = ri.ProductId
-            WHERE va.idEntidad = @idEntidad
+            WHERE va.idEntidad = @idEntidad AND va.estado=1
               AND va.siglaFamilia = 'ING'
               AND (
                     va.descripcion LIKE '%'+ISNULL(@textSearch,'')+'%'
