@@ -61,9 +61,7 @@ BEGIN
     FROM Restaurant.[OrderItem]    oi WITH (NOLOCK) 
 	INNER JOIN Restaurant.ItemType it WITH (NOLOCK) ON it.id         = oi.itemTypeId
     LEFT JOIN Restaurant.Item       i WITH (NOLOCK) ON i.Id          = oi.ItemId
-	LEFT JOIN Restaurant.Menu      me WITH (NOLOCK) ON me.id         = oi.MenuId
-    LEFT JOIN Sri.Impuesto          t WITH (NOLOCK) ON oi.TaxId      = t.idImpuesto
-    LEFT JOIN Sri.TarifaImpuesto   ti WITH (NOLOCK) ON t.codigo      = ti.codImpuesto AND ti.codigo = '2'
+	LEFT JOIN Restaurant.Menu      me WITH (NOLOCK) ON me.id         = oi.MenuId 
 	LEFT JOIN dbo.Articulo         ma WITH (NOLOCK) ON ma.idArticulo = me.ProductId
 	LEFT JOIN dbo.Articulo         ia WITH (NOLOCK) ON ia.idArticulo = i.ProductId
     WHERE oi.OrderId = @id
@@ -77,7 +75,9 @@ BEGIN
             where oi.OrderId = @id AND oi.TaxPercentId = ti.idTarifaImpuesto
 
           ),0) as [value]
-    FROM Sri.TarifaImpuesto ti WITH (NOLOCK) WHERE ti.codImpuesto = '2' AND estado = 1
+    FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+     INNER JOIN Sri.Impuesto i  WITH (NOLOCK) ON i.idImpuesto = ti.idImpuesto
+    WHERE i.codigo = '2' AND ti.estado = 1
 
      SELECT ti.descripcion as [name]
           ,ISNULL
@@ -86,8 +86,9 @@ BEGIN
             FROM Restaurant.[OrderItem] oi 
             where oi.OrderId = @id AND oi.TaxPercentId = ti.idTarifaImpuesto
           ),0) as [value]
-    FROM Sri.TarifaImpuesto ti WITH (NOLOCK) 
-    WHERE ti.codImpuesto='2' AND ti.porcentaje > 0 AND estado = 1 
+    FROM Sri.TarifaImpuesto ti WITH (NOLOCK)
+    INNER JOIN Sri.Impuesto i  WITH (NOLOCK) ON i.idImpuesto = ti.idImpuesto
+    WHERE i.codigo='2' AND ti.porcentaje > 0 AND ti.estado = 1 
 
 END
 GO

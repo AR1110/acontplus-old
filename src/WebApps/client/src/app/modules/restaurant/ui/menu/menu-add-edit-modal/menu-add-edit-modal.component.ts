@@ -372,9 +372,11 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   generateDescription() {
-    this.data.summary = this.productsAdded()
+    const summary = this.productsAdded()
       .map((item) => item.quantity + ' ' + item.descripcion)
       .join(', ');
+
+    this.menuForm.get('summary')?.setValue(summary);
   }
 
   onItemSelected($event: Item) {

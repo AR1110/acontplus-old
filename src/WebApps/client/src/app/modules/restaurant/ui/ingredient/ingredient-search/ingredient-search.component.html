@@ -6,12 +6,12 @@
     [formControl]="control"
     [matAutocomplete]="autoProductSearchSimple"
   />
-  <mat-autocomplete
-    #autoProductSearchSimple="matAutocomplete"
-    (optionSelected)="onSelect($event.option.value)"
-  >
+  <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
     @for (state of filteredProducts | async; track $index) {
-      <mat-option [value]="state.descripcion">
+      <mat-option
+        [value]="state.descripcion"
+        (onSelectionChange)="onSelect(state)"
+      >
         <div class="vstack gap-2">
           <span class="text-muted">{{ state.code }}</span>
           <span class="description">{{ state.productDescription }}</span>
