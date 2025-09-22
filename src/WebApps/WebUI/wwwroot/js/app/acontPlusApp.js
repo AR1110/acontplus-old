@@ -144,7 +144,7 @@ app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
 
     let _responseError = (rejection) => {
         if (rejection.status === 401) {
-            alertEndSession();
+            //alertEndSession();
         }
         return $q.reject(rejection);
     };
