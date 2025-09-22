@@ -24,4 +24,5 @@ export const enum CONFIG_PATHS {
   ELECTRONIC_SIGNATURE = 'FirmaElectronica',
   CONTRIBUYENTE = 'Contribuyente/',
   SHIFT = 'Turno/',
+  SCHEDULE = 'Horario/',
 }
