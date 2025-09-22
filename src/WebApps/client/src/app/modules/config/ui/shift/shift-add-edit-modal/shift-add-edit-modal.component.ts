@@ -1,8 +1,10 @@
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ScheduleUseCase } from '@modules/config/application/use-cases/schedule/schedule.use.case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Shift, ShiftList } from '@modules/config/domain/models/shift.models';
+import { ScheduleList } from '@modules/config/domain/models/schedule.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +28,10 @@ import Swal from 'sweetalert2';
 export class ShiftAddEditModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<ShiftAddEditModalComponent>);
   private params = inject(MAT_DIALOG_DATA);
+  private $scheduleUseCase = inject(ScheduleUseCase);
   private $shiftUseCase = inject(ShiftUseCase);
+
+  schedules = signal<ScheduleList[]>([]);
 
   title = '';
 
@@ -51,6 +56,14 @@ export class ShiftAddEditModalComponent implements OnInit {
     Swal.fire({
       icon: icon,
       text: text,
+    });
+  }
+
+  getSchedules() {
+    this.schedules.set([]);
+
+    this.$scheduleUseCase.listSchedules().subscribe((response) => {
+      this.schedules.set(response.data);
     });
   }
 
