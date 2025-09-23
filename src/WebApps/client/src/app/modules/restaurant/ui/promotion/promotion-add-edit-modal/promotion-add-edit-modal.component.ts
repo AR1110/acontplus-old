@@ -1,32 +1,24 @@
-import { CommonModule } from '@angular/common';
-import {
-  Component,
-  ElementRef,
-  inject,
-  model,
-  signal,
-  ViewChild, OnInit,
-} from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, ElementRef, inject, model, signal, ViewChild, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate, formatDateToString } from '@core/utils/date.util';
 import { imgDefault, isValidField } from '@core/utils/utils';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MenuSearchComponent } from '@restaurant/ui/components/menu-search/menu-search.component';
-import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
-import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
-import { TimeInputFormat24Directive } from '@shared/directives/time-input-format-directive.directive';
+import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { PromotionService } from '@restaurant/data/services/promotion.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
-import {MatTabsModule} from "@angular/material/tabs";
 
 @Component({
   selector: 'app-promotion-add-edit-modal',
@@ -36,14 +28,13 @@ import {MatTabsModule} from "@angular/material/tabs";
     MatIcon,
     InputDateComponent,
     ToUpperCaseDirective,
-    TimeInputFormat24Directive,
     MenuSearchComponent,
     ThemeButtonComponent,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatTabsModule
+    MatTabsModule,
   ],
   templateUrl: './promotion-add-edit-modal.component.html',
   styleUrl: './promotion-add-edit-modal.component.scss',
@@ -121,9 +112,7 @@ export class PromotionAddEditModalComponent implements OnInit {
 
       this.promotionMenuSvc
         .getByPromotionId(data.id, {})
-        .subscribe((response) => [
-          this.promotionMenus.set(response.promotionMenus),
-        ]);
+        .subscribe((response) => [this.promotionMenus.set(response.promotionMenus)]);
     } else {
       this.daysOfWeek.set(
         days.map((item: any) => {
@@ -215,9 +204,7 @@ export class PromotionAddEditModalComponent implements OnInit {
 
       if (
         this.daysOfWeek().some(
-          (e) =>
-            e.checked &&
-            !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
+          (e) => e.checked && !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
         )
       ) {
         this.tS.show({
@@ -227,9 +214,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         return;
       }
 
-      if (
-        this.daysOfWeek().some((e) => e.checked && !e.horaInicio.includes(':'))
-      ) {
+      if (this.daysOfWeek().some((e) => e.checked && !e.horaInicio.includes(':'))) {
         this.tS.show({
           type: 'warning',
           message: 'Hora de inicio formato incorrecto',
@@ -237,9 +222,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         return;
       }
 
-      if (
-        this.daysOfWeek().some((e) => e.checked && !e.horaFin.includes(':'))
-      ) {
+      if (this.daysOfWeek().some((e) => e.checked && !e.horaFin.includes(':'))) {
         this.tS.show({
           type: 'warning',
           message: 'Hora de fin formato incorrecto',
@@ -273,23 +256,21 @@ export class PromotionAddEditModalComponent implements OnInit {
       };
 
       if (this.data.id > 0) {
-        this.promotionSvc
-          .put(this.data.id, newObject, this.file)
-          .subscribe((response) => {
-            if (response.code === '0') {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
-            }
-            if (response.code === '1') {
-              this.tS.show({
-                type: 'success',
-                message: response.message,
-              });
-              this.modalRef.close(response);
-            }
-          });
+        this.promotionSvc.put(this.data.id, newObject, this.file).subscribe((response) => {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+            this.modalRef.close(response);
+          }
+        });
       } else {
         this.promotionSvc.post(newObject, this.file).subscribe((response) => {
           if (response.code === '0') {
