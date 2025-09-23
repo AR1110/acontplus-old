@@ -34,12 +34,11 @@ export class ShiftAddEditModalComponent implements OnInit {
   schedules = signal<ScheduleList[]>([]);
 
   title = '';
-
   data: Shift = {
     descripcion: '',
-    estado: true,
-    idUsuario: undefined,
-    idEntidad: undefined,
+    idUsuario: 0,
+    idEntidad: 0,
+    estado: false,
   };
 
   isEdit = false;
