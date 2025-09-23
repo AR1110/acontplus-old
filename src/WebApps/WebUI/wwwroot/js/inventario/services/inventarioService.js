@@ -804,17 +804,17 @@
                     data,
                     detalles,
                     itemsDeleted,
-                    isDocOrderProduction,
+                    withNegative
                 } = obj;
 
                 const consolidacion = headerTo(data);
                 const resultsItemsDeleted = detalleTo(
                     itemsDeleted,
-                    isDocOrderProduction
+                    withNegative
                 );
                 const resultsDetalle = detalleTo(
                     detalles,
-                    isDocOrderProduction
+                    withNegative
                 );
                 const components = detalles.map((item) => (item.components || [])).flat();
                 const componentsMapped = componenteDetalleTo(
@@ -842,14 +842,14 @@
                 };
             }
 
-            function detalleTo(detalles, isDocOrderProduction) {
+            function detalleTo(detalles, withNegative) {
                 let results = detalles.map((item, index) => {
                     let conversion = item.conversion || 1;
                     let cantidadTransaccion = fS.roundNumber(
                         item.cantidad * conversion,
                         5
                     );
-                    cantidadTransaccion = isDocOrderProduction ? +cantidadTransaccion : (-cantidadTransaccion);
+                    cantidadTransaccion = withNegative ? (-cantidadTransaccion) : (+cantidadTransaccion);
 
                     return {
                         idConsolidacionInventarioDetalle: item.id,

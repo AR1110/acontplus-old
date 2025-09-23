@@ -506,11 +506,19 @@
                 //Baja Inventario
                 case docyType.BI:
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'S');
+                    movimiento = {
+                        id: movimiento.id,
+                        withNegative: true
+                    }
                     break;
 
                 //Entrada Inventario
                 case 'EI':
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'E');
+                    movimiento = {
+                        id: movimiento.id,
+                        withNegative: true
+                    }
                     break;
 
                 case docyType.OP:
@@ -1700,7 +1708,8 @@
                     },
                     detalles,
                     itemsDeleted,
-                    isDocOrderProduction: $scope.isDocOrderProduction
+                    isDocOrderProduction: $scope.isDocOrderProduction,
+                    withNegative: dataMovimiento.withNegative
 
                 })
 
