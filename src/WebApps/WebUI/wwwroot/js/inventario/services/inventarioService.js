@@ -849,9 +849,7 @@
                         item.cantidad * conversion,
                         5
                     );
-                    if (isDocOrderProduction) {
-                        cantidadTransaccion = +cantidadTransaccion;
-                    }
+                    cantidadTransaccion = isDocOrderProduction ? +cantidadTransaccion : (-cantidadTransaccion);
 
                     return {
                         idConsolidacionInventarioDetalle: item.id,
