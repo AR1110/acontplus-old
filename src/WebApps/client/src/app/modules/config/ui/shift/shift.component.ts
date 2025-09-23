@@ -52,6 +52,7 @@ export class ShiftComponent implements OnInit {
 
   openModalAddUpdate(item?: ShiftList) {
     const ref = this._dialogSvc.open(ShiftAddEditModalComponent, {
+      size: 'lg',
       data: structuredClone(item) || {},
     });
     ref.subscribe((result) => {
