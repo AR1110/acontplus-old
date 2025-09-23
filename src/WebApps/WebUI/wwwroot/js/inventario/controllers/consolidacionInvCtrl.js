@@ -517,7 +517,7 @@
                     movimiento = $scope.tiposMovimiento.find(t => t.code === 'E');
                     movimiento = {
                         id: movimiento.id,
-                        withNegative: true
+                        withNegative: false
                     }
                     break;
 
