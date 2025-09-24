@@ -179,11 +179,12 @@
 
         $scope.isDisabledRow = function (item) {
             const estado = estadosConfig[item.codEstado];
+            if (item.codEstado === 2) return false;
 
             if (estado) {
                 return !estado.authorized;
             }
-            return estado ? estado.disabled : true
+            return estado ? estado.disabled : false
         }
 
         function isAuthorized(item) {
@@ -206,20 +207,23 @@
             return item.codEstado == 5 || item.codEstado == 0;
         }
 
+        function getDocsToAuthorize() {
+            return $scope.selectedComprobantes.filter(item => item.codEstado === 2);
+        }
+
         $scope.showButtonAuthorize = function () {
-            return $scope.selectedComprobantes.length > 0 && $scope.selectedComprobantes.every(item => ![0, 4].includes(item.codEstado));
+            return getDocsToAuthorize().length > 0
 
         }
 
         $scope.showButtonDownloadAllXml = function () {
-            return $scope.selectedComprobantes.length > 0 && $scope.selectedComprobantes.every(item => item.codEstado === 4);
+            return $scope.selectedComprobantes.filter(item => item.codEstado === 4).length > 0
         }
 
         $scope.downloadAllXml = function () {
             const docs = $scope.selectedComprobantes.filter(item => item.codEstado === 4).map(item => item.idDocumentoElectronico);
 
             docElectSvc.downloadMultipleXmlsAsZip(docs)
-            console.log('click')
         }
 
         $scope.resultRangeFilter = function (item) {
@@ -433,15 +437,18 @@
 
         $scope.getAuthorizate = async () => {
             try {
-                if ($scope.selectedComprobantes.length === 0) {
-                    tS.toastr('warning', 'Seleccione al menos un comprobante');
+
+                const docs = getDocsToAuthorize()
+
+                if (docs.length === 0) {
+                    tS.toastr('warning', 'No hay documentos por autorizar');
                     return;
                 }
 
                 let { isConfirmed } = await Swal.fire({
                     title: '<small>Autorizar</small>',
                     icon: 'warning',
-                    html: `<small>Estás seguro/a de Autorizar <h4><b>${$scope.selectedComprobantes.length}</b></h4> comprobantes?</small>`,
+                    html: `<small>Estás seguro/a de Autorizar <h4><b>${docs.length}</b></h4> comprobantes?</small>`,
                     showDenyButton: true,
                     confirmButtonText: 'Si, autorizar',
                     denyButtonText: 'No, cancelar',
@@ -449,7 +456,7 @@
                 });
 
                 if (isConfirmed) {
-                    let updatePromises = $scope.selectedComprobantes.filter(item => ![0, 4].includes(item.codEstado)).map(item =>
+                    let updatePromises = docs.map(item =>
                         docElectSvc.updateXml(item.idDocumentoElectronico)
                     );
 
