@@ -1,18 +1,36 @@
-<input matInput #input autocomplete="off" cdkOverlayOrigin #trigger="cdkOverlayOrigin"
-    (input)="applyFilter(input.value)" [value]="dataSearch.textSearch" (focus)="onFocus($event)" (blur)="onBlur($event)"
-    (keydown)="handleKeyDown($event)" class="form-control" placeholder="Buscar producto">
+<input
+  matInput
+  #input
+  autocomplete="off"
+  cdkOverlayOrigin
+  #trigger="cdkOverlayOrigin"
+  (input)="applyFilter(input.value)"
+  [value]="dataSearch.textSearch"
+  (focus)="onFocus($event)"
+  (blur)="onBlur($event)"
+  (keydown)="handleKeyDown($event)"
+  class="form-control"
+  placeholder="Buscar producto"
+/>
 
- 
 <!-- [cdkConnectedOverlayHasBackdrop]="true" -->
-<ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="trigger" [cdkConnectedOverlayOpen]="isOverlayOpen"
-    (overlayOutsideClick)="backdropClick()">
-
-    <div class="overlay-content">
-
-        <app-menu-search-list [tableData]="dataSource" [highlightRowIndex]="highlightRowIndex"
-            [isLoadingResults]="isLoadingResults" [isRateLimitReached]="isRateLimitReached" [pagination]="pagination"
-            (rowsEmitter)="handleRows($event)" (handlePageEvent)="handlePageEvent($event)"
-            (rowSelected)="selectRow($event)" (onClickPaginator)="onClickPaginator()" />
-
-    </div>
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="trigger"
+  [cdkConnectedOverlayOpen]="isOverlayOpen"
+  (overlayOutsideClick)="backdropClick()"
+>
+  <div class="overlay-content">
+    <app-menu-search-list
+      [tableData]="dataSource"
+      [highlightRowIndex]="highlightRowIndex"
+      [isLoadingResults]="isLoadingResults()"
+      [isRateLimitReached]="isRateLimitReached"
+      [pagination]="pagination"
+      (rowsEmitter)="handleRows($event)"
+      (handlePageEvent)="handlePageEvent($event)"
+      (rowSelected)="selectRow($event)"
+      (onClickPaginator)="onClickPaginator()"
+    />
+  </div>
 </ng-template>

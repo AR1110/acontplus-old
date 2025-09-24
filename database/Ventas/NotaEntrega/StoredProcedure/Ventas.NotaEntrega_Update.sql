@@ -74,7 +74,7 @@ BEGIN
         ,codigoPorcentaje VARCHAR(5) NOT NULL
         ,tarifa NUMERIC(15,5) NOT NULL
         ,valorImpuesto NUMERIC(18,5) NOT NULL
-		,nota VARCHAR(100)  NULL
+		,nota VARCHAR(300)  NULL
 		,descripcion VARCHAR(255) NOT NULL
         ,cantidadTransaccion NUMERIC(18,5) NOT NULL
         ,llevaInventario BIT NOT NULL
@@ -183,7 +183,7 @@ BEGIN
             ,codigoPorcentaje       VARCHAR(5)
             ,tarifa                 NUMERIC(15,5)
             ,valorImpuesto          NUMERIC(15,5)
-            ,nota                   VARCHAR(100)
+            ,nota                   VARCHAR(300)
             ,descripcion            VARCHAR(255) 
             ,llevaInventario        BIT
             ,cantidadTransaccion    NUMERIC(15,5) 
