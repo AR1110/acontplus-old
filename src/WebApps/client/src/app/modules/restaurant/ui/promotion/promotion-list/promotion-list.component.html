@@ -5,10 +5,14 @@
     <div class="col">
       <mat-form-field class="w-100">
         <mat-label>Establecimiento</mat-label>
-        <mat-select [(ngModel)]="estabId" (selectionChange)="onChangeEstab($event)">
+        <mat-select
+          [(ngModel)]="estabId"
+          (selectionChange)="onChangeEstab($event)"
+        >
           @for (item of estabs(); track $index) {
-            <mat-option [value]="item.idEstablecimiento"> {{ item.nombreComercial }}</mat-option>
-
+            <mat-option [value]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -24,7 +28,6 @@
       />
     </div>
   </div>
-
 </div>
 
 <app-mat-dynamic-table
@@ -36,7 +39,10 @@
   [enablePagination]="false"
   (pageEvent)="handlePageEvent($event)"
 />
-<ng-template #templateOp let-item="item">
+<ng-template
+  #templateOp
+  let-item="item"
+>
   <app-theme-button
     icon="edit"
     matStyle="icon"

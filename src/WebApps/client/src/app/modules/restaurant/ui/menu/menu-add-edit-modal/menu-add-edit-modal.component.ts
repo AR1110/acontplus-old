@@ -342,9 +342,11 @@ export class MenuAddEditModalComponent implements OnInit {
 
   onSave() {
     if (!this.onValidate()) return;
+    const data = this.menuForm.value;
+    console.log(data);
 
     const dataToSave = {
-      ...this.data,
+      ...data,
       menuItems: this.productsAdded(),
     };
 

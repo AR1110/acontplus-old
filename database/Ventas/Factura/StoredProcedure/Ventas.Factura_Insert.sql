@@ -211,7 +211,7 @@ BEGIN
             ,tarifa                 NUMERIC(15,5)
             ,valorImpuesto          NUMERIC(15,5)
 		    ,precioTotalSinImpuesto NUMERIC(15,5)
-		    ,nota                   VARCHAR(100)
+		    ,nota                   VARCHAR(300)
 		    ,descripcion            VARCHAR(300) 
 		    ,idTipoIva              INT 
             ,llevaInventario        BIT

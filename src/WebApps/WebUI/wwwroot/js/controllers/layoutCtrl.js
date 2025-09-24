@@ -6,7 +6,7 @@
     layoutCtrl.$inject = [
         "$scope",
         "$rootScope",
-        "$window", 
+        "$window",
         "userCustomerPermissionService"
     ];
 
@@ -18,76 +18,59 @@
         $scope.drawMenus = function () {
             let textHtml = "";
 
-            // User profile section (static)
+            // --- Sección de usuario (fija) ---
             textHtml += `<li class="user-pro">
-                <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                    <img src="/assets/images/user/user.png" alt="" class="img-circle">
-                    <span class="hide-menu">${$scope.userData.username}</span>
-                </a>
-                <ul aria-expanded="false" class="collapse">
-                    <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>
-                    <li><a href="/Common/UserManual/Index"><i class="fa fa-book-reader"></i> Manual de Usuario</a></li>
-                    <li><a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank" class="dropdown-item text-success" data-bs-toggle="tooltip" title="Si requiere ayuda personalizada comuniquese al siguiente número!"> <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte </a></li>
-                    <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
-                </ul>
-            </li>`;
+                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                            <img src="/assets/images/user/user.png" alt="" class="img-circle">
+                            <span class="hide-menu">${$scope.userData.username}</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a href="/Config/UserProfile/Index"><i class="ti-user"></i> Mi Perfil</a></li>
+                            <li><a href="/Common/UserManual/Index"><i class="fa fa-book-reader"></i> Manual de Usuario</a></li>
+                            <li><a href="https://api.whatsapp.com/send?phone=593986669930" target="_blank" class="dropdown-item text-success" data-bs-toggle="tooltip" title="Si requiere ayuda personalizada comuniquese al siguiente número!">
+                                <i aria-hidden="true" class="fab fa-whatsapp"></i> Soporte
+                            </a></li>
+                            <li><a href="#" onclick="logout()" id="logoutII"><i class="fa fa-power-off"></i> Salir</a></li>
+                        </ul>
+                    </li>`;
 
-            // Helper function to get children of a specific menu
-            function getChildren(parentId) {
-                return $scope.menus.filter(menu => menu.parentId === parentId);
-            }
 
-            // Get root level menus (parentId is null, 0, or undefined)
-            const rootMenus = $scope.menus.filter(menu =>
-                menu.parentId === null ||
-                menu.parentId === 0 ||
-                menu.parentId === undefined
-            );
-
-            // Recursive function to build menu items
             function buildMenuItem(menu) {
-                const children = getChildren(menu.id);
-
-                if (children.length > 0) {
-                    // Menu item with children (has submenu)
+                if (menu.children && menu.children.length > 0) {
                     let itemHtml = `
-                <li>
-                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
-                        <i class="${menu.icon || 'ti-align-left'}"></i>
-                        <span class="hide-menu">${menu.name}</span>
-                    </a>
-                    <ul aria-expanded="false" class="collapse">`;
+                                    <li>
+                                        <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false">
+                                            <i class="${menu.icon || 'ti-align-left'}"></i>
+                                            <span class="hide-menu">${menu.name}</span>
+                                        </a>
+                                        <ul aria-expanded="false" class="collapse">`;
 
-                    // Recursively build children
-                    children.forEach(child => {
+                    menu.children.forEach(child => {
                         itemHtml += buildMenuItem(child);
                     });
 
                     itemHtml += `
-                    </ul>
-                </li>`;
-
+                                        </ul>
+                                    </li>`;
                     return itemHtml;
+
                 } else {
-                    // Leaf menu item (no children) - using menu.url directly
                     return `
-                <li>
-                    <a href="${menu.url || 'javascript:void(0)'}">
-                        <i class="${menu.icon || ''}"></i> 
-                        ${menu.name}
-                    </a>
-                </li>`;
+                            <li>
+                                <a href="${menu.url || 'javascript:void(0)'}">
+                                    <i class="${menu.icon || ''}"></i>
+                                    ${menu.name}
+                                </a>
+                            </li>`;
                 }
             }
-
-            // Build HTML for all root menus
-            rootMenus.forEach(menu => {
+            $scope.menusWithChildren.forEach(menu => {
                 textHtml += buildMenuItem(menu);
             });
 
-            // Set the HTML to the sidebar
             $("#sidebarnav").html(textHtml);
         };
+
 
         $scope.logout = function () {
             Object.keys(localStorage).forEach(function (key) {
@@ -98,6 +81,30 @@
             });
             location.href = "/Login";
         };
+
+        const buildTree = (items, parentId = undefined) => {
+            const nodeMap = new Map(); // Para validar que no haya duplicados
+            const roots = [];
+
+            items.forEach(item => {
+                if (nodeMap.has(item.id)) {
+                    console.warn(`Nodo duplicado ignorado: ${item.id} ${item.name}`);
+                    return;
+                }
+                nodeMap.set(item.id, { ...item, children: [] });
+            });
+
+            nodeMap.forEach(node => {
+                if (node.parentId !== undefined && nodeMap.has(node.parentId)) {
+                    nodeMap.get(node.parentId).children.push(node);
+                } else if (node.parentId === undefined) {
+                    roots.push(node);
+                }
+            });
+
+            return roots;
+        };
+
 
 
 
@@ -122,12 +129,15 @@
 
             $scope.menus = $scope.userData.menus || [];
 
+
+            const fullTree = buildTree($scope.menus);
+            $scope.menusWithChildren = fullTree.filter(item => item.children.length > 0);
+
             if ($scope.menus.length == 0) {
                 $scope.logout();
                 return;
             }
 
-            console.log($scope.menus);
 
             $scope.permissions = $scope.userData.permissions || [];
             $scope.accions = $scope.userData.actions || [];
@@ -149,11 +159,11 @@
         if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
         if (/\/Common\/UserManual\/Index/.test(pathname)) return;
 
-        if(pathname==='/Index')return 
+        if (pathname === '/Index') return
 
         if (pathname) {
             if (pathname === "/") {
-                location.href = "/Index"; 
+                location.href = "/Index";
             }
             if (pathname.indexOf("/Home") == -1) {
                 let lengthPath = pathname.split("/").splice(1).length;
@@ -169,11 +179,11 @@
                             obj[name] = true;
                             return obj;
                         }, {});
-                        $scope.accion = namesObject; 
+                        $scope.accion = namesObject;
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                     //  location.href = "/Index";
+                        location.href = "/Index";
                     }
                 }
             }
