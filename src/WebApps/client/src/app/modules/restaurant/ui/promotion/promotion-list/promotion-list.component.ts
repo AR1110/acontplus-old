@@ -1,24 +1,27 @@
-import { Component, inject, model, signal, OnInit } from '@angular/core';
-import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
-import {MatPagination} from '@shared/models/pagination.model';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {PageEvent} from "@angular/material/paginator";
-import {FormsModule} from "@angular/forms";
-import {DialogService} from "@core/services/dialog.service";
+import { Component, inject, model, signal, OnInit } from '@angular/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatPagination } from '@shared/models/pagination.model';
+import { DialogService } from '@core/services/dialog.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { PageEvent } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-promotion-list',
-  imports: [  ThemeButtonComponent,
+  imports: [
+    ThemeButtonComponent,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule, MatDynamicTableComponent, FormsModule
+    MatSelectModule,
+    MatDynamicTableComponent,
+    FormsModule,
   ],
   templateUrl: './promotion-list.component.html',
   styles: ``,
@@ -45,15 +48,15 @@ export class PromotionListComponent implements OnInit {
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   pagination = signal(new MatPagination());
 
-  dataSource = signal<any>([])
+  dataSource = signal<any>([]);
 
   openModalAddEdit<T>(data?: T) {
     const modalRef = this.modalSvc.open(PromotionAddEditModalComponent, {
-      size: 'lg' ,
+      size: 'xl',
       data: {
         days: this.days(),
         data: (data && structuredClone(data)) || {},
-      }
+      },
     });
     modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
@@ -64,13 +67,18 @@ export class PromotionListComponent implements OnInit {
 
   private getPromotions() {
     const params = {
-      pageIndex: this.pagination().pageIndex+1,
+      pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       estabId: this.estabId(),
     };
     this.dataSource.set([]);
     this.promotionSvc.getAll(params).subscribe((response) => {
-      this.dataSource.set((response.promotions||[]).map((item:any, index:number) => ({...item, index: index+1})));
+      this.dataSource.set(
+        (response.promotions || []).map((item: any, index: number) => ({
+          ...item,
+          index: index + 1,
+        })),
+      );
       this.days.set(response.days);
       if (this.dataSource().length > 0) {
         this.pagination.update((e) => {
@@ -91,7 +99,7 @@ export class PromotionListComponent implements OnInit {
     this.getPromotions();
   }
 
-  onChangeEstab($event:any) {
+  onChangeEstab($event: any) {
     this.restaurantStore.state.update((e) => {
       return {
         ...e,
@@ -112,5 +120,4 @@ export class PromotionListComponent implements OnInit {
     });
     this.refresh();
   }
-
 }
