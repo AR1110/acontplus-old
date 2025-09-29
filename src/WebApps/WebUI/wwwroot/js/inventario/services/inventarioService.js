@@ -849,7 +849,7 @@
                         item.cantidad * conversion,
                         5
                     );
-                    cantidadTransaccion = withNegative ? (-cantidadTransaccion) : (+cantidadTransaccion);
+                    cantidadTransaccion = withNegative ? (cantidadTransaccion) : (+cantidadTransaccion);
 
                     return {
                         idConsolidacionInventarioDetalle: item.id,
