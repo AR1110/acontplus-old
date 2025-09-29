@@ -930,17 +930,20 @@
         function loadValidateDate() {
             const hoy = new Date();
 
+            // Formatear fecha actual
             const yyyy = hoy.getFullYear();
             const mm = String(hoy.getMonth() + 1).padStart(2, '0');
             const dd = String(hoy.getDate()).padStart(2, '0');
-            $scope.minFecha = `${yyyy}-${mm}-${dd}`;
+            $scope.maxFecha = `${yyyy}-${mm}-${dd}`; // hasta hoy
 
-            const fechaMax = new Date();
-            fechaMax.setDate(fechaMax.getDate() + 30);
-            const yyyyMax = fechaMax.getFullYear();
-            const mmMax = String(fechaMax.getMonth() + 1).padStart(2, '0');
-            const ddMax = String(fechaMax.getDate()).padStart(2, '0');
-            $scope.maxFecha = `${yyyyMax}-${mmMax}-${ddMax}`;
+            // Calcular fecha mínima (30 días atrás)
+            const fechaMin = new Date();
+            fechaMin.setDate(fechaMin.getDate() - 30);
+            const yyyyMin = fechaMin.getFullYear();
+            const mmMin = String(fechaMin.getMonth() + 1).padStart(2, '0');
+            const ddMin = String(fechaMin.getDate()).padStart(2, '0');
+            $scope.minFecha = `${yyyyMin}-${mmMin}-${ddMin}`; // desde 30 días atrás
+
         }
 
         function isValidDateRange(fecha) {

@@ -172,14 +172,25 @@ BEGIN
 
 			    IF @bySearch IS NOT NULL
                     BEGIN
-                        SET @dynamicFilterCondition = CHOOSE(
-				            ISNULL(@filterMode, 1),
-				            ' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' OR a.codigo LIKE ''%'' + @bySearch + ''%'' OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
-				            ' AND a.codigo       = @bySearch  ',
-				            ' AND a.codigoBarra  = @bySearch  ',
-				            ' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' ',
-				            ' AND a.codigoAuxiliar  = @bySearch  '
-			            )
+                         SET @dynamicFilterCondition = CHOOSE(
+					            ISNULL(@filterMode, 1),
+					            ' AND (a.descripcion LIKE ''%'' + @bySearch + ''%'' 
+						               OR a.codigo LIKE ''%'' + @bySearch + ''%'' 
+						               OR a.codigoBarra LIKE ''%'' + @bySearch + ''%'') ',
+					            ' AND a.codigo       = @bySearch  ',
+					            ' AND (
+						             a.codigoBarra = @bySearch 
+						             OR EXISTS (
+							             SELECT 1 
+							             FROM dbo.ArticuloCodigoBarra acb 
+							             WHERE acb.idArticulo = a.idArticulo 
+							               AND acb.codigoBarra = @bySearch
+						             )
+					             )',
+					            ' AND a.descripcion  LIKE ''%'' + @bySearch + ''%'' ',
+					            ' AND a.codigoAuxiliar  = @bySearch  '
+				            )
+
 
 				        SET @sql += ' ' + @dynamicFilterCondition
                     END
