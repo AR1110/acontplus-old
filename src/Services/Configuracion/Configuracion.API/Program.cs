@@ -33,7 +33,7 @@ try
 
     app.UseResponseCompression();
 
-    app.UseAcontplusServices(builder.Environment);
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.MapAllEndpoints();
 

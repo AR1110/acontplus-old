@@ -1,3 +1,5 @@
+using Acontplus.Services.Extensions;
+
 namespace Identity.API.Extensions;
 
 public static class ApplicationServicesExtensions
@@ -5,6 +7,9 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddIdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+
+        services.AddAcontplusServices(configuration);
+
         services.AddJwtAuthentication(configuration);
 
         services.AddResponseCompressionServices();

@@ -1,4 +1,4 @@
-﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
@@ -43,7 +43,7 @@ try
 
     app.UseAcontplusExceptionHandling();
 
-    app.UseAcontplusServices(builder.Environment);
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseRouting();
 
