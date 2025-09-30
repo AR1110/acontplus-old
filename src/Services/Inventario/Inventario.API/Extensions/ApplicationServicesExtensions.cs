@@ -1,3 +1,4 @@
+using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -11,28 +12,19 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddInventoryServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddJwtAuthentication(configuration);
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddOpenApi();
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddHttpContextAccessor();
 
-        services.AddControllers();
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<InventarioContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

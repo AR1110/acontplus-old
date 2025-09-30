@@ -24,23 +24,19 @@ try
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddApplicationServices(builder.Configuration);
-
     builder.Services.AddTechnicalSupportServices(builder.Configuration);
-
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseAcontplusExceptionHandling();
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
+
+    app.UseRateLimiter();
+
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseHttpsRedirection();
 

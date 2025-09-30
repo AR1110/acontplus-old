@@ -39,6 +39,8 @@ try
 
     app.UseResponseCompression();
 
+    app.UseRateLimiter();
+
     app.UseApplicationMiddleware(builder.Environment);
 
     app.UseRouting();

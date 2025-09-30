@@ -24,24 +24,17 @@ try
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    // Add services to the container.
-    builder.Services.AddApplicationServices(builder.Configuration);
-
     builder.Services.AddVentasServices(builder.Configuration);
-
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
 
-    app.UseAcontplusExceptionHandling();
+    app.UseRateLimiter();
 
     app.UseApplicationMiddleware(builder.Environment);
 

@@ -2,6 +2,7 @@ using Acontplus.FactElect.Interfaces.Services;
 using Acontplus.FactElect.Services.Conversion;
 using Acontplus.FactElect.Services.Documents;
 using Acontplus.FactElect.Services.External;
+using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -15,27 +16,21 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddComprasServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddJwtAuthentication(configuration);
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddOpenApi();
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddHttpContextAccessor();
+
         services.AddControllers();
 
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));

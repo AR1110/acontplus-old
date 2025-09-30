@@ -10,11 +10,19 @@ public static class ApplicationServicesExtensions
 
         services.AddAcontplusServices(configuration);
 
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddJwtAuthentication(configuration);
 
-        services.AddResponseCompressionServices();
+        services.AddOpenApi();
 
-        services.AddAdvancedLoggingOptions(configuration);
+        services.AddHttpContextAccessor();
+
+        services.AddApiVersioningAndDocumentation();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -46,19 +54,6 @@ public static class ApplicationServicesExtensions
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
-
-        services.AddApiVersioningAndDocumentation();
-
-        services.AddOpenApi();
-
-        // Register services
         services.AddHostedService<TokenCleanupAndArchivalService>();
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAdoRepository, AdoRepository>();

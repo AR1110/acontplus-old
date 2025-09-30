@@ -24,21 +24,16 @@ try
     builder.Configuration.AddConfiguration(configuration);
 
     builder.Services.AddAccountingServices(builder.Configuration);
-    builder.Services.AddApplicationServices(builder.Configuration);
-
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
 
-    app.UseAcontplusExceptionHandling();
+    app.UseRateLimiter();
 
     app.UseApplicationMiddleware(builder.Environment);
 
@@ -53,7 +48,6 @@ try
     app.MapContabilidadEndpoints();
 
     app.MapControllers().RequireAuthorization();
-
 
     //using var scope = app.Services.CreateScope();
     //var services = scope.ServiceProvider;

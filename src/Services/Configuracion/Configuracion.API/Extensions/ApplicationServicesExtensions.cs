@@ -12,28 +12,24 @@ public static class ApplicationServicesExtensions
     {
         services.AddAcontplusServices(configuration);
 
+        services.AddAdvancedLoggingOptions(configuration);
+
         services.AddJwtAuthentication(configuration);
 
         services.AddOpenApi();
 
-        services.AddAdvancedLoggingOptions(configuration);
-
         services.AddHttpContextAccessor();
+
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<ConfigContext>(opt =>
         {
             opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("Configuracion.Infrastructure"));
-        });
-
-        services.AddControllers();
-
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         });
 
         // Services that should be scoped (have dependencies on ConfigContext)

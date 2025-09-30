@@ -25,24 +25,19 @@ try
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddApplicationServices(builder.Configuration);
-
     builder.Services.AddVetServices(builder.Configuration);
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseAcontplusExceptionHandling();
-
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) app.Urls.Add("http://*:5014"); // Linux Port
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
+
+    app.UseRateLimiter();
+
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseHttpsRedirection();
 

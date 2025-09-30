@@ -23,21 +23,20 @@ try
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddApplicationServices(builder.Configuration);
     builder.Services.AddBarberShopServices(builder.Configuration);
 
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
     var app = builder.Build();
-
-    app.UseSerilogRequestLogging();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
+    app.UseSerilogRequestLogging();
+
     app.UseResponseCompression();
 
-    app.UseAcontplusExceptionHandling();
+    app.UseRateLimiter();
+
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseHttpsRedirection();
 

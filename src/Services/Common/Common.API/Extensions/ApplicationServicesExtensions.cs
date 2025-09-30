@@ -1,3 +1,4 @@
+using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
 using Common.Infrastructure.Persistence;
@@ -12,19 +13,22 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddCommonApplicationServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
         services.AddJwtAuthentication(configuration);
 
-        services.AddAcontplusServices(configuration);
+        services.AddOpenApi();
 
         services.AddHttpContextAccessor();
 
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
+
         services.AddDbContextPool<CommonContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        services.AddOpenApi();
 
         string[] scopedNameSpaces =
         [
