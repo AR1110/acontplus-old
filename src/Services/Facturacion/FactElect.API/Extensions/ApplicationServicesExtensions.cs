@@ -2,6 +2,7 @@ using Acontplus.FactElect.Services.Authentication;
 using Acontplus.FactElect.Services.Conversion;
 using Acontplus.FactElect.Services.External;
 using Acontplus.FactElect.Services.Validation;
+using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Utilities.Time;
 using FactElect.Application.Services.Sri;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -16,42 +17,27 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddBillingServices(this IServiceCollection services,
         IConfiguration configuration, IWebHostEnvironment environment)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
+        services.AddJwtAuthentication(configuration);
+        
+        services.AddOpenApi();
+
         services.AddHttpContextAccessor();
+
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
 
         services.AddHttpClient();
-        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
-        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
-
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
-
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.AddControllers();
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
-        services.Configure<JsonOptions>(options =>
-        {
-            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
-        });
 
         services.AddDbContextPool<FactElectContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
@@ -64,7 +50,10 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.Logistica",
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
-            "FactElect.API.Endpoints.Implementations"
+            "FactElect.API.Endpoints.Implementations",
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions",
+            "FactElect.Infrastructure.Persistence.Repositories"
         ];
 
         services.Scan(scan => scan
@@ -75,25 +64,15 @@ public static class ApplicationServicesExtensions
             .WithScopedLifetime()
         );
 
-        string[] transientNameSpaces =
-        [
-            "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions",
-            "FactElect.Infrastructure.Persistence.Repositories"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(transientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<ICaptchaService, CaptchaService>();
         services.AddScoped<IRucService, RucService>();
         services.AddScoped<ICedulaService, CedulaService>();
+
+        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
+
         return services;
     }
 }

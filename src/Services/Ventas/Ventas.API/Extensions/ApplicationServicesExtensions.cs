@@ -1,3 +1,4 @@
+using Acontplus.Services.Extensions.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
 using System.IO.Compression;
@@ -9,20 +10,21 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddVentasServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddJwtAuthentication(configuration);
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddOpenApi();
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddHttpContextAccessor();
 
         services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         string[] nameSpaces =
         [

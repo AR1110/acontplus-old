@@ -27,23 +27,17 @@ try
 
     // Add services to the container.
 
-    builder.Services.AddAcontplusServices(builder.Configuration);
-
     builder.Services.AddBillingServices(builder.Configuration, builder.Environment);
-
-    builder.Services.AddJwtAuthentication(builder.Configuration);
-
-    builder.Services.AddOpenApi();
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
 
-    app.UseAcontplusExceptionHandling();
+    app.UseRateLimiter();
 
     app.UseApplicationMiddleware(builder.Environment);
 
