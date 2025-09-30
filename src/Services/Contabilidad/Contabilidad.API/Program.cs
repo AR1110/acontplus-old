@@ -40,7 +40,7 @@ try
 
     app.UseAcontplusExceptionHandling();
 
-    app.UseAcontplusServices(builder.Environment);
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseHttpsRedirection();
 

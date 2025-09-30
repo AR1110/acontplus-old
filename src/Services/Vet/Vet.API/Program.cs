@@ -46,8 +46,6 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseStatusCodePages();
-
     app.UseRouting();
 
     app.UseAuthentication();

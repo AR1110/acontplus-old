@@ -1,4 +1,4 @@
-﻿using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Authentication;
 using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
@@ -43,8 +43,6 @@ try
     app.UseResponseCompression();
 
     app.UseHttpsRedirection();
-
-    app.UseStatusCodePages();
 
     app.UseRouting();
 

@@ -1,3 +1,5 @@
+using Acontplus.Services.Extensions;
+using Acontplus.Services.Extensions.Authentication;
 using Common.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
@@ -12,21 +14,14 @@ public static class ApplicationServicesExtensions
     {
         services.AddAdvancedLoggingOptions(configuration);
 
+        services.AddJwtAuthentication(configuration);
+
+        services.AddAcontplusServices(configuration);
+
         services.AddHttpContextAccessor();
 
         services.AddDbContextPool<CommonContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
-
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         services.AddOpenApi();

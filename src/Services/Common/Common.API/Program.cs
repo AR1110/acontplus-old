@@ -29,9 +29,6 @@ try
 
   // Add services to the container.
   builder.Services.AddCommonApplicationServices(builder.Configuration);
-  builder.Services.AddApplicationServices(builder.Configuration);
-  builder.Services.AddJwtAuthentication(builder.Configuration);
-  builder.Services.AddRateLimiter(_ => { });
 
   var app = builder.Build();
 
@@ -41,9 +38,7 @@ try
 
   app.UseResponseCompression();
 
-  app.UseAcontplusExceptionHandling();
-
-  app.UseAcontplusServices(builder.Environment);
+  app.UseApplicationMiddleware(builder.Environment);
 
   app.UseRouting();
 
