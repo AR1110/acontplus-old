@@ -2,7 +2,7 @@ using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
 using Scrutor;
 
-namespace Restaurant.Api.Extensions;
+namespace Restaurant.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {

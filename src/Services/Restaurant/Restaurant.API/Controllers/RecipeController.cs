@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Restaurant.Api.Controllers;
+namespace Restaurant.API.Controllers;
 
 public class RecipeController(IRecipeRepository recipeService) : BaseApiController
 {
