@@ -9,6 +9,9 @@ import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {DialogService} from "@core/services/dialog.service";
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+
+import { UAParser } from 'ua-parser-js';
+import {RoleSelectionModalComponent} from "@modules/auth/ui/auth/role-selection-modal/role-selection-modal.component";
 @Component({
   selector: 'app-auth',
   imports: [
@@ -50,10 +53,14 @@ export class AuthComponent {
   private _tokenUseCase = inject(TokenUseCase)
   private router = inject(Router)
   private tS = inject(ToastrNotificationService)
-  private dialogSvc = inject(DialogService)
+  private dialogSvc = inject(DialogService);
 
   hide = signal(true);
 
+  private parser = new UAParser(navigator.userAgent)
+  private parserResults = this.parser.getResult();
+
+   customerIp = "";
   form = new FormGroup({
     username: new FormControl(''),
     password: new FormControl(''),
@@ -64,15 +71,29 @@ export class AuthComponent {
     event.stopPropagation();
   }
 
+  ngOnInit(){
+    console.log(this.parser)
+    console.log(this.parserResults);
+    this.getPublicIP()
+    this.openRoleSeleccionModal({})
+  }
 
-  private openMultipleEstabs(dataEstab: any) {
-    // let modalRef = this.dialogSvc.open(MultipleEstabsComponent, {
-    //   size: 'lg',
-    //   data: {
-    //     multipleEstabs: dataEstab
-    //   }
-    // })
-    //
+  private getPublicIP() {
+    fetch('https://api.ipify.org?format=json')
+      .then(response=>response.json())
+      .then( response=>{
+       this.customerIp = response.ip;
+      })
+  };
+
+  private openRoleSeleccionModal(userRoles: any) {
+    let modalRef = this.dialogSvc.open(RoleSelectionModalComponent, {
+      size: 'lg',
+      data: {
+        roles: userRoles
+      }
+    })
+
     // modalRef.subscribe(result => {
     //     if (result && typeof result === 'object') {
     //       this.setDataLogin(result.dataLogin, result.dataEstab)
@@ -90,14 +111,35 @@ export class AuthComponent {
   }
 
   login() {
-    if (this.form.invalid) return
+    const {username, password} = this.form.value;
+    if(!username){
+      this.tS.show({
+        type: 'warning',
+        message: 'Ingrese su usuario'
+      })
+      return;
+    }
 
+    if(!password){
+      this.tS.show({
+        type: 'warning',
+        message: 'Ingrese su contraseña'
+      })
+      return
+    }
+
+
+    const userAgent = JSON.stringify({
+      userAgent: JSON.stringify(this.parserResults),
+      ipAddress: this.customerIp
+    });
 
     this._authUseCase.login({
-      username: this.form.value.username!,
-      password: this.form.value.password!
+      username: username!,
+      password: password!,
+      userAgent
     }).subscribe(response => {
-      if (response.code === "0") {
+      if (!response.success) {
         this.tS.show({
           type: 'warning',
           message: response.message
@@ -105,21 +147,27 @@ export class AuthComponent {
         return
       }
 
-      const dataPayload = JSON.parse(response.payload as string)
-      console.log(dataPayload)
-      const establecimientos = dataPayload.flatMap((userRole: any) => userRole.establecimientos)
+      const userRoles = response.userRoles;
+      console.log(userRoles)
+      if (userRoles.length > 0) {
+        this.openRoleSeleccionModal(userRoles)
 
-      if (establecimientos.length > 1) {
-        this.openMultipleEstabs(dataPayload)
+        return
+      }
+        const dataLogin = userRoles[0];
 
-      } else {
+      if(dataLogin.needAuthorization){
 
-        const dataLogin = dataPayload[0];
-     //   let dataEstab = establecimientos.find((e: any) => e.predeterminado);
-     //   this.setDataLogin(dataLogin, dataEstab)
-     this.router.navigateByUrl('/')
 
       }
+
+
+        console.log(dataLogin)
+     //   let dataEstab = establecimientos.find((e: any) => e.predeterminado);
+     //   this.setDataLogin(dataLogin, dataEstab)
+   //  this.router.navigateByUrl('/')
+
+
 
     })
   }

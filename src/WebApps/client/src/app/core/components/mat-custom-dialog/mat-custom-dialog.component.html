@@ -36,6 +36,7 @@
     </div>
   }
   <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
+  <ng-content select="content"></ng-content>
 </mat-dialog-content>
 <mat-dialog-actions [align]="align()">
   <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>

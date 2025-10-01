@@ -1,14 +1,34 @@
-import { Injectable } from '@angular/core';
 import { TokenRepository } from '../../domain/repositories/token.repository';
-import { TokenModel } from '../../domain/models/token.model';
-import { jwtDecode } from 'jwt-decode';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
+import { TokenModel } from '../../domain/models/token.model';
+import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
+import {Session} from "@modules/auth/domain/models/session";
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenLocalStorageRepository implements TokenRepository {
-  private readonly TOKEN_KEY = 'access_token';
+  private TOKEN_KEY = 'token';
+  private SESSION_KEY = 'session';
+
+  saveSession(session: Session): void {
+    localStorage.setItem(this.TOKEN_KEY, session.token);
+    localStorage.setItem(this.SESSION_KEY, JSON.stringify({
+      userData: session.userData,
+      menus: session.menus,
+      permissions: session.permissions
+    }));
+  }
+
+  getSession(): Session | null {
+    const data = localStorage.getItem(this.SESSION_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      return { ...parsed, token: this.getToken()! };
+    }
+    return null;
+  }
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
@@ -21,18 +41,6 @@ export class TokenLocalStorageRepository implements TokenRepository {
   removeToken(): void {
     localStorage.removeItem(this.TOKEN_KEY);
   }
-
-  // parseJwt(): TokenModel['decodedToken'] | null {
-  //   try {
-  //     const token = this.getToken();
-  //     if (token) {
-  //       return JSON.parse(atob(token.split('.')[1]));
-  //     }
-  //     return null;
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
   parseJwt(): TokenModel['decodedToken'] | null {
     try {
       const token = this.getToken();
@@ -80,16 +88,18 @@ export class TokenLocalStorageRepository implements TokenRepository {
       return {
         email: token.email || '',
         name:
-          token[
-            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'
-          ] || token.name,
+          token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname'] || token.name,
         userId:
-          token[
-            'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
-          ] || token.userId,
+          token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+          token.userId,
         username: token.unique_name || '',
       };
     }
     return null;
+  }
+
+  clear(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.SESSION_KEY);
   }
 }

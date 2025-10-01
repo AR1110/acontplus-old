@@ -1,0 +1,71 @@
+
+
+/* Estilos de la Tarjeta de Rol */
+.role-card {
+  background-color: #fff;
+  border: 2px solid #e9ecef; /* gray-100 equivalente */
+  border-radius: 0.75rem; /* rounded-xl equivalente */
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el hover */
+.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Estilo para el estado seleccionado (Ajustado a Rosado) */
+.role-card.selected {
+  border-color: #ec4899; /* Pink 500 */
+  background-color: #fff1ff; /* Pink 50 (Rosa muy claro) para resaltar */
+  box-shadow: 0 0.5rem 1rem rgba(236, 72, 153, 0.3) !important;
+  transform: scale(1.01);
+}
+
+/* Estilo para el logo circular */
+.logo-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+/* Estilo para el Título del Rol (Pink 700) */
+.role-title {
+  font-weight: 800; /* Extra bold */
+  color: #be185d; /* Pink 700 */
+  font-size: 0.80rem; /* text-xl */
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.trade-name {
+  font-weight: 500;
+  color: #343a40; /* Darker gray */
+}
+
+/* Estilos de detalles */
+.detail-label {
+  font-weight: 500;
+  color: #6c757d; /* Gray 500 */
+  font-size: 0.75rem; /* text-xs */
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #495057; /* Gray 700 */
+}
+
+/* Estilos del botón Continuar (Pink) */
+#continueButton:not(:disabled) {
+  background-color: #ec4899; /* Pink 500 */
+  color: white;
+  transition: background-color 0.3s;
+}
+
+#continueButton:not(:disabled):hover {
+  background-color: #db2777; /* Pink 600 */
+}

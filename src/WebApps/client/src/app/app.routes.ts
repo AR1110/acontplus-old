@@ -11,16 +11,16 @@ export const routes: Routes = [
   //   }
   // },
 
-  // {
-  //   path: 'auth',
-  //   title: 'Login',
-  //   loadChildren: () =>
-  //     import(`./layouts/auth-layout/auth-layout.routes`).then((m) => m.routes),
-  // },
+  {
+    path: 'auth',
+    title: 'Login',
+    loadChildren: () =>
+      import(`./layouts/auth-layout/auth-layout.routes`).then((m) => m.routes),
+  },
 
   {
     path: '',
-    //canActivate: [sessionGuard],
+    canActivate: [sessionGuard],
     loadChildren: () =>
       import(`./layouts/main-layout/main-layout.routes`).then((m) => m.routes),
     // data: {

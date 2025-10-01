@@ -9,7 +9,7 @@ import { RestaurantStoreService } from '@restaurant/application/store/restaurant
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { PromotionService } from '@restaurant/data/services/promotion.service'; 
+import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { MatIcon } from '@angular/material/icon';
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
