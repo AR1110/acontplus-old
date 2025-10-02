@@ -1,31 +1,31 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { MatSelectModule } from '@angular/material/select';
 
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 
-import { TipoDoc } from '@core/models/tipo-doc.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
+import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
-import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { DOC_TYPE } from '@core/constants/global.constants';
+import { TipoDoc } from '@core/models/tipo-doc.model';
 
-import { formatDateToString } from '@core/utils/date.util';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatDivider} from "@angular/material/divider";
-import {MatInputModule} from "@angular/material/input";
+import { formatDateToString } from '@core/utils/date.util';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -42,16 +42,17 @@ import {MatInputModule} from "@angular/material/input";
     ThemeButtonComponent,
     MatDynamicCardComponent,
     MatCheckbox,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './rentabilidad-page.component.html',
 })
 export class RentabilidadPageComponent implements OnInit {
   establecimientos = signal<GroupedEstab[]>([]);
   bodegas = signal<GroupedEstabBodega[]>([]);
-  tarifas = signal<TarifaSelectHtmlOnly[]>([])
-  tiposDoc = signal<TipoDoc[]>([])
-  subCategorias = signal<GroupedSubFamilia[]>([])
+  tarifas = signal<TarifaSelectHtmlOnly[]>([]);
+  tiposDoc = signal<TipoDoc[]>([]);
+  subCategorias = signal<GroupedSubFamilia[]>([]);
+  taxes = signal<any[]>([]);
   tiposArticulo = [
     {
       codigo: 'B',
@@ -81,6 +82,7 @@ export class RentabilidadPageComponent implements OnInit {
     porcentajeRenta: 0,
     porcentajeComision: 0,
     codigoTipoArticulo: 'B',
+    idTipoIva: 0,
   };
   productSearchProps = {
     isSimpleMode: true,
@@ -91,31 +93,30 @@ export class RentabilidadPageComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe( (response) => {
-        const { estabs, tarifas, tiposDoc, subCategorias } = response;
-        this.establecimientos.set(estabs);
-        this.tarifas.set(tarifas)
-        this.tiposDoc.set(tiposDoc)
-        this.subCategorias.set(subCategorias);
+    this._productUseCase.getDataReport().subscribe((response) => {
+      const { estabs, tarifas, tiposDoc, subCategorias, taxes } = response;
+      this.establecimientos.set(estabs);
+      this.tarifas.set(tarifas);
+      this.tiposDoc.set(tiposDoc);
+      this.subCategorias.set(subCategorias);
+      this.taxes.set(taxes);
 
-        const dataEstab = this.establecimientos().find(
-          (estab) => estab.defaultEstab,
-        );
-        if (dataEstab) {
-          this.dataSearch.codEstab = dataEstab.codEstab;
-          this.bodegas.set(dataEstab.bodegas);
-          const dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
-          if (dataBodega) {
-            this.dataSearch.idBodega = dataBodega.idBodega;
-          }
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      if (dataEstab) {
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        this.bodegas.set(dataEstab.bodegas);
+        const dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
+        if (dataBodega) {
+          this.dataSearch.idBodega = dataBodega.idBodega;
         }
+      }
 
-        if (this.tarifas.length > 0) {
-          const dataTarifa = this.tarifas().find((t) => t.predeterminada);
-          if (dataTarifa) {
-            this.dataSearch.idTarifa = dataTarifa.idTarifa;
-          }
+      if (this.tarifas.length > 0) {
+        const dataTarifa = this.tarifas().find((t) => t.predeterminada);
+        if (dataTarifa) {
+          this.dataSearch.idTarifa = dataTarifa.idTarifa;
         }
+      }
     });
   }
 
@@ -243,30 +244,23 @@ export class RentabilidadPageComponent implements OnInit {
       codEstab: isValidField(this.dataSearch.codEstab),
       idBodega: isValidField(this.dataSearch.idBodega),
       codDoc: isValidField(this.getDataCodDoc()),
-      idUsuario:
-        (this.dataSearch.userChecked &&
-          isValidField(this.dataSearch.idUsuario)) ||
-        null,
+      idUsuario: (this.dataSearch.userChecked && isValidField(this.dataSearch.idUsuario)) || null,
       idArticulo:
-        (this.dataSearch.productChecked &&
-          isValidField(this.dataSearch.idArticulo)) ||
-        null,
+        (this.dataSearch.productChecked && isValidField(this.dataSearch.idArticulo)) || null,
       idTarifa: getValidId(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
-      subFamiliasChecked:
-        (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
+      subFamiliasChecked: (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
       userRoleId: this._tokenUseCase.getUserRoleId(),
+      idTipoIva: getValidId(this.dataSearch.idTipoIva),
     };
 
     const parameters = {
       hasService: true,
       reportParams: JSON.stringify({
-        codigo: this.dataSearch.checkboxRentabCustom
-          ? SALE_CODE_REPORT.SRRC
-          : SALE_CODE_REPORT.SRR,
+        codigo: this.dataSearch.checkboxRentabCustom ? SALE_CODE_REPORT.SRRC : SALE_CODE_REPORT.SRR,
         format,
         aditionalParams: [],
       }),
