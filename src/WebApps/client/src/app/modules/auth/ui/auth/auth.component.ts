@@ -75,7 +75,7 @@ export class AuthComponent {
     console.log(this.parser)
     console.log(this.parserResults);
     this.getPublicIP()
-    this.openRoleSeleccionModal({})
+  //  this.openRoleSeleccionModal({})
   }
 
   private getPublicIP() {
@@ -149,7 +149,7 @@ export class AuthComponent {
 
       const userRoles = response.userRoles;
       console.log(userRoles)
-      if (userRoles.length > 0) {
+      if (userRoles.length > 1) {
         this.openRoleSeleccionModal(userRoles)
 
         return
@@ -159,13 +159,15 @@ export class AuthComponent {
       if(dataLogin.needAuthorization){
 
 
+        return
       }
 
-
-        console.log(dataLogin)
-     //   let dataEstab = establecimientos.find((e: any) => e.predeterminado);
-     //   this.setDataLogin(dataLogin, dataEstab)
-   //  this.router.navigateByUrl('/')
+      this._tokenUseCase.saveSession(dataLogin);
+      this.tS.show({
+        type: 'success',
+        message: response.message
+      })
+      this.router.navigateByUrl('/').then()
 
 
 

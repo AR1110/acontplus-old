@@ -140,16 +140,17 @@ export class AuthWebRepository implements AuthRepository {
             companyId,
             codeRole,
             idCard: item.idCardUser,
-            company: {
+          };
+          const   company = {
               id: item.companyId,
               businessName: item.businessName,
               tradeName: item.tradeName,
               idCard: item.idCardCompany
-            },
-          };
+            }
 
           return {
             userData,
+            company,
             menus: menusWithChildren,
             permissions: mappedPermissions,
             token,
@@ -159,6 +160,7 @@ export class AuthWebRepository implements AuthRepository {
         });
 
         result.success = true;
+        result.message = response.message;
         result.userRoles = userRoles;
         result.userRolesOriginal = dto;
 

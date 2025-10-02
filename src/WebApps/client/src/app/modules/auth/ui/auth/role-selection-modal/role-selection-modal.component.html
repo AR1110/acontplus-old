@@ -13,7 +13,7 @@
         @for (role of roles(); track $index) {
         <div
              class="role-card card p-4"
-             [ngClass]="{'selected': selectedRole?.id === role.id}"
+             [ngClass]="{'selected': selectedRole?.uuid === role.uuid}"
              (click)="selectRole(role, true)">
 
           <div class="d-flex align-items-start">

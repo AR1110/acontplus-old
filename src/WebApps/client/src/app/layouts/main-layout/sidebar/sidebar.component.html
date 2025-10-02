@@ -1,29 +1,23 @@
-<div class="sidenav">
-  <div class="sidenav-header">
-    <!-- <img
-      src=""
-      alt=""
-      [width]="profilePickSize()"
-      [height]="profilePickSize()"
-    /> -->
-    <svg
-      [attr.width]="profilePickSize()"
-      [attr.height]="profilePickSize()"
-      version="1.1"
-      id="Capa_1"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-      viewBox="0 0 480 480"
-      xml:space="preserve"
-      fill="#000000"
-    >
+<div class="sidenav-header flex flex-col justify-center items-center">
+  <!--  <img src="" alt="logo" [width]="profilePicSize()" [height]="profilePicSize()">-->
+  <svg
+    [attr.width]="profilePicSize()"
+    [attr.height]="profilePicSize()"
+    version="1.1"
+    id="Capa_1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    viewBox="0 0 480 480"
+    xml:space="preserve"
+    fill="#000000"
+  >
       <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-      <g
-        id="SVGRepo_tracerCarrier"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      ></g>
-      <g id="SVGRepo_iconCarrier">
+    <g
+      id="SVGRepo_tracerCarrier"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    ></g>
+    <g id="SVGRepo_iconCarrier">
         <g>
           <g>
             <circle style="fill: #b8bac0" cx="240" cy="240" r="240"></circle>
@@ -70,52 +64,16 @@
       </g>
     </svg>
 
-    @if (!sideNavCollapsed()) {
-      <div class="header-text">
-        <h2>{{ userName() }}</h2>
-      </div>
-    }
-
-    <button
-      class="d-block d-md-none hide-expanded-sidenav"
-      mat-icon-button
-      (click)="toggle.emit()"
-    >
-      <mat-icon aria-label="Close sidenav">close</mat-icon>
-    </button>
-  </div>
-
-  <mat-nav-list>
-
-
-      <a
-        mat-list-item
-        [routerLink]=""
-        #link="routerLinkActive"
-        class="nav-item"
-        routerLinkActive
-        [class.active]="link.isActive"
-        [activated]="link.isActive"
-      >
-        <mat-icon
-          [fontSet]="link.isActive ? 'material-icons' : 'material-icons-outlined'"
-          matListItemIcon
-        >home</mat-icon
-        >
-        @if(!sideNavCollapsed()){
-          <span matListItemTitle>Dashboard</span>
-        }
-      </a>
-
-  </mat-nav-list>
-  <div class="sidenav-footer">
-    <a
-      mat-list-item
-      class="nav-item"
-      (click)="toggleTheme()"
-      style="cursor: pointer"
-    >
-      <mat-icon> light_mode  </mat-icon>
-    </a>
+  <div class="header-text" [class.hide-header-text]="collapsed()">
+    <!--<h2>iei</h2>-->
+    <p>username</p>
   </div>
 </div>
+
+<mat-nav-list>
+  @for (item of menuItems(); track $index) {
+    <app-menu-item [item]="item" [collapsed]="collapsed()" [level]="0"
+                   [allMenuItems]="menuItems()"
+    />
+  }
+</mat-nav-list>

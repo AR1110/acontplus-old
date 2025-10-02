@@ -1,10 +1,15 @@
-import {Component, computed, Input, output, signal} from '@angular/core';
-import {MatSidenavModule} from "@angular/material/sidenav";
-import {MatToolbarModule} from "@angular/material/toolbar";
-import {RouterModule} from "@angular/router";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MatListModule} from "@angular/material/list";
+import { MenuItemComponent } from '../menu-item/menu-item.component';
+import {Component, computed, inject, input, signal} from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatButtonModule } from '@angular/material/button';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MenuUtils } from '@core/utils/menu.utils';
+import { RouterModule } from '@angular/router';
+import { autoMenuConfig } from '../menu-items';
+import { MenuConfig } from '../menu.types';
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
   selector: 'app-sidebar',
@@ -15,23 +20,42 @@ import {MatListModule} from "@angular/material/list";
     MatIconModule,
     MatButtonModule,
     MatListModule,
+    MenuItemComponent,
   ],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.scss'
+  styleUrl: './sidebar.component.scss',
 })
 export class SidebarComponent {
-  userName = computed(() => "");
+  private tokenUseCase = inject(TokenUseCase)
+  collapsed = input(false);
+  profilePicSize = computed(() => (this.collapsed() ? '32' : '80'));
 
-  toggle = output();
-  sideNavCollapsed = signal(false);
-  @Input() set collapsed(val: boolean) {
-    this.sideNavCollapsed.set(val);
+  // Configuración del menú
+  private menuConfig = signal<MenuConfig>(autoMenuConfig);
+
+  // Items del menú procesados
+  menuItems = computed(() => {
+    const config = this.menuConfig();
+    return this.processApiMenuItems(this.tokenUseCase.getSession()?.menus || []);
+
+    // return MenuUtils.sortMenuItems(config.items.filter((item) => !item.hidden && !item.disabled));
+  });
+
+  private processApiMenuItems(items: any[]):any[] {
+    return items.map((item:any) => {
+     const   subItems = item.children ? this.processApiMenuItems(item.children || []) : [];
+
+      return {
+        id: item.id,
+        label: item.name,
+        icon: 'home',
+        route: item.url,
+        actions:  item.actions,
+        subItems,
+          routeType: subItems.length>0 ? 'container': null,
+      }
+
+    });
   }
 
-
-  profilePickSize = computed(() => (this.sideNavCollapsed() ? '32' : '50'));
-
-  toggleTheme(): void {
-
-  }
 }
