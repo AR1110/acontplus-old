@@ -1,0 +1,48 @@
+@use 'src/styles/theme/_colors.scss' as colors;
+@use 'src/styles/theme/_font.scss' as font;
+@use 'src/styles/theme/_variables.scss' as vars;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  z-index: 2;
+  height: vars.$header-height;
+
+  &__title {
+    display: flex;
+    align-items: center;
+  }
+
+  &__title-button {
+    background-color: vars.$header-button-background-color;
+    box-shadow: vars.$header-button-box-shadow;
+
+    &:hover {
+      background-color: vars.$header-button-background-color-hover;
+    }
+
+    @media (max-width: vars.$small) {
+      margin-top: 0;
+    }
+  }
+
+  &__title-button-icon {
+    color: vars.$header-button-font-color;
+  }
+
+  &__title-text {
+    color: vars.$header-title-font-color;
+    margin-left: 32px;
+    font-weight: font.$fw-lighter;
+
+    @media (max-width: vars.$small) {
+      display: none;
+    }
+  }
+}
+
+.header-toolbar {
+  display: flex;
+  align-items: center;
+}

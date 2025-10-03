@@ -1,0 +1,307 @@
+@use '@angular/material' as mat;
+@use 'sass:map';
+@use '_palettes' as palettes;
+
+// Import custom component styles
+@use "./../components/mat-card.scss" as card;
+
+@use "./../components/mat-toolbar.scss" as toolbar;
+@use "./../components/_header.scss" as header;
+
+
+/***********************************/
+/**        BLUE THEME            **/
+/**********************************/
+
+$blue-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: palettes.$ama-blue-palette,
+    tertiary: palettes.$ama-light-blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@mixin blueTheme() {
+  .blueTheme {
+    // Apply M3 theme colors only (not base styles)
+    @include mat.all-component-colors($blue-theme);
+
+    // Custom component mixins
+    @include header.header();
+    @include card.mat-card();
+
+    @include toolbar.mat-toolbar();
+    @include sidebar($blue);
+    @include settings($blue);
+
+    // Apply custom success/info colors
+    @include apply-custom-colors($blue, $yellow, $pink, $green, $violet, $light-blue);
+  }
+}
+
+/***********************************/
+/**        PINK THEME            **/
+/**********************************/
+
+$pink-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: palettes.$ama-pink-palette,
+    tertiary: palettes.$ama-light-blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@mixin pinkTheme() {
+  .pinkTheme {
+    @include mat.all-component-colors($pink-theme);
+
+    // Custom component mixins
+    @include header();
+    @include mat-card();
+
+    @include sidebar($pink);
+
+    @include settings($pink);
+
+    @include apply-custom-colors($pink, $yellow, $blue, $green, $violet, $light-blue);
+  }
+}
+
+/***********************************/
+/**       GREEN THEME            **/
+/**********************************/
+
+$green-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: palettes.$ama-green-palette,
+    tertiary: palettes.$ama-light-blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@mixin greenTheme() {
+  .greenTheme {
+    @include mat.all-component-colors($green-theme);
+
+    // Custom component mixins
+    @include header();
+    @include mat-card();
+
+    @include sidebar($green);
+
+    @include settings($green);
+
+    @include apply-custom-colors($green, $yellow, $pink, $blue, $violet, $light-blue);
+  }
+}
+
+/***********************************/
+/**          DARK MODE           **/
+/**********************************/
+
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: palettes.$ama-blue-palette,
+    tertiary: palettes.$ama-light-blue-palette,
+  ),
+  typography: (
+    brand-family: 'Roboto, sans-serif',
+    plain-family: 'Roboto, sans-serif',
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+@mixin darkMode() {
+  .darkMode {
+    @include mat.all-component-colors($dark-theme);
+
+    // Custom component mixins for dark mode
+    @include header-dark();
+    @include mat-card-dark();
+    @include sidebar-dark();
+
+
+    // M3 checkbox dark mode
+    .mat-mdc-checkbox {
+      --mdc-checkbox-unselected-icon-color: #{$white};
+      --mdc-checkbox-disabled-unselected-icon-color: #{$white-50};
+    }
+
+    // M3 radio button dark mode
+    .mat-mdc-radio-button {
+      --mdc-radio-unselected-icon-color: #{$white};
+
+      &.mat-mdc-radio-disabled {
+        --mdc-radio-disabled-unselected-icon-color: #{$white-50};
+
+        .mdc-label {
+          color: $white-50;
+        }
+      }
+    }
+
+    .layout-content {
+      background-color: #13131A !important;
+    }
+  }
+}
+
+// Helper mixin for custom colors (success, info)
+@mixin apply-custom-colors($primary, $accent, $warn, $success, $info, $primary-light) {
+  // Custom color classes for components
+
+  // Buttons with custom colors
+  .mat-mdc-button,
+  .mat-mdc-outlined-button {
+    &.mat-success {
+      --mdc-text-button-label-text-color: #{$success};
+      --mdc-outlined-button-label-text-color: #{$success};
+      --mdc-outlined-button-outline-color: #{$success};
+      color: $success;
+    }
+
+    &.mat-info {
+      --mdc-text-button-label-text-color: #{$info};
+      --mdc-outlined-button-label-text-color: #{$info};
+      --mdc-outlined-button-outline-color: #{$info};
+      color: $info;
+    }
+
+    &.mat-primary-light {
+      --mdc-text-button-label-text-color: #{$primary-light};
+      --mdc-outlined-button-label-text-color: #{$primary-light};
+      --mdc-outlined-button-outline-color: #{$primary-light};
+      color: $primary-light;
+    }
+  }
+
+  .mat-mdc-raised-button,
+  .mat-mdc-unelevated-button,
+  .mat-mdc-fab,
+  .mat-mdc-mini-fab {
+    &.mat-success {
+      --mdc-filled-button-container-color: #{$success};
+      --mdc-filled-button-label-text-color: white;
+      --mdc-protected-button-container-color: #{$success};
+      --mdc-protected-button-label-text-color: white;
+      background-color: $success;
+      color: white;
+    }
+
+    &.mat-info {
+      --mdc-filled-button-container-color: #{$info};
+      --mdc-filled-button-label-text-color: white;
+      --mdc-protected-button-container-color: #{$info};
+      --mdc-protected-button-label-text-color: white;
+      background-color: $info;
+      color: white;
+    }
+
+    &.mat-primary-light {
+      --mdc-filled-button-container-color: #{$primary-light};
+      --mdc-filled-button-label-text-color: rgba(0, 0, 0, 0.87);
+      --mdc-protected-button-container-color: #{$primary-light};
+      --mdc-protected-button-label-text-color: rgba(0, 0, 0, 0.87);
+      background-color: $primary-light;
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  // Icon buttons
+  .mat-mdc-icon-button {
+    &.mat-success {
+      --mdc-icon-button-icon-color: #{$success};
+      color: $success;
+    }
+
+    &.mat-info {
+      --mdc-icon-button-icon-color: #{$info};
+      color: $info;
+    }
+
+    &.mat-primary-light {
+      --mdc-icon-button-icon-color: #{$primary-light};
+      color: $primary-light;
+    }
+  }
+
+  // Chips
+  .mat-mdc-chip {
+    &.mat-success {
+      --mdc-chip-elevated-container-color: #{$success};
+      --mdc-chip-label-text-color: white;
+    }
+
+    &.mat-info {
+      --mdc-chip-elevated-container-color: #{$info};
+      --mdc-chip-label-text-color: white;
+    }
+
+    &.mat-primary-light {
+      --mdc-chip-elevated-container-color: #{$primary-light};
+      --mdc-chip-label-text-color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  // Badges
+  .mat-badge-success .mat-badge-content {
+    background: $success;
+    color: white;
+  }
+
+  .mat-badge-info .mat-badge-content {
+    background: $info;
+    color: white;
+  }
+
+  .mat-badge-primary-light .mat-badge-content {
+    background: $primary-light;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  // Progress bars
+  .mat-mdc-progress-bar {
+    &.mat-success {
+      --mdc-linear-progress-active-indicator-color: #{$success};
+    }
+
+    &.mat-info {
+      --mdc-linear-progress-active-indicator-color: #{$info};
+    }
+  }
+
+  // Progress spinners
+  .mat-mdc-progress-spinner {
+    &.mat-success {
+      --mdc-circular-progress-active-indicator-color: #{$success};
+    }
+
+    &.mat-info {
+      --mdc-circular-progress-active-indicator-color: #{$info};
+    }
+  }
+}

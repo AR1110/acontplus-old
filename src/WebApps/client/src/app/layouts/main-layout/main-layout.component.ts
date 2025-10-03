@@ -4,14 +4,14 @@ import {
   computed,
   inject,
   signal,
-  ViewChild, OnInit,
+  ViewChild, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
 import { ThemeService } from '@core/theme/theme.service';
 import { ThemeClass } from '@core/theme/types';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import {BreakpointObserver, Breakpoints, MediaMatcher} from '@angular/cdk/layout';
 import { map, Observable } from 'rxjs';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,6 +22,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AsyncPipe } from '@angular/common';
 import { HeaderComponent } from './header/header.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
+import {SettingsMenuComponent} from "./settings-menu/settings-menu.component";
+import {ThemeTempService} from "@core/services/theme.service";
 
 @Component({
   selector: 'app-main-layout',
@@ -37,36 +39,73 @@ import { SidebarComponent } from './sidebar/sidebar.component';
     RouterOutlet,
     HeaderComponent,
     SidebarComponent,
+    SettingsMenuComponent,
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent implements OnInit {
-  @ViewChild('sidenav') sidenav!: MatSidenav;
-
-  private breakpointObserver = inject(BreakpointObserver);
-
-  isHandset$: Observable<boolean> = this.breakpointObserver
-    .observe(Breakpoints.Web)
-    .pipe(map((result) => result.matches));
-
   themeOptions = THEME_OPTIONS;
-  #themeService = inject(ThemeService);
-  activeTheme = this.#themeService.theme;
+//  #themeService = inject(ThemeService);
+    private service= inject(ThemeTempService)
+//  activeTheme = this.#themeService.theme;
 
-  changeTheme(newTheme: ThemeClass) {
-    this.#themeService.changeTheme(newTheme);
+
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+  public isShowSidebar: boolean;
+  public mobileQuery: MediaQueryList;
+  private mobileQueryListener: () => void;
+
+  constructor(
+    private changeDetectorRef: ChangeDetectorRef,
+    private media: MediaMatcher,
+  ) {
+    this.mobileQuery = media.matchMedia('(max-width: 1024px)');
+    this.mobileQueryListener = () => changeDetectorRef.detectChanges();
+    this.mobileQuery.addListener(this.mobileQueryListener);
+
+    this.isShowSidebar = !this.mobileQuery.matches;
   }
 
-  ngOnInit(): void {}
+  public ngOnDestroy(): void {
+    this.mobileQuery.removeListener(this.mobileQueryListener);
 
-  collapsed = signal(false);
-  sidenavWidth = computed(() => {
-    return this.collapsed() ? '70px' : '250px';
-  });
+    this.sidenav?.close();
+  }
 
-  toggleSidenav() {
-    this.collapsed.set(!this.collapsed());
+  public isBlueTheme = true;
+  public isPinkTheme = false;
+  public isGreenTheme = false;
+  public isDarkMode = false;
+
+  public changeThemeOnBlue(): void {
+    this.isBlueTheme = true;
+    this.isPinkTheme = false;
+    this.isGreenTheme = false;
+
+    this.service.setBlueTheme();
+  }
+  public changeThemeOnPink(): void {
+    this.isBlueTheme = false;
+    this.isPinkTheme = true;
+    this.isGreenTheme = false;
+
+    this.service.setPinkTheme();
+  }
+  public changeThemeOnGreen(): void {
+    this.isBlueTheme = false;
+    this.isPinkTheme = false;
+    this.isGreenTheme = true;
+
+    this.service.setGreenTheme();
+  }
+  public onDarkMode(value: boolean): void {
+    this.isDarkMode = value;
+
+    this.service.setDarkMode(value);
+  }
+
+  ngOnInit() {
   }
 }

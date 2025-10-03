@@ -1,0 +1,24 @@
+// ============================================
+// FILE 1: _palettes.scss
+// ============================================
+@use '@angular/material' as mat;
+
+$yellow: #FFEB3B;
+$pink: #E91E63;
+$blue: #2196F3;
+$light-blue: #03A9F4;
+$green: #4CAF50;
+$violet: #9C27B0;
+$white: #FFFFFF;
+$white-50: rgba(255, 255, 255, 0.5);
+$blue-white: #E3F2FD;
+
+// Material 3 uses predefined palettes
+// We select the closest M3 palettes to your brand colors
+
+$ama-blue-palette: mat.$azure-palette;      // Closest to #2196F3
+$ama-light-blue-palette: mat.$cyan-palette;  // Closest to #03A9F4
+$ama-yellow-palette: mat.$yellow-palette;    // Closest to #FFEB3B
+$ama-pink-palette: mat.$red-palette;         // Closest to #E91E63
+$ama-green-palette: mat.$green-palette;      // Closest to #4CAF50
+$ama-violet-palette: mat.$violet-palette;    // Closest to #9C27B0

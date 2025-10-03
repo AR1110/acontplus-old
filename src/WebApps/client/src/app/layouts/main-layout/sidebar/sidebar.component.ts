@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { autoMenuConfig } from '../menu-items';
 import { MenuConfig } from '../menu.types';
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import {MatTree} from "@angular/material/tree";
 
 @Component({
   selector: 'app-sidebar',
@@ -21,6 +22,7 @@ import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
     MatButtonModule,
     MatListModule,
     MenuItemComponent,
+    MatTree,
   ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
@@ -45,7 +47,7 @@ export class SidebarComponent {
       return {
         id: item.id,
         label: item.name,
-        //icon: 'home',
+        icon: 'home',
         route: item.url,
         actions:  item.actions,
         subItems

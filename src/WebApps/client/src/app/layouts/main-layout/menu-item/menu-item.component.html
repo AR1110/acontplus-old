@@ -8,23 +8,24 @@
   [activated]="rla.isActive"
   [style.--mat-list-list-item-leading-icon-start-space]="indentation()"
   matTooltip="{{item().label}}"
+  matTooltipPosition="right"
 >
-  @if (item().icon) {
+
     <mat-icon
       matListItemIcon
       [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
     >
       {{item().icon}}
     </mat-icon>
-  }
-  @else{
-    <mat-icon
-      matListItemIcon
-      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
-    >
-      keyboard_arrow_right
-    </mat-icon>
-  }
+
+<!--  @else{-->
+<!--    <mat-icon-->
+<!--      matListItemIcon-->
+<!--      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"-->
+<!--    >-->
+<!--      keyboard_arrow_right-->
+<!--    </mat-icon>-->
+<!--  }-->
   @if (!collapsed()) {
     <span matListItemTitle>{{item().label}}</span>
   } @if (hasChildren()) {

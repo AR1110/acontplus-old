@@ -1,3 +1,4 @@
+@use "src/styles/theme/_font.scss" as font;
 :host * {
   transition: all 500ms ease-in-out;
 }
@@ -6,6 +7,11 @@
 .menu-item{
   border-left: 5px solid;
   border-left-color: rgba(0,0,0,0);
+}
+
+.mat-mdc-list-item-title {
+  font-size: font.$fs-small !important;
+
 }
 .selected-menu-item {
   background:rgba(0,0,0,0.05);

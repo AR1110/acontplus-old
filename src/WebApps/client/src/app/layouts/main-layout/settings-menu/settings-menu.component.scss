@@ -1,0 +1,69 @@
+
+@use 'src/styles/theme/_colors.scss' as colors;
+@use 'src/styles/theme/_font.scss' as vars;
+
+.settings-wrapper {
+  z-index: 10000;
+  width: 56px;
+  height: 56px;
+  top: 120px;
+  right: 0;
+  position: fixed;
+  border-radius: 50% 0 0 50%;
+  color: colors.$white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
+  0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+.settings-menu-wrapper {
+  padding: 24px;
+}
+
+.menu-title {
+  color: colors.$dark-grey;
+  margin: 0;
+  font-size: vars.$fs-small;
+  font-weight: vars.$fw-bold;
+  line-height: 1.43;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.radio-group {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 9px;
+}
+
+.bord {
+  width: 100%;
+  margin: 8px 0 16px;
+  border: none;
+  height: 1px;
+  flex-shrink: 0;
+  background-color: colors.$black-12;
+}
+
+.slide-wrapper {
+  text-align: center;
+  padding: 9px 0;
+}
+
+.buttons-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+  text-transform: uppercase;
+}
+
+a + a {
+  margin-top: 24px;
+}
