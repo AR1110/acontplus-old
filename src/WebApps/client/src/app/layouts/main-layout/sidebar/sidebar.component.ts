@@ -28,14 +28,11 @@ import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 export class SidebarComponent {
   private tokenUseCase = inject(TokenUseCase)
   collapsed = input(false);
-  profilePicSize = computed(() => (this.collapsed() ? '32' : '80'));
+  profilePicSize = computed(()=>this.collapsed()?'32':'80')
 
-  // Configuración del menú
-  private menuConfig = signal<MenuConfig>(autoMenuConfig);
 
   // Items del menú procesados
   menuItems = computed(() => {
-    const config = this.menuConfig();
     return this.processApiMenuItems(this.tokenUseCase.getSession()?.menus || []);
 
     // return MenuUtils.sortMenuItems(config.items.filter((item) => !item.hidden && !item.disabled));
@@ -48,11 +45,10 @@ export class SidebarComponent {
       return {
         id: item.id,
         label: item.name,
-        icon: 'home',
+        //icon: 'home',
         route: item.url,
         actions:  item.actions,
-        subItems,
-          routeType: subItems.length>0 ? 'container': null,
+        subItems
       }
 
     });

@@ -1,153 +1,51 @@
-<!-- Item navegable (sin subitems o con container) -->
-@if (isNavigable()) {
-  <mat-list-item
-    [routerLink]="routerLink()"
-    routerLinkActive="active"
-    [routerLinkActiveOptions]="routerLinkOptions()"
-    [matTooltip]="collapsed() ? item().label : ''"
-    matTooltipPosition="right"
-    class="menu-item"
-    [style.padding-left.px]="dynamicPaddingLeft()"
-    [style.font-size.rem]="dynamicFontSize()">
-
-    @if (item().icon) {
-      <mat-icon matListItemIcon [style.opacity]="iconOpacity()">{{ item().icon }}</mat-icon>
+<a
+  mat-list-item
+  class="menu-item"
+  [routerLink]="routeHistory() +'/'+item().route"
+  (click)=" nestedMenuOpen.set(!nestedMenuOpen())"
+  routerLinkActive="menu-selected-item"
+  #rla="routerLinkActive"
+  [activated]="rla.isActive"
+  [style.--mat-list-list-item-leading-icon-start-space]="indentation()"
+  matTooltip="{{item().label}}"
+>
+  @if (item().icon) {
+    <mat-icon
+      matListItemIcon
+      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
+    >
+      {{item().icon}}
+    </mat-icon>
+  }
+  @else{
+    <mat-icon
+      matListItemIcon
+      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
+    >
+      keyboard_arrow_right
+    </mat-icon>
+  }
+  @if (!collapsed()) {
+    <span matListItemTitle>{{item().label}}</span>
+  } @if (hasChildren()) {
+  <span matListItemMeta>
+    @if (nestedMenuOpen()) {
+      <mat-icon>expand_less</mat-icon>
+    }@else{
+      <mat-icon>expand_more</mat-icon>
     }
-
-    @if (!collapsed()) {
-      <span matListItemTitle>{{ item().label }}</span>
-    }
-
-    <!-- Indicador de subitems si es container -->
-    @if (hasExpandableSubItems() && !collapsed()) {
-      <mat-icon matListItemMeta class="expand-icon" (click)="toggleExpanded($event)">
-        {{ expanded() ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
-    }
-  </mat-list-item>
+  </span>
 }
-@else {
-  <mat-list-item
-    (click)="toggleExpanded()"
-    [matTooltip]="collapsed() ? item().label : ''"
-    matTooltipPosition="right"
-    class="menu-item expandable"
-    [class.expanded]="expanded()"
-    [style.padding-left.px]="dynamicPaddingLeft()"
-    [style.font-size.rem]="dynamicFontSize()">
+</a>
 
-    @if (item().icon) {
-      <mat-icon matListItemIcon [style.opacity]="iconOpacity()">{{ item().icon }}</mat-icon>
-    }
-
-    @if (!collapsed()) {
-      <span matListItemTitle>{{ item().label }}</span>
-      <mat-icon matListItemMeta class="expand-icon">
-        {{ expanded() ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
-    }
-  </mat-list-item>
-}
-
-<!-- Sub-items expandibles -->
-@if (hasSubItems() && shouldShowSubItems()) {
-  <div class="sub-items"
-       [class.container-subitems]="isContainerType()"
-       [style.border-left-width.px]="borderWidth()"
-       [style.margin-left.px]="subItemsMargin()">
-    @for (subItem of item().subItems; track subItem.id || $index) {
+@if (hasChildren() && nestedMenuOpen()) {
+  <div @expandContractMenu>
+    @for (subItem of item().subItems; track $index){
       <app-menu-item
         [item]="subItem"
         [collapsed]="collapsed()"
-        [level]="level() + 1"
-        [parentRoute]="getParentRouteForSubItem()"
-        [allMenuItems]="allMenuItems()"/>
+        [routeHistory]="routeHistory()+'/'+item().route"
+      />
     }
   </div>
 }
-
-
-<!--@if (!item().subItems || (item().subItems)?.length === 0) {-->
-<!--  <a-->
-<!--    mat-list-item-->
-<!--    class="menu-item"-->
-<!--    [routerLink]="item().route"-->
-<!--    routerLinkActive="active"-->
-<!--    [matTooltip]="collapsed() ? item().label : ''"-->
-<!--    matTooltipPosition="right"-->
-<!--  >-->
-<!--    @if (item().icon) {-->
-<!--      <mat-icon matListItemIcon>{{ item().icon }}</mat-icon>-->
-<!--    }-->
-
-<!--    @if (!collapsed) {-->
-<!--      <span matListItemTitle>{{ item().label }}</span>-->
-<!--    }-->
-<!--  </a>-->
-<!--}-->
-<!--<a-->
-<!--  mat-list-item-->
-<!--  class="menu-item"-->
-<!--  [routerLink]="routeHistory() +'/'+item().route"-->
-<!--  (click)=" nestedMenuOpen.set(!nestedMenuOpen())"-->
-<!--  routerLinkActive="menu-selected-item"-->
-<!--  [matTooltip]="collapsed() ? item().label : ''"-->
-<!--  matTooltipPosition="right"-->
-<!--  #rla="routerLinkActive"-->
-<!--  [activated]="rla.isActive"-->
-<!--  [style.&#45;&#45;mat-list-list-item-leading-icon-start-space]="indentation()"-->
-<!--&gt;-->
-<!--  @if (item().icon) {-->
-<!--    <mat-icon-->
-<!--      matListItemIcon-->
-<!--      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"-->
-<!--    >-->
-<!--      {{item().icon}}-->
-<!--    </mat-icon>-->
-<!--  }@else{-->
-<!--    <mat-icon-->
-<!--      matListItemIcon-->
-<!--      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"-->
-<!--    >-->
-<!--      keyboard_arrow_right-->
-<!--    </mat-icon>-->
-<!--  }-->
-<!--  @if (!collapsed()) {-->
-<!--    <span matListItemTitle>{{item().label}}</span>-->
-<!--  } @if (item().subItems) {-->
-<!--  <span matListItemMeta>-->
-<!--    @if (nestedMenuOpen()) {-->
-<!--      <mat-icon>expand_less</mat-icon>-->
-<!--    }@else{-->
-<!--      <mat-icon>expand_more</mat-icon>-->
-<!--    }-->
-<!--  </span>-->
-<!--}-->
-<!--</a>-->
-
-<!--@if (item().subItems && nestedMenuOpen()) {-->
-<!--  <div @expandContractMenu>-->
-<!--    @for (subItem of item().subItems; track $index){-->
-<!--      <app-menu-item-->
-<!--        [item]="subItem"-->
-<!--        [collapsed]="collapsed()"-->
-<!--        [routeHistory]="routeHistory()+'/'+item().route"-->
-<!--      />-->
-<!--      &lt;!&ndash;      <a mat-list-item class="menu-item"&ndash;&gt;-->
-<!--        &lt;!&ndash;         [class.indented]="!collapsed()"&ndash;&gt;-->
-<!--        &lt;!&ndash;         [routerLink]="item().route+'/'+subItem.route"&ndash;&gt;-->
-<!--        &lt;!&ndash;         routerLinkActive&ndash;&gt;-->
-<!--        &lt;!&ndash;         #rla="routerLinkActive"&ndash;&gt;-->
-<!--        &lt;!&ndash;         [activated]="rla.isActive"&ndash;&gt;-->
-<!--        &lt;!&ndash;      >&ndash;&gt;-->
-<!--        &lt;!&ndash;        <mat-icon matListItemIcon&ndash;&gt;-->
-<!--        &lt;!&ndash;                  [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'">&ndash;&gt;-->
-<!--        &lt;!&ndash;          {{subItem.icon}}&ndash;&gt;-->
-<!--        &lt;!&ndash;        </mat-icon>&ndash;&gt;-->
-<!--        &lt;!&ndash;        @if (!collapsed()) {&ndash;&gt;-->
-<!--        &lt;!&ndash;          <span matListItemTitle>{{subItem.label}}</span>&ndash;&gt;-->
-<!--        &lt;!&ndash;        }&ndash;&gt;-->
-<!--        &lt;!&ndash;      </a>&ndash;&gt;-->
-<!--    }-->
-<!--  </div>-->
-<!--}-->

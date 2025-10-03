@@ -18,6 +18,7 @@ import {
   InventoryAdjustmentComponent
 } from "@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component";
 import { InventoryHomeComponent } from './ui/inventory-home.component';
+import {WarehouseTransferComponent} from "@inventory/ui/warehouse-transfer/warehouse-transfer.component";
 
 export const routes: Route[] = [
   {
@@ -142,6 +143,13 @@ export const routes: Route[] = [
     component: InventoryAdjustmentComponent,
     data: {
       breadcrumb: 'Ajuste Inventario',
+    }
+  },
+  {
+    path: 'warehouse-transfer',
+    component: WarehouseTransferComponent,
+    data: {
+      breadcrumb: 'Transferencia de Bodega',
     }
   }
 ];

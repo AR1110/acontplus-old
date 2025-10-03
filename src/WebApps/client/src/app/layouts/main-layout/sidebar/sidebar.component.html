@@ -72,8 +72,6 @@
 
 <mat-nav-list>
   @for (item of menuItems(); track $index) {
-    <app-menu-item [item]="item" [collapsed]="collapsed()" [level]="0"
-                   [allMenuItems]="menuItems()"
-    />
+    <app-menu-item [item]="item" [collapsed]="collapsed()"/>
   }
 </mat-nav-list>
