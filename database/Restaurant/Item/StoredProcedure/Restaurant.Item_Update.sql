@@ -87,7 +87,7 @@ BEGIN
         
         --IF EXISTS(SELECT TOP 1 1 FROM Restaurant.Item WHERE ProductId = @productId AND Id != @id)
         --    BEGIN
-        --        SELECT '0' code, 'Este ítem ya se encuentra registrado' as 'message'
+        --        SELECT '0' code, 'Este Ã­tem ya se encuentra registrado' as 'message'
         --        RETURN
         --    END
             
@@ -140,14 +140,21 @@ BEGIN
                     , rt.extentId
                     , rt.costPrice
             FROM #RecipeTemp rt
-            WHERE rt.ingredientId NOT IN(SELECT rr.IngredientId FROM Restaurant.Recipe rr WHERE rr.ItemId = @itemId)
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM Restaurant.Recipe rr
+                WHERE rr.ItemId = rt.ItemId
+                  AND rr.IngredientId = rt.IngredientId
+                  AND ISNULL(rr.Deleted, 0) = 0  -- solo bloquea los activos
+            ) AND rt.Id = 0
+
           
             ---- UPDATE RECIPE ----
             UPDATE rr
             SET rr.Unit          = rt.unit
                 ,rr.Weight       = rt.[weight]
                 ,rr.NetWeight    = rt.[weight]
-                ,rr.Enabled      = ISNULL(rt.[enabled], 1)
+              --  ,rr.Enabled      = ISNULL(rt.[enabled], 1)
                 ,rr.IngredientId = rt.ingredientId
                 ,rr.Instructions = rt.instructions
                 ,rr.Quantity     = rt.quantity
@@ -157,7 +164,7 @@ BEGIN
             FROM Restaurant.Recipe rr            
             INNER JOIN #RecipeTemp rt ON rt.itemId = rr.ItemId
             WHERE rr.IngredientId = rt.ingredientId
-            AND rr.Id = rt.id
+            AND rr.Id = rt.id AND rr.Enabled=1
 
             --- UPDATE DELETED ----
             UPDATE rr
@@ -178,21 +185,28 @@ BEGIN
             AND rr.Deleted = 1
                     
             -------- SELECT NOT EXISTS ------
-            SELECT rr.Id, rr.ItemId, rr.IngredientId
-            INTO #NotExists
-            FROM Restaurant.Recipe rr
-            WHERE rr.ItemId = @itemId AND rr.IngredientId NOT IN (SELECT ingredientId FROM #RecipeTemp)
-                      
-            IF EXISTS(SELECT TOP 1 1 FROM #NotExists)
-                BEGIN
-                    UPDATE rr
-                    SET rr.Deleted     =  1
-                        ,rr.UpdatedAt   = dbo.ufnGetDateEcuador()
-                    FROM Restaurant.Recipe rr
-                    INNER JOIN #NotExists ne ON ne.Id = rr.Id
-                    WHERE rr.ItemId = ne.ItemId AND rr.IngredientId = ne.IngredientId
-                END
+            --SELECT rr.Id, rr.ItemId, rr.IngredientId
+            --INTO #NotExists
+            --FROM Restaurant.Recipe rr
+            --WHERE rr.ItemId = @itemId AND rr.IngredientId NOT IN (SELECT ingredientId FROM #RecipeTemp)
 
+            ---- SELECT INGREDIENTS TO DELETE ----
+            UPDATE rr
+                SET rr.Deleted   = 1,
+              --      rr.Enabled = 0,
+                    rr.UpdatedAt = dbo.ufnGetDateEcuador()
+                FROM Restaurant.Recipe rr
+                WHERE rr.ItemId = @itemId
+                  AND NOT EXISTS (
+                      SELECT 1 
+                      FROM #RecipeTemp rt 
+                      WHERE rt.IngredientId = rr.IngredientId
+                        AND rt.ItemId = rr.ItemId
+                        AND rr.Id = rt.id
+                        AND ISNULL(rr.Deleted , 0)=0
+                  );
+
+              
             ---- UPDATE IN Articulo ------
             SET @precioCostoSumTotal = (SELECT ISNULL(SUM(rr.CostPrice), 0) 
                                         FROM Restaurant.Recipe rr
