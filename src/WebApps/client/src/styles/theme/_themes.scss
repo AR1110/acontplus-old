@@ -1,23 +1,26 @@
 @use '@angular/material' as mat;
 @use 'sass:map';
-@use '_palettes' as palettes;
+@use '_palettes' as ama;
 
 // Import custom component styles
-@use "./../components/mat-card.scss" as card;
+@use "./../components/mat-card.scss" as mat-card;
 
-@use "./../components/mat-toolbar.scss" as toolbar;
-@use "./../components/_header.scss" as header;
+@use "./../components/mat-toolbar.scss" as mat-toolbar;
+@use "./../components/_header.scss" as mat-header;
 
+
+// Incluir estilos base de Material 3 (solo una vez)
+@include mat.core();
 
 /***********************************/
-/**        BLUE THEME            **/
+/**        BLUE THEME (M3)       **/
 /**********************************/
 
 $blue-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: palettes.$ama-blue-palette,
-    tertiary: palettes.$ama-light-blue-palette,
+    primary: ama.$ama-blue-palette,
+    tertiary: ama.$ama-light-blue-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -30,31 +33,30 @@ $blue-theme: mat.define-theme((
 
 @mixin blueTheme() {
   .blueTheme {
-    // Apply M3 theme colors only (not base styles)
-    @include mat.all-component-colors($blue-theme);
+    @include mat.all-component-themes($blue-theme);
 
-    // Custom component mixins
-    @include header.header();
-    @include card.mat-card();
+    // Colores personalizados adicionales
+    --color-success: #{ama.get-tone(ama.$ama-green-palette, 50)};
+    --color-info: #{ama.get-tone(ama.$ama-violet-palette, 40)};
+    --color-warn: #{ama.get-tone(ama.$ama-pink-palette, 40)};
+    --color-accent: #{ama.get-tone(ama.$ama-yellow-palette, 60)};
 
-    @include toolbar.mat-toolbar();
-    @include sidebar($blue);
-    @include settings($blue);
+    @include mat-card.mat-card();
 
-    // Apply custom success/info colors
-    @include apply-custom-colors($blue, $yellow, $pink, $green, $violet, $light-blue);
+    @include mat-toolbar.mat-toolbar();
+
   }
 }
 
 /***********************************/
-/**        PINK THEME            **/
+/**        PINK THEME (M3)       **/
 /**********************************/
 
 $pink-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: palettes.$ama-pink-palette,
-    tertiary: palettes.$ama-light-blue-palette,
+    primary: ama.$ama-pink-palette,
+    tertiary: ama.$ama-light-blue-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -67,29 +69,28 @@ $pink-theme: mat.define-theme((
 
 @mixin pinkTheme() {
   .pinkTheme {
-    @include mat.all-component-colors($pink-theme);
+    @include mat.all-component-themes($pink-theme);
 
-    // Custom component mixins
-    @include header();
-    @include mat-card();
+    // Colores personalizados adicionales
+    --color-success: #{ama.get-tone(ama.$ama-green-palette, 50)};
+    --color-info: #{ama.get-tone(ama.$ama-violet-palette, 40)};
+    --color-warn: #{ama.get-tone(ama.$ama-blue-palette, 40)};
+    --color-accent: #{ama.get-tone(ama.$ama-yellow-palette, 60)};
 
-    @include sidebar($pink);
+    @include mat-card.mat-card();
 
-    @include settings($pink);
-
-    @include apply-custom-colors($pink, $yellow, $blue, $green, $violet, $light-blue);
   }
 }
 
 /***********************************/
-/**       GREEN THEME            **/
+/**       GREEN THEME (M3)       **/
 /**********************************/
 
 $green-theme: mat.define-theme((
   color: (
     theme-type: light,
-    primary: palettes.$ama-green-palette,
-    tertiary: palettes.$ama-light-blue-palette,
+    primary: ama.$ama-green-palette,
+    tertiary: ama.$ama-light-blue-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -102,29 +103,28 @@ $green-theme: mat.define-theme((
 
 @mixin greenTheme() {
   .greenTheme {
-    @include mat.all-component-colors($green-theme);
+    @include mat.all-component-themes($green-theme);
 
-    // Custom component mixins
-    @include header();
-    @include mat-card();
+    // Colores personalizados adicionales
+    --color-success: #{ama.get-tone(ama.$ama-blue-palette, 40)};
+    --color-info: #{ama.get-tone(ama.$ama-violet-palette, 40)};
+    --color-warn: #{ama.get-tone(ama.$ama-pink-palette, 40)};
+    --color-accent: #{ama.get-tone(ama.$ama-yellow-palette, 60)};
 
-    @include sidebar($green);
+    @include mat-card.mat-card();
 
-    @include settings($green);
-
-    @include apply-custom-colors($green, $yellow, $pink, $blue, $violet, $light-blue);
   }
 }
 
 /***********************************/
-/**          DARK MODE           **/
+/**       DARK MODE (M3)         **/
 /**********************************/
 
 $dark-theme: mat.define-theme((
   color: (
     theme-type: dark,
-    primary: palettes.$ama-blue-palette,
-    tertiary: palettes.$ama-light-blue-palette,
+    primary: ama.$ama-blue-palette,
+    tertiary: ama.$ama-light-blue-palette,
   ),
   typography: (
     brand-family: 'Roboto, sans-serif',
@@ -139,169 +139,30 @@ $dark-theme: mat.define-theme((
   .darkMode {
     @include mat.all-component-colors($dark-theme);
 
-    // Custom component mixins for dark mode
-    @include header-dark();
-    @include mat-card-dark();
-    @include sidebar-dark();
+    // Variables de color personalizadas para dark mode
+    --color-success: #{ama.get-tone(ama.$ama-green-palette, 80)};
+    --color-info: #{ama.get-tone(ama.$ama-violet-palette, 80)};
+    --color-warn: #{ama.get-tone(ama.$ama-pink-palette, 80)};
 
-
-    // M3 checkbox dark mode
-    .mat-mdc-checkbox {
-      --mdc-checkbox-unselected-icon-color: #{$white};
-      --mdc-checkbox-disabled-unselected-icon-color: #{$white-50};
+    // Ajustes para componentes en dark mode
+    .mat-mdc-checkbox .mdc-checkbox__background {
+      border-color: #FFFFFF;
     }
 
-    // M3 radio button dark mode
-    .mat-mdc-radio-button {
-      --mdc-radio-unselected-icon-color: #{$white};
+    .mat-mdc-radio-button .mdc-radio__outer-circle {
+      border-color: #FFFFFF;
+    }
 
-      &.mat-mdc-radio-disabled {
-        --mdc-radio-disabled-unselected-icon-color: #{$white-50};
+    .mat-mdc-radio-button.mat-mdc-radio-disabled .mdc-radio__outer-circle {
+      border-color: rgba(255, 255, 255, 0.5);
+    }
 
-        .mdc-label {
-          color: $white-50;
-        }
-      }
+    .mat-mdc-radio-button.mat-mdc-radio-disabled .mdc-label {
+      color: rgba(255, 255, 255, 0.5);
     }
 
     .layout-content {
       background-color: #13131A !important;
-    }
-  }
-}
-
-// Helper mixin for custom colors (success, info)
-@mixin apply-custom-colors($primary, $accent, $warn, $success, $info, $primary-light) {
-  // Custom color classes for components
-
-  // Buttons with custom colors
-  .mat-mdc-button,
-  .mat-mdc-outlined-button {
-    &.mat-success {
-      --mdc-text-button-label-text-color: #{$success};
-      --mdc-outlined-button-label-text-color: #{$success};
-      --mdc-outlined-button-outline-color: #{$success};
-      color: $success;
-    }
-
-    &.mat-info {
-      --mdc-text-button-label-text-color: #{$info};
-      --mdc-outlined-button-label-text-color: #{$info};
-      --mdc-outlined-button-outline-color: #{$info};
-      color: $info;
-    }
-
-    &.mat-primary-light {
-      --mdc-text-button-label-text-color: #{$primary-light};
-      --mdc-outlined-button-label-text-color: #{$primary-light};
-      --mdc-outlined-button-outline-color: #{$primary-light};
-      color: $primary-light;
-    }
-  }
-
-  .mat-mdc-raised-button,
-  .mat-mdc-unelevated-button,
-  .mat-mdc-fab,
-  .mat-mdc-mini-fab {
-    &.mat-success {
-      --mdc-filled-button-container-color: #{$success};
-      --mdc-filled-button-label-text-color: white;
-      --mdc-protected-button-container-color: #{$success};
-      --mdc-protected-button-label-text-color: white;
-      background-color: $success;
-      color: white;
-    }
-
-    &.mat-info {
-      --mdc-filled-button-container-color: #{$info};
-      --mdc-filled-button-label-text-color: white;
-      --mdc-protected-button-container-color: #{$info};
-      --mdc-protected-button-label-text-color: white;
-      background-color: $info;
-      color: white;
-    }
-
-    &.mat-primary-light {
-      --mdc-filled-button-container-color: #{$primary-light};
-      --mdc-filled-button-label-text-color: rgba(0, 0, 0, 0.87);
-      --mdc-protected-button-container-color: #{$primary-light};
-      --mdc-protected-button-label-text-color: rgba(0, 0, 0, 0.87);
-      background-color: $primary-light;
-      color: rgba(0, 0, 0, 0.87);
-    }
-  }
-
-  // Icon buttons
-  .mat-mdc-icon-button {
-    &.mat-success {
-      --mdc-icon-button-icon-color: #{$success};
-      color: $success;
-    }
-
-    &.mat-info {
-      --mdc-icon-button-icon-color: #{$info};
-      color: $info;
-    }
-
-    &.mat-primary-light {
-      --mdc-icon-button-icon-color: #{$primary-light};
-      color: $primary-light;
-    }
-  }
-
-  // Chips
-  .mat-mdc-chip {
-    &.mat-success {
-      --mdc-chip-elevated-container-color: #{$success};
-      --mdc-chip-label-text-color: white;
-    }
-
-    &.mat-info {
-      --mdc-chip-elevated-container-color: #{$info};
-      --mdc-chip-label-text-color: white;
-    }
-
-    &.mat-primary-light {
-      --mdc-chip-elevated-container-color: #{$primary-light};
-      --mdc-chip-label-text-color: rgba(0, 0, 0, 0.87);
-    }
-  }
-
-  // Badges
-  .mat-badge-success .mat-badge-content {
-    background: $success;
-    color: white;
-  }
-
-  .mat-badge-info .mat-badge-content {
-    background: $info;
-    color: white;
-  }
-
-  .mat-badge-primary-light .mat-badge-content {
-    background: $primary-light;
-    color: rgba(0, 0, 0, 0.87);
-  }
-
-  // Progress bars
-  .mat-mdc-progress-bar {
-    &.mat-success {
-      --mdc-linear-progress-active-indicator-color: #{$success};
-    }
-
-    &.mat-info {
-      --mdc-linear-progress-active-indicator-color: #{$info};
-    }
-  }
-
-  // Progress spinners
-  .mat-mdc-progress-spinner {
-    &.mat-success {
-      --mdc-circular-progress-active-indicator-color: #{$success};
-    }
-
-    &.mat-info {
-      --mdc-circular-progress-active-indicator-color: #{$info};
     }
   }
 }

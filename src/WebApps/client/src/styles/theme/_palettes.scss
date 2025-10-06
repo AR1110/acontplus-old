@@ -1,24 +1,116 @@
-// ============================================
-// FILE 1: _palettes.scss
-// ============================================
+// ========================================
+// ARCHIVO: palettes.scss (Material 3)
+// ========================================
+
 @use '@angular/material' as mat;
 
-$yellow: #FFEB3B;
-$pink: #E91E63;
-$blue: #2196F3;
-$light-blue: #03A9F4;
-$green: #4CAF50;
-$violet: #9C27B0;
-$white: #FFFFFF;
-$white-50: rgba(255, 255, 255, 0.5);
-$blue-white: #E3F2FD;
+/***********************************/
+/**     PALETAS TONALES M3       **/
+/**********************************/
 
-// Material 3 uses predefined palettes
-// We select the closest M3 palettes to your brand colors
+// Paleta Azul
+$ama-blue-palette: (
+  0: #000000,
+  10: #001849,
+  20: #002D6E,
+  30: #004494,
+  40: #005CBC,
+  50: #0076E5,
+  60: #4C92FF,
+  70: #7DADFF,
+  80: #A8C8FF,
+  90: #D4E3FF,
+  95: #ECF1FF,
+  99: #FDFBFF,
+  100: #FFFFFF,
+);
 
-$ama-blue-palette: mat.$azure-palette;      // Closest to #2196F3
-$ama-light-blue-palette: mat.$cyan-palette;  // Closest to #03A9F4
-$ama-yellow-palette: mat.$yellow-palette;    // Closest to #FFEB3B
-$ama-pink-palette: mat.$red-palette;         // Closest to #E91E63
-$ama-green-palette: mat.$green-palette;      // Closest to #4CAF50
-$ama-violet-palette: mat.$violet-palette;    // Closest to #9C27B0
+// Paleta Azul Claro
+$ama-light-blue-palette: (
+  0: #000000,
+  10: #001F28,
+  20: #003544,
+  30: #004D61,
+  40: #00677F,
+  50: #00829E,
+  60: #009EBD,
+  70: #26BADC,
+  80: #4DD6F7,
+  90: #B2EBFF,
+  95: #D8F5FF,
+  99: #F7FCFF,
+  100: #FFFFFF,
+);
+
+// Paleta Amarilla
+$ama-yellow-palette: (
+  0: #000000,
+  10: #1F1C00,
+  20: #343000,
+  30: #4B4400,
+  40: #635A00,
+  50: #7C7100,
+  60: #968900,
+  70: #B0A100,
+  80: #CCBB00,
+  90: #E9D62E,
+  95: #F7E56A,
+  99: #FFFBF7,
+  100: #FFFFFF,
+);
+
+// Paleta Rosa
+$ama-pink-palette: (
+  0: #000000,
+  10: #3E001D,
+  20: #5E1133,
+  30: #7D2449,
+  40: #9D3A60,
+  50: #BE5178,
+  60: #DF6A91,
+  70: #FF84AB,
+  80: #FFB0C8,
+  90: #FFD9E3,
+  95: #FFECF0,
+  99: #FFFBFF,
+  100: #FFFFFF,
+);
+
+// Paleta Verde
+$ama-green-palette: (
+  0: #000000,
+  10: #002106,
+  20: #003910,
+  30: #005319,
+  40: #006E23,
+  50: #008A2E,
+  60: #00A73A,
+  70: #1FC54B,
+  80: #51E370,
+  90: #77FF8C,
+  95: #C1FFCB,
+  99: #F5FFF1,
+  100: #FFFFFF,
+);
+
+// Paleta Violeta
+$ama-violet-palette: (
+  0: #000000,
+  10: #21005D,
+  20: #371E73,
+  30: #4F378B,
+  40: #6750A4,
+  50: #7F67BE,
+  60: #9A82DB,
+  70: #B69DF8,
+  80: #D0BCFF,
+  90: #EADDFF,
+  95: #F6EDFF,
+  99: #FFFBFE,
+  100: #FFFFFF,
+);
+
+// Función helper para obtener tonos
+@function get-tone($palette, $tone) {
+  @return map-get($palette, $tone);
+}
