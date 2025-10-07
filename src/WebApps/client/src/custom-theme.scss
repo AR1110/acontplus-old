@@ -5,161 +5,22 @@
 
 
 // Custom styles - Import palettes first
-@import "src/styles/theme/_palettes.scss";
 @import "src/styles/theme/_colors.scss";
 @import "src/styles/theme/_variables.scss";
 @import "src/styles/theme/_font.scss";
 @import "src/styles/components/_header.scss";
 @import "src/styles/components/_sidebar.scss";
 @import "src/styles/theme/settings.scss";
-@import "src/styles/theme/_themes.scss"; // This includes the theme definitions
 @import "src/styles/components/mat-card.scss";
 @import "src/styles/base/_typography.scss";
 @import "src/styles/theme/notification.scss";
-// Include Material 3 core styles (typography, density, base styles)
-@include mat.core();
 
-/***********************************/
-/** Angular Material Admin THEME **/
-/**********************************/
-
-// Define the base theme using palettes from _palettes.scss
-$ama-theme: mat.define-theme((
-  color: (
-    theme-type: light,
-    primary: $ama-blue-palette,
-    tertiary: $ama-light-blue-palette,
-  ),
-  typography: (
-    brand-family: 'Roboto, sans-serif',
-    plain-family: 'Roboto, sans-serif',
-  ),
-  density: (
-    scale: 0,
-  )
-));
-
-// Apply base theme to all components
-@include mat.all-component-themes($ama-theme);
-
-/***********************************/
-/**        Global Styles         **/
-/**********************************/
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
-}
+@import "src/styles/theme/_m3-tokens.scss";
+@import "src/styles/theme/_theme-base.scss";
 
 // Include custom mixins
-@include notification;
-@include typography;
-@include blueTheme();
-@include pinkTheme();
-@include greenTheme();
-@include darkMode();
-@include mat-card;
+@include header();
+@include mat-button();
+@include notification();
+@include mat-card();
 
-// M3 Mat-select customization
-.mat-mdc-select-panel {
-  .mat-mdc-option.mdc-list-item--selected:not(.mat-mdc-option-multiple),
-  .mat-mdc-option:hover:not(.mat-mdc-option-disabled) {
-    background-color: $blue-white;
-  }
-
-  .mat-mdc-option {
-    font-size: 16px !important;
-  }
-}
-
-// M3 Menu customization
-.mat-mdc-menu-panel.settings-theme-menu {
-  margin-right: 64px;
-  margin-top: -55px;
-}
-
-// ng-select customization (third-party, not M3)
-.ng-select .ng-select-container {
-  min-width: 150px;
-  min-height: 40.5px;
-}
-
-/***********************************/
-/**   Additional M3 Overrides    **/
-/**********************************/
-
-// Ensure form fields use M3 styling
-.mat-mdc-form-field {
-  &.mat-success {
-    --mdc-outlined-text-field-focus-outline-color: #{$green};
-    --mdc-outlined-text-field-focus-label-text-color: #{$green};
-  }
-
-  &.mat-info {
-    --mdc-outlined-text-field-focus-outline-color: #{$violet};
-    --mdc-outlined-text-field-focus-label-text-color: #{$violet};
-  }
-}
-
-// M3 Checkbox custom colors
-.mat-mdc-checkbox {
-  &.mat-success {
-    --mdc-checkbox-selected-icon-color: #{$green};
-    --mdc-checkbox-selected-hover-icon-color: #{$green};
-    --mdc-checkbox-selected-pressed-icon-color: #{$green};
-  }
-
-  &.mat-info {
-    --mdc-checkbox-selected-icon-color: #{$violet};
-    --mdc-checkbox-selected-hover-icon-color: #{$violet};
-    --mdc-checkbox-selected-pressed-icon-color: #{$violet};
-  }
-}
-
-// M3 Radio custom colors
-.mat-mdc-radio-button {
-  &.mat-success {
-    --mdc-radio-selected-icon-color: #{$green};
-    --mdc-radio-selected-hover-icon-color: #{$green};
-    --mdc-radio-selected-pressed-icon-color: #{$green};
-  }
-
-  &.mat-info {
-    --mdc-radio-selected-icon-color: #{$violet};
-    --mdc-radio-selected-hover-icon-color: #{$violet};
-    --mdc-radio-selected-pressed-icon-color: #{$violet};
-  }
-}
-
-// M3 Slide toggle custom colors
-.mat-mdc-slide-toggle {
-  &.mat-success {
-    --mdc-switch-selected-track-color: #{$green};
-    --mdc-switch-selected-handle-color: #{$green};
-  }
-
-  &.mat-info {
-    --mdc-switch-selected-track-color: #{$violet};
-    --mdc-switch-selected-handle-color: #{$violet};
-  }
-}
-
-// M3 Tabs custom colors (if needed beyond what's in mat-tab.scss)
-.mat-mdc-tab-group {
-  &.mat-success {
-    --mdc-tab-indicator-active-indicator-color: #{$green};
-    --mat-tab-header-active-label-text-color: #{$green};
-    --mat-tab-header-active-ripple-color: #{$green};
-  }
-
-  &.mat-info {
-    --mdc-tab-indicator-active-indicator-color: #{$violet};
-    --mat-tab-header-active-label-text-color: #{$violet};
-    --mat-tab-header-active-ripple-color: #{$violet};
-  }
-}

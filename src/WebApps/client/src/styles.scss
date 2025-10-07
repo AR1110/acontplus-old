@@ -3,7 +3,7 @@
 @use 'sass:map';
 @use 'ngx-toastr/toastr';
 @use 'styles/components/forms' as forms;
-//@use 'styles/theme/theme-colors' as acontplus-theme;
+@use 'styles/theme/theme-colors' as acontplus-theme;
 @use 'app/modules/config/styles/shepherd-tour';
 @use '@ng-select/ng-select/themes/material.theme';
 /* Tabulator Styles */
@@ -43,21 +43,21 @@ $compact-theme: mat.define-theme(
   @include mat.form-field-density($compact-theme);
 }
 
-//html,
-//body {
-//  height: 100%;
-//  @include mat.theme(
-//    (
-//      color: (
-//        primary: acontplus-theme.$primary-palette,
-//        tertiary: acontplus-theme.$tertiary-palette,
-//        theme-type: light,
-//      ),
-//      typography: Roboto,
-//      density: 0,
-//    )
-//  );
-//}
+html,
+body {
+  height: 100%;
+  @include mat.theme(
+    (
+      color: (
+        primary: acontplus-theme.$primary-palette,
+        tertiary: acontplus-theme.$tertiary-palette,
+        theme-type: light,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
 
 button,
 html,

@@ -1,5 +1,6 @@
+// src/app/styles/settings.scss
 
-@use 'src/styles/theme/_colors.scss' as colors;
+// Mantenemos la importación de fuentes, pero ya no necesitamos los colores.
 @use 'src/styles/theme/_font.scss' as vars;
 
 .settings-wrapper {
@@ -10,13 +11,20 @@
   right: 0;
   position: fixed;
   border-radius: 50% 0 0 50%;
-  color: colors.$white;
+
+  // 1. El botón flotante es una acción primaria.
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary); // El ícono ahora tiene contraste automático
+
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+
+  // La sombra está bien, es un detalle de diseño y no un color de tema.
   box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2),
-  0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+  0px 6px 10px 0px rgba(0, 0, 0, 0.14),
+  0px 1px 18px 0px rgba(0, 0, 0, 0.12);
 }
 
 .settings-menu-wrapper {
@@ -24,7 +32,8 @@
 }
 
 .menu-title {
-  color: colors.$dark-grey;
+  // 2. El título del menú es un texto secundario sobre una superficie.
+  color: var(--md-sys-color-on-surface-variant);
   margin: 0;
   font-size: vars.$fs-small;
   font-weight: vars.$fw-bold;
@@ -47,7 +56,9 @@
   border: none;
   height: 1px;
   flex-shrink: 0;
-  background-color: colors.$black-12;
+
+  // 3. Los divisores tienen un token específico que se adapta al tema.
+  background-color: var(--md-sys-color-outline-variant);
 }
 
 .slide-wrapper {

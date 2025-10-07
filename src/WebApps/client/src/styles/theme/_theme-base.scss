@@ -1,0 +1,117 @@
+// src/styles/components/_theme-base.scss
+
+// --- BADGE ---
+// Ya no necesita @mixin mat-badge-theme($theme). Los estilos son globales.
+@mixin mat-badge() {
+  .mat-badge-content {
+    color: var(--md-sys-color-on-primary);
+    background: var(--md-sys-color-primary);
+  }
+  .mat-badge-accent .mat-badge-content {
+    // Tu 'accent' (amarillo) ahora es 'secondary' en M3
+    background: var(--md-sys-color-secondary);
+    color: var(--md-sys-color-on-secondary);
+  }
+  .mat-badge-warn .mat-badge-content {
+    // Tu 'warn' (rosa) ahora es 'error' en M3
+    background: var(--md-sys-color-error);
+    color: var(--md-sys-color-on-error);
+  }
+  .mat-badge-success .mat-badge-content {
+    // Mapeamos 'success' al color 'tertiary' de M3
+    background: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+  }
+  .mat-badge-info .mat-badge-content {
+    // También mapeamos 'info' a 'tertiary'
+    background: var(--md-sys-color-tertiary);
+    color: var(--md-sys-color-on-tertiary);
+  }
+  .mat-badge-primary-light .mat-badge-content {
+    // 'primary-light' es 'primary-container' en M3
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+  }
+  .mat-badge-disabled .mat-badge-content {
+    background: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    opacity: 0.38;
+  }
+  // Estilos estructurales (sin cambios)
+  .mat-badge { position: relative; }
+  .mat-badge-hidden .mat-badge-content { display: none; }
+  .mat-badge-content {
+    position: absolute; text-align: center; display: inline-block; border-radius: 50%;
+    transition: transform 200ms ease-in-out; transform: scale(0.6); overflow: hidden;
+    font-weight: 400; white-space: nowrap; text-overflow: ellipsis; pointer-events: none;
+  }
+  .mat-badge-content.mat-badge-active { transform: none; }
+}
+
+// --- RADIO BUTTON ---
+@mixin mat-radio() {
+  .mat-radio-outer-circle { border-color: var(--md-sys-color-on-surface-variant); }
+  .mat-radio-button.mat-primary {
+    &.mat-radio-checked .mat-radio-outer-circle { border-color: var(--md-sys-color-primary); }
+    .mat-radio-inner-circle { background-color: var(--md-sys-color-primary); }
+  }
+  .mat-radio-button.mat-accent { // Mapeamos 'accent' (tu amarillo) a 'secondary'
+    &.mat-radio-checked .mat-radio-outer-circle { border-color: var(--md-sys-color-secondary); }
+    .mat-radio-inner-circle { background-color: var(--md-sys-color-secondary); }
+  }
+  .mat-radio-button.mat-warn { // Mapeamos 'warn' a 'error'
+    &.mat-radio-checked .mat-radio-outer-circle { border-color: var(--md-sys-color-error); }
+    .mat-radio-inner-circle { background-color: var(--md-sys-color-error); }
+  }
+  .mat-radio-button.mat-radio-disabled {
+    .mat-radio-outer-circle, .mat-radio-inner-circle, .mat-radio-label-content {
+      border-color: var(--md-sys-color-on-surface); opacity: 0.38;
+    }
+  }
+}
+
+// --- CHIPS ---
+@mixin mat-chips() {
+  .mat-chip.mat-standard-chip {
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+    .mat-chip-remove { color: var(--md-sys-color-on-surface-variant); opacity: 0.6; }
+  }
+  .mat-chip.mat-standard-chip.mat-chip-selected {
+    &.mat-primary { background: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary); }
+    &.mat-accent { background: var(--md-sys-color-secondary); color: var(--md-sys-color-on-secondary); }
+    &.mat-warn { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); }
+    &.mat-success, &.mat-info { background: var(--md-sys-color-tertiary); color: var(--md-sys-color-on-tertiary); }
+  }
+}
+
+// --- BUTTONS ---
+@mixin mat-button() {
+  // Botones 'raised' y 'fab'
+  .mat-mdc-raised-button, .mat-mdc-fab {
+    &.mat-primary {
+      --mdc-protected-button-container-color: var(--md-sys-color-primary);
+      --mdc-protected-button-label-text-color: var(--md-sys-color-on-primary);
+    }
+    &.mat-accent { // Mapeado a secondary
+      --mdc-protected-button-container-color: var(--md-sys-color-secondary);
+      --mdc-protected-button-label-text-color: var(--md-sys-color-on-secondary);
+    }
+    &.mat-warn { // Mapeado a error
+      --mdc-protected-button-container-color: var(--md-sys-color-error);
+      --mdc-protected-button-label-text-color: var(--md-sys-color-on-error);
+    }
+    &.mat-success, &.mat-info { // Mapeado a tertiary
+      --mdc-protected-button-container-color: var(--md-sys-color-tertiary);
+      --mdc-protected-button-label-text-color: var(--md-sys-color-on-tertiary);
+    }
+  }
+  // Botones 'stroked' (con borde)
+  .mat-mdc-outlined-button {
+    &.mat-primary {
+      --mdc-outlined-button-label-text-color: var(--md-sys-color-primary);
+      --mdc-outlined-button-outline-color: var(--md-sys-color-primary);
+    }
+    // ... y así para los demás colores (accent, warn, etc.)
+  }
+}

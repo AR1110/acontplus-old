@@ -3,6 +3,7 @@
 // ========================================
 
 @use '@angular/material' as mat;
+@use 'sass:map';
 
 /***********************************/
 /**     PALETAS TONALES M3       **/
@@ -13,7 +14,9 @@ $ama-blue-palette: (
   0: #000000,
   10: #001849,
   20: #002D6E,
+  25: #003A87,
   30: #004494,
+  35: #004FA3,
   40: #005CBC,
   50: #0076E5,
   60: #4C92FF,
@@ -21,6 +24,7 @@ $ama-blue-palette: (
   80: #A8C8FF,
   90: #D4E3FF,
   95: #ECF1FF,
+  98: #F8FBFF,
   99: #FDFBFF,
   100: #FFFFFF,
 );
@@ -30,7 +34,9 @@ $ama-light-blue-palette: (
   0: #000000,
   10: #001F28,
   20: #003544,
+  25: #004153,
   30: #004D61,
+  35: #005970,
   40: #00677F,
   50: #00829E,
   60: #009EBD,
@@ -38,6 +44,7 @@ $ama-light-blue-palette: (
   80: #4DD6F7,
   90: #B2EBFF,
   95: #D8F5FF,
+  98: #EDF9FF,
   99: #F7FCFF,
   100: #FFFFFF,
 );
@@ -47,7 +54,9 @@ $ama-yellow-palette: (
   0: #000000,
   10: #1F1C00,
   20: #343000,
+  25: #3F3A00,
   30: #4B4400,
+  35: #564F00,
   40: #635A00,
   50: #7C7100,
   60: #968900,
@@ -55,6 +64,7 @@ $ama-yellow-palette: (
   80: #CCBB00,
   90: #E9D62E,
   95: #F7E56A,
+  98: #FDF5B0,
   99: #FFFBF7,
   100: #FFFFFF,
 );
@@ -64,7 +74,9 @@ $ama-pink-palette: (
   0: #000000,
   10: #3E001D,
   20: #5E1133,
+  25: #6E1D3E,
   30: #7D2449,
+  35: #8D2F54,
   40: #9D3A60,
   50: #BE5178,
   60: #DF6A91,
@@ -72,6 +84,7 @@ $ama-pink-palette: (
   80: #FFB0C8,
   90: #FFD9E3,
   95: #FFECF0,
+  98: #FFF8F8,
   99: #FFFBFF,
   100: #FFFFFF,
 );
@@ -81,7 +94,9 @@ $ama-green-palette: (
   0: #000000,
   10: #002106,
   20: #003910,
+  25: #004415,
   30: #005319,
+  35: #005F1E,
   40: #006E23,
   50: #008A2E,
   60: #00A73A,
@@ -89,6 +104,7 @@ $ama-green-palette: (
   80: #51E370,
   90: #77FF8C,
   95: #C1FFCB,
+  98: #E5FFE9,
   99: #F5FFF1,
   100: #FFFFFF,
 );
@@ -98,7 +114,9 @@ $ama-violet-palette: (
   0: #000000,
   10: #21005D,
   20: #371E73,
+  25: #43297F,
   30: #4F378B,
+  35: #5B4397,
   40: #6750A4,
   50: #7F67BE,
   60: #9A82DB,
@@ -106,11 +124,70 @@ $ama-violet-palette: (
   80: #D0BCFF,
   90: #EADDFF,
   95: #F6EDFF,
+  98: #FDF7FF,
   99: #FFFBFE,
   100: #FFFFFF,
 );
 
+// Paletas neutrales y de error (requeridas por Material 3)
+$ama-neutral-palette: (
+  0: #000000,
+  10: #181c20,
+  20: #2d3135,
+  25: #383c40,
+  30: #44474b,
+  35: #4f5357,
+  40: #5b5f63,
+  50: #74777c,
+  60: #8e9196,
+  70: #a9abb0,
+  80: #c4c7cb,
+  90: #e0e2e7,
+  95: #eff1f6,
+  98: #f7f9fe,
+  99: #fcfcff,
+  100: #ffffff,
+);
+
+$ama-neutral-variant-palette: (
+  0: #000000,
+  10: #151c23,
+  20: #2a3139,
+  25: #353c44,
+  30: #40484f,
+  35: #4c535b,
+  40: #575f67,
+  50: #707880,
+  60: #8a919a,
+  70: #a4acb5,
+  80: #c0c7d1,
+  90: #dce3ed,
+  95: #eaf1fb,
+  98: #f7f9ff,
+  99: #fcfcff,
+  100: #ffffff,
+);
+
+$ama-error-palette: (
+  0: #000000,
+  10: #410002,
+  20: #690005,
+  25: #7e0007,
+  30: #93000a,
+  35: #a80710,
+  40: #ba1a1a,
+  50: #de3730,
+  60: #ff5449,
+  70: #ff897d,
+  80: #ffb4ab,
+  90: #ffdad6,
+  95: #ffedea,
+  98: #fff8f7,
+  99: #fffbff,
+  100: #ffffff,
+);
+
 // Función helper para obtener tonos
 @function get-tone($palette, $tone) {
-  @return map-get($palette, $tone);
+  @return map.get($palette, $tone);
 }
