@@ -123,7 +123,7 @@ export class AuthWebRepository implements AuthRepository {
             permissions,
             uuid,
             needAuthorization,
-            codeRole
+            codeRole,
           } = item;
 
           const fullTree = mapModules(menus);
@@ -141,12 +141,12 @@ export class AuthWebRepository implements AuthRepository {
             codeRole,
             idCard: item.idCardUser,
           };
-          const   company = {
-              id: item.companyId,
-              businessName: item.businessName,
-              tradeName: item.tradeName,
-              idCard: item.idCardCompany
-            }
+          const company = {
+            id: item.companyId,
+            businessName: item.businessName,
+            tradeName: item.tradeName,
+            idCard: item.idCardCompany,
+          };
 
           return {
             userData,

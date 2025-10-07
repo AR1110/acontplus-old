@@ -1,17 +1,21 @@
-// /* You can add global styles to this file, and also import other style files */
+@use 'styles/reboot';
+@use 'styles/themes';
+@use 'styles/colors';
+@use 'styles/grid';
+@use 'styles/helpers';
+@use 'styles/plugins';
+@use 'styles/custom';
+
 // @use '@angular/material' as mat;
 // @use 'sass:map';
-// @use 'ngx-toastr/toastr';
+ @use 'ngx-toastr/toastr';
 // @use 'styles/components/forms' as forms;
 // @use 'styles/theme/theme-colors' as acontplus-theme;
-// @use 'app/modules/config/styles/shepherd-tour';
-// @use '@ng-select/ng-select/themes/material.theme';
-// @use 'styles/theme/_variables.scss' as vars;
-// @use 'styles/theme/_colors.scss' as colors;
-// @use 'styles/theme/_font.scss' as font;
+@use 'app/modules/config/styles/shepherd-tour';
+@use '@ng-select/ng-select/themes/material.theme';
 // /* Tabulator Styles */
-// @import 'tabulator-tables/dist/css/tabulator.min.css';
-// @import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
+ @import 'tabulator-tables/dist/css/tabulator.min.css';
+ @import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
 // /* Brand-Inspired Color Palette */
 // :root {
 //   --primary-color: #d61672;
@@ -33,17 +37,7 @@
 //   --app-content: #e9ddffbf;
 // }
 
-// $compact-theme: mat.define-theme(
-//   (
-//     density: (
-//       scale: -4,
-//     ),
-//   )
-// );
 
-// :root {
-//   @include mat.form-field-density($compact-theme);
-// }
 
 // html,
 // body {
@@ -72,50 +66,40 @@
 //     sans-serif !important;
 // }
 
-// table {
-//   width: 100%;
-// }
+ table {
+   width: 100%;
+ }
 
-// .section-container-table {
-//   max-height: 400px;
-//   overflow: auto;
-// }
+ .section-container-table {
+   max-height: 400px;
+   overflow: auto;
+ }
 
-// //autocomplete search inside boostrap modal
-// .cdk-overlay-container {
-//   z-index: 999999 !important;
-// }
+ //autocomplete search inside boostrap modal
+ .cdk-overlay-container {
+   z-index: 999999 !important;
+ }
 
-// //remove z index to material table headers
-// .mat-mdc-header-cell {
-//   z-index: unset !important;
-// }
+ //remove z index to material table headers
+ .mat-mdc-header-cell {
+   z-index: unset !important;
+ }
 
-// .swal2-container {
-//   z-index: 999999;
-// }
+ .swal2-container {
+   z-index: 999999;
+ }
 
-// .cursor-pointer {
-//   cursor: pointer;
-// }
-// .toast-container {
-//   z-index: 9999999;
-// }
-// .mat-mdc-icon-button {
-//   font-size: inherit !important;
-// }
+ .cursor-pointer {
+   cursor: pointer;
+ }
+ .toast-container {
+   z-index: 9999999;
+ }
+ .mat-mdc-icon-button {
+   font-size: inherit !important;
+ }
 
-// .mat-mdc-radio-button ~ .mat-mdc-radio-button {
-//   margin-left: 16px;
-// }
+ .mat-mdc-radio-button ~ .mat-mdc-radio-button {
+   margin-left: 16px;
+ }
 
-// //styles custom
-
-/* You can add global styles to this file, and also import other style files */
-@use 'styles/reboot';
-@use 'styles/themes';
-@use 'styles/colors';
-@use 'styles/grid';
-@use 'styles/helpers';
-@use 'styles/plugins';
-@use 'styles/custom';

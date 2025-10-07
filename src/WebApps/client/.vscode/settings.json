@@ -17,5 +17,8 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+
+  "ngx-translate.lookup.resourcesType": "json",
+  "ngx-translate.lookup.resourcesPath": "public/i18n/zh-CN.json",
 }

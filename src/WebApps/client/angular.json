@@ -44,12 +44,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "sweetalert2",
-              "file-saver",
-              "quill-delta",
-              "moment"
-            ],
+            "allowedCommonJsDependencies": ["sweetalert2", "file-saver", "quill-delta", "moment"],
             "outputPath": {
               "base": "dist",
               "browser": ""
@@ -64,6 +59,10 @@
                 "glob": "**/*",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "public"
               }
             ],
             "styles": [

@@ -1,0 +1,30 @@
+@use '@angular/material' as mat;
+
+html {
+  color-scheme: light;
+
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0
+  ));
+}
+
+.theme-dark {
+  color-scheme: light;
+}
+
+ $compact-theme: mat.define-theme(
+   (
+     density: (
+       scale: -4,
+     ),
+   )
+ );
+
+ :root {
+   @include mat.form-field-density($compact-theme);
+ }

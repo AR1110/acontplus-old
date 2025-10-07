@@ -1,43 +1,75 @@
 import {
   ApplicationConfig,
-  importProvidersFrom, inject, provideAppInitializer,
+  importProvidersFrom,
+  inject,
+  provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import {
-  featureProviders,
-  infrastructureProviders,
-  uiProviders,
-} from './config/providers';
-import { editorProviders } from './config/editor.config';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
+import { featureProviders, infrastructureProviders } from './providers';
+import { customTranslateLoaderFactory } from '@core/i18n/custom-translate-loader';
+import { SettingsService, TranslateLangService } from '@core/bootstrap';
+import { BASE_URL } from '@core/interceptors/base-url-interceptor';
+import { formlyConfigFactory } from '@shared/formly-config';
+import { environment } from 'src/environments/environment';
+import {MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
+import { editorProviders } from './editor.config';
+import { HttpBackend } from '@angular/common/http';
+import { FORMLY_CONFIG } from '@ngx-formly/core';
 import { FormsModule } from '@angular/forms';
-import {provideRouter, withComponentInputBinding, withInMemoryScrolling} from "@angular/router";
-import {routes} from "./app.routes";
-import {TranslateLangService} from "@core/bootstrap";
-import { FORMLY_CONFIG, provideFormlyCore } from '@ngx-formly/core';
-import {formlyConfigFactory} from "@shared/formly-config";
-import {TranslateService} from "@ngx-translate/core";
+import { routes } from './app.routes';
+import {provideToastr} from "ngx-toastr";
+import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
+import {DatePipe} from "@angular/common";
+
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: BASE_URL, useValue: environment.baseUrl },
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
     provideAppInitializer(() => inject(TranslateLangService).load()),
     ...infrastructureProviders,
-    ...uiProviders,
-
     provideRouter(
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' }),
-      withComponentInputBinding()
+      withComponentInputBinding(),
     ),
     ...editorProviders,
     ...featureProviders,
     importProvidersFrom(FormsModule),
+    provideTranslateService({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: customTranslateLoaderFactory,
+        deps: [HttpBackend],
+      },
+    }),
     {
       provide: FORMLY_CONFIG,
       useFactory: formlyConfigFactory,
       deps: [TranslateService],
       multi: true,
     },
+    {
+      provide: MAT_DATE_LOCALE,
+      useFactory: () => inject(SettingsService).getLocale(),
+    },
+    provideToastr({
+      preventDuplicates: true,
+      positionClass: 'toast-bottom-center',
+      progressBar: true,
+    }),
+    importProvidersFrom(MatNativeDateModule),
+    {
+      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+      useValue: { appearance: 'outline' },
+    },
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: 'es-MX',
+    },
+    DatePipe,
   ],
 };
