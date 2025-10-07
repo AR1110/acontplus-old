@@ -71,6 +71,15 @@
 </div>
 
 <mat-nav-list>
+  <app-menu-item [item]="{
+  icon: 'dashboard',
+  label: 'Dashboard',
+  route: 'dashboard',
+  order: 1,
+  data: {
+    breadcrumb: 'Dashboard'
+  }
+  }" [collapsed]="collapsed()"/>
   @for (item of menuItems(); track $index) {
     <app-menu-item [item]="item" [collapsed]="collapsed()"/>
   }

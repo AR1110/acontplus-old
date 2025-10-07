@@ -3,6 +3,7 @@
 @use 'src/styles/theme/_variables.scss' as vars;
 
 .header {
+  background-color: vars.$header-background-color;
   display: flex;
   justify-content: space-between;
   position: fixed;
@@ -16,7 +17,7 @@
 
   &__title-button {
     background-color: vars.$header-button-background-color;
-    box-shadow: vars.$header-button-box-shadow;
+    box-shadow: none;
 
     &:hover {
       background-color: vars.$header-button-background-color-hover;
@@ -45,4 +46,17 @@
 .header-toolbar {
   display: flex;
   align-items: center;
+
+  .unlock-button {
+    border-color: colors.$green;
+    margin-right: 16px;
+    text-transform: uppercase;
+    background-color: colors.$green;
+    color: white;
+
+    letter-spacing: .0892857143em;
+    @media (max-width: vars.$small) {
+      display: none;
+    }
+  }
 }

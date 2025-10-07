@@ -1,8 +1,0 @@
-@use './../theme/_colors.scss' as colors;
-
-@mixin mat-toolbar() {
-  .mat-toolbar {
-    background-color: transparent;
-    color: colors.$grey;
-  }
-}

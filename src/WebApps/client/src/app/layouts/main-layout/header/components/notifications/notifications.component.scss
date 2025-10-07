@@ -1,31 +1,20 @@
-// src/app/styles/notification.scss
 
-// Ya no necesitas importar tu archivo de colores personalizado.
-// Puedes mantener la importación de variables si la usas para otras cosas como breakpoints.
+@use "src/styles/theme/_colors.scss" as colors;
 @use 'src/styles/theme/_variables.scss' as vars;
 
 .notification-button {
-  // 1. El fondo del botón es una acción primaria. Usamos el color 'primary'.
-  background-color: var(--md-sys-color-primary);
+  background-color: colors.$blue;
   box-shadow: none;
   margin-left: 16px;
 
   &__icon {
-    // 2. El ícono sobre el botón primario usa el color 'on-primary'.
-    color: var(--md-sys-color-on-primary);
+    color: colors.$white-35;
   }
 
-  // 3. El estado hover usa 'primary-container' para un efecto sutil y moderno.
   &:hover {
-    background-color: var(--md-sys-color-primary-container);
-
-    // El ícono también debe cambiar de color para mantener el contraste.
-    .notification-button__icon {
-      color: var(--md-sys-color-on-primary-container);
-    }
+    background-color: colors.$black-08;
   }
 
-  // Los media queries no cambian, ya que son de layout, no de color.
   @media (max-width: vars.$small) {
     margin-top: 0;
   }
@@ -33,33 +22,26 @@
 
 .notification-menu {
   &__button {
-    // 4. El hover en un elemento de menú usa un color de superficie sutil.
     &:hover {
-      background-color: var(--md-sys-color-surface-variant);
+      background-color: colors.$blue-white;
     }
   }
 
   &__icon {
-    // 5. Mapeamos tus colores de notificación a los roles semánticos de M3.
-    // El componente ahora se adaptará al tema actual (azul, rosa, etc.).
-
-    &_primary { // Tu antiguo '_blue'
-      color: var(--md-sys-color-primary);
+    &_yellow {
+      color: colors.$yellow;
     }
 
-    &_success { // Tu antiguo '_green'
-      // M3 no tiene un token 'success', así que 'tertiary' es la mejor opción.
-      color: var(--md-sys-color-tertiary);
+    &_green {
+      color: colors.$green;
     }
 
-    &_warning { // Tu antiguo '_yellow'
-      // También podemos mapear 'warning' a 'tertiary' o 'secondary'.
-      color: var(--md-sys-color-tertiary);
+    &_pink {
+      color: colors.$pink;
     }
 
-    &_error { // Tu antiguo '_pink'
-      // M3 tiene un token específico para errores.
-      color: var(--md-sys-color-error);
+    &_blue {
+      color: colors.$blue;
     }
   }
 }

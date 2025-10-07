@@ -45,22 +45,13 @@ import {ThemeTempService} from "@core/services/theme.service";
   styleUrl: './main-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MainLayoutComponent implements OnInit {
-  themeOptions = THEME_OPTIONS;
-//  #themeService = inject(ThemeService);
-    private service= inject(ThemeTempService)
-//  activeTheme = this.#themeService.theme;
-
-
+export class MainLayoutComponent  {
   @ViewChild('sidenav') sidenav!: MatSidenav;
   public isShowSidebar: boolean;
   public mobileQuery: MediaQueryList;
   private mobileQueryListener: () => void;
 
-  constructor(
-    private changeDetectorRef: ChangeDetectorRef,
-    private media: MediaMatcher,
-  ) {
+  constructor(changeDetectorRef: ChangeDetectorRef, media: MediaMatcher) {
     this.mobileQuery = media.matchMedia('(max-width: 1024px)');
     this.mobileQueryListener = () => changeDetectorRef.detectChanges();
     this.mobileQuery.addListener(this.mobileQueryListener);
@@ -71,41 +62,6 @@ export class MainLayoutComponent implements OnInit {
   public ngOnDestroy(): void {
     this.mobileQuery.removeListener(this.mobileQueryListener);
 
-    this.sidenav?.close();
-  }
-
-  public isBlueTheme = true;
-  public isPinkTheme = false;
-  public isGreenTheme = false;
-  public isDarkMode = false;
-
-  public changeThemeOnBlue(): void {
-    this.isBlueTheme = true;
-    this.isPinkTheme = false;
-    this.isGreenTheme = false;
-
-    this.service.setBlueTheme();
-  }
-  public changeThemeOnPink(): void {
-    this.isBlueTheme = false;
-    this.isPinkTheme = true;
-    this.isGreenTheme = false;
-
-    this.service.setPinkTheme();
-  }
-  public changeThemeOnGreen(): void {
-    this.isBlueTheme = false;
-    this.isPinkTheme = false;
-    this.isGreenTheme = true;
-
-    this.service.setGreenTheme();
-  }
-  public onDarkMode(value: boolean): void {
-    this.isDarkMode = value;
-
-    this.service.setDarkMode(value);
-  }
-
-  ngOnInit() {
+    this.sidenav.close();
   }
 }
