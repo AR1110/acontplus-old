@@ -131,13 +131,7 @@ export const routes: Route[] = [
       breadcrumb: 'Transferencia de Mercaderia',
     },
   },
-  {
-    path: 'warehouse',
-    component: WarehouseComponent,
-    data: {
-      breadcrumb: 'Bodega',
-    },
-  },
+
   {
     path: 'inventory-adjustment',
     component: InventoryAdjustmentComponent,

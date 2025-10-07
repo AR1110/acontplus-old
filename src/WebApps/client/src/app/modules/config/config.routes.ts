@@ -1,6 +1,5 @@
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-signature/electronic-signature.component';
-import { TiempoCreditoPageComponent } from '@modules/config/ui/tiempo-credito-page/tiempo-credito-page.component';
 import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
 import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
@@ -14,6 +13,7 @@ import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { ConfigHomeComponent } from './ui/config-home.component';
 import { ShiftComponent } from './ui/shift/shift.component';
 import { Routes } from '@angular/router';
+import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
 
 export const routes: Routes = [
   {
@@ -30,7 +30,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'doc-config-page',
+    path: 'doc-config',
     title: 'Config. Docs',
     component: DocConfigPageComponent,
     data: {
@@ -46,7 +46,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'solicitud-autorizacion',
+    path: 'user-request',
     title: 'Solicitudes de Usuario',
     component: SolicitudAutorizacionComponent,
     data: {
@@ -94,14 +94,6 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'tiempo-credito',
-    title: 'Tiempo de Crédito',
-    component: TiempoCreditoPageComponent,
-    data: {
-      breadcrumb: 'Tiempo de Crédito',
-    },
-  },
-  {
     path: 'excel-import',
     title: 'Importación',
     component: ExcelImportComponent,
@@ -128,6 +120,13 @@ export const routes: Routes = [
     component: ShiftComponent,
     data: {
       breadcrumb: 'Turno',
+    },
+  },
+  {
+    path: 'warehouse',
+    component: WarehouseComponent,
+    data: {
+      breadcrumb: 'Bodega',
     },
   },
 ];
