@@ -6,4 +6,10 @@ export interface Session {
   permissions: string[];
   token: string;
   returnUrl?: string;
+  company: {
+    id: number
+    businessName: string
+    tradeName: string
+    idCard: string
+  }
 }

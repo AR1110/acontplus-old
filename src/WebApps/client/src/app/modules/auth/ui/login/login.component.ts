@@ -1,11 +1,4 @@
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -13,14 +6,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
-import { Router, RouterLink } from '@angular/router';
-import { UAParser } from 'ua-parser-js';
+import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DialogService } from '@core/services/dialog.service';
 import { RoleSelectionComponent } from '@modules/auth/ui/login/role-selection/role-selection.component';
+import { AuthService } from '@modules/auth/domain/auth.service';
+import { AccessAuthorizationComponent } from '@modules/auth/ui/login/access-authorization/access-authorization.component';
 
 @Component({
   selector: 'app-login',
@@ -46,6 +40,7 @@ export class LoginComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
   private tS = inject(ToastrNotificationService);
   private dialogSvc = inject(DialogService);
+  private authSvc = inject(AuthService);
 
   hide = signal(true);
 
@@ -57,10 +52,6 @@ export class LoginComponent implements OnInit {
     rememberMe: [false],
   });
 
-  private parser = new UAParser(navigator.userAgent);
-  private parserResults = this.parser.getResult();
-
-  customerIp = '';
   clickEvent(event: MouseEvent) {
     this.hide.set(!this.hide());
     event.stopPropagation();
@@ -79,34 +70,13 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getPublicIP();
+    this.authSvc.getPublicIP();
   }
 
-  private getPublicIP() {
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(response => {
-        this.customerIp = response.ip;
-      });
-  }
-
-  private openRoleSeleccionModal(userRoles: any, userRolesOriginal: any) {
-    let modalRef = this.dialogSvc.open(RoleSelectionComponent, {
+  private openRoleSeleccionModal() {
+    this.dialogSvc.open(RoleSelectionComponent, {
       size: 'lg',
-      data: {
-        roles: userRoles,
-        userRolesOriginal,
-        parserResults: this.parserResults,
-        customerIp: this.customerIp,
-      },
     });
-
-    // modalRef.subscribe(result => {
-    //     if (result && typeof result === 'object') {
-    //       this.setDataLogin(result.dataLogin, result.dataEstab)
-    //     }
-    //   }
-    // )
   }
 
   login() {
@@ -130,8 +100,8 @@ export class LoginComponent implements OnInit {
     }
 
     const userAgent = JSON.stringify({
-      userAgent: JSON.stringify(this.parserResults),
-      ipAddress: this.customerIp,
+      userAgent: JSON.stringify(this.authSvc.parserResults),
+      ipAddress: this.authSvc.customerIp(),
     });
 
     this._authUseCase
@@ -148,16 +118,26 @@ export class LoginComponent implements OnInit {
           });
           return;
         }
-
         const userRoles = response.userRoles;
         const userRolesOriginal = response.userRolesOriginal;
+
+        this.authSvc.setUserRole(userRoles, userRolesOriginal);
+
         if (userRoles.length > 1) {
-          this.openRoleSeleccionModal(userRoles, userRolesOriginal);
+          this.openRoleSeleccionModal();
           return;
         }
         const dataLogin = userRoles[0];
 
         if (dataLogin.needAuthorization) {
+          const modalRef = this.dialogSvc.open(AccessAuthorizationComponent, {
+            size: 'lg',
+          });
+          modalRef.subscribe(result => {
+            if (result && typeof result === 'object') {
+              this.authSvc.createToken();
+            }
+          });
           return;
         }
 
@@ -166,7 +146,7 @@ export class LoginComponent implements OnInit {
           type: 'success',
           message: response.message,
         });
-        this.router.navigateByUrl('/').then();
+        this.authSvc.goToDashboard();
       });
   }
 }

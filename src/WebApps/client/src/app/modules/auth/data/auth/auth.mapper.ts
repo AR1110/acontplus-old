@@ -11,8 +11,9 @@ export class AuthMapper {
   }
 
   static fromApi(response: any) {
-    const dto = JSON.parse(response.payload as string);
+    const parsed = JSON.parse(response.payload as string);
 
+    const dto = Array.isArray(parsed) ? parsed : [parsed];
     // --- Map modules to tree ---
     const mapModules = (items: any[]): any[] => {
       const nodeMap = new Map<number, any>();
@@ -123,6 +124,7 @@ export class AuthMapper {
         companyId,
         codeRole,
         idCard: item.idCardUser,
+        avatar: 'images/user-avatar.jpg',
       };
       const company = {
         id: item.companyId,

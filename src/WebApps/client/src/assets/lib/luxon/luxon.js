@@ -3632,7 +3632,7 @@ var luxon = (function (exports) {
   /**
    * A Duration object represents a period of time, like "2 months" or "1 day, 1 hour". Conceptually, it's just a map of units to their quantities, accompanied by some additional configuration and methods for creating, parsing, interrogating, transforming, and formatting them. They can be used on their own or in conjunction with other Luxon types; for example, you can use {@link DateTime#plus} to add a Duration object to a DateTime, producing another DateTime.
    *
-   * Here is a brief overview of commonly used methods and getters in Duration:
+   * Here is a brief settings of commonly used methods and getters in Duration:
    *
    * * **Creation** To create a Duration, use {@link Duration.fromMillis}, {@link Duration.fromObject}, or {@link Duration.fromISO}.
    * * **Unit values** See the {@link Duration#years}, {@link Duration#months}, {@link Duration#weeks}, {@link Duration#days}, {@link Duration#hours}, {@link Duration#minutes}, {@link Duration#seconds}, {@link Duration#milliseconds} accessors.
@@ -4579,7 +4579,7 @@ var luxon = (function (exports) {
   /**
    * An Interval object represents a half-open interval of time, where each endpoint is a {@link DateTime}. Conceptually, it's a container for those two endpoints, accompanied by methods for creating, parsing, interrogating, comparing, transforming, and formatting them.
    *
-   * Here is a brief overview of the most commonly used methods and getters in Interval:
+   * Here is a brief settings of the most commonly used methods and getters in Interval:
    *
    * * **Creation** To create an Interval, use {@link Interval.fromDateTimes}, {@link Interval.after}, {@link Interval.before}, or {@link Interval.fromISO}.
    * * **Accessors** Use {@link Interval#start} and {@link Interval#end} to get the start and end.
@@ -6663,7 +6663,7 @@ var luxon = (function (exports) {
    * * A time zone. Each instance is considered in the context of a specific zone (by default the local system's zone).
    * * Configuration properties that effect how output strings are formatted, such as `locale`, `numberingSystem`, and `outputCalendar`.
    *
-   * Here is a brief overview of the most commonly used functionality it provides:
+   * Here is a brief settings of the most commonly used functionality it provides:
    *
    * * **Creation**: To create a DateTime from its components, use one of its factory class methods: {@link DateTime.local}, {@link DateTime.utc}, and (most flexibly) {@link DateTime.fromObject}. To create one from a standard string format, use {@link DateTime.fromISO}, {@link DateTime.fromHTTP}, and {@link DateTime.fromRFC2822}. To create one from a custom string format, use {@link DateTime.fromFormat}. To create one from a native JS date, use {@link DateTime.fromJSDate}.
    * * **Gregorian calendar and time**: To examine the Gregorian properties of a DateTime individually (i.e as opposed to collectively through {@link DateTime#toObject}), use the {@link DateTime#year}, {@link DateTime#month},

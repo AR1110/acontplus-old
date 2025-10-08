@@ -15,14 +15,19 @@ export class AuthWebRepository implements AuthRepository {
   private _url = `${PATHS_API.IDENTITY}${PATHS_AUTH.ACCOUNT}`;
   private http = inject(HttpClient);
 
-  login(credentials: { username: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this._url}login`, credentials).pipe(
+  login(credentials: { username: string; password: string }): Observable<{
+    success: boolean;
+    message: string;
+    userRoles: any[];
+    userRolesOriginal: any[];
+  }> {
+    return this.http.post<ApiResponse>(`${this._url}login`, credentials).pipe(
       map(response => {
         const result = {
           success: false,
           message: '',
-          userRoles: [],
-          userRolesOriginal: [],
+          userRoles: [] as any[],
+          userRolesOriginal: [] as any[],
         };
 
         if (response.code === '0') {
@@ -43,21 +48,21 @@ export class AuthWebRepository implements AuthRepository {
   }
 
   requestAccess(params: any) {
-    return this.http.post<ApiResponse>(`account/requestaccess`, params);
+    return this.http.post<ApiResponse>(`${this._url}requestaccess`, params);
   }
 
   authenticate(params: any) {
-    return this.http.post<ApiResponse>(`account/authenticate`, params);
+    return this.http.post<ApiResponse>(`${this._url}authenticate`, params);
   }
 
   createToken(params: any) {
-    return this.http.post<any>(`account/createtoken`, params).pipe(
+    return this.http.post<any>(`${this._url}createtoken`, params).pipe(
       map(response => {
         const result = {
           success: false,
           message: '',
-          userRoles: [],
-          userRolesOriginal: [],
+          userRoles: [] as any[],
+          userRolesOriginal: [] as any[],
         };
 
         if (response.code === '0') {

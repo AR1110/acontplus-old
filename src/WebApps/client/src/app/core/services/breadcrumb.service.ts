@@ -71,8 +71,12 @@ export class BreadcrumbService {
     }
 
     for (const child of children) {
-      const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
 
+      if (!child.snapshot || !child.snapshot.url) {
+        continue;
+      }
+      const routeSegments = child.snapshot.url.map(seg => seg.path).filter(Boolean);
+      const routeURL = routeSegments.join('/');
       if (routeURL !== '') {
         url += `/${routeURL}`;
       }

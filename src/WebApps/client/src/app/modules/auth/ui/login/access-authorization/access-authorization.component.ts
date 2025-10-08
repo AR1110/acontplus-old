@@ -2,11 +2,12 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatCard } from '@angular/material/card';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '@modules/auth/domain/auth.service';
 
 @Component({
   selector: 'app-access-authorization',
@@ -17,9 +18,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class AccessAuthorizationComponent {
   private authUseCase = inject(AuthUseCase);
+  private authSvc = inject(AuthService);
   private tS = inject(ToastrNotificationService);
   public dialogRef = inject(MatDialogRef<AccessAuthorizationComponent>);
-  readonly params = inject<any>(MAT_DIALOG_DATA);
 
   codes: string[] = ['', '', '', '', '', ''];
   success = false;
@@ -51,7 +52,7 @@ export class AccessAuthorizationComponent {
 
   /** Permite pegar los 6 dígitos */
   onPaste(event: ClipboardEvent) {
-    const data = event.clipboardData?.getData('text') || '';
+    const data = event.clipboardData?.getData('text') ?? '';
     if (/^\d{6}$/.test(data)) {
       this.codes = data.split('');
       this.verifyCode();
@@ -65,11 +66,11 @@ export class AccessAuthorizationComponent {
     const dataSend = {
       senderId: 0,
       receiverId: 0,
-      uuid: this.params.uuid,
+      uuid: this.authSvc.selectedRole().uuid,
       code: Number(code),
     };
 
-    this.authUseCase.authenticate(dataSend).subscribe((response) => {
+    this.authUseCase.authenticate(dataSend).subscribe(response => {
       if (response.code === '0') {
         this.tS.warning({
           message: response.message,
@@ -79,7 +80,7 @@ export class AccessAuthorizationComponent {
       if (response.code == '1') {
         this.success = true;
         setTimeout(() => {
-          this.dialogRef.close(response);
+          this.authSvc.goToDashboard();
         }, 1000);
       }
     });

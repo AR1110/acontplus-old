@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '@core/bootstrap';
 import { debounceTime, tap } from 'rxjs';
+import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 
 @Component({
   selector: 'app-user',
@@ -15,13 +16,9 @@ import { debounceTime, tap } from 'rxjs';
     </button>
 
     <mat-menu #menu="matMenu">
-      <button routerLink="/profile/overview" mat-menu-item>
+      <button routerLink="config/profile/settings" mat-menu-item>
         <mat-icon>account_circle</mat-icon>
         <span>{{ 'profile' | translate }}</span>
-      </button>
-      <button routerLink="/profile/settings" mat-menu-item>
-        <mat-icon>edit</mat-icon>
-        <span>{{ 'edit_profile' | translate }}</span>
       </button>
       <button mat-menu-item (click)="restore()">
         <mat-icon>restore</mat-icon>
@@ -43,9 +40,9 @@ import { debounceTime, tap } from 'rxjs';
   imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, TranslateModule],
 })
 export class UserButton implements OnInit {
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly router = inject(Router);
   private readonly settings = inject(SettingsService);
+  private tokenUseCase = inject(TokenUseCase);
 
   user = {
     avatar: 'images/user-avatar.jpg',
@@ -54,7 +51,8 @@ export class UserButton implements OnInit {
   ngOnInit(): void {}
 
   logout() {
-    this.router.navigateByUrl('/auth/login');
+    this.tokenUseCase.clear();
+    this.router.navigateByUrl('/auth').then()
   }
 
   restore() {

@@ -1,0 +1,82 @@
+<mat-card>
+  <mat-tab-group>
+    <mat-tab label="Empresas Asignadas">
+      <div class="m-16">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Rol</th>
+              <th>Empresa</th>
+              <th>Fecha registro</th>
+              <th>Estado</th>
+            </tr>
+            </thead>
+            <tbody>
+              @for (item of roles; track $index) {
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.companyName }}</td>
+                  <td>{{ item.fechaRegistro }}</td>
+                  <td>
+                            <span class="label label-success">
+                              {{ item.estado ? 'Activo' : 'Inactivo' }}
+                            </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Seguridad">
+      <div class="m-16">
+        <div class="container">
+          <div class="row justify-content-md-center">
+            <div class="col-6 col-lg-6 col-md-6 col-sm-10">
+              <form [formGroup]="passwordForm" autocomplete="off" class="form-field-full">
+                <mat-form-field>
+                  <mat-label>Contraseña</mat-label>
+                  <input matInput
+                    (change)="verifyPassword()"
+                    [type]="isShowPassword ? 'text' : 'password'"
+                    formControlName="password"
+                    placeholder="*******"
+                  />
+                </mat-form-field>
+                <mat-form-field>
+                  <mat-label>Confirmar contraseña</mat-label>
+                  <input
+                    matInput
+                    (change)="verifyPassword()"
+                    [type]="isShowPassword ? 'text' : 'password'"
+                    formControlName="confirmPassword"
+                    placeholder="Repita la contraseña"
+                    autocomplete="new-password"
+                  />
+                </mat-form-field>
+
+                <section class="example-section">
+                  <mat-checkbox (change)="showPassword()" class="example-margin">
+                    Mostrar contraseña
+                  </mat-checkbox>
+                </section>
+
+                <app-theme-button
+                  variant="success"
+                  icon="save"
+                  text="Actualizar Contraseña"
+                  (handleClick)="confirmUpdate()"
+                  [disabled]="!isVerified"
+                ></app-theme-button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</mat-card>

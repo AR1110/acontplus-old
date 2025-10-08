@@ -1,3 +1,4 @@
+import {ProfileSettings} from '@modules/config/ui/profile/settings/settings';
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-signature/electronic-signature.component';
 import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
@@ -14,8 +15,23 @@ import { ConfigHomeComponent } from './ui/config-home.component';
 import { ShiftComponent } from './ui/shift/shift.component';
 import { Routes } from '@angular/router';
 import { WarehouseComponent } from '@inventory/ui/warehouse/warehouse.component';
+import { ProfileLayout } from '@modules/config/ui/profile/layout/layout';
 
 export const routes: Routes = [
+  {
+    path: 'profile',
+    component: ProfileLayout,
+    data: { breadcrumb: 'Perfil' },
+    children: [
+      { path: '', redirectTo: 'settings', pathMatch: 'full' },
+      {
+        path: 'settings',
+        component: ProfileSettings,
+        data: { breadcrumb: 'Configuración de Perfil' }
+      },
+      // { path: 'settings', component: ProfileSettings },
+    ],
+  },
   {
     path: '',
     component: ConfigHomeComponent,

@@ -20,6 +20,7 @@ export class TokenLocalStorageRepository implements TokenRepository {
         userData: session.userData,
         menus: session.menus,
         permissions: session.permissions,
+        company:session.company
       }),
     );
   }
