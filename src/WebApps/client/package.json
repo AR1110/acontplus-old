@@ -33,7 +33,7 @@
     "@fortawesome/free-brands-svg-icons": "^7.0.0",
     "@ng-matero/extensions": "^20.3.1",
     "@ng-select/ng-select": "^15.2.0",
-    "@ngrx/signals": "^20.0.0",
+    "@ngrx/signals": "^20.0.1",
     "@ngx-formly/core": "^7.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
