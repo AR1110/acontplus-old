@@ -11,7 +11,6 @@ export interface Floor {
   rooms?: Room[];
 }
 
-
 export interface FloorTreeNode {
   id: number;
   description: string;
@@ -25,12 +24,11 @@ export interface FloorTreeNode {
   roomId?: number;
   numberTable?: number;
   enabled?: boolean;
-  roomName?:string
-  floorId?:number
+  roomName?: string;
+  floorId?: number;
   code?: string;
 }
 
-
 export class GetFloorsByEstabIdResponse {
-  floors: FloorTreeNode[]=[]
+  floors: FloorTreeNode[] = [];
 }

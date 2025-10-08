@@ -1,10 +1,10 @@
 $utilities: (
-  'object-fit': (
+  "object-fit": (
     property: object-fit,
     class: object,
-    values: contain cover fill none scale-down
+    values: contain cover fill none scale-down,
   ),
-  'object-position': (
+  "object-position": (
     property: object-position,
     class: object,
     values: (
@@ -17,6 +17,6 @@ $utilities: (
       right: right,
       right-top: right top,
       right-bottom: right bottom,
-    )
-  )
+    ),
+  ),
 );

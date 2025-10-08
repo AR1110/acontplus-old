@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+
+# Conventional commit message format validation
+# Allowed types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test
+
+commit_regex='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(.+\))?(!)?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ Invalid commit message format!"
+    echo ""
+    echo "Commit message must follow the Conventional Commits specification:"
+    echo "  <type>[optional scope]: <description>"
+    echo ""
+    echo "Types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add user authentication"
+    echo "  fix(auth): resolve login issue"
+    echo "  docs: update README"
+    echo "  feat!: breaking change to API"
+    echo ""
+    echo "Your commit message:"
+    echo "  $(cat $1)"
+    echo ""
+    exit 1
+fi

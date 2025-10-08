@@ -20,10 +20,8 @@ export class AtsService {
 
   checkValidation<T>(params: T) {
     return this.#http
-      .get<ApiResponse>(
-        `${this.#url}CheckValidation/?json=${JSON.stringify(params)}`,
-      )
-      .pipe(map((response) => response));
+      .get<ApiResponse>(`${this.#url}CheckValidation/?json=${JSON.stringify(params)}`)
+      .pipe(map(response => response));
   }
 
   download<T>(obj: T) {

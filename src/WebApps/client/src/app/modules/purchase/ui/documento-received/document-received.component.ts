@@ -67,7 +67,7 @@ export class DocumentReceivedComponent implements OnInit {
     { key: 'claveAcceso', label: 'No. Aut.', type: 'string' },
     { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
   textSearch = '';
   dataSearch = {
     codDoc: '',
@@ -101,7 +101,7 @@ export class DocumentReceivedComponent implements OnInit {
       });
     }
     const dataEstab = this.establecimientos.find(
-      (estab) => estab.codEstab === this.dataSearch.codEstab,
+      estab => estab.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
       const { isConfirmed } = await Swal.fire({
@@ -120,12 +120,10 @@ export class DocumentReceivedComponent implements OnInit {
   }
 
   loadFilters() {
-    this._documentReceivedUseCase.getDataFilter().subscribe((response) => {
+    this._documentReceivedUseCase.getDataFilter().subscribe(response => {
       this.establecimientos = response.establecimientos;
       this.documentTypes = response.documentTypes;
-      const codEstabFound = this.establecimientos.find(
-        (x) => x.predeterminado,
-      )?.codEstab;
+      const codEstabFound = this.establecimientos.find(x => x.predeterminado)?.codEstab;
       if (codEstabFound) {
         this.dataSearch.codEstab = codEstabFound;
         this.loadData();
@@ -148,7 +146,7 @@ export class DocumentReceivedComponent implements OnInit {
       subcategoryId: this.dataSearch.subcategoryId,
       tipo: 1,
     };
-    this._documentReceivedUseCase.get(dataSearch).subscribe((response) => {
+    this._documentReceivedUseCase.get(dataSearch).subscribe(response => {
       this.documents = response.documents;
       this.pagination().totalRecords = this.documents[0]?.totalRecords ?? 0;
     });
@@ -187,23 +185,21 @@ export class DocumentReceivedComponent implements OnInit {
   async openModalManualUpload() {
     if (!(await this.alertEstabSelected())) return;
 
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+    this._subCategoryUseCase.getAll({}).subscribe(response => {
       this.subcategories = response;
       if (this.subcategories.length > 0) {
         const dialogRef = this._dialogService.open(DocManualUploadComponent, {
           size: 'lg',
           data: {
             codEstab: this.dataSearch.codEstab,
-            nombreComercial: this.establecimientos.find(
-              (x) => x.codEstab == this.dataSearch.codEstab,
-            )?.nombreComercial,
+            nombreComercial: this.establecimientos.find(x => x.codEstab == this.dataSearch.codEstab)
+              ?.nombreComercial,
           },
         });
       } else {
         return this._tS.show({
           type: 'warning',
-          message:
-            'Debe de registrar subcategorías de compra en el módulo de contabilidad',
+          message: 'Debe de registrar subcategorías de compra en el módulo de contabilidad',
         });
       }
     });

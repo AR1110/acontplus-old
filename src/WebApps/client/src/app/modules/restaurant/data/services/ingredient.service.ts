@@ -15,35 +15,27 @@ export class IngredientService {
   #http = inject(HttpClient);
 
   get<T>(params: T) {
-    return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`)
-      .pipe(
-        map((response) => {
-          if (response.code !== '1') {
-            return { ingredients: [], extents: [] };
-          }
+    return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
+      map(response => {
+        if (response.code !== '1') {
+          return { ingredients: [], extents: [] };
+        }
 
-          const { ingredients, extents } = JSON.parse(
-            response.payload as string,
-          );
+        const { ingredients, extents } = JSON.parse(response.payload as string);
 
-          return {
-            ingredients: ingredients || [],
-            extents: extents || [],
-          };
-        }),
-      );
+        return {
+          ingredients: ingredients || [],
+          extents: extents || [],
+        };
+      }),
+    );
   }
 
   put<T>(id: number, data: T) {
-    return this.#http
-      .put<ApiResponse>(`${this.#url}${id}`, data)
-      .pipe(map((response) => response));
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map(response => response));
   }
 
-  search<T extends { textSearch: string }>(
-    data: T,
-  ): Observable<Ingredient[]> {
+  search<T extends { textSearch: string }>(data: T): Observable<Ingredient[]> {
     const query = {
       textSearch: data.textSearch,
       tipo: 2,
@@ -53,11 +45,10 @@ export class IngredientService {
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           if (response.code === '1') {
             const { ingredients } =
-              (response.payload && JSON.parse(response.payload as string)) ||
-              [];
+              (response.payload && JSON.parse(response.payload as string)) || [];
             return ingredients || [];
           }
           return [];

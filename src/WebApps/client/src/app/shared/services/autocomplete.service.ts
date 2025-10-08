@@ -1,18 +1,19 @@
 // services/autocomplete.service.ts
 
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable, of, delay, map} from 'rxjs';
+import { BehaviorSubject, Observable, of, delay, map } from 'rxjs';
 import {
   AutocompleteConfig,
   AutocompleteFilters,
   AutocompleteItem,
-  DEFAULT_AUTOCOMPLETE_CONFIG, SearchFunction, SearchResult
-} from "@shared/models/autocomplete.interfaces";
-import {imgDefault} from "@core/utils/utils";
-
+  DEFAULT_AUTOCOMPLETE_CONFIG,
+  SearchFunction,
+  SearchResult,
+} from '@shared/models/autocomplete.interfaces';
+import { imgDefault } from '@core/utils/utils';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AutocompleteService {
   private historySubject = new BehaviorSubject<AutocompleteItem[]>([]);
@@ -27,7 +28,7 @@ export class AutocompleteService {
     items: AutocompleteItem[],
     query: string,
     filters: AutocompleteFilters,
-    config: AutocompleteConfig
+    config: AutocompleteConfig,
   ): Observable<SearchResult> {
     const filtered = this.filterItems(items, query, filters, config);
     const page = 1; // Para búsqueda local, asumimos página 1
@@ -38,7 +39,7 @@ export class AutocompleteService {
     return of({
       items: pageItems,
       totalCount: filtered.length,
-      hasMore: filtered.length > startIndex + pageSize
+      hasMore: filtered.length > startIndex + pageSize,
     });
   }
 
@@ -47,7 +48,7 @@ export class AutocompleteService {
     items: AutocompleteItem[],
     query: string,
     filters: AutocompleteFilters,
-    config: AutocompleteConfig = DEFAULT_AUTOCOMPLETE_CONFIG
+    config: AutocompleteConfig = DEFAULT_AUTOCOMPLETE_CONFIG,
   ): AutocompleteItem[] {
     if (!query || query.length < (config.minSearchLength || 2)) {
       return [];
@@ -55,7 +56,7 @@ export class AutocompleteService {
 
     let filteredItems = items.filter(item => {
       if (item && typeof item === 'string') {
-        return true
+        return true;
       }
 
       // Buscar por el campo seleccionado
@@ -83,7 +84,7 @@ export class AutocompleteService {
     items: AutocompleteItem[],
     query: string,
     filters: AutocompleteFilters,
-    config: AutocompleteConfig = DEFAULT_AUTOCOMPLETE_CONFIG
+    config: AutocompleteConfig = DEFAULT_AUTOCOMPLETE_CONFIG,
   ): Observable<AutocompleteItem[]> {
     const results = this.filterItems(items, query, filters, config);
     return of(results).pipe(delay(100)); // Simular delay de API
@@ -93,7 +94,7 @@ export class AutocompleteService {
   private getSearchValue(
     item: AutocompleteItem,
     searchBy: string,
-    config: AutocompleteConfig
+    config: AutocompleteConfig,
   ): string {
     const searchField = config.searchFields?.find(field => field.value === searchBy);
     if (searchField) {
@@ -103,20 +104,20 @@ export class AutocompleteService {
     // Fallback a la lógica anterior
     switch (searchBy) {
       case 'description':
-        return item["description"]   || '';
+        return item['description'] || '';
       case 'code':
-        return item["code"]   || item.id?.toString() || '';
+        return item['code'] || item.id?.toString() || '';
       case 'barcode':
-        return item["barcode"]  || '';
+        return item['barcode'] || '';
       case 'email':
-        return   '';
+        return '';
       case 'phone':
-        return   '';
+        return '';
       case 'document':
-        return   '';
+        return '';
       case 'name':
       default:
-        return item.name || item.value   || '';
+        return item.name || item.value || '';
     }
   }
 
@@ -212,10 +213,8 @@ export class AutocompleteService {
     return { ...DEFAULT_AUTOCOMPLETE_CONFIG, ...userConfig };
   }
 
-
-
   createGenericSearchFunction(config: {
-    search (params: any): Observable<any>;
+    search(params: any): Observable<any>;
     queryParam?: string;
     searchByParam?: string;
     pageParam?: string;
@@ -223,15 +222,14 @@ export class AutocompleteService {
     responseMapper?: (response: any) => SearchResult;
   }): SearchFunction {
     return (query: string, filters: AutocompleteFilters, page = 1, pageSize = 10) => {
-
-      const {searchBy, ...rest} = filters;
-      const params =  {
+      const { searchBy, ...rest } = filters;
+      const params = {
         [config.queryParam || 'q']: query,
-          [config.searchByParam || 'searchBy']: searchBy,
+        [config.searchByParam || 'searchBy']: searchBy,
         [config.pageParam || 'page']: page,
         [config.pageSizeParam || 'pageSize']: pageSize,
-        ...rest
-      }
+        ...rest,
+      };
 
       return config.search(params).pipe(
         map(response => {
@@ -240,7 +238,7 @@ export class AutocompleteService {
           }
 
           // Mapper por defecto
-          const items =  response.data || response.items || response;
+          const items = response.data || response.items || response;
           const totalRecords = response.totalRecords || response.totalCount || response.total || 0;
           return {
             items,
@@ -365,12 +363,11 @@ export class AutocompleteService {
             //     ]
             //   }
             // ],
-            totalCount: totalRecords ,
-            hasMore: response.hasMore || false
+            totalCount: totalRecords,
+            hasMore: response.hasMore || false,
           };
-        })
+        }),
       );
     };
   }
-
 }

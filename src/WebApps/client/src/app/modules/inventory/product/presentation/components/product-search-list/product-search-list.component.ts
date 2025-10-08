@@ -18,11 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import {
-  MatRow,
-  MatTableDataSource,
-  MatTableModule,
-} from '@angular/material/table';
+import { MatRow, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
@@ -38,9 +34,7 @@ import { Pagination } from '@shared/models/pagination.model';
   templateUrl: './product-search-list.component.html',
   styleUrl: './product-search-list.component.scss',
 })
-export class ProductSearchListComponent
-  implements OnInit, AfterViewInit, OnChanges
-{
+export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChanges {
   readonly tableData = input<any[]>([]);
 
   @Input() highlightRowIndex!: number;
@@ -79,7 +73,7 @@ export class ProductSearchListComponent
 
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.visibleColumns = this.columns.map((x) => x.columnDef);
+    this.visibleColumns = this.columns.map(x => x.columnDef);
   }
 
   ngAfterViewInit() {
@@ -88,9 +82,9 @@ export class ProductSearchListComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tableData'] && changes['tableData'].currentValue) {
+    if (changes['tableData']?.currentValue) {
       this.columns = structuredClone(this.mainColumns);
-      this.visibleColumns = this.columns.map((x) => x.columnDef);
+      this.visibleColumns = this.columns.map(x => x.columnDef);
       this.pagination.totalRecords = 0;
 
       if (this.tableData().length > 0) {
@@ -106,7 +100,7 @@ export class ProductSearchListComponent
         });
       }
 
-      this.visibleColumns = this.columns.map((x) => x.columnDef);
+      this.visibleColumns = this.columns.map(x => x.columnDef);
       this.makeDynamicTarifa(this.tableData());
     }
   }
@@ -133,9 +127,7 @@ export class ProductSearchListComponent
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput
-        .split(',')
-        .map((str) => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
     }
   }
 

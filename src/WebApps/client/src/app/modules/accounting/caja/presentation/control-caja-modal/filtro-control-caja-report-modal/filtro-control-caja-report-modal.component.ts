@@ -5,26 +5,29 @@ import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-filtro-caja-modal-report-modal',
-  imports: [FormsModule, ThemeButtonComponent, MatCustomDialogComponent,
-  MatFormFieldModule,
+  imports: [
+    FormsModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
     MatSelectModule,
   ],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })
 export class FiltroControlCajaReportModal {
-  private dialogRef = inject(MatDialogRef<FiltroControlCajaReportModal>)
+  private dialogRef = inject(MatDialogRef<FiltroControlCajaReportModal>);
   params = inject<{
-    id: 0,
-    enterKey: false,
-  }>(MAT_DIALOG_DATA)
+    id: 0;
+    enterKey: false;
+  }>(MAT_DIALOG_DATA);
   dataSearch = {
     sortByDefault: 0,
     sortOrder: 'ASC',
@@ -61,15 +64,13 @@ export class FiltroControlCajaReportModal {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async (clave) => {
+          preConfirm: async clave => {
             const obj = {
               typeCheck: 1,
               clave,
             };
 
-            const response = await this.userPermissionSvc
-              .checkHasPermission(obj)
-              .toPromise();
+            const response = await this.userPermissionSvc.checkHasPermission(obj).toPromise();
 
             if (isApiResponse(response)) {
               if (response.code === '0') {
@@ -83,7 +84,7 @@ export class FiltroControlCajaReportModal {
             return true;
           },
           allowOutsideClick: () => Swal.isLoading(),
-        }).then((result) => {
+        }).then(result => {
           if (result.isConfirmed) {
             this.generateReport();
           }
@@ -119,7 +120,7 @@ export class FiltroControlCajaReportModal {
     });
   }
 
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

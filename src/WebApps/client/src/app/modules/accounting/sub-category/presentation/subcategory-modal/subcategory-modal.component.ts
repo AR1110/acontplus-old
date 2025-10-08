@@ -1,38 +1,36 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { Category } from '@accounting/category/domain/category';
-import {ApiResponse } from '@core/models/api-response';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ApiResponse } from '@core/models/api-response';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-subcategory-modal',
-  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent,
-  MatFormFieldModule,
+  imports: [
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
   ],
   templateUrl: './subcategory-modal.component.html',
   styles: ``,
 })
 export class SubcategoryModalComponent implements OnInit {
-  data = inject<Subcategory>(MAT_DIALOG_DATA)
-  categories = signal<Category[]>([])
+  data = inject<Subcategory>(MAT_DIALOG_DATA);
+  categories = signal<Category[]>([]);
   subcategoryForm = new FormGroup({
     id: new FormControl(0),
     categoryId: new FormControl(0, Validators.required),
@@ -57,7 +55,7 @@ export class SubcategoryModalComponent implements OnInit {
   private _subCategoryUseCase = inject(SubCategoryUseCase);
 
   get() {
-    this._subCategoryUseCase.getDataForm().subscribe((response) => {
+    this._subCategoryUseCase.getDataForm().subscribe(response => {
       this.categories.set(response.categories);
     });
   }
@@ -87,13 +85,9 @@ export class SubcategoryModalComponent implements OnInit {
       return;
     }
     if (this.data.id > 0) {
-      this._subCategoryUseCase
-        .update(this.data.id, dataToSave)
-        .subscribe(this.successResponse);
+      this._subCategoryUseCase.update(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this._subCategoryUseCase
-        .create(dataToSave)
-        .subscribe(this.successResponse);
+      this._subCategoryUseCase.create(dataToSave).subscribe(this.successResponse);
     }
   }
 
@@ -106,12 +100,12 @@ export class SubcategoryModalComponent implements OnInit {
   }
 
   successResponse = (response: ApiResponse) => {
-      this.toastService.show({
-        type: response.code === '1' ? 'success' : 'warning',
-        message: response.message,
-      });
-      if (response.code == '1') {
-        this.modalRef.close(response);
-      }
+    this.toastService.show({
+      type: response.code === '1' ? 'success' : 'warning',
+      message: response.message,
+    });
+    if (response.code == '1') {
+      this.modalRef.close(response);
+    }
   };
 }

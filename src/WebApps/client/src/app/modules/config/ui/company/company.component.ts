@@ -1,14 +1,14 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CompanyAddEditModalComponent } from '@modules/config/ui/company/company-add-edit-modal/company-add-edit-modal.component';
 
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {ListCompanyUseCase} from "@modules/config/application/use-cases/company/list-company.use-case";
-import {CompanyList} from "@modules/config/domain/models/company.model";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {DialogService} from "@core/services/dialog.service";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ListCompanyUseCase } from '@modules/config/application/use-cases/company/list-company.use-case';
+import { CompanyList } from '@modules/config/domain/models/company.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-company',
@@ -16,16 +16,15 @@ import {DialogService} from "@core/services/dialog.service";
     BreadcrumbComponent,
     ThemeButtonComponent,
     MatDynamicCardComponent,
-    MatDynamicTableComponent
+    MatDynamicTableComponent,
   ],
   templateUrl: './company.component.html',
 })
 export class CompanyComponent implements OnInit {
-  private $listUseCase = inject(ListCompanyUseCase)
+  private $listUseCase = inject(ListCompanyUseCase);
   dialogSvc = inject(DialogService);
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'ruc', label: 'Ruc', type: 'string' },
@@ -36,14 +35,14 @@ export class CompanyComponent implements OnInit {
     { key: 'direccion', label: 'Dirección', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
-  dataSource = signal<CompanyList[]>([])
+  dataSource = signal<CompanyList[]>([]);
 
   getList() {
     this.$listUseCase.execute().subscribe(response => {
-      this.dataSource.set(response.data)
-    })
+      this.dataSource.set(response.data);
+    });
   }
 
   ngOnInit() {
@@ -52,9 +51,9 @@ export class CompanyComponent implements OnInit {
 
   openModalEdit(item: any) {
     const modalRef = this.dialogSvc.open(CompanyAddEditModalComponent, {
-      data: structuredClone(item) || {}
+      data: structuredClone(item) || {},
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getList();
       }

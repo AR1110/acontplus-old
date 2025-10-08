@@ -23,7 +23,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { PagoDetalleModalComponent } from '@accounting/cuenta-por-pagar/presentation/components/pago-detalle-modal/pago-detalle-modal.component';
 import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 import { MatTooltip } from '@angular/material/tooltip';
-import {CuentaPorPagarUseCase} from "@accounting/cuenta-por-pagar/application/cuenta-por-pagar.use-case";
+import { CuentaPorPagarUseCase } from '@accounting/cuenta-por-pagar/application/cuenta-por-pagar.use-case';
 
 @Component({
   selector: 'app-cuenta-por-pagar-hist-movimiento',
@@ -48,12 +48,10 @@ import {CuentaPorPagarUseCase} from "@accounting/cuenta-por-pagar/application/cu
   styles: ``,
 })
 export class CuentaPorPagarHistMovimientoComponent implements OnInit {
-  readonly dialogRef = inject(
-    MatDialogRef<CuentaPorPagarHistMovimientoComponent>,
-  );
+  readonly dialogRef = inject(MatDialogRef<CuentaPorPagarHistMovimientoComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
-  private useCase = inject(CuentaPorPagarUseCase)
+  private useCase = inject(CuentaPorPagarUseCase);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -64,7 +62,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'expand', label: '', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   cuentaPorPagar = {} as Partial<CuentaPorPagarLista>;
 
@@ -80,10 +78,8 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     this.useCase
       .getHistorialMovimientoByIdCuentaPorPagar(this.data.idCuentaPorPagar)
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
-        this.comprobantesEgreso = new MatTableDataSource(
-          response.comprobantesEgreso,
-        );
+      .subscribe(response => {
+        this.comprobantesEgreso = new MatTableDataSource(response.comprobantesEgreso);
         this.tempHistorialPagos.set(response.historialPagos);
         this.tempPagosDetalle.set(response.pagosDetalle);
       });
@@ -92,7 +88,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   onShowExpanded(row: ComprobanteEgresoLista) {
     this.historialPagos.set(
       this.tempHistorialPagos().filter(
-        (item) => item.idComprobanteEgreso === row.idComprobanteEgreso,
+        item => item.idComprobanteEgreso === row.idComprobanteEgreso,
       ),
     );
   }
@@ -104,7 +100,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   openPagoDetalle(item: HistorialPagoLista) {
     this.dialogSvc.open(PagoDetalleModalComponent, {
       size: 'md',
-      data: this.tempPagosDetalle().filter((pd) => pd.idPago === item.idPago),
+      data: this.tempPagosDetalle().filter(pd => pd.idPago === item.idPago),
     });
   }
 

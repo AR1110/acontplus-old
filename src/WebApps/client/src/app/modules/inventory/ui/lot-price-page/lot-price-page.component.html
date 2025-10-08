@@ -7,28 +7,21 @@
           <mat-label>Tipo Artículo</mat-label>
           <mat-select [(ngModel)]="mainForm.tipo">
             @for (item of tiposArticulo; track $index) {
-            <mat-option [value]="item.code">{{ item.description }}</mat-option>
+              <mat-option [value]="item.code">{{ item.description }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
-        <mat-radio-group
-          aria-label="Select an option catalog"
-          [(ngModel)]="mainForm.opcion"
-        >
-          @for (item of catalogs; track $index){
-          <mat-radio-button [value]="item.code">{{
-            item.description
-          }}</mat-radio-button>
+        <mat-radio-group aria-label="Select an option catalog" [(ngModel)]="mainForm.opcion">
+          @for (item of catalogs; track $index) {
+            <mat-radio-button [value]="item.code">{{ item.description }}</mat-radio-button>
           }
         </mat-radio-group>
       </div>
     </div>
     <mat-divider />
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
-    >
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
       <div class="col">
         <app-sub-category-select-multiple
           [isMat]="true"
@@ -67,25 +60,11 @@
           />
         </mat-form-field>
       </div>
-      <div
-        class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center"
-      >
-        <app-theme-button
-          variant="info"
-          icon="search"
-          text="Buscar"
-          (handleClick)="toSearch()"
-        />
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-center">
+        <app-theme-button variant="info" icon="search" text="Buscar" (handleClick)="toSearch()" />
       </div>
-      <div
-        class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end"
-      >
-        <app-theme-button
-          variant="success"
-          icon="save"
-          text="Guardar"
-          (handleClick)="askToSave()"
-        />
+      <div class="col-xl-5 col-lg-5 col-md-2 col-sm-6 col-12 d-flex align-items-center justify-content-end">
+        <app-theme-button variant="success" icon="save" text="Guardar" (handleClick)="askToSave()" />
       </div>
     </div>
     <mat-divider></mat-divider>
@@ -96,14 +75,9 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
             <mat-form-field class="w-100">
               <mat-label>Opción de cálculo:</mat-label>
-              <mat-select
-                [(ngModel)]="mainForm.optionToCalculate"
-                (selectionChange)="onChangeOptionCalculate()"
-              >
+              <mat-select [(ngModel)]="mainForm.optionToCalculate" (selectionChange)="onChangeOptionCalculate()">
                 @for (item of optionsCalculate; track $index) {
-                <mat-option [value]="item.code">{{
-                  item.description
-                }}</mat-option>
+                  <mat-option [value]="item.code">{{ item.description }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -114,9 +88,7 @@
               <mat-label>Tarifa:</mat-label>
               <mat-select [formControl]="tarifasSelected" multiple>
                 @for (item of tarifas; track $index) {
-                <mat-option [value]="item.idTarifa">{{
-                  item.descripcion
-                }}</mat-option>
+                  <mat-option [value]="item.idTarifa">{{ item.descripcion }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -126,9 +98,7 @@
               <mat-label>Opción PVP:</mat-label>
               <mat-select [(ngModel)]="optionPvp">
                 @for (item of optionsPvps; track $index) {
-                <mat-option [value]="item.code">{{
-                  item.description
-                }}</mat-option>
+                  <mat-option [value]="item.code">{{ item.description }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -138,11 +108,7 @@
       <div class="col-xl-5 col-lg-5 col-md-12 col-sm-12 col-12">
         <mat-form-field class="w-100">
           <mat-label>Valor/Porcentaje:</mat-label>
-          <input
-            matInput
-            type="number"
-            [(ngModel)]="mainForm.valueToCalculate"
-          />
+          <input matInput type="number" [(ngModel)]="mainForm.valueToCalculate" />
           <ng-container matSuffix>
             <button mat-icon-button aria-label="Calcular" (click)="calculate()">
               <svg
@@ -158,12 +124,8 @@
                 class="icon icon-tabler icons-tabler-outline icon-tabler-calculator"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path
-                  d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
-                />
-                <path
-                  d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z"
-                />
+                <path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
+                <path d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z" />
                 <path d="M8 14l0 .01" />
                 <path d="M12 14l0 .01" />
                 <path d="M16 14l0 .01" />
@@ -172,11 +134,7 @@
                 <path d="M16 17l0 .01" />
               </svg>
             </button>
-            <button
-              mat-icon-button
-              aria-label="Calculo manual"
-              (click)="calculateManual()"
-            >
+            <button mat-icon-button aria-label="Calculo manual" (click)="calculateManual()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -202,11 +160,7 @@
                 <path d="M15 6h1" />
               </svg>
             </button>
-            <button
-              mat-icon-button
-              aria-label="Deschacer cambios"
-              (click)="refreshToNestedProducts()"
-            >
+            <button mat-icon-button aria-label="Deschacer cambios" (click)="refreshToNestedProducts()">
               <mat-icon>refresh</mat-icon>
             </button>
           </ng-container>

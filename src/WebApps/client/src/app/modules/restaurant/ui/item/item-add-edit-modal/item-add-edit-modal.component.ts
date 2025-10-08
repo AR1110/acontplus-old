@@ -78,7 +78,7 @@ export class ItemAddEditModalComponent implements OnInit {
     };
 
     selectList.addEventListener('blur', onChange);
-    selectList.addEventListener('keydown', (e) => {
+    selectList.addEventListener('keydown', e => {
       if (e.keyCode == 13) {
         onChange();
       }
@@ -245,7 +245,7 @@ export class ItemAddEditModalComponent implements OnInit {
   }
 
   getRecipes() {
-    this.#recipeService.getByItem(this.data.id).subscribe((response) => {
+    this.#recipeService.getByItem(this.data.id).subscribe(response => {
       this.recipes.set(response.recipes);
     });
   }
@@ -274,7 +274,7 @@ export class ItemAddEditModalComponent implements OnInit {
       itemJson: this.itemForm.value,
       recipeJson: this.recipes(),
     };
-    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe((response) => {
+    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe(response => {
       Swal.fire({
         icon: response.code === '1' ? 'success' : 'warning',
         html: response.message,
@@ -286,7 +286,7 @@ export class ItemAddEditModalComponent implements OnInit {
   }
 
   onIngredientSelected($event: Ingredient) {
-    this.recipes.update((x) => {
+    this.recipes.update(x => {
       return [
         ...x,
         {
@@ -309,7 +309,7 @@ export class ItemAddEditModalComponent implements OnInit {
   }
 
   getExtent(productId: number) {
-    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
+    this.#ingredientService.get({ productId, tipo: 3 }).subscribe(response => {
       const extents = response.extents;
       this.recipes().forEach((e: Recipe, index: number) => {
         if (e.productId === productId) {

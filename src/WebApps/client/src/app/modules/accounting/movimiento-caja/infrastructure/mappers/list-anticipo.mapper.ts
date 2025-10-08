@@ -1,20 +1,20 @@
-import {ApiResponse} from "@core/models/api-response";
+import { ApiResponse } from '@core/models/api-response';
 
 export class ListAnticipoMapper {
-  static toJson(params: any){
-    return  JSON.stringify({
+  static toJson(params: any) {
+    return JSON.stringify({
       tipo: 1,
-      ...params
-    })
+      ...params,
+    });
   }
 
-  static fromJson(response:ApiResponse){
+  static fromJson(response: ApiResponse) {
     let data = [];
-    if(response.code==="1"){
-      const { anticipos=[] } = JSON.parse(response.payload as string)
-      data = anticipos.map((item:any, index: number) => {
+    if (response.code === '1') {
+      const { anticipos = [] } = JSON.parse(response.payload as string);
+      data = anticipos.map((item: any, index: number) => {
         return {
-          index: index +1,
+          index: index + 1,
           idAnticipo: item.idAnticipo,
           idTipoDocumento: item.idTipoDocumento,
           codEstab: item.codEstab,
@@ -29,11 +29,11 @@ export class ListAnticipoMapper {
           codDoc: item.codDoc,
           identificacionUsuario: item.identificacionUsuario,
           totalRecords: item.totalRecords,
-          nomUsuario: item.usuario
-        }
-      })
+          nomUsuario: item.usuario,
+        };
+      });
     }
 
-    return  data;
+    return data;
   }
 }

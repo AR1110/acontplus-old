@@ -5,14 +5,8 @@
     <div class="row">
       <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
         <div class="form-group">
-          <label for="establecimiento"
-            >Establecimiento: <span class="text-danger">*</span></label
-          >
-          <select
-            class="form-select"
-            id="establecimiento"
-            name="establecimiento"
-          >
+          <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+          <select class="form-select" id="establecimiento" name="establecimiento">
             @for (item of establecimientos; track $index) {
               <option [ngValue]="item.codEstab">
                 {{ item.nombreComercial }}
@@ -33,9 +27,7 @@
                 type="checkbox"
               />
             </div>
-            <app-date-range-selection
-              (onChangeDateRange)="onDateRangeSelection($event)"
-            />
+            <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
           </div>
         </div>
       </div>
@@ -43,15 +35,9 @@
     </div>
 
     <div class="row">
-      <div
-        class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center"
-      >
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center">
         <div class="d-grid gap-2 text-center w-100">
-          <button
-            (click)="openDocPaymentModal()"
-            mat-raised-button
-            type="button"
-          >
+          <button (click)="openDocPaymentModal()" mat-raised-button type="button">
             <mat-icon>payments</mat-icon>
             Cobrar
           </button>

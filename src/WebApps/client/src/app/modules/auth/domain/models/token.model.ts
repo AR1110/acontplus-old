@@ -1,5 +1,3 @@
-
-
 export interface TokenModel {
   token: string;
   decodedToken: {
@@ -9,6 +7,5 @@ export interface TokenModel {
     userRoleId?: number;
     exp?: number;
     [key: string]: any;
-  }
+  };
 }
-

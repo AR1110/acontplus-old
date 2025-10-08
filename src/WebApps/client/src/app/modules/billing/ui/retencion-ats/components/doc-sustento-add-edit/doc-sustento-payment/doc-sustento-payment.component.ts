@@ -10,13 +10,7 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-payment',
-  imports: [
-    ReactiveFormsModule,
-    MatInput,
-    MatFormField,
-    MatSelectModule,
-    ThemeButtonComponent,
-  ],
+  imports: [ReactiveFormsModule, MatInput, MatFormField, MatSelectModule, ThemeButtonComponent],
   templateUrl: './doc-sustento-payment.component.html',
   styles: ``,
 })
@@ -27,15 +21,11 @@ export class DocSustentoPaymentComponent {
   paymentGroup = input.required<any>();
   formasPago = input.required<FormaPago[]>();
 
-  private readonly _docSustentoPaymentUseCase = inject(
-    DocSustentoPaymentUseCase,
-  );
+  private readonly _docSustentoPaymentUseCase = inject(DocSustentoPaymentUseCase);
   private readonly _tS = inject(ToastrNotificationService);
 
   async removePayment() {
-    const payments = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('payments') as FormArray;
+    const payments = this.docSustentoArray().at(this.indexDoc()).get('payments') as FormArray;
 
     const paymentSelected = payments.controls[this.indexPayment()].value;
 
@@ -53,7 +43,7 @@ export class DocSustentoPaymentComponent {
       if (isConfirmed) {
         this._docSustentoPaymentUseCase
           .delete(paymentSelected.idRetencionAtsPago)
-          .subscribe((response) => {
+          .subscribe(response => {
             this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
@@ -69,9 +59,7 @@ export class DocSustentoPaymentComponent {
   }
 
   async removeByIndex() {
-    const payments = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('payments') as FormArray;
+    const payments = this.docSustentoArray().at(this.indexDoc()).get('payments') as FormArray;
 
     if (this.indexPayment() >= 0 && this.indexPayment() < payments.length) {
       payments.removeAt(this.indexPayment());
@@ -79,30 +67,26 @@ export class DocSustentoPaymentComponent {
   }
 
   onSave() {
-    const payments = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('payments') as FormArray;
+    const payments = this.docSustentoArray().at(this.indexDoc()).get('payments') as FormArray;
 
     const paymentSelected = payments.controls[this.indexPayment()].value;
 
     if (paymentSelected.idRetencionAtsPago > 0) {
       this._docSustentoPaymentUseCase
         .update(paymentSelected.idRetencionAtsPago, paymentSelected)
-        .subscribe((response) => {
+        .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoPaymentUseCase
-        .create(paymentSelected)
-        .subscribe((response) => {
-          this._tS.show({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
+      this._docSustentoPaymentUseCase.create(paymentSelected).subscribe(response => {
+        this._tS.show({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
         });
+      });
     }
   }
 }

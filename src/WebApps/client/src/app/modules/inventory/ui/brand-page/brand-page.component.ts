@@ -13,24 +13,24 @@ import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.d
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import {BrandUseCase} from "@inventory/domain/usecases/brand.use-case";
+import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
 
 @Component({
-    selector: 'app-brand-page',
-    templateUrl: './brand-page.component.html',
-    imports: [
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-        CustomTableContainerComponent,
-        BrandAddEditDirective,
-    ]
+  selector: 'app-brand-page',
+  templateUrl: './brand-page.component.html',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    CustomTableContainerComponent,
+    BrandAddEditDirective,
+  ],
 })
 export class BrandPageComponent implements OnInit {
-  private _brandUseCase= inject(BrandUseCase);
+  private _brandUseCase = inject(BrandUseCase);
   pagination = signal(new MatPagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<any[]>([]);
@@ -48,11 +48,11 @@ export class BrandPageComponent implements OnInit {
     };
     this.isLoadingResults = true;
     this._brandUseCase.getAll(params).subscribe({
-      next: (response) => {
+      next: response => {
         this.isLoadingResults = false;
         this.dataSource.set(response.brands);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource()[0].totalRecords,
@@ -74,7 +74,7 @@ export class BrandPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -95,9 +95,9 @@ export class BrandPageComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this._brandUseCase.updateStatus(data.idMarca).subscribe((response) => {
+          this._brandUseCase.updateStatus(data.idMarca).subscribe(response => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

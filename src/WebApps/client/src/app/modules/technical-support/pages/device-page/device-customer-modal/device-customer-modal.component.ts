@@ -3,12 +3,9 @@ import { isApiResponse } from '@core/models/api-response';
 
 import { DeviceCustomerService } from '@modules/technical-support/services/device.customer.service';
 
-
 @Component({
   selector: 'app-device-customer-modal',
-  imports: [
-
-  ],
+  imports: [],
   templateUrl: './device-customer-modal.component.html',
   styles: ``,
 })
@@ -24,23 +21,23 @@ export class DeviceCustomerModalComponent implements OnInit {
   }
 
   get() {
-
-    this.deviceCustomerService.get(JSON.stringify({
-      tipo: 1,
-      deviceId: this.params.deviceId
-    })).subscribe({
-      next: (response) => {
-        if (isApiResponse(response)) {
-          console.log(JSON.parse(response.payload as string));
-        }
-      },
-      complete() {
-
-      },
-      error(error) {
-        console.log(error);
-
-      },
-    });
+    this.deviceCustomerService
+      .get(
+        JSON.stringify({
+          tipo: 1,
+          deviceId: this.params.deviceId,
+        }),
+      )
+      .subscribe({
+        next: response => {
+          if (isApiResponse(response)) {
+            console.log(JSON.parse(response.payload as string));
+          }
+        },
+        complete() {},
+        error(error) {
+          console.log(error);
+        },
+      });
   }
 }

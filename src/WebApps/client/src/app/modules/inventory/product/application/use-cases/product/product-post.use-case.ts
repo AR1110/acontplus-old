@@ -5,10 +5,10 @@ import { ApiResponse } from '@core/models/api-response';
 import { Observable } from 'rxjs';
 
 // Define una interfaz para los parámetros
-interface  Params {
+interface Params {
   id: number;
-  data: any;         // Si tienes una estructura específica, cámbialo por una interfaz/estructura definida
-  dataPvp: any;      // Lo mismo para estos dos
+  data: any; // Si tienes una estructura específica, cámbialo por una interfaz/estructura definida
+  dataPvp: any; // Lo mismo para estos dos
   dataUbicacion: any;
   file?: Blob;
 }

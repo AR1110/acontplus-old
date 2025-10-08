@@ -132,11 +132,11 @@ export class UserCustomerAddEditModalComponent implements OnInit {
     const data = {
       ...this.dataForm.value,
       idUsuario: this.params.idUsuario,
-      roleCode: this.roles().find((i) => i.id === this.dataForm.value.roleId)?.roleCode,
+      roleCode: this.roles().find(i => i.id === this.dataForm.value.roleId)?.roleCode,
     };
 
     if (this.isUpdate()) {
-      this.$updateUserCustomerUseCase.execute(data).subscribe((response) => {
+      this.$updateUserCustomerUseCase.execute(data).subscribe(response => {
         this.tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
@@ -148,7 +148,7 @@ export class UserCustomerAddEditModalComponent implements OnInit {
     }
 
     if (this.isAdd()) {
-      this.$createUserCustomerUseCase.execute(data).subscribe((response) => {
+      this.$createUserCustomerUseCase.execute(data).subscribe(response => {
         this.tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

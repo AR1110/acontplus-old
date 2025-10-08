@@ -1,24 +1,15 @@
 <div class="container-upload">
   <div class="avatar-upload">
-    <div
-      class="avatar-preview"
-      [ngStyle]="{ 'background-image': 'url(' + showImgUrl() + ')' }"
-    ></div>
+    <div class="avatar-preview" [ngStyle]="{ 'background-image': 'url(' + showImgUrl() + ')' }"></div>
 
     <div class="avatar-actions">
       <!-- Botón de edición -->
-      <label
-        for="imageUpload"
-        class="edit-button"
-      >
+      <label for="imageUpload" class="edit-button">
         <mat-icon>edit</mat-icon>
       </label>
 
       <!-- Botón de eliminación -->
-      <button
-        class="delete-button"
-        (click)="onDelete()"
-      >
+      <button class="delete-button" (click)="onDelete()">
         <mat-icon>delete</mat-icon>
       </button>
     </div>

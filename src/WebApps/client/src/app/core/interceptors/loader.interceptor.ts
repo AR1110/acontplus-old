@@ -29,7 +29,7 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
   // console.log("No of requests--->" + requests.length);
 
   if (requests.length === 1) {
-    // 
+    //
     overlayService.showSpinner();
   }
 
@@ -46,7 +46,7 @@ export const loaderInterceptor: HttpInterceptorFn = (req, next) => {
     }
 
     if (requests.length === 0) {
-      // 
+      //
       overlayService.hideSpinner();
     }
   }

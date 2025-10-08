@@ -1,22 +1,18 @@
-
-import {ApiResponse} from "@core/models/api-response";
-
+import { ApiResponse } from '@core/models/api-response';
 
 export class FractionalProductGetAllMapper {
+  static fromJson(responseApi: any) {
+    const resultResponse = new ApiResponse();
 
-  static fromJson(responseApi:any){
-    const resultResponse = new ApiResponse()
+    let articulosFraccionado = [];
 
-    let articulosFraccionado = []
+    if (responseApi?.articulosFraccionados) {
+      articulosFraccionado = responseApi.articulosFraccionados || [];
+    }
 
-      if(responseApi && responseApi.articulosFraccionados){
-        articulosFraccionado = responseApi.articulosFraccionados || []
+    console.log(responseApi);
 
-      }
-
-    console.log(responseApi)
-
-    const data = articulosFraccionado.map((item:any, index: number)=>{
+    const data = articulosFraccionado.map((item: any, index: number) => {
       return {
         idArticuloFraccionado: item.idArticuloFraccionado,
         conversion: item.conversion,
@@ -27,20 +23,16 @@ export class FractionalProductGetAllMapper {
         nomMedida: item.medida,
         codigo: item.codigo,
         totalRecords: item.totalRecords,
-        nomEstado: item.estado ? 'Activo': 'Inactivo'
-      }
-    })
+        nomEstado: item.estado ? 'Activo' : 'Inactivo',
+      };
+    });
 
-    const totalRecords = data.length>0? data[0].totalRecords : 0;
+    const totalRecords = data.length > 0 ? data[0].totalRecords : 0;
     resultResponse.payload = {
       data,
-      totalRecords
-
-    }
+      totalRecords,
+    };
 
     return resultResponse;
-
-
   }
-
 }

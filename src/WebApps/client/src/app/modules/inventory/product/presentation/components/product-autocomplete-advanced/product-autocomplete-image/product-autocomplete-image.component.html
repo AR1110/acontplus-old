@@ -1,129 +1,113 @@
-<h1>{{isLoading()}}</h1>
-<div class="product-image-container"
-     [class.loading]="isLoading()"
-     [class.error]="hasError"
-     [class.has-multiple]="hasMultipleImages"
-     (mouseenter)="onMouseEnter()"
-     (mouseleave)="onMouseLeave()">
-
+<h1>{{ isLoading() }}</h1>
+<div
+  class="product-image-container"
+  [class.loading]="isLoading()"
+  [class.error]="hasError"
+  [class.has-multiple]="hasMultipleImages"
+  (mouseenter)="onMouseEnter()"
+  (mouseleave)="onMouseLeave()"
+>
   <!-- Skeleton loader -->
   @if (isLoading()) {
-
-  <div  class="image-skeleton">
-    <div class="skeleton-shimmer"></div>
-  </div>
+    <div class="image-skeleton">
+      <div class="skeleton-shimmer"></div>
+    </div>
   }
 
   <!-- Imagen principal -->
   @if (!isLoading) {
-  <div   class="image-wrapper">
-    <img
-      [src]="currentImageUrl"
-      [alt]="currentImageAlt"
-      [class.zoom]="enableZoom() && isHovered"
-      (load)="onImageLoad()"
-      (error)="onImageError()"
-      #mainImage>
+    <div class="image-wrapper">
+      <img
+        [src]="currentImageUrl"
+        [alt]="currentImageAlt"
+        [class.zoom]="enableZoom() && isHovered"
+        (load)="onImageLoad()"
+        (error)="onImageError()"
+        #mainImage
+      />
 
-    <!-- Overlay con zoom -->
-    @if (enableZoom() && isHovered) {
-    <div   class="zoom-overlay">
-      <mat-icon>zoom_in</mat-icon>
+      <!-- Overlay con zoom -->
+      @if (enableZoom() && isHovered) {
+        <div class="zoom-overlay">
+          <mat-icon>zoom_in</mat-icon>
+        </div>
+      }
     </div>
-
-    }
-  </div>
-
   }
 
   <!-- Error state -->
   @if (hasError) {
-  <div   class="image-error">
-    <mat-icon>broken_image</mat-icon>
-    <span>Sin imagen</span>
-  </div>
-
+    <div class="image-error">
+      <mat-icon>broken_image</mat-icon>
+      <span>Sin imagen</span>
+    </div>
   }
 
   <!-- Badges del producto -->
-<!--  @if (product?.badges?.length) {-->
-<!--  <div  class="product-badges">-->
-<!--    @for ( badge of product.badges; track $index) {-->
-<!--    <div-->
-<!--         class="product-badge"-->
-<!--         [class]="getBadgeClass(badge)"-->
-<!--         [style.background-color]="badge.backgroundColor"-->
-<!--         [style.color]="badge.color">-->
-<!--      {{ getBadgeText(badge) }}-->
-<!--    </div>-->
+  <!--  @if (product?.badges?.length) {-->
+  <!--  <div  class="product-badges">-->
+  <!--    @for ( badge of product.badges; track $index) {-->
+  <!--    <div-->
+  <!--         class="product-badge"-->
+  <!--         [class]="getBadgeClass(badge)"-->
+  <!--         [style.background-color]="badge.backgroundColor"-->
+  <!--         [style.color]="badge.color">-->
+  <!--      {{ getBadgeText(badge) }}-->
+  <!--    </div>-->
 
-<!--    }-->
-<!--  </div>-->
+  <!--    }-->
+  <!--  </div>-->
 
-<!--  }-->
+  <!--  }-->
 
   <!-- Indicador de múltiples imágenes -->
   @if (hasMultipleImages) {
-  <div  class="images-indicator">
-    <div class="images-dots">
-      @for ( img of getDisplayImages(); track $index){
-      <div class="image-dot"
-           [class.active]="$index === currentImageIndex"
-           (click)="selectImage($index)">
+    <div class="images-indicator">
+      <div class="images-dots">
+        @for (img of getDisplayImages(); track $index) {
+          <div class="image-dot" [class.active]="$index === currentImageIndex" (click)="selectImage($index)"></div>
+        }
       </div>
-
-      }
+      <div class="images-count">
+        <mat-icon>photo_library</mat-icon>
+        <span>{{ getTotalImages() }}</span>
+      </div>
     </div>
-    <div class="images-count">
-      <mat-icon>photo_library</mat-icon>
-      <span>{{ getTotalImages() }}</span>
-    </div>
-  </div>
-
   }
 
   <!-- Navegación de imágenes -->
   @if (hasMultipleImages && showNavigation()) {
-  <div   class="image-navigation">
-    <button class="nav-btn prev-btn"
-            (click)="previousImage()"
-            [disabled]="currentImageIndex === 0"
-             >
-      <mat-icon>chevron_left</mat-icon>
-    </button>
+    <div class="image-navigation">
+      <button class="nav-btn prev-btn" (click)="previousImage()" [disabled]="currentImageIndex === 0">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
 
-    <button class="nav-btn next-btn"
-            (click)="nextImage()"
-            [disabled]="currentImageIndex >= getTotalImages() - 1"
-            >
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-  </div>
-
+      <button class="nav-btn next-btn" (click)="nextImage()" [disabled]="currentImageIndex >= getTotalImages() - 1">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
   }
 
   <!-- Stock badge en imagen -->
   @if (showStockBadge()) {
-  <div   class="stock-badge-overlay">
-    <div class="stock-badge"
-         [class.available]="getStockStatus() === 'available'"
-         [class.low]="getStockStatus() === 'low'"
-         [class.out]="getStockStatus() === 'out'">
-      {{ getStockBadgeText() }}
+    <div class="stock-badge-overlay">
+      <div
+        class="stock-badge"
+        [class.available]="getStockStatus() === 'available'"
+        [class.low]="getStockStatus() === 'low'"
+        [class.out]="getStockStatus() === 'out'"
+      >
+        {{ getStockBadgeText() }}
+      </div>
     </div>
-  </div>
-
   }
 
   <!-- Acción de vista rápida -->
   @if (enableQuickView() && isHovered) {
-
-  <div   class="quick-view-action">
-    <button class="quick-view-btn"
-            (click)="onQuickView()"
-            [matTooltip]="'Vista rápida'">
-      <mat-icon>visibility</mat-icon>
-    </button>
-  </div>
+    <div class="quick-view-action">
+      <button class="quick-view-btn" (click)="onQuickView()" [matTooltip]="'Vista rápida'">
+        <mat-icon>visibility</mat-icon>
+      </button>
+    </div>
   }
 </div>

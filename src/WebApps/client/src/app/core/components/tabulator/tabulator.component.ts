@@ -159,7 +159,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   private registerEvents(): void {
-    this._refTabulator.on('cellEdited', (cell) => {
+    this._refTabulator.on('cellEdited', cell => {
       this.cellEdited.emit(cell);
     });
     this._refTabulator.on('rowClick', (e, row) => {

@@ -1,37 +1,38 @@
-import {ApiResponse} from "@core/models/api-response";
-import {GroupedEstab} from "@core/models/estab.model";
-import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {fechaString, formatDate, formatDateToString} from "@core/utils/date.util";
-import {roundNumber} from "@core/utils/round-number.utils";
-import {DECIMALS} from "@core/constants/global.constants";
-import {impuestoDetailAdapter} from "@shared/adapters/impuesto-detail.adapter";
-import {NotaEntregaDetail} from "@sale/domain/models/nota-entrega.model";
-import {NotaEntregaComprobanteEntity, NotaEntregaDetailEntity} from "@sale/data/nota-entrega/nota-entrega.entity";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import { ApiResponse } from '@core/models/api-response';
+import { GroupedEstab } from '@core/models/estab.model';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { fechaString, formatDate, formatDateToString } from '@core/utils/date.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { DECIMALS } from '@core/constants/global.constants';
+import { impuestoDetailAdapter } from '@shared/adapters/impuesto-detail.adapter';
+import { NotaEntregaDetail } from '@sale/domain/models/nota-entrega.model';
+import {
+  NotaEntregaComprobanteEntity,
+  NotaEntregaDetailEntity,
+} from '@sale/data/nota-entrega/nota-entrega.entity';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 interface ToApiSaveParams {
-  comprobante: any
-  details: NotaEntregaDetail[],
-  cuotas: any[],
-  infoAdicionalDoc:any[]
+  comprobante: any;
+  details: NotaEntregaDetail[];
+  cuotas: any[];
+  infoAdicionalDoc: any[];
 }
 
 export class NotaEntregaMapper {
-
-  static fromApiDataFilter(response: ApiResponse){
+  static fromApiDataFilter(response: ApiResponse) {
     const resultData = {
       estabs: [] as GroupedEstab[],
-      estadosDoc: [] as any[]
-    }
+      estadosDoc: [] as any[],
+    };
 
-    if (response.code === "1") {
+    if (response.code === '1') {
       const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
-
 
       const dataToGroup = {
         estabs: tempEstabs,
-        isGroupPuntoEmision: true
-      }
+        isGroupPuntoEmision: true,
+      };
       resultData.estabs = groupEstabUtil(dataToGroup);
       resultData.estadosDoc = estadosDoc;
     }
@@ -39,13 +40,13 @@ export class NotaEntregaMapper {
     return resultData;
   }
 
-  static fromApiGetAll(response: ApiResponse){
+  static fromApiGetAll(response: ApiResponse) {
     const result = {
       data: [] as any[],
-      totalRecords: 0
-    }
-    if (response && response.code === "1") {
-      let [notasEntrega] = JSON.parse(response.payload as string)
+      totalRecords: 0,
+    };
+    if (response && response.code === '1') {
+      let [notasEntrega] = JSON.parse(response.payload as string);
 
       notasEntrega = notasEntrega || [];
 
@@ -68,19 +69,17 @@ export class NotaEntregaMapper {
           codEstado: item.codEstado,
           convertToDoc: item.convertToDoc,
           totalRecords: item.totalRecords,
-        }
-      })
+        };
+      });
       result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
     }
     return result;
   }
 
-
-
-  static fromApiDetalleCompleto(response: ApiResponse){
+  static fromApiDetalleCompleto(response: ApiResponse) {
     const result = {} as any;
-    if (response.code === "1") {
-      const mainData = JSON.parse(response.payload as string)
+    if (response.code === '1') {
+      const mainData = JSON.parse(response.payload as string);
       const [tempHeader, tempCliente, tempDetalles, datosAdicionalesDoc, tiposIva] = mainData;
       const header = tempHeader[0] || {};
       const cliente = tempCliente[0] || {};
@@ -100,17 +99,19 @@ export class NotaEntregaMapper {
           total: header.total,
           tiempoCreditoNombre: header.tiempoCredito,
           empleadoNombre: header.empleado,
-          observacion: header.observacion
+          observacion: header.observacion,
         },
         clienteData: {
           razonSocialComprador: cliente.razonSocialComprador,
           identificacionComprador: cliente.identificacionComprador,
           direccionComprador: cliente.direccionComprador,
-          correo: cliente.correo
+          correo: cliente.correo,
         },
-        detalles: tempDetalles.map((item:any) => {
-          const precioConIva =   item.precioUnitario + item.valorImpuesto;
-          const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+        detalles: tempDetalles.map((item: any) => {
+          const precioConIva = item.precioUnitario + item.valorImpuesto;
+          const total =
+            roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +
+            roundNumber(item.valorImpuesto, DECIMALS.GENERAL);
           return {
             idNotaEntregaDetalle: item.idNotaEntregaDetalle,
             codigo: item.codigo,
@@ -130,31 +131,30 @@ export class NotaEntregaMapper {
             tipoIvaNombre: item.tipoIva,
             pvpNombre: item.pvp,
             precioConIva: roundNumber(precioConIva, DECIMALS.DOS),
-            total:  roundNumber(total, DECIMALS.DOS)
-          }}),
+            total: roundNumber(total, DECIMALS.DOS),
+          };
+        }),
         datosAdicionalesDoc,
-        tiposIva
+        tiposIva,
       };
 
       return result;
     }
 
-    return result
+    return result;
   }
 
-
-
-  static  toApiSave(input: ToApiSaveParams) {
-    const comprobante = this.toApiComprobante(input.comprobante)
+  static toApiSave(input: ToApiSaveParams) {
+    const comprobante = this.toApiComprobante(input.comprobante);
 
     const details = this.toApiDetail(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
-      return{
-        nombre : item.name,
-        valor : item.value
-      }
-    })
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item => {
+      return {
+        nombre: item.name,
+        valor: item.value,
+      };
+    });
 
     return {
       notaEntrega: comprobante,
@@ -162,11 +162,9 @@ export class NotaEntregaMapper {
       impuestos: impuestos,
       infoAdicional: infoAdicionalDoc,
       infoAdicionalArticulo: [],
-      cuotas: input.cuotas
-    }
-
+      cuotas: input.cuotas,
+    };
   }
-
 
   static toApiComprobante(obj: any) {
     const result: NotaEntregaComprobanteEntity = {
@@ -193,14 +191,14 @@ export class NotaEntregaMapper {
       direccionComprador: obj.direccionComprador,
       email: obj.email,
       telefono: obj.telefono,
-      supportId: obj.supportId
-    }
+      supportId: obj.supportId,
+    };
     return result;
   }
 
   static toApiDetail(input: NotaEntregaDetail[]): NotaEntregaDetailEntity[] {
     const results = input.map((item, index) => {
-      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const cantidadTransaccion = item.quantity * (item.conversion || 1);
       const obj = {
         uuid: generateUuidv4(),
         orderIndex: index + 1,
@@ -224,11 +222,10 @@ export class NotaEntregaMapper {
         llevaInventario: item.llevaInventario,
         cantidadTransaccion,
         conversion: item.conversion,
-        precioCostoFraccionado: item.costoFraccionado
-      }
+        precioCostoFraccionado: item.costoFraccionado,
+      };
       return obj;
-    })
+    });
     return results;
   }
-
 }

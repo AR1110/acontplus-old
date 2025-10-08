@@ -1,15 +1,10 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  title="Dispositivos"
-  (close)="onModalClose()"
-/>
+<app-mat-custom-dialog [containerTemplate]="body" title="Dispositivos" (close)="onModalClose()" />
 <ng-template #body>
-
-    <div class="row">
-      <div class="col">
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
+  <div class="row">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
               <th>Nombre</th>
               <th>Modelo</th>
@@ -17,32 +12,29 @@
               <th>Garantía</th>
               <th></th>
             </tr>
-            </thead>
-            <tbody>
-              @for (item of devices(); track $index) {
-                <tr>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.model }}</td>
-                  <td>{{ item.year }}</td>
-                  <td>{{ item.deviceWarranty }}</td>
-                  <td>
-                    <app-theme-button
-                      matStyle="icon"
-                      variant="info"
-                      icon="arrow_forward"
-                      text="Seleccionar Equipo"
-                      (handleClick)="select(item)"
-                    >
-                    </app-theme-button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
+          </thead>
+          <tbody>
+            @for (item of devices(); track $index) {
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.model }}</td>
+                <td>{{ item.year }}</td>
+                <td>{{ item.deviceWarranty }}</td>
+                <td>
+                  <app-theme-button
+                    matStyle="icon"
+                    variant="info"
+                    icon="arrow_forward"
+                    text="Seleccionar Equipo"
+                    (handleClick)="select(item)"
+                  >
+                  </app-theme-button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
-
+  </div>
 </ng-template>
-
-

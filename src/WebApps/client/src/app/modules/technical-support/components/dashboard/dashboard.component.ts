@@ -1,4 +1,4 @@
-import {Component, OnInit, inject} from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 
 import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
@@ -27,52 +27,53 @@ export class DashboardComponent implements OnInit {
   }
 
   get() {
-    this.statsService.get({}).subscribe( (response) => {
-        if (isApiResponse(response) && response.code == '1') {
-          const { stats, totalOrders, totalCustomers, totalEmployes } =
-            JSON.parse(response.payload as string);
-          this.totalOrders = totalOrders;
-          this.totalCustomers = totalCustomers;
-          this.totalEmployes = totalEmployes;
-          const labels = stats.map((item: { name: string }) => item.name);
-          const data = stats.map((item: { total: number }) => item.total);
-          this.chartOrders = new Chart('chartOrders', {
-            type: 'bar',
-            data: {
-              labels: labels,
-              datasets: [
-                {
-                  label: 'Cantidad',
-                  data: data,
-                  borderWidth: 1,
-                },
-              ],
-            },
-            options: {
-              scales: {
-                y: {
-                  ticks: {},
-                },
-                x: {
-                  ticks: {
-                    autoSkip: false,
-                  },
+    this.statsService.get({}).subscribe(response => {
+      if (isApiResponse(response) && response.code == '1') {
+        const { stats, totalOrders, totalCustomers, totalEmployes } = JSON.parse(
+          response.payload as string,
+        );
+        this.totalOrders = totalOrders;
+        this.totalCustomers = totalCustomers;
+        this.totalEmployes = totalEmployes;
+        const labels = stats.map((item: { name: string }) => item.name);
+        const data = stats.map((item: { total: number }) => item.total);
+        this.chartOrders = new Chart('chartOrders', {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Cantidad',
+                data: data,
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                ticks: {},
+              },
+              x: {
+                ticks: {
+                  autoSkip: false,
                 },
               },
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Total Ordenes',
-                  padding: {
-                    top: 10,
-                    bottom: 30,
-                  },
+            },
+            plugins: {
+              title: {
+                display: true,
+                text: 'Total Ordenes',
+                padding: {
+                  top: 10,
+                  bottom: 30,
                 },
               },
-              responsive: true,
             },
-          });
-        }
+            responsive: true,
+          },
+        });
+      }
     });
   }
 

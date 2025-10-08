@@ -4,7 +4,7 @@ export interface UserCustomerPermissionParams {
 }
 
 export interface UserCustomerPermissionSaveEntity {
-  id: number
+  id: number;
   userRoleId: number;
-  permissionsData: string
+  permissionsData: string;
 }

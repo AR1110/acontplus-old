@@ -1,21 +1,21 @@
-@use 'sass:map';
-@use 'sass:meta';
-@use 'sass:list';
+@use "sass:map";
+@use "sass:meta";
+@use "sass:list";
 
-@use 'functions';
-@use 'variables';
-@use 'position';
-@use 'display';
-@use 'flexbox';
-@use 'sizing';
-@use 'spacing';
-@use 'border';
-@use 'rounded';
-@use 'text';
-@use 'alignment';
-@use 'overflow';
-@use 'interaction';
-@use 'object';
+@use "functions";
+@use "variables";
+@use "position";
+@use "display";
+@use "flexbox";
+@use "sizing";
+@use "spacing";
+@use "border";
+@use "rounded";
+@use "text";
+@use "alignment";
+@use "overflow";
+@use "interaction";
+@use "object";
 
 $utilities: functions.map-collect(
   variables.$utilities,
@@ -30,14 +30,14 @@ $utilities: functions.map-collect(
   alignment.$utilities,
   overflow.$utilities,
   interaction.$utilities,
-  object.$utilities,
+  object.$utilities
 );
 
 @each $key, $utility in $utilities {
   $values: map.get($utility, values);
 
   // If the values are a list or string, convert it into a map
-  @if meta.type-of($values) == 'string' or meta.type-of(list.nth($values, 1)) != 'list' {
+  @if meta.type-of($values) == "string" or meta.type-of(list.nth($values, 1)) != "list" {
     $values: list.zip($values, $values);
   }
 
@@ -46,9 +46,9 @@ $utilities: functions.map-collect(
 
   // Utility class maybe empty, (e.g. with position class)
   $property-class-prefix-hyphen: if(
-    $property-class-prefix == '',
+    $property-class-prefix == "",
     $property-class-prefix,
-    $property-class-prefix + '-'
+    $property-class-prefix + "-"
   );
 
   @each $class-modifier, $value in $values {

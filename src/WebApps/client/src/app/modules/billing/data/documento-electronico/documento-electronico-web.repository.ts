@@ -16,9 +16,7 @@ import { catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentoElectronicoWebRepository
-  implements DocumentoElectronicoRepository
-{
+export class DocumentoElectronicoWebRepository implements DocumentoElectronicoRepository {
   private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
   private readonly _http = inject(HttpClient);
   private readonly _sharedService = inject(SharedService);
@@ -27,14 +25,12 @@ export class DocumentoElectronicoWebRepository
   filterDataSubject = new BehaviorSubject<FilterData | null>(null);
 
   authorize(id: number) {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, '')
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, '').pipe(map(response => response));
   }
   cancel(id: number) {
     return this._http
       .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
-      .pipe(map((response) => response));
+      .pipe(map(response => response));
   }
   downloadXml(id: number) {
     return this._http
@@ -57,14 +53,14 @@ export class DocumentoElectronicoWebRepository
     }
 
     return this._http.get<ApiResponse>(`${this._url}GetFilters`).pipe(
-      map((response) => this.processFilterResponse(response)),
-      tap((processedData) => {
+      map(response => this.processFilterResponse(response)),
+      tap(processedData => {
         // Actualizar caché local
         this.filterDataCache = processedData;
         this.filterDataSubject.next(processedData);
         console.log('💾 Datos de filtros actualizados en caché local');
       }),
-      catchError((error) => {
+      catchError(error => {
         console.error('❌ Error al obtener datos de filtros:', error);
 
         // Si hay error y tenemos caché, devolver caché como fallback
@@ -79,14 +75,14 @@ export class DocumentoElectronicoWebRepository
   }
   refreshFilters(): Observable<FilterData> {
     return this._http.get<ApiResponse>(`${this._url}RefreshFilters`).pipe(
-      map((response) => this.processFilterResponse(response)),
-      tap((processedData) => {
+      map(response => this.processFilterResponse(response)),
+      tap(processedData => {
         // Actualizar caché local
         this.filterDataCache = processedData;
         this.filterDataSubject.next(processedData);
         console.log('💾 Datos de filtros actualizados en caché local');
       }),
-      catchError((error) => {
+      catchError(error => {
         console.error('❌ Error al obtener datos de filtros:', error);
 
         // Si hay error y tenemos caché, devolver caché como fallback
@@ -108,7 +104,7 @@ export class DocumentoElectronicoWebRepository
       ...obj,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return { documentosElectronicos: [] };
         }
@@ -126,8 +122,9 @@ export class DocumentoElectronicoWebRepository
    */
   private processFilterResponse(response: ApiResponse): FilterData {
     try {
-      const { tipoDocumentos, estadoDocumentos, estabs, estadoPagos } =
-        JSON.parse(response.payload as string);
+      const { tipoDocumentos, estadoDocumentos, estabs, estadoPagos } = JSON.parse(
+        response.payload as string,
+      );
 
       // Procesar establecimientos con la utilidad existente
       const establecimientos = groupEstabUtil({

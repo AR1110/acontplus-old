@@ -1,4 +1,4 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 
 import {
   FormControl,
@@ -24,11 +24,11 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-medical-history-modal',
@@ -54,7 +54,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   diseases = signal<Disease[]>([]);
   diseasesStatuses = signal<DiseaseStatus[]>([]);
   establecimientos = signal<GroupedEstab[]>([]);
-  healthChecks = signal<HealthCheck[] >([])
+  healthChecks = signal<HealthCheck[]>([]);
   modalIcon = 'add';
   modalTitle = 'Registrar Nuevo';
   medicalHistoryForm = new FormGroup({
@@ -75,20 +75,19 @@ export class MedicalHistoryModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   addBehavior(behaviorId: number, behaviorStatusId: number) {
-    this.behaviorTests.update(r=>[...r, {
-      id: 0,
-      medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
-      behaviorId,
-      behaviorStatusId,
-    }])
+    this.behaviorTests.update(r => [
+      ...r,
+      {
+        id: 0,
+        medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
+        behaviorId,
+        behaviorStatusId,
+      },
+    ]);
   }
 
-  addBehaviorStatus(
-    behaviorId: number,
-    behaviorStatusId: number,
-    dbUp: boolean,
-  ) {
-    if (this.behaviorTests().some((test) => test.behaviorId === behaviorId)) {
+  addBehaviorStatus(behaviorId: number, behaviorStatusId: number, dbUp: boolean) {
+    if (this.behaviorTests().some(test => test.behaviorId === behaviorId)) {
       const behaviorTest = this.behaviorTests().find(
         (check: BehaviorTest) => check.behaviorId === behaviorId,
       );
@@ -106,21 +105,19 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   addDisease(diseaseId: number, diseaseStatusId: number) {
-
-    this.healthChecks.update(r=>[...r, {
-      id: 0,
-      medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
-      diseaseId,
-      diseaseStatusId,
-    }])
+    this.healthChecks.update(r => [
+      ...r,
+      {
+        id: 0,
+        medicalHistoryId: this.data.id > 0 ? this.data.id : 0,
+        diseaseId,
+        diseaseStatusId,
+      },
+    ]);
   }
 
   addDiseaseStatus(diseaseId: number, diseaseStatusId: number, dbUp: boolean) {
-    if (
-      this.healthChecks().some(
-        (check: HealthCheck) => check.diseaseId === diseaseId,
-      )
-    ) {
+    if (this.healthChecks().some((check: HealthCheck) => check.diseaseId === diseaseId)) {
       const healthCheck = this.healthChecks().find(
         (check: HealthCheck) => check.diseaseId === diseaseId,
       );
@@ -138,11 +135,9 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   getById() {
-    this.medicalHistoryService.getById(this.data.id).subscribe((response) => {
+    this.medicalHistoryService.getById(this.data.id).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
-        const { medicalHistory, healthChecks, behaviors } = JSON.parse(
-          response.payload as string,
-        );
+        const { medicalHistory, healthChecks, behaviors } = JSON.parse(response.payload as string);
         const objData = medicalHistory[0];
         this.petSelected.customer = objData.businessName;
         this.petSelected.customerIdCard = objData.idCard;
@@ -162,9 +157,7 @@ export class MedicalHistoryModalComponent implements OnInit {
           this.addDiseaseStatus(value.diseaseId, value.diseaseStatusId, false);
           setTimeout(() => {
             const elementId = `${value.diseaseId}-${value.diseaseStatusId}-chkdds`;
-            const checkbox = document.getElementById(
-              elementId,
-            ) as HTMLInputElement;
+            const checkbox = document.getElementById(elementId) as HTMLInputElement;
             if (checkbox) {
               checkbox.checked = true;
             } else {
@@ -175,17 +168,11 @@ export class MedicalHistoryModalComponent implements OnInit {
 
         this.behaviorTests.set(behaviors);
         behaviors.forEach((value: any) => {
-          this.addBehaviorStatus(
-            value.behaviorId,
-            value.behaviorStatusId,
-            false,
-          );
+          this.addBehaviorStatus(value.behaviorId, value.behaviorStatusId, false);
           setTimeout(() => {
             const elementId = `${value.behaviorId}-${value.behaviorStatusId}-chkbbs`;
 
-            const checkbox = document.getElementById(
-              elementId,
-            ) as HTMLInputElement;
+            const checkbox = document.getElementById(elementId) as HTMLInputElement;
             if (checkbox) {
               checkbox.checked = true;
             } else {
@@ -198,23 +185,17 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   initialLoad() {
-    this.medicalHistoryService.get({ tipo: 2 }).subscribe((response) => {
+    this.medicalHistoryService.get({ tipo: 2 }).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
-        const {
-          behaviors,
-          behaviorsStatuses,
-          diseases,
-          diseasesStatuses,
-          estabs,
-        } = JSON.parse(response.payload as string);
+        const { behaviors, behaviorsStatuses, diseases, diseasesStatuses, estabs } = JSON.parse(
+          response.payload as string,
+        );
         this.behaviors.set(behaviors);
         this.behaviorsStatuses.set(behaviorsStatuses);
         this.diseases.set(diseases);
         this.diseasesStatuses.set(diseasesStatuses);
         this.establecimientos.set(estabs);
-        const dataEstab = this.establecimientos().find(
-          (estab) => estab.defaultEstab,
-        );
+        const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
 
         if (dataEstab) {
           this.medicalHistoryForm.patchValue({
@@ -239,7 +220,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   onPetSelected($event: any) {
-    console.log($event)
+    console.log($event);
     this.petSelected = { ...$event };
     this.medicalHistoryForm.patchValue({ petId: this.petSelected.id });
   }
@@ -263,7 +244,7 @@ export class MedicalHistoryModalComponent implements OnInit {
       healthChecks: this.healthChecks(),
     };
     if (!(this.data.id > 0)) {
-      this.medicalHistoryService.post(dataToSave).subscribe((response) => {
+      this.medicalHistoryService.post(dataToSave).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -275,19 +256,17 @@ export class MedicalHistoryModalComponent implements OnInit {
         }
       });
     } else {
-      this.medicalHistoryService
-        .put(this.data.id, dataToSave)
-        .subscribe((response) => {
-          if (isApiResponse(response)) {
-            this.tS.show({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code == '1') {
-              this.modalRef.close(response);
-            }
+      this.medicalHistoryService.put(this.data.id, dataToSave).subscribe(response => {
+        if (isApiResponse(response)) {
+          this.tS.show({
+            type: response.code == '1' ? 'success' : 'warning',
+            message: response.message,
+          });
+          if (response.code == '1') {
+            this.modalRef.close(response);
           }
-        });
+        }
+      });
     }
   }
 
@@ -307,16 +286,14 @@ export class MedicalHistoryModalComponent implements OnInit {
       behaviorId,
       behaviorStatusId,
     };
-    this.behaviorTestService
-      .put(behaviorTest.id, dataToSave)
-      .subscribe((response) => {
-        if (isApiResponse(response)) {
-          this.tS.show({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-        }
-      });
+    this.behaviorTestService.put(behaviorTest.id, dataToSave).subscribe(response => {
+      if (isApiResponse(response)) {
+        this.tS.show({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      }
+    });
   }
 
   updateHealthCheck(diseaseId: number, diseaseStatusId: number) {
@@ -335,15 +312,13 @@ export class MedicalHistoryModalComponent implements OnInit {
       diseaseId,
       diseaseStatusId,
     };
-    this.healthCheckService
-      .put(healthCheck.id, dataToSave)
-      .subscribe((response) => {
-        if (isApiResponse(response)) {
-          this.tS.show({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-        }
-      });
+    this.healthCheckService.put(healthCheck.id, dataToSave).subscribe(response => {
+      if (isApiResponse(response)) {
+        this.tS.show({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
+      }
+    });
   }
 }

@@ -52,36 +52,40 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   introducingItems = [
     {
       name: 'Suscripción Básica',
-      description: 'Tu plan Básico está por vencer. Renueva ahora para mantener acceso a todas las funciones esenciales.',
+      description:
+        'Tu plan Básico está por vencer. Renueva ahora para mantener acceso a todas las funciones esenciales.',
       link: '/suscripciones/renovar?plan=basico',
     },
     {
       name: 'Suscripción Premium',
-      description: 'La suscripción Premium expirará pronto. Renueva para conservar tus beneficios exclusivos y soporte prioritario.',
+      description:
+        'La suscripción Premium expirará pronto. Renueva para conservar tus beneficios exclusivos y soporte prioritario.',
       link: '/suscripciones/renovar?plan=premium',
     },
     {
       name: 'Suscripción Empresarial',
-      description: 'Tu plan Empresarial está próximo a finalizar. Asegura la continuidad del servicio para tu equipo sin interrupciones.',
+      description:
+        'Tu plan Empresarial está próximo a finalizar. Asegura la continuidad del servicio para tu equipo sin interrupciones.',
       link: '/suscripciones/renovar?plan=empresarial',
     },
     {
       name: 'Suscripción de Prueba',
-      description: 'Tu periodo de prueba está a punto de terminar. Actualiza a un plan de pago para seguir disfrutando del servicio.',
+      description:
+        'Tu periodo de prueba está a punto de terminar. Actualiza a un plan de pago para seguir disfrutando del servicio.',
       link: '/suscripciones/renovar?plan=trial',
     },
     {
       name: 'Recordatorio General',
-      description: 'Algunas de tus suscripciones están por vencer. Revisa tu panel de usuario y evita la suspensión del servicio.',
+      description:
+        'Algunas de tus suscripciones están por vencer. Revisa tu panel de usuario y evita la suspensión del servicio.',
       link: '/suscripciones',
     },
   ];
 
-
   introducingItem = this.introducingItems[this.getRandom(0, 4)];
 
   ngOnInit() {
-    this.notifySubscription = this.settings.notify.subscribe((opts) => {
+    this.notifySubscription = this.settings.notify.subscribe(opts => {
       console.log(opts);
 
       this.updateCharts();

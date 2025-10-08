@@ -16,18 +16,18 @@ import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
 @Component({
-    selector: 'app-subcategory',
-    imports: [
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-        CustomTableContainerComponent,
-        SubCategoryModalDirective,
-    ],
-    templateUrl: './sub-category.component.html'
+  selector: 'app-subcategory',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    CustomTableContainerComponent,
+    SubCategoryModalDirective,
+  ],
+  templateUrl: './sub-category.component.html',
 })
 export class SubCategoryComponent implements OnInit {
   pagination = signal(new MatPagination());
@@ -59,19 +59,19 @@ export class SubCategoryComponent implements OnInit {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    if(this.isLoadingResults) return
+    if (this.isLoadingResults) return;
 
     this.isLoadingResults = true;
 
     this.subCategorySvc.getAll(params).subscribe({
-      next: (categories) => {
+      next: categories => {
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(categories);
         //  this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource.data[0].totalRecords,
@@ -79,7 +79,7 @@ export class SubCategoryComponent implements OnInit {
           });
         }
       },
-      error: (err) => {
+      error: err => {
         this.isLoadingResults = false;
         console.log(err);
       },
@@ -95,7 +95,7 @@ export class SubCategoryComponent implements OnInit {
   }
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -118,23 +118,21 @@ export class SubCategoryComponent implements OnInit {
       });
 
       if (isConfirmed) {
-        this.subCategorySvc
-          .updateStatus(obj.idSubFamilia)
-          .subscribe((response) => {
-            if (response.code === '0') {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
-            }
-            if (response.code === '1') {
-              this.tS.show({
-                type: 'success',
-                message: response.message,
-              });
-              this.getSubcategories();
-            }
-          });
+        this.subCategorySvc.updateStatus(obj.idSubFamilia).subscribe(response => {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+            this.getSubcategories();
+          }
+        });
       }
     } catch (error) {
       console.log(error);

@@ -1,5 +1,4 @@
-
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
@@ -9,17 +8,17 @@ import { MatRadioModule } from '@angular/material/radio';
 import { isValidEmail, isValidField } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import {ApiResponse } from '@core/models/api-response';
+import { ApiResponse } from '@core/models/api-response';
 import { forkJoin, Observable } from 'rxjs';
-import {  MatIconButton} from '@angular/material/button';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {  MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputChipComponent} from "@shared/components/mat-input-chip/mat-input-chip.component";
-import {MatIcon} from "@angular/material/icon";
+import { MatIconButton } from '@angular/material/button';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-estab-add-edit-modal',
@@ -34,14 +33,14 @@ import {MatIcon} from "@angular/material/icon";
     MatSelectModule,
     MatIconButton,
     MatIcon,
-    MatInputChipComponent
+    MatInputChipComponent,
   ],
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,
 })
 export class EstabAddEditModalComponent implements OnInit {
-   params = inject<{
-    id: 0,
+  params = inject<{
+    id: 0;
   }>(MAT_DIALOG_DATA);
 
   modal = inject(MatDialogRef<EstabAddEditModalComponent>);
@@ -77,21 +76,20 @@ export class EstabAddEditModalComponent implements OnInit {
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
 
-  successResponse =   (response: ApiResponse) => {
-
-        if (response.code == '0') {
-          this.tS.show({
-            type: 'warning',
-            message: response.message,
-          });
-        }
-        if (response.code == '1') {
-          this.tS.show({
-            type: 'success',
-            message: response.message,
-          });
-          this.modal.close(response);
-        }
+  successResponse = (response: ApiResponse) => {
+    if (response.code == '0') {
+      this.tS.show({
+        type: 'warning',
+        message: response.message,
+      });
+    }
+    if (response.code == '1') {
+      this.tS.show({
+        type: 'success',
+        message: response.message,
+      });
+      this.modal.close(response);
+    }
   };
 
   private getOnLoadData(): Observable<any> {
@@ -99,10 +97,7 @@ export class EstabAddEditModalComponent implements OnInit {
       this.titleModal = 'Editar Establecimiento';
       this.btnText = 'Actualizar';
 
-      return forkJoin([
-        this.estabSvc.getDataForm(),
-        this.estabSvc.getId(this.params.id),
-      ]);
+      return forkJoin([this.estabSvc.getDataForm(), this.estabSvc.getId(this.params.id)]);
     }
 
     return this.estabSvc.getDataForm();
@@ -110,7 +105,7 @@ export class EstabAddEditModalComponent implements OnInit {
 
   ngOnInit() {
     try {
-      this.getOnLoadData().subscribe((response) => {
+      this.getOnLoadData().subscribe(response => {
         let mainDataForm = {} as any;
         let data = {} as any;
 
@@ -121,13 +116,8 @@ export class EstabAddEditModalComponent implements OnInit {
           mainDataForm = response;
         }
 
-        const {
-          cantones,
-          actividadesEconomica,
-          agentesRetencion,
-          contribuyentes,
-          ambientes,
-        } = mainDataForm;
+        const { cantones, actividadesEconomica, agentesRetencion, contribuyentes, ambientes } =
+          mainDataForm;
         this.cantones.set(cantones);
         this.actividadesEconomica.set(actividadesEconomica);
         this.agentesRetencion.set(agentesRetencion);
@@ -154,9 +144,7 @@ export class EstabAddEditModalComponent implements OnInit {
   }
 
   showInfoTipoContribuyente() {
-    const dataInfo = this.contribuyentes().find(
-      (item) => item.codigo === this.data.contribuyente,
-    );
+    const dataInfo = this.contribuyentes().find(item => item.codigo === this.data.contribuyente);
     if (!this.data.contribuyente || !dataInfo.contribuyenteRimpe) return;
 
     Swal.fire({
@@ -168,14 +156,13 @@ export class EstabAddEditModalComponent implements OnInit {
   showInfoActividadEconomica() {
     if (!this.data.actividad) return;
     const groupActEconomica = this.actividadesEconomica().find(
-      (item) => item.codigo === this.data.actividad,
+      item => item.codigo === this.data.actividad,
     ).grupo;
     Swal.fire({
       icon: 'info',
       html: `<small>${groupActEconomica}</small>`,
     });
   }
-
 
   async save() {
     try {
@@ -248,7 +235,7 @@ export class EstabAddEditModalComponent implements OnInit {
       }
 
       if (this.emails.length > 0) {
-        if (!this.emails().every((item) => isValidEmail(item))) {
+        if (!this.emails().every(item => isValidEmail(item))) {
           this.tS.show({
             type: 'warning',
             message: 'Verifique que los correos  esten ingresado correctamente',
@@ -274,17 +261,13 @@ export class EstabAddEditModalComponent implements OnInit {
       }
 
       this.data.contribuyenteRimpe = this.contribuyentes().find(
-        (item) => item.codigo === this.data.contribuyente,
+        item => item.codigo === this.data.contribuyente,
       ).contribuyenteRimpe;
 
       this.data.telefono =
-        this.telephones().length > 0
-          ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH)
-          : null;
+        this.telephones().length > 0 ? this.telephones().join(SEPARATOR_KEY_CODE.SLASH) : null;
       this.data.correo =
-        this.emails().length > 0
-          ? this.emails().join(SEPARATOR_KEY_CODE.SLASH)
-          : null;
+        this.emails().length > 0 ? this.emails().join(SEPARATOR_KEY_CODE.SLASH) : null;
 
       if (!isValidField(this.data.correo)) {
         this.tS.show({
@@ -306,15 +289,13 @@ export class EstabAddEditModalComponent implements OnInit {
       }
 
       if (this.params.id > 0) {
-        this.estabSvc
-          .put(this.params.id, this.data)
-          .subscribe(this.successResponse);
+        this.estabSvc.put(this.params.id, this.data).subscribe(this.successResponse);
       }
     } catch (error) {
       console.trace(error);
     }
   }
-  close(){
+  close() {
     this.modal.close();
   }
 }

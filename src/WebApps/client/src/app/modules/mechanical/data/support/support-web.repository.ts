@@ -2,138 +2,135 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import {map, Observable} from 'rxjs';
-import { ApiResponse } from "@core/models/api-response";
+import { map, Observable } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
-import {SupportRepository} from "@mechanical/domain/repositories/support.repository";
-import {SupportMapper} from "@mechanical/data/support/support.mapper";
-import {FilterDataSupportMapper} from "@mechanical/data/support/filter-data-support.mapper";
+import { SupportRepository } from '@mechanical/domain/repositories/support.repository';
+import { SupportMapper } from '@mechanical/data/support/support.mapper';
+import { FilterDataSupportMapper } from '@mechanical/data/support/filter-data-support.mapper';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SupportWebRepository extends SupportRepository {
-  #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT}`
-  #http = inject(HttpClient)
-
+  #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT}`;
+  #http = inject(HttpClient);
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({
       ...obj,
-      tipo: 1
-    })
-    return this.#http.get(`${this.#url}?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(
-      map((response: any) =>  SupportMapper.fromApiGetAll(response))
-    )
+      tipo: 1,
+    });
+    return this.#http
+      .get(`${this.#url}?json=${json}`, {
+        context: getNoLoader(),
+      })
+      .pipe(map((response: any) => SupportMapper.fromApiGetAll(response)));
   }
 
-  getDataFilter(){
-    const json = FilterDataSupportMapper.toJson()
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
-      map((response) => FilterDataSupportMapper.fromJson(response))
-    )
+  getDataFilter() {
+    const json = FilterDataSupportMapper.toJson();
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .pipe(map(response => FilterDataSupportMapper.fromJson(response)));
   }
 
   getDataForm() {
     const json = JSON.stringify({
-      tipo: 2
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(
-      map((response) => SupportMapper.fromApiDataForm(response))
-    )
+      tipo: 2,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+        context: getNoLoader(),
+      })
+      .pipe(map(response => SupportMapper.fromApiDataForm(response)));
   }
 
   getId(id: number) {
     const json = JSON.stringify({
       id,
-      tipo: 3
-    })
-    return this.#http.get(`${this.#url}?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(
-      map((response: any) => SupportMapper.fromApiGetId(response))
-    )
+      tipo: 3,
+    });
+    return this.#http
+      .get(`${this.#url}?json=${json}`, {
+        context: getNoLoader(),
+      })
+      .pipe(map((response: any) => SupportMapper.fromApiGetId(response)));
   }
 
-  getDashboard(){
+  getDashboard() {
     const json = JSON.stringify({
-      tipo: 6
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
-      map((response) =>SupportMapper.fromApiDashboard(response))
-    )
+      tipo: 6,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .pipe(map(response => SupportMapper.fromApiDashboard(response)));
   }
 
-  getConvertToAprobDoc(id:number){
+  getConvertToAprobDoc(id: number) {
     const json = JSON.stringify({
       tipo: 5,
-      id
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
-      map((response) => SupportMapper.fromApiGetAprobacion(response)))
+      id,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .pipe(map(response => SupportMapper.fromApiGetAprobacion(response)));
   }
 
-  getDocView(id:number){
+  getDocView(id: number) {
     const json = JSON.stringify({
       tipo: 7,
-      id
-    })
+      id,
+    });
 
-    return this.#http.get(`${this.#url}?json=${json}`).pipe(
-      map((response:any)=>SupportMapper.fromApiDocView(response))
-    )
+    return this.#http
+      .get(`${this.#url}?json=${json}`)
+      .pipe(map((response: any) => SupportMapper.fromApiDocView(response)));
   }
-
 
   override generateSequential(idPuntoEmision: number): Observable<string> {
     const params = {
       tipo: 9,
-      idPuntoEmision
-    }
+      idPuntoEmision,
+    };
     return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
-      map(res=>{
-        let secuencual = "" as string;
-        if(res.code==="1"){
-          const {sequence}=JSON.parse(res.payload as string);
+      map(res => {
+        let secuencual = '' as string;
+        if (res.code === '1') {
+          const { sequence } = JSON.parse(res.payload as string);
 
           secuencual = sequence[0].serieComprobante;
         }
         return secuencual;
-      })
-    )
+      }),
+    );
   }
 
   search<T extends { textSearch: string }>(obj: T) {
     const json = JSON.stringify({
       tipo: 4,
-      textSearch: obj.textSearch
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`,{
-      context: getNoLoader()
-    }).pipe(
-      map((response) => SupportMapper.fromApiSearch(response) )
-    )
+      textSearch: obj.textSearch,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+        context: getNoLoader(),
+      })
+      .pipe(map(response => SupportMapper.fromApiSearch(response)));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data })
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
   }
 
-  remove(id:number){
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`)
+  remove(id: number) {
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`);
   }
 
   putState(id: number, supportStatusId: number) {
-    return this.#http.put<ApiResponse>(`${this.#url}PutState/${id}/${supportStatusId}`, null)
+    return this.#http.put<ApiResponse>(`${this.#url}PutState/${id}/${supportStatusId}`, null);
   }
-
-
 }

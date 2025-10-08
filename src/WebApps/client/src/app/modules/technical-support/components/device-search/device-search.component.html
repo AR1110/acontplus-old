@@ -1,40 +1,22 @@
-
-
 <mat-form-field class="w-100">
   <mat-label>Buscar Equipo</mat-label>
-  <input matInput
-         aria-label="State"
-         [matAutocomplete]="auto"
-         [formControl]="control">
+  <input matInput aria-label="State" [matAutocomplete]="auto" [formControl]="control" />
   <mat-autocomplete #auto="matAutocomplete">
     @for (item of filteredItems | async; track $index) {
-      <mat-option [value]="item.name"   (onSelectionChange)="onDeviceSelect(item)">
-        <span>{{ item.name + ' - ' + item.year + ' - ' + item.modeloName}}</span>
+      <mat-option [value]="item.name" (onSelectionChange)="onDeviceSelect(item)">
+        <span>{{ item.name + ' - ' + item.year + ' - ' + item.modeloName }}</span>
       </mat-option>
     }
   </mat-autocomplete>
   <ng-container matSuffix>
-    @if (device.id > 0 && !clearSearch) {-->
-          <app-theme-button
-            variant="secondary"
-            icon="edit"
-            matStyle="icon"
-            (handleClick)="openModal()"
-          >
-          </app-theme-button>
-        } @else {
-          <app-theme-button
-            variant="secondary"
-            icon="add"
-            matStyle="icon"
-            (handleClick)="openModal()"
-          >
-          </app-theme-button>
-        }
+    @if (device.id > 0 && !clearSearch) {
+      -->
+      <app-theme-button variant="secondary" icon="edit" matStyle="icon" (handleClick)="openModal()"> </app-theme-button>
+    } @else {
+      <app-theme-button variant="secondary" icon="add" matStyle="icon" (handleClick)="openModal()"> </app-theme-button>
+    }
   </ng-container>
 </mat-form-field>
-
-
 
 <!--<div class="input-group">-->
 <!--  <input-->

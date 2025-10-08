@@ -2,10 +2,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { inject, Injectable, signal } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResponsiveService {
-
   private breakpointObserver = inject(BreakpointObserver);
 
   // Definimos las señales (signals) para los diferentes tipos de pantallas
@@ -14,18 +13,15 @@ export class ResponsiveService {
   isDesktop = signal(false);
 
   constructor() {
-    this.breakpointObserver.observe(Breakpoints.Handset)
-      .subscribe(result => {
-        this.isHandset.set(result.matches);
-      });
-      this.breakpointObserver.observe( Breakpoints.Tablet )
-      .subscribe(result => {
-        this.isTablet.set(result.matches);
-      });
-      this.breakpointObserver.observe( Breakpoints.Web )
-      .subscribe(result => {
-        this.isDesktop.set(result.matches);
-      });
+    this.breakpointObserver.observe(Breakpoints.Handset).subscribe(result => {
+      this.isHandset.set(result.matches);
+    });
+    this.breakpointObserver.observe(Breakpoints.Tablet).subscribe(result => {
+      this.isTablet.set(result.matches);
+    });
+    this.breakpointObserver.observe(Breakpoints.Web).subscribe(result => {
+      this.isDesktop.set(result.matches);
+    });
   }
 
   public isMatching(breakpoint: string) {

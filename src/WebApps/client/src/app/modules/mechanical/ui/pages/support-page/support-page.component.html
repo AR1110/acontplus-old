@@ -1,117 +1,94 @@
 @if ($store.isDashboard()) {
-<div class="row">
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    <app-date-range-selection
-      [(checkbox)]="dataSearch.ckDate"
-      (onCheckboxChange)="refresh()"
-      (onChangeDateRange)="onDateRangeSelection($event)"
-      [showInputMaterial]="true"
-      [showMatSuffix]="true"
-    />
-  </div>
-  <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-    <app-company-customer-search
-      (clearSearch)="searchEmptyCompanyCustomer()"
-      (customerSelected)="onCustomerSelected($event)"
-      [isSimpleMode]="true"
-    >
-    </app-company-customer-search>
-  </div>
-  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-    <mat-form-field class="w-100">
-      <mat-label>Placa</mat-label>
-      <input
-        matInput
-        name="licensePlate"
-        autocomplete="off"
-        id="licensePlate"
-        [(ngModel)]="dataSearch.licensePlate"
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <app-date-range-selection
+        [(checkbox)]="dataSearch.ckDate"
+        (onCheckboxChange)="refresh()"
+        (onChangeDateRange)="onDateRangeSelection($event)"
+        [showInputMaterial]="true"
+        [showMatSuffix]="true"
       />
-    </mat-form-field>
-  </div>
-
-  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-    <mat-form-field>
-      <mat-label>Estado</mat-label>
-      <mat-select
-        name="status"
-        id="status"
-        [(ngModel)]="dataSearch.supportStatusId"
-        (selectionChange)="refresh()"
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <app-company-customer-search
+        (clearSearch)="searchEmptyCompanyCustomer()"
+        (customerSelected)="onCustomerSelected($event)"
+        [isSimpleMode]="true"
       >
-        <mat-option [value]="0">--Todos--</mat-option>
-        @for (item of $store.supportStatus(); track $index) {
-        <mat-option [value]="item.id">{{ item.name }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-  </div>
+      </app-company-customer-search>
+    </div>
+    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Placa</mat-label>
+        <input
+          matInput
+          name="licensePlate"
+          autocomplete="off"
+          id="licensePlate"
+          [(ngModel)]="dataSearch.licensePlate"
+        />
+      </mat-form-field>
+    </div>
 
-  <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-    <div class="d-flex flex-row gap-1 justify-content-end">
-      <button
-        mat-icon-button
+    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+      <mat-form-field>
+        <mat-label>Estado</mat-label>
+        <mat-select name="status" id="status" [(ngModel)]="dataSearch.supportStatusId" (selectionChange)="refresh()">
+          <mat-option [value]="0">--Todos--</mat-option>
+          @for (item of $store.supportStatus(); track $index) {
+            <mat-option [value]="item.id">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-        [disabled]="isLoadingResults()"
-        (click)="openModal()"
-      >
-        <mat-icon>add</mat-icon>
-      </button>
-      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
-        <mat-icon>refresh</mat-icon>
-      </button>
+    <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+      <div class="d-flex flex-row gap-1 justify-content-end">
+        <button mat-icon-button [disabled]="isLoadingResults()" (click)="openModal()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
-</div>
-
-}@else {
-
-<div
-  class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3"
->
-  <div class="col">
-    <app-date-range-selection
-      [(checkbox)]="dataSearch.ckDate"
-      (onCheckboxChange)="refresh()"
-      (onChangeDateRange)="onDateRangeSelection($event)"
-      [showInputMaterial]="true"
-      [showMatSuffix]="true"
-    />
-  </div>
-  <div class="col">
-    <app-company-customer-search
-      (clearSearch)="searchEmptyCompanyCustomer()"
-      (customerSelected)="onCustomerSelected($event)"
-      [isSimpleMode]="true"
-    >
-    </app-company-customer-search>
-  </div>
-  <div class="col">
-    <mat-form-field class="w-100">
-      <mat-label>Placa</mat-label>
-      <input
-        matInput
-        name="licensePlate"
-        autocomplete="off"
-        [(ngModel)]="dataSearch.licensePlate"
+} @else {
+  <div class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-3">
+    <div class="col">
+      <app-date-range-selection
+        [(checkbox)]="dataSearch.ckDate"
+        (onCheckboxChange)="refresh()"
+        (onChangeDateRange)="onDateRangeSelection($event)"
+        [showInputMaterial]="true"
+        [showMatSuffix]="true"
       />
-    </mat-form-field>
-  </div>
-  <div class="col">
-    <div class="d-flex flex-row gap-1 justify-content-end">
-      <button
-        mat-icon-button
-        [disabled]="isLoadingResults()"
-        (click)="openModal()"
+    </div>
+    <div class="col">
+      <app-company-customer-search
+        (clearSearch)="searchEmptyCompanyCustomer()"
+        (customerSelected)="onCustomerSelected($event)"
+        [isSimpleMode]="true"
       >
-        <mat-icon>add</mat-icon>
-      </button>
-      <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
-        <mat-icon>refresh</mat-icon>
-      </button>
+      </app-company-customer-search>
+    </div>
+    <div class="col">
+      <mat-form-field class="w-100">
+        <mat-label>Placa</mat-label>
+        <input matInput name="licensePlate" autocomplete="off" [(ngModel)]="dataSearch.licensePlate" />
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <div class="d-flex flex-row gap-1 justify-content-end">
+        <button mat-icon-button [disabled]="isLoadingResults()" (click)="openModal()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
     </div>
   </div>
-</div>
 }
 
 <app-mat-dynamic-table
@@ -137,55 +114,47 @@
       <span>Reporte</span>
     </button>
 
-    @if ($store.isPending()){
-
-    <button mat-menu-item (click)="openModal(item.id)">
-      <mat-icon>edit</mat-icon>
-      <span>Editar</span>
-    </button>
-    } @if ($store.isPending() || $store.isInspection()) {
-
-    <button mat-menu-item (click)="askToDelete(item.id)">
-      <mat-icon>delete</mat-icon>
-      <span>Anular</span>
-    </button>
-    } @if ($store.isPending() ||$store.isProcessing()) {
-
-    <button mat-menu-item (click)="openMaintenance(item.id)">
-      <mat-icon>build</mat-icon>
-      <span>Mantenimiento</span>
-    </button>
-
-    } @if (($store.isPending() || $store.isProcessing() ) && !item.existsInsp) {
-
-    <button mat-menu-item (click)="openModalInspection(item.id)">
-      <mat-icon>engineering</mat-icon>
-      <span>Inspección</span>
-    </button>
-    } @if ($store.isToDeliver()) {
-
-    <button mat-menu-item (click)="askToConvertToDoc(item.id)">
-      <mat-icon>show_chart</mat-icon>
-      <span> Convertir a Aprobación</span>
-    </button>
-
-    } @if ($store.isApproved()) {
-
-    <button mat-menu-item (click)="getDocView(item.id)">
-      <mat-icon>file</mat-icon>
-      <span> Doc. Aprobado</span>
-    </button>
-
+    @if ($store.isPending()) {
+      <button mat-menu-item (click)="openModal(item.id)">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+    }
+    @if ($store.isPending() || $store.isInspection()) {
+      <button mat-menu-item (click)="askToDelete(item.id)">
+        <mat-icon>delete</mat-icon>
+        <span>Anular</span>
+      </button>
+    }
+    @if ($store.isPending() || $store.isProcessing()) {
+      <button mat-menu-item (click)="openMaintenance(item.id)">
+        <mat-icon>build</mat-icon>
+        <span>Mantenimiento</span>
+      </button>
+    }
+    @if (($store.isPending() || $store.isProcessing()) && !item.existsInsp) {
+      <button mat-menu-item (click)="openModalInspection(item.id)">
+        <mat-icon>engineering</mat-icon>
+        <span>Inspección</span>
+      </button>
+    }
+    @if ($store.isToDeliver()) {
+      <button mat-menu-item (click)="askToConvertToDoc(item.id)">
+        <mat-icon>show_chart</mat-icon>
+        <span> Convertir a Aprobación</span>
+      </button>
+    }
+    @if ($store.isApproved()) {
+      <button mat-menu-item (click)="getDocView(item.id)">
+        <mat-icon>file</mat-icon>
+        <span> Doc. Aprobado</span>
+      </button>
     }
   </mat-menu>
 </ng-template>
 
 <ng-template #statusTemplate let-item>
-  @if ($store.isProcessing()){
-  <mat-slide-toggle
-    (change)="putState(item.id)"
-    [(ngModel)]="item.enabled"
-  ></mat-slide-toggle>
-
+  @if ($store.isProcessing()) {
+    <mat-slide-toggle (change)="putState(item.id)" [(ngModel)]="item.enabled"></mat-slide-toggle>
   }
 </ng-template>

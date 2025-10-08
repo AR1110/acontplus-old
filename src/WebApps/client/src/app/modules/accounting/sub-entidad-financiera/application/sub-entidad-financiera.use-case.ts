@@ -1,28 +1,25 @@
-import { Injectable } from "@angular/core";
-import {SubEntidadFinancieraRepository} from "@accounting/sub-entidad-financiera/domain/sub-entidad-financiera.repository";
-
+import { Injectable } from '@angular/core';
+import { SubEntidadFinancieraRepository } from '@accounting/sub-entidad-financiera/domain/sub-entidad-financiera.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class SubEntidadFinancieraUseCase {
-  constructor(private repo: SubEntidadFinancieraRepository) { }
+  constructor(private repo: SubEntidadFinancieraRepository) {}
 
   getAll() {
-    return this.repo.getAll()
+    return this.repo.getAll();
   }
 
   create<T>(data: T) {
-    return this.repo.create(data)
+    return this.repo.create(data);
   }
 
   update<T>(id: number, data: T) {
-    return this.repo.update(id, data)
+    return this.repo.update(id, data);
   }
 
   delete(id: number) {
-    return this.repo.delete(id)
+    return this.repo.delete(id);
   }
-
 }

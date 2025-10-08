@@ -1,30 +1,28 @@
 export const isValidField = <T>(field: T): T | null => {
-  let value:any = field
-  if(typeof field==='string'){
-    value = field.trim()
+  let value: any = field;
+  if (typeof field === 'string') {
+    value = field.trim();
   }
-  const invalidValues: readonly (T | null | undefined | "" | 0)[] = ["", null, undefined, 0];
+  const invalidValues: readonly (T | null | undefined | '' | 0)[] = ['', null, undefined, 0];
 
   return invalidValues.includes(value) ? null : value;
 };
 
-export const removeSpacesInValue = function(value: string) {
+export const removeSpacesInValue = function (value: string) {
   return value.trim();
-}
+};
 
 export const isValidEmail = function (valor: string) {
   return /^[-\w.%+]{1,64}@(?:[A-Z0-9-]{1,63}\.){1,125}[A-Z]{2,63}$/i.test(valor);
-}
-
+};
 
 export const getPermisosLocal = () => {
-  let dataPermisos = localStorage.getItem("permisos");
+  let dataPermisos = localStorage.getItem('permisos');
   if (dataPermisos) {
-    dataPermisos = JSON.parse(dataPermisos)
+    dataPermisos = JSON.parse(dataPermisos);
   }
   return dataPermisos;
-}
-
+};
 
 export function isValidJSON(texto: string) {
   try {
@@ -35,14 +33,10 @@ export function isValidJSON(texto: string) {
   }
 }
 
-
 export function getValidId(id?: number): number | null | undefined {
   if (id === undefined) return undefined;
   return id > 0 ? id : null;
 }
-
-
-
 
 export const imgDefault = () => '/assets/images/img-default.png';
 
@@ -52,16 +46,13 @@ const isNumber = (value: string | number): boolean => {
   return regex.test(value.toString());
 };
 
-
-
 export class ValidatorUtils {
-
   static isValidField<T>(field: T): T | null {
     let value: any = field;
     if (typeof field === 'string') {
       value = field.trim();
     }
-    const invalidValues: readonly (T | null | undefined | "" | 0)[] = ["", null, undefined, 0];
+    const invalidValues: readonly (T | null | undefined | '' | 0)[] = ['', null, undefined, 0];
     return invalidValues.includes(value) ? null : value;
   }
 
@@ -74,7 +65,7 @@ export class ValidatorUtils {
   }
 
   static getPermisosLocal(): any {
-    const dataPermisos = localStorage.getItem("permisos");
+    const dataPermisos = localStorage.getItem('permisos');
     return dataPermisos ? JSON.parse(dataPermisos) : null;
   }
 
@@ -100,7 +91,6 @@ export class ValidatorUtils {
     return regex.test(value.toString());
   }
 
-
   static validAndFormatedRangeSequential(cadena: string): string | null {
     // Verifica si la cadena contiene solo números.
     const formatoValido = /^\d+$/;
@@ -116,6 +106,4 @@ export class ValidatorUtils {
     // Si la cadena es válida, la devolvemos; de lo contrario, retornamos null.
     return formatoValidoFinal.test(cadena) ? cadena : null;
   }
-
-
 }

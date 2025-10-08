@@ -13,6 +13,6 @@ export class StatsService {
   get<T>(parameters: T) {
     return this.http
       .get(`${this.url}?json=${JSON.stringify(parameters)}`)
-      .pipe(map((response) => response));
+      .pipe(map(response => response));
   }
 }

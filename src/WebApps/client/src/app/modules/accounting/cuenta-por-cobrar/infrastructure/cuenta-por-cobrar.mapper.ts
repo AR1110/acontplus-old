@@ -1,11 +1,8 @@
-
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 export class CuentaPorCobrarMapper {
-
-
   static fromApiGetAll(response: any) {
-    const cuentasPorCobrar = response.cuentasPorCobrar || []
+    const cuentasPorCobrar = response.cuentasPorCobrar || [];
     const data = cuentasPorCobrar.map((cxc: any, index: number) => {
       return {
         index: index + 1,
@@ -30,13 +27,12 @@ export class CuentaPorCobrarMapper {
     });
 
     return {
-      data
-    }
+      data,
+    };
   }
 
-
-  static fromApiGetCuotasById(response:any){
-    const cuotas = response.cuotas || []
+  static fromApiGetCuotasById(response: any) {
+    const cuotas = response.cuotas || [];
 
     const data = cuotas.map((cuota: any) => {
       return {
@@ -57,5 +53,4 @@ export class CuentaPorCobrarMapper {
 
     return data;
   }
-
 }

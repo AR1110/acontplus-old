@@ -1,10 +1,5 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -15,13 +10,18 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
 import Swal from 'sweetalert2';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-brand-modal',
-  imports: [ReactiveFormsModule, TabulatorComponent,   ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [
+    ReactiveFormsModule,
+    TabulatorComponent,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+  ],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })
@@ -45,7 +45,7 @@ export class BrandModalComponent implements OnInit {
       Validators.maxLength(100),
     ]),
   });
-  categories =signal<Category[]>([]);
+  categories = signal<Category[]>([]);
   columnNames = [
     {
       title: 'id',
@@ -112,7 +112,7 @@ export class BrandModalComponent implements OnInit {
       width: 150,
     },
   ];
-  data = inject<Brand>(MAT_DIALOG_DATA)
+  data = inject<Brand>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Marca';
   series: Serie[] = [];
@@ -123,11 +123,8 @@ export class BrandModalComponent implements OnInit {
       this.modalTitle = 'Editar Marca';
       this.brandForm.patchValue(this.data);
     }
-    if (
-      this.data.id > 0 &&
-      Number(JSON.parse(this.data.series as string)?.length) > 0
-    ) {
-      this.series = JSON.parse(this.data.series as string) || [];
+    if (this.data.id > 0 && Number(JSON.parse(this.data.series!)?.length) > 0) {
+      this.series = JSON.parse(this.data.series!) || [];
     }
     if (this.data.categoryId > 0) {
       this.brandForm.get('categoryId')?.setValue(this.data.categoryId);
@@ -135,12 +132,12 @@ export class BrandModalComponent implements OnInit {
     this.onGet();
   }
   onGet() {
-    this.categoryService.get({}).subscribe(  (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '1') {
-            this.categories.set(JSON.parse(response.payload as string));
-          }
+    this.categoryService.get({}).subscribe(response => {
+      if (isApiResponse(response)) {
+        if (response.code == '1') {
+          this.categories.set(JSON.parse(response.payload as string));
         }
+      }
     });
   }
   onModalClose() {
@@ -148,7 +145,7 @@ export class BrandModalComponent implements OnInit {
   }
   onSave() {
     if (this.series.length > 0) {
-      this.series.forEach((x) => {
+      this.series.forEach(x => {
         if (!x.code) {
           return this.tS.show({
             type: 'warning',
@@ -170,7 +167,7 @@ export class BrandModalComponent implements OnInit {
     if (this.data.id > 0) {
       this.brandService.put(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this.brandService.post(dataToSave).subscribe(  this.successResponse);
+      this.brandService.post(dataToSave).subscribe(this.successResponse);
     }
   }
   onSerieAdd() {
@@ -188,21 +185,21 @@ export class BrandModalComponent implements OnInit {
       showDenyButton: true,
       denyButtonText: 'No',
       confirmButtonText: 'Si',
-    }).then((response) => {
+    }).then(response => {
       if (response.isConfirmed) {
-        this.serieService.delete(item.id).subscribe(  (response) => {
-            if (isApiResponse(response)) {
-              this.tS.show({
-                type: response.code === '1' ? 'success' : 'warning',
-                message: response.message,
-              });
-              if (response.code === '1') {
-                this.series.splice(
-                  this.series.findIndex((x) => x.id == item.id),
-                  1,
-                );
-              }
+        this.serieService.delete(item.id).subscribe(response => {
+          if (isApiResponse(response)) {
+            this.tS.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
+            if (response.code === '1') {
+              this.series.splice(
+                this.series.findIndex(x => x.id == item.id),
+                1,
+              );
             }
+          }
         });
       }
     });

@@ -5,9 +5,7 @@ import { DocSustentoPaymentRepository } from '@billing/domain/repositories/reten
   providedIn: 'root',
 })
 export class DocSustentoPaymentUseCase {
-  private readonly _docSustentoPaymentRepository = inject(
-    DocSustentoPaymentRepository,
-  );
+  private readonly _docSustentoPaymentRepository = inject(DocSustentoPaymentRepository);
 
   getById(id: number) {
     return this._docSustentoPaymentRepository.getById(id);

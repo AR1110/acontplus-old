@@ -1,7 +1,3 @@
-
-
 export class CategoryMapper {
-  static fromApiGetAll(response:any){
-
-  }
+  static fromApiGetAll(response: any) {}
 }

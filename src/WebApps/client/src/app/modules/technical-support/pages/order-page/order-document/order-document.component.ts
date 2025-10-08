@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
-import {Component, OnInit, inject, signal} from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { FormsModule } from '@angular/forms';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-order-document',
   templateUrl: './order-document.component.html',
   styles: ``,
-  imports: [CommonModule, TabulatorComponent, FormsModule,   MatCustomDialogComponent],
+  imports: [CommonModule, TabulatorComponent, FormsModule, MatCustomDialogComponent],
 })
 export class OrderDocumentComponent implements OnInit {
   private modalRef = inject(MatDialogRef<OrderDocumentComponent>);
@@ -68,12 +68,12 @@ export class OrderDocumentComponent implements OnInit {
   get() {
     const params = { tipo: 5, id: this.data.id };
 
-    this.orderService.get(params).subscribe(  (response: any) => {
-        if (response.code === '1') {
-          const { documento, documentoDetalle } = JSON.parse(response.payload);
-          this.documento = documento;
-          this.documentDetails.set(documentoDetalle)
-        }
+    this.orderService.get(params).subscribe((response: any) => {
+      if (response.code === '1') {
+        const { documento, documentoDetalle } = JSON.parse(response.payload);
+        this.documento = documento;
+        this.documentDetails.set(documentoDetalle);
+      }
     });
   }
 

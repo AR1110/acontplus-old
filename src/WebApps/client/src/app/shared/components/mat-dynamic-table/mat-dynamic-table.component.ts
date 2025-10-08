@@ -38,13 +38,7 @@ import { CommonModule, DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger,
-} from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Pagination } from '@shared/models/pagination.model';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
@@ -70,19 +64,14 @@ import { DYNAMIC_INPUT } from '@shared/input/dynamic-input';
     trigger('detailExpand', [
       state('collapsed,void', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
-      transition(
-        'expanded <=> collapsed',
-        animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)'),
-      ),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
   templateUrl: './mat-dynamic-table.component.html',
   styleUrl: `./mat-dynamic-table.component.scss`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatDynamicTableComponent<T>
-  implements AfterContentInit, OnInit, OnChanges, OnDestroy
-{
+export class MatDynamicTableComponent<T> implements AfterContentInit, OnInit, OnChanges, OnDestroy {
   private viewContainerRef = inject(ViewContainerRef);
   private injector = inject(Injector);
   private embeddedViews: EmbeddedViewRef<any>[] = [];
@@ -105,7 +94,7 @@ export class MatDynamicTableComponent<T>
 
   //agrego por tema de que el rowAllSelected esta mesclado con rowSelected
   //deberia gestionar independientemente rowSelected para cuando seleccionan una fila y rowAllSelected checkbox general
-  returnMultiple = input(true)
+  returnMultiple = input(true);
 
   copyRow = output<T>();
   showExpanded = output<T>();
@@ -142,20 +131,14 @@ export class MatDynamicTableComponent<T>
   isLoadingData = input<boolean>(false);
 
   ngAfterContentInit(): void {
-    this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
-    this.rowDefs.forEach((rowDef) => this.table.addRowDef(rowDef));
-    this.headerRowDefs.forEach((headerRowDef) =>
-      this.table.addHeaderRowDef(headerRowDef),
-    );
+    this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
+    this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
+    this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
 
     if (this.showFooter) {
-      this.footerRowDefs.forEach((footerRowDef) =>
-        this.table.addFooterRowDef(footerRowDef),
-      );
+      this.footerRowDefs.forEach(footerRowDef => this.table.addFooterRowDef(footerRowDef));
     } else {
-      this.footerRowDefs.forEach((footerRowDef) =>
-        this.table.removeFooterRowDef(footerRowDef),
-      );
+      this.footerRowDefs.forEach(footerRowDef => this.table.removeFooterRowDef(footerRowDef));
     }
     // init grid state
     this.selection = new SelectionModel<T>(true, []);
@@ -164,11 +147,11 @@ export class MatDynamicTableComponent<T>
 
   ngOnInit(): void {
     if (!this.visibleColumns) {
-      this.visibleColumns = this.columnDefinitions.map((col) => col.key);
+      this.visibleColumns = this.columnDefinitions.map(col => col.key);
       this.columnDefinitions.forEach((col, index) => (col.index = index));
     }
 
-    if (this.showSelectBox && this.visibleColumns.indexOf('select') < 0) {
+    if (this.showSelectBox && !this.visibleColumns.includes('select')) {
       this.visibleColumns = ['select', ...this.visibleColumns];
     }
   }
@@ -225,13 +208,11 @@ export class MatDynamicTableComponent<T>
     }
 
     // Emit the current selection
-    if(this.returnMultiple()){
+    if (this.returnMultiple()) {
       this.rowSelected.emit([...this._selectedRows]);
-    }else{
+    } else {
       this.rowSelected.emit(row);
     }
-
-
   }
 
   // ----START CHECKBOX LOGIC
@@ -250,16 +231,16 @@ export class MatDynamicTableComponent<T>
       this.selection.clear();
       this._selectedRows.clear();
     } else {
-      this.dataSource.data.forEach((row) => {
+      this.dataSource.data.forEach(row => {
         this.selection.select(row);
         this._selectedRows.add(row);
       });
     }
     // Emit both events to keep parent components in sync
-    if(this.returnMultiple()){
+    if (this.returnMultiple()) {
       this.rowAllSelected.emit([...this.selection.selected]);
       this.rowSelected.emit([...this._selectedRows]);
-    }else{
+    } else {
       this.rowAllSelected.emit([...this.selection.selected]);
     }
   }
@@ -330,6 +311,6 @@ export class MatDynamicTableComponent<T>
 
   ngOnDestroy(): void {
     // Clean up components and views to prevent memory leaks
-    this.embeddedViews.forEach((view) => view.destroy());
+    this.embeddedViews.forEach(view => view.destroy());
   }
 }

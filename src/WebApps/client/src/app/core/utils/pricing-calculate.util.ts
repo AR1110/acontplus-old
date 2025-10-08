@@ -1,10 +1,8 @@
-import { DECIMALS } from "@core/constants/global.constants";
+import { DECIMALS } from '@core/constants/global.constants';
 
-import { div, minus, mul, plus } from "./decimal.util";
+import { div, minus, mul, plus } from './decimal.util';
 
 export const pricingCalculateUtil = {
-
-
   calculateVATAmount(price: number, percentage: number) {
     return (percentage / 100) * price;
   },
@@ -13,11 +11,11 @@ export const pricingCalculateUtil = {
     return price + vatAmount;
   },
   /**
- * Calcula el precio incluyendo un porcentaje dado al precio de venta.
- * @param salePrice El precio original.
- * @param percentage El porcentaje a agregar al precio de venta.
- * @returns El precio de venta calculado incluyendo el porcentaje.
- */
+   * Calcula el precio incluyendo un porcentaje dado al precio de venta.
+   * @param salePrice El precio original.
+   * @param percentage El porcentaje a agregar al precio de venta.
+   * @returns El precio de venta calculado incluyendo el porcentaje.
+   */
   calculatePriceIncludePercentage(price: number, percentage: number): number {
     try {
       const vatAmount = this.calculateVATAmount(price, percentage);
@@ -27,8 +25,6 @@ export const pricingCalculateUtil = {
       return -1;
     }
   },
-
-
 
   /**
    * Función que se emplea en documentos de venta
@@ -45,11 +41,7 @@ export const pricingCalculateUtil = {
       console.log('pricingUtils -> getPrecioIvaConDescuento', error);
       return -1;
     }
-
   },
-
-
-
 
   //calculos con lib decimal js
   /**
@@ -64,7 +56,7 @@ export const pricingCalculateUtil = {
       const tax = div(multiplo, 100, DECIMALS.GENERAL) as number;
       return tax;
     } catch (error) {
-      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error)
+      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error);
     }
   },
 
@@ -80,10 +72,9 @@ export const pricingCalculateUtil = {
       const result = mul(salePrice, cociente, DECIMALS.GENERAL) as number;
       return result + salePrice;
     } catch (error) {
-      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error)
+      throw new Error('pricingUtils -> CALCULO PRECIO CON IVA' + error);
     }
   },
-
 
   /**
    *
@@ -97,10 +88,9 @@ export const pricingCalculateUtil = {
       const resultPercentage = cociente + 1;
       return div(priceWithVat, resultPercentage, DECIMALS.GENERAL) as number;
     } catch (error) {
-      throw new Error('pricingUtils -> CALCULO PRECIO Unitario' + error)
+      throw new Error('pricingUtils -> CALCULO PRECIO Unitario' + error);
     }
   },
-
 
   /**
    *
@@ -108,16 +98,18 @@ export const pricingCalculateUtil = {
    * @param percentageUtility porcentaje utilidad
    * @returns
    */
-  calculatePriceSaleOfValuePercentageUtility: function (unitPrice: number, percentageUtility: number): number {
+  calculatePriceSaleOfValuePercentageUtility: function (
+    unitPrice: number,
+    percentageUtility: number,
+  ): number {
     try {
       const resultDivisorPercentage = percentageUtility / 100;
       const multiplicationResult = unitPrice * resultDivisorPercentage;
       return unitPrice + multiplicationResult;
     } catch (error) {
-      throw new Error('pricingUtils -> calcularPorcentajeUtilidad' + error)
+      throw new Error('pricingUtils -> calcularPorcentajeUtilidad' + error);
     }
   },
-
 
   /**
    *
@@ -142,11 +134,9 @@ export const pricingCalculateUtil = {
     } catch (error) {
       // Captura cualquier error y lo registra en la consola
 
-      throw new Error('pricingUtils -> calculateProfitMarginPercentage' + error)
+      throw new Error('pricingUtils -> calculateProfitMarginPercentage' + error);
     }
   },
-
-
 
   /**
    * Función que se emplea en documentos de venta
@@ -160,11 +150,9 @@ export const pricingCalculateUtil = {
       const discount = Number(resultPercentage) * Number(priceWithVAT);
       return Number(priceWithVAT) - Number(discount);
     } catch (error) {
-      throw new Error('pricingUtils -> getPrecioIvaConDescuento' + error)
+      throw new Error('pricingUtils -> getPrecioIvaConDescuento' + error);
     }
-
   },
-
 
   /**
    *
@@ -177,7 +165,7 @@ export const pricingCalculateUtil = {
       const percentage = Number(discountPercentage) / 100;
       return Number(percentage) * Number(unitPrice);
     } catch (error) {
-      throw new Error('pricingUtils -> getValorDescuento' + error)
+      throw new Error('pricingUtils -> getValorDescuento' + error);
     }
   },
 
@@ -192,12 +180,12 @@ export const pricingCalculateUtil = {
       const percentage = valueDiscount / unitPrice;
       return percentage * 100;
     } catch (error) {
-      throw new Error('pricingUtils -> getPorcentajeDescuento' + error)
+      throw new Error('pricingUtils -> getPorcentajeDescuento' + error);
     }
   },
 
   getValueUtility: (priceSale: number, unitPrice: number): number => {
-    const utilidad = minus(priceSale, unitPrice, DECIMALS.GENERAL) as number
+    const utilidad = minus(priceSale, unitPrice, DECIMALS.GENERAL) as number;
     return utilidad;
   },
 
@@ -207,7 +195,11 @@ export const pricingCalculateUtil = {
     return valorTotal as number;
   },
 
-  calcularSubtotalSinImpuesto: function (precioUnitario: number, cantidad: number, descuento: number) {
+  calcularSubtotalSinImpuesto: function (
+    precioUnitario: number,
+    cantidad: number,
+    descuento: number,
+  ) {
     const totalAntesDescuento = this.calcularTotalAntesDescuento(precioUnitario, cantidad);
     const subtotalSinImpuesto = minus(totalAntesDescuento, descuento, DECIMALS.GENERAL);
     return subtotalSinImpuesto as number;
@@ -215,17 +207,8 @@ export const pricingCalculateUtil = {
 
   // Calcular el total con impuesto
   calcularTotalConImpuesto: function (subtotalSinImpuesto: number, valorImpuesto: number) {
-
     // Sumar el subtotal sin impuestos y el valor del impuesto
     const totalConImpuesto = plus(subtotalSinImpuesto, valorImpuesto, DECIMALS.GENERAL);
     return totalConImpuesto as number;
-
-  }
-
-
-
-}
-
-
-
-
+  },
+};

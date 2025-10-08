@@ -1,4 +1,4 @@
-@if (matStyle() === "basic") {
+@if (matStyle() === 'basic') {
   <button
     mat-button
     [ngClass]="getButtonClasses()"
@@ -22,7 +22,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "raised") {
+} @else if (matStyle() === 'raised') {
   <button
     mat-raised-button
     [ngClass]="getButtonClasses()"
@@ -47,7 +47,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "flat") {
+} @else if (matStyle() === 'flat') {
   <button
     mat-flat-button
     [ngClass]="getButtonClasses()"
@@ -71,7 +71,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "stroked") {
+} @else if (matStyle() === 'stroked') {
   <button
     mat-stroked-button
     [ngClass]="getButtonClasses()"
@@ -95,7 +95,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "icon") {
+} @else if (matStyle() === 'icon') {
   <button
     mat-icon-button
     [ngClass]="getButtonClasses()"
@@ -116,7 +116,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "fab") {
+} @else if (matStyle() === 'fab') {
   <button
     mat-fab
     [ngClass]="getButtonClasses()"
@@ -140,7 +140,7 @@
     }
     <ng-content></ng-content>
   </button>
-} @else if (matStyle() === "mini-fab") {
+} @else if (matStyle() === 'mini-fab') {
   <button
     mat-mini-fab
     [ngClass]="getButtonClasses()"
@@ -177,7 +177,6 @@
     [attr.data-testid]="testId()"
     (click)="handleClick.emit($event)"
   >
-
     <ng-content select="svgIcon"></ng-content>
 
     @if (icon()) {

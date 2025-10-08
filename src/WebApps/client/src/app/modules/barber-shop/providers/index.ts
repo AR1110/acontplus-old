@@ -1,6 +1,3 @@
+import { seatProvider } from '@barber-shop/providers/seat.provider';
 
-import {seatProvider} from "@barber-shop/providers/seat.provider";
-
-export const barberShopProviders = [
-  seatProvider
-];
+export const barberShopProviders = [seatProvider];

@@ -26,7 +26,6 @@ export class FieldDefinition {
   columnType?: ColumnType;
   body?: any;
 
-
   constructor(
     options: {
       value?: any; // T
@@ -118,4 +117,4 @@ export declare type FieldType =
   | 'template'
   | 'custom';
 
-export declare type ColumnType = 'text' | 'component' | 'html' | 'template'
+export declare type ColumnType = 'text' | 'component' | 'html' | 'template';

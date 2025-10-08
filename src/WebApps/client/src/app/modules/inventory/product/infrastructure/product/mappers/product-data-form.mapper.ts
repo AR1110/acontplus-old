@@ -1,10 +1,9 @@
-import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
-import {ApiResponse} from "@core/models/api-response";
-
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ProductDataFormMapper {
-  static  fromJson(response:ApiResponse)  {
+  static fromJson(response: ApiResponse) {
     const {
       brands,
       categories,
@@ -17,33 +16,30 @@ export class ProductDataFormMapper {
       subcategories,
       tags,
       taxes,
-      warehouses
-
+      warehouses,
     } = JSON.parse(response.payload as string);
     const estabs = groupEstabUtil({
       bodegas: warehouses,
-      isGroupBodega: true
-    })
+      isGroupBodega: true,
+    });
 
     return {
-      categorias : categories,
-      decimal : decimal[0],
-      estabs   ,
+      categorias: categories,
+      decimal: decimal[0],
+      estabs,
 
-      etiquetas : tags,
-      marcas : brands,
-      medidas : measures,
-      modelos : models,
-      subCategorias : subcategories,
+      etiquetas: tags,
+      marcas: brands,
+      medidas: measures,
+      modelos: models,
+      subCategorias: subcategories,
 
-      subCategoriasGroup : groupSubCategoryUtil(subcategories),
+      subCategoriasGroup: groupSubCategoryUtil(subcategories),
 
       tarifas: fees,
-      tiposArticulo: productTypes ,
-      tiposIce : ice,
-      tiposIva: taxes ,
-    }
+      tiposArticulo: productTypes,
+      tiposIce: ice,
+      tiposIva: taxes,
+    };
   }
-
-
 }

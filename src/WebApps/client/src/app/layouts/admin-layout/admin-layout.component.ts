@@ -86,7 +86,7 @@ export class AdminLayoutComponent implements OnDestroy {
   constructor() {
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_MEDIAQUERY, TABLET_MEDIAQUERY, MONITOR_MEDIAQUERY])
-      .subscribe((state) => {
+      .subscribe(state => {
         // SidenavOpened must be reset true when layout changes
         this.options.sidenavOpened = true;
 
@@ -95,7 +95,7 @@ export class AdminLayoutComponent implements OnDestroy {
         this.isContentWidthFixed = state.breakpoints[MONITOR_MEDIAQUERY];
       });
 
-    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((e) => {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(e => {
       if (this.isOver) {
         this.sidenav.close();
       }

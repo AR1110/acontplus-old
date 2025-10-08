@@ -1,6 +1,3 @@
-import {notaEntregaProvider} from "@sale/providers/nota-entrega.provider";
+import { notaEntregaProvider } from '@sale/providers/nota-entrega.provider';
 
-
-export const saleProvider = [
- notaEntregaProvider
-]
+export const saleProvider = [notaEntregaProvider];

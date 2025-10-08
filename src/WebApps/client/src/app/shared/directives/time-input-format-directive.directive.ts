@@ -4,8 +4,7 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
   selector: '[appTimeInputFormat]',
 })
 export class TimeInputFormat24Directive {
-
-  constructor(private el: ElementRef) { }
+  constructor(private el: ElementRef) {}
 
   @HostListener('input', ['$event']) onInputChange(event: KeyboardEvent) {
     const input = this.el.nativeElement;

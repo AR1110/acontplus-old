@@ -1,17 +1,9 @@
-import {Component, inject, signal, ViewChild, ViewEncapsulation, OnInit} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, signal, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { isApiResponse } from '@core/models/api-response';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { isValidField } from '@core/utils/utils';
@@ -29,15 +21,15 @@ import {
   formatDateToString,
   isDateValid,
 } from '@core/utils/date.util';
-import {   DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {DialogService} from "@core/services/dialog.service";
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-order-modal',
@@ -146,7 +138,7 @@ export class OrderModalComponent implements OnInit {
   clearSearch = true;
   currentDate = new Date();
   customerBusinessName = '';
-  data= inject<any>(MAT_DIALOG_DATA)
+  data = inject<any>(MAT_DIALOG_DATA);
   deviceFound: any = {};
   devices = signal<any>([]);
   establecimientos = signal<GroupedEstab[]>([]);
@@ -171,7 +163,7 @@ export class OrderModalComponent implements OnInit {
   });
 
   addDetail(device: any) {
-    if (this.orderDetails().some((x) => x.deviceId == device.id)) {
+    if (this.orderDetails().some(x => x.deviceId == device.id)) {
       return this.tS.show({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
@@ -187,29 +179,17 @@ export class OrderModalComponent implements OnInit {
     };
     deviceToAdd.deviceId = device.id;
     deviceToAdd.deviceCustomerId = device.deviceCustomerId;
-    deviceToAdd.deviceName = !device.deviceName
-      ? device.name
-      : device.deviceName;
-    deviceToAdd.deviceSerie = !device.deviceSerie
-      ? device.serie
-      : device.deviceSerie;
-    deviceToAdd.deviceWarranty = !device.deviceWarranty
-      ? device.warranty
-      : device.deviceWarranty;
+    deviceToAdd.deviceName = !device.deviceName ? device.name : device.deviceName;
+    deviceToAdd.deviceSerie = !device.deviceSerie ? device.serie : device.deviceSerie;
+    deviceToAdd.deviceWarranty = !device.deviceWarranty ? device.warranty : device.deviceWarranty;
     deviceToAdd.obs = '';
     deviceToAdd.uuid = generateUuidv4();
     deviceToAdd.assignedUserId = 0;
-    deviceToAdd.deviceCustomerId = !device.deviceCustomerId
-      ? 0
-      : device.deviceCustomerId;
-    deviceToAdd.deviceCustomerId = !device.deviceCustomerId
-      ? 0
-      : device.deviceCustomerId;
+    deviceToAdd.deviceCustomerId = !device.deviceCustomerId ? 0 : device.deviceCustomerId;
+    deviceToAdd.deviceCustomerId = !device.deviceCustomerId ? 0 : device.deviceCustomerId;
     deviceToAdd.deviceSerie = !device.deviceSerie ? 0 : device.deviceSerie;
-    deviceToAdd.deviceWarranty = !device.deviceWarranty
-      ? ''
-      : device.deviceWarranty;
-    this.orderDetails.update(r=>[...r, deviceToAdd])
+    deviceToAdd.deviceWarranty = !device.deviceWarranty ? '' : device.deviceWarranty;
+    this.orderDetails.update(r => [...r, deviceToAdd]);
   }
 
   askToDeleteDetail(detail: OrderDetail) {
@@ -219,16 +199,16 @@ export class OrderModalComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
-    }).then((response) => {
+    }).then(response => {
       if (response.isConfirmed) {
-        this.oDS.delete(detail.id).subscribe((response) => {
+        this.oDS.delete(detail.id).subscribe(response => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
             if (response.code == '1') {
-              this.orderDetails.update(r=>r.filter(x=>x.id != detail.id))
+              this.orderDetails.update(r => r.filter(x => x.id != detail.id));
             }
           }
         });
@@ -241,7 +221,7 @@ export class OrderModalComponent implements OnInit {
   }
 
   editDetail(detail: any) {
-    this.oDS.put(detail.id, detail).subscribe((response) => {
+    this.oDS.put(detail.id, detail).subscribe(response => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -257,7 +237,7 @@ export class OrderModalComponent implements OnInit {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
     }
-    this.orderService.get(parameters).subscribe((response) => {
+    this.orderService.get(parameters).subscribe(response => {
       if (isApiResponse(response)) {
         if (response.code == '1') {
           const parsedResponse = JSON.parse(response.payload as string);
@@ -266,19 +246,15 @@ export class OrderModalComponent implements OnInit {
             estabs: puntosEmision,
             isGroupPuntoEmision: true,
           });
-          this.establecimientos.set(establecimientos)
-          const dataEstab = this.establecimientos().find(
-            (estab) => estab.defaultEstab,
-          );
+          this.establecimientos.set(establecimientos);
+          const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
           if (dataEstab) {
             this.orderForm.patchValue({
               establecimientoId: dataEstab.idEstablecimiento,
             });
             this.order.codEstab = dataEstab.codEstab;
-            this.puntosEmision.set(dataEstab.puntosEmision)
-            const dataPuntoEmision = this.puntosEmision().find(
-              (ptoEmi) => ptoEmi.defaultPtoEmi,
-            );
+            this.puntosEmision.set(dataEstab.puntosEmision);
+            const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
             if (dataPuntoEmision) {
               this.orderForm.patchValue({
                 puntoEmisionId: dataPuntoEmision.idPuntoEmision,
@@ -299,16 +275,14 @@ export class OrderModalComponent implements OnInit {
   }
 
   getDevices() {
-    const modalRef = this.modalService.open(
-      DeviceListModalComponent,
-      { size: 'lg',
+    const modalRef = this.modalService.open(DeviceListModalComponent, {
+      size: 'lg',
 
       data: {
         customerCompanyId: this.order.customerCompanyId,
-      }
       },
-    );
-    modalRef.subscribe((result) => {
+    });
+    modalRef.subscribe(result => {
       if (result) {
         this.addDetail({
           deviceCustomerId: result.deviceCustomerId,
@@ -331,12 +305,11 @@ export class OrderModalComponent implements OnInit {
     const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
       const estabs = this.establecimientos().find(
-        (x) => x.idEstablecimiento == Number(establecimientoId),
+        x => x.idEstablecimiento == Number(establecimientoId),
       );
       this.puntosEmision.set(estabs?.puntosEmision || []);
       const puntoEmisionId =
-        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
-          ?.idPuntoEmision || 0;
+        this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
       this.orderForm.patchValue({
         establecimientoId: establecimientoId,
         puntoEmisionId: puntoEmisionId,
@@ -353,7 +326,7 @@ export class OrderModalComponent implements OnInit {
   }
 
   removeFromList(deviceId: number) {
-    this.orderDetails.update(r=>r.filter(x=>x.deviceId !== deviceId))
+    this.orderDetails.update(r => r.filter(x => x.deviceId !== deviceId));
   }
 
   onChangeDate(event: Event) {
@@ -393,8 +366,7 @@ export class OrderModalComponent implements OnInit {
     if (dateIsAfterCurrentDate(fechaEmision)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
       });
       return;
     }
@@ -423,7 +395,7 @@ export class OrderModalComponent implements OnInit {
     if (isApiResponse(response)) {
       this.tS.show({
         type: response.code == '1' ? 'success' : 'warning',
-        message: response.message!,
+        message: response.message,
       });
       if (response.code === '1') {
         this.orderForm.patchValue({});

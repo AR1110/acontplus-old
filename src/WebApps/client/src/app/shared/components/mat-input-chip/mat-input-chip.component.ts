@@ -44,7 +44,7 @@ export class MatInputChipComponent {
     }
 
     // Clear the input value
-    event.chipInput!.clear();
+    event.chipInput.clear();
   }
 
   remove(value: string): void {

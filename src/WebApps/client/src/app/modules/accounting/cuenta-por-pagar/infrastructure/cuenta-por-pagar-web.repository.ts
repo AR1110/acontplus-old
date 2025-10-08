@@ -10,28 +10,27 @@ import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/histor
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/shared/models/tiempo-credito.interface';
-import {CuentaPorPagarRepository} from "@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.repository";
+import { CuentaPorPagarRepository } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.repository';
+import { GetFilterDataCuentaPorPagarMapper } from '@accounting/cuenta-por-pagar/infrastructure/get-filter-data-cuenta-por-pagar.mapper';
 import {
-  GetFilterDataCuentaPorPagarMapper
-} from "@accounting/cuenta-por-pagar/infrastructure/get-filter-data-cuenta-por-pagar.mapper";
-import {CuentaPorPagarCuotaConfig, CuentaPorPagarLista} from "@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model";
+  CuentaPorPagarCuotaConfig,
+  CuentaPorPagarLista,
+} from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
+export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
   private http = inject(HttpClient);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
 
   getDataFilter() {
-    const json = GetFilterDataCuentaPorPagarMapper.toJson()
+    const json = GetFilterDataCuentaPorPagarMapper.toJson();
     return this.http
       .get<ApiResponse>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(
-        map((response) => GetFilterDataCuentaPorPagarMapper.fromJson(response)),
-      );
+      .pipe(map(response => GetFilterDataCuentaPorPagarMapper.fromJson(response)));
   }
 
   getAll<T>(obj: T) {
@@ -44,17 +43,15 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           const result = {
             data: [] as CuentaPorPagarLista[],
             totalRecords: 0,
           };
           if (response.code === '1') {
             const [mainData] = JSON.parse(response.payload as string);
-            result.data =
-              CuentaPorPagarMapper.fromApiGetAll(mainData);
-            result.totalRecords =
-              result.data.length > 0 ? result.data[0].totalRecords : 0;
+            result.data = CuentaPorPagarMapper.fromApiGetAll(mainData);
+            result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
           }
           return result;
         }),
@@ -70,7 +67,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           const result = {
             tiemposCredito: [] as TiempoCreditoSelectHtmlOnly[],
           };
@@ -94,14 +91,13 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           const result = {
             data: [] as CuentaPorPagarCuotaConfig[],
           };
           if (response.code === '1') {
             const [mainData] = JSON.parse(response.payload as string);
-            result.data =
-              CuentaPorPagarMapper.fromApiCuotaConfig(mainData);
+            result.data = CuentaPorPagarMapper.fromApiCuotaConfig(mainData);
           }
           return result;
         }),
@@ -118,7 +114,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           let result = {
             cuentaPorPagar: {} as Partial<CuentaPorPagarLista>,
             comprobantesEgreso: [] as ComprobanteEgresoLista[],
@@ -128,8 +124,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository{
           if (response.code === '1') {
             const mainData = JSON.parse(response.payload as string);
             console.log(mainData);
-            result =
-              CuentaPorPagarMapper.fromApiHistMovimiento(mainData);
+            result = CuentaPorPagarMapper.fromApiHistMovimiento(mainData);
           }
           return result;
         }),

@@ -1,37 +1,33 @@
-import { inject, Injectable } from "@angular/core";
-import { PATHS_API } from "@core/constants/global.constants";
-import { INVENTORY_PATHS } from "@inventory/domain/enums/inventory.enum";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs";
-import { pricingCalculateUtil } from "@core/utils/pricing-calculate.util";
-import { roundNumber } from "@core/utils/round-number.utils";
-import { groupSubCategoryUtil } from "@inventory/domain/utils/group-sub-category.util";
-import {ApiResponse} from "@core/models/api-response";
-
+import { inject, Injectable } from '@angular/core';
+import { PATHS_API } from '@core/constants/global.constants';
+import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
+import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class LotPriceService {
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.LOT_PRICE}`;
-  private http = inject(HttpClient)
-
+  private http = inject(HttpClient);
 
   getDataFilter() {
-    const json = JSON.stringify({ tipo: 1 })
+    const json = JSON.stringify({ tipo: 1 });
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
-
         const data = {
           decimal: {
-            nroPrecio: 2
+            nroPrecio: 2,
           },
           tarifasImpuesto: [],
           tarifas: [],
           subFamilias: [],
-          familias: []
-        }
+          familias: [],
+        };
         if (response !== null && typeof response === 'object') {
           const { decimales, impuestos, familias, subfamilias: subFamilias, tarifas } = response;
 
@@ -46,7 +42,7 @@ export class LotPriceService {
             // nroDescuento: tempDecimal.nroDescuento,
             // importeTotal: tempDecimal.importeTotal,
             // nroIce: tempDecimal.nroIce,
-          }
+          };
           data.tarifasImpuesto = impuestos.map((item: any) => {
             return {
               idTarifaImpuesto: item.idTipoIva,
@@ -58,8 +54,8 @@ export class LotPriceService {
               // fechaRegistro: item.fechaRegistro,
               // idUsuario: item.idUsuario,
               // codigo: item.codigo,
-            }
-          })
+            };
+          });
 
           // infrastructure.familias = familias.map((item: any) => {
           //   return {
@@ -68,25 +64,24 @@ export class LotPriceService {
           //     siglas: item.siglas,
           //   }
           // })
-          data.subFamilias = groupSubCategoryUtil(subFamilias)
+          data.subFamilias = groupSubCategoryUtil(subFamilias);
 
           data.tarifas = tarifas.map((item: any) => {
             return {
               idTarifa: item.idTarifa,
               descripcion: item.descripcion,
               predeterminada: item.predeterminada,
-            }
-          })
+            };
+          });
         }
 
         return data;
-
-      })
-    )
+      }),
+    );
   }
 
   getAll<T>(obj: T) {
-    const json = JSON.stringify({ ...obj})
+    const json = JSON.stringify({ ...obj });
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
         const mainData = response.articulos;
@@ -95,7 +90,7 @@ export class LotPriceService {
           const mainTarifas = JSON.parse(item.tarifas);
           const tarifas = mainTarifas.map((t: any) => {
             return {
-              idArticuloFraccionadoPvP: t.idArticuloFraccionadoPvP || 0,//Articulo Fraccionado
+              idArticuloFraccionadoPvP: t.idArticuloFraccionadoPvP || 0, //Articulo Fraccionado
               idArticuloFraccionado: t.idArticuloFraccionado || 0, //Articulo Fraccionado
 
               idArticuloPvP: t.idArticuloPvp,
@@ -105,9 +100,12 @@ export class LotPriceService {
               precioConIva: t.precioConIva,
               porcentajeUtilidad: t.porcentajeUtilidad,
               tarifaDesc: t.tarifa,
-              utilidad: roundNumber(pricingCalculateUtil.getValueUtility(t.precioVenta, item.precioCosto), 5)
-            }
-          })
+              utilidad: roundNumber(
+                pricingCalculateUtil.getValueUtility(t.precioVenta, item.precioCosto),
+                5,
+              ),
+            };
+          });
           return {
             index: index + 1,
             idArticulo: item.idArticulo,
@@ -122,19 +120,14 @@ export class LotPriceService {
             estado: item.estado,
             iva: item.iva,
             _children: tarifas,
-          }
-        })
+          };
+        });
         return products;
-      })
-    )
+      }),
+    );
   }
 
   put<T>(data: T) {
-    return this.http.put<ApiResponse>(`${this.url}`, { data })
+    return this.http.put<ApiResponse>(`${this.url}`, { data });
   }
-
-
-
-
-
 }

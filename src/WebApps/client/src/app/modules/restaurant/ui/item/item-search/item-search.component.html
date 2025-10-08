@@ -1,16 +1,11 @@
-
-
 <mat-form-field class="w-100">
   <mat-label>Buscar item</mat-label>
-  <input matInput
-         aria-label="State"
-         [matAutocomplete]="auto"
-         [formControl]="control">
+  <input matInput aria-label="State" [matAutocomplete]="auto" [formControl]="control" />
   <mat-autocomplete #auto="matAutocomplete">
     @for (item of filteredItems | async; track $index) {
-      <mat-option [value]="item.descripcion"   (onSelectionChange)="onSelectionChange(item)">
-<!--        <img alt="" class="example-option-img" [src]="item.flag" height="25">-->
-        <span>{{item.descripcion}}</span>
+      <mat-option [value]="item.descripcion" (onSelectionChange)="onSelectionChange(item)">
+        <!--        <img alt="" class="example-option-img" [src]="item.flag" height="25">-->
+        <span>{{ item.descripcion }}</span>
       </mat-option>
     }
   </mat-autocomplete>

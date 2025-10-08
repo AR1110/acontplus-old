@@ -31,10 +31,8 @@ export class SharedService {
 
     if (contentDisposition) {
       // Extract filename safely using regex
-      const filenameMatch = contentDisposition.match(
-        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
-      );
-      if (filenameMatch && filenameMatch[1]) {
+      const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+      if (filenameMatch?.[1]) {
         fileName = filenameMatch[1].replace(/['"]/g, '');
 
         // Decode URL encoded characters
@@ -74,13 +72,7 @@ export class SharedService {
    * @param obj
    */
   getReport<T>(obj: ReportParams<T>) {
-    const {
-      data,
-      format = 'pdf',
-      isOldVersion = false,
-      downloadOnly = false,
-      openInModal,
-    } = obj;
+    const { data, format = 'pdf', isOldVersion = false, downloadOnly = false, openInModal } = obj;
 
     const path = isOldVersion ? PATHS.DOWNLOAD_V1 : PATHS.DOWNLOAD;
 
@@ -89,7 +81,7 @@ export class SharedService {
         observe: 'response',
         responseType: 'blob',
       })
-      .subscribe((response) => {
+      .subscribe(response => {
         if (format === 'pdf' && openInModal && response.body) {
           // this.openPdfInModal(response.body)
         } else {
@@ -98,15 +90,12 @@ export class SharedService {
       });
   }
 
-
-
   async askToPrint<T extends { parameters: string }>(obj: T) {
     const { parameters } = obj;
     const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
-      confirmButtonText:
-        '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
+      confirmButtonText: '<icon class="mdi mdi-cloud-print-outline"></icon> Sí, imprimir',
       showDenyButton: true,
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false,
@@ -120,7 +109,7 @@ export class SharedService {
           context: customUrl(),
         })
         .subscribe({
-          next: (response) => {
+          next: response => {
             if (isApiResponse(response)) {
               if (response.code === '1') {
                 this.tS.show({
@@ -147,7 +136,7 @@ export class SharedService {
     try {
       const url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
       this.http.get(url).subscribe({
-        next: (response) => {
+        next: response => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
               this.tS.show({
@@ -189,7 +178,7 @@ export class SharedService {
       }`;
 
       this.http.post(urlPrinter, null).subscribe({
-        next: (response) => {
+        next: response => {
           if (isApiResponse(response)) {
             if (response.code === '1') {
               this.tS.show({
@@ -214,29 +203,27 @@ export class SharedService {
   }
 
   getEstabAsign() {
-    return this.http
-      .get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 }))
-      .pipe(
-        map((response) => {
-          let estabs: any[] = [];
-          let results: any[] = [];
-          if (isApiResponse(response)) {
-            if (response.code === '1') {
-              estabs = JSON.parse(response.payload as string);
-              results = estabs.map((estab: any) => {
-                return {
-                  idEstablecimiento: estab.idEstablecimiento,
-                  codEstab: estab.codEstab,
-                  nombreComercial: estab.nombreComercial,
-                  predeterminado: estab.predeterminado,
-                  estab: estab.estab,
-                };
-              });
-            }
+    return this.http.get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 })).pipe(
+      map(response => {
+        let estabs: any[] = [];
+        let results: any[] = [];
+        if (isApiResponse(response)) {
+          if (response.code === '1') {
+            estabs = JSON.parse(response.payload as string);
+            results = estabs.map((estab: any) => {
+              return {
+                idEstablecimiento: estab.idEstablecimiento,
+                codEstab: estab.codEstab,
+                nombreComercial: estab.nombreComercial,
+                predeterminado: estab.predeterminado,
+                estab: estab.estab,
+              };
+            });
           }
-          return results;
-        }),
-      );
+        }
+        return results;
+      }),
+    );
   }
 
   exportToExcel(data: any[], fileName: string): void {

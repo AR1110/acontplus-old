@@ -8,17 +8,9 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { DialogService } from '@core/services/dialog.service';
 import { DocsGuiaRemisionComponent } from '@billing/ui/guia-remision/components/docs-guia-remision/docs-guia-remision.component';
 import { GetGuiaRemisionFormDataUseCase } from '@billing/domain/use-cases/guia-remision/get-guia-remision-form-data.use-case.';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import {
-  FormBuilder,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatButtonModule } from '@angular/material/button';
@@ -49,9 +41,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<AddEditGuiaRemisionComponent>);
   private _dialogSvc = inject(DialogService);
 
-  private $getGuiaRemisionFormDataUseCase = inject(
-    GetGuiaRemisionFormDataUseCase
-  );
+  private $getGuiaRemisionFormDataUseCase = inject(GetGuiaRemisionFormDataUseCase);
   title = 'Nuevo Guía Remisión';
 
   estabs = signal<GroupedEstab[]>([]);
@@ -137,9 +127,9 @@ export class AddEditGuiaRemisionComponent implements OnInit {
   }
 
   private initForm() {
-    this.$getGuiaRemisionFormDataUseCase.execute().subscribe((response) => {
+    this.$getGuiaRemisionFormDataUseCase.execute().subscribe(response => {
       this.estabs.set(response.estabs);
-      const dataEstab = this.estabs().find((item) => item.defaultEstab);
+      const dataEstab = this.estabs().find(item => item.defaultEstab);
 
       if (!dataEstab) {
         Swal.fire({
@@ -151,9 +141,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
       }
 
       this.puntosEmision.set(dataEstab.puntosEmision);
-      const dataPuntoEmision = this.puntosEmision().find(
-        (ptoEmi) => ptoEmi.defaultPtoEmi
-      );
+      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
       if (!dataPuntoEmision) {
         Swal.fire({
           icon: 'warning',
@@ -193,9 +181,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
 
     this.dataFormClone.codEstab = this.dataForm.value?.codEstab;
 
-    const dataEstab = this.estabs().find(
-      (item) => item.codEstab === this.dataForm.value.codEstab
-    );
+    const dataEstab = this.estabs().find(item => item.codEstab === this.dataForm.value.codEstab);
     if (!dataEstab) {
       Swal.fire({
         icon: 'warning',
@@ -206,9 +192,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
     }
 
     this.puntosEmision.set(dataEstab.puntosEmision);
-    const dataPuntoEmision = this.puntosEmision().find(
-      (ptoEmi) => ptoEmi.defaultPtoEmi
-    );
+    const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
     if (!dataPuntoEmision) {
       Swal.fire({
         icon: 'warning',
@@ -226,25 +210,21 @@ export class AddEditGuiaRemisionComponent implements OnInit {
   private asignarInfoAdicionalPorPuntoDeEmision() {
     // Elimina info adicional existente relacionada a algún punto de emisión
     this.informacionAdicionalDocumento.set(
-      this.informacionAdicionalDocumento().filter(
-        (info) => !(info.idPuntoEmision > 0)
-      )
+      this.informacionAdicionalDocumento().filter(info => !(info.idPuntoEmision > 0)),
     );
 
     // Busca la configuración para el punto de emisión actual
     const configuracionPuntoEmision = this.configuracionesInfoAdicional().find(
-      (config) => config.idPuntoEmision === this.dataForm.value.puntoEmisionId
+      config => config.idPuntoEmision === this.dataForm.value.puntoEmisionId,
     );
 
     if (!configuracionPuntoEmision) return;
 
     // Clona los valores y les asigna el punto de emisión actual
-    const infoAdicionalGenerada = configuracionPuntoEmision.infoAdicional.map(
-      (item: any) => ({
-        ...item,
-        idPuntoEmision: this.dataForm.value.puntoEmisionId,
-      })
-    );
+    const infoAdicionalGenerada = configuracionPuntoEmision.infoAdicional.map((item: any) => ({
+      ...item,
+      idPuntoEmision: this.dataForm.value.puntoEmisionId,
+    }));
 
     // Asigna la nueva información adicional combinada con la existente
     this.informacionAdicionalDocumento.set([

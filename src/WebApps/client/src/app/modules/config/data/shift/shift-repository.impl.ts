@@ -24,7 +24,7 @@ export class ShiftRepositoryImpl implements ShiftRepository {
 
     return this._http
       .get<ApiResponse>(`${this._url}?json=${JSON}`)
-      .pipe(map((response) => ListShiftMapper.fromJson(response)));
+      .pipe(map(response => ListShiftMapper.fromJson(response)));
   }
 
   create(params: ShiftList): Observable<ApiResponse> {

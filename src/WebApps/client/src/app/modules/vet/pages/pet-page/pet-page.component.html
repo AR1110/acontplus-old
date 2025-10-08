@@ -9,13 +9,7 @@
         </button>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-        <input
-          #input
-          (keyup)="applyFilter($event)"
-          class="form-control"
-          matInput
-          placeholder="Buscar mascota"
-        />
+        <input #input (keyup)="applyFilter($event)" class="form-control" matInput placeholder="Buscar mascota" />
       </div>
     </div>
     <br />
@@ -102,17 +96,12 @@
             </td>
           </ng-container>
 
-          <tr
-            *matHeaderRowDef="visibleColumns; sticky: true"
-            mat-header-row
-          ></tr>
+          <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
           <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
 
           <!-- Row shown when there is no matching infrastructure. -->
           <tr *matNoDataRow class="mat-row">
-            <td class="mat-cell" colspan="7">
-              No data matching the filter {{ input.value }}
-            </td>
+            <td class="mat-cell" colspan="7">No data matching the filter {{ input.value }}</td>
           </tr>
         </table>
       </section>

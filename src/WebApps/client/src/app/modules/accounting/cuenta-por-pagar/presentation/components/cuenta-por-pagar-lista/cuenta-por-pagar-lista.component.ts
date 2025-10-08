@@ -111,7 +111,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   selection = new SelectionModel<CuentaPorPagarLista>(true, []);
   dataSource = new MatTableDataSource<CuentaPorPagarLista>();
@@ -156,7 +156,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
   private setResponseGetAll(response: any) {
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
+    this.pagination.update(p => ({
       ...p,
       totalRecords: response.totalRecords,
     }));
@@ -167,8 +167,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
     // Obtener los parámetros iniciales
     const params = this.getDataParams();
-    const { esBuscarProveedor, idProveedor, esBuscarPorNro, secuencial } =
-      this.dataSearch();
+    const { esBuscarProveedor, idProveedor, esBuscarPorNro, secuencial } = this.dataSearch();
 
     if (esBuscarProveedor && !ValidatorUtils.getValidId(idProveedor)) {
       this.tS.show({
@@ -215,7 +214,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
       .pipe(
         finalize(() => this.isLoadingResults.set(false)), // Marcar finalización de la carga
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         console.log(response);
         this.setResponseGetAll(response);
       });
@@ -230,15 +229,15 @@ export class CuentaPorPagarListaComponent implements OnInit {
     this.useCase
       .getDataFilter()
       .pipe(
-        switchMap((initialData) => {
+        switchMap(initialData => {
           this.estabs = initialData.estabs;
           this.estadosDoc = initialData.estadosDoc;
           this.tiposDoc = initialData.tiposDoc;
 
           if (this.estabs.length > 0) {
-            const dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
 
-            this.dataSearch.update((e) => {
+            this.dataSearch.update(e => {
               return {
                 ...e,
                 codEstab: dataEstab?.codEstab,
@@ -249,16 +248,14 @@ export class CuentaPorPagarListaComponent implements OnInit {
               type: 'warning',
               message: 'No tienes asignado Establecimiento!',
             });
-            return throwError(
-              () => new Error('No tienes asignado Establecimiento'),
-            );
+            return throwError(() => new Error('No tienes asignado Establecimiento'));
           }
 
           return this.useCase.getAll(this.getDataParams());
         }),
       )
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.setResponseGetAll(response);
       });
   }
@@ -272,7 +269,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
     key: K,
     value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update((ds) => {
+    this.dataSearch.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -281,7 +278,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update((e) => {
+    this.dataSearch.update(e => {
       return {
         ...e,
         fromDate: range.from,
@@ -310,9 +307,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
     const firstCustomerId = this.selection.selected[0]?.idProveedor;
 
     // Verificar si todas las demás entradas tienen la misma idProveedor
-    return this.selection.selected.every(
-      (item) => item.idProveedor === firstCustomerId,
-    );
+    return this.selection.selected.every(item => item.idProveedor === firstCustomerId);
   }
 
   openPaymentModal() {
@@ -334,18 +329,16 @@ export class CuentaPorPagarListaComponent implements OnInit {
     }
 
     // Crear un array de observables para obtener las cuotas
-    const observables = selected.map((item) =>
-      this._comprobanteEgresoUseCase.getCuotasByIdCuentaPorPagar(
-        item.idCuentaPorPagar,
-      ),
+    const observables = selected.map(item =>
+      this._comprobanteEgresoUseCase.getCuotasByIdCuentaPorPagar(item.idCuentaPorPagar),
     );
 
-    forkJoin(observables).subscribe((cuotasResponse) => {
-      const selectedMergeCuotas = selected.map((item) => {
+    forkJoin(observables).subscribe(cuotasResponse => {
+      const selectedMergeCuotas = selected.map(item => {
         // Aplanamos las cuotas de la respuesta y las filtramos por idCuentaPorPagar
         const filteredCuotas = cuotasResponse
-          .flatMap((payment) => payment.cuotas)
-          .filter((cuota) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
+          .flatMap(payment => payment.cuotas)
+          .filter(cuota => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
 
         // Devolvemos el documento combinado con las cuotas clonadas
         return {
@@ -355,7 +348,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
         };
       });
 
-      if (selectedMergeCuotas.some((item) => item.cuotas.length === 0)) {
+      if (selectedMergeCuotas.some(item => item.cuotas.length === 0)) {
         this.tS.show({
           type: 'warning',
           message: 'Algunos de los documentos seleccionados no tienen cuotas',
@@ -411,7 +404,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
       },
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       console.log(result);
     });
   }
@@ -424,7 +417,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
       },
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       console.log(result);
     });
   }
@@ -444,7 +437,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

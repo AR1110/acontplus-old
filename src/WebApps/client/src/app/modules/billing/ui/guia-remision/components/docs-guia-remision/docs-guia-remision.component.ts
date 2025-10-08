@@ -1,16 +1,16 @@
-import {Component, inject, signal} from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import {PageEvent} from "@angular/material/paginator";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {MatFormField, MatLabel} from "@angular/material/form-field";
-import {MatOption} from "@angular/material/core";
-import {MatSelect} from "@angular/material/select";
-import {MatInput} from "@angular/material/input";
-import {MatDivider} from "@angular/material/divider";
+import { Component, inject, signal } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatPagination } from '@shared/models/pagination.model';
+import { PageEvent } from '@angular/material/paginator';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { MatOption } from '@angular/material/core';
+import { MatSelect } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-docs-guia-remision',
@@ -23,18 +23,17 @@ import {MatDivider} from "@angular/material/divider";
     MatOption,
     MatSelect,
     MatInput,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './docs-guia-remision.component.html',
-  styles: ``
+  styles: ``,
 })
 export class DocsGuiaRemisionComponent {
   readonly dialogRef = inject(MatDialogRef<DocsGuiaRemisionComponent>);
 
   loading = false;
-dataSource = signal([])
+  dataSource = signal([]);
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'nomDoc', label: 'Tipo Doc', type: 'string' },
@@ -42,21 +41,16 @@ dataSource = signal([])
     { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
     { key: 'total', label: 'Total', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
-  refresh(){
+  refresh() {}
 
-  }
-
-
-  changeDateRange($event: {from:string, to: string}){
-
-  }
+  changeDateRange($event: { from: string; to: string }) {}
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -67,7 +61,7 @@ dataSource = signal([])
     this.refresh();
   }
 
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

@@ -15,23 +15,18 @@ import { PageEvent } from '@angular/material/paginator';
 import { GetGuiaRemisionFilterDataUseCase } from '@modules/billing/domain/use-cases/guia-remision/get-guia-remision-filter-data.use-case';
 import { ListGuiasRemisionUseCase } from '@modules/billing/domain/use-cases/guia-remision/list-guias-remision.use-case';
 import { finalize } from 'rxjs';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
-import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { FormsModule } from '@angular/forms';
-import {formatDateToString} from "@core/utils/date.util";
-import {GuiaRemisionList} from "@billing/domain/models/guia-remision/guia-remision.model";
-import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
-import {CompraHabitualHistorialDirective} from "@purchase/directives/compra-habitual-historial.directive";
-import {  MatMenuModule} from "@angular/material/menu";
-import {ProductKardexModalDirective} from "@inventory/product/presentation/directives/product-kardex-modal.directive";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  AddEditGuiaRemisionComponent
-} from "@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component";
+import { formatDateToString } from '@core/utils/date.util';
+import { GuiaRemisionList } from '@billing/domain/models/guia-remision/guia-remision.model';
+import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
+import { MatMenuModule } from '@angular/material/menu';
+import { ProductKardexModalDirective } from '@inventory/product/presentation/directives/product-kardex-modal.directive';
+import { DialogService } from '@core/services/dialog.service';
+import { AddEditGuiaRemisionComponent } from '@billing/ui/guia-remision/components/add-edit-guia-remision/add-edit-guia-remision.component';
 
 @Component({
   selector: 'app-guia-remision',
@@ -56,18 +51,16 @@ import {
   templateUrl: './guia-remision.component.html',
   styles: ``,
 })
-export class GuiaRemisionComponent implements OnInit   {
-  private $getGuiaRemisionFilterDataUseCase = inject(
-    GetGuiaRemisionFilterDataUseCase
-  );
+export class GuiaRemisionComponent implements OnInit {
+  private $getGuiaRemisionFilterDataUseCase = inject(GetGuiaRemisionFilterDataUseCase);
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
   private tS = inject(ToastrNotificationService);
-  private _dialogSvc = inject(DialogService)
+  private _dialogSvc = inject(DialogService);
 
   estabs = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   estadosDoc: any[] = [];
-  users = signal<any[]>([])
+  users = signal<any[]>([]);
 
   dataSearch = {
     codEstab: '',
@@ -76,9 +69,9 @@ export class GuiaRemisionComponent implements OnInit   {
     clienteId: 0,
     usuarioId: 0,
     codEstado: 0,
-    nroSecuencial: "" as string  ,
+    nroSecuencial: '' as string,
     toDate: formatDateToString(new Date()),
-    fromDate: formatDateToString(new Date())
+    fromDate: formatDateToString(new Date()),
   };
 
   loading = false;
@@ -99,7 +92,7 @@ export class GuiaRemisionComponent implements OnInit   {
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -109,7 +102,6 @@ export class GuiaRemisionComponent implements OnInit   {
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
-
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
@@ -141,40 +133,40 @@ export class GuiaRemisionComponent implements OnInit   {
   }
 
   private getGuiasRemision() {
-    if(this.loading) {
+    if (this.loading) {
       this.tS.show({
         type: 'warning',
-        message: 'Esta cargando los datos...'
-      })
-      return
+        message: 'Esta cargando los datos...',
+      });
+      return;
     }
 
     if (isValidField(this.dataSearch.nroSecuencial)) {
       if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
-       this.dataSearch.filterByDate = true;
+        this.dataSearch.filterByDate = true;
         this.tS.show({
           type: 'error',
-          message: 'Define correctamente el número de secuencial o el rango de número secuencial!'
-        })
-        return
+          message: 'Define correctamente el número de secuencial o el rango de número secuencial!',
+        });
+        return;
       }
       if (!(this.dataSearch.clienteId > 0)) {
         this.dataSearch.filterByDate = false;
       }
     }
 
-    const params = this.getParams()
-    if(!params) return;
-    this.$listGuiasRemisionUseCase.execute(params).subscribe(response=>{
+    const params = this.getParams();
+    if (!params) return;
+    this.$listGuiasRemisionUseCase.execute(params).subscribe(response => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update(e=>{
+      this.pagination.update(e => {
         return {
           ...e,
-          totalRecords: response.totalRecords
-        }
-      })
-    })
+          totalRecords: response.totalRecords,
+        };
+      });
+    });
   }
 
   ngOnInit() {
@@ -182,52 +174,44 @@ export class GuiaRemisionComponent implements OnInit   {
     this.$getGuiaRemisionFilterDataUseCase
       .execute()
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe((filterData) => {
+      .subscribe(filterData => {
         this.estabs.set(filterData.estabs);
         this.estadosDoc = filterData.estadosDoc;
-        this.users.set(filterData.users)
+        this.users.set(filterData.users);
 
         if (this.estabs().length > 0) {
-          const dataEstab = this.estabs().find((item) => item.defaultEstab);
+          const dataEstab = this.estabs().find(item => item.defaultEstab);
 
           this.dataSearch.codEstab = dataEstab?.codEstab || '';
           this.puntosEmision.set(dataEstab?.puntosEmision || []);
           if (this.puntosEmision().length > 0) {
-            const dataPuntoEmision = this.puntosEmision().find(
-              (item) => item.defaultPtoEmi
-            );
+            const dataPuntoEmision = this.puntosEmision().find(item => item.defaultPtoEmi);
 
-            this.dataSearch.puntoEmisionId =
-              dataPuntoEmision?.idPuntoEmision || 0;
+            this.dataSearch.puntoEmisionId = dataPuntoEmision?.idPuntoEmision || 0;
           }
-        this.refresh();
+          this.refresh();
         }
       });
   }
 
-
-  changeDateRange($event:any){
+  changeDateRange($event: any) {
     this.dataSearch.fromDate = $event.from;
     this.dataSearch.toDate = $event.to;
-    this.refresh()
+    this.refresh();
   }
 
-
-  public openAddEditModal(){
+  public openAddEditModal() {
     const ref = this._dialogSvc.open(AddEditGuiaRemisionComponent, {
       size: 'xl',
-      data: {
-
-      }
-    })
-    ref.subscribe(rs=>{
-      console.log(rs)
-    })
+      data: {},
+    });
+    ref.subscribe(rs => {
+      console.log(rs);
+    });
   }
 
-
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

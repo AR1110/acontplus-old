@@ -6,19 +6,16 @@ import { FacturaFisicaDetalleModalComponent } from '@purchase/ui/factura-fisica/
   selector: '[appFacturaFisicaDetalle]',
 })
 export class FacturaFisicaDetalleDirective {
-  private modalSvc = inject(DialogService)
+  private modalSvc = inject(DialogService);
 
-  id = input(0)
+  id = input(0);
 
   @HostListener('click') onClick() {
-
     this.modalSvc.open(FacturaFisicaDetalleModalComponent, {
       size: 'xl',
       data: {
-        id: this.id()
-      }
-    })
-
+        id: this.id(),
+      },
+    });
   }
-
 }

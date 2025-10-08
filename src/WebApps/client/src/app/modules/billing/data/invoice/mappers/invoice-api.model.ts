@@ -46,5 +46,5 @@ export interface InvoiceDetailApi {
   cantidadTransaccion: number;
   conversion: number;
   precioCostoFraccionado: number;
-  precioSinSubsidio: number
+  precioSinSubsidio: number;
 }

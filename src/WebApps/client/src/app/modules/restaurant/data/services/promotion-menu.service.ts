@@ -6,34 +6,32 @@ import { map } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PromotionMenuService {
   private url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTION_MENU}`;
   private http = inject(HttpClient);
-  constructor() { }
+  constructor() {}
 
-  getByPromotionId<T>(id:number, obj: T){
+  getByPromotionId<T>(id: number, obj: T) {
     const json = JSON.stringify({
       tipo: 1,
-      ...obj
-    })
+      ...obj,
+    });
 
     return this.http.get<ApiResponse>(`${this.url}GetById/${id}?json=${json}`).pipe(
-      map(response=>{
+      map(response => {
         const result = {
-          promotionMenus: []
-        }
-        if(response.code==="1"){
-          const mainData = JSON.parse(response.payload as string)
-          console.log(mainData)
+          promotionMenus: [],
+        };
+        if (response.code === '1') {
+          const mainData = JSON.parse(response.payload as string);
+          console.log(mainData);
           const promotionMenus = mainData.promotionMenus || [];
-          result.promotionMenus = promotionMenus
+          result.promotionMenus = promotionMenus;
         }
-        return  result;
-      })
-    )
-
+        return result;
+      }),
+    );
   }
-
 }

@@ -4,7 +4,7 @@ export interface Device {
   brandId: number;
   modeloId: number;
   name: string;
-  serie: string;  
+  serie: string;
   warranty: number;
   color: string;
   customers?: DeviceCustomer[];

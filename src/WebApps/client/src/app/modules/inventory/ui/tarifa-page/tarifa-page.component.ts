@@ -10,21 +10,21 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-modal/tarifa-edit-modal.component';
-import {DialogService} from "@core/services/dialog.service";
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
-    selector: 'app-tarifa-page',
-    imports: [
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-        CustomTableContainerComponent,
-    ],
-    templateUrl: './tarifa-page.component.html',
-    styles: ``
+  selector: 'app-tarifa-page',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    CustomTableContainerComponent,
+  ],
+  templateUrl: './tarifa-page.component.html',
+  styles: ``,
 })
 export class TarifaPageComponent implements OnInit {
   tarifaSvc = inject(TarifaService);
@@ -48,7 +48,7 @@ export class TarifaPageComponent implements OnInit {
     const params = {};
     this.isLoadingResults = true;
     this.tarifaSvc.getAll(params).subscribe({
-      next: (response) => {
+      next: response => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tarifas);
       },
@@ -70,7 +70,7 @@ export class TarifaPageComponent implements OnInit {
       data: data || {},
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getTarifas();
       }

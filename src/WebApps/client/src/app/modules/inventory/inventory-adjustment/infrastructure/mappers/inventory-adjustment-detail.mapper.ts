@@ -1,19 +1,17 @@
-
-import {fechaString} from "@core/utils/date.util";
-import {InventoryAdjustmentDetailDto} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
+import { fechaString } from '@core/utils/date.util';
+import { InventoryAdjustmentDetailDto } from '@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto';
 
 export class InventoryAdjustmentDetailMapper {
-  static toJson(id:number){
-
+  static toJson(id: number) {
     return JSON.stringify({
       tipo: 3,
-      id
-    })
+      id,
+    });
   }
 
-  static fromJson(response:any): InventoryAdjustmentDetailDto{
+  static fromJson(response: any): InventoryAdjustmentDetailDto {
     const result = new InventoryAdjustmentDetailDto();
-    const {comprobante, detalles} = response;
+    const { comprobante, detalles } = response;
     const header = comprobante[0];
     result.header = {
       id: header.idConsolidacionInventario,
@@ -24,23 +22,23 @@ export class InventoryAdjustmentDetailMapper {
       ptoEmision: header.ptoEmi,
       tipoDocNombre: header.tipoDocumento,
       movimientoNombre: header.movimiento,
-    }
+    };
 
-    result.items = detalles.map((item:any, index:number) => {
+    result.items = detalles.map((item: any, index: number) => {
       return {
-        index: index+1,
-        "idConsolidacionInventarioDetalle": item.idConsolidacionInventarioDetalle,
-        "codigo": item.codigo,
-        "descripcion":item.descripcion,
-        "stock": item.stock,
-        "cantidad": item.cantidad,
-        "medidaNombre": item.medida,
-        "bodegaNombre": item.bodega,
-        "precioActual": item.precioActual,
-        "precioCosto": item.precioCosto,
-        "total": item.total,
-      }
-    })
+        index: index + 1,
+        idConsolidacionInventarioDetalle: item.idConsolidacionInventarioDetalle,
+        codigo: item.codigo,
+        descripcion: item.descripcion,
+        stock: item.stock,
+        cantidad: item.cantidad,
+        medidaNombre: item.medida,
+        bodegaNombre: item.bodega,
+        precioActual: item.precioActual,
+        precioCosto: item.precioCosto,
+        total: item.total,
+      };
+    });
     return result;
   }
 }

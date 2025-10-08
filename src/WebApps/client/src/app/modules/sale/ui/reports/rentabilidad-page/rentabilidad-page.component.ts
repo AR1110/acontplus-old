@@ -1,4 +1,4 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,10 +22,10 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatDivider} from "@angular/material/divider";
-import {MatInputModule} from "@angular/material/input";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -42,16 +42,16 @@ import {MatInputModule} from "@angular/material/input";
     ThemeButtonComponent,
     MatDynamicCardComponent,
     MatCheckbox,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './rentabilidad-page.component.html',
 })
 export class RentabilidadPageComponent implements OnInit {
   establecimientos = signal<GroupedEstab[]>([]);
   bodegas = signal<GroupedEstabBodega[]>([]);
-  tarifas = signal<TarifaSelectHtmlOnly[]>([])
-  tiposDoc = signal<TipoDoc[]>([])
-  subCategorias = signal<GroupedSubFamilia[]>([])
+  tarifas = signal<TarifaSelectHtmlOnly[]>([]);
+  tiposDoc = signal<TipoDoc[]>([]);
+  subCategorias = signal<GroupedSubFamilia[]>([]);
   tiposArticulo = [
     {
       codigo: 'B',
@@ -91,42 +91,40 @@ export class RentabilidadPageComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe( (response) => {
-        const { estabs, tarifas, tiposDoc, subCategorias } = response;
-        this.establecimientos.set(estabs);
-        this.tarifas.set(tarifas)
-        this.tiposDoc.set(tiposDoc)
-        this.subCategorias.set(subCategorias);
+    this._productUseCase.getDataReport().subscribe(response => {
+      const { estabs, tarifas, tiposDoc, subCategorias } = response;
+      this.establecimientos.set(estabs);
+      this.tarifas.set(tarifas);
+      this.tiposDoc.set(tiposDoc);
+      this.subCategorias.set(subCategorias);
 
-        const dataEstab = this.establecimientos().find(
-          (estab) => estab.defaultEstab,
-        );
-        if (dataEstab) {
-          this.dataSearch.codEstab = dataEstab.codEstab;
-          this.bodegas.set(dataEstab.bodegas);
-          const dataBodega = this.bodegas().find((bodega) => bodega.defaultBodega);
-          if (dataBodega) {
-            this.dataSearch.idBodega = dataBodega.idBodega;
-          }
+      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      if (dataEstab) {
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        this.bodegas.set(dataEstab.bodegas);
+        const dataBodega = this.bodegas().find(bodega => bodega.defaultBodega);
+        if (dataBodega) {
+          this.dataSearch.idBodega = dataBodega.idBodega;
         }
+      }
 
-        if (this.tarifas.length > 0) {
-          const dataTarifa = this.tarifas().find((t) => t.predeterminada);
-          if (dataTarifa) {
-            this.dataSearch.idTarifa = dataTarifa.idTarifa;
-          }
+      if (this.tarifas.length > 0) {
+        const dataTarifa = this.tarifas().find(t => t.predeterminada);
+        if (dataTarifa) {
+          this.dataSearch.idTarifa = dataTarifa.idTarifa;
         }
+      }
     });
   }
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos().find(
-        (estab) => estab.codEstab === this.dataSearch.codEstab,
+        estab => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
-        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
+        const dataBodega = this.bodegas().find(b => b.defaultBodega);
         if (dataBodega) {
           this.dataSearch.idBodega = dataBodega.idBodega;
         }
@@ -243,19 +241,13 @@ export class RentabilidadPageComponent implements OnInit {
       codEstab: isValidField(this.dataSearch.codEstab),
       idBodega: isValidField(this.dataSearch.idBodega),
       codDoc: isValidField(this.getDataCodDoc()),
-      idUsuario:
-        (this.dataSearch.userChecked &&
-          isValidField(this.dataSearch.idUsuario)) ||
-        null,
+      idUsuario: (this.dataSearch.userChecked && isValidField(this.dataSearch.idUsuario)) || null,
       idArticulo:
-        (this.dataSearch.productChecked &&
-          isValidField(this.dataSearch.idArticulo)) ||
-        null,
+        (this.dataSearch.productChecked && isValidField(this.dataSearch.idArticulo)) || null,
       idTarifa: getValidId(this.dataSearch.idTarifa),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
-      subFamiliasChecked:
-        (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
+      subFamiliasChecked: (this.dataSearch.subCategoriaChecked && subCategoriasChecked) || null,
       porcentajeRenta: this.dataSearch.porcentajeRenta,
       porcentajeComision: this.dataSearch.porcentajeComision,
       userRoleId: this._tokenUseCase.getUserRoleId(),
@@ -264,9 +256,7 @@ export class RentabilidadPageComponent implements OnInit {
     const parameters = {
       hasService: true,
       reportParams: JSON.stringify({
-        codigo: this.dataSearch.checkboxRentabCustom
-          ? SALE_CODE_REPORT.SRRC
-          : SALE_CODE_REPORT.SRR,
+        codigo: this.dataSearch.checkboxRentabCustom ? SALE_CODE_REPORT.SRRC : SALE_CODE_REPORT.SRR,
         format,
         aditionalParams: [],
       }),

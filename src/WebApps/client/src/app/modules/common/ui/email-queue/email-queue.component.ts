@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
@@ -96,7 +91,7 @@ export class EmailQueueComponent {
         ...this.emailForm.value,
       };
       console.log('Email Queue Data:', formData);
-      this._emailQueueUseCase.send(formData).subscribe((response) => {
+      this._emailQueueUseCase.send(formData).subscribe(response => {
         this._snackBar.open('Email queued successfully!', 'Close', {
           duration: 3000,
         });

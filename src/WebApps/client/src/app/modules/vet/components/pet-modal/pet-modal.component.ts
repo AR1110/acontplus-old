@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 
 import {
   FormControl,
@@ -19,8 +19,8 @@ import { CompanyCustomerSearchComponent } from '@company-customer/presentation/c
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-pet-modal',
@@ -61,11 +61,9 @@ export class PetModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   get() {
-    this.petService.get({ tipo: 3 }).subscribe((response) => {
+    this.petService.get({ tipo: 3 }).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
-        const { petTypes, breeds, genders } = JSON.parse(
-          response.payload as string,
-        );
+        const { petTypes, breeds, genders } = JSON.parse(response.payload as string);
         this.petTypes.set(petTypes);
         this.breeds.set(breeds);
         this.genders.set(genders);
@@ -95,10 +93,8 @@ export class PetModalComponent implements OnInit {
 
   onPetTypeChange($event: any) {
     this.breedsFiltered.set([]);
-    const breedsFiltered = this.breeds().filter(
-      (x) => x.petTypeId === Number($event.target.value),
-    );
-    this.breedsFiltered.set(breedsFiltered)
+    const breedsFiltered = this.breeds().filter(x => x.petTypeId === Number($event.target.value));
+    this.breedsFiltered.set(breedsFiltered);
   }
 
   onSave() {
@@ -107,7 +103,7 @@ export class PetModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.petService.put(this.data.id, dataToSave).subscribe((response) => {
+      this.petService.put(this.data.id, dataToSave).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -119,7 +115,7 @@ export class PetModalComponent implements OnInit {
         }
       });
     } else {
-      this.petService.post(dataToSave).subscribe((response) => {
+      this.petService.post(dataToSave).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',

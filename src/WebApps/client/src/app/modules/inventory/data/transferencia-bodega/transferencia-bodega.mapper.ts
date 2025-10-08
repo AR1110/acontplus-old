@@ -28,8 +28,7 @@ export class TransferenciaBodegaMapper {
         };
       });
 
-      result.totalRecords =
-        result.data.length > 0 ? result.data[0].totalRecords : 0;
+      result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
     }
     return result;
   }

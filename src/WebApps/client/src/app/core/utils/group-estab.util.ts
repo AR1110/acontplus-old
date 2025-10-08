@@ -1,6 +1,6 @@
-import { BodegaEstablecimiento } from "@core/models/bodega.model";
-import { GroupedEstab } from "@core/models/estab.model";
-import { PuntoEmisionEstablecimiento } from "@core/models/punto-emision.model";
+import { BodegaEstablecimiento } from '@core/models/bodega.model';
+import { GroupedEstab } from '@core/models/estab.model';
+import { PuntoEmisionEstablecimiento } from '@core/models/punto-emision.model';
 
 interface GroupEstabProps {
   estabs?: PuntoEmisionEstablecimiento[];
@@ -14,11 +14,10 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
 
   let groupEstabs: GroupedEstab[] = [];
 
-
   if (isGroupPuntoEmision && estabs) {
     groupEstabs = estabs.reduce((acc, item) => {
       const existingItem = acc.find(
-        (el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab
+        el => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
       );
 
       if (!existingItem) {
@@ -50,23 +49,28 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
     }, [] as GroupedEstab[]);
 
     if (isGroupBodega) {
-      groupEstabs = groupEstabs.map((estab) => ({
+      groupEstabs = groupEstabs.map(estab => ({
         ...estab,
-        bodegas: bodegas?.filter((bodega) => bodega.idEstablecimiento === estab.idEstablecimiento).map((bodega) => ({
-          idBodega: bodega.idBodega,
-          bodega: bodega.bodega,
-          descripcion: bodega.bodega,
-          defaultBodega: bodega.defaultBodega,
-          idEstablecimiento: bodega.idEstablecimiento,
-        })) || [],
+        bodegas:
+          bodegas
+            ?.filter(bodega => bodega.idEstablecimiento === estab.idEstablecimiento)
+            .map(bodega => ({
+              idBodega: bodega.idBodega,
+              bodega: bodega.bodega,
+              descripcion: bodega.bodega,
+              defaultBodega: bodega.defaultBodega,
+              idEstablecimiento: bodega.idEstablecimiento,
+            })) || [],
       }));
     }
-    return groupEstabs
+    return groupEstabs;
   }
 
   if (isGroupBodega && bodegas) {
     groupEstabs = bodegas.reduce((acc, item) => {
-      const existingItem = acc.find((el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab);
+      const existingItem = acc.find(
+        el => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
+      );
 
       if (!existingItem) {
         acc.push({

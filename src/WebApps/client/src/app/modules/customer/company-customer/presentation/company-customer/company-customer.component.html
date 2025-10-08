@@ -1,14 +1,11 @@
 <app-breadcrumb />
 
 <app-mat-dynamic-card>
-
-  <div
-    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4 mb-3"
-  >
+  <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4 mb-3">
     <div class="col">
       <mat-form-field>
         <mat-label>Buscar</mat-label>
-        <input matInput [(ngModel)]="dataSearch.textSearch">
+        <input matInput [(ngModel)]="dataSearch.textSearch" />
         <ng-container matSuffix>
           <button type="button" mat-icon-button (click)="refresh()">
             <mat-icon>refresh</mat-icon>
@@ -19,9 +16,7 @@
     <div class="col">
       <div class="d-flex flex-row gap-2 justify-content-end">
         <!-- Export Button with Dropdown -->
-        <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">
-           Exportar Reporte
-        </button>
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">Exportar Reporte</button>
 
         <mat-menu #exportMenu="matMenu">
           <button mat-menu-item (click)="exportExcel()">
@@ -34,7 +29,7 @@
           </button>
         </mat-menu>
 
-        <button mat-icon-button  appCompanyCustomerAddEdit (companyCustomerSaved)="refresh()">
+        <button mat-icon-button appCompanyCustomerAddEdit (companyCustomerSaved)="refresh()">
           <mat-icon>add</mat-icon>
         </button>
 
@@ -55,22 +50,16 @@
     (pageEvent)="handlePageEvent($event)"
   />
   <ng-template #templateOp let-item="item">
-
-    <app-theme-button  (companyCustomerSaved)="refresh()"
-                       appCompanyCustomerAddEdit
-                       [id]="item.idCliente"
+    <app-theme-button
+      (companyCustomerSaved)="refresh()"
+      appCompanyCustomerAddEdit
+      [id]="item.idCliente"
       variant="success"
       icon="edit"
       matStyle="icon"
     />
-                  @if (!item.esConsumidorFinal) {
-                    <app-theme-button (handleClick)="askToDelete(item)"
-                      variant="danger"
-                      icon="delete"
-                      matStyle="icon"
-                    />
-                  }
+    @if (!item.esConsumidorFinal) {
+      <app-theme-button (handleClick)="askToDelete(item)" variant="danger" icon="delete" matStyle="icon" />
+    }
   </ng-template>
-
-
 </app-mat-dynamic-card>

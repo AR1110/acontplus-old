@@ -1,31 +1,25 @@
-import { Injectable } from "@angular/core";
-import {CuentaPorCobrarRepository} from "@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository";
-
+import { Injectable } from '@angular/core';
+import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class CuentaPorCobrarUseCase {
-  constructor(private repo: CuentaPorCobrarRepository) { }
+  constructor(private repo: CuentaPorCobrarRepository) {}
 
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
-
-  getDataForm(idCuentaPorCobrar: number, idCliente: number){
+  getDataForm(idCuentaPorCobrar: number, idCliente: number) {
     return this.repo.getDataForm(idCuentaPorCobrar, idCliente);
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter()
+  getDataFilter() {
+    return this.repo.getDataFilter();
   }
 
-
-  getCuotasById(idCuentaPorCobrar: number){
-    return this.repo.getCuotasById(idCuentaPorCobrar)
+  getCuotasById(idCuentaPorCobrar: number) {
+    return this.repo.getCuotasById(idCuentaPorCobrar);
   }
-
-
 }

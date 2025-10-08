@@ -13,10 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
@@ -78,7 +75,7 @@ export class DocElectComponent implements OnInit {
     },
     { key: 'usuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   dataSource = new MatTableDataSource<any>();
 
@@ -109,9 +106,7 @@ export class DocElectComponent implements OnInit {
       dateEnd: this.dataSearch().toDate,
       codEstab: this.dataSearch().codEstab,
       idPuntoEmision: this.dataSearch().idPuntoEmision,
-      identificacionReceptor: isValidField(
-        this.dataSearch().identificacionReceptor,
-      ),
+      identificacionReceptor: isValidField(this.dataSearch().identificacionReceptor),
       idUsuario: getValidId(this.dataSearch().idUsuario),
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -122,12 +117,9 @@ export class DocElectComponent implements OnInit {
 
   private successResponseList(response: any) {
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
+    this.pagination.update(p => ({
       ...p,
-      totalRecords:
-        this.dataSource.data.length > 0
-          ? this.dataSource.data[0].totalRecords
-          : 0,
+      totalRecords: this.dataSource.data.length > 0 ? this.dataSource.data[0].totalRecords : 0,
     }));
   }
 
@@ -142,7 +134,7 @@ export class DocElectComponent implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         this.successResponseList(response);
       });
   }
@@ -152,21 +144,20 @@ export class DocElectComponent implements OnInit {
     this.docElectSvc
       .getFilters()
       .pipe(
-        switchMap((initialData) => {
+        switchMap(initialData => {
           this.estabs = initialData.estabs;
           this.tiposDoc = initialData.tipoDocumentos;
           this.estadosDoc = initialData.estadoDocumentos;
 
           if (this.estabs.length > 0) {
-            const dataEstab = this.estabs.find((estab) => estab.defaultEstab);
+            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
             this.puntosEmision = dataEstab?.puntosEmision || [];
-            this.dataSearch.update((e) => {
+            this.dataSearch.update(e => {
               return {
                 ...e,
                 codEstab: dataEstab?.codEstab,
                 idPuntoEmision:
-                  this.puntosEmision.find((pto) => pto.defaultPtoEmi)
-                    ?.idPuntoEmision || 0,
+                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
               };
             });
           }
@@ -178,7 +169,7 @@ export class DocElectComponent implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         this.successResponseList(response);
       });
   }
@@ -187,7 +178,7 @@ export class DocElectComponent implements OnInit {
     key: K,
     value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update((ds) => {
+    this.dataSearch.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -196,16 +187,13 @@ export class DocElectComponent implements OnInit {
   }
 
   onEstabChange() {
-    const dataEstab = this.estabs.find(
-      (estab) => estab.codEstab === this.dataSearch().codEstab,
-    );
+    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
       this.setDataSearch(
         'idPuntoEmision',
-        this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ||
-          0,
+        this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
       );
       this.getDocElects();
     } else {
@@ -217,7 +205,7 @@ export class DocElectComponent implements OnInit {
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update((e) => {
+    this.dataSearch.update(e => {
       return {
         ...e,
         fromDate: range.from,
@@ -228,7 +216,7 @@ export class DocElectComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

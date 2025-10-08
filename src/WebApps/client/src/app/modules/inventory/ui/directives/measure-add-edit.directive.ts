@@ -1,10 +1,4 @@
-import {
-  Directive,
-  EventEmitter,
-  HostListener,
-  Input,
-  Output,
-} from '@angular/core';
+import { Directive, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { MeasureAddEditModalComponent } from '@inventory/ui/measure-page/measure-add-edit-modal/measure-add-edit-modal.component';
 import { MeasureRead } from '../../domain/models/measure.model';
 import { DialogService } from '@core/services/dialog.service';

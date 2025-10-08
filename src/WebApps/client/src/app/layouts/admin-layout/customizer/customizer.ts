@@ -82,7 +82,7 @@ export class Customizer {
     });
 
     this.drawerRef.afterOpened().subscribe(() => {
-      this.formSubscription = this.form.valueChanges.subscribe((value) => {
+      this.formSubscription = this.form.valueChanges.subscribe(value => {
         this.sendOptions(this.form.getRawValue());
       });
     });

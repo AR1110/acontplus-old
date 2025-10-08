@@ -22,17 +22,15 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
       tipo: 2,
     };
     return this._http.get(`${this._url}?json=${JSON.stringify(query)}`).pipe(
-      map((response) => {
+      map(response => {
         if (isApiResponse(response)) {
           const mainData = JSON.parse(response.payload as string);
-          const documentTypes = mainData.tipoComprobantes.map(
-            (tipoDoc: TipoDoc) => {
-              return {
-                descripcion: tipoDoc.descripcion,
-                codigoSri: tipoDoc.codigoSri,
-              };
-            },
-          );
+          const documentTypes = mainData.tipoComprobantes.map((tipoDoc: TipoDoc) => {
+            return {
+              descripcion: tipoDoc.descripcion,
+              codigoSri: tipoDoc.codigoSri,
+            };
+          });
           return {
             establecimientos: mainData.establecimientos,
             subcategories: mainData.subcategories,
@@ -49,19 +47,17 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
   }
 
   get<T>(params: T) {
-    return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`)
-      .pipe(
-        map((response) => {
-          if (response.code !== '1') {
-            return { documents: [] as DocumentReceived[] };
-          }
-          const { documentos } = JSON.parse(response.payload as string);
-          return {
-            documents: (documentos as DocumentReceived[]) || [],
-          };
-        }),
-      );
+    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`).pipe(
+      map(response => {
+        if (response.code !== '1') {
+          return { documents: [] as DocumentReceived[] };
+        }
+        const { documentos } = JSON.parse(response.payload as string);
+        return {
+          documents: (documentos as DocumentReceived[]) || [],
+        };
+      }),
+    );
   }
 
   getById(id: number) {

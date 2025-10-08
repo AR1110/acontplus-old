@@ -1,58 +1,50 @@
-import {inject, Injectable} from "@angular/core";
-import {ProductRepository} from "@inventory/product/domain/repositories/product.repository";
-
+import { inject, Injectable } from '@angular/core';
+import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class ProductUseCase {
-  private repo = inject(ProductRepository)
+  private repo = inject(ProductRepository);
 
-
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter()
+  getDataFilter() {
+    return this.repo.getDataFilter();
   }
 
-
-  getDataForm(){
+  getDataForm() {
     return this.repo.getDataForm();
   }
 
+  search = <T extends { textSearch: string; pageIndex?: number; pageSize?: number }>(obj: T) => {
+    return this.repo.search(obj);
+  };
 
-   search = <T extends { textSearch: string, pageIndex?: number, pageSize?: number }>(obj:T)=>{
-    return this.repo.search(obj)
-   }
-
-
-  getForSale(id: number){
-    return this.repo.getForSale(id)
+  getForSale(id: number) {
+    return this.repo.getForSale(id);
   }
 
-  checkNotificationStock<T extends {
-    idArticulo: number
-    cantidad: number
-    idBodega: number
-    idMedida: number
-  }>(obj:T){
-    return this.repo.checkNotificationStock(obj)
+  checkNotificationStock<
+    T extends {
+      idArticulo: number;
+      cantidad: number;
+      idBodega: number;
+      idMedida: number;
+    },
+  >(obj: T) {
+    return this.repo.checkNotificationStock(obj);
   }
 
-  getDataReport(){
-    return this.repo.getDataReport()
+  getDataReport() {
+    return this.repo.getDataReport();
   }
 
-  updateStatus(id: number){
-    return this.repo.updateStatus(id)
+  updateStatus(id: number) {
+    return this.repo.updateStatus(id);
   }
-
-
-
-
 
   // create<T>(infrastructure: T) {
   //   return this.repo.create(infrastructure)
@@ -65,5 +57,4 @@ export class ProductUseCase {
   // delete(id: number) {
   //   return this.repo.delete(id)
   // }
-
 }

@@ -1,14 +1,14 @@
 export interface SeatList {
-  index: number
-  seatNumber: number
-  code: string
-  name: string
-  description: string
-  isOccupied: string,
-  id: number,
-  createdAt: string
-  enabled: boolean
-  deleted: null
+  index: number;
+  seatNumber: number;
+  code: string;
+  name: string;
+  description: string;
+  isOccupied: string;
+  id: number;
+  createdAt: string;
+  enabled: boolean;
+  deleted: null;
 }
 
 export interface SeatResponse {
@@ -17,11 +17,10 @@ export interface SeatResponse {
 }
 
 export interface SeatCreateDto {
-  name: string ;
+  name: string;
   description: string | null;
-  seatNumber: number
+  seatNumber: number;
 }
-
 
 export interface SeatUpdateDto {
   id: number;
@@ -30,7 +29,6 @@ export interface SeatUpdateDto {
   name: string;
   description?: string;
 }
-
 
 export interface SeatUpdateParams {
   data: SeatUpdateDto;

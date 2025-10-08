@@ -1,107 +1,102 @@
-import { Component, inject, Input, signal, OnInit } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { ApiResponse } from "@core/models/api-response";
-import { ToastrNotificationService } from "@core/services/toastr-notification.service";
-import {getValidId, isValidField} from "@core/utils/utils";
-import { BrandAddEditDirective } from "@inventory/ui/directives/brand-add-edit.directive";
-import { ToUpperCaseDirective } from "@shared/directives/ui/to-upper-case.directive";
-import {ProductUseCase} from "@inventory/product/application/use-cases/product.use-case";
-import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {finalize} from "rxjs/operators";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatRadioModule} from "@angular/material/radio";
-
+import { Component, inject, Input, signal, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { ApiResponse } from '@core/models/api-response';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { InventarioModeloUseCase } from '@inventory/domain/usecases/inventario-modelo.use-case';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
-    selector: 'app-model-add-edit-modal',
-    templateUrl: './model-add-edit.component.html',
-    imports: [
-        FormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatSelectModule,
-MatIconModule,
-      MatButtonModule,
-      MatRadioModule,
-        BrandAddEditDirective,
-        ToUpperCaseDirective,
-      MatCustomDialogComponent
-    ]
+  selector: 'app-model-add-edit-modal',
+  templateUrl: './model-add-edit.component.html',
+  imports: [
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatIconModule,
+    MatButtonModule,
+    MatRadioModule,
+    BrandAddEditDirective,
+    ToUpperCaseDirective,
+    MatCustomDialogComponent,
+  ],
 })
 export class ModelAddEditComponent implements OnInit {
-
   readonly dialogRef = inject(MatDialogRef<ModelAddEditComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);
-  private _productUseCase = inject(ProductUseCase)
+  private _productUseCase = inject(ProductUseCase);
 
-  private  _modeloUseCase= inject(InventarioModeloUseCase)
+  private _modeloUseCase = inject(InventarioModeloUseCase);
 
   btnText = 'Guardar';
-  titleModal = signal('Nuevo')
+  titleModal = signal('Nuevo');
 
   data = {
     idModelo: 0,
     idMarca: 0,
     descripcion: null,
-    estado: true
-  }
+    estado: true,
+  };
 
-  marcas = signal<any[]>([])
-  loading = signal(false)
+  marcas = signal<any[]>([]);
+  loading = signal(false);
 
   successReponse = {
     next: (response: ApiResponse) => {
-
-      if (response.code === "0") {
+      if (response.code === '0') {
         this.tS.show({
           type: 'warning',
-          message: response.message
-        })
+          message: response.message,
+        });
       }
-      if (response.code === "1") {
+      if (response.code === '1') {
         this.tS.show({
           type: 'success',
-          message: response.message
-        })
-        this.dialogRef.close(response)
+          message: response.message,
+        });
+        this.dialogRef.close(response);
       }
-
     },
     error(error: any) {
-      console.log(error)
-    }
-  }
+      console.log(error);
+    },
+  };
 
   ngOnInit() {
-    this.getDataForm()
+    this.getDataForm();
 
-    this.data = {...this.data, ...this.params }
-      if(!getValidId(this.data.idMarca)){
-        this.data.idMarca = 0;
-      }
+    this.data = { ...this.data, ...this.params };
+    if (!getValidId(this.data.idMarca)) {
+      this.data.idMarca = 0;
+    }
 
     if (this.data.idModelo > 0) {
       this.btnText = 'Actualizar';
-      this.titleModal.set('Editar ')
+      this.titleModal.set('Editar ');
     }
   }
 
   private getDataForm() {
     this._productUseCase.getDataForm().subscribe(response => {
-      this.marcas.set(response.marcas)
-    })
+      this.marcas.set(response.marcas);
+    });
   }
   refreshMarca() {
-    this.getDataForm()
-
+    this.getDataForm();
   }
 
   save() {
@@ -109,32 +104,28 @@ export class ModelAddEditComponent implements OnInit {
       if (!isValidField(this.data.descripcion)) {
         this.tS.show({
           type: 'warning',
-          message: 'Ingrese la descripción'
-        })
-        return
+          message: 'Ingrese la descripción',
+        });
+        return;
       }
 
       if (this.data.idModelo > 0) {
-        this.loading.set(true)
-        this._modeloUseCase.put(this.data.idModelo, this.data)
-          .pipe(
-            finalize(()=>this.loading.set(false))
-          )
-          .subscribe(this.successReponse)
+        this.loading.set(true);
+        this._modeloUseCase
+          .put(this.data.idModelo, this.data)
+          .pipe(finalize(() => this.loading.set(false)))
+          .subscribe(this.successReponse);
       }
 
       if (!(this.data.idModelo > 0)) {
-        this.loading.set(true)
-        this._modeloUseCase.post(this.data)
-          .pipe(
-            finalize(()=>this.loading.set(false))
-          )
-          .subscribe(this.successReponse)
+        this.loading.set(true);
+        this._modeloUseCase
+          .post(this.data)
+          .pipe(finalize(() => this.loading.set(false)))
+          .subscribe(this.successReponse);
       }
-
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }

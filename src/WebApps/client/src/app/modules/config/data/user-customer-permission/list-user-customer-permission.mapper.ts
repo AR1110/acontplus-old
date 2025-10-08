@@ -12,8 +12,7 @@ export class ListUserCustomerPermissionMapper {
   static fromJson(response: any): UserCustomerPermissionResponse {
     const userPermissionData = response.userPermissionData[0] || {};
     const userCustomPermissionsApi = response.userCustomPermissions || [];
-    const userCustomPermissionsSavedApi =
-      response.userCustomPermissionsSaved || [];
+    const userCustomPermissionsSavedApi = response.userCustomPermissionsSaved || [];
     const usersCustomerAdmin = response.usersCustomerAdmin || [];
 
     const userCustomPermissionsMerged = [
@@ -24,34 +23,24 @@ export class ListUserCustomerPermissionMapper {
     function transformMenuData(data: any[]): any[] {
       const menuMap = new Map<string, any>();
 
-      data.forEach(
-        ({
+      data.forEach(({ id, nomMenu, descAction, securityType, enabled, requiresKey, users }) => {
+        const fullName = nomMenu;
+
+        if (!menuMap.has(fullName)) {
+          menuMap.set(fullName, { name: fullName, children: [] });
+        }
+
+        const menu = menuMap.get(fullName)!;
+        menu.children.push({
           id,
-          nomMenu,
-          descAction,
+          name: descAction,
           securityType,
           enabled,
           requiresKey,
-          users,
-        }) => {
-          const fullName = nomMenu;
-
-          if (!menuMap.has(fullName)) {
-            menuMap.set(fullName, { name: fullName, children: [] });
-          }
-
-          const menu = menuMap.get(fullName)!;
-          menu.children.push({
-            id,
-            name: descAction,
-            securityType,
-            enabled,
-            requiresKey,
-            hasStatus: true,
-            users: isValidJSON(users) ? JSON.parse(users) : [],
-          });
-        },
-      );
+          hasStatus: true,
+          users: isValidJSON(users) ? JSON.parse(users) : [],
+        });
+      });
 
       return Array.from(menuMap.values()).map((item: any, index) => ({
         ...item,
@@ -59,12 +48,9 @@ export class ListUserCustomerPermissionMapper {
       }));
     }
 
-    const userCustomPermissions = transformMenuData(
-      userCustomPermissionsMerged,
-    );
+    const userCustomPermissions = transformMenuData(userCustomPermissionsMerged);
 
-    const [permissionsSale, permissionsProduct, permissionsCashBox] =
-      response.permissions;
+    const [permissionsSale, permissionsProduct, permissionsCashBox] = response.permissions;
 
     permissionsSale.permission = JSON.parse(permissionsSale.permission);
     permissionsProduct.permission = JSON.parse(permissionsProduct.permission);

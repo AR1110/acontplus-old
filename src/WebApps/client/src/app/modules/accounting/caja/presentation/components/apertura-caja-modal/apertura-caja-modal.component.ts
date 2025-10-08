@@ -50,10 +50,10 @@ export class AperturaCajaModalComponent implements OnInit {
   ngOnInit() {
     this.dataForm.get('idCaja')?.setValue(this.params.idCaja);
 
-    this._controlCajaUseCase.getDataForm().subscribe((response) => {
+    this._controlCajaUseCase.getDataForm().subscribe(response => {
       const { formaPagos } = response as { formaPagos: any };
       this.entidadesFinanciera = formaPagos;
-      const dataEF = this.entidadesFinanciera.find((item) => item.codigo === PaymentTypeCode.EFE);
+      const dataEF = this.entidadesFinanciera.find(item => item.codigo === PaymentTypeCode.EFE);
       if (dataEF) {
         this.dataForm.get('idEntidadFinanciera')?.setValue(dataEF.idEntidadFinanciera);
       }
@@ -79,7 +79,7 @@ export class AperturaCajaModalComponent implements OnInit {
       }
 
       if (data.idCaja && data.idCaja > 0) {
-        this._controlCajaUseCase.post(data).subscribe((response) => {
+        this._controlCajaUseCase.post(data).subscribe(response => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

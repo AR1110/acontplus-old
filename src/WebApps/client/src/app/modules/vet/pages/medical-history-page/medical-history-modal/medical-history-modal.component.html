@@ -1,143 +1,121 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="modalTitle"
-  (close)="onClose()"
-/>
+<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="modalTitle" (close)="onClose()" />
 <ng-template #body>
-  <form
-    (ngSubmit)="onSave()"
-    id="medicalHistoryForm"
-    [formGroup]="medicalHistoryForm"
-  >
+  <form (ngSubmit)="onSave()" id="medicalHistoryForm" [formGroup]="medicalHistoryForm">
     <div class="vstack gap-2">
-      <div
-        class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2"
-      >
+      <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2">
         <div class="col">
           <mat-form-field class="w-100">
-            <mat-label>Establecimiento
-            </mat-label>
-              <mat-select   formControlName="establecimientoId">
-                @for (estab of establecimientos(); track $index) {
-                  <mat-option [value]="estab.idEstablecimiento">
-                    {{ estab.nombreComercial }}
-                  </mat-option>
-                }
-              </mat-select>
+            <mat-label>Establecimiento </mat-label>
+            <mat-select formControlName="establecimientoId">
+              @for (estab of establecimientos(); track $index) {
+                <mat-option [value]="estab.idEstablecimiento">
+                  {{ estab.nombreComercial }}
+                </mat-option>
+              }
+            </mat-select>
           </mat-form-field>
         </div>
         <div class="col">
-          <app-pet-search
-            (onPetSelected)="onPetSelected($event)"
-          />
+          <app-pet-search (onPetSelected)="onPetSelected($event)" />
         </div>
         <div class="col">
           <div class="form-group">
             <label for="date">Fecha:</label>
-            <input
-              class="form-control"
-              formControlName="date"
-              id="date"
-              required
-              type="date"
-            />
+            <input class="form-control" formControlName="date" id="date" required type="date" />
           </div>
         </div>
       </div>
     </div>
 
-
     @if (petSelected.id > 0) {
-   <div class="vstack gap-2">
-     <mat-card>
-       <mat-card-content>
-         <h5 class="card-title">Datos del Responsable</h5>
-         <div class="row">
-           <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-             <div class="form-group">
-               <label for="customer">Cliente</label>
-               <input
-                 [value]="petSelected.customer"
-                 class="form-control"
-                 disabled
-                 id="customer"
-                 name="customer"
-                 type="text"
-               />
-             </div>
-           </div>
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label for="customerIdCard">Ruc</label>
-               <input
-                 [value]="petSelected.customerIdCard"
-                 class="form-control"
-                 disabled
-                 id="customerIdCard"
-                 name="customerIdCard"
-                 type="text"
-               />
-             </div>
-           </div>
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label for="email">Email</label>
-               <input
-                 [value]="petSelected.email"
-                 class="form-control"
-                 disabled
-                 id="email"
-                 name="email"
-                 type="text"
-               />
-             </div>
-           </div>
-         </div>
-       </mat-card-content>
-     </mat-card>
-     <mat-card>
-       <mat-card-content>
-         <h5 class="card-title">Datos de la mascota</h5>
-         <div class="row">
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-             <div class="form-group">
-               <label>Nombre</label>
-               <h5>{{ petSelected.name }}</h5>
-             </div>
-           </div>
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label>Tipo</label>
-               <h5>{{ petSelected.petType }}</h5>
-             </div>
-           </div>
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label>Raza</label>
-               <h5>{{ petSelected.breed }}</h5>
-             </div>
-           </div>
-         </div>
-         <div class="row">
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label>Sexo</label>
-               <h5>{{ petSelected.gender }}</h5>
-             </div>
-           </div>
-           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-             <div class="form-group">
-               <label>Color</label>
-               <h5>{{ petSelected.color }}</h5>
-             </div>
-           </div>
-         </div>
-       </mat-card-content>
-     </mat-card>
-   </div>
+      <div class="vstack gap-2">
+        <mat-card>
+          <mat-card-content>
+            <h5 class="card-title">Datos del Responsable</h5>
+            <div class="row">
+              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                <div class="form-group">
+                  <label for="customer">Cliente</label>
+                  <input
+                    [value]="petSelected.customer"
+                    class="form-control"
+                    disabled
+                    id="customer"
+                    name="customer"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label for="customerIdCard">Ruc</label>
+                  <input
+                    [value]="petSelected.customerIdCard"
+                    class="form-control"
+                    disabled
+                    id="customerIdCard"
+                    name="customerIdCard"
+                    type="text"
+                  />
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input
+                    [value]="petSelected.email"
+                    class="form-control"
+                    disabled
+                    id="email"
+                    name="email"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-content>
+            <h5 class="card-title">Datos de la mascota</h5>
+            <div class="row">
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+                <div class="form-group">
+                  <label>Nombre</label>
+                  <h5>{{ petSelected.name }}</h5>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label>Tipo</label>
+                  <h5>{{ petSelected.petType }}</h5>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label>Raza</label>
+                  <h5>{{ petSelected.breed }}</h5>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label>Sexo</label>
+                  <h5>{{ petSelected.gender }}</h5>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+                <div class="form-group">
+                  <label>Color</label>
+                  <h5>{{ petSelected.color }}</h5>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     }
-
 
     <div class="table-responsive mt-3">
       <table class="table table-bordered">
@@ -145,25 +123,25 @@
           <tr>
             <th>Test de Salud</th>
             @for (item of diseasesStatuses(); track $index) {
-            <th>{{ item.name }}</th>
+              <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
           @for (d of diseases(); track $index) {
-          <tr>
-            <td>{{ d.name }}</td>
-            @for (ds of diseasesStatuses(); track $index) {
-            <td>
-              <input
-                (change)="addDiseaseStatus(d.id, ds.id, true)"
-                [id]="d.id + '-' + ds.id + '-chkdds'"
-                [name]="d.id + '-chkdds'"
-                type="radio"
-              />
-            </td>
-            }
-          </tr>
+            <tr>
+              <td>{{ d.name }}</td>
+              @for (ds of diseasesStatuses(); track $index) {
+                <td>
+                  <input
+                    (change)="addDiseaseStatus(d.id, ds.id, true)"
+                    [id]="d.id + '-' + ds.id + '-chkdds'"
+                    [name]="d.id + '-chkdds'"
+                    type="radio"
+                  />
+                </td>
+              }
+            </tr>
           }
         </tbody>
       </table>
@@ -175,25 +153,25 @@
           <tr>
             <th>Test de Comportamiento:</th>
             @for (item of behaviorsStatuses(); track $index) {
-            <th>{{ item.name }}</th>
+              <th>{{ item.name }}</th>
             }
           </tr>
         </thead>
         <tbody>
           @for (b of behaviors(); track $index) {
-          <tr>
-            <td>{{ b.name }}</td>
-            @for (bs of behaviorsStatuses(); track $index) {
-            <td>
-              <input
-                (change)="addBehaviorStatus(b.id, bs.id, true)"
-                [id]="b.id + '-' + bs.id + '-chkbbs'"
-                [name]="b.id + '-chkbbs'"
-                type="radio"
-              />
-            </td>
-            }
-          </tr>
+            <tr>
+              <td>{{ b.name }}</td>
+              @for (bs of behaviorsStatuses(); track $index) {
+                <td>
+                  <input
+                    (change)="addBehaviorStatus(b.id, bs.id, true)"
+                    [id]="b.id + '-' + bs.id + '-chkbbs'"
+                    [name]="b.id + '-chkbbs'"
+                    type="radio"
+                  />
+                </td>
+              }
+            </tr>
           }
         </tbody>
       </table>
@@ -202,12 +180,7 @@
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <div class="form-group">
           <label for="observations">Corte y Estilo</label>
-          <textarea
-            class="form-control"
-            formControlName="observations"
-            id="observations"
-            required
-          ></textarea>
+          <textarea class="form-control" formControlName="observations" id="observations" required></textarea>
         </div>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">

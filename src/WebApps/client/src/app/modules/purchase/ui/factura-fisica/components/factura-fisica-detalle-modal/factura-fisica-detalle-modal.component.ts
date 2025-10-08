@@ -9,12 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-factura-fisica-detalle-modal',
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatCustomDialogComponent,
-    TablaResumenTotalesComponent,
-  ],
+  imports: [MatButtonModule, MatIconModule, MatCustomDialogComponent, TablaResumenTotalesComponent],
   templateUrl: './factura-fisica-detalle-modal.component.html',
   styles: ``,
 })
@@ -40,15 +35,9 @@ export class FacturaFisicaDetalleModalComponent implements OnInit {
           this.isLoading.set(false);
         }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         console.log(response);
-        const {
-          infoTributaria,
-          infoFactura,
-          detalles,
-          datosAdicionalesDoc,
-          tiposIva,
-        } = response;
+        const { infoTributaria, infoFactura, detalles, datosAdicionalesDoc, tiposIva } = response;
 
         this.infoTributaria = infoTributaria;
         this.infoFactura = infoFactura;

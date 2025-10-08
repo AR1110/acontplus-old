@@ -1,13 +1,10 @@
-
-import {ApiResponse} from "@core/models/api-response";
-import {FractionalProductDataGetId} from "@inventory/product/domain/entities/fractional-product.model";
-import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
-
+import { ApiResponse } from '@core/models/api-response';
+import { FractionalProductDataGetId } from '@inventory/product/domain/entities/fractional-product.model';
+import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 
 export class FractionalProductGetIdMapper {
-
-  static fromJson(responseApi:any){
-    const resultResponse = new ApiResponse<FractionalProductDataGetId>()
+  static fromJson(responseApi: any) {
+    const resultResponse = new ApiResponse<FractionalProductDataGetId>();
 
     const dataApi = responseApi.data[0];
     const data = {
@@ -21,13 +18,10 @@ export class FractionalProductGetIdMapper {
       precioCosto: dataApi.precioCosto,
       codigo: dataApi.codigo,
       nombreMedida: dataApi.nombreMedida,
-    }
+    };
 
-    const productPvps = responseApi.pvps.map((item:any, index: number)=>{
-      const utilidad = pricingCalculateUtil.getValueUtility(
-        item.precioVenta,
-        data.precioCosto
-      );
+    const productPvps = responseApi.pvps.map((item: any, index: number) => {
+      const utilidad = pricingCalculateUtil.getValueUtility(item.precioVenta, data.precioCosto);
       return {
         idArticuloFraccionadoPvP: item.idArticuloFraccionadoPvP,
         idTarifa: item.idTarifa,
@@ -39,15 +33,14 @@ export class FractionalProductGetIdMapper {
         porcentajeIva: item.porcentajeIva,
         utilidad,
         nomEstado: item.precioPredeterminado ? 'Predeterminado' : '',
-      }
-    })
+      };
+    });
 
     resultResponse.payload = {
       data,
-      productPvps
-    }
+      productPvps,
+    };
 
     return resultResponse;
   }
-
 }

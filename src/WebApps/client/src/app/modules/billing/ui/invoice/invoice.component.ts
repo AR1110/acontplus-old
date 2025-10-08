@@ -25,38 +25,36 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
-    selector: 'app-invoice',
-    imports: [
-        FormsModule,
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        MatMenuModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        MatInputModule,
-        //components
-        BreadcrumbComponent,
-        CustomTableContainerComponent,
-        MatDynamicTableComponent,
-        DateRangeSelectionComponent,
-    ],
-    templateUrl: './invoice.component.html',
-    styles: ``
+  selector: 'app-invoice',
+  imports: [
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatInputModule,
+    //components
+    BreadcrumbComponent,
+    CustomTableContainerComponent,
+    MatDynamicTableComponent,
+    DateRangeSelectionComponent,
+  ],
+  templateUrl: './invoice.component.html',
+  styles: ``,
 })
 export class InvoiceComponent implements OnInit {
-
-  private invoiceSvc = inject(InvoiceService)
-  private tS = inject(ToastrNotificationService)
+  private invoiceSvc = inject(InvoiceService);
+  private tS = inject(ToastrNotificationService);
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
-  estadosDoc = [] as any[]
-  isSearchAdvanced = signal(false)
-  isLoadingResults = signal(false)
-
+  estadosDoc = [] as any[];
+  isSearchAdvanced = signal(false);
+  isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -70,7 +68,7 @@ export class InvoiceComponent implements OnInit {
     { key: 'estadoNom', label: 'Estado', type: 'string' },
     { key: 'usuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   dataSource = new MatTableDataSource<any>();
 
@@ -89,47 +87,41 @@ export class InvoiceComponent implements OnInit {
     esDatoAdicional: false,
     esBuscarPorNro: false,
     esBuscarUsuario: false,
-    esBuscarCliente: false
-  })
+    esBuscarCliente: false,
+  });
 
   private getDataParams() {
     const params = {
-
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
 
-        codEstab: this.dataSearch().codEstab,
-        idPuntoEmision: getValidId(this.dataSearch().idPuntoEmision),
-        byCliente: this.dataSearch().idCliente,
-        checkBoxFecha: this.dataSearch().checkBoxDate,
-        byUsuario: getValidId(this.dataSearch().idUsuario),
-        idEstadoPago: getValidId(this.dataSearch().idEstadoDoc),
-        fechaInicio:  this.dataSearch().fromDate,
-        fechaFin: this.dataSearch().toDate,
-   //     nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
-    //    infoAdicional: this.dataSearch.infoAdicional ? this.dataSearch.infoAdicional : null,
-        convertToDoc: this.dataSearch().isTransferredToDoc
-
-
+      codEstab: this.dataSearch().codEstab,
+      idPuntoEmision: getValidId(this.dataSearch().idPuntoEmision),
+      byCliente: this.dataSearch().idCliente,
+      checkBoxFecha: this.dataSearch().checkBoxDate,
+      byUsuario: getValidId(this.dataSearch().idUsuario),
+      idEstadoPago: getValidId(this.dataSearch().idEstadoDoc),
+      fechaInicio: this.dataSearch().fromDate,
+      fechaFin: this.dataSearch().toDate,
+      //     nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
+      //    infoAdicional: this.dataSearch.infoAdicional ? this.dataSearch.infoAdicional : null,
+      convertToDoc: this.dataSearch().isTransferredToDoc,
     };
     return params;
   }
 
-
   private setGetAll(response: any) {
-
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
+    this.pagination.update(p => ({
       ...p,
       totalRecords: response.totalRecords,
     }));
-
   }
 
   private getNotasEntrega() {
     if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
 
-    this.isLoadingResults.set(true)
+    this.isLoadingResults.set(true);
     this.invoiceSvc
       .getAll(this.getDataParams())
       .pipe(
@@ -137,62 +129,58 @@ export class InvoiceComponent implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         this.setGetAll(response);
       });
   }
 
   refresh() {
-    this.getNotasEntrega()
+    this.getNotasEntrega();
   }
 
   ngOnInit(): void {
-    this.isLoadingResults.set(true)
-    this.invoiceSvc.getDataFilter().pipe(
-      switchMap(initialData => {
-
-        this.estabs = initialData.estabs;
-        this.estadosDoc = initialData.estadosDoc;
-
-        if (this.estabs.length > 0) {
-          const dataEstab = this.estabs.find(estab => (estab.defaultEstab));
-          this.puntosEmision = dataEstab?.puntosEmision || [];
-
-          this.dataSearch.update(e => {
-            return {
-              ...e,
-              codEstab: dataEstab?.codEstab,
-              idPuntoEmision: this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0
-            }
-
-          })
-        } else {
-          this.tS.show({
-            type: 'warning',
-            message: 'No tienes asignado Establecimiento!'
-          })
-          return throwError(() => new Error('No tienes asignado Establecimiento'));
-        }
-
-        return this.invoiceSvc.getAll(this.getDataParams())
-
-      })
-    )
+    this.isLoadingResults.set(true);
+    this.invoiceSvc
+      .getDataFilter()
       .pipe(
-        finalize(() => this.isLoadingResults.set(false))
+        switchMap(initialData => {
+          this.estabs = initialData.estabs;
+          this.estadosDoc = initialData.estadosDoc;
+
+          if (this.estabs.length > 0) {
+            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
+            this.puntosEmision = dataEstab?.puntosEmision || [];
+
+            this.dataSearch.update(e => {
+              return {
+                ...e,
+                codEstab: dataEstab?.codEstab,
+                idPuntoEmision:
+                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+              };
+            });
+          } else {
+            this.tS.show({
+              type: 'warning',
+              message: 'No tienes asignado Establecimiento!',
+            });
+            return throwError(() => new Error('No tienes asignado Establecimiento'));
+          }
+
+          return this.invoiceSvc.getAll(this.getDataParams());
+        }),
       )
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe(response => {
         this.setGetAll(response);
-      })
-
-
+      });
   }
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
     value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update((ds) => {
+    this.dataSearch.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -200,18 +188,21 @@ export class InvoiceComponent implements OnInit {
     });
   }
 
-  onEstabChange(){
+  onEstabChange() {
     const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
-      this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
-        this.refresh();
+      this.setDataSearch(
+        'idPuntoEmision',
+        this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+      );
+      this.refresh();
     } else {
-        this.tS.show({
-          type: 'warning',
-          message: 'No tiene puntos de emisión asignados'
-        })
+      this.tS.show({
+        type: 'warning',
+        message: 'No tiene puntos de emisión asignados',
+      });
     }
   }
 
@@ -220,15 +211,14 @@ export class InvoiceComponent implements OnInit {
       return {
         ...e,
         fromDate: range.from,
-        toDate: range.to
-      }
-    })
-    this.refresh()
+        toDate: range.to,
+      };
+    });
+    this.refresh();
   }
 
-
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -238,5 +228,4 @@ export class InvoiceComponent implements OnInit {
     });
     this.refresh();
   }
-
 }

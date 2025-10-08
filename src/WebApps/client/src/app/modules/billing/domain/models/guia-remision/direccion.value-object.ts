@@ -6,7 +6,7 @@ export class Direccion {
     private readonly provincia: string,
     private readonly pais: string,
     private readonly complemento?: string,
-    private readonly codigoPostal?: string
+    private readonly codigoPostal?: string,
   ) {
     this.validarDireccion();
   }
@@ -44,13 +44,27 @@ export class Direccion {
     );
   }
 
-  getCalle(): string { return this.calle; }
-  getNumero(): string { return this.numero; }
-  getCiudad(): string { return this.ciudad; }
-  getProvincia(): string { return this.provincia; }
-  getPais(): string { return this.pais; }
-  getComplemento(): string | undefined { return this.complemento; }
-  getCodigoPostal(): string | undefined { return this.codigoPostal; }
+  getCalle(): string {
+    return this.calle;
+  }
+  getNumero(): string {
+    return this.numero;
+  }
+  getCiudad(): string {
+    return this.ciudad;
+  }
+  getProvincia(): string {
+    return this.provincia;
+  }
+  getPais(): string {
+    return this.pais;
+  }
+  getComplemento(): string | undefined {
+    return this.complemento;
+  }
+  getCodigoPostal(): string | undefined {
+    return this.codigoPostal;
+  }
 
   // Método para serializar a un objeto plano
   toPlainObject(): any {
@@ -61,7 +75,7 @@ export class Direccion {
       ciudad: this.ciudad,
       provincia: this.provincia,
       codigoPostal: this.codigoPostal,
-      pais: this.pais
+      pais: this.pais,
     };
   }
 
@@ -74,7 +88,7 @@ export class Direccion {
       object.provincia,
       object.pais,
       object.complemento,
-      object.codigoPostal
+      object.codigoPostal,
     );
   }
 }

@@ -1,10 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
@@ -14,11 +9,11 @@ import { ApiResponse } from '@core/models/api-response';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -29,13 +24,12 @@ import {MatInputModule} from "@angular/material/input";
     ThemeButtonComponent,
     MatCustomDialogComponent,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
   ],
   templateUrl: './floor-add-edit-modal.component.html',
   styles: ``,
 })
 export class FloorAddEditModalComponent implements OnInit {
-
   roomColumns: any[] = [
     { title: 'ID', field: 'id', visible: false },
     { title: 'Código', field: 'code', editor: 'input' },
@@ -130,7 +124,7 @@ export class FloorAddEditModalComponent implements OnInit {
     const rowData = row.getData();
 
     // Find the index of the room to delete in the array
-    const index = this.rooms.findIndex((room) => room.id === rowData.id);
+    const index = this.rooms.findIndex(room => room.id === rowData.id);
     if (index > -1) {
       // Remove the room from the array
       this.rooms.splice(index, 1);
@@ -172,11 +166,11 @@ export class FloorAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this._floorUseCase.put(this.data.id, dataToSave).subscribe((response) => {
+      this._floorUseCase.put(this.data.id, dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     } else {
-      this._floorUseCase.post(dataToSave).subscribe((response) => {
+      this._floorUseCase.post(dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     }
@@ -206,13 +200,10 @@ export class FloorAddEditModalComponent implements OnInit {
   }
 
   addRoom() {
-    const maxId =
-      this.rooms.length > 0
-        ? Math.max(...this.rooms.map((room) => room.id))
-        : 0;
+    const maxId = this.rooms.length > 0 ? Math.max(...this.rooms.map(room => room.id)) : 0;
     const code =
       this.rooms.length > 0
-        ? `${Math.max(...this.rooms.map((room) => parseInt(room.code))) + 1}`
+        ? `${Math.max(...this.rooms.map(room => parseInt(room.code))) + 1}`
         : '1';
     const newRoom: Room = {
       id: maxId + 1, // Auto-increment the id based on the highest current id;
@@ -224,7 +215,7 @@ export class FloorAddEditModalComponent implements OnInit {
     };
     if (this.data.id > 0) {
       newRoom.id = 0;
-      this._roomService.post(newRoom).subscribe((response) => {
+      this._roomService.post(newRoom).subscribe(response => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

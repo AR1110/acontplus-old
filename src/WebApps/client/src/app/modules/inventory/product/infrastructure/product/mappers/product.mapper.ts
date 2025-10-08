@@ -1,25 +1,22 @@
-import {ApiResponse} from "@core/models/api-response";
-import {groupSubCategoryUtil} from "@inventory/domain/utils/group-sub-category.util";
-import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {ProductSearch} from "@inventory/product/domain/entities/product.entity";
-import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
-import {imgDefault} from "@core/utils/utils";
-
+import { ApiResponse } from '@core/models/api-response';
+import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { ProductSearch } from '@inventory/product/domain/entities/product.entity';
+import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import { imgDefault } from '@core/utils/utils';
 
 export class ProductMapper {
-
-  static fromApiDataFilter(response:ApiResponse){
-
-    let { brands, measures,models, subcategories , taxes } = JSON.parse(response.payload as string);
-    const subCategorias = groupSubCategoryUtil(subcategories)
+  static fromApiDataFilter(response: ApiResponse) {
+    const { brands, measures, models, subcategories, taxes } = JSON.parse(response.payload as string);
+    const subCategorias = groupSubCategoryUtil(subcategories);
 
     return {
       subCategorias,
       medidas: measures,
       marcas: brands,
       modelos: models,
-      tiposIva: taxes
-    }
+      tiposIva: taxes,
+    };
   }
 
   static searchFrom(products: unknown): ProductSearch[] {
@@ -30,11 +27,11 @@ export class ProductMapper {
           return {
             tarifa: tarifa.tarifa,
             precioVenta: tarifa.precioVenta,
-            precio: tarifa.precio
-          }
-        })
-        let obj = {
-          position: index +1,
+            precio: tarifa.precio,
+          };
+        });
+        const obj = {
+          position: index + 1,
           idArticulo: product.idArticulo,
           codigo: product.codigo,
           descripcion: product.descripcion,
@@ -51,26 +48,24 @@ export class ProductMapper {
           imagen: product.s3ObjectUrl || imgDefault(),
           s3ObjectUrl: product.s3ObjectUrl,
           s3ObjectKey: product.s3ObjectKey,
-          totalRecords: product.totalRecords
-        }
+          totalRecords: product.totalRecords,
+        };
         return obj;
-      })
+      });
 
       return results;
     }
     return [];
   }
 
+  static fromApiGetAll(response: ApiResponse) {
+    const { products } = JSON.parse(response.payload as string);
 
-  static fromApiGetAll(response:ApiResponse){
-
-    let { products } = JSON.parse(response.payload as string);
-
-    let data = products || [];
+    const data = products || [];
 
     return data.map((item: any, index: number) => {
       return {
-        index: index +1,
+        index: index + 1,
         idArticulo: item.idArticulo,
         idMedida: item.idMedida,
         code_unique: item.code_unique,
@@ -88,54 +83,56 @@ export class ProductMapper {
         totalRecords: item.totalRecords,
         style: item.style,
         s3ObjectKey: item.s3ObjectKey,
-        s3ObjectUrl: item.s3ObjectUrl
-      }
-    })
+        s3ObjectUrl: item.s3ObjectUrl,
+      };
+    });
   }
 
-
-  static fromApiDataReport(response:ApiResponse){
-
-    const {brands, documentTypes,fees,subcategories,warehouses, taxes=[]} = JSON.parse(response.payload as string);
-
-    let estabs = groupEstabUtil({
-      bodegas: warehouses,
-      isGroupBodega: true
-    })
-    let subCategorias = groupSubCategoryUtil(subcategories);
-
-    return {
-      estabs : estabs,
-      subCategorias : subCategorias,
-      marcas : brands,
-      tarifas : fees,
-      tiposDoc : documentTypes,
-      taxes
-    }
-  }
-
-
-  static fromApiSale(response:ApiResponse){
-    let   {
-      product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo
+  static fromApiDataReport(response: ApiResponse) {
+    const {
+      brands,
+      documentTypes,
+      fees,
+      subcategories,
+      warehouses,
+      taxes = [],
     } = JSON.parse(response.payload as string);
 
+    const estabs = groupEstabUtil({
+      bodegas: warehouses,
+      isGroupBodega: true,
+    });
+    const subCategorias = groupSubCategoryUtil(subcategories);
+
+    return {
+      estabs: estabs,
+      subCategorias: subCategorias,
+      marcas: brands,
+      tarifas: fees,
+      tiposDoc: documentTypes,
+      taxes,
+    };
+  }
+
+  static fromApiSale(response: ApiResponse) {
+    let { product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo } = JSON.parse(
+      response.payload as string,
+    );
 
     const medidas = mergeMeasureUtil(measures, fractionedMeasures);
 
-    inventoryAdjustment = inventoryAdjustment || []
+    inventoryAdjustment = inventoryAdjustment || [];
     const consolidacionesFecha = inventoryAdjustment.map((data: any) => ({
       ...data,
-      fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion)
-    }))
+      fechaConsolidacion: data.fechaConsolidacion && new Date(data.fechaConsolidacion),
+    }));
 
     return {
-      product : product[0],
+      product: product[0],
       medidas,
-      consolidacionesFecha
-    }
+      consolidacionesFecha,
+    };
   }
-
 
   static fromApiCheckStockNotificacion(responseApi: ApiResponse) {
     const { stockCheckResponse } = JSON.parse(responseApi.payload as string);

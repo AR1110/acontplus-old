@@ -1,20 +1,12 @@
-<mat-form-field
-  class="w-100"
-  appearance="outline"
->
+<mat-form-field class="w-100" appearance="outline">
   <mat-label>{{ labelText() }}</mat-label>
-  <mat-chip-grid
-    #chipGrid
-    [attr.aria-label]="'Lista de ' + labelText()"
-  >
+  <mat-chip-grid #chipGrid [attr.aria-label]="'Lista de ' + labelText()">
     @for (chip of chips(); track $index) {
       <mat-chip-row
         (removed)="remove(chip)"
         [editable]="true"
         (edited)="edit(chip, $event)"
-        [aria-description]="
-          'Presione Enter para editar o el botón X para eliminar ' + chip
-        "
+        [aria-description]="'Presione Enter para editar o el botón X para eliminar ' + chip"
         [matTooltip]="'Clic para editar, X para eliminar'"
         matTooltipPosition="above"
       >
@@ -45,9 +37,7 @@
     <span>
       <strong>{{ getHintText() }}</strong>
       <br />
-      <small class="text-muted">
-        Separadores: Enter, coma (,) • Clic en chip para editar
-      </small>
+      <small class="text-muted"> Separadores: Enter, coma (,) • Clic en chip para editar </small>
     </span>
   </mat-hint>
 </mat-form-field>

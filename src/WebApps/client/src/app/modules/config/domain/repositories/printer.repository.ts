@@ -1,9 +1,6 @@
 import { Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
-import {
-  Printer,
-  PrinterRead,
-} from '@modules/config/domain/models/printing/printer.model';
+import { Printer, PrinterRead } from '@modules/config/domain/models/printing/printer.model';
 
 export abstract class PrinterRepository {
   abstract getPrinters(): Observable<{

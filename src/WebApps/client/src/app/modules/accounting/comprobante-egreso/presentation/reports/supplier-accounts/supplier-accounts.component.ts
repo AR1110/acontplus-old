@@ -1,36 +1,27 @@
 import { HttpClient } from '@angular/common/http';
-import {Component, inject, signal, OnInit} from '@angular/core';
-import {
-  REPORT_CODE,
-  DOC_TYPE,
-} from '@core/constants/global.constants';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import {getValidId, isValidField} from '@core/utils/utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatDivider} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {
-  GetFilterDataCuentaPorPagarUseCase
-} from "@accounting/cuenta-por-pagar/application/get-filter-data-cuenta-por-pagar.use-case";
-import {MatRadioModule} from "@angular/material/radio";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { GetFilterDataCuentaPorPagarUseCase } from '@accounting/cuenta-por-pagar/application/get-filter-data-cuenta-por-pagar.use-case';
+import { MatRadioModule } from '@angular/material/radio';
 
-
-type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
+type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
 
 @Component({
   selector: 'app-supplier-accounts',
@@ -45,7 +36,7 @@ type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string }
     MatDivider,
     MatFormFieldModule,
     MatSelectModule,
-    MatRadioModule
+    MatRadioModule,
   ],
   templateUrl: './supplier-accounts.component.html',
   styles: ``,
@@ -54,13 +45,13 @@ export class SupplierAccountsComponent implements OnInit {
   http = inject(HttpClient);
   establecimientos = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
-  tiposDoc = signal<EstadoSelect[]>([])
+  tiposDoc = signal<EstadoSelect[]>([]);
   estadosDoc = signal<{ codigo: string; descripcion: string }[]>([]);
 
   dateFilterType = {
-    emission : 1,
-    expiration : 2
-  }
+    emission: 1,
+    expiration: 2,
+  };
 
   searchFilters = {
     codEstab: '',
@@ -77,39 +68,33 @@ export class SupplierAccountsComponent implements OnInit {
     useDateFilter: true,
     reportTypeCode: 'RG',
     useQuotaDueDateFilter: false,
-    dateFilterType: this.dateFilterType.emission
+    dateFilterType: this.dateFilterType.emission,
   };
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
-  private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase)
+  private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase);
 
   reportTypeCode = {
     RG: 'RG', //Reporte General
-    RD: 'RD' //Reporte Detallado
-  }
-
+    RD: 'RD', //Reporte Detallado
+  };
 
   reportTypes = signal([
-    {code: this.reportTypeCode.RG,name: 'Reporte General'},
-    {code: this.reportTypeCode.RD,name: 'Reporte Detallado(Incluye cuotas)'},
-  ])
+    { code: this.reportTypeCode.RG, name: 'Reporte General' },
+    { code: this.reportTypeCode.RD, name: 'Reporte Detallado(Incluye cuotas)' },
+  ]);
 
   private initialed() {
-    this.$getFilterDataUseCase.execute().subscribe(response=>{
+    this.$getFilterDataUseCase.execute().subscribe(response => {
       this.establecimientos.set(response.estabs);
-      const dataEstab = this.establecimientos().find(
-        (estab) => estab.defaultEstab,
-      );
+      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
       if (dataEstab) {
         this.searchFilters.codEstab = dataEstab.codEstab;
         this.puntosEmision.set(dataEstab.puntosEmision);
-        const dataPuntoEmision = this.puntosEmision().find(
-          (ptoEmi) => ptoEmi.defaultPtoEmi,
-        );
+        const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
         if (dataPuntoEmision) {
-          this.searchFilters.idPuntoEmision =
-            dataPuntoEmision.idPuntoEmision;
+          this.searchFilters.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
       }
       this.tiposDoc.set(response.tiposDoc);
@@ -117,8 +102,7 @@ export class SupplierAccountsComponent implements OnInit {
       //   this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
       //     ?.codDoc || '';
       this.estadosDoc.set(response.estadosDoc);
-    })
-
+    });
   }
 
   ngOnInit() {
@@ -135,20 +119,19 @@ export class SupplierAccountsComponent implements OnInit {
   }
 
   onChangeEstab() {
-    if(!isValidField(this.searchFilters.codEstab)){
+    if (!isValidField(this.searchFilters.codEstab)) {
       this.searchFilters.idPuntoEmision = 0;
       return;
     }
 
     const dataEstab = this.establecimientos().find(
-      (estab) => estab.codEstab === this.searchFilters.codEstab,
+      estab => estab.codEstab === this.searchFilters.codEstab,
     );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
 
       this.searchFilters.idPuntoEmision =
-        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
-          ?.idPuntoEmision || 0;
+        this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
     }
   }
 
@@ -157,7 +140,7 @@ export class SupplierAccountsComponent implements OnInit {
     this.searchFilters.toDate = range.to;
   }
 
-  private isValidSearchFilter(){
+  private isValidSearchFilter() {
     if (!isValidField(this.searchFilters.fromDate)) {
       this.tS.show({
         type: 'warning',
@@ -184,12 +167,13 @@ export class SupplierAccountsComponent implements OnInit {
     return true;
   }
 
-  private getParamsReport(format: string){
-    const idProveedor = (this.searchFilters.supplierSelected && isValidField(this.searchFilters.supplierId)) || null;
-    const ckCuotas = this.searchFilters.reportTypeCode===this.reportTypeCode.RD;
+  private getParamsReport(format: string) {
+    const idProveedor =
+      (this.searchFilters.supplierSelected && isValidField(this.searchFilters.supplierId)) || null;
+    const ckCuotas = this.searchFilters.reportTypeCode === this.reportTypeCode.RD;
     const useQuotaDueDateFilter = this.searchFilters.useQuotaDueDateFilter;
-    const dateFilterType = useQuotaDueDateFilter ? null: this.searchFilters.dateFilterType;
-    return  {
+    const dateFilterType = useQuotaDueDateFilter ? null : this.searchFilters.dateFilterType;
+    return {
       tipo: 2,
       format,
       ckFecha: this.searchFilters.useDateFilter,
@@ -202,13 +186,13 @@ export class SupplierAccountsComponent implements OnInit {
       ckCxcVencida: this.searchFilters.ckCxcVencida,
       ckCuotas,
       useQuotaDueDateFilter,
-      dateFilterType
+      dateFilterType,
     };
   }
 
   getReport(format: 'pdf' | 'excel') {
-    if(!this.isValidSearchFilter()) return
-    const dataParams = this.getParamsReport(format)
+    if (!this.isValidSearchFilter()) return;
+    const dataParams = this.getParamsReport(format);
 
     const parameters = {
       reportParams: JSON.stringify({
@@ -222,7 +206,4 @@ export class SupplierAccountsComponent implements OnInit {
 
     this.sharedSvc.getReport({ data: parameters, format: format });
   }
-
-
-
 }

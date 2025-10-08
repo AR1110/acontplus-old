@@ -75,7 +75,7 @@ export class CuentaPorCobrarComponent implements OnInit {
 
   getCodigoTipoDoc() {
     const dataDoc = this.tiposDoc.find(
-      (doc) => doc.idTipoDocumento === this.dataSearch.idTipoDocumento,
+      doc => doc.idTipoDocumento === this.dataSearch.idTipoDocumento,
     );
     let codigo;
     if (dataDoc) {
@@ -101,7 +101,7 @@ export class CuentaPorCobrarComponent implements OnInit {
       };
 
       this.selection = new SelectionModel<any>(true, []);
-      this._cuentaPorCobrarUseCase.getAll(params).subscribe((response) => {
+      this._cuentaPorCobrarUseCase.getAll(params).subscribe(response => {
         this.dataSource = new MatTableDataSource(response.data);
       });
     } catch (error) {
@@ -111,20 +111,18 @@ export class CuentaPorCobrarComponent implements OnInit {
 
   getDataFilter() {
     try {
-      this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
+      this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response => {
         this.establecimientos = response.estabs;
         this.estadosDoc = response.estadosDoc;
         this.tiposDoc = response.tiposDoc;
 
         if (this.estadosDoc.length > 0) {
-          const dataEstado = this.estadosDoc.find((e) => e.codigo === 'NCBR');
+          const dataEstado = this.estadosDoc.find(e => e.codigo === 'NCBR');
           this.dataSearch.codEstado = dataEstado.codigo;
         }
 
         if (this.establecimientos.length > 0) {
-          const dataEstab = this.establecimientos.find(
-            (estab) => estab.defaultEstab,
-          );
+          const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
           this.dataSearch.codEstab = dataEstab?.codEstab ?? null;
           this.getCuentasPorCobrar();
         }
@@ -174,9 +172,7 @@ export class CuentaPorCobrarComponent implements OnInit {
     const firstCustomerId = selectedDocumentos[0].idCliente;
 
     // Verificar si todas las demás entradas tienen la misma idCliente
-    const sonIguales = selectedDocumentos.every(
-      (cuenta) => cuenta.idCliente === firstCustomerId,
-    );
+    const sonIguales = selectedDocumentos.every(cuenta => cuenta.idCliente === firstCustomerId);
 
     return sonIguales;
   }
@@ -201,24 +197,22 @@ export class CuentaPorCobrarComponent implements OnInit {
     }
 
     // Crear un array de promesas para cada solicitud
-    const promises = selectedDocumentos.map((cxc) =>
+    const promises = selectedDocumentos.map(cxc =>
       this._cuentaPorCobrarUseCase.getCuotasById(cxc.idCuentaPorCobrar),
     );
 
     // Utilizar Promise.all para ejecutar las promesas concurrentemente
 
-    forkJoin(promises).subscribe((results) => {
+    forkJoin(promises).subscribe(results => {
       const mergeWithCuotas = this.mergeCuotas(selectedDocumentos, results);
       this.openModalCobroLote(mergeWithCuotas);
     });
   }
 
   mergeCuotas(selectedDocumentos: any[], results: any[]) {
-    return selectedDocumentos.map((cxc) => {
-      const [cuotasFiltradas] = results.filter((item) =>
-        item.some(
-          (cuota: any) => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar,
-        ),
+    return selectedDocumentos.map(cxc => {
+      const [cuotasFiltradas] = results.filter(item =>
+        item.some((cuota: any) => cuota.idCuentaPorCobrar === cxc.idCuentaPorCobrar),
       );
       return {
         ...cxc,
@@ -234,7 +228,7 @@ export class CuentaPorCobrarComponent implements OnInit {
       const params = {
         selectedDocumentos,
       };
-      this.comprobanteIngresoOpenModalSvc.open(params).then((result) => {
+      this.comprobanteIngresoOpenModalSvc.open(params).then(result => {
         if (result !== null && typeof result === 'object') {
           this.getCuentasPorCobrar();
         }

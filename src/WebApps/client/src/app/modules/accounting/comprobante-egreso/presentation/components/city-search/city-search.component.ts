@@ -5,9 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ComprobanteEgresoStore } from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
 
-
 const _filterCiudadGroup = (opt: any[], value: string): string[] => {
-
   const filterValue = value.toLowerCase();
 
   return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
@@ -15,17 +13,12 @@ const _filterCiudadGroup = (opt: any[], value: string): string[] => {
 
 @Component({
   selector: 'app-city-search',
-  imports: [
-    FormsModule,
-    MatAutocompleteModule,
-    MatFormFieldModule,
-    MatInputModule
-  ],
+  imports: [FormsModule, MatAutocompleteModule, MatFormFieldModule, MatInputModule],
   templateUrl: './city-search.component.html',
-  styles: ``
+  styles: ``,
 })
 export class CitySearchComponent {
-  comprobanteEgresoStore = inject(ComprobanteEgresoStore)
+  comprobanteEgresoStore = inject(ComprobanteEgresoStore);
 
   stateCityGroup = '';
 
@@ -35,24 +28,27 @@ export class CitySearchComponent {
     const input = event.target as HTMLInputElement;
     this.stateCityGroup = input.value;
 
-    this.ciudadGroupOptions = this._filterGroup(input.value || '')
+    this.ciudadGroupOptions = this._filterGroup(input.value || '');
   }
 
   private _filterGroup(value: string): any[] {
     if (value) {
-      return this.comprobanteEgresoStore.provinciaCiudades()
-        .map(group => ({ provincia: group.provincia, ciudades: _filterCiudadGroup(group.ciudades, value) }))
+      return this.comprobanteEgresoStore
+        .provinciaCiudades()
+        .map(group => ({
+          provincia: group.provincia,
+          ciudades: _filterCiudadGroup(group.ciudades, value),
+        }))
         .filter(group => group.ciudades.length > 0);
     }
 
-    return  this.comprobanteEgresoStore.provinciaCiudades()
+    return this.comprobanteEgresoStore.provinciaCiudades();
   }
 
   valueChangeCity(idCiudad: number) {
-   // this.infrastructure.idCiudad = idCiudad;
-   this.comprobanteEgresoStore.updateDataFormaPago({
-    idCiudad
-   })
+    // this.infrastructure.idCiudad = idCiudad;
+    this.comprobanteEgresoStore.updateDataFormaPago({
+      idCiudad,
+    });
   }
-
 }

@@ -29,7 +29,7 @@ export class ShepherdTourService {
   private setupSteps(): void {
     if (!this.tour) return;
 
-    const tour = this.tour as any;
+    const tour = this.tour;
 
     // Step 1: Welcome and Progress
     tour.addStep({
@@ -169,17 +169,17 @@ export class ShepherdTourService {
 
   startTour(): void {
     if (this.tour) {
-      (this.tour as any).start();
+      (this.tour).start();
     }
   }
 
   endTour(): void {
     if (this.tour) {
-      (this.tour as any).complete();
+      (this.tour).complete();
     }
   }
 
   isActive(): boolean {
-    return this.tour ? (this.tour as any).isActive() : false;
+    return this.tour ? (this.tour).isActive() : false;
   }
 }

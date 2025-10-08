@@ -12,9 +12,6 @@ export class FirmaElectronicaService {
   post<T>(data: T, file: File) {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.#http.post(
-      `${this.#url}?json=${JSON.stringify(data)}`,
-      formData,
-    );
+    return this.#http.post(`${this.#url}?json=${JSON.stringify(data)}`, formData);
   }
 }

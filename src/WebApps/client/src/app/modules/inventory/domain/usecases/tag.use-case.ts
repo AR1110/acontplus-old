@@ -1,28 +1,25 @@
-import { Injectable } from "@angular/core";
-import {TagRepository} from "@inventory/domain/repositories/tag.repository";
-
+import { Injectable } from '@angular/core';
+import { TagRepository } from '@inventory/domain/repositories/tag.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class TagUseCase {
-  constructor(private repo: TagRepository) { }
+  constructor(private repo: TagRepository) {}
 
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
   post<T>(data: T) {
-    return this.repo.post(data)
+    return this.repo.post(data);
   }
 
   put<T>(id: number, data: T) {
-    return this.repo.put(id, data)
+    return this.repo.put(id, data);
   }
 
   updateStatus(id: number) {
-    return this.repo.updateStatus(id)
+    return this.repo.updateStatus(id);
   }
-
 }

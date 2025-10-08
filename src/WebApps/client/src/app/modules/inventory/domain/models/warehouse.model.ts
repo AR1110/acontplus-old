@@ -1,4 +1,3 @@
-
 export interface WarehouseList {
   index: number;
   idBodega: number;
@@ -9,10 +8,10 @@ export interface WarehouseList {
   estado: boolean;
   nomEstab: string;
   totalRecords: number;
-  nomEstado: string
+  nomEstado: string;
 }
 
 export class ListWarehouseResponse {
-  data: WarehouseList[]=[]
+  data: WarehouseList[] = [];
   totalRecords = 0;
 }

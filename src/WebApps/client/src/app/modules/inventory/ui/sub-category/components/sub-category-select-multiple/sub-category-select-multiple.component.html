@@ -1,27 +1,24 @@
-
-
 @if (isMat()) {
   <mat-form-field class="w-100">
     <mat-label>SubFamilias</mat-label>
     <mat-select [formControl]="checkedSubCategorias" multiple>
       @for (item of subCategorias; track $index) {
-        <mat-optgroup [label]="item.familia" style="font-weight: bold;">
+        <mat-optgroup [label]="item.familia" style="font-weight: bold">
           @for (sf of item.subFamilias; track $index) {
-            <mat-option [value]="sf.idSubFamilia">{{sf.subFamilia}}</mat-option>
+            <mat-option [value]="sf.idSubFamilia">{{ sf.subFamilia }}</mat-option>
           }
         </mat-optgroup>
       }
     </mat-select>
   </mat-form-field>
-}@else{
+} @else {
   <mat-select matNativeControl [formControl]="checkedSubCategorias" multiple class="form-select">
     @for (item of subCategorias; track $index) {
-      <mat-optgroup [label]="item.familia" style="font-weight: bold;">
+      <mat-optgroup [label]="item.familia" style="font-weight: bold">
         @for (sf of item.subFamilias; track $index) {
-          <mat-option [value]="sf.idSubFamilia">{{sf.subFamilia}}</mat-option>
+          <mat-option [value]="sf.idSubFamilia">{{ sf.subFamilia }}</mat-option>
         }
       </mat-optgroup>
     }
-
   </mat-select>
 }

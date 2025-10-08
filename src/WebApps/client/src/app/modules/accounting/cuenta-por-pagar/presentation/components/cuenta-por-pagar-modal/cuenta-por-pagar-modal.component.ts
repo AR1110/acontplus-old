@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './cuenta-por-pagar-modal.component.html',
   styleUrls: ['./cuenta-por-pagar-modal.component.scss'],
 })
-export class CuentaPorPagarModalComponent {
-
-}
+export class CuentaPorPagarModalComponent {}

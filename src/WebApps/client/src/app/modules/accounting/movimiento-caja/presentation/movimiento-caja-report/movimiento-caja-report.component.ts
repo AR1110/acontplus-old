@@ -11,13 +11,13 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatDivider} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-movimiento-caja-report',
@@ -32,7 +32,7 @@ import {MatSelectModule} from "@angular/material/select";
     ThemeButtonComponent,
     MatDynamicCardComponent,
     MatCheckbox,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './movimiento-caja-report.component.html',
   styles: ``,
@@ -62,11 +62,9 @@ export class MovimientoCajaReportComponent implements OnInit {
     userId: 0,
   };
   ngOnInit() {
-    this.sharedSvc.getEstabAsign().subscribe((response) => {
+    this.sharedSvc.getEstabAsign().subscribe(response => {
       this.establecimientos = response;
-      this.dataSearch.codEstab = this.establecimientos.find(
-        (e) => e.predeterminado,
-      )?.codEstab;
+      this.dataSearch.codEstab = this.establecimientos.find(e => e.predeterminado)?.codEstab;
     });
   }
 
@@ -95,13 +93,12 @@ export class MovimientoCajaReportComponent implements OnInit {
     this.dataSearch.companyCustomerId = data.idCliente;
   }
 
-
   emptyInputUser() {
     this.dataSearch.userId = 0;
   }
 
   onUserSelected({ data }: any) {
-    console.log(data)
+    console.log(data);
     this.dataSearch.userId = data.idUsuario;
   }
   getReportPdf() {
@@ -132,12 +129,7 @@ export class MovimientoCajaReportComponent implements OnInit {
     }
 
     if (this.dataSearch.checkboxCompanyCustomerEmployee) {
-      if (
-        !(
-          this.dataSearch.companyCustomerId > 0 ||
-          this.dataSearch.employeeId > 0
-        )
-      ) {
+      if (!(this.dataSearch.companyCustomerId > 0 || this.dataSearch.employeeId > 0)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione el cliente/empleado!',
@@ -157,25 +149,18 @@ export class MovimientoCajaReportComponent implements OnInit {
     }
 
     const companyCustomerId =
-      (this.dataSearch.checkboxCompanyCustomerEmployee &&
-        this.dataSearch.companyCustomerId) ||
-      0;
+      (this.dataSearch.checkboxCompanyCustomerEmployee && this.dataSearch.companyCustomerId) || 0;
     const employeeId =
-      (this.dataSearch.checkboxCompanyCustomerEmployee &&
-        this.dataSearch.employeeId) ||
-      0;
+      (this.dataSearch.checkboxCompanyCustomerEmployee && this.dataSearch.employeeId) || 0;
     const userId = (this.dataSearch.checkboxUser && this.dataSearch.userId) || 0;
 
     const dataParams = {
       tipo: 2,
       codEstab: this.dataSearch.codEstab,
       tipoDoc: this.dataSearch.codDoc,
-      checkBoxCliente:
-        companyCustomerId > 0 &&
-        this.dataSearch.checkboxCompanyCustomerEmployee,
+      checkBoxCliente: companyCustomerId > 0 && this.dataSearch.checkboxCompanyCustomerEmployee,
       idCliente: companyCustomerId > 0 ? companyCustomerId : null,
-      checkBoxEmpleado:
-        employeeId > 0 && this.dataSearch.checkboxCompanyCustomerEmployee,
+      checkBoxEmpleado: employeeId > 0 && this.dataSearch.checkboxCompanyCustomerEmployee,
       idEmpleado: employeeId || null,
       checkBoxUsuario: this.dataSearch.checkboxUser,
       idUsuario: userId || null,

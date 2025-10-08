@@ -11,9 +11,7 @@ import { TransferenciaBodegaMapper } from './transferencia-bodega.mapper';
 @Injectable({
   providedIn: 'root',
 })
-export class TransferenciaBodegaWebRepository
-  implements TransferenciaBodegaRepository
-{
+export class TransferenciaBodegaWebRepository implements TransferenciaBodegaRepository {
   private _url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.TRANSFERENCIA_BODEGA}`;
   private _http = inject(HttpClient);
 
@@ -26,7 +24,7 @@ export class TransferenciaBodegaWebRepository
       .get(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map((response) => TransferenciaBodegaMapper.fromApiAll(response)));
+      .pipe(map(response => TransferenciaBodegaMapper.fromApiAll(response)));
   }
 
   getDataFilter() {
@@ -37,9 +35,7 @@ export class TransferenciaBodegaWebRepository
       .get(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(
-        map((response) => TransferenciaBodegaMapper.fromApiFilter(response))
-      );
+      .pipe(map(response => TransferenciaBodegaMapper.fromApiFilter(response)));
   }
 
   post<T>(data: T) {
@@ -48,7 +44,7 @@ export class TransferenciaBodegaWebRepository
       { data },
       {
         context: getNoLoader(),
-      }
+      },
     );
   }
   put<T>(id: number, data: T) {
@@ -57,7 +53,7 @@ export class TransferenciaBodegaWebRepository
       { data },
       {
         context: getNoLoader(),
-      }
+      },
     );
   }
 

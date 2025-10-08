@@ -1,22 +1,25 @@
-
-import { Component, inject, OnInit  } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {  MatInputModule, } from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatRadioModule} from "@angular/material/radio";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   selector: 'app-punto-emision-add-edit-modal',
-  imports: [InputNumberDirective, FormsModule, ThemeButtonComponent, MatCustomDialogComponent,
-  MatFormFieldModule,
+  imports: [
+    InputNumberDirective,
+    FormsModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatRadioModule,
@@ -25,13 +28,13 @@ import {MatRadioModule} from "@angular/material/radio";
   styleUrl: './punto-emision-add-edit-modal.component.scss',
 })
 export class PuntoEmisionAddEditModalComponent implements OnInit {
-    params = inject<{
-    codEstab: null,
-    establishmentName: '',
-    idPuntoEmision: 0,
-    estado: false,
-    ptoEmi: '',
-    ambiente: '1',
+  params = inject<{
+    codEstab: null;
+    establishmentName: '';
+    idPuntoEmision: 0;
+    estado: false;
+    ptoEmi: '';
+    ambiente: '1';
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<PuntoEmisionAddEditModalComponent>);
   tS = inject(ToastrNotificationService);
@@ -51,19 +54,19 @@ export class PuntoEmisionAddEditModalComponent implements OnInit {
     estado: true,
   };
   successResponse = (response: any) => {
-        if (response.code == '0') {
-          this.tS.show({
-            type: 'warning',
-            message: response.message,
-          });
-        }
-        if (response.code == '1') {
-          this.tS.show({
-            type: 'success',
-            message: response.message,
-          });
-          this.modal.close(response);
-        }
+    if (response.code == '0') {
+      this.tS.show({
+        type: 'warning',
+        message: response.message,
+      });
+    }
+    if (response.code == '1') {
+      this.tS.show({
+        type: 'success',
+        message: response.message,
+      });
+      this.modal.close(response);
+    }
   };
 
   ngOnInit() {
@@ -113,15 +116,13 @@ export class PuntoEmisionAddEditModalComponent implements OnInit {
       }
 
       if (this.params.idPuntoEmision > 0) {
-        this.ptoEmisionSvc
-          .put(this.params.idPuntoEmision, params)
-          .subscribe(this.successResponse);
+        this.ptoEmisionSvc.put(this.params.idPuntoEmision, params).subscribe(this.successResponse);
       }
     } catch (error) {
       console.log(error);
     }
   }
-  close(){
+  close() {
     this.modal.close();
   }
 }

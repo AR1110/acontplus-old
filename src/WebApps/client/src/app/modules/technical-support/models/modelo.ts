@@ -1,4 +1,3 @@
-
 export interface Modelo {
   id: number;
   brandId: number;

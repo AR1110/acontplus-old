@@ -15,14 +15,9 @@
         </div>
       </div>
     </div>
-    <div
-      class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
-    >
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
       <div class="col">
-        <mat-radio-group
-          aria-label="Seleccione una opcion"
-          formControlName="tipo"
-        >
+        <mat-radio-group aria-label="Seleccione una opcion" formControlName="tipo">
           <mat-radio-button value="1">Clave Acceso</mat-radio-button>
           <mat-radio-button value="2">Xml</mat-radio-button>
         </mat-radio-group>
@@ -39,7 +34,7 @@
       </div>
     </div>
 
-    @if (docUploadForm.get("tipo")?.value === "1") {
+    @if (docUploadForm.get('tipo')?.value === '1') {
       <div class="row mt-3">
         <div class="col">
           <label for="clavesAcceso">Claves de Acceso:</label>
@@ -61,30 +56,21 @@
           <div class="row mt-3">
             <div class="col-4">
               <div class="form-group">
-                <app-theme-button
-                  icon="add"
-                  text="Añadir"
-                  (handleClick)="addClaveAcceso()"
-                >
-                </app-theme-button>
+                <app-theme-button icon="add" text="Añadir" (handleClick)="addClaveAcceso()"> </app-theme-button>
               </div>
             </div>
           </div>
         </div>
       </div>
     }
-    @if (docUploadForm.get("tipo")?.value === "2") {
+    @if (docUploadForm.get('tipo')?.value === '2') {
       <div class="row mt-3">
         <div class="col">
           <div formArrayName="xmlDocs">
             @for (file of xmlDocs.controls; let i = $index; track i) {
               <div [formGroupName]="i">
                 <label for="file-{{ i }}">Xml {{ i + 1 }}</label>
-                <input
-                  id="file-{{ i }}"
-                  type="file"
-                  (change)="addXmlDoc($event)"
-                />
+                <input id="file-{{ i }}" type="file" (change)="addXmlDoc($event)" />
                 <button type="button" mat-icon-button (click)="removeXml(i)">
                   <mat-icon>delete</mat-icon>
                 </button>

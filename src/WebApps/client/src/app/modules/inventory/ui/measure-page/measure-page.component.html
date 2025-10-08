@@ -1,6 +1,6 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
-<mat-card appearance="outlined" >
+<mat-card appearance="outlined">
   <mat-card-header>
     <mat-card-title-group>
       <mat-card-title></mat-card-title>
@@ -19,9 +19,19 @@
   </mat-card-header>
   <mat-card-content>
     <!-- setting outline form field appearance -->
-    <app-custom-table-container [pagination]="pagination()" [isLoadingResults]="isLoadingResults"
-      (onPageEvent)="handlePageEvent($event)">
-      <table mat-table [dataSource]="dataSource()" matSort matSortActive="descripcion" matSortDisableClear matSortDirection="desc">
+    <app-custom-table-container
+      [pagination]="pagination()"
+      [isLoadingResults]="isLoadingResults"
+      (onPageEvent)="handlePageEvent($event)"
+    >
+      <table
+        mat-table
+        [dataSource]="dataSource()"
+        matSort
+        matSortActive="descripcion"
+        matSortDisableClear
+        matSortDirection="desc"
+      >
         <!-- Number Column -->
         <ng-container matColumnDef="index">
           <th mat-header-cell *matHeaderCellDef>#</th>
@@ -37,29 +47,23 @@
               <button mat-icon-button appMeasureAddEdit [params]="row" (onResultModal)="refresh()">
                 <mat-icon>edit</mat-icon>
               </button>
-               <button mat-icon-button    (click)="askToDelete(row)">
+              <button mat-icon-button (click)="askToDelete(row)">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
-
           </td>
         </ng-container>
 
-
         <!-- Title Column -->
-          <ng-container matColumnDef="code">
-            <th mat-header-cell *matHeaderCellDef>Código</th>
-            <td mat-cell *matCellDef="let row">{{row.codigo
-              }}</td>
-          </ng-container>
+        <ng-container matColumnDef="code">
+          <th mat-header-cell *matHeaderCellDef>Código</th>
+          <td mat-cell *matCellDef="let row">{{ row.codigo }}</td>
+        </ng-container>
 
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Descripción</th>
-          <td mat-cell *matCellDef="let row">{{row.descripcion
-            }}</td>
+          <td mat-cell *matCellDef="let row">{{ row.descripcion }}</td>
         </ng-container>
-
-
 
         <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef>Estado</th>
@@ -68,11 +72,9 @@
           </td>
         </ng-container>
 
-
-        <tr mat-header-row *matHeaderRowDef="visibleColumns;sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: visibleColumns;"></tr>
+        <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: visibleColumns"></tr>
       </table>
     </app-custom-table-container>
-
   </mat-card-content>
 </mat-card>

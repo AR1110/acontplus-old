@@ -10,34 +10,31 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
 import { map } from 'rxjs';
-import { ApiResponse } from "@core/models/api-response";
+import { ApiResponse } from '@core/models/api-response';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
-import {SupportDetailRepository} from "@mechanical/domain/repositories/support-detail.repository";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
-import {SupportDetailMapper} from "@mechanical/data/support-detail/support-detail.mapper";
+import { SupportDetailRepository } from '@mechanical/domain/repositories/support-detail.repository';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
+import { SupportDetailMapper } from '@mechanical/data/support-detail/support-detail.mapper';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SupportDetailWebRepository extends SupportDetailRepository {
-  #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT_DETAIL}`
-  #http = inject(HttpClient)
-
+  #url = `${PATHS_API.MECHANICAL}${MECHANICAL_PATHS.SUPPORT_DETAIL}`;
+  #http = inject(HttpClient);
 
   getId(id: number) {
     const json = JSON.stringify({
-      tipo: 1, id
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${json}`).pipe(
-      map((response) =>SupportDetailMapper.fromApiGetId(response) )
-    )
+      tipo: 1,
+      id,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .pipe(map(response => SupportDetailMapper.fromApiGetId(response)));
   }
-
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
-
-
 }

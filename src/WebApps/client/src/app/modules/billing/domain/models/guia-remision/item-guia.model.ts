@@ -1,4 +1,4 @@
-import {Id} from "@shared/value-objects/id.vo";
+import { Id } from '@shared/value-objects/id.vo';
 
 export class ItemGuia {
   constructor(
@@ -11,7 +11,7 @@ export class ItemGuia {
     private readonly volumen?: number,
     private readonly serieLote?: string,
     private readonly observaciones?: string,
-    private readonly id?: Id<number>
+    private readonly id?: Id<number>,
   ) {
     this.validarItem();
   }
@@ -34,16 +34,36 @@ export class ItemGuia {
     }
   }
 
-  getId(): Id<number> | undefined { return this.id; }
-  getProductoId(): Id<number> { return this.productoId; }
-  getCodigoProducto(): string { return this.codigoProducto; }
-  getDescripcion(): string { return this.descripcion; }
-  getCantidad(): number { return this.cantidad; }
-  getUnidadMedida(): string { return this.unidadMedida; }
-  getPeso(): number | undefined { return this.peso; }
-  getVolumen(): number | undefined { return this.volumen; }
-  getSerieLote(): string | undefined { return this.serieLote; }
-  getObservaciones(): string | undefined { return this.observaciones; }
+  getId(): Id<number> | undefined {
+    return this.id;
+  }
+  getProductoId(): Id<number> {
+    return this.productoId;
+  }
+  getCodigoProducto(): string {
+    return this.codigoProducto;
+  }
+  getDescripcion(): string {
+    return this.descripcion;
+  }
+  getCantidad(): number {
+    return this.cantidad;
+  }
+  getUnidadMedida(): string {
+    return this.unidadMedida;
+  }
+  getPeso(): number | undefined {
+    return this.peso;
+  }
+  getVolumen(): number | undefined {
+    return this.volumen;
+  }
+  getSerieLote(): string | undefined {
+    return this.serieLote;
+  }
+  getObservaciones(): string | undefined {
+    return this.observaciones;
+  }
 
   // Método para serializar a un objeto plano
   toPlainObject(): any {
@@ -57,7 +77,7 @@ export class ItemGuia {
       peso: this.peso,
       volumen: this.volumen,
       serieLote: this.serieLote,
-      observaciones: this.observaciones
+      observaciones: this.observaciones,
     };
   }
 
@@ -73,7 +93,7 @@ export class ItemGuia {
       object.volumen,
       object.serieLote,
       object.observaciones,
-      object.id ? new Id(object.id) : undefined
+      object.id ? new Id(object.id) : undefined,
     );
   }
 }

@@ -1,11 +1,11 @@
-import { Observable } from "rxjs";
-import { ApiResponse } from "@core/models/api-response";
+import { Observable } from 'rxjs';
+import { ApiResponse } from '@core/models/api-response';
 import {
   ComprobanteEgresoDeleteParams,
   ComprobanteEgresoDeleteResponse,
   ComprobanteEgresoFilterResponse,
   ComprobanteEgresoResponse,
-} from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
+} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 
 /**
  * Repositorio abstracto para la gestión de Comprobantes de Egreso
@@ -47,7 +47,6 @@ export abstract class ComprobanteEgresoRepository {
   abstract create<T>(comprobante: T): Observable<ApiResponse>;
 
   abstract anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponse>;
-
 }
 
 /**

@@ -1,10 +1,4 @@
-import {
-  Component,
-  inject,
-  signal,
-  OnInit,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,7 +20,7 @@ import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { TAX_RATE_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
-import {getValidId, imgDefault, isValidField} from '@core/utils/utils';
+import { getValidId, imgDefault, isValidField } from '@core/utils/utils';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -38,21 +32,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ProductPostUseCase } from '@inventory/product/application/use-cases/product/product-post.use-case';
 import { ProductPutUseCase } from '@inventory/product/application/use-cases/product/product-put.use-case';
 import { forkJoin } from 'rxjs';
-import {
-  ProductUbicationComponent
-} from "@inventory/product/presentation/components/product-ubication/product-ubication.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {ProductBarcodeComponent} from "@inventory/product/presentation/components/product-barcode/product-barcode.component";
-import {
-  FraccProductListComponent
-} from "@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component";
-import {UploadImageComponent} from "@shared/components/upload-image/upload-image.component";
-import {ProductPhotoPostUseCase} from "@inventory/product/application/use-cases/product-photo/product-photo-post.use-case";
-import {ProductPhotoPutUseCase} from "@inventory/product/application/use-cases/product-photo/product-photo-put.use-case";
+import { ProductUbicationComponent } from '@inventory/product/presentation/components/product-ubication/product-ubication.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ProductBarcodeComponent } from '@inventory/product/presentation/components/product-barcode/product-barcode.component';
+import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
+import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
+import { ProductPhotoPostUseCase } from '@inventory/product/application/use-cases/product-photo/product-photo-post.use-case';
+import { ProductPhotoPutUseCase } from '@inventory/product/application/use-cases/product-photo/product-photo-put.use-case';
 import {
   ProductDataFormUseCase,
-  ProductGetIdUseCase
-} from "@inventory/product/application/use-cases/product/get-product.use-case";
+  ProductGetIdUseCase,
+} from '@inventory/product/application/use-cases/product/get-product.use-case';
 interface ProductTarifa {
   tipoIva: string;
   tarifa: string;
@@ -92,7 +82,6 @@ interface ProductTarifa {
     BrandAddEditDirective,
     ToUpperCaseDirective,
     ModelAddEditDirective,
-
   ],
   templateUrl: './add-edit-product-dialog.component.html',
   styles: ``,
@@ -116,8 +105,8 @@ export class AddEditProductDialogComponent implements OnInit {
   private $productPutUseCase = inject(ProductPutUseCase);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
 
-  private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase)
-  private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase)
+  private $productPhotoPostUseCase = inject(ProductPhotoPostUseCase);
+  private $productPhotoPutUseCase = inject(ProductPhotoPutUseCase);
 
   private userRoleStateSvc = inject(UserRoleStateService);
 
@@ -140,7 +129,7 @@ export class AddEditProductDialogComponent implements OnInit {
   modelos: any[] = [];
   tiposIce: any[] = [];
 
-  productBarcodes = [] as any[]
+  productBarcodes = [] as any[];
 
   decimal = {
     nroPrecio: 6,
@@ -181,7 +170,7 @@ export class AddEditProductDialogComponent implements OnInit {
     fechaCreacion: null,
     fechaCaducidadLote: null,
     estado: true,
-    productPhotoId: 0
+    productPhotoId: 0,
   };
 
   private dataClone = {
@@ -195,9 +184,8 @@ export class AddEditProductDialogComponent implements OnInit {
     ubicacion: null,
   };
 
-
-  selectedFile = signal<any>('')
-  imageUrl = signal(imgDefault())
+  selectedFile = signal<any>('');
+  imageUrl = signal(imgDefault());
 
   columnNames = [
     {
@@ -293,8 +281,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
     if (this.tiposIva().length > 0) {
       const dataTipoIva = this.tiposIva().find(
-        (ti: any) =>
-          ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT
+        (ti: any) => ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIVE_PERCENT,
       );
       this.data.idTipoIva = dataTipoIva?.idTipoIva ?? 0;
     }
@@ -304,17 +291,17 @@ export class AddEditProductDialogComponent implements OnInit {
     this.setProductPvpAdd();
 
     //Registro de artículo desde Importación
-    if (this.params && this.params.isImport) {
+    if (this.params?.isImport) {
       this.setDataRecepcion();
     }
   }
 
-  private  loadDataForm(){
-    this.userRoleStateSvc.select('permission').subscribe((p) => {
+  private loadDataForm() {
+    this.userRoleStateSvc.select('permission').subscribe(p => {
       this.isChangePrecio = p?.product?.precio;
     });
 
-    this.onLoadForm().subscribe((response) => {
+    this.onLoadForm().subscribe(response => {
       const [dataForm, dataId] = response as any;
       const {
         categorias,
@@ -344,15 +331,13 @@ export class AddEditProductDialogComponent implements OnInit {
       this.tiposIce = tiposIce;
 
       if (this.estabs().length > 0) {
-        const dataEstab = this.estabs().find((estab) => estab.defaultEstab);
+        const dataEstab = this.estabs().find(estab => estab.defaultEstab);
         if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
           this.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
         }
         if (this.bodegas.length > 0) {
-          const dataBodega = this.bodegas.find(
-            (bodega) => bodega.defaultBodega
-          );
+          const dataBodega = this.bodegas.find(bodega => bodega.defaultBodega);
           if (dataBodega) {
             this.dataUbicacion.idBodega = dataBodega.idBodega;
           }
@@ -376,15 +361,15 @@ export class AddEditProductDialogComponent implements OnInit {
         this.dataClone.idSubFamilia = this.data.idSubFamilia;
         this.showStatus = this.data.estado;
 
-        if(data.imgUrl){
-        this.imageUrl.set(data.imageUrl)
+        if (data.imgUrl) {
+          this.imageUrl.set(data.imageUrl);
         }
       }
     });
   }
 
   ngOnInit() {
-    this.loadDataForm()
+    this.loadDataForm();
   }
 
   selectOnChangeTab(index: number) {
@@ -402,11 +387,7 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   setDataSubCategoria() {
-    if (
-      this.subCategoriesGroup().length === 0 ||
-      (this.params && this.params.isImport)
-    )
-      return;
+    if (this.subCategoriesGroup().length === 0 || (this.params?.isImport)) return;
 
     const { codigo, idSubFamilia } = this.subCategories()[0];
 
@@ -425,10 +406,7 @@ export class AddEditProductDialogComponent implements OnInit {
     this.data.codigoAuxiliar = this.params.codigoAuxiliar || '';
     this.data.codigoBarra = this.params.codigo || '';
     this.data.descripcion = this.params.descripcion || '';
-    this.data.precioCosto = roundNumber(
-      this.params.precioCosto || 0.1,
-      this.decimal.nroPrecio
-    );
+    this.data.precioCosto = roundNumber(this.params.precioCosto || 0.1, this.decimal.nroPrecio);
     if (this.data.codigoAuxiliar) {
       this.data.codigoAuxiliar = this.params.codigoAuxiliar || '';
     } else {
@@ -438,8 +416,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
   setProductPvpAdd() {
     const dataTipoIva = this.tiposIva().find(
-      (ti: any) =>
-        ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIFTEEN_PERCENT
+      (ti: any) => ti.codigoPorcentaje.toString() === TAX_RATE_CODE.FIFTEEN_PERCENT,
     );
     const dataTemp: any = [];
     if (dataTipoIva) {
@@ -479,11 +456,11 @@ export class AddEditProductDialogComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
           if (this.subCategories().length > 0) {
             const { codigo } = this.subCategories().find(
-              (val) => val.idSubFamilia === this.data.idSubFamilia
+              val => val.idSubFamilia === this.data.idSubFamilia,
             );
             this.setCodigo(codigo);
           }
@@ -494,7 +471,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
     if (!(this.data.idArticulo > 0) && this.subCategories().length > 0) {
       const { codigo } = this.subCategories().find(
-        (val) => val.idSubFamilia === this.data.idSubFamilia
+        val => val.idSubFamilia === this.data.idSubFamilia,
       );
       this.setCodigo(codigo);
     }
@@ -504,13 +481,11 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
 
-        const { idSubFamilia } = this.subCategories().at(
-          this.subCategories.length - 1
-        );
+        const { idSubFamilia } = this.subCategories().at(this.subCategories.length - 1);
         this.data.idSubFamilia = idSubFamilia;
 
         this.onChangeSubCategoria();
@@ -523,7 +498,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshSubFamilia($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
       });
@@ -536,11 +511,9 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.medidas.set(response.medidas);
-        this.data.idMedida = this.medidas().at(
-          this.medidas().length - 1
-        ).idMedida;
+        this.data.idMedida = this.medidas().at(this.medidas().length - 1).idMedida;
       });
     } catch (error) {
       console.log(error);
@@ -550,7 +523,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshMedida($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.medidas.set(response.medidas);
       });
     } catch (error) {
@@ -573,7 +546,7 @@ export class AddEditProductDialogComponent implements OnInit {
       if ($event) {
         $event.stopPropagation();
       }
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.etiquetas.set(response.etiquetas);
       });
     } catch (error) {
@@ -584,7 +557,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultBrand($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.marcas = response.marcas;
       });
     } catch (error) {
@@ -595,7 +568,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultModel($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productDataFormUseCase.execute().subscribe(response => {
         this.modelos = response.modelos;
       });
     } catch (error) {
@@ -627,10 +600,7 @@ export class AddEditProductDialogComponent implements OnInit {
       return;
     }
 
-    this.data.precioCosto = roundNumber(
-      this.data.precioCosto,
-      this.decimal.nroPrecio
-    );
+    this.data.precioCosto = roundNumber(this.data.precioCosto, this.decimal.nroPrecio);
     return true;
   }
 
@@ -641,9 +611,7 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   private recalculateTarifaAdd() {
-    const dataTipoIva = this.tiposIva().find(
-      (item) => item.idTipoIva === this.data.idTipoIva
-    );
+    const dataTipoIva = this.tiposIva().find(item => item.idTipoIva === this.data.idTipoIva);
     if (!dataTipoIva) {
       this.tS.show({
         type: 'warning',
@@ -658,22 +626,18 @@ export class AddEditProductDialogComponent implements OnInit {
 
         const precioVenta = pricingCalculateUtil.calculatePriceSale(
           item.precioConIva,
-          item.porcentajeIva
+          item.porcentajeIva,
         );
         const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           precioVenta,
-          item.porcentajeIva
+          item.porcentajeIva,
         );
 
-        const porcentajeUtilidad =
-          pricingCalculateUtil.calculateProfitMarginPercentage(
-            precioVenta,
-            this.data.precioCosto
-          );
-        const utilidad = pricingCalculateUtil.getValueUtility(
+        const porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
           precioVenta,
-          this.data.precioCosto
+          this.data.precioCosto,
         );
+        const utilidad = pricingCalculateUtil.getValueUtility(precioVenta, this.data.precioCosto);
 
         item.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
 
@@ -716,10 +680,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
 
     //Validacion de Campos
-    if (
-      [null, undefined, '', 0].includes(this.data.precioCosto) ||
-      isNaN(this.data.precioCosto)
-    ) {
+    if ([null, undefined, '', 0].includes(this.data.precioCosto) || isNaN(this.data.precioCosto)) {
       cell.setValue(oldValue);
       this.tS.show({
         type: 'warning',
@@ -742,48 +703,33 @@ export class AddEditProductDialogComponent implements OnInit {
     //Calculos
     switch (column) {
       case 'precioVenta':
-        precioConIva = pricingCalculateUtil.calculatePriceWithVat(
-          precioVenta,
-          porcentajeIva
-        );
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva);
 
-        porcentajeUtilidad =
-          pricingCalculateUtil.calculateProfitMarginPercentage(
-            precioVenta,
-            this.data.precioCosto
-          );
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+          precioVenta,
+          this.data.precioCosto,
+        );
 
         break;
 
       case 'precioConIva':
-        precioVenta = pricingCalculateUtil.calculatePriceSale(
-          precioConIva,
-          porcentajeIva
+        precioVenta = pricingCalculateUtil.calculatePriceSale(precioConIva, porcentajeIva);
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+          precioVenta,
+          this.data.precioCosto,
         );
-        porcentajeUtilidad =
-          pricingCalculateUtil.calculateProfitMarginPercentage(
-            precioVenta,
-            this.data.precioCosto
-          );
 
         break;
       case 'porcentajeUtilidad':
-        precioVenta =
-          pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
-            this.data.precioCosto,
-            porcentajeUtilidad
-          );
-        precioConIva = pricingCalculateUtil.calculatePriceWithVat(
-          precioVenta,
-          porcentajeIva
+        precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
+          this.data.precioCosto,
+          porcentajeUtilidad,
         );
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(precioVenta, porcentajeIva);
         break;
     }
 
-    const utilidad = pricingCalculateUtil.getValueUtility(
-      precioVenta,
-      this.data.precioCosto
-    );
+    const utilidad = pricingCalculateUtil.getValueUtility(precioVenta, this.data.precioCosto);
     console.log(utilidad);
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
@@ -801,61 +747,61 @@ export class AddEditProductDialogComponent implements OnInit {
     });
   }
 
-
   onSelected($event: any) {
-    this.selectedFile.set($event)
-    if(this.isUpdate()){
-      this.uploadImage()
+    this.selectedFile.set($event);
+    if (this.isUpdate()) {
+      this.uploadImage();
     }
   }
 
-
-  private uploadImage(){
+  private uploadImage() {
     if (this.data.productPhotoId > 0 && this.selectedFile()) {
-
-      this.$productPhotoPutUseCase.execute({
-        productId: this.params.id,
-        id: this.data.productPhotoId,
-        data: JSON.stringify({
+      this.$productPhotoPutUseCase
+        .execute({
+          productId: this.params.id,
           id: this.data.productPhotoId,
-          s3ObjectKey: null,
-          s3ObjectUrl: null
-        }),
-        file: this.selectedFile()
-      }).subscribe(response => {
-        if (response.code == "0") {
-          this.tS.show({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code == "1") {
-         this.tS.show({
-           type: 'success',
-           message: response.message
-         })
-        }
-
-      })
+          data: JSON.stringify({
+            id: this.data.productPhotoId,
+            s3ObjectKey: null,
+            s3ObjectUrl: null,
+          }),
+          file: this.selectedFile(),
+        })
+        .subscribe(response => {
+          if (response.code == '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code == '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+          }
+        });
     }
     if (this.isUpdate() && this.data.productPhotoId == 0 && this.selectedFile()) {
-      this.$productPhotoPostUseCase.execute({
-        productId: this.params.id,
-        file: this.selectedFile()
-      }).subscribe(response => {
-        if (response.code == "0") {
-          this.tS.show({
-            type: 'warning',
-            message: response.message
-          })
-        }
-        if (response.code == "1") {
-          this.tS.show({
-            type: 'success',
-            message: response.message
-          })
-        }
-      })
+      this.$productPhotoPostUseCase
+        .execute({
+          productId: this.params.id,
+          file: this.selectedFile(),
+        })
+        .subscribe(response => {
+          if (response.code == '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code == '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+          }
+        });
     }
   }
 
@@ -885,22 +831,9 @@ export class AddEditProductDialogComponent implements OnInit {
 
     // Validaciones para agregar un artículo
     if (this.isAdd()) {
-      if (
-        isFieldInvalid(
-          this.data.descripcion,
-          'Ingrese la Descripción del Articulo'
-        )
-      )
-        return;
-      if (
-        isFieldInvalid(
-          this.data.codigoBarra,
-          'Ingrese el Código de Barra del Articulo'
-        )
-      )
-        return;
-      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo'))
-        return;
+      if (isFieldInvalid(this.data.descripcion, 'Ingrese la Descripción del Articulo')) return;
+      if (isFieldInvalid(this.data.codigoBarra, 'Ingrese el Código de Barra del Articulo')) return;
+      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo')) return;
       if (isIdInvalid(this.data.idMedida, 'Seleccione la Medida')) return;
 
       if (
@@ -911,59 +844,28 @@ export class AddEditProductDialogComponent implements OnInit {
         return;
       }
 
-      if (
-        this.data.datosAdicionales &&
-        isIdInvalid(this.data.idEtiqueta, 'Seleccione la Etiqueta')
-      )
+      if (this.data.datosAdicionales && isIdInvalid(this.data.idEtiqueta, 'Seleccione la Etiqueta'))
         return;
     }
 
     // Validaciones comunes para agregar o actualizar un artículo
     if (this.isAdd() || this.isUpdate()) {
-      if (
-        isFieldInvalid(
-          this.data.descripcion,
-          'Ingrese la Descripción del Articulo'
-        )
-      )
-        return;
-      if (
-        isIdInvalid(
-          this.data.idSubFamilia,
-          'Seleccione la Sub Familia del Articulo'
-        )
-      )
-        return;
-      if (isFieldInvalid(this.data.codigo, 'Ingrese el Código del Articulo'))
-        return;
-      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo'))
-        return;
+      if (isFieldInvalid(this.data.descripcion, 'Ingrese la Descripción del Articulo')) return;
+      if (isIdInvalid(this.data.idSubFamilia, 'Seleccione la Sub Familia del Articulo')) return;
+      if (isFieldInvalid(this.data.codigo, 'Ingrese el Código del Articulo')) return;
+      if (isIdInvalid(this.data.idTipoArticulo, 'Seleccione el Tipo Articulo')) return;
       if (isIdInvalid(this.data.idMedida, 'Seleccione la Medida')) return;
 
       if (
         this.data.caducidad &&
-        isFieldInvalid(
-          this.data.fechaCaducidad,
-          'Ingrese la fecha de Caducidad del Articulo'
-        )
+        isFieldInvalid(this.data.fechaCaducidad, 'Ingrese la fecha de Caducidad del Articulo')
       )
         return;
 
       if (this.data.datosLote) {
         if (isFieldInvalid(this.data.lote, 'Ingrese el Lote')) return;
-        if (
-          isFieldInvalid(
-            this.data.fechaCreacion,
-            'Ingrese la fecha de Creación'
-          )
-        )
-          return;
-        if (
-          isFieldInvalid(
-            this.data.fechaCaducidadLote,
-            'Ingrese la fecha de Caducidad del Lote'
-          )
-        )
+        if (isFieldInvalid(this.data.fechaCreacion, 'Ingrese la fecha de Creación')) return;
+        if (isFieldInvalid(this.data.fechaCaducidadLote, 'Ingrese la fecha de Caducidad del Lote'))
           return;
       }
     }
@@ -989,11 +891,11 @@ export class AddEditProductDialogComponent implements OnInit {
       data: structuredClone(this.data),
       dataPvp: structuredClone(this.productTarifa),
       dataUbicacion: structuredClone(this.dataUbicacion),
-      file: this.selectedFile()
+      file: this.selectedFile(),
     };
 
     if (this.isAdd()) {
-      this.$productPostUseCase.execute(senData).subscribe((response) => {
+      this.$productPostUseCase.execute(senData).subscribe(response => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -1013,7 +915,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
 
     if (this.isUpdate()) {
-      this.$productPutUseCase.execute(senData).subscribe((response) => {
+      this.$productPutUseCase.execute(senData).subscribe(response => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -1039,15 +941,14 @@ export class AddEditProductDialogComponent implements OnInit {
         confirmButtonText: 'Sí',
         showDenyButton: true,
         denyButtonText: 'No',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
           this.params.id = response.idArticulo;
-          this.loadDataForm()
+          this.loadDataForm();
 
-          setTimeout(()=>{
-          this.selectedTab.set(4)
-
-          }, 1000)
+          setTimeout(() => {
+            this.selectedTab.set(4);
+          }, 1000);
         } else {
           this.setResponse(response);
         }
@@ -1076,21 +977,18 @@ export class AddEditProductDialogComponent implements OnInit {
     this.dialogRef.close(data);
   }
 
-
   onChangeEstab() {
     const dataEstab = this.estabs().find(
-      (estab) =>
-        estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento
+      estab => estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento,
     );
     if (dataEstab) {
       this.bodegas = dataEstab.bodegas;
-      const dataBodega = this.bodegas.find((b) => b.defaultBodega);
+      const dataBodega = this.bodegas.find(b => b.defaultBodega);
       if (dataBodega) {
         this.dataUbicacion.idBodega = dataBodega.idBodega;
       }
     }
   }
-
 
   close() {
     this.dialogRef.close();

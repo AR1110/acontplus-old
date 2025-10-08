@@ -1,17 +1,7 @@
-<form
-  [formGroup]="form"
-  (ngSubmit)="login()"
-  class="form-horizontal form-material text-center"
->
+<form [formGroup]="form" (ngSubmit)="login()" class="form-horizontal form-material text-center">
   <!--Logo-->
   <a href="javascript:void(0)" class="db">
-    <img
-      src="./img/logo-icon.jpg"
-      class="img-responsive"
-      alt="Home"
-      height="100"
-      width="100"
-    />
+    <img src="./img/logo-icon.jpg" class="img-responsive" alt="Home" height="100" width="100" />
   </a>
   <div class="center">
     <h5>AcontPlus</h5>
@@ -28,23 +18,11 @@
       } -->
     </mat-form-field>
 
-
-    <mat-form-field  class="w-100">
+    <mat-form-field class="w-100">
       <mat-label>Contraseña</mat-label>
-      <input
-        [type]="hide() ? 'password' : 'text'"
-        matInput
-        formControlName="password"
-        placeholder="Contraseña"
-      />
-      <button
-        type="button"
-        mat-icon-button
-        matSuffix
-        (click)="clickEvent($event)"
-        [attr.aria-label]="'Hide password'"
-      >
-        <mat-icon>{{ hide() ? "visibility_off" : "visibility" }}</mat-icon>
+      <input [type]="hide() ? 'password' : 'text'" matInput formControlName="password" placeholder="Contraseña" />
+      <button type="button" mat-icon-button matSuffix (click)="clickEvent($event)" [attr.aria-label]="'Hide password'">
+        <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
     </mat-form-field>
 
@@ -59,5 +37,4 @@
       <mat-icon>exit_to_app</mat-icon>
     </button>
   </div>
-
 </form>

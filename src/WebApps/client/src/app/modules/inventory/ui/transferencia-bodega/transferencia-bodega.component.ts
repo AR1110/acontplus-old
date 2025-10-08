@@ -8,10 +8,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { TransferenciaBodegaUseCase } from '@modules/inventory/domain/usecases/transferencia-bodega.use-case';
@@ -54,7 +51,7 @@ export class TransferenciaBodegaComponent implements OnInit {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -99,7 +96,7 @@ export class TransferenciaBodegaComponent implements OnInit {
     this._useCase
       .getAll(this.getParams())
       .pipe(finalize(() => (this.isLoadingResults = false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.dataSource.set(response.data);
         console.log(this.dataSource());
         this.pagination.set({
@@ -110,15 +107,15 @@ export class TransferenciaBodegaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._useCase.getDataFilter().subscribe((response) => {
+    this._useCase.getDataFilter().subscribe(response => {
       this.estabs = response.estabs;
 
-      const dataEstab = this.estabs.find((e) => e.defaultEstab);
+      const dataEstab = this.estabs.find(e => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.puntosEmision = dataEstab.puntosEmision;
 
-        const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+        const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
 
         if (dataPtoEmi) {
           this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
@@ -130,12 +127,10 @@ export class TransferenciaBodegaComponent implements OnInit {
   }
 
   onChangeEstab() {
-    const dataEstab = this.estabs.find(
-      (e) => e.codEstab === this.dataSearch.codEstab
-    );
+    const dataEstab = this.estabs.find(e => e.codEstab === this.dataSearch.codEstab);
     if (dataEstab) {
       this.puntosEmision = dataEstab?.puntosEmision;
-      const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
       if (dataPtoEmi) {
         this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
         this.getAll();
@@ -150,7 +145,7 @@ export class TransferenciaBodegaComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, OnInit   } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -11,26 +11,28 @@ import { isValidField } from '@core/utils/utils';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
-import {MatTimepickerModule} from "@angular/material/timepicker";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-filtro-detalle-caja-report-modal',
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     FormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatTimepickerModule,
     ThemeButtonComponent,
-    MatCustomDialogComponent, MatSlideToggle
+    MatCustomDialogComponent,
+    MatSlideToggle,
   ],
   templateUrl: './filtro-detalle-cajar-report-modal.component.html',
   providers: [provideNativeDateAdapter()],
@@ -39,9 +41,9 @@ import {MatSlideToggle} from "@angular/material/slide-toggle";
 export class FiltroDetalleCajaReportModal implements OnInit {
   private dialogRef = inject(MatDialogRef<FiltroDetalleCajaReportModal>);
   params = inject<{
-    id: 0,
-    fechaApertura: '',
-    fechaCierre: '',
+    id: 0;
+    fechaApertura: '';
+    fechaCierre: '';
   }>(MAT_DIALOG_DATA);
 
   dataSearch = {
@@ -60,21 +62,16 @@ export class FiltroDetalleCajaReportModal implements OnInit {
   private sharedSvc = inject(SharedService);
 
   ngOnInit() {
-    const fromDate = stringToDate(
-      this.params.fechaApertura,
-      'dd/MM/yyyy HH:ii',
-      '/',
-    );
+    const fromDate = stringToDate(this.params.fechaApertura, 'dd/MM/yyyy HH:ii', '/');
     const toDate =
-      this.params.fechaCierre &&
-      stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
+      this.params.fechaCierre && stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
 
     this.dataSearch.fromDate = fromDate || new Date();
     this.dataSearch.toDate = toDate || new Date();
 
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
-        next: (response) => {
+        next: response => {
           const { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;
@@ -92,11 +89,11 @@ export class FiltroDetalleCajaReportModal implements OnInit {
   }
 
   onTimeChange(event: Event, fromDate: boolean): void {
-    console.log(event)
+    console.log(event);
     const inputElement = event.target as HTMLInputElement;
     const timeStr = inputElement.value;
-    const [time, modifier] = timeStr.split(" ");
-    const [hours, minutes] = time.split(":").map(Number);
+    const [time, modifier] = timeStr.split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
 
     // Actualiza solo la hora y el minuto manteniendo la fecha actual
     if (fromDate) {
@@ -107,7 +104,6 @@ export class FiltroDetalleCajaReportModal implements OnInit {
       this.dataSearch.toDate.setMinutes(minutes);
     }
   }
-
 
   getReport(format: 'pdf' | 'excel') {
     try {
@@ -149,7 +145,7 @@ export class FiltroDetalleCajaReportModal implements OnInit {
     }
   }
 
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

@@ -6,27 +6,14 @@
 />
 
 <ng-template #body>
-  <form
-    (ngSubmit)="onSave()"
-    id="itemForm"
-    [formGroup]="itemForm"
-  >
+  <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
     <div class="vstack gap-1">
       <mat-form-field>
         <mat-label>Resumen</mat-label>
-        <input
-          type="text"
-          matInput
-          placeholder="..."
-          required=""
-          formControlName="summary"
-        />
+        <input type="text" matInput placeholder="..." required="" formControlName="summary" />
       </mat-form-field>
 
-      <app-ingredient-search
-        (selectedOn)="onIngredientSelected($event)"
-        [(textSearch)]="ingredientSearch"
-      />
+      <app-ingredient-search (selectedOn)="onIngredientSelected($event)" [(textSearch)]="ingredientSearch" />
 
       <app-tabulator
         [columnNames]="columns"
@@ -38,27 +25,17 @@
         }"
       ></app-tabulator>
 
-      <div
-        class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
-      >
+      <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Receta</mat-label>
-            <textarea
-              matInput
-              placeholder="..."
-              formControlName="recipe"
-            ></textarea>
+            <textarea matInput placeholder="..." formControlName="recipe"></textarea>
           </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Instrucciones</mat-label>
-            <textarea
-              matInput
-              placeholder="..."
-              formControlName="instructions"
-            ></textarea>
+            <textarea matInput placeholder="..." formControlName="instructions"></textarea>
           </mat-form-field>
         </div>
       </div>

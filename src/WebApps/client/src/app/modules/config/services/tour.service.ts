@@ -72,7 +72,7 @@ export class TourService {
   }
 
   private highlightElement(selector: string): void {
-    const element = document.querySelector(selector) as HTMLElement;
+    const element = document.querySelector(selector)!;
     if (element) {
       element.classList.add('tour-highlight');
 
@@ -112,18 +112,18 @@ export class TourService {
 
   private removeHighlights(): void {
     // Remove previous highlights
-    document.querySelectorAll('.tour-highlight').forEach((el) => {
+    document.querySelectorAll('.tour-highlight').forEach(el => {
       el.classList.remove('tour-highlight');
     });
 
     // Remove spotlight and cutout
-    document.querySelectorAll('.tour-spotlight, .tour-cutout').forEach((el) => {
+    document.querySelectorAll('.tour-spotlight, .tour-cutout').forEach(el => {
       el.remove();
     });
   }
 
   private scrollToElement(selector: string): void {
-    const element = document.querySelector(selector) as HTMLElement;
+    const element = document.querySelector(selector)!;
     if (element) {
       element.scrollIntoView({
         behavior: 'smooth',

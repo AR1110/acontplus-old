@@ -1,10 +1,10 @@
 export interface Brand {
-    idMarca: number
-    descripcion: string
-    estado: boolean
-    codigo: string 
+  idMarca: number;
+  descripcion: string;
+  estado: boolean;
+  codigo: string;
 }
 
 export type BrandRead = Brand & {
-    totalRecords: number
-} 
+  totalRecords: number;
+};

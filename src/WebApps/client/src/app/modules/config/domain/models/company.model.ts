@@ -9,10 +9,10 @@ export interface CompanyList {
   direccion: string;
   idCiudad: number;
   nomEstado: string;
-  emails: string[]
-  telefonos: string[]
+  emails: string[];
+  telefonos: string[];
 }
 
-export interface ListCompanyResponse{
-  data:CompanyList[]
+export interface ListCompanyResponse {
+  data: CompanyList[];
 }

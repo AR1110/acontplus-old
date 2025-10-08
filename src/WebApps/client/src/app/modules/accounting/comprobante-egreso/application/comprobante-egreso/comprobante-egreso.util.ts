@@ -1,34 +1,33 @@
+import { roundNumber } from '@core/utils/round-number.utils';
+import { DECIMALS } from '@core/constants/global.constants';
+import { pagoCuotaSinAbonoUtil } from './pago-cuota-sin-abono.util';
+import { pagoCuotaConAbonoUtil } from './pago-cuota-con-abono.util';
 
-
-import { roundNumber } from "@core/utils/round-number.utils";
-import { DECIMALS } from "@core/constants/global.constants";
-import { pagoCuotaSinAbonoUtil } from "./pago-cuota-sin-abono.util";
-import { pagoCuotaConAbonoUtil } from "./pago-cuota-con-abono.util";
-
-import { minus } from "@core/utils/decimal.util";
-import { CuentaPorPagarCuota, CuentaPorPagarHistorial } from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
-import { PagoDetalle } from "@accounting/comprobante-egreso/domain/pago-detalle.model";
-import { EstadoPago } from "@accounting/comprobante-egreso/domain/estado-pago.interface";
-import { CuotaPorPagarLista } from "@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface";
-import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
+import { minus } from '@core/utils/decimal.util';
+import {
+  CuentaPorPagarCuota,
+  CuentaPorPagarHistorial,
+} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
+import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { determinadoEstadoPagoCuotaUtil } from './determinado-estado-pago-cuota.util';
 
 export class ComprobanteEgresoUtil {
-
-  private cuentasPorPagar: CuentaPorPagarCuota[]
+  private cuentasPorPagar: CuentaPorPagarCuota[];
   private dataCuentaPorPagarCuota: CuentaPorPagarCuota;
   private pagosDetalle: PagoDetalle[];
-  private cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
-  private estadosPago: EstadoPago[] = []
+  private cuentasPorPagarHistorial: CuentaPorPagarHistorial[];
+  private estadosPago: EstadoPago[] = [];
   private valorAbono = 0;
   private esAbonoPosfechado!: boolean;
-  private secuencial!: number
+  private secuencial!: number;
 
   constructor(cuentasPorPagar: CuentaPorPagarCuota[]) {
     this.cuentasPorPagar = structuredClone(cuentasPorPagar);
     this.dataCuentaPorPagarCuota = {} as CuentaPorPagarCuota;
     this.pagosDetalle = [];
-    this.cuentasPorPagarHistorial = []
-
+    this.cuentasPorPagarHistorial = [];
   }
 
   //secuencial
@@ -40,16 +39,14 @@ export class ComprobanteEgresoUtil {
     return this.secuencial;
   }
 
-
   //valor abono
   setValorAbono = (value: number) => {
     this.valorAbono = value;
-  }
+  };
 
   getValorAbono() {
-    return this.valorAbono
+    return this.valorAbono;
   }
-
 
   setEstadosPago(estadosPago: EstadoPago[]) {
     this.estadosPago = estadosPago;
@@ -62,38 +59,31 @@ export class ComprobanteEgresoUtil {
     return this.esAbonoPosfechado;
   }
 
-
   setPagosDetalle(pagosDetalle: PagoDetalle[]) {
     this.pagosDetalle = pagosDetalle;
   }
 
   getPagosDetalle() {
-    return this.pagosDetalle
+    return this.pagosDetalle;
   }
-
-
 
   getCuentasPorPagar() {
     return this.cuentasPorPagar;
   }
 
   setCuentasPorPagarHistorial(values: CuentaPorPagarHistorial[]) {
-     this.cuentasPorPagarHistorial = values;
+    this.cuentasPorPagarHistorial = values;
   }
-  getCuentasPorPagarHistorial(){
-    return this.cuentasPorPagarHistorial
+  getCuentasPorPagarHistorial() {
+    return this.cuentasPorPagarHistorial;
   }
-
 
   abonar() {
-
     if (!Array.isArray(this.estadosPago) || this.estadosPago.length === 0) {
-      throw new Error("Estado pago no válido");
+      throw new Error('Estado pago no válido');
     }
 
-
     for (const group of this.cuentasPorPagar) {
-
       this.dataCuentaPorPagarCuota = group;
 
       if (this.valorAbono > 0) {
@@ -101,40 +91,32 @@ export class ComprobanteEgresoUtil {
       }
 
       for (const dataCuota of group.cuotas) {
-
         // dataCuota.abonoPosfechado = 0;
         if (this.valorAbono === 0) return;
 
         //Si la cuota no tiene ningún abono
         if (dataCuota.abono > 0) {
-
           pagoCuotaConAbonoUtil({
             dataCuota,
             valorAbono: this.getValorAbono(),
             esAbonoPosfechado: this.getEsAbonoPosfechado(),
             agregarPagoDetalle: this.agregarPagoDetalle,
-            setValorAbono: this.setValorAbono
-
-          })
+            setValorAbono: this.setValorAbono,
+          });
         } else {
           pagoCuotaSinAbonoUtil({
             dataCuota,
             valorAbono: this.getValorAbono(),
             esAbonoPosfechado: this.getEsAbonoPosfechado(),
             agregarPagoDetalle: this.agregarPagoDetalle,
-            setValorAbono: this.setValorAbono
-          })
+            setValorAbono: this.setValorAbono,
+          });
         }
 
-
-        this.actualizarEstadoCuota(dataCuota)
-
+        this.actualizarEstadoCuota(dataCuota);
       }
-
     }
   }
-
-
 
   agregarCuentasPorPagarHistorial() {
     const pagosDetalleFiltered = this.filtrarPagosDetalle();
@@ -149,7 +131,9 @@ export class ComprobanteEgresoUtil {
 
   // Filtra los pagos detalle asociados a la cuenta actual
   private filtrarPagosDetalle() {
-    return this.pagosDetalle.filter(cd => cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar);
+    return this.pagosDetalle.filter(
+      cd => cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar,
+    );
   }
 
   // Calcula el total de abonos para la cuenta actual
@@ -159,7 +143,10 @@ export class ComprobanteEgresoUtil {
 
   // Verifica si el saldo total ya ha sido pagado
   private esSaldoTotalPagado(totalAbonoCuenta: number) {
-    return roundNumber(totalAbonoCuenta, DECIMALS.DOS) === roundNumber(this.dataCuentaPorPagarCuota.saldo, DECIMALS.DOS);
+    return (
+      roundNumber(totalAbonoCuenta, DECIMALS.DOS) ===
+      roundNumber(this.dataCuentaPorPagarCuota.saldo, DECIMALS.DOS)
+    );
   }
 
   // Procesa el historial cuando no hay pagos previos
@@ -182,9 +169,11 @@ export class ComprobanteEgresoUtil {
 
   // Obtiene el último cobro registrado en el historial
   private obtenerUltimoCobro() {
-    const historialFiltrado = this.cuentasPorPagarHistorial.filter(cd => (
-      cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar && cd.secuencial === this.secuencial
-    ));
+    const historialFiltrado = this.cuentasPorPagarHistorial.filter(
+      cd =>
+        cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
+        cd.secuencial === this.secuencial,
+    );
     return historialFiltrado.pop();
   }
 
@@ -214,11 +203,10 @@ export class ComprobanteEgresoUtil {
     });
   }
 
-
   /**
-* Actualiza los valores y el estado de una cuota específica.
-* @param cuota - La cuota a actualizar.
-*/
+   * Actualiza los valores y el estado de una cuota específica.
+   * @param cuota - La cuota a actualizar.
+   */
   private actualizarEstadoCuota(cuota: CuotaPorPagarLista): void {
     cuota.cuota = roundNumber(cuota.cuota, DECIMALS.CINCO);
     cuota.abono = roundNumber(cuota.abono, DECIMALS.CINCO);
@@ -228,26 +216,29 @@ export class ComprobanteEgresoUtil {
       saldo: cuota.saldo,
       abono: cuota.abono,
       estadosPago: this.estadosPago,
-      esPosfechado: this.getEsAbonoPosfechado()
+      esPosfechado: this.getEsAbonoPosfechado(),
     });
     cuota.nombreEstado = descripcion;
     cuota.esCuotaAbonado = true; // Marcar la cuota como afectada.
   }
 
-
   agregarPagoDetalle = (dataCuota: CuotaPorPagarLista, abono: number, saldo: number) => {
-
     if (dataCuota.cuota === 0 || abono === 0) return;
 
     let valorMovimientoSaldo = 0;
-    const pagosDetalleFiltered = this.pagosDetalle.filter(cd => (
-      cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
-      cd.idCuotaPorPagar === dataCuota.idCuotaPorPagar
-    ))
+    const pagosDetalleFiltered = this.pagosDetalle.filter(
+      cd =>
+        cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
+        cd.idCuotaPorPagar === dataCuota.idCuotaPorPagar,
+    );
 
     const dataUltimoCobroDetalle = pagosDetalleFiltered.pop();
     if (dataUltimoCobroDetalle) {
-      valorMovimientoSaldo = minus(dataUltimoCobroDetalle.saldo, dataUltimoCobroDetalle.abono, DECIMALS.CINCO) as number
+      valorMovimientoSaldo = minus(
+        dataUltimoCobroDetalle.saldo,
+        dataUltimoCobroDetalle.abono,
+        DECIMALS.CINCO,
+      ) as number;
     } else {
       valorMovimientoSaldo = roundNumber(dataCuota.saldo, DECIMALS.CINCO);
     }
@@ -267,20 +258,10 @@ export class ComprobanteEgresoUtil {
 
       //  saldoOriginal: this.fS.instanceDecimal(valorMovimientoSaldo, DECIMALS.CINCO),
       //  posfechado: this.esAbonoPosfechado
-      esPosfechado: this.esAbonoPosfechado
-    })
+      esPosfechado: this.esAbonoPosfechado,
+    });
     // item.saldo = this.fS.instanceDecimal(item.saldo, DECIMALS.CINCO);
 
     // item.saldoOriginal = this.fS.minus(item.saldoOriginal, abono, DECIMALS.CINCO);
-
-  }
-
-
-
-
-
-
-
-
-
+  };
 }

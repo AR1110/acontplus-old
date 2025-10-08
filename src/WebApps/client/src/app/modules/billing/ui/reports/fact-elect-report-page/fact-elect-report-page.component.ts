@@ -1,10 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -111,12 +108,12 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
     [DOC_TYPE_SRI.GR]: {
       tipo: 6,
       codigo: BILLING_CODE_REPORT.RGGR,
-    }
+    },
   };
 
   onChangeTipoDoc() {
     const dataTipoDoc = this.tiposDoc().find(
-      (td) => td.idTipoDocumento === this.dataSearch.idTipoDocumento,
+      td => td.idTipoDocumento === this.dataSearch.idTipoDocumento,
     );
 
     this.showField = !!(dataTipoDoc && dataTipoDoc.codDoc === DOC_TYPE_SRI.F);
@@ -134,11 +131,11 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
       .getFilters()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.handleFilterDataReceived(data);
           this.isLoadingFilters = false;
         },
-        error: (error) => {
+        error: error => {
           console.error('Error al cargar filtros:', error);
           this.isLoadingFilters = false;
           // Aquí puedes mostrar un toast o mensaje de error
@@ -157,7 +154,7 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos.find(
-      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
       this.puntosEmision = dataEstab.puntosEmision;
@@ -201,20 +198,14 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
 
   private getReport() {
     try {
-      if (
-        this.dataSearch.checkBoxCustomer &&
-        !isValidField(this.dataSearch.identificacion)
-      ) {
+      if (this.dataSearch.checkBoxCustomer && !isValidField(this.dataSearch.identificacion)) {
         this._tS.show({
           type: 'warning',
           message: 'Seleccione el Cliente',
         });
         return;
       }
-      if (
-        this.dataSearch.checkBoxUser &&
-        !isValidField(this.dataSearch.userId)
-      ) {
+      if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
         this._tS.show({
           type: 'warning',
           message: 'Seleccione el Usuario',
@@ -222,40 +213,30 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
         return;
       }
       const dataEstab = this.establecimientos.find(
-        (estab) =>
-          estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+        estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
       );
       // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
       const { codDoc } = this.tiposDoc().find(
-        (item) => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
+        item => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
       );
-      const idCliente = this.dataSearch.checkBoxCustomer
-        ? this.dataSearch.companyCustomerId
-        : null;
+      const idCliente = this.dataSearch.checkBoxCustomer ? this.dataSearch.companyCustomerId : null;
       const identificacion = this.dataSearch.checkBoxCustomer
         ? isValidField(this.dataSearch.identificacion)
         : null;
-      const idUsuario = this.dataSearch.checkBoxUser
-        ? isValidField(this.dataSearch.userId)
-        : null;
+      const idUsuario = this.dataSearch.checkBoxUser ? isValidField(this.dataSearch.userId) : null;
       const ckRetencion =
-        this.dataSearch.codeRetencion === 'ALL'
-          ? null
-          : this.dataSearch.codeRetencion === 'CR';
+        this.dataSearch.codeRetencion === 'ALL' ? null : this.dataSearch.codeRetencion === 'CR';
       const ckDevolucion =
-        this.dataSearch.codeDevolucion === 'ALL'
-          ? null
-          : this.dataSearch.codeDevolucion === 'CD';
+        this.dataSearch.codeDevolucion === 'ALL' ? null : this.dataSearch.codeDevolucion === 'CD';
 
       const getDataReport = this.dataReporte[codDoc];
       const dataParams = {
         tipo: getDataReport.tipo,
         ckFecha: true,
         codDoc,
-        codEstab: (dataEstab && dataEstab.codEstab) || null,
+        codEstab: (dataEstab?.codEstab) || null,
         idCliente,
-        codEstado:
-          (this.dataSearch.codEstado && this.dataSearch.codEstado) || null,
+        codEstado: (this.dataSearch.codEstado && this.dataSearch.codEstado) || null,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
         identificacion,
@@ -296,14 +277,10 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
     this.tiposDoc.set(data.tipoDocumentos);
 
     if (this.establecimientos.length > 0) {
-      const dataEstab = this.establecimientos.find(
-        (estab) => estab.defaultEstab,
-      );
+      const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
       this.puntosEmision = dataEstab?.puntosEmision ?? [];
     }
-    const dataTipoDoc = this.tiposDoc().find(
-      (tipoDoc) => tipoDoc.codDoc === DOC_TYPE_SRI.F,
-    );
+    const dataTipoDoc = this.tiposDoc().find(tipoDoc => tipoDoc.codDoc === DOC_TYPE_SRI.F);
     this.dataSearch.idTipoDocumento = dataTipoDoc.idTipoDocumento;
     this.estadosDoc = data.estadoDocumentos;
     console.log('📊 Datos de filtros procesados:', {

@@ -14,7 +14,7 @@ export class RecipeService {
 
   getByItem<T>(id: number) {
     return this.#http.get<ApiResponse>(`${this.#url}GetByItem/${id}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return { recipes: [] };
         }

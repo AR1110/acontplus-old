@@ -7,6 +7,6 @@ export enum PersonType {
   SUPPLIER = 'supplier',
 }
 
-export enum CUSTOMER_CODE_REPORT  {
-  RCL='RCL' //Reporte Clientes
+export enum CUSTOMER_CODE_REPORT {
+  RCL = 'RCL', //Reporte Clientes
 }

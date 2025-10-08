@@ -8,33 +8,26 @@ import { PageEvent } from '@angular/material/paginator';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {FormsModule} from "@angular/forms";
-import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  InventoryAdjustmentAddEditComponent
-} from "@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-add-edit.component";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatMenuModule} from "@angular/material/menu";
-import {
-  InventoryAdjustmentDetailComponent
-} from "@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component";
-import {InventoryAdjustmentStore} from "@inventory/inventory-adjustment/domain/store/inventory-adjustment.store";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DialogService } from '@core/services/dialog.service';
+import { InventoryAdjustmentAddEditComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-add-edit.component';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { InventoryAdjustmentDetailComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-detail/inventory-adjustment-detail.component';
+import { InventoryAdjustmentStore } from '@inventory/inventory-adjustment/domain/store/inventory-adjustment.store';
 
-
-import {
-  InventoryAdjustmentService
-} from "@inventory/inventory-adjustment/domain/services/inventory-adjustment.service";
+import { InventoryAdjustmentService } from '@inventory/inventory-adjustment/domain/services/inventory-adjustment.service';
 import {
   InventoryAdjustmentFormDataDto,
-  InventoryAdjustmentListDto
-} from "@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto";
+  InventoryAdjustmentListDto,
+} from '@inventory/inventory-adjustment/domain/dtos/inventory-adjustment.dto';
 
 @Component({
   selector: 'app-inventory-adjustment',
@@ -53,17 +46,14 @@ import {
     MatMenuModule,
   ],
   templateUrl: './inventory-adjustment.component.html',
-  styles: `
-
-
-  `,
+  styles: ``,
 })
-export class InventoryAdjustmentComponent   {
+export class InventoryAdjustmentComponent {
   private inventorySvc = inject(InventoryAdjustmentService);
 
   private _tS = inject(ToastrNotificationService);
   private _dialogSvc = inject(DialogService);
-  private $inventoryAdjustmentStore  = inject(InventoryAdjustmentStore);
+  private $inventoryAdjustmentStore = inject(InventoryAdjustmentStore);
 
   isMoreFilter = signal(false);
 
@@ -79,13 +69,13 @@ export class InventoryAdjustmentComponent   {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'usuarioNombre', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
-  tiposDoc = signal<any[]>([])
-  estabs = signal<GroupedEstab[]>([])
-  puntosEmision = signal<GroupedEstabPuntoEmision[]>([])
+  tiposDoc = signal<any[]>([]);
+  estabs = signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
 
   dataFilter = {
     text: '',
@@ -97,23 +87,20 @@ export class InventoryAdjustmentComponent   {
     endDate: formatDateToString(new Date()),
   };
 
-  private mainFormData = signal({} as InventoryAdjustmentFormDataDto)
+  private mainFormData = signal({} as InventoryAdjustmentFormDataDto);
 
   refresh() {
-    this.getList()
+    this.getList();
   }
 
   private getDataParams() {
     let useFilterDate = this.dataFilter.useFilterDate;
     let serie = null;
     if (isValidField(this.dataFilter.serie)) {
-      serie = ValidatorUtils.validAndFormatedRangeSequential(
-        this.dataFilter.serie
-      );
+      serie = ValidatorUtils.validAndFormatedRangeSequential(this.dataFilter.serie);
       if (!serie) {
         this._tS.warning({
-          message:
-            'Define correctamente el número de secuencial o el rango de número secuencial!',
+          message: 'Define correctamente el número de secuencial o el rango de número secuencial!',
         });
         return;
       }
@@ -123,7 +110,7 @@ export class InventoryAdjustmentComponent   {
       });
     }
     return {
-      pageIndex: this.pagination().pageIndex+1,
+      pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       useFilterDate,
       startDate: this.dataFilter.startDate,
@@ -139,11 +126,11 @@ export class InventoryAdjustmentComponent   {
     if (!params) return;
     this.inventorySvc.getAll(params).subscribe(response => {
       this.dataSource.set(response.data);
-      this.pagination.update(pag=>({
+      this.pagination.update(pag => ({
         ...pag,
         totalRecords: response.totalRecords,
-      }))
-    })
+      }));
+    });
   }
 
   // ngOnInit() {
@@ -159,31 +146,29 @@ export class InventoryAdjustmentComponent   {
   //   });
   // }
 
-  addEdit(item?: InventoryAdjustmentListDto){
+  addEdit(item?: InventoryAdjustmentListDto) {
     const ref = this._dialogSvc.open(InventoryAdjustmentAddEditComponent, {
       size: 'xxl',
-      data: {
-
-      }
-    })
+      data: {},
+    });
     ref.subscribe(res => {
-      if(res && typeof res  == 'object'){
-        this.refresh()
+      if (res && typeof res == 'object') {
+        this.refresh();
       }
-    })
+    });
   }
 
-  openDetail(item: InventoryAdjustmentListDto){
+  openDetail(item: InventoryAdjustmentListDto) {
     this._dialogSvc.open(InventoryAdjustmentDetailComponent, {
       size: 'xxl',
       data: {
-        id: item.id
-      }
-    })
+        id: item.id,
+      },
+    });
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -193,7 +178,4 @@ export class InventoryAdjustmentComponent   {
     });
     this.refresh();
   }
-
-
-
 }

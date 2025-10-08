@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import { CODE_ROLE } from "@core/constants/global.constants";
+import { CODE_ROLE } from '@core/constants/global.constants';
 import { GenericStoreBehaviorSubjectService } from '@shared/services/generic-store-behaviorSubject.service';
 
 interface ActionState {
-  crear: boolean
-  editar: boolean
-  eliminar: boolean
-  anular: boolean
-  cerrarCaja: boolean
-  aperturarCaja: boolean
-  movimiento: boolean
-  reporte: boolean
-  enviarCorreo: boolean
+  crear: boolean;
+  editar: boolean;
+  eliminar: boolean;
+  anular: boolean;
+  cerrarCaja: boolean;
+  aperturarCaja: boolean;
+  movimiento: boolean;
+  reporte: boolean;
+  enviarCorreo: boolean;
 }
-export class PermissionCashAccounting  {
+export class PermissionCashAccounting {
   verOtrasCajas = false;
   reporteMovimiento = false;
   cerrarCaja = false;
@@ -26,7 +26,7 @@ export class ProductPermission {
   precio = false;
 }
 
-export class UserPermission  {
+export class UserPermission {
   // "sales": {
   //   "comprobante": {
   //     "fechaEmision": true,
@@ -61,29 +61,29 @@ export class UserPermission  {
     cerrarCaja: false,
     enterKey: false,
     reporteTransaccionPendiente: false,
-    reporteDetalleControlCaja: false
-  }
+    reporteDetalleControlCaja: false,
+  };
 
   product: ProductPermission = {
-    precio: false
-  }
+    precio: false,
+  };
 }
 
 interface UserRoleState {
-  permission: UserPermission
+  permission: UserPermission;
   accion: ActionState;
-  acciones: any[],
-  codeRole: CODE_ROLE.ADM
+  acciones: any[];
+  codeRole: CODE_ROLE.ADM;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class UserRoleStateService extends GenericStoreBehaviorSubjectService<UserRoleState> {
   constructor() {
     super();
   }
 
-  getAction(){
-    return this.select("accion")
+  getAction() {
+    return this.select('accion');
   }
 }

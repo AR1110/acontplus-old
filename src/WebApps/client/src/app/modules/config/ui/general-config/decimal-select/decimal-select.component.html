@@ -1,9 +1,8 @@
-
 <mat-form-field class="w-100">
   <mat-label>{{ label() }}</mat-label>
-  <mat-select [(ngModel)]="value"  (selectionChange)="onChange()">
+  <mat-select [(ngModel)]="value" (selectionChange)="onChange()">
     @for (item of decimales; track $index) {
-      <mat-option [value]="item">{{item}}</mat-option>
+      <mat-option [value]="item">{{ item }}</mat-option>
     }
   </mat-select>
 </mat-form-field>

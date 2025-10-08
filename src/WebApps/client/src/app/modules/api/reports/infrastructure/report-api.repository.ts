@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {ReportRepository} from "@modules/api/reports/domain/report.repository";
-import {PATHS, PATHS_API} from "@core/constants/global.constants";
-import {ReportParams} from "@modules/api/reports/domain/report.entity";
-import FileSaver from "file-saver";
+import { ReportRepository } from '@modules/api/reports/domain/report.repository';
+import { PATHS, PATHS_API } from '@core/constants/global.constants';
+import { ReportParams } from '@modules/api/reports/domain/report.entity';
+import FileSaver from 'file-saver';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReportApiRepository implements ReportRepository {
-  private readonly apiUrl = `${PATHS_API.REPORT}`
+  private readonly apiUrl = `${PATHS_API.REPORT}`;
 
   constructor(private http: HttpClient) {}
 
-  generateReport(payload: ReportParams)  {
+  generateReport(payload: ReportParams) {
     const {
       data,
       format = 'pdf',
@@ -27,7 +27,7 @@ export class ReportApiRepository implements ReportRepository {
         observe: 'response',
         responseType: 'blob',
       })
-      .subscribe((response) => {
+      .subscribe(response => {
         if (format === 'pdf' && openInModal && response.body) {
           // this.openPdfInModal(response.body)
         } else {
@@ -36,17 +36,14 @@ export class ReportApiRepository implements ReportRepository {
       });
   }
 
-
   private saveFile(response: any, format?: string, downloadOnly = false) {
     const contentDisposition = response.headers.get('content-disposition');
     let fileName = 'download';
 
     if (contentDisposition) {
       // Extract filename safely using regex
-      const filenameMatch = contentDisposition.match(
-        /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
-      );
-      if (filenameMatch && filenameMatch[1]) {
+      const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+      if (filenameMatch?.[1]) {
         fileName = filenameMatch[1].replace(/['"]/g, '');
 
         // Decode URL encoded characters

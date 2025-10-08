@@ -23,12 +23,10 @@ import { finalize } from 'rxjs/operators';
 import { MatMenuModule } from '@angular/material/menu';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
 import { DialogService } from '@core/services/dialog.service';
-import {
-  EgresoIngresoDialogComponent
-} from "@accounting/movimiento-caja/presentation/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component";
-import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
-import {ListMovimientoCajaUseCase} from "@accounting/movimiento-caja/application/list-movimiento-caja.use-case";
-import {MovimientoCajaList} from "@accounting/movimiento-caja/domain/movimiento-caja.model";
+import { EgresoIngresoDialogComponent } from '@accounting/movimiento-caja/presentation/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { ListMovimientoCajaUseCase } from '@accounting/movimiento-caja/application/list-movimiento-caja.use-case';
+import { MovimientoCajaList } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -53,14 +51,14 @@ export class EgresoIngresoCajaComponent implements OnInit {
     toDate: formatDateToString(new Date()),
     customerId: 0,
     codEstado: '',
-    enableDateFilter: true
+    enableDateFilter: true,
   };
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
-  private $listUseCase = inject(ListMovimientoCajaUseCase)
+  private $listUseCase = inject(ListMovimientoCajaUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
 
   dataSource: MovimientoCajaList[] = [];
@@ -84,7 +82,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -104,26 +102,25 @@ export class EgresoIngresoCajaComponent implements OnInit {
     if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
-    this.$listUseCase.execute(params)
+    this.$listUseCase
+      .execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response=>{
-      this.dataSource = response.data;
-      this.pagination.update((e) => {
-        return {
-          ...e,
-          totalRecords: response.totalRecords
-        };
+      .subscribe(response => {
+        this.dataSource = response.data;
+        this.pagination.update(e => {
+          return {
+            ...e,
+            totalRecords: response.totalRecords,
+          };
+        });
       });
-    })
   }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataFilter().subscribe((response) => {
+    this._movimientoCajaUseCase.getDataFilter().subscribe(response => {
       this.establecimientos = response.establecimientos;
       if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find(
-          (item) => item.predeterminado
-        );
+        const dataEstab = this.establecimientos.find(item => item.predeterminado);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.getMovimientosCaja();
@@ -156,7 +153,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
       size: 'lg',
       data: params || {},
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getMovimientosCaja();
       }
@@ -214,25 +211,23 @@ export class EgresoIngresoCajaComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this._movimientoCajaUseCase
-            .delete(item.idMovimientoCaja)
-            .subscribe((response) => {
-              if (response.code === '0') {
-                this.tS.show({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
-              if (response.code === '1') {
-                this.tS.show({
-                  type: 'success',
-                  message: response.message,
-                });
-                this.getMovimientosCaja();
-              }
-            });
+          this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe(response => {
+            if (response.code === '0') {
+              this.tS.show({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code === '1') {
+              this.tS.show({
+                type: 'success',
+                message: response.message,
+              });
+              this.getMovimientosCaja();
+            }
+          });
         }
       });
     } catch (error) {
@@ -240,7 +235,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     }
   }
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

@@ -1,7 +1,7 @@
-import {ComprobanteEgresoResponse} from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
+import { ComprobanteEgresoResponse } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 
 export class ListComprobanteEgresoMapper {
-  static toJson(params:any){
+  static toJson(params: any) {
     return JSON.stringify({
       tipo: 1,
       ...params,
@@ -10,31 +10,30 @@ export class ListComprobanteEgresoMapper {
     });
   }
 
-  static fromJson(response:any): ComprobanteEgresoResponse{
-
+  static fromJson(response: any): ComprobanteEgresoResponse {
     const results = response.comprobantesEgreso || [];
-    const data = results.map((item:any, index:number) => {
+    const data = results.map((item: any, index: number) => {
       return {
-        index: index+1,
-        "idComprobanteEgreso": item.idComprobanteEgreso,
-        "total": item.total,
-        "codEstab": item.codEstab,
+        index: index + 1,
+        idComprobanteEgreso: item.idComprobanteEgreso,
+        total: item.total,
+        codEstab: item.codEstab,
         fechaRegistro: item.fechaRegistro,
         nroDoc: item.nroDoc,
         nomPersona: item.nomPersona,
-        "nroIdentificacion": item.nroIdentificacion,
+        nroIdentificacion: item.nroIdentificacion,
         nomCaja: item.nomCaja,
-        "color": item.color,
+        color: item.color,
         nomEstado: item.nomEstado,
-        nomUsuario:item.nomUsuario,
+        nomUsuario: item.nomUsuario,
         totalRecords: item.totalRecords,
-        estado: item.estado
-      }
-    })
-    const totalRecords = data.length>0? data[0].totalRecords : 0
+        estado: item.estado,
+      };
+    });
+    const totalRecords = data.length > 0 ? data[0].totalRecords : 0;
     return {
       data,
-      totalRecords
-    }
+      totalRecords,
+    };
   }
 }

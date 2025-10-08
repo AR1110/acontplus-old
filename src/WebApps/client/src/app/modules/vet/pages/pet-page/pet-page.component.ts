@@ -21,10 +21,7 @@ import {
 } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import {
-  MatSlideToggle,
-  MatSlideToggleChange,
-} from '@angular/material/slide-toggle';
+import { MatSlideToggle, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ThemePalette } from '@angular/material/core';
@@ -35,7 +32,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
-import {DialogService} from "@core/services/dialog.service";
+import { DialogService } from '@core/services/dialog.service';
 
 Chart.register(...registerables);
 
@@ -117,7 +114,7 @@ export class PetPageComponent implements OnInit {
         showDenyButton: true,
         denyButtonText: 'No',
         confirmButtonText: 'Si',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
           event.source.checked = event.checked;
           //this.enableDisable(item.id, event.checked);
@@ -150,12 +147,11 @@ export class PetPageComponent implements OnInit {
       pageSize: this.pagination.pageSize,
     };
     const clonedParams = Object.assign(params, this.dataSearch);
-    this.petService.get(clonedParams).subscribe((response) => {
+    this.petService.get(clonedParams).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
         const { pets } = JSON.parse(response.payload as string);
         petsModified =
-          pets &&
-          pets.map((pet: any, index: number) => ({
+          pets?.map((pet: any, index: number) => ({
             ...pet,
             position: index + 1,
           }));
@@ -165,8 +161,7 @@ export class PetPageComponent implements OnInit {
       this.dataSource.sort = this.sort;
       setTimeout(() => {
         this.paginator.pageIndex = this.pagination.pageIndex;
-        this.paginator.length =
-          petsModified.length > 0 ? petsModified[0].totalRecords : 0;
+        this.paginator.length = petsModified.length > 0 ? petsModified[0].totalRecords : 0;
       });
     });
   }
@@ -184,9 +179,9 @@ export class PetPageComponent implements OnInit {
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then((response) => {
+    }).then(response => {
       if (response.isConfirmed) {
-        this.petService.delete(item.id).subscribe((response) => {
+        this.petService.delete(item.id).subscribe(response => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
@@ -209,10 +204,10 @@ export class PetPageComponent implements OnInit {
   onModalOpen() {
     const modalRef = this.modalService.open(PetModalComponent, {
       size: 'lg',
-       data: this.data.id > 0 ? this.data : {}
+      data: this.data.id > 0 ? this.data : {},
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.loadPets();
       }

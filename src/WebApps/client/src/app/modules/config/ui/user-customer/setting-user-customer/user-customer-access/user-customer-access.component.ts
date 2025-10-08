@@ -1,74 +1,66 @@
-import {Component, inject, signal, ViewChild, OnInit} from '@angular/core';
-import {MatTree,  MatTreeModule} from '@angular/material/tree';
-import {  MatCheckboxModule} from '@angular/material/checkbox';
-import {MatIcon} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {SelectionModel} from "@angular/cdk/collections";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {
-  ListAccessUserCustomerRoleUseCase
-} from "@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case";
-import {
-  UpdateAccessUserCustomerRoleUseCase
-} from "@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case";
-import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
-import {ApiResponse} from "@core/models/api-response";
-import Swal from "sweetalert2";
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
+import { MatTree, MatTreeModule } from '@angular/material/tree';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIcon } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { SelectionModel } from '@angular/cdk/collections';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ListAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case';
+import { UpdateAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case';
+import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
+import { ApiResponse } from '@core/models/api-response';
+import Swal from 'sweetalert2';
 
 interface TreeNode {
   name: string;
   children?: TreeNode[];
-  enabled?: boolean
-  level?: number
+  enabled?: boolean;
+  level?: number;
 }
 @Component({
   selector: 'app-user-customer-access',
-  imports: [
-    MatTreeModule,
-    MatCheckboxModule,
-    MatIcon,
-    MatButtonModule,
-    ThemeButtonComponent
-  ],
+  imports: [MatTreeModule, MatCheckboxModule, MatIcon, MatButtonModule, ThemeButtonComponent],
   templateUrl: './user-customer-access.component.html',
-  styleUrls: ['./user-customer-access.component.scss']
+  styleUrls: ['./user-customer-access.component.scss'],
 })
 export class UserCustomerAccessComponent implements OnInit {
   @ViewChild('tree') tree!: MatTree<TreeNode>;
 
   dataSource = signal<TreeNode[]>([]);
   checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
-  private $listAccessUseCase = inject(ListAccessUserCustomerRoleUseCase)
-  private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase)
+  private $listAccessUseCase = inject(ListAccessUserCustomerRoleUseCase);
+  private $updateAccessUseCase = inject(UpdateAccessUserCustomerRoleUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
 
-  private actions:any[] = [];
+  private actions: any[] = [];
 
-  childrenAccessor = (node: TreeNode) => node.children||[];
+  childrenAccessor = (node: TreeNode) => node.children || [];
 
-  getAccesses(){
-    this.dataSource.set([])
-    this.$listAccessUseCase.execute({
-      userRoleId: this.$userCustomerStore.userRoleId()
-    }).subscribe(response=>{
-      this.actions = response.actions;
-      const makeMenusNode = [{
-        name: 'Todos',
-        children: response.menus
-      }]
-      this.checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
-      this.dataSource.set(makeMenusNode)
-      this.initializeCheckedNodes(this.dataSource())
-  //    this.tree.expandAll()
-    })
+  getAccesses() {
+    this.dataSource.set([]);
+    this.$listAccessUseCase
+      .execute({
+        userRoleId: this.$userCustomerStore.userRoleId(),
+      })
+      .subscribe(response => {
+        this.actions = response.actions;
+        const makeMenusNode = [
+          {
+            name: 'Todos',
+            children: response.menus,
+          },
+        ];
+        this.checklistSelection = new SelectionModel<TreeNode>(true /* multiple */);
+        this.dataSource.set(makeMenusNode);
+        this.initializeCheckedNodes(this.dataSource());
+        //    this.tree.expandAll()
+      });
   }
 
   // Initialize checklistSelection with nodes that have checked=true
   initializeCheckedNodes(nodes: TreeNode[]): void {
-
     const checkNodes = (nodeArray: TreeNode[]) => {
       for (const node of nodeArray) {
-
         if (node.enabled) {
           this.checklistSelection.select(node);
         }
@@ -76,12 +68,10 @@ export class UserCustomerAccessComponent implements OnInit {
         if (node.children) {
           checkNodes(node.children);
         }
-
       }
     };
 
     checkNodes(nodes);
-
 
     nodes.forEach(node => {
       if (node.children) {
@@ -97,7 +87,7 @@ export class UserCustomerAccessComponent implements OnInit {
     }
 
     const allChildrenChecked = node.children.every(child =>
-      this.checklistSelection.isSelected(child)
+      this.checklistSelection.isSelected(child),
     );
 
     if (allChildrenChecked) {
@@ -114,11 +104,9 @@ export class UserCustomerAccessComponent implements OnInit {
     });
   }
 
-
-  ngOnInit(){
-    this.getAccesses()
+  ngOnInit() {
+    this.getAccesses();
   }
-
 
   hasChild = (_: number, node: TreeNode) => !!node.children && node.children.length > 0;
 
@@ -146,8 +134,10 @@ export class UserCustomerAccessComponent implements OnInit {
 
   descendantsAllSelected(node: TreeNode): boolean {
     const descendants = this.getDescendants(node);
-    return descendants.length > 0 &&
-      descendants.every(child => this.checklistSelection.isSelected(child));
+    return (
+      descendants.length > 0 &&
+      descendants.every(child => this.checklistSelection.isSelected(child))
+    );
   }
 
   descendantsPartiallySelected(node: TreeNode): boolean {
@@ -183,7 +173,6 @@ export class UserCustomerAccessComponent implements OnInit {
 
     this.checklistSelection.toggle(node);
     this.checkAllParentsSelection(node);
-
   }
 
   checkAllParentsSelection(node: TreeNode): void {
@@ -195,7 +184,6 @@ export class UserCustomerAccessComponent implements OnInit {
   }
 
   checkRootNodeSelection(node: TreeNode): void {
-
     const descendants = this.getDescendants(node);
 
     if (descendants.length === 0) {
@@ -217,14 +205,12 @@ export class UserCustomerAccessComponent implements OnInit {
     else {
       this.checklistSelection.deselect(node);
     }
-
-
   }
 
   getParentNode(node: TreeNode): TreeNode | null {
     const findParent = (nodes: TreeNode[], target: TreeNode): TreeNode | null => {
       for (const current of nodes) {
-        if (current.children && current.children.includes(target)) {
+        if (current.children?.includes(target)) {
           return current;
         }
         if (current.children) {
@@ -238,117 +224,99 @@ export class UserCustomerAccessComponent implements OnInit {
     return findParent(this.dataSource(), node);
   }
 
-
-
-  successResponse = (response:ApiResponse)=>{
-    if (response.code === "0") {
+  successResponse = (response: ApiResponse) => {
+    if (response.code === '0') {
       Swal.fire({
         icon: 'warning',
-        html: response.message
-      })
+        html: response.message,
+      });
     }
-    if (response.code === "1") {
+    if (response.code === '1') {
       Swal.fire({
         icon: 'success',
         html: response.message,
-        timer: 1000
-      })
-      this.getAccesses()
+        timer: 1000,
+      });
+      this.getAccesses();
     }
+  };
 
-  }
+  onSave() {
+    const menus = this.checklistSelection.selected.filter(cl => cl.level === 3);
+    const mergeDuplicateLevel3 = menus.reduce((acc: any, curr: any) => {
+      const existingNode = acc.find((m: any) => m.menuId === curr.menuId);
+      const action = this.actions.find(a => a.code === curr.code);
 
-  onSave(){
-
-    const menus = this.checklistSelection.selected.filter(cl=>cl.level===3);
-    const mergeDuplicateLevel3 = menus.reduce((acc:any, curr:any)=>{
-
-      const existingNode  = acc.find((m:any)=>m.menuId===curr.menuId);
-      const action = this.actions.find(a=>a.code===curr.code)
-
-      if(!existingNode ){
-
+      if (!existingNode) {
         acc.push({
           menuId: curr.menuId,
-          actions: [action]
-        })
-      }else{
-        if(action){
-          existingNode.actions.push(action)
+          actions: [action],
+        });
+      } else {
+        if (action) {
+          existingNode.actions.push(action);
         }
       }
 
       return acc;
+    }, []);
 
-    }, [])
-
-    const mappedLevel3 = mergeDuplicateLevel3.map((acc:any)=>({
+    const mappedLevel3 = mergeDuplicateLevel3.map((acc: any) => ({
       menuId: acc.menuId,
-      actions: JSON.stringify(acc.actions)
-    }))
+      actions: JSON.stringify(acc.actions),
+    }));
 
-    if(menus.length===0){
+    if (menus.length === 0) {
       Swal.fire({
         icon: 'warning',
-        text: 'Seleccione al menos una acción del SubMenú'
-      })
-      return
+        text: 'Seleccione al menos una acción del SubMenú',
+      });
+      return;
     }
-
 
     Swal.fire({
       icon: 'warning',
       text: '¿Está seguro de actualizar los accesos de manera personalizada para el usuario seleccionado?',
       showCancelButton: true,
-      showConfirmButton : true,
+      showConfirmButton: true,
       cancelButtonText: 'No',
-      confirmButtonText: 'Si'
-    }).then(result=>{
-
-      if(result.isConfirmed) {
-        const data =   {
-          accesses: JSON.stringify(mappedLevel3)
-        }
+      confirmButtonText: 'Si',
+    }).then(result => {
+      if (result.isConfirmed) {
+        const data = {
+          accesses: JSON.stringify(mappedLevel3),
+        };
 
         const params = {
           data,
-          userRoleId: this.$userCustomerStore.userRoleId()
-        }
+          userRoleId: this.$userCustomerStore.userRoleId(),
+        };
 
-        this.$updateAccessUseCase.execute(params).subscribe(this.successResponse)
+        this.$updateAccessUseCase.execute(params).subscribe(this.successResponse);
       }
-
-
-
-    })
-
+    });
   }
 
-
-  async onDelete(){
-    const {isConfirmed} = await  Swal.fire({
+  async onDelete() {
+    const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: '¿Está seguro de quitar los accesos personalizados? Esto restablecerá los permisos predeterminados.',
       showCancelButton: true,
       showConfirmButton: true,
       cancelButtonText: 'No',
-      confirmButtonText: 'Si'
-    })
+      confirmButtonText: 'Si',
+    });
 
-    if(!isConfirmed) return
+    if (!isConfirmed) return;
 
-    const data =   {
-      accesses: null
-    }
+    const data = {
+      accesses: null,
+    };
     const params = {
       data,
-      userRoleId: this.$userCustomerStore.userRoleId()
-    }
+      userRoleId: this.$userCustomerStore.userRoleId(),
+    };
 
-    this.$updateAccessUseCase.execute(params).subscribe(this.successResponse)
-
+    this.$updateAccessUseCase.execute(params).subscribe(this.successResponse);
   }
-
-
-
 }

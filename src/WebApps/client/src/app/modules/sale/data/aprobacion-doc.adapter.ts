@@ -1,54 +1,59 @@
-import { formatDateToString } from "@core/utils/date.util"
-
+import { formatDateToString } from '@core/utils/date.util';
 
 interface Comprobante {
-  idCliente: number
-  idTiempoCredito: number
-  idPuntoEmision: number
-  fechaEmision: string
-  codDoc: string
-  subTotalSinImpuestos: number
-  totalDescuento: number
-  total: number
-  importeTotal: number
-  propina: number
-  docOrigen: string
-  docDestino: string
-  observacion: string
+  idCliente: number;
+  idTiempoCredito: number;
+  idPuntoEmision: number;
+  fechaEmision: string;
+  codDoc: string;
+  subTotalSinImpuestos: number;
+  totalDescuento: number;
+  total: number;
+  importeTotal: number;
+  propina: number;
+  docOrigen: string;
+  docDestino: string;
+  observacion: string;
 }
 interface Detail {
-  orderIndex: number,
-  idAprob_Document_Detailt: number
-  idTarifa: number
-  idArticulo: number
-  idTipoIva: number
-  idMedida: number
-  cantidad: number
-  descripcion: string
-  precioUnitario: number
-  precioConIva: number
-  descuento: number
-  precioTotalSinImpuesto: number
-  nota: string
-  codigoPorcentaje: string
-  tarifa: number
-  valorImpuesto: number
-  llevaInventario: boolean
-  idBodega: number
-  fechaEmision: string
+  orderIndex: number;
+  idAprob_Document_Detailt: number;
+  idTarifa: number;
+  idArticulo: number;
+  idTipoIva: number;
+  idMedida: number;
+  cantidad: number;
+  descripcion: string;
+  precioUnitario: number;
+  precioConIva: number;
+  descuento: number;
+  precioTotalSinImpuesto: number;
+  nota: string;
+  codigoPorcentaje: string;
+  tarifa: number;
+  valorImpuesto: number;
+  llevaInventario: boolean;
+  idBodega: number;
+  fechaEmision: string;
 }
 interface ToProps {
-  comprobante: Comprobante,
-  detalles: Detail[],
-  detallesDeleted: Detail[],
-  selectedDocshistorial: any[],
-  infoAdicionalDocumento: any[],
-  datosAdicionalesArticulo: any[]
+  comprobante: Comprobante;
+  detalles: Detail[];
+  detallesDeleted: Detail[];
+  selectedDocshistorial: any[];
+  infoAdicionalDocumento: any[];
+  datosAdicionalesArticulo: any[];
 }
 class AprobacionDocAdapter {
   to(obj: ToProps) {
-    const { comprobante, detalles, detallesDeleted, selectedDocshistorial, infoAdicionalDocumento, datosAdicionalesArticulo } = obj;
-
+    const {
+      comprobante,
+      detalles,
+      detallesDeleted,
+      selectedDocshistorial,
+      infoAdicionalDocumento,
+      datosAdicionalesArticulo,
+    } = obj;
 
     // const itemsMainMapper = this.comprobanteTo(detalles);
     // const itemsDeletedMapper = this.detailTo(detallesDeleted)
@@ -58,7 +63,6 @@ class AprobacionDocAdapter {
     //   ...itemsMainMapper,
     //   ...itemsDeletedMapper
     // ]
-
 
     // return {
     //   comprobante: service.infoComprobanteMapperTo(comprobante),
@@ -85,7 +89,7 @@ class AprobacionDocAdapter {
       docOrigen: data.docOrigen,
       docDestino: data.docDestino,
       observacion: data.observacion,
-    }
+    };
     return result;
   }
 
@@ -105,19 +109,17 @@ class AprobacionDocAdapter {
         descuento: item.valorDescuento,
         precioTotalSinImpuesto: item.precioTotalSinImpuesto,
         codigoPorcentaje: item.codigoPorcentaje, //✅
-        tarifa: item.tarifa,//✅
-        valorImpuesto: item.valorImpuesto,//✅
+        tarifa: item.tarifa, //✅
+        valorImpuesto: item.valorImpuesto, //✅
         llevaInventario: item.llevaInventario,
         idBodega: item.idBodega,
         fechaEmision: formatDateToString(item.fechaEmision),
-        nota: item.nota
-      }
+        nota: item.nota,
+      };
       return obj;
-    })
+    });
     return results;
-
   }
 }
 
-
-export const aprobacionDocAdapter = new AprobacionDocAdapter()
+export const aprobacionDocAdapter = new AprobacionDocAdapter();

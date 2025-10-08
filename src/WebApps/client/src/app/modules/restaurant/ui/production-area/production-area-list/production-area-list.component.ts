@@ -53,15 +53,13 @@ export class ProductionAreaListComponent implements OnInit {
     //   return;
     // }
     this.establecimientoId = idEstablecimiento;
-    this.#productionAreaService
-      .getByEstab(this.establecimientoId)
-      .subscribe((response) => {
-        this.productionAreas = (response.payload as ProductionArea[]) || [];
-      });
+    this.#productionAreaService.getByEstab(this.establecimientoId).subscribe(response => {
+      this.productionAreas = (response.payload as ProductionArea[]) || [];
+    });
   }
 
   getEstabs() {
-    this.#sharedService.getEstabAsign().subscribe((response) => {
+    this.#sharedService.getEstabAsign().subscribe(response => {
       this.establecimientos = response;
     });
   }
@@ -87,9 +85,9 @@ export class ProductionAreaListComponent implements OnInit {
         cancelButtonText: 'No',
         showCancelButton: true,
       })
-      .then((response) => {
+      .then(response => {
         if (response.isConfirmed) {
-          this.#productionAreaService.delete(item.id).subscribe((result) => {
+          this.#productionAreaService.delete(item.id).subscribe(result => {
             this.#tS.show({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
@@ -103,17 +101,14 @@ export class ProductionAreaListComponent implements OnInit {
   }
 
   onModalOpen() {
-    const modalRef = this.#modalService.open(
-      ProductionAreaAddEditModalComponent,
-      {
-        size: 'sm',
-        data: Object.assign(this.data, {
-          establecimientoId: this.establecimientoId,
-        }),
-      }
-    );
+    const modalRef = this.#modalService.open(ProductionAreaAddEditModalComponent, {
+      size: 'sm',
+      data: Object.assign(this.data, {
+        establecimientoId: this.establecimientoId,
+      }),
+    });
 
-    modalRef.subscribe((response) => {
+    modalRef.subscribe(response => {
       if (typeof response == 'object') {
         if (response.code == '1') {
           this.loadData(this.establecimientoId);

@@ -15,11 +15,7 @@ export class OverlayService {
     if (!this.overlayRef) {
       this.overlayRef = this.overlay.create({
         hasBackdrop: true,
-        positionStrategy: this.overlay
-          .position()
-          .global()
-          .centerHorizontally()
-          .centerVertically(),
+        positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
       });
 
       const spinnerPortal = new ComponentPortal(SpinnerComponent);

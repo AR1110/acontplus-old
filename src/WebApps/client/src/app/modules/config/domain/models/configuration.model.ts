@@ -98,7 +98,8 @@ export const TOUR_STEPS: TourStep[] = [
   {
     element: '.mandatory-steps',
     title: 'Pasos Obligatorios',
-    content: 'Estos pasos son necesarios para que puedas usar todas las funcionalidades del sistema.',
+    content:
+      'Estos pasos son necesarios para que puedas usar todas las funcionalidades del sistema.',
     position: 'right',
   },
   {

@@ -52,20 +52,12 @@
         }
 
         @if ([2, 3, 7].includes(item.codEstado)) {
-          <button
-            mat-menu-item
-            (click)="authorize(item)"
-            matTooltip="Autorizar en el SRI"
-          >
+          <button mat-menu-item (click)="authorize(item)" matTooltip="Autorizar en el SRI">
             <mat-icon>send</mat-icon>
             Autorizar
           </button>
         }
-        <button
-          mat-menu-item
-          (click)="getRide(item)"
-          matTooltip="Ver PDF de la retención"
-        >
+        <button mat-menu-item (click)="getRide(item)" matTooltip="Ver PDF de la retención">
           <mat-icon>picture_as_pdf</mat-icon>
           Ride
         </button>
@@ -97,11 +89,7 @@
           </button>
         }
       </mat-menu>
-      <button
-        [matMenuTriggerFor]="menu"
-        aria-label="Open Options"
-        mat-icon-button
-      >
+      <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
         <mat-icon>menu</mat-icon>
       </button>
     </ng-template>

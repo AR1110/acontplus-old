@@ -26,8 +26,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
-import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
-import {DialogService} from "@core/services/dialog.service";
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-anticipo',
@@ -52,7 +52,7 @@ export class AnticipoComponent implements OnInit {
     customerId: 0,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
-    checkBoxFecha: true
+    checkBoxFecha: true,
   };
   private modalSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
@@ -60,7 +60,7 @@ export class AnticipoComponent implements OnInit {
   private _anticipoUseCase = inject(AnticipoUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
 
-  dataSource = signal<AnticipoRead[]>([])
+  dataSource = signal<AnticipoRead[]>([]);
 
   isLoadingResults = signal(false);
 
@@ -80,7 +80,7 @@ export class AnticipoComponent implements OnInit {
     { key: 'estadoDoc', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -92,7 +92,7 @@ export class AnticipoComponent implements OnInit {
       idCliente: isValidField(this.dataSearch.customerId),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
-      checkBoxFecha: this.dataSearch.checkBoxFecha
+      checkBoxFecha: this.dataSearch.checkBoxFecha,
     };
 
     if (this.isLoadingResults()) return;
@@ -101,25 +101,22 @@ export class AnticipoComponent implements OnInit {
     this._anticipoUseCase
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.dataSource.set(response);
-        this.pagination.update((e) => {
+        this.pagination.update(e => {
           return {
             ...e,
-            totalRecords:
-              this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
+            totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
           };
         });
       });
   }
 
   ngOnInit() {
-    this._anticipoUseCase.getDataFilter().subscribe((response) => {
-      this.establecimientos.set(response.establecimientos)
+    this._anticipoUseCase.getDataFilter().subscribe(response => {
+      this.establecimientos.set(response.establecimientos);
       if (this.establecimientos().length > 0) {
-        const dataEstab = this.establecimientos().find(
-          (item) => item.predeterminado,
-        );
+        const dataEstab = this.establecimientos().find(item => item.predeterminado);
 
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -206,25 +203,23 @@ export class AnticipoComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
-        if(!result.isConfirmed) return;
-          this._anticipoUseCase
-            .delete(data.idAnticipo)
-            .subscribe((response) => {
-              if (response.code === '0') {
-                this.tS.show({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
-              if (response.code === '1') {
-                this.tS.show({
-                  type: 'success',
-                  message: response.message,
-                });
-                this.getAnticipos();
-              }
+      }).then(result => {
+        if (!result.isConfirmed) return;
+        this._anticipoUseCase.delete(data.idAnticipo).subscribe(response => {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
             });
+          }
+          if (response.code === '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+            this.getAnticipos();
+          }
+        });
       });
     } catch (error) {
       console.log(error);
@@ -232,7 +227,7 @@ export class AnticipoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

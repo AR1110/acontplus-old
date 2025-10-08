@@ -1,17 +1,15 @@
-
-import {UserCustomerDataForm} from "@modules/config/domain/models/user-customer/user-customer.model";
+import { UserCustomerDataForm } from '@modules/config/domain/models/user-customer/user-customer.model';
 
 export class GetUserCustomerFormDataMapper {
-
-  static toJson( ){
+  static toJson() {
     return {
-      tipo: 2
-    }
+      tipo: 2,
+    };
   }
 
   static fromJson(response: any): UserCustomerDataForm {
     return {
-       roles: response?.roles || []
+      roles: response?.roles || [],
     };
   }
 }

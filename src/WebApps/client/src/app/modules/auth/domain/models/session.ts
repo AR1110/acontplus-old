@@ -1,4 +1,4 @@
-import {UserData} from "@modules/auth/domain/models/user-data.model";
+import { UserData } from '@modules/auth/domain/models/user-data.model';
 
 export interface Session {
   userData: UserData;

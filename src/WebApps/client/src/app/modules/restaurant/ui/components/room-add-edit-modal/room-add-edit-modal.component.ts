@@ -11,19 +11,23 @@ import {
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { RoomService } from '@restaurant/data/services/room.service';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import { MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-room-add-edit-modal',
-  imports: [FormsModule, ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent,
-
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
 
     MatFormFieldModule,
-  MatInputModule],
+    MatInputModule,
+  ],
   templateUrl: './room-add-edit-modal.component.html',
   styles: ``,
 })
@@ -52,12 +56,11 @@ export class RoomAddEditModalComponent implements OnInit {
   #roomService = inject(RoomService);
   #tS = inject(ToastrNotificationService);
 
-
   ngOnInit() {
     this.roomForm.patchValue({
       floorId: this.data.floorId,
     });
-    if(this.data.id>0){
+    if (this.data.id > 0) {
       this.roomForm.patchValue(this.data);
       this.modalTitle = 'Editar Sala';
       this.btnText = 'Actualizar';
@@ -77,11 +80,11 @@ export class RoomAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.#roomService.put(this.data.id, dataToSave).subscribe((response) => {
+      this.#roomService.put(this.data.id, dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     } else {
-      this.#roomService.post(dataToSave).subscribe((response) => {
+      this.#roomService.post(dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     }

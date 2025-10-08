@@ -5,20 +5,11 @@
   <div class="row">
     <div class="col-6">
       <div class="d-flex flex-row gap-1">
-        <button
-          type="button"
-          mat-raised-button
-          id="buttonNew"
-          (click)="(null)"
-        >
+        <button type="button" mat-raised-button id="buttonNew" (click)="(null)">
           <mat-icon>add</mat-icon>
           Agregar Turno
         </button>
-        <button
-          type="button"
-          mat-icon-button
-          (click)="(null)"
-        >
+        <button type="button" mat-icon-button (click)="(null)">
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -42,32 +33,15 @@
           <tr>
             <td class="text-center">
               <div class="d-flex flex-row gap-2 justify-content-center">
-                <app-theme-button
-                  variant="warning"
-                  matStyle="icon"
-                  icon="schedule"
-                  (handleClick)="(null)"
-                />
-                <app-theme-button
-                  variant="warning"
-                  matStyle="icon"
-                  icon="edit"
-                  (handleClick)="(null)"
-                />
-                <app-theme-button
-                  variant="danger"
-                  matStyle="icon"
-                  icon="delete"
-                  (handleClick)="askToDelete(item)"
-                />
+                <app-theme-button variant="warning" matStyle="icon" icon="schedule" (handleClick)="(null)" />
+                <app-theme-button variant="warning" matStyle="icon" icon="edit" (handleClick)="(null)" />
+                <app-theme-button variant="danger" matStyle="icon" icon="delete" (handleClick)="askToDelete(item)" />
               </div>
             </td>
             <td class="text-center">{{ $index + 1 }}</td>
             <td class="text-center">{{ item.descripcion }}</td>
             <td>
-              <span
-                class="badge {{ item.estado ? 'bg-success' : 'bg-danger' }}"
-              >
+              <span class="badge {{ item.estado ? 'bg-success' : 'bg-danger' }}">
                 {{ item.estado ? 'Activo' : 'Inactivo' }}
               </span>
             </td>

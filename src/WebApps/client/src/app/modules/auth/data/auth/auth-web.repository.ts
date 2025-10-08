@@ -16,7 +16,7 @@ export class AuthWebRepository implements AuthRepository {
 
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this._url}login`, credentials).pipe(
-      map((response) => {
+      map(response => {
         const result = {
           success: false,
           message: '',
@@ -36,13 +36,13 @@ export class AuthWebRepository implements AuthRepository {
           const nodeMap = new Map<number, any>();
           const roots: any[] = [];
 
-          items.forEach((item) => {
+          items.forEach(item => {
             if (!nodeMap.has(item.id)) {
               nodeMap.set(item.id, { ...item, children: [] });
             }
           });
 
-          nodeMap.forEach((node) => {
+          nodeMap.forEach(node => {
             if (node.parentId !== undefined && nodeMap.has(node.parentId)) {
               nodeMap.get(node.parentId).children.push(node);
             } else if (node.parentId === undefined) {
@@ -130,7 +130,7 @@ export class AuthWebRepository implements AuthRepository {
           const mappedPermissions = mapPermissions(permissions);
 
           // Only root menus
-          const menusWithChildren = fullTree.filter((node) => node.children.length > 0);
+          const menusWithChildren = fullTree.filter(node => node.children.length > 0);
 
           const userData = {
             id: userId,
