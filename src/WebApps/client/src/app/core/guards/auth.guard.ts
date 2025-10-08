@@ -5,10 +5,10 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 export const authGuard: CanActivateFn = (route, state) => {
   const router: Router = inject(Router);
   const _tokenUseCase = inject(TokenUseCase);
-  console.log(_tokenUseCase.isTokenExpired())
+  console.log(_tokenUseCase.isTokenExpired());
   if (_tokenUseCase.isTokenExpired()) {
     console.log('no auth');
-   router.navigateByUrl('auth').then();
+    router.navigateByUrl('auth').then();
     return false;
   }
   return true;

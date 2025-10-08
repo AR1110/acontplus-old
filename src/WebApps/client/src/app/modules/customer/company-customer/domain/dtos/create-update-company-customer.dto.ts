@@ -1,10 +1,9 @@
-
 export interface CreateUpdateCompanyCustomerDto {
-  idCliente?:number|null
-  idEmpleado?: number|null;
+  idCliente?: number | null;
+  idEmpleado?: number | null;
   idTipoIdentificacion: number;
   idTipoClienteProveedor?: number;
-  idTipoEntidad?: number ;
+  idTipoEntidad?: number;
   idCiudad?: number;
   idSubContribuyente?: number;
   idTiempoCredito?: number;

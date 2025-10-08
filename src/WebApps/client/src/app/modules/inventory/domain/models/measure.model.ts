@@ -1,16 +1,15 @@
-import { TarifaProducto } from "./tarifa.model"
+import { TarifaProducto } from './tarifa.model';
 
 export interface Measure {
-    idMedida: number,
-    descripcion: string
-    estado: boolean,
-    codigo: string
+  idMedida: number;
+  descripcion: string;
+  estado: boolean;
+  codigo: string;
 }
 
 export type MeasureRead = Measure & {
-    totalRecords: number
-}
-
+  totalRecords: number;
+};
 
 export interface PaginatedMeasureResponse {
   items: Measure[];
@@ -18,24 +17,20 @@ export interface PaginatedMeasureResponse {
 }
 
 export enum MeasureType {
-  FRACCIONADO = "FRACCIONADO",
-  PRINCIPAL = "PRINCIPAL"
+  FRACCIONADO = 'FRACCIONADO',
+  PRINCIPAL = 'PRINCIPAL',
 }
 export interface MedidaProducto {
   idMedida: number;
   descripcion: string;
   conversion: number;
   defaultMedida: boolean;
-  precioUnitario: number
-  precioCosto: number
-  precioCostoFraccionado: number
-  tipo:MeasureType
-  tarifas: TarifaProducto[]
+  precioUnitario: number;
+  precioCosto: number;
+  precioCostoFraccionado: number;
+  tipo: MeasureType;
+  tarifas: TarifaProducto[];
 }
-
-
 
 // Alternativa a MeasureSelectHtmlOnly
-export interface MeasureBasic  extends Pick<Measure, 'idMedida' | 'descripcion'> {
-
-}
+export interface MeasureBasic extends Pick<Measure, 'idMedida' | 'descripcion'> {}

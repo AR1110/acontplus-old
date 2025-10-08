@@ -1,15 +1,16 @@
-import {Component, EventEmitter, inject, Input, Output, output} from '@angular/core';
-import {AutocompleteConfig, PRODUCT_AUTOCOMPLETE_CONFIG} from "@shared/models/autocomplete.interfaces";
-import {ProductUseCase} from "@inventory/product/application/use-cases/product.use-case";
-import {AutocompleteService} from "@shared/services/autocomplete.service";
-import {ReusableAutocompleteComponent} from "@shared/components/reusable-autocomplete/reusable-autocomplete.component";
-import {MatTooltipModule} from "@angular/material/tooltip";
+import { Component, EventEmitter, inject, Input, Output, output } from '@angular/core';
 import {
-  ProductAutocompleteImageComponent
-} from "@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-image/product-autocomplete-image.component";
+  AutocompleteConfig,
+  PRODUCT_AUTOCOMPLETE_CONFIG,
+} from '@shared/models/autocomplete.interfaces';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { AutocompleteService } from '@shared/services/autocomplete.service';
+import { ReusableAutocompleteComponent } from '@shared/components/reusable-autocomplete/reusable-autocomplete.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ProductAutocompleteImageComponent } from '@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-image/product-autocomplete-image.component';
 
-import {CurrencyPipe} from "@angular/common";
-import {ListProductWithPricesUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
+import { CurrencyPipe } from '@angular/common';
+import { ListProductWithPricesUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
   selector: 'app-product-autocomplete-advanced',
@@ -17,10 +18,10 @@ import {ListProductWithPricesUseCase} from "@inventory/product/application/use-c
     MatTooltipModule,
     ReusableAutocompleteComponent,
     ProductAutocompleteImageComponent,
-    CurrencyPipe
+    CurrencyPipe,
   ],
   templateUrl: './product-autocomplete-advanced.component.html',
-  styleUrl: './product-autocomplete-advanced.component.scss'
+  styleUrl: './product-autocomplete-advanced.component.scss',
 })
 export class ProductAutocompleteAdvancedComponent {
   @Input() config: Partial<AutocompleteConfig> = {};
@@ -34,15 +35,15 @@ export class ProductAutocompleteAdvancedComponent {
   @Input() maxLocationsToShow = 4;
   @Input() maxPricesToShow = 5;
 
-   itemSelected =output<any>();
-   searchChanged =output<string>();
-   pageChanged =output<number>();
-   filterChanged =output<any>();
-   createProductClicked =output<string>();
-   stockDetails =output<any>();
-   quickAdd =output<any>();
-   imageClicked =output<{product: any, image: any}>();
-   quickViewClicked =output<any>();
+  itemSelected = output<any>();
+  searchChanged = output<string>();
+  pageChanged = output<number>();
+  filterChanged = output<any>();
+  createProductClicked = output<string>();
+  stockDetails = output<any>();
+  quickAdd = output<any>();
+  imageClicked = output<{ product: any; image: any }>();
+  quickViewClicked = output<any>();
 
   private autocompleteService = inject(AutocompleteService);
   public $listProductWithPricesUseCase = inject(ListProductWithPricesUseCase);
@@ -53,13 +54,13 @@ export class ProductAutocompleteAdvancedComponent {
       placeholder: 'Buscar productos por nombre, SKU o código de barras...',
       itemsPerPage: 8, // Menos items por el mayor tamaño
       clearInput: true,
-      ...this.config
+      ...this.config,
     };
   }
 
   productSearchFunction = this.autocompleteService.createGenericSearchFunction({
-    search: this.$listProductWithPricesUseCase.execute
-  })
+    search: this.$listProductWithPricesUseCase.execute,
+  });
 
   onProductSelected(product: any) {
     this.itemSelected.emit(product);
@@ -95,7 +96,6 @@ export class ProductAutocompleteAdvancedComponent {
     return price.type === 'promotional' && !!price.validTo;
   }
 
-
   onQuickAdd(product: any, event: Event) {
     event.stopPropagation();
     this.quickAdd.emit(product);
@@ -103,7 +103,6 @@ export class ProductAutocompleteAdvancedComponent {
 
   onViewDetails(product: any, event: Event) {
     event.stopPropagation();
-
   }
 
   onViewAllPrices(product: any, event: Event) {

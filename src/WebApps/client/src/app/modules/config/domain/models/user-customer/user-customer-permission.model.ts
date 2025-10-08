@@ -1,18 +1,16 @@
-import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
+import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 
 export interface UserCustomerPermission {
-  idUserPermission: number
+  idUserPermission: number;
 }
 
-export interface UserCustomerPermissionList {
-
-}
+export interface UserCustomerPermissionList {}
 
 export interface UserCustomerPermissionResponse {
-  userCustomPermissions: any[]
-  userPermissionData:UserCustomerPermission
-  usersCustomerAdmin: UserCustomerRole[]
-  permissionsSale: any[]
-  permissionsProduct:any[],
-  permissionsCashBox: any[]
+  userCustomPermissions: any[];
+  userPermissionData: UserCustomerPermission;
+  usersCustomerAdmin: UserCustomerRole[];
+  permissionsSale: any[];
+  permissionsProduct: any[];
+  permissionsCashBox: any[];
 }

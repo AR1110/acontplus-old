@@ -1,16 +1,16 @@
-import {Component, ViewEncapsulation, inject, signal, OnInit} from '@angular/core';
+import { Component, ViewEncapsulation, inject, signal, OnInit } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import {CurrencyPipe} from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 interface Modeda {
   idMoneda: number;
@@ -21,39 +21,42 @@ interface Modeda {
 
 @Component({
   selector: 'app-cierre-caja-modal',
-  imports: [FormsModule,
+  imports: [
+    FormsModule,
     MatFormFieldModule,
-    MatInputModule, ThemeButtonComponent,
-    MatCustomDialogComponent, CurrencyPipe],
+    MatInputModule,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    CurrencyPipe,
+  ],
   templateUrl: './cierre-caja-modal.component.html',
   encapsulation: ViewEncapsulation.None,
 })
 export class CierreCajaModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<CierreCajaModalComponent>);
-  private params = inject<{id: number}>(MAT_DIALOG_DATA)
-
+  private params = inject<{ id: number }>(MAT_DIALOG_DATA);
 
   private _controlCajaUseCase = inject(ControlCajaUseCase);
   private appNotifiSvc = inject(NotificacionService);
 
-  monedas= signal<Modeda[]>([]);
+  monedas = signal<Modeda[]>([]);
   totalArqueo = 0;
 
   ngOnInit() {
-    this._controlCajaUseCase.getDataFormCashboxClose().subscribe((response) => {
+    this._controlCajaUseCase.getDataFormCashboxClose().subscribe(response => {
       this.monedas.set(response.data);
     });
   }
 
   onChangeQuantity() {
     this.totalArqueo = this.monedas()
-      .map((val) => val.valor * Number(val.cantidad))
+      .map(val => val.valor * Number(val.cantidad))
       .reduce((acc, curr) => acc + curr, 0);
   }
 
   async save() {
     try {
-      if (this.monedas().some((val) => isNaN(val.cantidad))) {
+      if (this.monedas().some(val => isNaN(val.cantidad))) {
         Swal.fire({
           icon: 'warning',
           title: '<small>Cierre de Caja</small>',
@@ -72,7 +75,7 @@ export class CierreCajaModalComponent implements OnInit {
       });
 
       if (isConfirmed) {
-        const arqueoCaja = this.monedas().map((item) => ({
+        const arqueoCaja = this.monedas().map(item => ({
           idMoneda: item.idMoneda,
           descripcion: item.descripcion,
           cantidad: item.cantidad,
@@ -82,29 +85,27 @@ export class CierreCajaModalComponent implements OnInit {
           arqueoCaja,
         };
 
-        this._controlCajaUseCase
-          .put(this.params.id, data)
-          .subscribe((response) => {
-            if (response.code === '0') {
-              Swal.fire({
-                icon: 'warning',
-                html: `<small>${response.message}</small>`,
-              });
-            }
+        this._controlCajaUseCase.put(this.params.id, data).subscribe(response => {
+          if (response.code === '0') {
+            Swal.fire({
+              icon: 'warning',
+              html: `<small>${response.message}</small>`,
+            });
+          }
 
-            if (response.code === '1') {
-              const dataMail = JSON.parse(response.payload as string) || {};
-              Swal.fire({
-                icon: 'warning',
-                html: `<small>${response.message}</small>`,
-              });
+          if (response.code === '1') {
+            const dataMail = JSON.parse(response.payload as string) || {};
+            Swal.fire({
+              icon: 'warning',
+              html: `<small>${response.message}</small>`,
+            });
 
-              if (dataMail.receptor) {
-                this.sendEmail(dataMail);
-              }
-              this.dialogRef.close(response);
+            if (dataMail.receptor) {
+              this.sendEmail(dataMail);
             }
-          });
+            this.dialogRef.close(response);
+          }
+        });
       }
     } catch (error) {
       console.log(error);
@@ -132,7 +133,7 @@ export class CierreCajaModalComponent implements OnInit {
         },
       };
 
-      this.appNotifiSvc.post(data).subscribe((value) => {
+      this.appNotifiSvc.post(data).subscribe(value => {
         console.log(value);
       });
     } catch (error) {

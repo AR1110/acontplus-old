@@ -1,7 +1,9 @@
-import { MedidaProducto } from "../models/measure.model";
+import { MedidaProducto } from '../models/measure.model';
 
-export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionadoMedidas: unknown): MedidaProducto[] {
-
+export const mergeMeasureUtil = function (
+  principalMedidas: unknown,
+  fraccionadoMedidas: unknown,
+): MedidaProducto[] {
   const parseMedidas = (medidas: unknown): any[] => {
     if (typeof medidas === 'string') {
       return JSON.parse(medidas) || [];
@@ -19,12 +21,13 @@ export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionado
     precioCosto: medida.precioCosto || 0,
     precioCostoFraccionado: medida.precioCostoFraccionado || 0,
     precioUnitario: medida.precioUnitario || 0,
-    tipo
+    tipo,
   });
 
   const medidasPrincipalMapper = medidasPrincipalTemp.map(medida => mapMedida(medida, 'PRINCIPAL'));
-  const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medida => mapMedida(medida, 'FRACCIONADO'));
-
+  const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medida =>
+    mapMedida(medida, 'FRACCIONADO'),
+  );
 
   /**
    * Combinar los dos arrays de medidas en uno solo
@@ -43,40 +46,43 @@ export const mergeMeasureUtil = function (principalMedidas: unknown, fraccionado
    * Parámetros:
    *  - orderMedidaArray: El array de medidas ordenado
    */
-  let orderMedidaArray = mergedMedidasArray.slice().sort((a, b) => a.orden - b.orden).map(medida => ({
-    ...medida,
-    defaultMedida: false
-  }));
-  orderMedidaArray = orderMedidaArray || []
+  let orderMedidaArray = mergedMedidasArray
+    .slice()
+    .sort((a, b) => a.orden - b.orden)
+    .map(medida => ({
+      ...medida,
+      defaultMedida: false,
+    }));
+  orderMedidaArray = orderMedidaArray || [];
 
   // Establecer la propiedad "defaultMedida" en true para el primer elemento del array (el que tiene el orden más bajo)
   if (orderMedidaArray[0]) {
     orderMedidaArray[0].defaultMedida = true;
   }
 
-
   // Crear un nuevo array de medidas con un formato específico
   const medidas = orderMedidaArray.map(item => {
-    const tarifasParse = (typeof item.tarifas === "string" ? JSON.parse(item.tarifas) : item.tarifas) || [];
+    const tarifasParse =
+      (typeof item.tarifas === 'string' ? JSON.parse(item.tarifas) : item.tarifas) || [];
     const tarifas = tarifasParse.map((t: any) => ({
       idTarifa: t.idTarifa,
       precioVenta: t.precioVenta,
       precioConIva: t.precioConIva,
       descripcion: t.tarifa,
-      defaultTarifa: t.predeterminada
-    }))
+      defaultTarifa: t.predeterminada,
+    }));
     return {
       idMedida: item.idMedida,
       conversion: item.conversion || 1,
       descripcion: item.descripcion || item.medida,
       defaultMedida: item.defaultMedida,
       tipo: item.tipo,
-      precioUnitario: item.precioUnitario ,
+      precioUnitario: item.precioUnitario,
       precioCosto: item.precioCosto,
       precioCostoFraccionado: item.precioCostoFraccionado,
       tarifas,
-    }
-  })
+    };
+  });
 
   return medidas;
-}
+};

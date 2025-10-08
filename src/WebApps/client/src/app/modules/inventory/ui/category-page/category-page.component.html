@@ -4,13 +4,9 @@
     <div class="row">
       <div class="col-6 d-flex justify-content-start">
         <span class="form-group pull-left page-size form-inline">
-          <select
-            class="form-select control-color"
-            [(ngModel)]="dataSearch.pageSize"
-            (change)="changePageSize()"
-          >
+          <select class="form-select control-color" [(ngModel)]="dataSearch.pageSize" (change)="changePageSize()">
             @for (item of recordsQuantity; track $index) {
-            <option [ngValue]="item">{{ item }}</option>
+              <option [ngValue]="item">{{ item }}</option>
             }
           </select>
         </span>
@@ -40,14 +36,14 @@
         </thead>
         <tbody>
           @for (item of categories; track $index) {
-          <tr>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ item.siglas }}</td>
-            <td>{{ item.descripcion }}</td>
-            <td>
-              <div [innerHTML]="item.estado | primaryStatus"></div>
-            </td>
-          </tr>
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>{{ item.siglas }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td>
+                <div [innerHTML]="item.estado | primaryStatus"></div>
+              </td>
+            </tr>
           }
         </tbody>
       </table>

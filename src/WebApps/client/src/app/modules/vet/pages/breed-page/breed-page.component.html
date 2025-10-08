@@ -23,30 +23,30 @@
       </thead>
       <tbody>
         @for (item of breeds(); track $index) {
-        <tr>
-          <td class="text-center">
-            <button mat-button [matMenuTriggerFor]="menu">Menu</button>
+          <tr>
+            <td class="text-center">
+              <button mat-button [matMenuTriggerFor]="menu">Menu</button>
 
-            <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="onEdit(item)">
-                <mat-icon>edit</mat-icon>
-                Editar
-              </button>
-              <button mat-menu-item (click)="onDelete(item)">
-                <mat-icon>delete</mat-icon>
-                Eliminar
-              </button>
-            </mat-menu>
-          </td>
-          <td class="text-center">{{ $index + 1 }}</td>
-          <td>{{ item.petType?.name }}</td>
-          <td>{{ item.code }}</td>
-          <td>{{ item.name }}</td>
-          <td>{{ item.description }}</td>
-          <td>
-            <div [innerHTML]="item.enabled | secondaryStatus"></div>
-          </td>
-        </tr>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="onEdit(item)">
+                  <mat-icon>edit</mat-icon>
+                  Editar
+                </button>
+                <button mat-menu-item (click)="onDelete(item)">
+                  <mat-icon>delete</mat-icon>
+                  Eliminar
+                </button>
+              </mat-menu>
+            </td>
+            <td class="text-center">{{ $index + 1 }}</td>
+            <td>{{ item.petType?.name }}</td>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+              <div [innerHTML]="item.enabled | secondaryStatus"></div>
+            </td>
+          </tr>
         }
       </tbody>
     </table>

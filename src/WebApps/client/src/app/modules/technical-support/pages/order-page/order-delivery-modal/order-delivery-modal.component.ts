@@ -12,9 +12,9 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-order-delivery-modal',
@@ -35,10 +35,10 @@ export class OrderDeliveryModalComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   // * Status
-  isOtherReceiver  = false;
+  isOtherReceiver = false;
 
   // * Params.
-    data = inject(MAT_DIALOG_DATA);
+  data = inject(MAT_DIALOG_DATA);
 
   // * Forms.
   orderDeliveryForm = new FormGroup({
@@ -47,10 +47,7 @@ export class OrderDeliveryModalComponent implements OnInit {
       Validators.minLength(3),
       Validators.maxLength(13),
     ]),
-    receiver: new FormControl('', [
-      Validators.required,
-      Validators.minLength(5),
-    ]),
+    receiver: new FormControl('', [Validators.required, Validators.minLength(5)]),
   });
 
   ngOnInit(): void {}
@@ -70,17 +67,17 @@ export class OrderDeliveryModalComponent implements OnInit {
       receiver: this.orderDeliveryForm.value.receiver,
     };
 
-    this.orderService.delivery(this.data.id, dataModified).subscribe( (response) => {
-        if (isApiResponse(response)) {
-          this.tS.show({
-            type: response.code == '1' ? 'success' : 'warning',
-            message: response.message,
-          });
+    this.orderService.delivery(this.data.id, dataModified).subscribe(response => {
+      if (isApiResponse(response)) {
+        this.tS.show({
+          type: response.code == '1' ? 'success' : 'warning',
+          message: response.message,
+        });
 
-          if (response.code == '1') {
-            this.modalRef.close(response);
-          }
+        if (response.code == '1') {
+          this.modalRef.close(response);
         }
+      }
     });
   }
 }

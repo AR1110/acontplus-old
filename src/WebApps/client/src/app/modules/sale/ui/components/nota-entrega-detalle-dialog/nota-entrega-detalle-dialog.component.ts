@@ -8,11 +8,7 @@ import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-nota-entrega-detalle-dialog',
-  imports: [
-    MatButtonModule,
-    MatCustomDialogComponent,
-    TablaResumenTotalesComponent,
-  ],
+  imports: [MatButtonModule, MatCustomDialogComponent, TablaResumenTotalesComponent],
   templateUrl: './nota-entrega-detalle-dialog.component.html',
   styles: ``,
 })
@@ -38,14 +34,8 @@ export class NotaEntregaDetalleDialogComponent implements OnInit {
           this.isLoading.set(false);
         }),
       )
-      .subscribe((response) => {
-        const {
-          headerData,
-          clienteData,
-          detalles,
-          datosAdicionalesDoc,
-          tiposIva,
-        } = response;
+      .subscribe(response => {
+        const { headerData, clienteData, detalles, datosAdicionalesDoc, tiposIva } = response;
 
         this.headerData = headerData;
         this.clienteData = clienteData;

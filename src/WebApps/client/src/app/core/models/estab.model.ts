@@ -26,16 +26,10 @@ export interface Establecimiento {
 }
 
 export interface GroupedEstabPuntoEmision
-  extends Pick<
-    PuntoEmisionEstablecimiento,
-    'idPuntoEmision' | 'ptoEmi' | 'defaultPtoEmi'
-  > {}
+  extends Pick<PuntoEmisionEstablecimiento, 'idPuntoEmision' | 'ptoEmi' | 'defaultPtoEmi'> {}
 
 export interface GroupedEstabBodega
-  extends Pick<
-    BodegaEstablecimiento,
-    'idBodega' | 'defaultBodega' | 'idEstablecimiento'
-  > {
+  extends Pick<BodegaEstablecimiento, 'idBodega' | 'defaultBodega' | 'idEstablecimiento'> {
   descripcion: string;
 }
 
@@ -47,15 +41,11 @@ export interface GroupedEstab
   nombreEstab: string;
   puntosEmision: GroupedEstabPuntoEmision[];
   bodegas: GroupedEstabBodega[];
-  correo?: string
+  correo?: string;
 }
 
 export interface EstablecimientoSelectHtmlOnly
   extends Pick<
     Establecimiento,
-    | 'idEstablecimiento'
-    | 'codEstab'
-    | 'nombreComercial'
-    | 'predeterminado'
-    | 'estab'
+    'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'predeterminado' | 'estab'
   > {}

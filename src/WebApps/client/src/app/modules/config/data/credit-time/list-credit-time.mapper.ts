@@ -1,43 +1,41 @@
-import {ApiResponse} from "@core/models/api-response";
-import {ListCreditTimeResponse} from "@modules/config/domain/models/tiempo-credito.model";
-
+import { ApiResponse } from '@core/models/api-response';
+import { ListCreditTimeResponse } from '@modules/config/domain/models/tiempo-credito.model';
 
 export class ListCreditTimeMapper {
-  static toJson(params: any){
+  static toJson(params: any) {
     return JSON.stringify({
       tipo: 1,
       pageIndex: params.pageIndex,
       pageSize: params.pageSize,
-    })
+    });
   }
 
-  static fromJson(response:ApiResponse): ListCreditTimeResponse{
+  static fromJson(response: ApiResponse): ListCreditTimeResponse {
     const result = new ListCreditTimeResponse();
-    if(response.code==="1"){
-      const creditTimes= JSON.parse(response.payload as any);
-      result.data = creditTimes.map((item:any, index: number)=>{
+    if (response.code === '1') {
+      const creditTimes = JSON.parse(response.payload as any);
+      result.data = creditTimes.map((item: any, index: number) => {
         return {
-          index: index+1,
+          index: index + 1,
           idTiempoCredito: item.idTiempoCredito,
-          "gestion": item.gestion,
-          "diasCredito": item.diasCredito,
-          "numeroCuota": item.numeroCuota,
-          "descripcion": item.descripcion,
-          "entrada": item.entrada,
+          gestion: item.gestion,
+          diasCredito: item.diasCredito,
+          numeroCuota: item.numeroCuota,
+          descripcion: item.descripcion,
+          entrada: item.entrada,
           estado: item.estado,
-          "tipo": item.tipo,
-          "nombreGestion": item.nombreGestion,
-          "nombreEntrada": item.entrada?'SI': 'NO',
-          "tipoCredito": item.tipoCredito,
-          "totalRecords": item.totalRecords,
-          nombreEstado: item.estado?'ACTIVO': 'INACTIVO'
-        }
-      })
+          tipo: item.tipo,
+          nombreGestion: item.nombreGestion,
+          nombreEntrada: item.entrada ? 'SI' : 'NO',
+          tipoCredito: item.tipoCredito,
+          totalRecords: item.totalRecords,
+          nombreEstado: item.estado ? 'ACTIVO' : 'INACTIVO',
+        };
+      });
 
-      result.totalRecords = result.data.length>0?result.data[0].totalRecords: 0;
+      result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
     }
 
     return result;
-
   }
 }

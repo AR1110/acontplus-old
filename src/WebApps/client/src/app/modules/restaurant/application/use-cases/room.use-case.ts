@@ -1,29 +1,25 @@
-import { Injectable } from "@angular/core";
-import {RoomRepository} from "@restaurant/domain/repositories/room.repository";
-
+import { Injectable } from '@angular/core';
+import { RoomRepository } from '@restaurant/domain/repositories/room.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomUseCase {
-  constructor( private repo : RoomRepository ) {}
+  constructor(private repo: RoomRepository) {}
 
-
-  getByEstab(estabId: number){
-    return this.repo.getByEstab(estabId)
+  getByEstab(estabId: number) {
+    return this.repo.getByEstab(estabId);
   }
 
-
-  remove(id: number){
-    return this.repo.remove(id)
+  remove(id: number) {
+    return this.repo.remove(id);
   }
 
-  post<T>( data: T) {
-    return this.repo.post(data)
+  post<T>(data: T) {
+    return this.repo.post(data);
   }
 
   put<T>(id: number, data: T) {
-    return this.repo.put(id, data)
+    return this.repo.put(id, data);
   }
-
 }

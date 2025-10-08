@@ -1,4 +1,4 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isApiResponse } from '@core/models/api-response';
 import { Modelo } from '@modules/technical-support/models/modelo';
@@ -6,20 +6,20 @@ import { ModeloService } from '@modules/technical-support/services/modelo.servic
 import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {DialogService} from "@core/services/dialog.service";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DialogService } from '@core/services/dialog.service';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'app-modelo-page',
-  imports: [BreadcrumbComponent,  MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
+  imports: [BreadcrumbComponent, MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
   templateUrl: './modelo-page.component.html',
   styles: ``,
 })
 export class ModeloPageComponent implements OnInit {
   private modeloService = inject(ModeloService);
   private modalService = inject(DialogService);
-  modelos = signal<Modelo[] >([])
+  modelos = signal<Modelo[]>([]);
   modeloSelected: Modelo = {
     id: 0,
     code: '',
@@ -37,10 +37,10 @@ export class ModeloPageComponent implements OnInit {
   }
   onGet() {
     this.modeloService.get({ tipo: 1 }).subscribe({
-      next: (response) => {
+      next: response => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
-            this.modelos.set(JSON.parse(response.payload as string))
+            this.modelos.set(JSON.parse(response.payload as string));
           }
         }
       },
@@ -56,7 +56,7 @@ export class ModeloPageComponent implements OnInit {
       data: this.modeloSelected.id > 0 ? structuredClone(this.modeloSelected) : {},
     });
 
-    modalRef.subscribe((response) => {
+    modalRef.subscribe(response => {
       if (this.modeloSelected.id > 0) {
         this.modeloSelected = {} as Modelo;
       }
@@ -66,7 +66,5 @@ export class ModeloPageComponent implements OnInit {
     });
   }
 
-  onDelete(item: Modelo) {
-
-  }
+  onDelete(item: Modelo) {}
 }

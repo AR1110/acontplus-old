@@ -1,8 +1,8 @@
-import { Routes } from "@angular/router";
-import { VehiclePageComponent } from "@mechanical/ui/pages/vehicle-page/vehicle-page.component";
-import { MechanicalLayoutComponent } from "@mechanical/ui/layout/mechanical-layout/mechanical-layout.component";
-import { MechanicalHomeComponent } from "./ui/mechanical-home.component";
-import { ConfigInspectionComponent } from "./ui/pages/config-inspection-page/config-inspection-page.component";
+import { Routes } from '@angular/router';
+import { VehiclePageComponent } from '@mechanical/ui/pages/vehicle-page/vehicle-page.component';
+import { MechanicalLayoutComponent } from '@mechanical/ui/layout/mechanical-layout/mechanical-layout.component';
+import { MechanicalHomeComponent } from './ui/mechanical-home.component';
+import { ConfigInspectionComponent } from './ui/pages/config-inspection-page/config-inspection-page.component';
 
 export const routes: Routes = [
   {
@@ -33,5 +33,5 @@ export const routes: Routes = [
     data: {
       breadcrumb: 'Config. Inspección',
     },
-  }
-]
+  },
+];

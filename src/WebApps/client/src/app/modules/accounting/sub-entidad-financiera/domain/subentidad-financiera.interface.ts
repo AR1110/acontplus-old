@@ -1,13 +1,9 @@
-
-
 export interface SubEntidadFinanciera {
-  idEntidadFinanciera: number,
-  idSubEntidadFinanciera: number,
-  descripcion: string,
-  codigo: string
-  controlCaja: boolean
+  idEntidadFinanciera: number;
+  idSubEntidadFinanciera: number;
+  descripcion: string;
+  codigo: string;
+  controlCaja: boolean;
 }
 
-export interface SubEntidadFinancieraSelectHtmlOnly extends SubEntidadFinanciera {
-
-}
+export interface SubEntidadFinancieraSelectHtmlOnly extends SubEntidadFinanciera {}

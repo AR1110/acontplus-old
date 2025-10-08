@@ -1,6 +1,6 @@
-@use 'variables';
-@use 'breakpoints';
-@use 'columns';
+@use "variables";
+@use "breakpoints";
+@use "columns";
 
 .row {
   display: flex;
@@ -22,11 +22,9 @@
 // xlarge: 1920px
 
 @each $breakpoint, $infix in variables.$breakpoint-infixs {
-  @if ($breakpoint== 'xsmall') {
+  @if ($breakpoint== "xsmall") {
     @include columns.loop-grid-columns(variables.$grid-columns, $infix);
-  }
-
-  @else {
+  } @else {
     @include breakpoints.bp-gt($breakpoint) {
       @include columns.loop-grid-columns(variables.$grid-columns, $infix);
     }

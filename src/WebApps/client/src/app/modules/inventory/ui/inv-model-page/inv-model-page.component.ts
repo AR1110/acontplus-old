@@ -4,35 +4,34 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {InventarioModeloUseCase} from "@inventory/domain/usecases/inventario-modelo.use-case";
-import {finalize} from "rxjs/operators";
-
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { InventarioModeloUseCase } from '@inventory/domain/usecases/inventario-modelo.use-case';
+import { finalize } from 'rxjs/operators';
 
 @Component({
-    selector: 'app-inv-model-page',
-    imports: [
-        BreadcrumbComponent,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-      MatDynamicTableComponent,
-        ModelAddEditDirective,
-    ],
-    templateUrl: './inv-model-page.component.html',
-    styles: ``
+  selector: 'app-inv-model-page',
+  imports: [
+    BreadcrumbComponent,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    MatDynamicTableComponent,
+    ModelAddEditDirective,
+  ],
+  templateUrl: './inv-model-page.component.html',
+  styles: ``,
 })
 export class InvModelPageComponent implements OnInit {
-  private _modeloUseCase= inject(InventarioModeloUseCase);
+  private _modeloUseCase = inject(InventarioModeloUseCase);
   pagination = signal(new MatPagination());
   isLoadingResults = signal(false);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -49,8 +48,7 @@ export class InvModelPageComponent implements OnInit {
     { key: 'descripcion', label: 'Descripción', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
-
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   dataSource = new MatTableDataSource<any>([]);
 
@@ -59,18 +57,16 @@ export class InvModelPageComponent implements OnInit {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    if(this.isLoadingResults()) return
+    if (this.isLoadingResults()) return;
 
-    this.isLoadingResults.set(true) ;
-    this._modeloUseCase.getAll(params)
-      .pipe(
-        finalize(()=> this.isLoadingResults.set(false))
-      )
-      .subscribe((response) => {
-
+    this.isLoadingResults.set(true);
+    this._modeloUseCase
+      .getAll(params)
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
+      .subscribe(response => {
         this.dataSource = new MatTableDataSource(response.data);
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource.data[0].totalRecords,
@@ -90,7 +86,7 @@ export class InvModelPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -111,9 +107,9 @@ export class InvModelPageComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
+          this._modeloUseCase.updateStatus(data.idModelo).subscribe(response => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',
@@ -146,5 +142,4 @@ export class InvModelPageComponent implements OnInit {
 
     this.sharedSvc.exportToExcel(results, 'Listado de Modelos');
   }
-
 }

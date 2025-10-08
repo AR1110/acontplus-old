@@ -11,13 +11,9 @@ export class OrderDetailService {
   private http = inject(HttpClient);
   private url = `${PATHS_API.TECHSUPPORT}${TECH_SUPPORT_PATHS.ORDER_DETAIL}`;
   delete(id: number) {
-    return this.http
-      .delete(`${this.url}${id}`)
-      .pipe(map((response) => response));
+    return this.http.delete(`${this.url}${id}`).pipe(map(response => response));
   }
   put(id: number, data: any) {
-    return this.http
-      .put(`${this.url}${id}`, { data })
-      .pipe(map((response) => response));
+    return this.http.put(`${this.url}${id}`, { data }).pipe(map(response => response));
   }
 }

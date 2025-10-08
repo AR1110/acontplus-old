@@ -19,8 +19,8 @@ export const routes: Route[] = [
       breadcrumb: 'Productos',
     },
     resolve: {
-      configData: restaurantConfigDataResolver
-    }
+      configData: restaurantConfigDataResolver,
+    },
   },
   {
     path: 'item-report',

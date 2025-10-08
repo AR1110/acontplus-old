@@ -1,6 +1,6 @@
-USE [AcontPlus]
+USE [Acontplus]
 GO
-/****** Object:  StoredProcedure [Seguridad].[Login_Start]    Script Date: 06/30/2023 8:49:42 AM ******/
+/****** Object:  StoredProcedure [Seguridad].[Login_Restaurant]    Script Date: 6/10/2025 15:08:54 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -8,8 +8,8 @@ GO
 
 --- EXEC Seguridad.Login_Restaurant 'fatima.macias','Fm1245'
 --- EXEC Seguridad.Login_Restaurant 'edinson.romero','edi12345'
---- EXEC Seguridad.Login_Restaurant 'emilio.senguana','emilio2021'
-CREATE OR ALTER PROCEDURE [Seguridad].[Login_Restaurant] @username NVARCHAR(150)
+--- EXEC Seguridad.Login_Restaurant 'Carlos.e','carlos25*'
+ALTER   PROCEDURE [Seguridad].[Login_Restaurant] @username NVARCHAR(150)
     ,@password NVARCHAR(150)
 AS
 BEGIN
@@ -92,7 +92,8 @@ BEGIN
                                                                     )
 
                                                                 ELSE
-                                                                    (
+                                                                    ( 
+                                                                     SELECT * FROM (
                                                                         SELECT m.id
                                                                               ,m.code
 	                                                                          ,m.[url]
@@ -101,9 +102,34 @@ BEGIN
 	                                                                          ,m.parentId
                                                                              ,ISNULL(ua.actions, '[]') actions
                                                                         FROM Config.v_UserRole_Accesses          ua WITH (NOLOCK)
-                                                                        INNER JOIN AcontplusAdmin.Config.Menu    m WITH (NOLOCK) ON ua.MenuId = m.Id                                                                        WHERE ua.idUsuarioRol = r.idUsuarioRol AND m.Code IN('POS')
-                                                                        ORDER BY m.[Order] ASC
-                                                                        FOR JSON PATH
+                                                                        INNER JOIN AcontplusAdmin.Config.Menu    m WITH (NOLOCK) ON ua.MenuId = m.Id      
+                                                                        WHERE ua.idUsuarioRol = r.idUsuarioRol  
+                                                                       
+
+                                                                       UNION ALL
+
+                                                                        -- Menús sin acciones asignadas (temporal)
+                                                                        SELECT
+                                                                            me.id,
+                                                                            me.code,
+                                                                            me.[url],
+                                                                            ISNULL(me.icon, '') AS icon,
+                                                                            me.[name],
+                                                                            me.ParentId AS parentId,
+                                                                            '[]' AS actions
+                                                                        FROM AcontplusAdmin.Config.Menu me WITH (NOLOCK)
+                                                                        WHERE EXISTS (
+                                                                            SELECT 1
+                                                                            FROM Config.v_UserRole_Accesses ur
+                                                                            WHERE ur.idUsuarioRol = r.idUsuarioRol
+                                                                              AND ur.ParentId = me.Id
+                                                                        )
+
+                                                                        AND me.Code='POS'
+
+                                                                    )AS Menus
+                                                                    ORDER BY Menus.id
+                                                                    FOR JSON PATH
                                                                     )
                             END)
                                 
@@ -133,7 +159,7 @@ BEGIN
 		END
 	ELSE 
 		BEGIN
-			SELECT'0' code,'Usuario o Contrase�a incorrectos.' as 'message'
+			SELECT'0' code,'Usuario o Contraseña incorrectos.' as 'message'
 			RETURN 
 		END
 END

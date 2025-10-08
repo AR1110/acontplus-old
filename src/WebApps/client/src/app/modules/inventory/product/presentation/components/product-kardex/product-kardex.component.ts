@@ -1,4 +1,4 @@
-import {Component, inject, ViewChild, OnInit, signal} from '@angular/core';
+import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -20,9 +20,9 @@ import { monthEnd, monthStart } from '@formkit/tempo';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatFormFieldModule} from "@angular/material/form-field";
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-product-kardex',
@@ -94,7 +94,7 @@ export class ProductKardexComponent implements OnInit {
     totalGenetal: 0,
   };
 
-  transacciones = signal<any[]>([])
+  transacciones = signal<any[]>([]);
 
   sumCantidadEntrada = () => {
     return this.data.cantTotalEntrada || 0;
@@ -302,33 +302,33 @@ export class ProductKardexComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.transactionSvc.getDataFilter().subscribe( (response) => {
-        this.establecimientos.set(response.estabs);
-        this.tiposTransaccion.set( response.tiposTransaccion);
-        const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
+    this.transactionSvc.getDataFilter().subscribe(response => {
+      this.establecimientos.set(response.estabs);
+      this.tiposTransaccion.set(response.tiposTransaccion);
+      const dataEstab = this.establecimientos().find(e => e.defaultEstab);
 
-        if (dataEstab) {
-          this.bodegas.set(dataEstab.bodegas);
-          this.dataSearch.codEstab = dataEstab.codEstab;
-          const dataBodega = this.bodegas().find((b) => b.defaultBodega);
-          if (dataBodega) {
-            this.dataSearch.idBodega = dataBodega.idBodega;
-          }
+      if (dataEstab) {
+        this.bodegas.set(dataEstab.bodegas);
+        this.dataSearch.codEstab = dataEstab.codEstab;
+        const dataBodega = this.bodegas().find(b => b.defaultBodega);
+        if (dataBodega) {
+          this.dataSearch.idBodega = dataBodega.idBodega;
         }
+      }
 
-        //set params
-        this.dataSearch.idArticulo = this.params.id;
-        this.getDataKardex();
+      //set params
+      this.dataSearch.idArticulo = this.params.id;
+      this.getDataKardex();
     });
   }
 
   getBodegas() {
     const dataEstab = this.establecimientos().find(
-      (item) => item.codEstab === this.dataSearch.codEstab
+      item => item.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
       this.bodegas.set(dataEstab.bodegas);
-      const dataBodega = this.bodegas().find((estab) => estab.defaultBodega);
+      const dataBodega = this.bodegas().find(estab => estab.defaultBodega);
 
       this.dataSearch.idBodega = dataBodega?.idBodega ?? 0;
       this.getDataKardex();
@@ -343,49 +343,53 @@ export class ProductKardexComponent implements OnInit {
   }
 
   calculoTotales(prop: string) {
-    const total = this.transacciones().map((item) => item[prop] || 0).reduce((obj, cur) => Number(obj) + Number(cur), 0);
+    const total = this.transacciones()
+      .map(item => item[prop] || 0)
+      .reduce((obj, cur) => Number(obj) + Number(cur), 0);
     return roundNumber(total, 3);
   }
 
   getDataKardex() {
     try {
-      const tipoTransaccion = this.dataSearch.tipoTransaccion==='all'? null: isValidField(this.dataSearch.tipoTransaccion);
+      const tipoTransaccion =
+        this.dataSearch.tipoTransaccion === 'all'
+          ? null
+          : isValidField(this.dataSearch.tipoTransaccion);
       const params = {
         checkBoxFecha: this.dataSearch.option === 1,
         checkBoxUltimaConsolidacion: this.dataSearch.option === 3,
         checkBoxConsolidacion: this.dataSearch.option === 2,
-        movement:tipoTransaccion,
+        movement: tipoTransaccion,
         byBodega: isValidField(this.dataSearch.idBodega),
         byArticulo: this.dataSearch.idArticulo,
         fechaInicio: this.dataSearch.fechaInicio,
         fechaFin: this.dataSearch.fechaFin,
         estado: this.dataSearch.estado,
       };
-      this.transactionSvc.getDataKardex(params).subscribe(  (response) => {
-          this.dataArticulo = response.dataArticulo || {};
-          this.transacciones.set(response.kardex || []);
-          if (this.transacciones().length === 0) {
-            this.tS.show({
-              type: 'warning',
-              message: 'No se encontraron los resultados',
-            });
-          }
+      this.transactionSvc.getDataKardex(params).subscribe(response => {
+        this.dataArticulo = response.dataArticulo || {};
+        this.transacciones.set(response.kardex || []);
+        if (this.transacciones().length === 0) {
+          this.tS.show({
+            type: 'warning',
+            message: 'No se encontraron los resultados',
+          });
+        }
 
-          this.data.cantTotalEntrada = this.calculoTotales('cantidadEntrada');
-          this.data.totalEntrada = this.calculoTotales('totalEntrada');
+        this.data.cantTotalEntrada = this.calculoTotales('cantidadEntrada');
+        this.data.totalEntrada = this.calculoTotales('totalEntrada');
 
-          this.data.cantTotalSalida = this.calculoTotales('cantidadSalida');
+        this.data.cantTotalSalida = this.calculoTotales('cantidadSalida');
 
-          this.data.totalSalida = this.calculoTotales('totalSalida');
+        this.data.totalSalida = this.calculoTotales('totalSalida');
 
-          this.data.stock = this.calculoTotales('saldo');
-          this.data.totalGenetal = this.calculoTotales('totalGeneral');
+        this.data.stock = this.calculoTotales('saldo');
+        this.data.totalGenetal = this.calculoTotales('totalGeneral');
 
-          for (const value of this.transacciones()) {
-            value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
-          }
-          this.tabulatorComponent.refTabulator.setData(this.transacciones());
-
+        for (const value of this.transacciones()) {
+          value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
+        }
+        this.tabulatorComponent.refTabulator.setData(this.transacciones());
       });
     } catch (error) {
       console.log(error);
@@ -438,7 +442,7 @@ export class ProductKardexComponent implements OnInit {
         pdf: 'PDF',
         excel: 'EXCEL',
       },
-      inputValidator: (value) => {
+      inputValidator: value => {
         if (!value) {
           return 'Seleccione el Tipo de Formato!';
         }

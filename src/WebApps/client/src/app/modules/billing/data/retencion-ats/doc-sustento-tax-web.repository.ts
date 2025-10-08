@@ -17,18 +17,12 @@ export class DocSustentoTaxWebRepository implements DocSustentoTaxRepository {
     throw new Error('Method not implemented.');
   }
   create<T>(data: T): Observable<ApiResponse> {
-    return this._http
-      .post<ApiResponse>(`${this._url}`, data)
-      .pipe(map((response) => response));
+    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map(response => response));
   }
   update<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
   delete(id: number) {
-    return this._http
-      .delete<ApiResponse>(`${this._url}${id}`)
-      .pipe(map((response) => response));
+    return this._http.delete<ApiResponse>(`${this._url}${id}`).pipe(map(response => response));
   }
 }

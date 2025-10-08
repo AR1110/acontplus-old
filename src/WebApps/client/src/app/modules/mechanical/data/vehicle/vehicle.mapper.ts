@@ -1,56 +1,47 @@
-import {ApiResponse} from "@core/models/api-response";
-
+import { ApiResponse } from '@core/models/api-response';
 
 export class VehicleMapper {
-
-  static fromApiGetAll(response:ApiResponse){
-
-    let data = [] as any[]
-    if(response.code==="1"){
-      const {vehicles} = JSON.parse(response.payload as string)
+  static fromApiGetAll(response: ApiResponse) {
+    let data = [] as any[];
+    if (response.code === '1') {
+      const { vehicles } = JSON.parse(response.payload as string);
 
       data = vehicles.map((item: any, index: number) => {
         return {
           ...item,
-          position: index + 1
-        }
+          position: index + 1,
+        };
       });
     }
-    return  data ;
+    return data;
   }
 
-  static fromApiDataForm(response:ApiResponse){
-
+  static fromApiDataForm(response: ApiResponse) {
     const data = {
       countries: [],
-      vehicleTypes: []
-    }
-    if (response.code==="1") {
-      const {countrys, vehicleTypes} = JSON.parse(response.payload as string);
+      vehicleTypes: [],
+    };
+    if (response.code === '1') {
+      const { countrys, vehicleTypes } = JSON.parse(response.payload as string);
       data.countries = countrys;
       data.vehicleTypes = vehicleTypes;
     }
     return data;
   }
 
-  static fromApiGetId(response:ApiResponse){
+  static fromApiGetId(response: ApiResponse) {
     const data = {
       customer: {
         businessName: null,
-        id: 0
+        id: 0,
       },
-      vehicle: {}
-    }
-    if (response.code==="1") {
-      const {customer, vehicle}=JSON.parse(response.payload as string);
+      vehicle: {},
+    };
+    if (response.code === '1') {
+      const { customer, vehicle } = JSON.parse(response.payload as string);
       data.customer = customer[0];
-      data.vehicle = vehicle[0]
+      data.vehicle = vehicle[0];
     }
     return data;
   }
-
-
-
-
-
 }

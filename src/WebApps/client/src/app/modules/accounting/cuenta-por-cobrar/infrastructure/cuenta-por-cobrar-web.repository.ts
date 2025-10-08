@@ -3,15 +3,15 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import {CuentaPorCobrarRepository} from "@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository";
+import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
 
-import {CuentaPorCobrarMapper} from "@accounting/cuenta-por-cobrar/infrastructure/cuenta-por-cobrar.mapper";
-import {DataFilterCuentaPorCobrarMapper} from "@accounting/cuenta-por-cobrar/infrastructure/data-filter-cuenta-por-cobrar.mapper";
+import { CuentaPorCobrarMapper } from '@accounting/cuenta-por-cobrar/infrastructure/cuenta-por-cobrar.mapper';
+import { DataFilterCuentaPorCobrarMapper } from '@accounting/cuenta-por-cobrar/infrastructure/data-filter-cuenta-por-cobrar.mapper';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
+export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository {
   private _http = inject(HttpClient);
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_COBRAR}`;
 
@@ -20,17 +20,17 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
   }
 
   getDataFilter() {
-    const json = DataFilterCuentaPorCobrarMapper.toJson()
-    return this._http.get(`${this._url}?json=${json}`).pipe(
-      map((response) => DataFilterCuentaPorCobrarMapper.fromJson(response)),
-    );
+    const json = DataFilterCuentaPorCobrarMapper.toJson();
+    return this._http
+      .get(`${this._url}?json=${json}`)
+      .pipe(map(response => DataFilterCuentaPorCobrarMapper.fromJson(response)));
   }
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({ ...obj, tipo: 1 });
     return this._http.get(`${this._url}?json=${json}`).pipe(
-      map((response) => {
-        return CuentaPorCobrarMapper.fromApiGetAll(response)
+      map(response => {
+        return CuentaPorCobrarMapper.fromApiGetAll(response);
       }),
     );
   }
@@ -41,13 +41,7 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
       map((response: any) => {
         if (!response) return {};
 
-        const {
-          entidadFinanciera,
-          banco,
-          documentos,
-          subEntidadFinanciera,
-          provincia,
-        } = response;
+        const { entidadFinanciera, banco, documentos, subEntidadFinanciera, provincia } = response;
 
         const resultEntidadesFinanciera = entidadFinanciera.map((ef: any) => {
           const filteredSubEntidadFinanciera = subEntidadFinanciera.filter(
@@ -122,8 +116,8 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository{
   getCuotasById(idCuentaPorCobrar: number) {
     const json = JSON.stringify({ idCuentaPorCobrar, tipo: 8 });
     return this._http.get(`${this._url}?json=${json}`).pipe(
-      map((response) => {
-        return CuentaPorCobrarMapper.fromApiGetCuotasById(response)
+      map(response => {
+        return CuentaPorCobrarMapper.fromApiGetCuotasById(response);
       }),
     );
   }

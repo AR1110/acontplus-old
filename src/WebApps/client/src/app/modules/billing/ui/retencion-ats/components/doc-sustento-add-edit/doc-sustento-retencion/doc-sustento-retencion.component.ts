@@ -53,15 +53,13 @@ export class DocSustentoRetencionComponent {
       this.formGroup.get('codigoRetencion')?.setValue(codigo);
 
       if (this.codImpuestoRetencionSelected() === '1') {
-        const porcentaje = this.codigosRetencion().filter((x) => x.codigo === codigo)[0]
-          ?.porcentaje;
+        const porcentaje = this.codigosRetencion().filter(x => x.codigo === codigo)[0]?.porcentaje;
         if (porcentaje !== undefined) {
           this.formGroup.get('porcentajeRetener')?.setValue(porcentaje);
         }
       }
       if (this.codImpuestoRetencionSelected() === '2') {
-        const porcentaje = this.porcentajesRetIva().filter((x) => x.codigo === codigo)[0]
-          ?.porcentaje;
+        const porcentaje = this.porcentajesRetIva().filter(x => x.codigo === codigo)[0]?.porcentaje;
         if (porcentaje !== undefined) {
           this.formGroup.get('porcentajeRetener')?.setValue(porcentaje);
         }
@@ -103,7 +101,7 @@ export class DocSustentoRetencionComponent {
 
   selectImpuestoRetencion(idImpuestoRetencion: number) {
     // Logic to set porcentajes based on codigo
-    const codigo = this.impuestosRetencion().filter((x) => x.id === idImpuestoRetencion)[0].codigo;
+    const codigo = this.impuestosRetencion().filter(x => x.id === idImpuestoRetencion)[0].codigo;
 
     this.codImpuestoRetencionSelected.set(codigo);
 
@@ -112,7 +110,7 @@ export class DocSustentoRetencionComponent {
     if (codigo === '1') {
       const retRentaValues = [...this.codigosRetencion()]; // Create a shallow copy
       this.options.set(
-        retRentaValues.map((ret) => ({
+        retRentaValues.map(ret => ({
           value: ret.codigo,
           viewValue: `${ret.codigo} - ${ret.descripcion}`,
         })),
@@ -123,7 +121,7 @@ export class DocSustentoRetencionComponent {
       const retIvaValues = [...this.porcentajesRetIva()]; // Create a shallow copy
 
       this.options.set(
-        retIvaValues.map((ret) => ({
+        retIvaValues.map(ret => ({
           value: ret.codigo,
           viewValue: `${ret.codigo} - ${ret.descripcion}`,
         })),
@@ -178,7 +176,7 @@ export class DocSustentoRetencionComponent {
       if (isConfirmed) {
         this._docSustentoRetencionUseCase
           .delete(retencionSelected.idRetencionAtsRet)
-          .subscribe((response) => {
+          .subscribe(response => {
             this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
@@ -209,14 +207,14 @@ export class DocSustentoRetencionComponent {
     if (retencionSelected.idRetencionAtsRet > 0) {
       this._docSustentoRetencionUseCase
         .update(retencionSelected.idRetencionAtsRet, retencionSelected)
-        .subscribe((response) => {
+        .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoRetencionUseCase.create(retencionSelected).subscribe((response) => {
+      this._docSustentoRetencionUseCase.create(retencionSelected).subscribe(response => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

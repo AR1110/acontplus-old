@@ -5,9 +5,7 @@ import { DocSustentoRetencionRepository } from '@billing/domain/repositories/ret
   providedIn: 'root',
 })
 export class DocSustentoRetencionUseCase {
-  private readonly _docSustentoRetencionRepository = inject(
-    DocSustentoRetencionRepository,
-  );
+  private readonly _docSustentoRetencionRepository = inject(DocSustentoRetencionRepository);
 
   getById(id: number) {
     return this._docSustentoRetencionRepository.getById(id);

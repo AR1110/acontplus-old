@@ -14,15 +14,15 @@ import { SettingsService, TranslateLangService } from '@core/bootstrap';
 import { BASE_URL } from '@core/interceptors/base-url-interceptor';
 import { formlyConfigFactory } from '@shared/formly-config';
 import { environment } from 'src/environments/environment';
-import {MAT_DATE_LOCALE, MatNativeDateModule} from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { editorProviders } from './editor.config';
 import { HttpBackend } from '@angular/common/http';
 import { FORMLY_CONFIG } from '@ngx-formly/core';
 import { FormsModule } from '@angular/forms';
 import { routes } from './app.routes';
-import {provideToastr} from "ngx-toastr";
-import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
-import {DatePipe} from "@angular/common";
+import { provideToastr } from 'ngx-toastr';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { DatePipe } from '@angular/common';
 
 export const appConfig: ApplicationConfig = {
   providers: [

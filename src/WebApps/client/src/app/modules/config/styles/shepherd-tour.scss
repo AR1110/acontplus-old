@@ -1,5 +1,5 @@
 // Shepherd.js Tour Styles with Material Design
-@use 'shepherd.js/dist/css/shepherd.css';
+@use "shepherd.js/dist/css/shepherd.css";
 
 // Custom tour step styling
 .setup-tour-step {
@@ -13,7 +13,7 @@
     padding: 0 !important;
     background: white !important;
     max-width: 400px;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
   }
 
   .shepherd-header {

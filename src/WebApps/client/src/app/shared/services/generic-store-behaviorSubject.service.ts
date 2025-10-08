@@ -3,7 +3,7 @@ import { BehaviorSubject, map } from 'rxjs';
 export class GenericStoreBehaviorSubjectService<T> {
   private readonly state = new BehaviorSubject({} as T);
 
-  constructor() { }
+  constructor() {}
 
   public select<K extends keyof T>(key: K): BehaviorSubject<T[K]> {
     return this.state.pipe(map(state => state[key])) as BehaviorSubject<T[K]>;

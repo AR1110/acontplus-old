@@ -1,19 +1,17 @@
 <div class="row mt-2">
   @if (orderStatusCode === 2) {
-  <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
-    <div class="form-group">
-      <button type="button" mat-raised-button (click)="onModalOpen()">
-        <mat-icon>add</mat-icon>
-        Nueva
-      </button>
+    <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
+      <div class="form-group">
+        <button type="button" mat-raised-button (click)="onModalOpen()">
+          <mat-icon>add</mat-icon>
+          Nueva
+        </button>
+      </div>
     </div>
-  </div>
   }
   <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
     <div class="form-group">
-      <app-date-range-selection
-        (onChangeDateRange)="onDateRangeSelection($event)"
-      />
+      <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
     </div>
   </div>
   <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
@@ -28,7 +26,7 @@
       >
         <option [ngValue]="0" selected>Todos</option>
         @for (item of users; track $index) {
-        <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
+          <option [ngValue]="item.idUsuario">{{ item.nombreUsuario }}</option>
         }
       </select>
     </div>
@@ -65,39 +63,36 @@
   </button>
   <mat-menu #menu="matMenu">
     @if (orderStatusCode === 2 || orderStatusCode === 3) {
-    <button
-      mat-menu-item
-      (click)="openModalMaintenance(item)"
-      title="Iniciar Reparaciones"
-    >
-      <mat-icon>settings</mat-icon>
-      Mantenimiento
-    </button>
-    } @if (orderStatusCode === 2 || orderStatusCode === 3) {
-    <button mat-menu-item (click)="onEdit(item)" title="Editar">
-      <mat-icon>edit</mat-icon>
-      Editar
-    </button>
-    } @if (orderStatusCode === 2) {
-    <button mat-menu-item (click)="askToCancel(item)" title="Anular">
-      <mat-icon>lock</mat-icon>
-      Anular
-    </button>
+      <button mat-menu-item (click)="openModalMaintenance(item)" title="Iniciar Reparaciones">
+        <mat-icon>settings</mat-icon>
+        Mantenimiento
+      </button>
     }
-    <button mat-menu-item (click)="getReport(item)" title="Reporte">
-      <mat-icon>download</mat-icon>Reporte
-    </button>
+    @if (orderStatusCode === 2 || orderStatusCode === 3) {
+      <button mat-menu-item (click)="onEdit(item)" title="Editar">
+        <mat-icon>edit</mat-icon>
+        Editar
+      </button>
+    }
+    @if (orderStatusCode === 2) {
+      <button mat-menu-item (click)="askToCancel(item)" title="Anular">
+        <mat-icon>lock</mat-icon>
+        Anular
+      </button>
+    }
+    <button mat-menu-item (click)="getReport(item)" title="Reporte"><mat-icon>download</mat-icon>Reporte</button>
 
     @if (orderStatusCode === 4) {
-    <button mat-menu-item (click)="askToDelivery(item)" title="Entregar">
-      <mat-icon>place_item</mat-icon>
-      Entregar
-    </button>
-    } @if (orderStatusCode === 4 || orderStatusCode === 5) {
-    <button mat-menu-item (click)="onOpenDocument(item)" title="Documento">
-      <mat-icon>settings</mat-icon>
-      Documento vinculado
-    </button>
+      <button mat-menu-item (click)="askToDelivery(item)" title="Entregar">
+        <mat-icon>place_item</mat-icon>
+        Entregar
+      </button>
+    }
+    @if (orderStatusCode === 4 || orderStatusCode === 5) {
+      <button mat-menu-item (click)="onOpenDocument(item)" title="Documento">
+        <mat-icon>settings</mat-icon>
+        Documento vinculado
+      </button>
     }
   </mat-menu>
 </ng-template>

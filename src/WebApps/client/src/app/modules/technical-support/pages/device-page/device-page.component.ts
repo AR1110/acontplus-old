@@ -5,18 +5,11 @@ import { DeviceModalComponent } from './device-modal/device-modal.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {DialogService} from "@core/services/dialog.service";
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-device-page',
-  imports: [
-    BreadcrumbComponent,
-    DeviceListComponent,
-    MatCard,
-    MatCardContent,
-    MatButton,
-    MatIcon,
-  ],
+  imports: [BreadcrumbComponent, DeviceListComponent, MatCard, MatCardContent, MatButton, MatIcon],
   templateUrl: './device-page.component.html',
   styles: ``,
 })
@@ -26,9 +19,8 @@ export class DevicePageComponent {
   onModalOpen() {
     const modalRef = this.modalService.open(DeviceModalComponent, {
       size: 'xl',
-
     });
-    modalRef.subscribe((response) => {
+    modalRef.subscribe(response => {
       if (response !== null && typeof response === 'object') {
         this.child.get();
       }

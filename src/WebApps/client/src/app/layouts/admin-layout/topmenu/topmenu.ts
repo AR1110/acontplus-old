@@ -21,7 +21,7 @@ import { filter } from 'rxjs';
 import { Menu, MenuService } from '@core/bootstrap';
 import { TopmenuPanel } from './topmenu-panel';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 export interface TopmenuState {
   active: boolean;
@@ -57,14 +57,13 @@ export class Topmenu {
   private readonly destroyRef = inject(DestroyRef);
   private tokenUseCase = inject(TokenUseCase);
 
-
   // 🚀 Convertimos el observable a signal reactivo
   readonly menuList = computed(() => this.getMenusignal());
 
   // Signal para la URL actual
   readonly currentUrl = signal(this.router.url);
 
-  getMenusignal =() => {
+  getMenusignal = () => {
     const resultMenus = this.processApiMenuItems(this.tokenUseCase.getSession()?.menus || []);
     return [
       {
@@ -79,8 +78,7 @@ export class Topmenu {
       },
       ...resultMenus,
     ];
-  }
-
+  };
 
   private processApiMenuItems(items: any[]): any[] {
     return items.map((item: any) => {
@@ -102,8 +100,8 @@ export class Topmenu {
   constructor() {
     this.router.events
       .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef)
+        filter(event => event instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((e: NavigationEnd) => {
         this.currentUrl.set(e.urlAfterRedirects);
@@ -112,10 +110,10 @@ export class Topmenu {
 
   // 🔁 Computed: genera el estado de cada menú automáticamente
   readonly menuStates = computed<TopmenuState[]>(() =>
-    this.menuList().map((item) => ({
+    this.menuList().map(item => ({
       active: this.currentUrl().split('/').includes(item.route),
       route: item.route,
-    }))
+    })),
   );
 
   buildRoute = this.menuService.buildRoute;

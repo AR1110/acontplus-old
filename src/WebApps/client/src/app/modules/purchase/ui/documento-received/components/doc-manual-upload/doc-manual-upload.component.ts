@@ -1,10 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -19,24 +14,24 @@ import { DocumentReceivedWebRepository } from '@purchase/data/document-received/
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-doc-manual-upload',
-    imports: [
-        ReactiveFormsModule,
-        MatCustomDialogComponent,
-        MatButton,
-        MatFormField,
-        MatLabel,
-        MatSelect,
-        MatOption,
-        MatRadioGroup,
-        MatRadioButton,
-        MatIcon,
-        MatIconButton,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    ReactiveFormsModule,
+    MatCustomDialogComponent,
+    MatButton,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    MatOption,
+    MatRadioGroup,
+    MatRadioButton,
+    MatIcon,
+    MatIconButton,
+    ThemeButtonComponent,
+  ],
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,
 })
@@ -73,14 +68,7 @@ export class DocManualUploadComponent implements OnInit {
 
   addClaveAcceso() {
     const claveAccesoForm = this.#fb.group({
-      claveAcceso: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(49),
-          Validators.minLength(49),
-        ],
-      ],
+      claveAcceso: ['', [Validators.required, Validators.maxLength(49), Validators.minLength(49)]],
     });
 
     this.claveAccesoDocs.push(claveAccesoForm);
@@ -113,7 +101,7 @@ export class DocManualUploadComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+    this._subCategoryUseCase.getAll({}).subscribe(response => {
       this.subcategories = response;
     });
 
@@ -146,7 +134,7 @@ export class DocManualUploadComponent implements OnInit {
         const uploadObservable = this._docReceivedService
           .uploadXml({ codEstab, subcategoryId }, formData)
           .pipe(
-            tap((response) => {
+            tap(response => {
               this._tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
@@ -158,7 +146,7 @@ export class DocManualUploadComponent implements OnInit {
                 this.removeXml(index); // Remove uploaded file from form
               }
             }),
-            catchError((error) => {
+            catchError(error => {
               console.error('Error uploading file:', error);
               this._tS.show({ type: error, message: 'Error uploading file' });
               return throwError(() => error); // Re-throw error to handle in forkJoin
@@ -185,7 +173,7 @@ export class DocManualUploadComponent implements OnInit {
           message: 'Archivos subidos exitosamente!',
         });
       },
-      error: (error) => {
+      error: error => {
         console.error('Overall upload error:', error);
         this._tS.show({
           type: 'error',

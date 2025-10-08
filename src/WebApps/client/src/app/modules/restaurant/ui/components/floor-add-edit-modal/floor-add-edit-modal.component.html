@@ -1,10 +1,8 @@
-
 <app-mat-custom-dialog
   [title]="modalTitle"
   [containerTemplate]="body"
   [actionsTemplate]="footer"
   (close)="onModalClose()"
-
 />
 <ng-template #body>
   <form (ngSubmit)="onSave()" [formGroup]="floorForm" id="floorForm" autocomplete="off">
@@ -13,48 +11,37 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Descripción</mat-label>
-             <input matInput  (keyup)="setCode()" formControlName="description">
+            <input matInput (keyup)="setCode()" formControlName="description" />
           </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Código</mat-label>
-            <input matInput  formControlName="code">
+            <input matInput formControlName="code" />
           </mat-form-field>
         </div>
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Capacidad: <small>(Salas)</small></mat-label>
-            <input matInput  formControlName="capacity"
-                   id="capacity"
-                   min="1"
-                   required
-                   type="number" >
+            <input matInput formControlName="capacity" id="capacity" min="1" required type="number" />
           </mat-form-field>
         </div>
       </div>
 
       @if (data.id > 0) {
-          <mat-slide-toggle formControlName="enabled">
-            Activo
-          </mat-slide-toggle>
+        <mat-slide-toggle formControlName="enabled"> Activo </mat-slide-toggle>
       }
     </div>
 
     <div class="my-2">
-      <app-theme-button
-        icon="plus"
-        variant="info"
-        text="Añadir sala"
-        (handleClick)="addRoom()"
-      />
+      <app-theme-button icon="plus" variant="info" text="Añadir sala" (handleClick)="addRoom()" />
     </div>
-      <app-tabulator [theme]="'semantic-ui'"
-        [columnNames]="roomColumns"
-        [options]="{ reactiveData: true }"
-        [tableData]="rooms"
-      />
-
+    <app-tabulator
+      [theme]="'semantic-ui'"
+      [columnNames]="roomColumns"
+      [options]="{ reactiveData: true }"
+      [tableData]="rooms"
+    />
   </form>
 </ng-template>
 <ng-template #footer>
@@ -67,5 +54,3 @@
     [disabled]="floorForm.invalid"
   />
 </ng-template>
-
-

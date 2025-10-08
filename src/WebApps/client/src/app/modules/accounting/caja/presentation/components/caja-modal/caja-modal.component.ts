@@ -59,14 +59,14 @@ export class CajaModalComponent implements OnInit {
   idAsignacionCaja = 0;
 
   ngOnInit() {
-    this._cajaUseCase.getDataForm().subscribe((response) => {
+    this._cajaUseCase.getDataForm().subscribe(response => {
       const { turnos, usuarios } = response as { turnos: any; usuarios: any };
 
       this.usuarios.set(usuarios);
       this.turnos.set(turnos);
 
       if (typeof this.params === 'object' && this.params.idCaja > 0) {
-        this._cajaUseCase.getId(this.params.idCaja).subscribe((response) => {
+        this._cajaUseCase.getId(this.params.idCaja).subscribe(response => {
           this.tipoRegistro = 2;
           this.titleModal.set('Editar Caja');
           this.btnIcon = 'edit';

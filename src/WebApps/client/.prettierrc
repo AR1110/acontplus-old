@@ -3,36 +3,59 @@
   "useTabs": false,
   "singleQuote": true,
   "semi": true,
-  "arrowParens": "always",
+  "arrowParens": "avoid",
   "bracketSpacing": true,
   "endOfLine": "lf",
   "trailingComma": "all",
   "printWidth": 100,
   "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "css",
-  "embeddedLanguageFormatting": "auto",
-  "plugins": ["prettier-plugin-sort-imports"],
-  "importOrder": [
-    "^@angular/(.*)$",
-    "^@app/(.*)$",
-    "^[./]"
-  ],
-  "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true,
   "overrides": [
     {
-      "files": ["*.component.html"],
+      "files": "*.html",
       "options": {
         "parser": "angular",
-        "htmlWhitespaceSensitivity": "ignore",
-        "printWidth": 80,
-        "singleAttributePerLine": true
+        "printWidth": 120
       }
     },
     {
-      "files": ["*.{ts,tsx}"],
+      "files": ["*.ts"],
       "options": {
         "printWidth": 100
+      }
+    },
+    {
+      "files": "*.component.html",
+      "options": {
+        "parser": "angular",
+        "printWidth": 120,
+        "singleAttributePerLine": false
+      }
+    },
+    {
+      "files": ["*.scss", "*.css"],
+      "options": {
+        "printWidth": 100,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.json", "*.jsonc"],
+      "options": {
+        "printWidth": 80
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "printWidth": 80,
+        "proseWrap": "always"
+      }
+    },
+    {
+      "files": "*.yml",
+      "options": {
+        "singleQuote": false
       }
     }
   ]

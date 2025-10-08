@@ -8,17 +8,14 @@ export class ActionDeleteDirective implements OnInit {
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private pS: UserRoleStateService
+    private pS: UserRoleStateService,
   ) {}
 
   ngOnInit() {
     this.pS.select('accion').subscribe({
-      next: (value) => {
+      next: value => {
         if (value && value.eliminar) return;
-        this.renderer.removeChild(
-          this.el.nativeElement.parentNode,
-          this.el.nativeElement
-        );
+        this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },
     });
   }

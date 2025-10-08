@@ -92,9 +92,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const getDataPersist = sessionStorage.getItem(
-      this.KEY_STORAGE_DATA_PRODUCT_SEARCH
-    );
+    const getDataPersist = sessionStorage.getItem(this.KEY_STORAGE_DATA_PRODUCT_SEARCH);
     if (getDataPersist) {
       const dataPersist = JSON.parse(getDataPersist);
       this.pagination = dataPersist.pagination;
@@ -106,7 +104,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
       this.productTarifas = dataPersist.productTarifas;
       this.columns = dataPersist.columns;
     }
-    this.visibleColumns = this.columns.map((x) => x.columnDef);
+    this.visibleColumns = this.columns.map(x => x.columnDef);
   }
 
   applyFilter(value: string) {
@@ -140,15 +138,15 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
             return [];
           }
           return response;
-        })
+        }),
       )
 
       .subscribe({
-        next: (response) => {
+        next: response => {
           const results = structuredClone(response);
 
           this.columns = structuredClone(this.mainColumns);
-          this.visibleColumns = this.columns.map((x) => x.columnDef);
+          this.visibleColumns = this.columns.map(x => x.columnDef);
           this.pagination.totalRecords = 0;
 
           if (results.length > 0) {
@@ -164,10 +162,10 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
             });
           }
 
-          this.visibleColumns = this.columns.map((x) => x.columnDef);
+          this.visibleColumns = this.columns.map(x => x.columnDef);
           this.makeDynamicTarifa(results);
         },
-        error: (err) => {
+        error: err => {
           this.isLoadingResults = false;
           console.log(err);
         },
@@ -197,9 +195,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput
-        .split(',')
-        .map((str) => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
     }
   }
 
@@ -244,10 +240,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
    */
   @HostListener('keydown.arrowdown', ['$event'])
   onArrowDown(event: KeyboardEvent): void {
-    if (
-      this.overlayHasFocus &&
-      this.highlightRowIndex < this.dataSource.length - 1
-    ) {
+    if (this.overlayHasFocus && this.highlightRowIndex < this.dataSource.length - 1) {
       this.highlightRowIndex += 1;
 
       this.onHighlightedRowChange(event);
@@ -293,8 +286,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     const searchQueryHasAtLeast2Characters: any =
-      this.dataSearch.textSearch &&
-      this.dataSearch.textSearch.toString().length >= 1;
+      this.dataSearch.textSearch && this.dataSearch.textSearch.toString().length >= 1;
 
     if (
       event.key !== 'Enter' &&
@@ -315,10 +307,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
     this.closeOverlay();
   }
 
-  selectRow<T extends { idArticulo: number }>(
-    row: T,
-    closeOverlay = true
-  ): void {
+  selectRow<T extends { idArticulo: number }>(row: T, closeOverlay = true): void {
     if (closeOverlay) {
       this.closeOverlay();
     }
@@ -333,10 +322,10 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
   getDataProductSale(id: number) {
     try {
       this._productUseCase.getForSale(id).subscribe({
-        next: (response) => {
+        next: response => {
           this.modal.close(response);
         },
-        error: (err) => {
+        error: err => {
           console.log(err);
         },
       });
@@ -368,10 +357,7 @@ export class ProductSearchPopupComponent implements OnInit, OnDestroy {
       columns: this.columns,
     };
     if (this.dataSource.length > 0) {
-      sessionStorage.setItem(
-        this.KEY_STORAGE_DATA_PRODUCT_SEARCH,
-        JSON.stringify(persistSearch)
-      );
+      sessionStorage.setItem(this.KEY_STORAGE_DATA_PRODUCT_SEARCH, JSON.stringify(persistSearch));
     } else {
       sessionStorage.removeItem(this.KEY_STORAGE_DATA_PRODUCT_SEARCH);
     }

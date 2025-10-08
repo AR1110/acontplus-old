@@ -1,8 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
-import { HttpClient } from '@angular/common/http';
+import { PATHS_API } from '@core/constants/global.constants';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { ApiResponse } from '@core/models/api-response';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -14,7 +15,7 @@ export class RecipeService {
 
   getByItem<T>(id: number) {
     return this.#http.get<ApiResponse>(`${this.#url}GetByItem/${id}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return { recipes: [] };
         }
@@ -22,7 +23,12 @@ export class RecipeService {
         const { recipe } = JSON.parse(response.payload as string);
 
         return {
-          recipes: recipe || [],
+          recipes: (recipe || []).map((item: any) => {
+            return {
+              ...item,
+              uuid: generateUuidv4(),
+            };
+          }),
         };
       }),
     );

@@ -156,7 +156,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
     this.customerForm.patchValue({
       validationSri: false,
     });
-    this._companyCustomerUseCase.checkExistence({ textSearch: id }).subscribe((response) => {
+    this._companyCustomerUseCase.checkExistence({ textSearch: id }).subscribe(response => {
       if (response.code == '1' && response.payload) {
         this.tS.show({
           type: 'warning',
@@ -172,7 +172,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
         });
         return;
       }
-      this._sriCustomerUseCase.search(codigo, id).subscribe((secondResponse) => {
+      this._sriCustomerUseCase.search(codigo, id).subscribe(secondResponse => {
         const {
           error,
           telefono,
@@ -235,7 +235,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
 
   ngOnInit(): void {
     try {
-      this.getLoadData().subscribe((response) => {
+      this.getLoadData().subscribe(response => {
         let mainDataForm: any;
         let dataCompanyCustomer = {} as any;
         if (Array.isArray(response)) {
@@ -317,7 +317,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
 
   identificationTypeChange(event: MatSelectChange) {
     const dt = this.tiposIdentificacion().find(
-      (item) => item.idTipoIdentificacion === Number(event.value),
+      item => item.idTipoIdentificacion === Number(event.value),
     );
     this.setIdentificationTypeChange(dt.codigoSri);
   }
@@ -422,7 +422,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
         id: this.params.id,
         data: dataForm,
       };
-      this.$updateUseCase.execute(sendParams).subscribe((response) => {
+      this.$updateUseCase.execute(sendParams).subscribe(response => {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,
@@ -436,7 +436,7 @@ export class CompanyCustomerAddEditDialogComponent implements OnInit {
     }
 
     if (this.isCreate()) {
-      this.$createUseCase.execute(dataForm).subscribe((response) => {
+      this.$createUseCase.execute(dataForm).subscribe(response => {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
           message: response.message,

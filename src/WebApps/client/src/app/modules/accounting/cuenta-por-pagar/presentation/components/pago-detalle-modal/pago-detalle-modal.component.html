@@ -1,18 +1,15 @@
 <app-mat-custom-dialog
-        [containerTemplate]="containerTemplate"
-        [actionsTemplate]="actionsTemplate"
-        [showHeader]="false"
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [showHeader]="false"
 />
 
 <ng-template #containerTemplate>
-    <app-mat-dynamic-table
-
-            [columnDefinitions]="columnsDefs"
-            [visibleColumns]="columns"
-            [tableData]="dataSource.data"
-    ></app-mat-dynamic-table>
+  <app-mat-dynamic-table
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [tableData]="dataSource.data"
+  ></app-mat-dynamic-table>
 </ng-template>
 
-<ng-template #actionsTemplate>
-
-</ng-template>
+<ng-template #actionsTemplate> </ng-template>

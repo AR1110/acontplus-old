@@ -1,10 +1,11 @@
 <mat-toolbar>
   @if (showToggle) {
-  <button mat-icon-button (click)="toggleSidenav.emit()">
-    <mat-icon>menu</mat-icon>
-  </button>
-  } @if (showBranding) {
-  <app-branding />
+    <button mat-icon-button (click)="toggleSidenav.emit()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  @if (showBranding) {
+    <app-branding />
   }
 
   <span class="flex-fill"></span>

@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-pet-type-modal',
   imports: [],
   templateUrl: './pet-type-modal.component.html',
-  styles: ``
+  styles: ``,
 })
-export class PetTypeModalComponent {
-
-}
+export class PetTypeModalComponent {}

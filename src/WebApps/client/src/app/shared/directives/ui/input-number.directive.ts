@@ -5,7 +5,7 @@ import { NgModel } from '@angular/forms';
   selector: '[appInputNumber]',
 })
 export class InputNumberDirective {
-  constructor(private ngModel: NgModel) { }
+  constructor(private ngModel: NgModel) {}
 
   @HostListener('input', ['$event.target.value'])
   onInput(value: string) {

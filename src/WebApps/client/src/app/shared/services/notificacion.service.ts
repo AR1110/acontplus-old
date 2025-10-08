@@ -12,11 +12,6 @@ export class NotificacionService {
   private readonly _http = inject(HttpClient);
 
   post<T>(data: T) {
-    return this._http.post<ApiResponse>(
-      `${this._url}?json=${JSON.stringify(data)}`,
-      '',
-    );
+    return this._http.post<ApiResponse>(`${this._url}?json=${JSON.stringify(data)}`, '');
   }
 }
-
-

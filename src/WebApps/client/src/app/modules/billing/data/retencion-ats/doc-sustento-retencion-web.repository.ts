@@ -9,9 +9,7 @@ import { DocSustentoRetencionRepository } from '@billing/domain/repositories/ret
 @Injectable({
   providedIn: 'root',
 })
-export class DocSustentoRetencionWebRepository
-  implements DocSustentoRetencionRepository
-{
+export class DocSustentoRetencionWebRepository implements DocSustentoRetencionRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.RETENCION_ATS}${RETENCION_ATS_PATHS.DOC_SUST_RETENCION}`;
 
@@ -19,18 +17,12 @@ export class DocSustentoRetencionWebRepository
     throw new Error('Method not implemented.');
   }
   create<T>(data: T): Observable<ApiResponse> {
-    return this._http
-      .post<ApiResponse>(`${this._url}`, data)
-      .pipe(map((response) => response));
+    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map(response => response));
   }
   update<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
   delete(id: number) {
-    return this._http
-      .delete<ApiResponse>(`${this._url}${id}`)
-      .pipe(map((response) => response));
+    return this._http.delete<ApiResponse>(`${this._url}${id}`).pipe(map(response => response));
   }
 }

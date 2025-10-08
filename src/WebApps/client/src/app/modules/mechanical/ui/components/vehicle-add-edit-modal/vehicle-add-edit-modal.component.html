@@ -8,10 +8,7 @@
 
 <ng-template #containerTemplate>
   <div class="d-grid gap-2 mt-2">
-    <app-mat-dynamic-card
-      [showHeader]="true"
-      [title]="'Cliente/Conductor'"
-    >
+    <app-mat-dynamic-card [showHeader]="true" [title]="'Cliente/Conductor'">
       <div class="d-grid gap-2">
         <app-company-customer-search
           [isAdvancedMode]="true"
@@ -21,54 +18,32 @@
           [isGetId]="true"
         />
 
-        <div
-          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-        >
+        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Identificación:</mat-label>
-              <input
-                matInput
-                placeholder="..."
-                disabled
-                [value]="customer.idCard"
-              />
+              <input matInput placeholder="..." disabled [value]="customer.idCard" />
             </mat-form-field>
           </div>
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Razon Social:</mat-label>
-              <input
-                matInput
-                placeholder="..."
-                disabled
-                [value]="customer.businessName"
-              />
+              <input matInput placeholder="..." disabled [value]="customer.businessName" />
             </mat-form-field>
           </div>
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Correo:</mat-label>
-              <input
-                matInput
-                placeholder="..."
-                disabled
-                [value]="customer.email"
-              />
+              <input matInput placeholder="..." disabled [value]="customer.email" />
             </mat-form-field>
           </div>
         </div>
       </div>
     </app-mat-dynamic-card>
 
-    <app-mat-dynamic-card
-      [showHeader]="true"
-      [title]="'Vehículo'"
-    >
+    <app-mat-dynamic-card [showHeader]="true" [title]="'Vehículo'">
       <div class="d-grid gap-2">
-        <div
-          class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-        >
+        <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>
@@ -85,11 +60,7 @@
                 (input)="filterCountry()"
                 (focus)="filterCountry()"
               />
-              <mat-autocomplete
-                requireSelection
-                #auto="matAutocomplete"
-                [displayWith]="getCountryTitle.bind(this)"
-              >
+              <mat-autocomplete requireSelection #auto="matAutocomplete" [displayWith]="getCountryTitle.bind(this)">
                 @for (option of filteredCountryOptions(); track $index) {
                   <mat-option [value]="option.countryId">
                     {{ option.description }}
@@ -130,12 +101,7 @@
                 Placa
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.licensePlate"
-                appToUpperCase
-              />
+              <input matInput placeholder="..." [(ngModel)]="dataForm.licensePlate" appToUpperCase />
             </mat-form-field>
           </div>
 
@@ -145,28 +111,16 @@
                 Marca
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.brand"
-                appToUpperCase
-              />
+              <input matInput placeholder="..." [(ngModel)]="dataForm.brand" appToUpperCase />
             </mat-form-field>
           </div>
         </div>
 
-        <div
-          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-        >
+        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Modelo</mat-label>
-              <input
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.model"
-                appToUpperCase
-              />
+              <input matInput placeholder="..." [(ngModel)]="dataForm.model" appToUpperCase />
             </mat-form-field>
           </div>
           <div class="col">
@@ -175,12 +129,7 @@
                 Año de Fabricación
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                type="number"
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.year"
-              />
+              <input type="number" matInput placeholder="..." [(ngModel)]="dataForm.year" />
             </mat-form-field>
           </div>
           <div class="col">
@@ -189,33 +138,19 @@
                 Color
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                type="text"
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.color"
-                appToUpperCase
-              />
+              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.color" appToUpperCase />
             </mat-form-field>
           </div>
         </div>
 
-        <div
-          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-        >
+        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>
                 Motor
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                type="text"
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.engine"
-                appToUpperCase
-              />
+              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.engine" appToUpperCase />
             </mat-form-field>
           </div>
 
@@ -225,13 +160,7 @@
                 Chasis
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                type="text"
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.chassis"
-                appToUpperCase
-              />
+              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.chassis" appToUpperCase />
             </mat-form-field>
           </div>
 
@@ -241,13 +170,7 @@
                 Cilindraje
                 <span class="text-danger">*</span>
               </mat-label>
-              <input
-                type="text"
-                matInput
-                placeholder="..."
-                [(ngModel)]="dataForm.cylindraje"
-                appToUpperCase
-              />
+              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.cylindraje" appToUpperCase />
             </mat-form-field>
           </div>
         </div>
@@ -257,11 +180,7 @@
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button
-    type="button"
-    mat-flat-button
-    (click)="onSubmit()"
-  >
+  <button type="button" mat-flat-button (click)="onSubmit()">
     {{ btnText() }}
   </button>
 </ng-template>

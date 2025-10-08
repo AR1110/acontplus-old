@@ -1,4 +1,4 @@
-import {Component, OnInit, inject, signal} from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Device } from '@modules/technical-support/models/device.model';
 import { DeviceModalComponent } from '../device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {DialogService} from "@core/services/dialog.service";
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-device-list',
@@ -19,7 +19,7 @@ export class DeviceListComponent implements OnInit {
   private deviceService = inject(DeviceService);
   private tS = inject(ToastrNotificationService);
 
-  devices = signal<any>([])
+  devices = signal<any>([]);
 
   getCustomers(id: number) {}
 
@@ -28,7 +28,7 @@ export class DeviceListComponent implements OnInit {
       size: 'lg',
       data: item || {},
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.get();
       }
@@ -45,7 +45,7 @@ export class DeviceListComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: `Eliminar!`,
       cancelButtonText: 'Cancelar',
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         this.delete(item);
       }
@@ -53,19 +53,19 @@ export class DeviceListComponent implements OnInit {
   }
 
   get() {
-    this.deviceService.get({ tipo: 2 }).subscribe((response) => {
+    this.deviceService.get({ tipo: 2 }).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
         const tempArray = JSON.parse(response.payload as string);
         tempArray.devices.forEach((device: any) => {
           device.specs = JSON.parse(device.specs);
         });
-        this.devices.set(tempArray.devices)
+        this.devices.set(tempArray.devices);
       }
     });
   }
 
   delete(item: Device) {
-    this.deviceService.delete(item.id).subscribe((response) => {
+    this.deviceService.delete(item.id).subscribe(response => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -80,7 +80,7 @@ export class DeviceListComponent implements OnInit {
 
   updateStatus(item: any) {
     item.enabled = item.enabled ? 0 : 1;
-    this.deviceService.put(item.id, item).subscribe((response) => {
+    this.deviceService.put(item.id, item).subscribe(response => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
           this.tS.show({

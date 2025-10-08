@@ -1,22 +1,22 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {MatIconButton} from "@angular/material/button";
-import {MatMenu, MatMenuItem, MatMenuModule} from "@angular/material/menu";
-import {TransferenciaBodegaUseCase} from "@inventory/domain/usecases/transferencia-bodega.use-case";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import {GroupedEstab, GroupedEstabPuntoEmision} from "@core/models/estab.model";
-import {formatDateToString} from "@core/utils/date.util";
-import {getValidId, isValidField} from "@core/utils/utils";
-import {finalize} from "rxjs";
-import {PageEvent} from "@angular/material/paginator";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatIcon} from "@angular/material/icon";
-import {FormsModule} from "@angular/forms";
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { MatIconButton } from '@angular/material/button';
+import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
+import { TransferenciaBodegaUseCase } from '@inventory/domain/usecases/transferencia-bodega.use-case';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatPagination } from '@shared/models/pagination.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { formatDateToString } from '@core/utils/date.util';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { finalize } from 'rxjs';
+import { PageEvent } from '@angular/material/paginator';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIcon } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-warehouse-transfer',
@@ -30,13 +30,13 @@ import {FormsModule} from "@angular/forms";
     MatIconButton,
     MatMenuModule,
     MatSelectModule,
-    FormsModule
+    FormsModule,
   ],
   templateUrl: './warehouse-transfer.component.html',
   styleUrl: './warehouse-transfer.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WarehouseTransferComponent {
+export class WarehouseTransferComponent implements OnInit {
   private _useCase = inject(TransferenciaBodegaUseCase);
 
   dataSource = signal<any[]>([]);
@@ -52,7 +52,7 @@ export class WarehouseTransferComponent {
     { key: 'obs', label: 'Observación', type: 'number' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -97,7 +97,7 @@ export class WarehouseTransferComponent {
     this._useCase
       .getAll(this.getParams())
       .pipe(finalize(() => (this.isLoadingResults = false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.dataSource.set(response.data);
         console.log(this.dataSource());
         this.pagination.set({
@@ -108,15 +108,15 @@ export class WarehouseTransferComponent {
   }
 
   ngOnInit() {
-    this._useCase.getDataFilter().subscribe((response) => {
+    this._useCase.getDataFilter().subscribe(response => {
       this.estabs = response.estabs;
 
-      const dataEstab = this.estabs.find((e) => e.defaultEstab);
+      const dataEstab = this.estabs.find(e => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.puntosEmision = dataEstab.puntosEmision;
 
-        const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+        const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
 
         if (dataPtoEmi) {
           this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
@@ -128,12 +128,10 @@ export class WarehouseTransferComponent {
   }
 
   onChangeEstab() {
-    const dataEstab = this.estabs.find(
-      (e) => e.codEstab === this.dataSearch.codEstab
-    );
+    const dataEstab = this.estabs.find(e => e.codEstab === this.dataSearch.codEstab);
     if (dataEstab) {
       this.puntosEmision = dataEstab?.puntosEmision;
-      const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
       if (dataPtoEmi) {
         this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
         this.getAll();
@@ -148,7 +146,7 @@ export class WarehouseTransferComponent {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

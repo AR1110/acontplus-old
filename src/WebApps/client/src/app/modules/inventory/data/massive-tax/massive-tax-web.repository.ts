@@ -41,7 +41,7 @@ export class MassiveTaxWebRepository implements MassiveTaxRepository {
             taxRates,
             subCategories,
           };
-        })
+        }),
       );
   }
 
@@ -63,7 +63,7 @@ export class MassiveTaxWebRepository implements MassiveTaxRepository {
             });
           }
           return histories;
-        })
+        }),
       );
   }
 
@@ -77,12 +77,10 @@ export class MassiveTaxWebRepository implements MassiveTaxRepository {
       map((response: any) => {
         let quantity = 0;
         if (response !== null && typeof response === 'object') {
-          quantity = Array.isArray(response.quantity)
-            ? response.quantity[0]?.quantity
-            : 0;
+          quantity = Array.isArray(response.quantity) ? response.quantity[0]?.quantity : 0;
         }
         return quantity;
-      })
+      }),
     );
   }
 

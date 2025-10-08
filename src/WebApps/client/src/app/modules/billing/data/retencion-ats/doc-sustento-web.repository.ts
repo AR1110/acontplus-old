@@ -18,7 +18,7 @@ export class DocSustentoWebRepository implements DocSustentoRepository {
     const defaultData = this.getDefaultData();
 
     return this._http.get(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
-      map((response) => {
+      map(response => {
         if (!isApiResponse(response)) return defaultData;
 
         try {
@@ -46,18 +46,12 @@ export class DocSustentoWebRepository implements DocSustentoRepository {
     throw new Error('Method not implemented.');
   }
   create<T>(data: T): Observable<ApiResponse> {
-    return this._http
-      .post<ApiResponse>(`${this._url}`, data)
-      .pipe(map((response) => response));
+    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map(response => response));
   }
   update<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
   delete(id: number) {
-    return this._http
-      .delete<ApiResponse>(`${this._url}${id}`)
-      .pipe(map((response) => response));
+    return this._http.delete<ApiResponse>(`${this._url}${id}`).pipe(map(response => response));
   }
 }

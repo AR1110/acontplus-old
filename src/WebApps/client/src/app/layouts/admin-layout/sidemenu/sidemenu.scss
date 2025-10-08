@@ -1,4 +1,4 @@
-@use '@angular/material' as mat;
+@use "@angular/material" as mat;
 
 .acontplus-sidemenu {
   padding: 0;
@@ -76,7 +76,7 @@
     line-height: 1.5rem;
     text-align: center;
 
-    [dir='rtl'] & {
+    [dir="rtl"] & {
       margin-right: 0;
       margin-left: 0.75rem;
     }
@@ -90,7 +90,7 @@
       line-height: 1.5rem;
       opacity: 0;
 
-      [dir='rtl'] & {
+      [dir="rtl"] & {
         right: 0.75rem;
         left: 0;
       }
@@ -141,7 +141,7 @@
   &.level-1 > li > .menu-heading {
     padding-left: 3rem;
 
-    [dir='rtl'] & {
+    [dir="rtl"] & {
       padding-right: 3rem;
       padding-left: 1rem;
     }
@@ -150,16 +150,16 @@
   &.level-2 > li > .menu-heading {
     padding-left: 4rem;
 
-    [dir='rtl'] & {
+    [dir="rtl"] & {
       padding-right: 4rem;
       padding-left: 1rem;
     }
   }
 
-  &.level-2 [class^='level-'] > li > .menu-heading {
+  &.level-2 [class^="level-"] > li > .menu-heading {
     padding-left: 5rem;
 
-    [dir='rtl'] & {
+    [dir="rtl"] & {
       padding-right: 5rem;
       padding-left: 1rem;
     }

@@ -1,5 +1,5 @@
-@use 'sass:map';
-@use 'variables';
+@use "sass:map";
+@use "variables";
 
 @function bp($name, $breakpoints: variables.$breakpoints) {
   $min: map.get($breakpoints, $name);
@@ -15,8 +15,7 @@
     @media (min-width: $min) {
       @content;
     }
-  }
-  @else {
+  } @else {
     @content;
   }
 }
@@ -29,8 +28,7 @@
     @media (max-width: $max) {
       @content;
     }
-  }
-  @else {
+  } @else {
     @content;
   }
 }

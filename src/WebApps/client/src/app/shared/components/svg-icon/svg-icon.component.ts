@@ -1,4 +1,4 @@
-import {Component, input, ChangeDetectionStrategy} from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-svg-icon',
@@ -8,8 +8,8 @@ import {Component, input, ChangeDetectionStrategy} from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SvgIconComponent {
-    id =  input('')
-    width = input('40px')
-   height = input( '40px')
-   color = input('#414141')
+  id = input('');
+  width = input('40px');
+  height = input('40px');
+  color = input('#414141');
 }

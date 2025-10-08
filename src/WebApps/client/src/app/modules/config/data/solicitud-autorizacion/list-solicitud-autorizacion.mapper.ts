@@ -1,22 +1,20 @@
-
-import {SolicitudAutorizacionResponse} from "@modules/config/domain/models/solicitud-autorizacion.model";
-import {ApiResponse} from "@core/models/api-response";
+import { SolicitudAutorizacionResponse } from '@modules/config/domain/models/solicitud-autorizacion.model';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ListSolicitudAutorizacionMapper {
-
-  static toJson<T>(parameters:T){
+  static toJson<T>(parameters: T) {
     return JSON.stringify({
       tipo: 1,
-      ...parameters
-    })
+      ...parameters,
+    });
   }
 
   static fromJson(response: ApiResponse): SolicitudAutorizacionResponse {
-    const {requests=[]} = JSON.parse(response.payload as any);
+    const { requests = [] } = JSON.parse(response.payload as any);
 
-    const data = requests.map((item:any, index:number)=>{
+    const data = requests.map((item: any, index: number) => {
       return {
-        index: index+1,
+        index: index + 1,
         rowguid: item.rowguid,
         idSolicitudAutorizacion: item.idSolicitudAutorizacion,
         usuarioAprobante: item.usuarioAprobante,
@@ -32,12 +30,12 @@ export class ListSolicitudAutorizacionMapper {
         nombreModulo: item.nombreModulo,
         serieComprobante: item.serieComprobante,
         totalRecords: item.serieComprobante,
-        nomAdminRoles: item.nomAdminRoles
-      }
-    })
-    const totalRecords = data.length>0 ? data[0].totalRecords: 0
+        nomAdminRoles: item.nomAdminRoles,
+      };
+    });
+    const totalRecords = data.length > 0 ? data[0].totalRecords : 0;
     return {
-      data ,
+      data,
       totalRecords,
     };
   }

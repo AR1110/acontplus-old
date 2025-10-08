@@ -2,9 +2,9 @@
   <label>Banco: <span class="text-danger">*</span></label>
   <select class="form-select border-select" [(ngModel)]="value" (change)="onChange()">
     @for (item of bancos; track $index) {
-    <option [ngValue]="item.idBanco">
-      {{item.descripcion}}
-    </option>
+      <option [ngValue]="item.idBanco">
+        {{ item.descripcion }}
+      </option>
     }
   </select>
 </div>

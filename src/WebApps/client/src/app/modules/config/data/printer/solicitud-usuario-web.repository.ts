@@ -6,69 +6,68 @@ import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { map, Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
-import {SolicitudUsuarioRepository} from "@modules/config/domain/repositories/solicitud-usuario.repository";
-import {groupEstabUtil} from "@core/utils/group-estab.util";
+import { SolicitudUsuarioRepository } from '@modules/config/domain/repositories/solicitud-usuario.repository';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository {
   private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_REQUEST}`;
-  private http = inject(HttpClient)
+  private http = inject(HttpClient);
 
   getFilter() {
     const json = JSON.stringify({
-      tipo: 3
-    })
+      tipo: 3,
+    });
 
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
         if (response !== null && typeof response === 'object') {
-
           const estabs = groupEstabUtil({
             estabs: response.estabs,
-            isGroupPuntoEmision: true
-          })
+            isGroupPuntoEmision: true,
+          });
 
           return {
             establecimientos: estabs,
-            usersRole: response.usersRole
-          }
+            usersRole: response.usersRole,
+          };
         }
 
         return {
           establecimientos: [],
-          usersRole: []
-        }
-      })
-    )
+          usersRole: [],
+        };
+      }),
+    );
   }
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({
       ...obj,
-      tipo: 1
-    })
+      tipo: 1,
+    });
 
     return this.http.get(`${this.url}?json=${json}`).pipe(
       map((response: any) => {
-        let requests = [] as any[]
+        let requests = [] as any[];
         if (response !== null && typeof response === 'object') {
           requests = response.requests || [];
         }
         return {
-          data: requests.map((item:any, index:number)=>{
+          data: requests.map((item: any, index: number) => {
             return {
               index: index + 1,
-              ...item
-            }
-          })
+              ...item,
+            };
+          }),
         };
-      })
-    )
+      }),
+    );
   }
 
   put<T>(data: T) {
-    return this.http.put<ApiResponse>(`${this.url}`, { data })
+    return this.http.put<ApiResponse>(`${this.url}`, { data });
   }
 }

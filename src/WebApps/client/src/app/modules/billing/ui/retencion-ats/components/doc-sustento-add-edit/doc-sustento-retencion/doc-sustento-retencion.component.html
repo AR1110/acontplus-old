@@ -6,16 +6,12 @@
         <mat-select
           formControlName="impuestoRetencionId"
           id="impuestoRetencionId-{{ formGroup.get('uniqueIdDoc')?.value }}"
-          (selectionChange)="
-            selectImpuestoRetencion(formGroup.get('impuestoRetencionId')?.value)
-          "
+          (selectionChange)="selectImpuestoRetencion(formGroup.get('impuestoRetencionId')?.value)"
           required
         >
           <mat-option [value]="">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
-            <mat-option [value]="impuesto.id">
-              {{ impuesto.codigo }} - {{ impuesto.descripcion }}
-            </mat-option>
+            <mat-option [value]="impuesto.id"> {{ impuesto.codigo }} - {{ impuesto.descripcion }} </mat-option>
           }
         </mat-select>
       </mat-form-field>

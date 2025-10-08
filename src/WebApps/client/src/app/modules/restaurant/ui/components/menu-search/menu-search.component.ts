@@ -94,7 +94,7 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.isLoadingResults.set(false);
         }),
-        map((response) => {
+        map(response => {
           this.isRateLimitReached = response.menus.length === 0;
 
           if (this.isRateLimitReached) {
@@ -105,13 +105,13 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
       )
 
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.openOverlay();
           const results = structuredClone(response);
           this.dataSource = results;
           console.log(this.dataSource);
         },
-        error: (err) => {
+        error: err => {
           console.log(err);
         },
       });

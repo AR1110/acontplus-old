@@ -1,20 +1,18 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import {
   CODE_ESTADO,
   DOC_TYPE,
   DOC_TYPE_SRI,
-  REPORT_FORMAT, SEPARADORES_REGEX,
+  REPORT_FORMAT,
+  SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SharedService } from '@core/services/shared.service';
-import {isValidEmail, isValidField} from '@core/utils/utils';
+import { isValidEmail, isValidField } from '@core/utils/utils';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCardModule } from '@angular/material/card';
@@ -77,14 +75,14 @@ export class SaleReportPageComponent implements OnInit {
     idCiudad: 0,
   };
   establecimientos = signal<GroupedEstab[]>([]);
-  puntosEmision = signal<GroupedEstabPuntoEmision[]>([])
-  estadosDoc  = signal<any[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  estadosDoc = signal<any[]>([]);
 
   tiposDoc = signal<any[]>([]);
   empresas = signal<any[]>([]);
   provinciasAgrupadas = signal<any[]>([]);
 
-  estabCorreo = null as string|null|undefined
+  estabCorreo = null as string | null | undefined;
   format: any;
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
@@ -94,10 +92,10 @@ export class SaleReportPageComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
 
   getDataFilter() {
-    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
 
-      this.establecimientos.set(estabs)
+      this.establecimientos.set(estabs);
       this.estadosDoc.set(estadosDoc);
       this.tiposDoc.set([
         ...tiposDoc,
@@ -107,33 +105,26 @@ export class SaleReportPageComponent implements OnInit {
           codigoSri: '',
           codigo: DOC_TYPE.CDV,
         },
-      ])
+      ]);
       this.empresas.set(empresas);
 
-      const provinciasAgrupadas = ciudades.reduce(
-        (agrupador: any, ciudad: any) => {
-          const provinciaIndex = agrupador.findIndex(
-            (p: any) => p.nombre === ciudad.provincia,
-          );
-          if (provinciaIndex >= 0) {
-            agrupador[provinciaIndex].ciudades.push(ciudad);
-          } else {
-            agrupador.push({
-              nombre: ciudad.provincia,
-              ciudades: [ciudad],
-            });
-          }
-          return agrupador;
-        },
-        [],
-      );
-      this.provinciasAgrupadas.set(provinciasAgrupadas)
+      const provinciasAgrupadas = ciudades.reduce((agrupador: any, ciudad: any) => {
+        const provinciaIndex = agrupador.findIndex((p: any) => p.nombre === ciudad.provincia);
+        if (provinciaIndex >= 0) {
+          agrupador[provinciaIndex].ciudades.push(ciudad);
+        } else {
+          agrupador.push({
+            nombre: ciudad.provincia,
+            ciudades: [ciudad],
+          });
+        }
+        return agrupador;
+      }, []);
+      this.provinciasAgrupadas.set(provinciasAgrupadas);
 
-      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      const dataPuntoEmision = this.puntosEmision().find(
-        (ptoEmi) => ptoEmi.defaultPtoEmi,
-      );
+      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
 
       this.estabCorreo = dataEstab?.correo || null;
 
@@ -146,9 +137,7 @@ export class SaleReportPageComponent implements OnInit {
         )?.codigo;
       }
 
-      const dataTipoDoc = this.tiposDoc().find(
-        (tipoDoc) => tipoDoc.codigo === DOC_TYPE.CDV,
-      );
+      const dataTipoDoc = this.tiposDoc().find(tipoDoc => tipoDoc.codigo === DOC_TYPE.CDV);
       this.dataSearch.codDoc = dataTipoDoc.codigo;
     });
   }
@@ -163,7 +152,7 @@ export class SaleReportPageComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
       this.estabCorreo = dataEstab.correo;
@@ -206,28 +195,26 @@ export class SaleReportPageComponent implements OnInit {
 
   private getDataParams() {
     const dataEstab = this.establecimientos().find(
-      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     const dataEstado = this.estadosDoc().find(
-      (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
+      estado => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
     const identificacion = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.identificacion)
       : null;
-    const idUsuario = this.dataSearch.checkBoxUser
-      ? isValidField(this.dataSearch.userId)
-      : null;
+    const idUsuario = this.dataSearch.checkBoxUser ? isValidField(this.dataSearch.userId) : null;
     const idCliente = this.dataSearch.checkBoxCustomer
       ? isValidField(this.dataSearch.companyCustomerId)
       : null;
 
-    return  {
+    return {
       tipo: 2,
       ckFecha: true,
       codDoc: this.getTipoDoc(),
-      codEstab: (dataEstab && dataEstab.codEstab) || null,
-      codEstado: (dataEstado && dataEstado.codigo) || null,
+      codEstab: (dataEstab?.codEstab) || null,
+      codEstado: (dataEstado?.codigo) || null,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       identificacion,
@@ -241,10 +228,7 @@ export class SaleReportPageComponent implements OnInit {
   }
 
   private isValidDataSearch() {
-    if (
-      this.dataSearch.checkBoxCustomer &&
-      !isValidField(this.dataSearch.identificacion)
-    ) {
+    if (this.dataSearch.checkBoxCustomer && !isValidField(this.dataSearch.identificacion)) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione el Cliente',
@@ -296,13 +280,13 @@ export class SaleReportPageComponent implements OnInit {
   }
 
   async askToSendMail() {
-    const correos = this.estabCorreo?.split(SEPARADORES_REGEX) || []
-    if(!isValidField(this.estabCorreo)){
+    const correos = this.estabCorreo?.split(SEPARADORES_REGEX) || [];
+    if (!isValidField(this.estabCorreo)) {
       Swal.fire({
         icon: 'warning',
-        text: 'El establecimiento no tiene agregado el correo'
-      })
-      return
+        text: 'El establecimiento no tiene agregado el correo',
+      });
+      return;
     }
 
     // Validar formato de cada correo
@@ -311,14 +295,12 @@ export class SaleReportPageComponent implements OnInit {
     if (correosInvalidos.length > 0) {
       Swal.fire({
         icon: 'warning',
-        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`
+        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`,
       });
       return;
     }
 
     if (!this.isValidDataSearch()) return;
-
-
 
     const result = await Swal.fire({
       title: 'Confirmación',
@@ -331,14 +313,12 @@ export class SaleReportPageComponent implements OnInit {
       cancelButtonText: 'Cancelar',
       showCancelButton: true,
       reverseButtons: true, // Pone Cancelar a la izquierda, más común en UX
-      focusCancel: true
+      focusCancel: true,
     });
 
     if (!result.isConfirmed) {
       return;
     }
-
-
 
     const params = {
       subject: 'Reporte Ventas',
@@ -354,21 +334,21 @@ export class SaleReportPageComponent implements OnInit {
         withTableNames: true,
       },
       codigo: SALE_CODE_REPORT.FG,
-      receptor: this.estabCorreo
+      receptor: this.estabCorreo,
     };
 
-    this.appNotifiSvc.post(params).subscribe((response) => {
+    this.appNotifiSvc.post(params).subscribe(response => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',
-          text: response.message
-        })
+          text: response.message,
+        });
       }
       if (response.code === '1') {
         Swal.fire({
           icon: 'success',
-          text: response.message
-        })
+          text: response.message,
+        });
       }
     });
   }

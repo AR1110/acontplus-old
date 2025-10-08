@@ -1,21 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '@technical-support/models/category';
 import { ApiResponse } from '@core/models/api-response';
 import { CategoryUseCase } from '@accounting/category/application/category.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule,  ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
@@ -45,7 +40,7 @@ export class CategoryModalComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   get() {
-    this._categoryUseCase.get({ tipo: 2 }).subscribe((response) => {
+    this._categoryUseCase.get({ tipo: 2 }).subscribe(response => {
       if (response.code == '1') {
         const { tipos } = JSON.parse(response.payload as string);
         this.tipos = tipos;
@@ -73,9 +68,7 @@ export class CategoryModalComponent implements OnInit {
     if (!(this.data.id > 0)) {
       this._categoryUseCase.post(dataToSave).subscribe(this.successResponse);
     } else {
-      this._categoryUseCase
-        .put(this.data.id, dataToSave)
-        .subscribe(this.successResponse);
+      this._categoryUseCase.put(this.data.id, dataToSave).subscribe(this.successResponse);
     }
   }
 

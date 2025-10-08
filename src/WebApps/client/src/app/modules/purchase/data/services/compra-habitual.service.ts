@@ -15,31 +15,29 @@ export class CompraHabitualService {
   #http = inject(HttpClient);
 
   delete<T>(obj: T) {
-    const json = JSON.stringify(obj)
-    return this.#http.delete<ApiResponse>(`${this.#url}Delete?json=${json}`)
+    const json = JSON.stringify(obj);
+    return this.#http.delete<ApiResponse>(`${this.#url}Delete?json=${json}`);
   }
 
   get<T>(params: T) {
     return this.#http
       .get<ApiResponse>(`${this.#url}Get?json=${JSON.stringify(params)}`, {
-        context: getNoLoader()
+        context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           if (response.code !== '1') {
             return { comprasHabituales: [] };
           }
 
           return {
-            comprasHabituales:
-              (JSON.parse(response.payload as string) as CompraHabitual[]) ||
-              [],
+            comprasHabituales: (JSON.parse(response.payload as string) as CompraHabitual[]) || [],
           };
         }),
       );
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data)
+    return this.#http.post<ApiResponse>(`${this.#url}`, data);
   }
 }

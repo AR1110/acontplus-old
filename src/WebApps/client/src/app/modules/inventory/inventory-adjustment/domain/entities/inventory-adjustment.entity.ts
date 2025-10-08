@@ -1,11 +1,8 @@
-
-import { ValidationException} from '@core/domain/domain-exception';
-import {
-  InventoryAdjustmentDetail
-} from "@inventory/inventory-adjustment/domain/entities/inventory-adjustment-detail.entity";
-import {Money} from "@inventory/inventory-adjustment/domain/value-objects/money.vo";
-import {Quantity} from "@inventory/inventory-adjustment/domain/value-objects/quantity.vo";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import { ValidationException } from '@core/domain/domain-exception';
+import { InventoryAdjustmentDetail } from '@inventory/inventory-adjustment/domain/entities/inventory-adjustment-detail.entity';
+import { Money } from '@inventory/inventory-adjustment/domain/value-objects/money.vo';
+import { Quantity } from '@inventory/inventory-adjustment/domain/value-objects/quantity.vo';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
 
 export class InventoryAdjustment {
   private _details: InventoryAdjustmentDetail[] = [];
@@ -18,7 +15,7 @@ export class InventoryAdjustment {
     private _emissionDate: Date,
     private _observations: string | undefined,
     private _total: Money,
-    private readonly _registrationDate: Date
+    private readonly _registrationDate: Date,
   ) {}
 
   static create(params: {
@@ -36,49 +33,67 @@ export class InventoryAdjustment {
       params.emissionDate,
       params.observations,
       Money.zero(),
-      new Date()
+      new Date(),
     );
   }
 
   // Getters
-  get id(): number { return this._id; }
-  get emissionPointId(): number { return this._emissionPointId; }
-  get documentTypeId(): number { return this._documentTypeId; }
-  get transactionTypeId(): number { return this._transactionTypeId; }
-  get emissionDate(): Date { return this._emissionDate; }
-  get observations(): string | undefined { return this._observations; }
-  get total(): Money { return this._total; }
-  get registrationDate(): Date { return this._registrationDate; }
-  get details(): InventoryAdjustmentDetail[] { return [...this._details]; }
+  get id(): number {
+    return this._id;
+  }
+  get emissionPointId(): number {
+    return this._emissionPointId;
+  }
+  get documentTypeId(): number {
+    return this._documentTypeId;
+  }
+  get transactionTypeId(): number {
+    return this._transactionTypeId;
+  }
+  get emissionDate(): Date {
+    return this._emissionDate;
+  }
+  get observations(): string | undefined {
+    return this._observations;
+  }
+  get total(): Money {
+    return this._total;
+  }
+  get registrationDate(): Date {
+    return this._registrationDate;
+  }
+  get details(): InventoryAdjustmentDetail[] {
+    return [...this._details];
+  }
 
   addDetail(params: {
     productId: number;
     code: string;
     warehouseId: number;
     unitOfMeasureId: number;
-    measures:MedidaProducto[];
+    measures: MedidaProducto[];
     quantity: number;
     transactionQuantity: number;
-    unitConversion: number
+    unitConversion: number;
     unitPrice: number;
     costPrice: number;
     fractionalCostPrice: number;
     description: string;
     notes?: string;
-    status: boolean
+    status: boolean;
   }) {
     const detail = InventoryAdjustmentDetail.create({
       ...params,
-      orderIndex: this._details.length + 1
+      orderIndex: this._details.length + 1,
     });
     detail.calculateTotal();
-    console.log(detail)
+    console.log(detail);
     this._details.push(detail);
     this.recalculateTotal();
   }
 
-  getDetailIndex(productId: number){
-    return  this.toPlainObject().details.findIndex(detail => detail.productId === productId);
+  getDetailIndex(productId: number) {
+    return this.toPlainObject().details.findIndex(detail => detail.productId === productId);
   }
 
   getDetail(index: number): InventoryAdjustmentDetail {
@@ -89,7 +104,7 @@ export class InventoryAdjustment {
   private executeDetailUpdate(
     detailIndex: number,
     updateFn: (detail: InventoryAdjustmentDetail) => void,
-    shouldRecalculateTotal = true
+    shouldRecalculateTotal = true,
   ): InventoryAdjustmentDetail {
     this.validateDetailIndex(detailIndex);
 
@@ -103,38 +118,40 @@ export class InventoryAdjustment {
     return existingDetail;
   }
 
-  updateDetail(detailIndex: number, additionalQuantity = 1){
-
-    return this.executeDetailUpdate(detailIndex, (detail) => {
+  updateDetail(detailIndex: number, additionalQuantity = 1) {
+    return this.executeDetailUpdate(detailIndex, detail => {
       const newQuantity = detail.quantity.add(Quantity.from(additionalQuantity));
       detail.updateQuantity(newQuantity.value);
     });
   }
 
-  updateQuantityDetail(detailIndex:number, newQuantity: number) {
-    return this.executeDetailUpdate(detailIndex, (detail) => {
+  updateQuantityDetail(detailIndex: number, newQuantity: number) {
+    return this.executeDetailUpdate(detailIndex, detail => {
       detail.updateQuantity(newQuantity);
     });
   }
 
-  updateMeasure(detailIndex:number, unitOfMeasureId: number) {
-    return this.executeDetailUpdate(detailIndex, (detail) => {
+  updateMeasure(detailIndex: number, unitOfMeasureId: number) {
+    return this.executeDetailUpdate(detailIndex, detail => {
       detail.updateMeasure(unitOfMeasureId);
     });
   }
 
-  updatePricing(detailIndex:number, unitPrice: number) {
-    return this.executeDetailUpdate(detailIndex, (detail) => {
+  updatePricing(detailIndex: number, unitPrice: number) {
+    return this.executeDetailUpdate(detailIndex, detail => {
       detail.updatePricing(unitPrice, detail.costPrice.value);
     });
   }
 
-  updateWarehouseId(detailIndex:number, warehouseId: number) {
-    return this.executeDetailUpdate(detailIndex, (detail) => {
-      detail.updateWarehouseId(warehouseId);
-    }, false);
+  updateWarehouseId(detailIndex: number, warehouseId: number) {
+    return this.executeDetailUpdate(
+      detailIndex,
+      detail => {
+        detail.updateWarehouseId(warehouseId);
+      },
+      false,
+    );
   }
-
 
   removeDetail(index: number): void {
     this._details.splice(index, 1);
@@ -158,7 +175,11 @@ export class InventoryAdjustment {
 
   private validateDetailIndex(index: number): void {
     if (index < 0 || index >= this._details.length) {
-      throw new ValidationException("index", index, `Invalid detail index: ${index}. Must be between 0 and ${this._details.length - 1}` )
+      throw new ValidationException(
+        'index',
+        index,
+        `Invalid detail index: ${index}. Must be between 0 and ${this._details.length - 1}`,
+      );
     }
   }
 
@@ -171,10 +192,10 @@ export class InventoryAdjustment {
   }
 
   hasDetails(): boolean {
-    return this._details.length>0
+    return this._details.length > 0;
   }
 
-  toPlainObject(){
+  toPlainObject() {
     return {
       id: this._id,
       emissionPointId: this.emissionPointId,
@@ -182,9 +203,9 @@ export class InventoryAdjustment {
       transactionTypeId: this.transactionTypeId,
       emissionDate: this.emissionDate,
       observations: this.observations,
-      total:  this.total,
+      total: this.total,
       registrationDate: this.registrationDate,
-      details:  [...this.details.map(item => item.toPlainObject())]
-    }
+      details: [...this.details.map(item => item.toPlainObject())],
+    };
   }
 }

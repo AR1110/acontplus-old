@@ -1,33 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {
-  REPORT_CODE,
-  DOC_TYPE,
-  PATHS_API,
-} from '@core/constants/global.constants';
+import { REPORT_CODE, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { isApiResponse } from '@core/models/api-response';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import {FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatDivider} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-reports',
@@ -41,7 +34,7 @@ import {MatSelectModule} from "@angular/material/select";
     DateRangeSelectionComponent,
     ThemeButtonComponent,
     MatDynamicCardComponent,
-    MatDivider
+    MatDivider,
   ],
   templateUrl: './reports.component.html',
   styles: ``,
@@ -86,14 +79,13 @@ export class ReportsComponent implements OnInit {
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos.find(
-        (estab) => estab.codEstab === this.dataSearch.codEstab,
+        estab => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.puntosEmision = dataEstab.puntosEmision;
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)
-            ?.idPuntoEmision || 0;
+          this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
         return;
       }
     }
@@ -139,9 +131,7 @@ export class ReportsComponent implements OnInit {
       codEstab: isValidField(this.dataSearch.codEstab),
       codDoc: isValidField(this.dataSearch.codDoc),
       idProveedor:
-        (this.dataSearch.supplierChecked &&
-          isValidField(this.dataSearch.idProveedor)) ||
-        null,
+        (this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor)) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
@@ -175,7 +165,7 @@ export class ReportsComponent implements OnInit {
           json: JSON.stringify({ tipo: 6 }),
         },
       })
-      .subscribe((response) => {
+      .subscribe(response => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
             console.log(response);
@@ -189,24 +179,18 @@ export class ReportsComponent implements OnInit {
               estabs,
               isGroupPuntoEmision: true,
             });
-            const dataEstab = this.establecimientos.find(
-              (estab) => estab.defaultEstab,
-            );
+            const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
             if (dataEstab) {
               this.dataSearch.codEstab = dataEstab.codEstab;
               this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(
-                (ptoEmi) => ptoEmi.defaultPtoEmi,
-              );
+              const dataPuntoEmision = this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi);
               if (dataPuntoEmision) {
-                this.dataSearch.idPuntoEmision =
-                  dataPuntoEmision.idPuntoEmision;
+                this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
               }
             }
             this.tiposDoc = tiposDoc;
             this.dataSearch.codDoc =
-              this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)
-                ?.codDoc || '';
+              this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
             //console.log(this.tiposDoc)
             this.estadosDoc = estadosDoc;
             this.subcategories = subcategories;

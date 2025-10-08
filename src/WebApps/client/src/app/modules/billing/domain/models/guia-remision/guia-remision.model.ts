@@ -1,14 +1,13 @@
 import { GroupedEstab } from '@core/models/estab.model';
-import {TipoDoc} from "@core/models/tipo-doc.model";
-import {Id} from "@shared/value-objects/id.vo";
-import {Transportista} from "@customer/domain/models/transportista.model";
-import {Direccion} from "@billing/domain/models/guia-remision/direccion.value-object";
-import {ItemGuia} from "@billing/domain/models/guia-remision/item-guia.model";
-import {TipoTraslado} from "@billing/domain/models/guia-remision/tipo-traslado.enum";
-import {EstadoGuia} from "@billing/domain/models/guia-remision/estado-guia.enum";
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { Id } from '@shared/value-objects/id.vo';
+import { Transportista } from '@customer/domain/models/transportista.model';
+import { Direccion } from '@billing/domain/models/guia-remision/direccion.value-object';
+import { ItemGuia } from '@billing/domain/models/guia-remision/item-guia.model';
+import { TipoTraslado } from '@billing/domain/models/guia-remision/tipo-traslado.enum';
+import { EstadoGuia } from '@billing/domain/models/guia-remision/estado-guia.enum';
 
 export class GuiaRemision {
-
   constructor(
     private readonly id: Id<number>,
     private fechaInicioTraslado: Date,
@@ -32,7 +31,7 @@ export class GuiaRemision {
     private numeroGuia?: string,
     private fechaEmision?: Date,
     private modificadoPor?: string,
-    private modificadoFecha?: Date
+    private modificadoFecha?: Date,
   ) {
     this.validarGuiaRemision();
   }
@@ -137,31 +136,75 @@ export class GuiaRemision {
   }
 
   // Getters
-  getId(): Id<number> { return this.id; }
-  getFechaInicioTraslado(): Date { return this.fechaInicioTraslado; }
-  getTipoTraslado(): TipoTraslado { return this.tipoTraslado; }
-  getEstado(): EstadoGuia { return this.estado; }
-  getNumeroGuia(): string | undefined { return this.numeroGuia; }
-  getFechaEmision(): Date | undefined { return this.fechaEmision; }
-  getRemitenteId(): Id<number> { return this.remitenteId; }
-  getRemitenteRuc(): string { return this.remitenteRuc; }
-  getRemitenteRazonSocial(): string { return this.remitenteRazonSocial; }
-  getDestinatarioId(): Id<number> { return this.destinatarioId; }
-  getDestinatarioRuc(): string { return this.destinatarioRuc; }
-  getDestinatarioRazonSocial(): string { return this.destinatarioRazonSocial; }
-  getDireccionPartida(): Direccion { return this.direccionPartida; }
-  getDireccionLlegada(): Direccion { return this.direccionLlegada; }
-  getTransportista(): Transportista { return this.transportista; }
-  getItems(): ItemGuia[] { return [...this.items]; }  // Retorna copia para evitar modificación directa
-  getMotivoTraslado(): string { return this.motivoTraslado; }
-  getObservaciones(): string | undefined { return this.observaciones; }
-  getDocumentosReferencia(): string[] | undefined { return this.documentosReferencia ? [...this.documentosReferencia] : undefined; }
-  getCreadoPor(): string { return this.creadoPor; }
-  getCreadoFecha(): Date { return this.creadoFecha; }
-  getModificadoPor(): string | undefined { return this.modificadoPor; }
-  getModificadoFecha(): Date | undefined { return this.modificadoFecha; }
-
-
+  getId(): Id<number> {
+    return this.id;
+  }
+  getFechaInicioTraslado(): Date {
+    return this.fechaInicioTraslado;
+  }
+  getTipoTraslado(): TipoTraslado {
+    return this.tipoTraslado;
+  }
+  getEstado(): EstadoGuia {
+    return this.estado;
+  }
+  getNumeroGuia(): string | undefined {
+    return this.numeroGuia;
+  }
+  getFechaEmision(): Date | undefined {
+    return this.fechaEmision;
+  }
+  getRemitenteId(): Id<number> {
+    return this.remitenteId;
+  }
+  getRemitenteRuc(): string {
+    return this.remitenteRuc;
+  }
+  getRemitenteRazonSocial(): string {
+    return this.remitenteRazonSocial;
+  }
+  getDestinatarioId(): Id<number> {
+    return this.destinatarioId;
+  }
+  getDestinatarioRuc(): string {
+    return this.destinatarioRuc;
+  }
+  getDestinatarioRazonSocial(): string {
+    return this.destinatarioRazonSocial;
+  }
+  getDireccionPartida(): Direccion {
+    return this.direccionPartida;
+  }
+  getDireccionLlegada(): Direccion {
+    return this.direccionLlegada;
+  }
+  getTransportista(): Transportista {
+    return this.transportista;
+  }
+  getItems(): ItemGuia[] {
+    return [...this.items];
+  } // Retorna copia para evitar modificación directa
+  getMotivoTraslado(): string {
+    return this.motivoTraslado;
+  }
+  getObservaciones(): string | undefined {
+    return this.observaciones;
+  }
+  getDocumentosReferencia(): string[] | undefined {
+    return this.documentosReferencia ? [...this.documentosReferencia] : undefined;
+  }
+  getCreadoPor(): string {
+    return this.creadoPor;
+  }
+  getCreadoFecha(): Date {
+    return this.creadoFecha;
+  }
+  getModificadoPor(): string | undefined {
+    return this.modificadoPor;
+  }
+  getModificadoFecha(): Date | undefined {
+    return this.modificadoFecha;
+  }
 
   // Método para serializar a un objeto plano
   toPlainObject(): any {
@@ -188,7 +231,7 @@ export class GuiaRemision {
       creadoPor: this.creadoPor,
       creadoFecha: this.creadoFecha,
       modificadoPor: this.modificadoPor,
-      modificadoFecha: this.modificadoFecha
+      modificadoFecha: this.modificadoFecha,
     };
   }
 
@@ -217,13 +260,10 @@ export class GuiaRemision {
       object.numeroGuia,
       object.fechaEmision ? new Date(object.fechaEmision) : undefined,
       object.modificadoPor,
-      object.modificadoFecha ? new Date(object.modificadoFecha) : undefined
+      object.modificadoFecha ? new Date(object.modificadoFecha) : undefined,
     );
   }
 }
-
-
-
 
 export class GuiasRemisionResponse {
   totalRecords = 0;
@@ -249,13 +289,13 @@ export interface GuiaRemisionList {
 }
 
 export interface GuiaRemisionDataForm {
-  estabs: GroupedEstab[],
-  tiposDoc: TipoDoc[],
-  informacionesAdicionales: any[]
+  estabs: GroupedEstab[];
+  tiposDoc: TipoDoc[];
+  informacionesAdicionales: any[];
 }
 
 export interface GuiaRemisionFilterData {
   estabs: GroupedEstab[];
   estadosDoc: any[];
-  users: any[]
+  users: any[];
 }

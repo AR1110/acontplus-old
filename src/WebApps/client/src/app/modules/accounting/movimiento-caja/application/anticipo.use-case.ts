@@ -1,36 +1,33 @@
-import { Injectable } from "@angular/core";
-import {AnticipoRepository} from "@accounting/movimiento-caja/domain/anticipo.repository";
-
+import { Injectable } from '@angular/core';
+import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class AnticipoUseCase {
-  constructor(private repo: AnticipoRepository) { }
+  constructor(private repo: AnticipoRepository) {}
 
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter()
+  getDataFilter() {
+    return this.repo.getDataFilter();
   }
 
-  getDataForm(){
+  getDataForm() {
     return this.repo.getDataForm();
   }
 
   create<T>(data: T) {
-    return this.repo.create(data)
+    return this.repo.create(data);
   }
 
   update<T>(id: number, data: T) {
-    return this.repo.update(id, data)
+    return this.repo.update(id, data);
   }
 
   delete(id: number) {
-    return this.repo.delete(id)
+    return this.repo.delete(id);
   }
-
 }

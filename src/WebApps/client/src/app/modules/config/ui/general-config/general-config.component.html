@@ -12,13 +12,9 @@
       <ng-template matTabContent>
         <div class="mx-3 mt-2">
           <div class="d-grid gap-2">
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.customerDefault"
-                  >Cliente predeterminado</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.customerDefault">Cliente predeterminado</mat-slide-toggle>
               </div>
               <div class="col">
                 @if (configVenta.customerDefault) {
@@ -32,13 +28,9 @@
               </div>
             </div>
 
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.articleDefault"
-                  >Artículo predeterminado</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.articleDefault">Artículo predeterminado</mat-slide-toggle>
               </div>
               <div class="col">
                 @if (configVenta.articleDefault) {
@@ -54,13 +46,10 @@
             </div>
             <mat-divider />
 
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
                 <mat-slide-toggle [(ngModel)]="configVenta.searchCode"
-                  >Búsqueda de artículo por Código de Barra en
-                  venta</mat-slide-toggle
+                  >Búsqueda de artículo por Código de Barra en venta</mat-slide-toggle
                 >
               </div>
               <div class="col">
@@ -69,14 +58,10 @@
                 >
               </div>
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.multipleVendedor"
-                  >Múltiples vendedores</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.multipleVendedor">Múltiples vendedores</mat-slide-toggle>
               </div>
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.detailDuplicate"
-                  >Duplicar artículo</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.detailDuplicate">Duplicar artículo</mat-slide-toggle>
               </div>
             </div>
             <mat-slide-toggle [(ngModel)]="configVenta.payAutomatic"
@@ -84,13 +69,9 @@
             >
             <mat-divider />
 
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.configDeuda"
-                  >Crédito Vencido de Clientes</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.configDeuda">Crédito Vencido de Clientes</mat-slide-toggle>
               </div>
               <div class="col">
                 @if (configVenta.configDeuda) {
@@ -100,36 +81,20 @@
                       (change)="onChangeConfigPorcentaje()"
                       aria-label="tipoConfig"
                     >
-                      <mat-radio-button value="PI"
-                        >Con Interes</mat-radio-button
-                      >
-                      <mat-radio-button value="PF"
-                        >Precio fijo</mat-radio-button
-                      >
+                      <mat-radio-button value="PI">Con Interes</mat-radio-button>
+                      <mat-radio-button value="PF">Precio fijo</mat-radio-button>
                     </mat-radio-group>
 
                     <div class="hstack gap-2">
-                    <mat-form-field>
-                      <mat-label>Interés</mat-label>
-                      <input
-                        type="number"
-                        matInput
-                        [(ngModel)]="configVenta.interes"
-                        placeholder="Ej: 20"
-                      />
-                    </mat-form-field>
+                      <mat-form-field>
+                        <mat-label>Interés</mat-label>
+                        <input type="number" matInput [(ngModel)]="configVenta.interes" placeholder="Ej: 20" />
+                      </mat-form-field>
                       <mat-form-field>
                         <mat-label>Días Gracia</mat-label>
-                        <input
-                          type="number"
-                          matInput
-                          [(ngModel)]="configVenta.diasGracia"
-                          placeholder="..."
-                        />
+                        <input type="number" matInput [(ngModel)]="configVenta.diasGracia" placeholder="..." />
                       </mat-form-field>
-
                     </div>
-
                   </div>
                 }
               </div>
@@ -137,13 +102,9 @@
 
             <mat-divider />
 
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configVenta.configCc"
-                  >Envió de copia de comprobantes</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configVenta.configCc">Envió de copia de comprobantes</mat-slide-toggle>
               </div>
               <div class="col">
                 @if (configVenta.configCc) {
@@ -153,18 +114,14 @@
             </div>
 
             <mat-divider />
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col"></div>
               <div class="col">
                 <mat-form-field class="w-100">
                   <mat-label>Forma de Pago Sri</mat-label>
                   <mat-select [(ngModel)]="configVenta.idFormaPagoSri">
                     @for (item of formasPagoSri(); track $index) {
-                      <mat-option [value]="item.idFormaPagoSri">{{
-                        item.descripcion
-                      }}</mat-option>
+                      <mat-option [value]="item.idFormaPagoSri">{{ item.descripcion }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -187,25 +144,17 @@
       <ng-template matTabContent>
         <div class="mx-3 mt-2">
           <div class="d-grid gap-2">
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
-                <mat-slide-toggle [(ngModel)]="configInventario.llevaInventario"
-                  >Control Inventario</mat-slide-toggle
-                >
+                <mat-slide-toggle [(ngModel)]="configInventario.llevaInventario">Control Inventario</mat-slide-toggle>
               </div>
               <div class="col">
                 @if (configInventario.llevaInventario) {
                   <mat-form-field class="w-100">
                     <!--                <mat-label>Forma de Pago Sri</mat-label>-->
-                    <mat-select
-                      [(ngModel)]="configInventario.idMetodoValoracion"
-                    >
+                    <mat-select [(ngModel)]="configInventario.idMetodoValoracion">
                       @for (item of metodosValoracion; track $index) {
-                        <mat-option [value]="item.idMetodoValoracion">{{
-                          item.descripcion
-                        }}</mat-option>
+                        <mat-option [value]="item.idMetodoValoracion">{{ item.descripcion }}</mat-option>
                       }
                     </mat-select>
                   </mat-form-field>
@@ -229,9 +178,7 @@
       <ng-template matTabContent>
         <div class="x-3 mt-2">
           <div class="d-grid gap-2">
-            <div
-              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
-            >
+            <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2">
               <div class="col">
                 <mat-card appearance="outlined">
                   <mat-card-header>
@@ -239,50 +186,29 @@
                   </mat-card-header>
                   <mat-card-content>
                     <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select
-                        [label]="'Precio'"
-                        [(value)]="decimalVenta.nroPrecio"
-                      />
+                      <app-decimal-select [label]="'Precio'" [(value)]="decimalVenta.nroPrecio" />
 
-                      <app-decimal-select
-                        [label]="'Cantidad'"
-                        [(value)]="decimalVenta.nroCantidad"
-                      />
+                      <app-decimal-select [label]="'Cantidad'" [(value)]="decimalVenta.nroCantidad" />
 
-                      <app-decimal-select
-                        [label]="'IVA'"
-                        [(value)]="decimalVenta.nroIva"
-                      />
+                      <app-decimal-select [label]="'IVA'" [(value)]="decimalVenta.nroIva" />
 
-                      <app-decimal-select
-                        [label]="'Descuento general'"
-                        [(value)]="decimalVenta.nroDescuento"
-                      />
+                      <app-decimal-select [label]="'Descuento general'" [(value)]="decimalVenta.nroDescuento" />
 
                       <app-decimal-select
                         [label]="'Descuento por artículo'"
                         [(value)]="decimalVenta.nroDescuentoDetalle"
                       />
 
-                      <app-decimal-select
-                        [label]="'Total detalle'"
-                        [(value)]="decimalVenta.nroTotalDetalle"
-                      />
+                      <app-decimal-select [label]="'Total detalle'" [(value)]="decimalVenta.nroTotalDetalle" />
 
                       <app-decimal-select
                         [label]="'SubTotales de comprobante'"
                         [(value)]="decimalVenta.nroTotalSubTotal"
                       />
 
-                      <app-decimal-select
-                        [label]="'ICE'"
-                        [(value)]="decimalVenta.nroIce"
-                      />
+                      <app-decimal-select [label]="'ICE'" [(value)]="decimalVenta.nroIce" />
 
-                      <app-decimal-select
-                        [label]="'Importe total'"
-                        [(value)]="decimalVenta.importeTotal"
-                      />
+                      <app-decimal-select [label]="'Importe total'" [(value)]="decimalVenta.importeTotal" />
                     </div>
                   </mat-card-content>
                 </mat-card>
@@ -294,45 +220,24 @@
                   </mat-card-header>
                   <mat-card-content>
                     <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select
-                        [label]="'Precio'"
-                        [(value)]="decimalCompra.nroPrecio"
-                      />
+                      <app-decimal-select [label]="'Precio'" [(value)]="decimalCompra.nroPrecio" />
 
-                      <app-decimal-select
-                        [label]="'Cantidad'"
-                        [(value)]="decimalCompra.nroCantidad"
-                      />
+                      <app-decimal-select [label]="'Cantidad'" [(value)]="decimalCompra.nroCantidad" />
 
-                      <app-decimal-select
-                        [label]="'IVA'"
-                        [(value)]="decimalCompra.nroIva"
-                      />
+                      <app-decimal-select [label]="'IVA'" [(value)]="decimalCompra.nroIva" />
 
-                      <app-decimal-select
-                        [label]="'Descuento general'"
-                        [(value)]="decimalCompra.nroDescuento"
-                      />
+                      <app-decimal-select [label]="'Descuento general'" [(value)]="decimalCompra.nroDescuento" />
 
                       <app-decimal-select
                         [label]="'Descuento por artículo'"
                         [(value)]="decimalCompra.nroDescuentoDetalle"
                       />
 
-                      <app-decimal-select
-                        [label]="'Total detalle'"
-                        [(value)]="decimalCompra.nroTotalDetalle"
-                      />
+                      <app-decimal-select [label]="'Total detalle'" [(value)]="decimalCompra.nroTotalDetalle" />
 
-                      <app-decimal-select
-                        [label]="'ICE'"
-                        [(value)]="decimalCompra.nroIce"
-                      />
+                      <app-decimal-select [label]="'ICE'" [(value)]="decimalCompra.nroIce" />
 
-                      <app-decimal-select
-                        [label]="'Totales y SubTotales'"
-                        [(value)]="decimalCompra.nroTotalSubTotal"
-                      />
+                      <app-decimal-select [label]="'Totales y SubTotales'" [(value)]="decimalCompra.nroTotalSubTotal" />
                     </div>
                   </mat-card-content>
                 </mat-card>
@@ -344,10 +249,7 @@
                   </mat-card-header>
                   <mat-card-content>
                     <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select
-                        [label]="'Precio'"
-                        [(value)]="decimalAlmacen.nroPrecio"
-                      />
+                      <app-decimal-select [label]="'Precio'" [(value)]="decimalAlmacen.nroPrecio" />
                     </div>
                   </mat-card-content>
                 </mat-card>
@@ -370,14 +272,9 @@
       <ng-template matTabContent>
         <div class="mx-3">
           <div class="d-grid gap-2">
-            <mat-selection-list
-              [(ngModel)]="notificacionesSelected"
-              (ngModelChange)="ngModelChangeNotifi($event)"
-            >
+            <mat-selection-list [(ngModel)]="notificacionesSelected" (ngModelChange)="ngModelChangeNotifi($event)">
               @for (item of notificaciones(); track $index) {
-                <mat-list-option [selected]="item.estado" [value]="item">{{
-                  item.notificacion
-                }}</mat-list-option>
+                <mat-list-option [selected]="item.estado" [value]="item">{{ item.notificacion }}</mat-list-option>
               }
             </mat-selection-list>
 

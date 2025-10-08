@@ -1,5 +1,4 @@
-import {ValidationException, ValueObject} from "@core/domain";
-
+import { ValidationException, ValueObject } from '@core/domain';
 
 export class ProductId extends ValueObject<number> {
   private constructor(value: number) {

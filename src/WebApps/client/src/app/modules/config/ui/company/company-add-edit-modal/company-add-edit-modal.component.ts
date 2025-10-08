@@ -1,16 +1,16 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatInputChipComponent} from "@shared/components/mat-input-chip/mat-input-chip.component";
-import {SEPARATOR_KEY_CODE} from "@core/constants/global.constants";
-import {UpdateCompanyUseCase} from "@modules/config/application/use-cases/company/update-company.use-case";
-import Swal from "sweetalert2";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
+import { UpdateCompanyUseCase } from '@modules/config/application/use-cases/company/update-company.use-case';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-company-add-edit-modal',
@@ -21,16 +21,16 @@ import Swal from "sweetalert2";
     ToUpperCaseDirective,
     ThemeButtonComponent,
     MatCustomDialogComponent,
-    MatInputChipComponent
+    MatInputChipComponent,
   ],
   templateUrl: './company-add-edit-modal.component.html',
   styles: ``,
 })
 export class CompanyAddEditModalComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<CompanyAddEditModalComponent>);
-  private params = inject(MAT_DIALOG_DATA)
+  private params = inject(MAT_DIALOG_DATA);
 
-  private $updateUseCase = inject(UpdateCompanyUseCase)
+  private $updateUseCase = inject(UpdateCompanyUseCase);
 
   data = {
     direccion: null as string | null,
@@ -40,44 +40,44 @@ export class CompanyAddEditModalComponent implements OnInit {
     email: null as string | null,
     telefono: null as string | null,
   };
-  emails = signal<string[]>([])
-  telefonos = signal<string[]>([])
+  emails = signal<string[]>([]);
+  telefonos = signal<string[]>([]);
 
   ngOnInit() {
     this.data = structuredClone(this.params);
-    this.emails.set(this.params.emails)
-    this.telefonos.set(this.params.telefonos)
+    this.emails.set(this.params.emails);
+    this.telefonos.set(this.params.telefonos);
   }
 
-  showSwal(icon:any, text: string){
+  showSwal(icon: any, text: string) {
     Swal.fire({
       icon: icon,
       text: text,
-    })
+    });
   }
   save() {
     if (!isValidField(this.data.ruc)) {
-      this.showSwal("warning", 'Ingrese número de ruc')
+      this.showSwal('warning', 'Ingrese número de ruc');
       return;
     }
 
     if (this.data.ruc?.slice(this.data.ruc?.length - 3) !== '001') {
-      this.showSwal("warning", 'Número de RUC tiene que contener (001) en últimos dígitos')
+      this.showSwal('warning', 'Número de RUC tiene que contener (001) en últimos dígitos');
       return;
     }
 
     if (!isValidField(this.data.razonSocial)) {
-      this.showSwal("warning",  'Ingrese Razón Social')
+      this.showSwal('warning', 'Ingrese Razón Social');
       return;
     }
 
     if (!isValidField(this.data.nombreComercial)) {
-      this.showSwal("warning",  'Ingrese Nombre Comercial')
+      this.showSwal('warning', 'Ingrese Nombre Comercial');
       return;
     }
 
-    if (this.emails().length>0 && this.emails().some(c=>!isValidEmail(c))) {
-      this.showSwal("warning", 'Correo inválido!')
+    if (this.emails().length > 0 && this.emails().some(c => !isValidEmail(c))) {
+      this.showSwal('warning', 'Correo inválido!');
       return;
     }
 
@@ -86,29 +86,30 @@ export class CompanyAddEditModalComponent implements OnInit {
       razonSocial: this.data.razonSocial,
       ruc: this.data.ruc,
       nombreComercial: this.data.nombreComercial,
-      telefono: this.telefonos().length > 0 ? this.telefonos().join(SEPARATOR_KEY_CODE.SLASH) : null,
+      telefono:
+        this.telefonos().length > 0 ? this.telefonos().join(SEPARATOR_KEY_CODE.SLASH) : null,
       //estado: true,
       email: this.emails().length > 0 ? this.emails().join(SEPARATOR_KEY_CODE.SLASH) : null,
       direccion: isValidField(this.data.direccion),
       //  idCiudad: 111
-    } as any
+    } as any;
 
-    this.$updateUseCase.execute(params).subscribe((response) => {
-        if (response.code === '0') {
-          this.showSwal('warning', response.message);
-        }
-        if (response.code === '1') {
-          Swal.fire({
-            icon: 'success',
-            text: response.message,
-            timer: 1000
-          })
-          this.dialogRef.close(response);
-        }
+    this.$updateUseCase.execute(params).subscribe(response => {
+      if (response.code === '0') {
+        this.showSwal('warning', response.message);
+      }
+      if (response.code === '1') {
+        Swal.fire({
+          icon: 'success',
+          text: response.message,
+          timer: 1000,
+        });
+        this.dialogRef.close(response);
+      }
     });
   }
 
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

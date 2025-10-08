@@ -1,17 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AuthRepository } from "../repositories/auth.repository";
-import { User } from "../models/user.model";
+import { AuthRepository } from '../repositories/auth.repository';
+import { User } from '../models/user.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthUseCase {
-  constructor(
-    private authRepository: AuthRepository,
-  ) {}
+  constructor(private authRepository: AuthRepository) {}
 
-  login(credentials: { username: string, password: string, userAgent: string }) {
-    return this.authRepository.login(credentials)
+  login(credentials: { username: string; password: string; userAgent: string }) {
+    return this.authRepository.login(credentials);
   }
 
   register(user: User) {

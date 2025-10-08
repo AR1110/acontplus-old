@@ -45,7 +45,7 @@ export class IngredientSearchComponent implements OnInit {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-      switchMap((val) => {
+      switchMap(val => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]

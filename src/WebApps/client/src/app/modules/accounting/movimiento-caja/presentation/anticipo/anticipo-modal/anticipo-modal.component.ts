@@ -1,4 +1,4 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -15,9 +15,9 @@ import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.
 import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatDialogRef} from "@angular/material/dialog";
-import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 
 @Component({
   selector: 'app-anticipo-modal',
@@ -41,21 +41,15 @@ export class AnticipoModalComponent implements OnInit {
 
   isSimpleModeCompanyCustomer = true;
 
-  private tempSubEntidadesFinanciera = signal<SubEntidadFinanciera[]>([])
-  establecimientos = signal<EstablecimientoSelectHtmlOnly[]>([])
+  private tempSubEntidadesFinanciera = signal<SubEntidadFinanciera[]>([]);
+  establecimientos = signal<EstablecimientoSelectHtmlOnly[]>([]);
   entidadesFinanciera = signal<EntidadFinanciera[]>([]);
   subEntidadesFinanciera = signal<SubEntidadFinanciera[]>([]);
 
   dataForm = new FormGroup({
-    idCliente: new FormControl(0, [
-      Validators.required,
-      this.greaterThanZeroValidator,
-    ]),
+    idCliente: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
     codEstab: new FormControl('', Validators.required),
-    idEntidadFinanciera: new FormControl(0, [
-      Validators.required,
-      this.greaterThanZeroValidator,
-    ]),
+    idEntidadFinanciera: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
     idSubEntidadFinanciera: new FormControl(0, [
       Validators.required,
       this.greaterThanZeroValidator,
@@ -64,9 +58,7 @@ export class AnticipoModalComponent implements OnInit {
     observaciones: new FormControl(''),
   });
 
-  greaterThanZeroValidator(
-    control: AbstractControl<number>,
-  ): ValidationErrors | null {
+  greaterThanZeroValidator(control: AbstractControl<number>): ValidationErrors | null {
     const value = control.value;
     if (value !== null && (isNaN(value) || value <= 0)) {
       return { lessThanZero: true }; // Validation failed
@@ -75,13 +67,11 @@ export class AnticipoModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._anticipoUseCase.getDataForm().subscribe((response) => {
-      const { establecimientos, entidadesFinanciera, subEntidadesFinanciera } =  response;
+    this._anticipoUseCase.getDataForm().subscribe(response => {
+      const { establecimientos, entidadesFinanciera, subEntidadesFinanciera } = response;
 
       this.establecimientos.set(establecimientos);
-      const dataEstab = this.establecimientos().find(
-        (estab) => estab.predeterminado,
-      );
+      const dataEstab = this.establecimientos().find(estab => estab.predeterminado);
       if (dataEstab) {
         this.dataForm.get('codEstab')?.setValue(dataEstab.codEstab);
       }
@@ -97,9 +87,9 @@ export class AnticipoModalComponent implements OnInit {
     const idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
     if (idEntidadFinanciera) {
       const subEntidadesFinanciera = this.tempSubEntidadesFinanciera().filter(
-        (ef) => ef.idEntidadFinanciera === idEntidadFinanciera,
+        ef => ef.idEntidadFinanciera === idEntidadFinanciera,
       );
-      this.subEntidadesFinanciera.set(subEntidadesFinanciera)
+      this.subEntidadesFinanciera.set(subEntidadesFinanciera);
     }
   }
 
@@ -122,7 +112,7 @@ export class AnticipoModalComponent implements OnInit {
         return;
       }
 
-      this._anticipoUseCase.create(params).subscribe((response) => {
+      this._anticipoUseCase.create(params).subscribe(response => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

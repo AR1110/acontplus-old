@@ -72,7 +72,7 @@ export class NgDynamicSelectComponent implements OnInit, OnDestroy {
     effect(() => {
       const value = this.selectedValue();
       if (value !== undefined && value !== null) {
-        const selectedOption = this.options().find((option) => option.value === value);
+        const selectedOption = this.options().find(option => option.value === value);
         if (selectedOption && this.selectControl.value !== selectedOption.value) {
           this.selectControl.setValue(selectedOption.value, {
             emitEvent: false,
@@ -85,7 +85,7 @@ export class NgDynamicSelectComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Handle initial value if provided
     if (this.selectedValue() !== undefined && this.selectedValue() !== null) {
-      const selectedOption = this.options().find((opt) => opt.value === this.selectedValue());
+      const selectedOption = this.options().find(opt => opt.value === this.selectedValue());
       if (selectedOption) {
         this.selectControl.setValue(selectedOption.value, { emitEvent: false });
       }

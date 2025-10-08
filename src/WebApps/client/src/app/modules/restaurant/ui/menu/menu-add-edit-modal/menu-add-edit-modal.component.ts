@@ -277,7 +277,7 @@ export class MenuAddEditModalComponent implements OnInit {
   ];
 
   getItems(id: number) {
-    this._menuItemService.getByMenu(id, { tipo: 1 }).subscribe((response) => {
+    this._menuItemService.getByMenu(id, { tipo: 1 }).subscribe(response => {
       this.productsAdded.set(response.menuItems);
       this.verifyUpdateCell(this.productsAdded());
     });
@@ -294,9 +294,9 @@ export class MenuAddEditModalComponent implements OnInit {
   }
 
   getTarifaById(productId: number, newMenuItem: any) {
-    this._menuItemService.getByMenu(0, { productId: productId, tipo: 2 }).subscribe((response) => {
+    this._menuItemService.getByMenu(0, { productId: productId, tipo: 2 }).subscribe(response => {
       if (response) {
-        const newFees = response['tarifas'];
+        const newFees = response.tarifas;
 
         newFees.forEach((e: any) => {
           if (e.precioPredeterminado) {
@@ -306,7 +306,7 @@ export class MenuAddEditModalComponent implements OnInit {
           }
         });
 
-        this.productsAdded().forEach((e) => {
+        this.productsAdded().forEach(e => {
           if (this.validation.includes(e.price)) {
             e.price = 0;
           }
@@ -317,13 +317,13 @@ export class MenuAddEditModalComponent implements OnInit {
         });
 
         newMenuItem.fees = JSON.stringify(newFees);
-        this.productsAdded.update((prev) => [...prev, newMenuItem]);
+        this.productsAdded.update(prev => [...prev, newMenuItem]);
       }
     });
   }
 
   removeFromList(itemId: number) {
-    this.productsAdded.update((prev) => prev.filter((x) => x.itemId !== itemId));
+    this.productsAdded.update(prev => prev.filter(x => x.itemId !== itemId));
   }
 
   ngOnInit() {
@@ -350,7 +350,7 @@ export class MenuAddEditModalComponent implements OnInit {
       menuItems: this.productsAdded(),
     };
 
-    this._menuService.put(this.data.id, { data: dataToSave }).subscribe((response) => {
+    this._menuService.put(this.data.id, { data: dataToSave }).subscribe(response => {
       this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
@@ -375,7 +375,7 @@ export class MenuAddEditModalComponent implements OnInit {
 
   generateDescription() {
     const summary = this.productsAdded()
-      .map((item) => item.quantity + ' ' + item.descripcion)
+      .map(item => item.quantity + ' ' + item.descripcion)
       .join(', ');
 
     this.menuForm.get('summary')?.setValue(summary);

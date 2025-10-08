@@ -1,16 +1,17 @@
 :root {
-  --body-font-family: 'Roboto', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial,
-    'Lucida Grande', sans-serif;
-  --code-font-family: 'Roboto Mono', monospace;
+  --body-font-family:
+    "Roboto", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande",
+    sans-serif;
+  --code-font-family: "Roboto Mono", monospace;
   --gutter: 1rem;
   --sidenav-width: 15rem;
   --sidenav-collapsed-width: 4rem;
   --body-background-color: var(--mat-sys-surface-container);
   --link-color: var(--mat-sys-primary);
   --link-hover-color: var(--mat-sys-primary);
-  --code-border-color: light-dark(rgba(19, 28, 43, .08), rgba(218, 226, 249, .08));
-  --code-background-color: light-dark(rgba(19, 28, 43, .04), rgba(218, 226, 249, .04));
-  --header-background-color: light-dark(rgba(239, 237, 240, .8), rgba(31, 32, 34, .8));
+  --code-border-color: light-dark(rgba(19, 28, 43, 0.08), rgba(218, 226, 249, 0.08));
+  --code-background-color: light-dark(rgba(19, 28, 43, 0.04), rgba(218, 226, 249, 0.04));
+  --header-background-color: light-dark(rgba(239, 237, 240, 0.8), rgba(31, 32, 34, 0.8));
   --user-panel-background-color: var(--mat-sys-surface-container);
   --user-panel-hover-background-color: var(--mat-sys-surface-variant);
   --sidemenu-heading-hover-background-color: var(--mat-sys-surface-container-highest);

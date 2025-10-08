@@ -60,10 +60,7 @@
       </ng-template>
       <ng-template #templateDefaultBodega let-item>
         @if (item.estado) {
-          <mat-slide-toggle
-            [(ngModel)]="item.defaultBodga"
-            (change)="onChangeBodegaDefault(item)"
-          ></mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="item.defaultBodga" (change)="onChangeBodegaDefault(item)"></mat-slide-toggle>
         }
       </ng-template>
     </app-mat-dynamic-card>

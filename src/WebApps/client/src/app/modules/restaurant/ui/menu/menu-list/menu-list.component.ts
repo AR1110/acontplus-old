@@ -26,7 +26,7 @@ export class MenuListComponent implements OnInit {
       pageSize: this.pagination().pageSize,
       tipo: 1,
     };
-    this._menuService.get(obj).subscribe((response) => {
+    this._menuService.get(obj).subscribe(response => {
       this.menus.set(response.menus);
       // this.pagination().totalRecords = this.menus[0]?.totalRecords ?? 0;
     });
@@ -42,7 +42,7 @@ export class MenuListComponent implements OnInit {
         size: 'xl',
         data: structuredClone(item),
       })
-      .subscribe((result) => {
+      .subscribe(result => {
         if (result && typeof result === 'object') {
           this.loadData();
         }

@@ -1,8 +1,6 @@
 <div
   class="acontplus-container-wrap"
-  [class.acontplus-sidenav-collapsed]="
-    options.sidenavCollapsed && options.navPos !== 'top'
-  "
+  [class.acontplus-sidenav-collapsed]="options.sidenavCollapsed && options.navPos !== 'top'"
   [class.acontplus-navbar-side]="options.navPos === 'side'"
   [class.acontplus-navbar-top]="options.navPos === 'top'"
   [class.acontplus-header-above]="options.headerPos === 'above'"
@@ -20,11 +18,7 @@
     />
   }
 
-  <mat-sidenav-container
-    class="acontplus-container"
-    autosize
-    autoFocus
-  >
+  <mat-sidenav-container class="acontplus-container" autosize autoFocus>
     <mat-sidenav
       #sidenav
       class="acontplus-sidenav"
@@ -43,18 +37,11 @@
       />
     </mat-sidenav>
 
-    <mat-sidenav
-      #sidenavNotice
-      position="end"
-      mode="over"
-    >
+    <mat-sidenav #sidenavNotice position="end" mode="over">
       <app-sidebar-notice />
     </mat-sidenav>
 
-    <mat-sidenav-content
-      #content
-      class="acontplus-content"
-    >
+    <mat-sidenav-content #content class="acontplus-content">
       @if (options.showHeader && options.headerPos !== 'above') {
         <app-header
           [showToggle]="!options.sidenavCollapsed && options.navPos !== 'top'"

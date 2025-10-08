@@ -4,8 +4,6 @@
   [title]="modalTitle"
   (close)="close()"
   [icon]="modalIcon"
-
-
 />
 <ng-template #body>
   <div class="row">
@@ -73,12 +71,7 @@
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
         <label for="typePrinter">Tipo Impresora </label>
-        <select
-          class="form-select"
-          id="typePrinter"
-          [(ngModel)]="data.printerTypeId"
-          required
-        >
+        <select class="form-select" id="typePrinter" [(ngModel)]="data.printerTypeId" required>
           <option [ngValue]="0">Seleccione un tipo</option>
           @for (item of printerTypes(); track $index) {
             <option [ngValue]="item.id">
@@ -133,16 +126,12 @@
   <div class="row">
     <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
-        <mat-slide-toggle [(ngModel)]="data.isDefault"
-        >Predeterminada</mat-slide-toggle
-        >
+        <mat-slide-toggle [(ngModel)]="data.isDefault">Predeterminada</mat-slide-toggle>
       </div>
     </div>
     <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
-        <mat-slide-toggle id="serverDevice" [(ngModel)]="data.serverDevice"
-        >Servidor</mat-slide-toggle
-        >
+        <mat-slide-toggle id="serverDevice" [(ngModel)]="data.serverDevice">Servidor</mat-slide-toggle>
       </div>
     </div>
   </div>
@@ -150,12 +139,12 @@
   <div class="table-responsive">
     <table class="table">
       <thead>
-      <tr class="small">
-        <th class="text-center">N°</th>
-        <th>Documento</th>
-        <th class="text-center">Estado</th>
-        <th class="text-center">Copia</th>
-      </tr>
+        <tr class="small">
+          <th class="text-center">N°</th>
+          <th>Documento</th>
+          <th class="text-center">Estado</th>
+          <th class="text-center">Copia</th>
+        </tr>
       </thead>
       <tbody>
         @for (item of documents(); track $index) {
@@ -163,10 +152,7 @@
             <td class="text-center">{{ $index + 1 }}</td>
             <td>{{ item.name }}</td>
             <td class="text-center">
-              <mat-slide-toggle
-                [(ngModel)]="item.isActive"
-                (change)="updateDocument(item)"
-              ></mat-slide-toggle>
+              <mat-slide-toggle [(ngModel)]="item.isActive" (change)="updateDocument(item)"></mat-slide-toggle>
             </td>
             <td class="text-center">
               @if (item.isActive) {
@@ -188,10 +174,5 @@
   </div>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
-    variant="success"
-    icon="save"
-    text="Guardar"
-    (handleClick)="saveEdit()"
-  />
+  <app-theme-button variant="success" icon="save" text="Guardar" (handleClick)="saveEdit()" />
 </ng-template>

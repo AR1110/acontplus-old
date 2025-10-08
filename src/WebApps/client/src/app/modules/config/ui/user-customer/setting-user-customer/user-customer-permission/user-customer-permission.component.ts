@@ -1,31 +1,24 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {
-  ListUserCustomerPermissionUseCase
-} from "@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case";
-import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
-import {  MatTableModule
-} from "@angular/material/table";
-import {FlatTreeControl} from "@angular/cdk/tree";
-import {MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule} from "@angular/material/tree";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {
-  CreateUserCustomerPermissionUseCase
-} from "@modules/config/application/use-cases/user-customer-permission/create-user-customer-permission.use-case";
-import {ApiResponse} from "@core/models/api-response";
-import Swal from "sweetalert2";
-import {UserCustomerPermission} from "@modules/config/domain/models/user-customer/user-customer-permission.model";
-import {
-  UpdateUserCustomerPermissionUseCase
-} from "@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case";
-import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
-import {getValidId} from "@core/utils/utils";
+import { Component, inject, OnInit } from '@angular/core';
+import { ListUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case';
+import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
+import { MatTableModule } from '@angular/material/table';
+import { FlatTreeControl } from '@angular/cdk/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { CreateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/create-user-customer-permission.use-case';
+import { ApiResponse } from '@core/models/api-response';
+import Swal from 'sweetalert2';
+import { UserCustomerPermission } from '@modules/config/domain/models/user-customer/user-customer-permission.model';
+import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';
+import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { getValidId } from '@core/utils/utils';
 
 interface ModuleNode {
   name: string;
@@ -41,7 +34,6 @@ interface ModuleNode {
   expanded?: boolean;
 }
 
-
 @Component({
   selector: 'app-user-customer-permission',
   imports: [
@@ -55,25 +47,24 @@ interface ModuleNode {
     MatSelectModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatTreeModule
+    MatTreeModule,
   ],
   templateUrl: './user-customer-permission.component.html',
   styles: `
-
-    .mat-column-securityType  {
+    .mat-column-securityType {
       width: 400px;
     }
-  `
+  `,
 })
 export class UserCustomerPermissionComponent implements OnInit {
-  private $listUseCase = inject(ListUserCustomerPermissionUseCase)
-  private $createUseCase = inject(CreateUserCustomerPermissionUseCase)
-  private $updateUseCase = inject(UpdateUserCustomerPermissionUseCase)
-  private $userCustomerStore =inject(UserCustomerStore)
+  private $listUseCase = inject(ListUserCustomerPermissionUseCase);
+  private $createUseCase = inject(CreateUserCustomerPermissionUseCase);
+  private $updateUseCase = inject(UpdateUserCustomerPermissionUseCase);
+  private $userCustomerStore = inject(UserCustomerStore);
 
   userPermissionData = {} as UserCustomerPermission;
   usersCustomerAdmin: UserCustomerRole[] = [];
-  displayedColumns: string[] = ['index','name', 'status', 'securityType'];
+  displayedColumns: string[] = ['index', 'name', 'status', 'securityType'];
 
   private transformer = (node: any, level: number) => {
     return {
@@ -86,81 +77,86 @@ export class UserCustomerPermissionComponent implements OnInit {
       id: node.id,
       enabled: node.enabled,
       requiresKey: node.requiresKey,
-      users: node.users
+      users: node.users,
     };
-  }
+  };
 
   treeControl = new FlatTreeControl<any>(
-    node => node.level, node => node.expandable);
+    node => node.level,
+    node => node.expandable,
+  );
 
   treeFlattener = new MatTreeFlattener(
-    this.transformer, node => node.level,
-    node => node.expandable, node => node.children);
+    this.transformer,
+    node => node.level,
+    node => node.expandable,
+    node => node.children,
+  );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-
-
-  refresh(){
-    this.getList()
+  refresh() {
+    this.getList();
   }
 
-  private getList(){
-    this.$listUseCase.execute({
-      userRoleId: this.$userCustomerStore.userRoleId()
-    }).subscribe(response=>{
-      this.dataSource.data = response.userCustomPermissions
-      this.userPermissionData = response.userPermissionData;
-      this.usersCustomerAdmin = response.usersCustomerAdmin;
-
-    })
+  private getList() {
+    this.$listUseCase
+      .execute({
+        userRoleId: this.$userCustomerStore.userRoleId(),
+      })
+      .subscribe(response => {
+        this.dataSource.data = response.userCustomPermissions;
+        this.userPermissionData = response.userPermissionData;
+        this.usersCustomerAdmin = response.usersCustomerAdmin;
+      });
   }
-
-
 
   ngOnInit(): void {
-    this.getList()
+    this.getList();
   }
 
-
-  private successResponse = (response:ApiResponse)=>{
-    if(response.code==="0"){
+  private successResponse = (response: ApiResponse) => {
+    if (response.code === '0') {
       Swal.fire({
         icon: 'warning',
         html: response.message,
-
-      })
+      });
     }
-    if(response.code==="1"){
+    if (response.code === '1') {
       Swal.fire({
         icon: 'success',
         html: response.message,
-        timer: 1000
-      })
-      this.getList()
+        timer: 1000,
+      });
+      this.getList();
     }
-  }
+  };
 
-  save(){
-   const permissionsFiltered =  this.treeControl.dataNodes.filter(item=>item.level===1 && item.enabled)
+  save() {
+    const permissionsFiltered = this.treeControl.dataNodes.filter(
+      item => item.level === 1 && item.enabled,
+    );
 
-
-    if (permissionsFiltered.some(({ securityType, users }) => securityType === 2 && (!users || users.length === 0))) {
+    if (
+      permissionsFiltered.some(
+        ({ securityType, users }) => securityType === 2 && (!users || users.length === 0),
+      )
+    ) {
       Swal.fire({
         icon: 'warning',
-        html: `<small>Hay una acción que requiere la selección de al menos un usuario aprobador antes de continuar.</small>`
+        html: `<small>Hay una acción que requiere la selección de al menos un usuario aprobador antes de continuar.</small>`,
       });
       return;
     }
 
-   const permissionsData = permissionsFiltered.map((item:any)=>{
+    const permissionsData = permissionsFiltered.map((item: any) => {
       return {
         userCustomPermissionId: item.id,
         enabled: item.enabled,
         requiresKey: item.requiresKey,
-        users: item.users || []
-      }
-    })
+        users: item.users || [],
+      };
+    });
     // if(permissionsData.length===0){
     //   Swal.fire({
     //     icon: 'warning',
@@ -172,18 +168,15 @@ export class UserCustomerPermissionComponent implements OnInit {
     const params = {
       userRoleId: this.$userCustomerStore.userRoleId(),
       permissionsData,
-      id: this.userPermissionData.idUserPermission
+      id: this.userPermissionData.idUserPermission,
+    };
+
+    if (getValidId(this.userPermissionData.idUserPermission)) {
+      this.$updateUseCase.execute(params).subscribe(this.successResponse);
     }
 
-    if(getValidId(this.userPermissionData.idUserPermission)){
-      this.$updateUseCase.execute(params).subscribe(this.successResponse)
+    if (!getValidId(this.userPermissionData.idUserPermission)) {
+      this.$createUseCase.execute(params).subscribe(this.successResponse);
     }
-
-    if(!getValidId(this.userPermissionData.idUserPermission)){
-      this.$createUseCase.execute(params).subscribe(this.successResponse)
-    }
-
-
   }
-
 }

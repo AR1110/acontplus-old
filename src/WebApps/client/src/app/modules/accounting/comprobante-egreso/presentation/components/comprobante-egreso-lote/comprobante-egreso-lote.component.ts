@@ -22,12 +22,10 @@ import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-po
 import Swal from 'sweetalert2';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
-import {
-  obtenerCuotasPorPagarEstadoUtil,
-} from "@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuotas-por-pagar-estado.util";
-import {obtenerCuentasPorPagarEstado} from "@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuentas-por-pagar-estado.util";
+import { obtenerCuotasPorPagarEstadoUtil } from '@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuotas-por-pagar-estado.util';
+import { obtenerCuentasPorPagarEstado } from '@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuentas-por-pagar-estado.util';
 import { FormsModule } from '@angular/forms';
-import {ComprobanteEgresoUseCase} from "@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case";
+import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote',
@@ -56,9 +54,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
   private dialogSvc = inject(DialogService);
   private tS = inject(ToastrNotificationService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
-  private useCase = inject(ComprobanteEgresoUseCase)
-
-
+  private useCase = inject(ComprobanteEgresoUseCase);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -68,7 +64,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     { key: 'saldo', label: 'Saldo', type: 'number' },
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   cuentaPorPagarColumnsDefs: ColumnDefinition[] = [
     { key: 'nombreDoc', label: 'Op.', type: 'string' },
@@ -76,9 +72,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'expand', label: '', type: 'string' },
   ];
-  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map(
-    (colDef) => colDef.key,
-  );
+  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map(colDef => colDef.key);
 
   ngOnInit() {
     this.comprobanteEgresoStore.updateMultipleFields({
@@ -86,9 +80,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
       cuentasPorPagar: structuredClone(this.data.cuentasPorPagar),
       cuentasPorPagarCopy: structuredClone(this.data.cuentasPorPagar),
     });
-    this.comprobanteEgresoStore.loadDataForm(
-      this.data.dataCuentaPorPagar.idProveedor as number,
-    );
+    this.comprobanteEgresoStore.loadDataForm(this.data.dataCuentaPorPagar.idProveedor as number);
   }
 
   openFormaPago(row: EntidadFinanciera) {
@@ -110,13 +102,13 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     // Filtrar los pagos relacionados con la cuota seleccionada
     const tempPagosDetalle = this.comprobanteEgresoStore
       .pagosDetalle()
-      .filter((item) => item.idCuotaPorPagar === data.idCuotaPorPagar);
+      .filter(item => item.idCuotaPorPagar === data.idCuotaPorPagar);
 
     // Construir el detalle de los pagos con la información adicional
-    const infoPagosDetalle = tempPagosDetalle.map((pd) => {
+    const infoPagosDetalle = tempPagosDetalle.map(pd => {
       const dataPago = this.comprobanteEgresoStore
         .formasPago()
-        .find((item) => item.secuencial === pd.secuencial);
+        .find(item => item.secuencial === pd.secuencial);
 
       return {
         ...pd,
@@ -163,50 +155,49 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     });
   }
 
-
   async save() {
-    const { formasPago, pagosDetalle, cuentasPorPagarHistorial, estadosPago } = this.comprobanteEgresoStore;
+    const { formasPago, pagosDetalle, cuentasPorPagarHistorial, estadosPago } =
+      this.comprobanteEgresoStore;
 
     const cuentasPorPagarEstado = obtenerCuentasPorPagarEstado({
       pagosDetalle: pagosDetalle(),
       cuentasPorPagarHistorial: cuentasPorPagarHistorial(),
       estadosPago: estadosPago(),
-    })
-
+    });
 
     const cuotasPorPagarEstado = obtenerCuotasPorPagarEstadoUtil({
       pagosDetalle: pagosDetalle(),
-      estadosPago: estadosPago()
-    })
+      estadosPago: estadosPago(),
+    });
 
-    const valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0)
-    const totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0)
+    const valorAbonoInput = formasPago().reduce((acc, curr) => acc + curr.valorAbonoInput, 0);
+    const totalAbonoCuota = formasPago().reduce((acc, curr) => acc + curr.abono, 0);
 
     if (formasPago().length === 0) {
       this.tS.show({
         type: 'warning',
-        message: 'Ingrese al menos una forma de pago'
-      })
-      return
+        message: 'Ingrese al menos una forma de pago',
+      });
+      return;
     }
 
     // Filtrar las secuencias que no existen en los datos de referencia
-    const secuenciasInvalidas = formasPago().filter(dato =>
-      !pagosDetalle().some(referencia => referencia.secuencial === dato.secuencial)
+    const secuenciasInvalidas = formasPago().filter(
+      dato => !pagosDetalle().some(referencia => referencia.secuencial === dato.secuencial),
     );
 
     if (secuenciasInvalidas.length > 0) {
       this.tS.show({
         type: 'warning',
-        message: 'Se encontraron secuencias inválidas'
-      })
-      return
+        message: 'Se encontraron secuencias inválidas',
+      });
+      return;
     }
 
     if (valorAbonoInput <= 0) {
       this.tS.show({
         type: 'warning',
-        message: 'El abono ingresado en las formas de pago no puede ser igual o menor a 0.'
+        message: 'El abono ingresado en las formas de pago no puede ser igual o menor a 0.',
       });
       return;
     }
@@ -214,26 +205,24 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     if (totalAbonoCuota <= 0) {
       this.tS.show({
         type: 'warning',
-        message: 'El abono de la cuota ingresado en las formas de pago no puede ser igual o menor a 0.'
+        message:
+          'El abono de la cuota ingresado en las formas de pago no puede ser igual o menor a 0.',
       });
       return;
     }
 
-
-
     const { isConfirmed } = await Swal.fire({
       title: '<small>Guardar Pago</small>',
-      html: "¿Estas seguro de guardar este pago ahora? ",
+      html: '¿Estas seguro de guardar este pago ahora? ',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, guardar!',
-      cancelButtonText: 'No, cancelar!'
-    })
+      cancelButtonText: 'No, cancelar!',
+    });
 
-    if (!isConfirmed) return
-
+    if (!isConfirmed) return;
 
     const data = {
       dataCuentaPorPagar: this.comprobanteEgresoStore.dataCuentaPorPagar(),
@@ -242,35 +231,27 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
       pagosDetalle: pagosDetalle(),
       cuentasPorPagarEstado,
       cuotasPorPagarEstado,
-      cuentasPorPagarHistorial: cuentasPorPagarHistorial()
-    }
+      cuentasPorPagarHistorial: cuentasPorPagarHistorial(),
+    };
 
-
-    this.useCase.post(data).subscribe(response=>{
-      if(response.code==="0"){
+    this.useCase.post(data).subscribe(response => {
+      if (response.code === '0') {
         this.tS.show({
           type: 'warning',
-          message: response.message
-        })
+          message: response.message,
+        });
       }
 
-      if(response.code==="1"){
+      if (response.code === '1') {
         this.tS.show({
           type: 'success',
-          message: response.message
-        })
+          message: response.message,
+        });
         this.dialogRef.close({
-          isSave: true
-        })
+          isSave: true,
+        });
       }
-
-
-    })
-
-
-
-
-
+    });
   }
 
   closeDialog() {

@@ -1,4 +1,1 @@
-export class TableMapper {
-
-
-}
+export class TableMapper {}

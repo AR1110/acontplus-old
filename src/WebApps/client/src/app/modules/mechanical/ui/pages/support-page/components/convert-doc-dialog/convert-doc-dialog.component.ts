@@ -1,4 +1,4 @@
-import {Component, inject, signal, ViewChild, AfterViewInit, OnInit} from '@angular/core';
+import { Component, inject, signal, ViewChild, AfterViewInit, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -28,12 +28,7 @@ import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
 
 @Component({
   selector: 'app-convert-doc-dialog',
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatCustomDialogComponent,
-    TabulatorComponent,
-  ],
+  imports: [MatButtonModule, MatIconModule, MatCustomDialogComponent, TabulatorComponent],
   templateUrl: './convert-doc-dialog.component.html',
   styles: ``,
 })
@@ -89,7 +84,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
     total: 0,
   };
 
-  details  = signal<SupportDetail[]>([]);
+  details = signal<SupportDetail[]>([]);
 
   infoAdicionalDoc = signal<any[]>([]);
 
@@ -135,7 +130,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No!',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
           const index = this.infoAdicionalDoc().indexOf(data);
           this.infoAdicionalDoc().splice(index, 1);
@@ -210,7 +205,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
     //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
     if (this.params.formasPagoSri.length > 0) {
-      const dataFormaPago = this.params.formasPagoSri.find((item) => {
+      const dataFormaPago = this.params.formasPagoSri.find(item => {
         if (this.params.config.idFormaPagoSri > 0) {
           return item.idFormaPagoSri === this.params.config.idFormaPagoSri;
         } else {
@@ -233,21 +228,16 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
     const adicionalVehicle = this.convertToKeyName(vehicle);
     const adicionalInspection = this.convertToKeyName(inspection);
-    this.infoAdicionalDoc.set([...adicionalVehicle, ...adicionalInspection])
+    this.infoAdicionalDoc.set([...adicionalVehicle, ...adicionalInspection]);
   }
 
   protected generateSubTotals() {
     try {
-      const {
-        subTotalSinImpuesto,
-        importeTotal,
-        discount,
-        percentageDiscount,
-        propina,
-      } = this.salesDetailCalculationSvc.getTaxTotals({
-        items: this.details(),
-        tarifasImpuesto: this.params.taxPercents,
-      });
+      const { subTotalSinImpuesto, importeTotal, discount, percentageDiscount, propina } =
+        this.salesDetailCalculationSvc.getTaxTotals({
+          items: this.details(),
+          tarifasImpuesto: this.params.taxPercents,
+        });
 
       this.data.subTotalSinImpuesto = subTotalSinImpuesto;
       this.data.total = importeTotal;
@@ -298,8 +288,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
       });
       return;
     }
@@ -361,16 +350,15 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
       return;
     }
 
-    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
+    if (this.details().some(row => row.llevaInventario && row.quantity === 0)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
+        message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
       });
       return;
     }
 
-    if (this.details().some((row) => !(row.bodegaId > 0))) {
+    if (this.details().some(row => !(row.bodegaId > 0))) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -452,7 +440,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
       if (!isConfirmed) return;
 
-      const details = this.details().map((item) => {
+      const details = this.details().map(item => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -469,8 +457,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         supportId: this.data.supportId,
       };
 
-      const selectedData =
-        this.tabulatorComponent.refTabulator.getSelectedData();
+      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
 
       const params = {
         comprobante,
@@ -521,7 +508,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
       if (!isConfirmed) return;
 
-      const details = this.details().map((item) => {
+      const details = this.details().map(item => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -538,8 +525,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         supportId: this.data.supportId,
       };
 
-      const selectedData =
-        this.tabulatorComponent.refTabulator.getSelectedData();
+      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
 
       const params = {
         comprobante,

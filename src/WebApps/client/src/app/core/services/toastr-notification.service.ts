@@ -6,8 +6,9 @@ export type ToastrType = 'success' | 'error' | 'warning' | 'info';
 
 export type ToastrNotificationConfig = Partial<IndividualConfig>;
 
-export const TOASTR_NOTIFICATION_CONFIG =
-  new InjectionToken<ToastrNotificationConfig>('toastr-notification-config', {
+export const TOASTR_NOTIFICATION_CONFIG = new InjectionToken<ToastrNotificationConfig>(
+  'toastr-notification-config',
+  {
     // Default configuration if none is provided at the project level
     providedIn: 'root',
     factory: () => ({
@@ -17,7 +18,8 @@ export const TOASTR_NOTIFICATION_CONFIG =
       closeButton: true,
       newestOnTop: true,
     }),
-  });
+  },
+);
 
 export interface ToastrCallProps {
   message: string;

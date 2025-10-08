@@ -1,6 +1,9 @@
 import { Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
-import {FractionalProductDataGetId, FractionalProductDataSave} from "@inventory/product/domain/entities/fractional-product.model";
+import {
+  FractionalProductDataGetId,
+  FractionalProductDataSave,
+} from '@inventory/product/domain/entities/fractional-product.model';
 
 export abstract class FractionalProductRepository {
   abstract getAll<T>(obj: T): Observable<any>;
@@ -9,5 +12,3 @@ export abstract class FractionalProductRepository {
   abstract put(obj: FractionalProductDataSave): Observable<ApiResponse>;
   // abstract getId(id:number): Observable<ApiResponse>;
 }
-
-

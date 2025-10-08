@@ -17,15 +17,14 @@
         }
       ],
       "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
+        {
+          "name": "ASPNETCORE__ENVIRONMENT",
+          "value": "${ENVIRONMENT}"
+        },
         {
           "name": "AllowedCorsOrigins",
           "value": "http://localhost,http://localhost:8000,https://restaurant.acontplus.com,https://acontplus.com"
         },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" },
         {
           "name": "S3Bucket__Name",
           "value": "acontplusprd"
@@ -39,10 +38,6 @@
         {
           "name": "JwtSettings__SecurityKey",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-        },
-        {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
@@ -69,7 +64,9 @@
       }
     }
   ],
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "256",
   "memory": "512"
 }

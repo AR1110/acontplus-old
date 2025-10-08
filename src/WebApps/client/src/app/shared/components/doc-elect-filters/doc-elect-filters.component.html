@@ -2,11 +2,7 @@
   <div class="row mb-3">
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
       @if (this.filterOptions().showButtonNew()) {
-        <app-theme-button
-          icon="add"
-          text="Registrar"
-          (handleClick)="onDialogOpen()"
-        ></app-theme-button>
+        <app-theme-button icon="add" text="Registrar" (handleClick)="onDialogOpen()"></app-theme-button>
       }
     </div>
     <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 col-6 d-flex">
@@ -15,9 +11,7 @@
           matStyle="icon"
           variant="info"
           [icon]="showMoreOptions() ? 'visibility_off' : 'visibility'"
-          [matTooltip]="
-            showMoreOptions() ? 'Ocultar Opciones' : 'Ver más opciones'
-          "
+          [matTooltip]="showMoreOptions() ? 'Ocultar Opciones' : 'Ver más opciones'"
           (click)="onMoreOptionsClick()"
         >
           <mat-icon>visibility</mat-icon>
@@ -36,20 +30,14 @@
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Establecimiento</mat-label>
-        <mat-select
-          formControlName="idEstablecimiento"
-          (selectionChange)="onEstabChange()"
-        >
+        <mat-select formControlName="idEstablecimiento" (selectionChange)="onEstabChange()">
           @for (item of establecimientos(); track $index) {
             <mat-option [value]="item.idEstablecimiento">
               {{ item.nombreComercial }}
             </mat-option>
           }
         </mat-select>
-        @if (
-          filterForm.get("codEstab")?.invalid &&
-          filterForm.get("codEstab")?.touched
-        ) {
+        @if (filterForm.get('codEstab')?.invalid && filterForm.get('codEstab')?.touched) {
           <mat-error> Campo requerido </mat-error>
         }
       </mat-form-field>
@@ -57,20 +45,14 @@
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Punto de Emisión</mat-label>
-        <mat-select
-          formControlName="idPuntoEmision"
-          (selectionChange)="reload()"
-        >
+        <mat-select formControlName="idPuntoEmision" (selectionChange)="reload()">
           @for (item of puntosEmision(); track item.idPuntoEmision) {
             <mat-option [value]="item.idPuntoEmision">
               {{ item.ptoEmi }}
             </mat-option>
           }
         </mat-select>
-        @if (
-          filterForm.get("idPuntoEmision")?.invalid &&
-          filterForm.get("idPuntoEmision")?.touched
-        ) {
+        @if (filterForm.get('idPuntoEmision')?.invalid && filterForm.get('idPuntoEmision')?.touched) {
           <mat-error> Campo requerido </mat-error>
         }
       </mat-form-field>
@@ -92,9 +74,7 @@
       @if (this.filterOptions().showPersonSearch()) {
         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
           @if (this.filterOptions().personType()) {
-            <app-supplier-search
-              (supplierSelected)="onSelectSupplierHandler($event)"
-            ></app-supplier-search>
+            <app-supplier-search (supplierSelected)="onSelectSupplierHandler($event)"></app-supplier-search>
           } @else {
             <app-company-customer-search
               [isSimpleMode]="true"
@@ -118,32 +98,21 @@
       <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Nro. Documento</mat-label>
-          <input
-            matInput
-            formControlName="nroSecuencial"
-            placeholder="Ej: 123 o 1-30"
-          />
+          <input matInput formControlName="nroSecuencial" placeholder="Ej: 123 o 1-30" />
         </mat-form-field>
       </div>
 
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Dato Adicional</mat-label>
-          <input
-            matInput
-            formControlName="infoAdicional"
-            placeholder="Ej: SERIE"
-          />
+          <input matInput formControlName="infoAdicional" placeholder="Ej: SERIE" />
         </mat-form-field>
       </div>
       @if (this.filterOptions().showTipoDocumento()) {
         <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>Tipo Documento:</mat-label>
-            <mat-select
-              formControlName="idTipoDocumento"
-              (selectionChange)="reload()"
-            >
+            <mat-select formControlName="idTipoDocumento" (selectionChange)="reload()">
               <mat-option value="">Todos</mat-option>
               @for (item of tipoDocumentos(); track item.idTipoDocumento) {
                 <mat-option [value]="item.idTipoDocumento">
@@ -157,10 +126,7 @@
       <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Estado</mat-label>
-          <mat-select
-            formControlName="idEstadoServicio"
-            (selectionChange)="reload()"
-          >
+          <mat-select formControlName="idEstadoServicio" (selectionChange)="reload()">
             <mat-option value="">Todos</mat-option>
             @for (item of estadoDocumentos(); track item.idEstadoServicio) {
               <mat-option [value]="item.idEstadoServicio">

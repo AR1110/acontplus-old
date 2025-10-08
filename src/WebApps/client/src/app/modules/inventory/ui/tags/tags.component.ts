@@ -12,33 +12,27 @@ import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edi
 import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import {TagUseCase} from "@inventory/domain/usecases/tag.use-case";
+import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
 
 @Component({
-    selector: 'app-tags',
-    imports: [
-        BreadcrumbComponent,
-        PrimaryStatusPipe,
-        MatButtonModule,
-        MatCardModule,
-        MatIconModule,
-        MatTableModule,
-        CustomTableContainerComponent,
-        TagsAddEditModalDirective,
-    ],
-    templateUrl: './tags.component.html',
-    styles: ``
+  selector: 'app-tags',
+  imports: [
+    BreadcrumbComponent,
+    PrimaryStatusPipe,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatTableModule,
+    CustomTableContainerComponent,
+    TagsAddEditModalDirective,
+  ],
+  templateUrl: './tags.component.html',
+  styles: ``,
 })
 export class TagsComponent implements OnInit {
-  private _tagUseCase= inject(TagUseCase);
+  private _tagUseCase = inject(TagUseCase);
   pagination = signal(new MatPagination());
-  visibleColumns: string[] = [
-    'index',
-    'op',
-    'description',
-    'etiquetas',
-    'estado',
-  ];
+  visibleColumns: string[] = ['index', 'op', 'description', 'etiquetas', 'estado'];
   dataSource = signal<any[]>([]);
   isLoadingResults = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -53,11 +47,11 @@ export class TagsComponent implements OnInit {
     };
     this.isLoadingResults = true;
     this._tagUseCase.getAll(params).subscribe({
-      next: (response) => {
+      next: response => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tags);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => {
+          this.pagination.update(e => {
             return {
               ...e,
               totalRecords: this.dataSource()[0].totalRecords,
@@ -79,7 +73,7 @@ export class TagsComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -100,9 +94,9 @@ export class TagsComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe((response) => {
+          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe(response => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

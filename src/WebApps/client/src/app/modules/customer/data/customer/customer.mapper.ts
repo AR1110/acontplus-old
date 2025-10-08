@@ -1,10 +1,8 @@
-
-
 export class CustomerMapper {
-  static fromApiGetAll(response:any){
+  static fromApiGetAll(response: any) {
     const { anticipos } = response;
 
-    return  anticipos.map((anticipo:any) => {
+    return anticipos.map((anticipo: any) => {
       return {
         idAnticipo: anticipo.idAnticipo,
         idTipoDocumento: anticipo.idTipoDocumento,
@@ -21,7 +19,7 @@ export class CustomerMapper {
         usuario: anticipo.usuario,
         identificacionUsuario: anticipo.identificacionUsuario,
         totalRecords: anticipo.totalRecords,
-      }
-    })
+      };
+    });
   }
 }

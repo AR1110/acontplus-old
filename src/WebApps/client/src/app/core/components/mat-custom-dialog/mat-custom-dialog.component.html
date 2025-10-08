@@ -1,28 +1,13 @@
 @if (showHeader()) {
   <div class="m3-dialog-header">
-    <h6
-      mat-dialog-title
-      cdkDrag
-      cdkDragRootElement=".cdk-overlay-pane"
-      cdkDragHandle
-      (mousedown)="toTop(unique)"
-    >
+    <h6 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle (mousedown)="toTop(unique)">
       @if (icon()) {
-        <mat-icon
-          aria-hidden="false"
-          aria-label="Dialog Icon"
-          fontIcon="{{ icon() }}"
-        ></mat-icon>
+        <mat-icon aria-hidden="false" aria-label="Dialog Icon" fontIcon="{{ icon() }}"></mat-icon>
       }
 
       {{ title() }}
 
-      <button
-        type="button"
-        mat-icon-button
-        class="close-button"
-        (click)="close.emit()"
-      >
+      <button type="button" mat-icon-button class="close-button" (click)="close.emit()">
         <mat-icon>close</mat-icon>
       </button>
     </h6>

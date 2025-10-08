@@ -1,15 +1,15 @@
-import { PURCHASE_CODE_REPORT } from "@purchase/domain/enums/purchase.constants";
-import { REPORT_FORMAT } from "@core/constants/global.constants";
-import { ACCOUNTING_CODE_REPORT } from "@accounting/shared/enums/accounting.constants";
-import {CUSTOMER_CODE_REPORT} from "@customer/shared/enums/customer.enum";
-import {INVENTORY_CODE_REPORT} from "@inventory/domain/enums/inventory.enum";
+import { PURCHASE_CODE_REPORT } from '@purchase/domain/enums/purchase.constants';
+import { REPORT_FORMAT } from '@core/constants/global.constants';
+import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
+import { CUSTOMER_CODE_REPORT } from '@customer/shared/enums/customer.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 
 export interface ReportOptions {
   id?: number;
   codEstab?: string;
   estabId?: number;
   tipo?: number;
-  format?:string
+  format?: string;
   [key: string]: any;
 }
 
@@ -27,15 +27,14 @@ export interface ReportConfig {
 }
 
 export class ReportParamsBuilder {
-
   private static readonly reportConfigs: Record<string, ReportConfig> = {
-    "DH": {
+    DH: {
       hasParams: true,
       reportCode: PURCHASE_CODE_REPORT.RCNH,
       format: REPORT_FORMAT.PDF,
       hasService: true,
     },
-    "03": {
+    '03': {
       hasParams: false,
       reportCode: PURCHASE_CODE_REPORT.RLC,
       format: REPORT_FORMAT.PDF,
@@ -70,7 +69,7 @@ export class ReportParamsBuilder {
       reportCode: INVENTORY_CODE_REPORT.RCD,
       format: REPORT_FORMAT.EXCEL,
       hasService: false,
-    }
+    },
   };
 
   /**
@@ -88,27 +87,25 @@ export class ReportParamsBuilder {
       id: options.id,
       tipo: options.tipo ?? 1,
       codEstab: options.codEstab,
-        ...options, // Spread de parámetros adicionales
+      ...options, // Spread de parámetros adicionales
     };
-
-
 
     // Construye los parámetros del reporte
     const reportParams = {
       hasParams: config.hasParams,
       codigo: config.reportCode,
       format: config.format,
-      additionalParams: []
+      additionalParams: [],
     };
 
-    if(options.format){
+    if (options.format) {
       reportParams.format = options.format;
     }
 
     return {
       dataParams: JSON.stringify(dataParams),
       hasService: config.hasService,
-      reportParams: JSON.stringify(reportParams)
+      reportParams: JSON.stringify(reportParams),
     };
   }
 

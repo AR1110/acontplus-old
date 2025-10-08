@@ -1,55 +1,46 @@
-import {Directive, HostListener, inject, input, output} from '@angular/core';
-import {
-  GetComprobanteEgresoForDeletionUseCase
-} from "@accounting/comprobante-egreso/application/use-cases/get-comprobante-egreso-for-deletion.use-case";
-import {getValidId} from "@core/utils/utils";
-import Swal from "sweetalert2";
-import {roundNumber} from "@core/utils/round-number.utils";
-import {
-  AnularComprobanteEgresoUseCase
-} from "@accounting/comprobante-egreso/application/use-cases/anular-comprobante-egreso.use-case";
-import DecimalUtils from "@core/utils/decimal.util";
+import { Directive, HostListener, inject, input, output } from '@angular/core';
+import { GetComprobanteEgresoForDeletionUseCase } from '@accounting/comprobante-egreso/application/use-cases/get-comprobante-egreso-for-deletion.use-case';
+import { getValidId } from '@core/utils/utils';
+import Swal from 'sweetalert2';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { AnularComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/anular-comprobante-egreso.use-case';
+import DecimalUtils from '@core/utils/decimal.util';
 
 @Directive({
-  selector: '[appActionComprobanteEgresoAnular]'
+  selector: '[appActionComprobanteEgresoAnular]',
 })
 export class ActionComprobanteEgresoAnularDirective {
+  private $getDataForDeletionUseCase = inject(GetComprobanteEgresoForDeletionUseCase);
+  private $anularUseCase = inject(AnularComprobanteEgresoUseCase);
 
-  private $getDataForDeletionUseCase = inject(GetComprobanteEgresoForDeletionUseCase)
-  private $anularUseCase = inject(AnularComprobanteEgresoUseCase)
+  id = input(0);
+  cantDocs = input(0);
+  handleResult = output();
 
-  id = input(0)
-  cantDocs = input(0)
-  handleResult = output()
-
-  @HostListener('click', ['$event']) async onClick(){
-    if(!getValidId(this.id())){
+  @HostListener('click', ['$event']) async onClick() {
+    if (!getValidId(this.id())) {
       Swal.fire({
         icon: 'warning',
         text: 'unique es required',
-      })
-      return
+      });
+      return;
     }
 
     let isContinue = true;
 
-    if (getValidId(this.cantDocs() )) {
+    if (getValidId(this.cantDocs())) {
       isContinue = await this.messageQtyDoc();
     }
 
-    if (!isContinue) return
+    if (!isContinue) return;
 
-    this.$getDataForDeletionUseCase.execute(this.id()).subscribe(async response=>{
-      const {cuentas, cuotas, estadosPago} = response;
+    this.$getDataForDeletionUseCase.execute(this.id()).subscribe(async response => {
+      const { cuentas, cuotas, estadosPago } = response;
       if (cuentas.length === 0 || cuotas.length === 0) {
-
-        console.log("cuentasPorPagar", cuentas);
-        console.log("cuotas", cuotas);
+        console.log('cuentasPorPagar', cuentas);
+        console.log('cuotas', cuotas);
         return;
       }
-
-
-
 
       const { isConfirmed, value } = await Swal.fire({
         icon: 'warning',
@@ -61,64 +52,58 @@ export class ActionComprobanteEgresoAnularDirective {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar!',
         allowOutsideClick: false,
-        inputValidator: (value) => {
+        inputValidator: value => {
           if (!value) {
-            return 'Ingrese la Observación!'
+            return 'Ingrese la Observación!';
           }
           if (value.length <= 8) {
-            return 'La observación tiene que tener al menos 10 caracteres!'
+            return 'La observación tiene que tener al menos 10 caracteres!';
           }
-          return  value;
-        }
-      })
+          return value;
+        },
+      });
 
       if (!isConfirmed) return;
-
 
       const dataParams = this.getDataParams(cuentas, cuotas, estadosPago);
       const data = {
         observacion: value,
-        ...dataParams
-      }
+        ...dataParams,
+      };
 
+      this.$anularUseCase
+        .execute({
+          data,
+          id: this.id(),
+        })
+        .subscribe(response => {
+          if (response.code === '0') {
+            Swal.fire({
+              icon: 'warning',
+              text: response.message,
+            });
+            return;
+          }
 
-      this.$anularUseCase.execute({
-        data,
-        id: this.id()
-      }).subscribe(response=>{
-        if(response.code==="0"){
-          Swal.fire({
-            icon: 'warning',
-            text: response.message
-          })
-          return
-        }
-
-        if(response.code==="1"){
-          Swal.fire({
-            icon: 'success',
-            text: response.message,
-            timer: 1000
-          })
-          this.handleResult.emit()
-        }
-
-      })
-
-
-    })
-
+          if (response.code === '1') {
+            Swal.fire({
+              icon: 'success',
+              text: response.message,
+              timer: 1000,
+            });
+            this.handleResult.emit();
+          }
+        });
+    });
   }
 
   async messageQtyDoc() {
-    const {isConfirmed} = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       icon: 'warning',
-      text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? '
-    })
+      text: 'Este anulación de comprobante afectará mas de un doc. porque se ha realizado cobro por lote ¿Desea continuar? ',
+    });
     return isConfirmed;
   }
-
-
 
   /**
    *
@@ -126,7 +111,7 @@ export class ActionComprobanteEgresoAnularDirective {
    * @param {*} estadosPago
    * @returns
    */
-  getDataIdEstadoPago(codigoEstadoPago: string, estadosPago:any[]) {
+  getDataIdEstadoPago(codigoEstadoPago: string, estadosPago: any[]) {
     const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
     return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
   }
@@ -138,10 +123,12 @@ export class ActionComprobanteEgresoAnularDirective {
    * @param {*} estadosPago
    * @returns
    */
-  private getDataParams(cuentas:any[], cuotas:any[], estadosPago:any[]) {
+  private getDataParams(cuentas: any[], cuotas: any[], estadosPago: any[]) {
     // Agrupa cuentas por pagar
     const cuentasAgrupado = cuentas.reduce((acc, curr) => {
-      const existeDato = acc.find((dataCxc:any) => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar);
+      const existeDato = acc.find(
+        (dataCxc: any) => dataCxc.idCuentaPorPagar === curr.idCuentaPorPagar,
+      );
 
       const abono = curr.abono;
 
@@ -159,9 +146,11 @@ export class ActionComprobanteEgresoAnularDirective {
 
     // Agrupa cuotas por pagar
     const cuotasAgrupado = cuotas.reduce((acc, curr) => {
-      const existeDato = acc.find((dataCxc:any) => dataCxc.idCuotaPorPagar === curr.idCuotaPorPagar);
+      const existeDato = acc.find(
+        (dataCxc: any) => dataCxc.idCuotaPorPagar === curr.idCuotaPorPagar,
+      );
 
-      const abono = curr.abono
+      const abono = curr.abono;
 
       if (!existeDato) {
         acc.push({
@@ -170,45 +159,46 @@ export class ActionComprobanteEgresoAnularDirective {
           abono,
         });
       } else {
-        existeDato.abono =  DecimalUtils.addAsNumber(existeDato.abono, curr.abono);
+        existeDato.abono = DecimalUtils.addAsNumber(existeDato.abono, curr.abono);
       }
       return acc;
     }, []);
 
     // Calcula los valores residuales y el estado de pago para cuentas por cobrar
-    const tempCuentasPorPagar = cuentasAgrupado.map((item:any) => {
+    const tempCuentasPorPagar = cuentasAgrupado.map((item: any) => {
       //let valorResiduo = fS.minus(item.abonoDoc,item.abono).toNumber()
       const valorResiduo = DecimalUtils.subtractAsNumber(item.abonoDoc, item.abono);
 
       //quitar cuando se haya validado bien tema de decimales en compras
       const abonoDocRounded = roundNumber(item.abonoDoc, 2);
-      const abonoRounded = roundNumber(item.abono, 2)
+      const abonoRounded = roundNumber(item.abono, 2);
       const valorResiduoValidar = DecimalUtils.subtractAsNumber(abonoDocRounded, abonoRounded, 2);
 
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         abono: valorResiduo,
-        idEstadoPago: this.getDataIdEstadoPago(valorResiduoValidar === 0 ? 'PE' : 'PP', estadosPago)
+        idEstadoPago: this.getDataIdEstadoPago(
+          valorResiduoValidar === 0 ? 'PE' : 'PP',
+          estadosPago,
+        ),
       };
     });
 
     // Calcula los valores residuales y el estado de pago para cuotas por cobrar
-    const tempCuotasPorCobrar = cuotasAgrupado.map((item:any) => {
-      const valorResiduo = DecimalUtils.subtractAsNumber(item.abonoCuota, item.abono)
+    const tempCuotasPorCobrar = cuotasAgrupado.map((item: any) => {
+      const valorResiduo = DecimalUtils.subtractAsNumber(item.abonoCuota, item.abono);
 
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         abono: valorResiduo,
-        idEstadoPago: this.getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago)
+        idEstadoPago: this.getDataIdEstadoPago(valorResiduo === 0 ? 'PE' : 'PP', estadosPago),
       };
     });
 
     // Retorna los datos agrupados y calculados
     return {
       cuenta: tempCuentasPorPagar,
-      cuota: tempCuotasPorCobrar
+      cuota: tempCuotasPorCobrar,
     };
   }
-
-
 }

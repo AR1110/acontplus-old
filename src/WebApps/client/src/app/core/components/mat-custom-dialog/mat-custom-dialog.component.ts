@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  inject,
-  Input,
-  input,
-  output,
-  TemplateRef,
-} from '@angular/core';
+import { Component, inject, Input, input, output, TemplateRef } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -52,8 +45,7 @@ export class MatCustomDialogComponent {
   unique = generateUuidv4();
   toTop(id: string) {
     this.cdk.getContainerElement().childNodes.forEach((x: any) => {
-      if (x.innerHTML.indexOf('id="' + id + '"') <= 0)
-        x.style['z-index'] = 1000;
+      if (x.innerHTML.indexOf('id="' + id + '"') <= 0) x.style['z-index'] = 1000;
       else x.style['z-index'] = 1001;
     });
   }

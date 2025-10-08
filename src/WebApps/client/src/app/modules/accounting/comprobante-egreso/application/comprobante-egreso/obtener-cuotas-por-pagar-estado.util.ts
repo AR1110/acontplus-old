@@ -1,16 +1,16 @@
-import { DECIMALS } from "@core/constants/global.constants";
-import { roundNumber } from "@core/utils/round-number.utils";
-import { PagoDetalle } from "@accounting/comprobante-egreso/domain/pago-detalle.model";
-import { determinadoEstadoPagoCuotaUtil } from "./determinado-estado-pago-cuota.util";
-import { EstadoPago } from "@accounting/comprobante-egreso/domain/estado-pago.interface";
-import { minus } from "@core/utils/decimal.util";
-import {CuotaPorPagarEstado} from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
+import { DECIMALS } from '@core/constants/global.constants';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
+import { determinadoEstadoPagoCuotaUtil } from './determinado-estado-pago-cuota.util';
+import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { minus } from '@core/utils/decimal.util';
+import { CuotaPorPagarEstado } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 
-
-interface PagoDetallePick extends Pick<PagoDetalle, "idCuentaPorPagar" | "idCuotaPorPagar" | "abono" | "saldo"> { }
+interface PagoDetallePick
+  extends Pick<PagoDetalle, 'idCuentaPorPagar' | 'idCuotaPorPagar' | 'abono' | 'saldo'> {}
 interface Props {
-  pagosDetalle: PagoDetalle[]
-  estadosPago: EstadoPago[]
+  pagosDetalle: PagoDetalle[];
+  estadosPago: EstadoPago[];
 }
 
 /**
@@ -20,18 +20,23 @@ interface Props {
  * @param {Array} param0.pagosDetalle - Detalles de los pagos realizados.
  * @returns {Array} - Lista con el estado de cada cuota por pagar.
  */
-export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estadosPago }: Props): CuotaPorPagarEstado[] {
-
-
+export const obtenerCuotasPorPagarEstadoUtil = function ({
+  pagosDetalle,
+  estadosPago,
+}: Props): CuotaPorPagarEstado[] {
   const cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
-    const existeDato = acc.find(item => (item.idCuentaPorPagar === curr.idCuentaPorPagar) && (item.idCuotaPorPagar === curr.idCuotaPorPagar));
+    const existeDato = acc.find(
+      item =>
+        item.idCuentaPorPagar === curr.idCuentaPorPagar &&
+        item.idCuotaPorPagar === curr.idCuotaPorPagar,
+    );
     if (!existeDato) {
       acc.push({
         idCuentaPorPagar: curr.idCuentaPorPagar,
         idCuotaPorPagar: curr.idCuotaPorPagar,
         //   valorSaldoLectura: curr.valorSaldoLectura,
         saldo: curr.saldo,
-        abono: curr.abono
+        abono: curr.abono,
       });
     } else {
       existeDato.abono += curr.abono;
@@ -42,28 +47,28 @@ export const obtenerCuotasPorPagarEstadoUtil = function ({ pagosDetalle, estados
   const cuotasPorPagarEstado: CuotaPorPagarEstado[] = [];
 
   for (const item of cuotasPorPagarAgrupado) {
-    const totalNoPosfechado = pagosDetalle.filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
+    const totalNoPosfechado = pagosDetalle
+      .filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
       .map(item => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
     const valorSaldoLectura = roundNumber(item.saldo, DECIMALS.DOS);
     const totalNoPosfechadoTemp = roundNumber(totalNoPosfechado, DECIMALS.DOS);
 
-    const valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp, DECIMALS.DOS) as number
+    const valorSaldo = minus(valorSaldoLectura, totalNoPosfechadoTemp, DECIMALS.DOS) as number;
 
     const dataEstadoPago = determinadoEstadoPagoCuotaUtil({
       saldo: valorSaldo,
       estadosPago,
-      abono: item.abono
+      abono: item.abono,
     });
 
     cuotasPorPagarEstado.push({
       idEstadoPago: dataEstadoPago.idEstadoPago,
       abono: totalNoPosfechado,
-      idCuotaPorPagar: item.idCuotaPorPagar
+      idCuotaPorPagar: item.idCuotaPorPagar,
     });
   }
 
   return cuotasPorPagarEstado;
-
-}
+};

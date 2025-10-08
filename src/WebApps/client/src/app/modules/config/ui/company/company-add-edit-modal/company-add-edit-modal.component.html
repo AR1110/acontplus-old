@@ -9,18 +9,18 @@
   <div class="d-grid gap-3">
     <mat-form-field class="w-100">
       <mat-label>RUC</mat-label>
-      <input matInput  [(ngModel)]="data.ruc">
+      <input matInput [(ngModel)]="data.ruc" />
     </mat-form-field>
 
     <mat-form-field class="w-100">
       <mat-label> Razón Social:</mat-label>
-      <input matInput   [(ngModel)]="data.razonSocial">
+      <input matInput [(ngModel)]="data.razonSocial" />
       <mat-hint>Nombre oficial y legal de la Persona Natural o Jurídica</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="w-100">
       <mat-label> Nombre Comercial:</mat-label>
-      <input matInput   [(ngModel)]="data.nombreComercial">
+      <input matInput [(ngModel)]="data.nombreComercial" />
       <mat-hint>Nombre de la Persona Natural o Juridica para el ejercicio de Actividades Economicas</mat-hint>
     </mat-form-field>
 
@@ -29,23 +29,11 @@
       <textarea matInput [(ngModel)]="data.direccion"></textarea>
     </mat-form-field>
 
-    <app-mat-input-chip
-      [labelText]="'Correo'"
-      [chips]="emails()"
-    />
+    <app-mat-input-chip [labelText]="'Correo'" [chips]="emails()" />
 
-    <app-mat-input-chip
-      [labelText]="'Teléfono'"
-      [chips]="telefonos()"
-    />
+    <app-mat-input-chip [labelText]="'Teléfono'" [chips]="telefonos()" />
   </div>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
-    variant="success"
-    icon="edit"
-    text="Actualizar"
-    (handleClick)="save()"
-  />
+  <app-theme-button variant="success" icon="edit" text="Actualizar" (handleClick)="save()" />
 </ng-template>
-

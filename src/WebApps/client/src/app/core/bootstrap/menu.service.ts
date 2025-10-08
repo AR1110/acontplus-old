@@ -67,7 +67,7 @@ export class MenuService {
   /** Delete empty values and rebuild route. */
   buildRoute(routeArr: string[]) {
     let route = '';
-    routeArr.forEach((item) => {
+    routeArr.forEach(item => {
       if (item && item.trim()) {
         route += '/' + item.replace(/^\/+|\/+$/g, '');
       }
@@ -101,14 +101,14 @@ export class MenuService {
   // Whether routeArr equals realRouteArr (after remove empty route element)
   private isRouteEqual(routeArr: string[], realRouteArr: string[]) {
     realRouteArr = this.deepClone(realRouteArr);
-    realRouteArr = realRouteArr.filter((r) => r !== '');
+    realRouteArr = realRouteArr.filter(r => r !== '');
     return this.isJsonObjEqual(routeArr, realRouteArr);
   }
 
   /** Get the menu level. */
   getLevel(routeArr: string[]): string[] {
     let tmpArr: any[] = [];
-    this.menu$.value.forEach((item) => {
+    this.menu$.value.forEach(item => {
       // Breadth-first traverse
       let unhandledLayer = [{ item, parentNamePathList: [], realRouteArr: [] }];
       while (unhandledLayer.length > 0) {
@@ -123,7 +123,7 @@ export class MenuService {
             break;
           }
           if (!this.isLeafItem(eachItem)) {
-            const wrappedChildren = eachItem.children?.map((child) => ({
+            const wrappedChildren = eachItem.children?.map(child => ({
               item: child,
               parentNamePathList: currentNamePathList,
               realRouteArr: currentRealRouteArr,
@@ -139,7 +139,7 @@ export class MenuService {
 
   /** Add namespace for translation. */
   addNamespace(menu: Menu[] | MenuChildrenItem[], namespace: string) {
-    menu.forEach((menuItem) => {
+    menu.forEach(menuItem => {
       menuItem.name = `${namespace}.${menuItem.name}`;
       if (menuItem.children && menuItem.children.length > 0) {
         this.addNamespace(menuItem.children, menuItem.name);

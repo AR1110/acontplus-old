@@ -1,7 +1,6 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
-  <mat-tab-group  [selectedIndex]="selected()"
-                  (selectedIndexChange)="selectedIndexChange($event)">
+  <mat-tab-group [selectedIndex]="selected()" (selectedIndexChange)="selectedIndexChange($event)">
     <mat-tab label="Dashboard">
       <ng-template matTabContent>
         <app-dashboard></app-dashboard>
@@ -38,5 +37,4 @@
       </ng-template>
     </mat-tab>
   </mat-tab-group>
-
 </app-mat-dynamic-card>

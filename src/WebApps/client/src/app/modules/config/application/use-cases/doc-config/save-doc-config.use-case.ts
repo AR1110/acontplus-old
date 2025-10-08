@@ -10,7 +10,7 @@ import { DocConfigRepository } from '@modules/config/domain/repositories/doc-con
 })
 export class SaveDocConfigUseCase implements BaseUseCase<ApiResponse, DocConfig> {
   constructor(
-    @Inject(DocConfigRepository) private repo: DocConfigRepository // TODO: Provide concrete implementation in module providers
+    @Inject(DocConfigRepository) private repo: DocConfigRepository, // TODO: Provide concrete implementation in module providers
   ) {}
 
   execute(docConfig: DocConfig): Observable<ApiResponse> {

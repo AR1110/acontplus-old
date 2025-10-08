@@ -7,38 +7,32 @@ import { GuiaRemisionRepository } from '@billing/domain/repositories/guia-remisi
 import { GuiaRemisionDataForm } from '@billing/domain/models/guia-remision/guia-remision.model';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { GetGuiaRemisionFilterDataMapper } from './get-guia-remision-filter-data.mapper';
-import {ListGuiaRemisionMapper} from "@billing/data/guia-remision/list-guia-remision.mapper";
-import {GetGuiaRemisionFormDataMapper} from "@billing/data/guia-remision/get-guia-remision-form-data.mapper";
+import { ListGuiaRemisionMapper } from '@billing/data/guia-remision/list-guia-remision.mapper';
+import { GetGuiaRemisionFormDataMapper } from '@billing/data/guia-remision/get-guia-remision-form-data.mapper';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
-    getFormData()  {
-      const json = JSON.stringify({
-        tipo: 3,
-      });
-      return this._http
-        .get(`${this._url}?json=${json}`)
-        .pipe(
-          map((response) => GetGuiaRemisionFormDataMapper.fromJson(response))
-        );
-  }
-    getFilterData() {
-    const json = GetGuiaRemisionFilterDataMapper.toJson()
+  getFormData() {
+    const json = JSON.stringify({
+      tipo: 3,
+    });
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(
-        map((response) => GetGuiaRemisionFilterDataMapper.fromJson(response))
-      );
+      .pipe(map(response => GetGuiaRemisionFormDataMapper.fromJson(response)));
   }
-    list<T>(parameters: T)  {
-      return this._http
-        .get(`${this._url}?json=${ListGuiaRemisionMapper.toJson(parameters)}`)
-        .pipe(
-          map((response) => ListGuiaRemisionMapper.fromJson(response))
-        );
-   }
+  getFilterData() {
+    const json = GetGuiaRemisionFilterDataMapper.toJson();
+    return this._http
+      .get(`${this._url}?json=${json}`)
+      .pipe(map(response => GetGuiaRemisionFilterDataMapper.fromJson(response)));
+  }
+  list<T>(parameters: T) {
+    return this._http
+      .get(`${this._url}?json=${ListGuiaRemisionMapper.toJson(parameters)}`)
+      .pipe(map(response => ListGuiaRemisionMapper.fromJson(response)));
+  }
   // override getById(id: number): Observable<any> {
   //   throw new Error('Method not implemented.');
   // }

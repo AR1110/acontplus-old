@@ -1,22 +1,17 @@
-import {
-  CreateInventoryAdjustmentCommand
-} from "@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case";
-import {formatDateToString} from "@core/utils/date.util";
-import {isValidField} from "@core/utils/utils";
+import { CreateInventoryAdjustmentCommand } from '@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
 
 export class SaveInventoryAdjustmentMapper {
-
-
-  static toJson(params: CreateInventoryAdjustmentCommand){
-
-    const consolidacion ={
-        idPuntoEmision: params.emissionPointId,
-        idTipoDocumento : params.documentTypeId,
-        idTipoTransaccion : params.transactionTypeId,
-        fechaEmision:  formatDateToString(params.emissionDate),
-        total:params.total,
-        observacion:  isValidField(params.observations),
-    }
+  static toJson(params: CreateInventoryAdjustmentCommand) {
+    const consolidacion = {
+      idPuntoEmision: params.emissionPointId,
+      idTipoDocumento: params.documentTypeId,
+      idTipoTransaccion: params.transactionTypeId,
+      fechaEmision: formatDateToString(params.emissionDate),
+      total: params.total,
+      observacion: isValidField(params.observations),
+    };
 
     const detalles = params.details.map(item => {
       return {
@@ -32,19 +27,15 @@ export class SaveInventoryAdjustmentMapper {
         precioCosto: item.costPrice,
         precioCostoFraccionado: item.fractionalCostPrice,
         total: item.total,
-        nota:  isValidField(item.notes),
+        nota: isValidField(item.notes),
         descripcion: item.description,
         estado: item.status,
-      }
-    })
+      };
+    });
 
     return {
       consolidacion,
       detalles,
-    }
+    };
   }
-
-
-
-
 }

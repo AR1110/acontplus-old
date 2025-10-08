@@ -5,37 +5,34 @@
   (close)="onModalClose()"
 />
 <ng-template #body>
-  <div class=" vstack gap-2">
+  <div class="vstack gap-2">
     <form (ngSubmit)="onSave()" id="subcategoryForm" [formGroup]="subcategoryForm">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
+        <mat-form-field class="w-100">
+          <mat-label>Categoría: </mat-label>
+          <mat-select formControlName="categoryId">
+            <mat-option [value]="0">Seleccione una categoría</mat-option>
+            @for (item of categories(); track $index) {
+              <mat-option [value]="item.id">{{ item.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
 
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
-      <mat-form-field class="w-100">
-        <mat-label>Categoría: </mat-label>
-        <mat-select formControlName="categoryId">
-          <mat-option [value]="0">Seleccione una categoría</mat-option>
-          @for (item of categories(); track $index) {
-            <mat-option [value]="item.id">{{ item.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="name" (blur)="setCode($event)" />
+        </mat-form-field>
 
-      <mat-form-field class="w-100">
-        <mat-label>Nombre</mat-label>
-        <input matInput   formControlName="name"  (blur)="setCode($event)">
-      </mat-form-field>
+        <mat-form-field class="w-100">
+          <mat-label>Código</mat-label>
+          <input matInput formControlName="code" (blur)="setCode($event)" />
+        </mat-form-field>
 
-      <mat-form-field class="w-100">
-        <mat-label>Código</mat-label>
-        <input matInput   formControlName="code"  (blur)="setCode($event)">
-      </mat-form-field>
-
-      <div class="vstack gap-2">
-        <span>Estado</span>
-        <mat-slide-toggle   formControlName="enabled"></mat-slide-toggle>
+        <div class="vstack gap-2">
+          <span>Estado</span>
+          <mat-slide-toggle formControlName="enabled"></mat-slide-toggle>
+        </div>
       </div>
-
-
-    </div>
     </form>
   </div>
 </ng-template>
@@ -49,4 +46,3 @@
     (handleClick)="onSave()"
   />
 </ng-template>
-

@@ -1,9 +1,9 @@
-import { TAX_RATE_CODE } from "@core/constants/global.constants";
+import { TAX_RATE_CODE } from '@core/constants/global.constants';
 
-import { TarifaProductSearch } from "../../../domain/models/tarifa.model";
-import {GroupedEstab} from "@core/models/estab.model";
-import {GroupedSubFamilia} from "@inventory/domain/models/sub-category.model";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import { TarifaProductSearch } from '../../../domain/models/tarifa.model';
+import { GroupedEstab } from '@core/models/estab.model';
+import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
 
 export interface ProductList {
   position: number;
@@ -35,49 +35,48 @@ export interface Product {
 }
 
 export interface ProductSearch {
-  position?:number
-  idArticulo: number,
-  codigo: string,
-  descripcion: string
-  iva: string,
-  stock: number,
-  subFamilia: string,
-  marca: string,
-  medida: string
-  fraccionado: boolean
-  style: string
-  tarifas:  TarifaProductSearch[],
-  warehouses: unknown,
-  precioSinSubsidio: number
-  imagen?: string
-  s3ObjectUrl: string
-  s3ObjectKey: string
-  totalRecords: number
+  position?: number;
+  idArticulo: number;
+  codigo: string;
+  descripcion: string;
+  iva: string;
+  stock: number;
+  subFamilia: string;
+  marca: string;
+  medida: string;
+  fraccionado: boolean;
+  style: string;
+  tarifas: TarifaProductSearch[];
+  warehouses: unknown;
+  precioSinSubsidio: number;
+  imagen?: string;
+  s3ObjectUrl: string;
+  s3ObjectKey: string;
+  totalRecords: number;
 }
 
 export interface ProductSale {
-  idArticulo: number
-  idMedida: number
-  idTipoIva: number
-  descripcion: string
-  llevaInventario: true,
-  precioCosto: number
-  precioSinSubsidio: number
-  tarifaImpuesto: string
-  tarifa: number
+  idArticulo: number;
+  idMedida: number;
+  idTipoIva: number;
+  descripcion: string;
+  llevaInventario: true;
+  precioCosto: number;
+  precioSinSubsidio: number;
+  tarifaImpuesto: string;
+  tarifa: number;
   codigoPorcentaje:
-  TAX_RATE_CODE.DIFFERENTIATED_TAX
-  | TAX_RATE_CODE.FOURTEEN_PERCENT
-  | TAX_RATE_CODE.NOT_SUBJECT_TO_TAX
-  | TAX_RATE_CODE.TAX_EXEMPT
-  | TAX_RATE_CODE.TWELVE_PERCENT
-  | TAX_RATE_CODE.ZERO_PERCENT
-  codigoArticulo: string
-  stock: string
-  s3ObjectKey: string
-  s3ObjectUrl: string
+    | TAX_RATE_CODE.DIFFERENTIATED_TAX
+    | TAX_RATE_CODE.FOURTEEN_PERCENT
+    | TAX_RATE_CODE.NOT_SUBJECT_TO_TAX
+    | TAX_RATE_CODE.TAX_EXEMPT
+    | TAX_RATE_CODE.TWELVE_PERCENT
+    | TAX_RATE_CODE.ZERO_PERCENT;
+  codigoArticulo: string;
+  stock: string;
+  s3ObjectKey: string;
+  s3ObjectUrl: string;
 }
-
 
 export class ProductDataForm {
   categorias: any[] = [];
@@ -97,24 +96,23 @@ export class ProductDataForm {
   constructor() {}
 }
 
-
 export class ProductGetIdResult {
-  data= {} as any
-  productPvps: any[] = []
-  productBarcodes:any[] = []
-  productLocations:any[] = []
-  productMeasures: any[] = []
+  data = {} as any;
+  productPvps: any[] = [];
+  productBarcodes: any[] = [];
+  productLocations: any[] = [];
+  productMeasures: any[] = [];
 }
 
 export class GetProductPurchaseResult {
   data = {} as any;
-  measures: MedidaProducto[]=[];
-  tags = [] as any[]
+  measures: MedidaProducto[] = [];
+  tags = [] as any[];
 }
 
 export interface ValidateProductStockParams {
-  idArticulo: number
-  cantidad: number
-  idBodega: number
-  idMedida: number
+  idArticulo: number;
+  cantidad: number;
+  idBodega: number;
+  idMedida: number;
 }

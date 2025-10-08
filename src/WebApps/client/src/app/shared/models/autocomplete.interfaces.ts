@@ -1,5 +1,4 @@
-
-import {Observable} from "rxjs";
+import { Observable } from 'rxjs';
 
 export interface AutocompleteItem {
   id?: string | number;
@@ -14,13 +13,11 @@ export interface SearchResult {
   hasMore?: boolean;
 }
 
-
-
 export type SearchFunction = (
   query: string,
   filters: AutocompleteFilters,
   page?: number,
-  pageSize?: number
+  pageSize?: number,
 ) => Observable<SearchResult>;
 
 export interface AutocompleteConfig {
@@ -112,20 +109,20 @@ export const DEFAULT_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
     { value: 'description', label: 'Descripción', property: 'description' },
     { value: 'code', label: 'Código', property: 'code' },
     { value: 'barcode', label: 'Código de Barras', property: 'barcode' },
-    { value: 'auxCode', label: 'Código Auxiliar', property: 'auxCode' } // <- nuevo campo
+    { value: 'auxCode', label: 'Código Auxiliar', property: 'auxCode' }, // <- nuevo campo
   ],
   stockOptions: [
     { value: 'all', label: 'Todos' },
     { value: 'with-stock', label: 'Con Stock' },
-    { value: 'without-stock', label: 'Sin Stock' }
-  ]
+    { value: 'without-stock', label: 'Sin Stock' },
+  ],
 };
 
 export const PRODUCT_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
   ...DEFAULT_AUTOCOMPLETE_CONFIG,
   placeholder: 'Buscar productos...',
   enableStockFilter: true,
-  enableFooterActions: true
+  enableFooterActions: true,
 };
 
 export const CUSTOMER_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
@@ -136,8 +133,8 @@ export const CUSTOMER_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
     { value: 'name', label: 'Nombre', property: 'name' },
     { value: 'email', label: 'Email', property: 'email' },
     { value: 'phone', label: 'Teléfono', property: 'phone' },
-    { value: 'document', label: 'Documento', property: 'document' }
-  ]
+    { value: 'document', label: 'Documento', property: 'document' },
+  ],
 };
 
 export const SIMPLE_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
@@ -147,5 +144,5 @@ export const SIMPLE_AUTOCOMPLETE_CONFIG: AutocompleteConfig = {
   enableFilters: false,
   enableFooterActions: false,
   enablePagination: false,
-  itemsPerPage: 50
+  itemsPerPage: 50,
 };

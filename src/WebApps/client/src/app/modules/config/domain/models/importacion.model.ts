@@ -1,3 +1,3 @@
-export interface ImportacionResponse  {
-  modules: any[]
+export interface ImportacionResponse {
+  modules: any[];
 }

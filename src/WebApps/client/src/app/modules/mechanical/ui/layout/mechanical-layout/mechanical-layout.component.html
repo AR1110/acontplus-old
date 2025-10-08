@@ -1,13 +1,11 @@
 <app-breadcrumb />
 
 <app-mat-dynamic-card>
-  <mat-tab-group [selectedIndex]="store.selectedIndex()"
-                 (selectedIndexChange)="store.selectedIndexChange($event)">
+  <mat-tab-group [selectedIndex]="store.selectedIndex()" (selectedIndexChange)="store.selectedIndexChange($event)">
     <mat-tab label="Dashboard">
       <ng-template matTabContent>
         <div class="mx-3 mt-2">
-        <app-mechanical-dashboard/>
-
+          <app-mechanical-dashboard />
         </div>
       </ng-template>
     </mat-tab>
@@ -44,17 +42,13 @@
         <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
       </ng-template>
     </mat-tab>
-
   </mat-tab-group>
 
   <ng-template #templateSupport>
     <div class="mx-3 mt-2">
-    @if (store.supportStatus().length > 0) {
-      <app-support-page/>
-    }
+      @if (store.supportStatus().length > 0) {
+        <app-support-page />
+      }
     </div>
   </ng-template>
-
-
 </app-mat-dynamic-card>
-

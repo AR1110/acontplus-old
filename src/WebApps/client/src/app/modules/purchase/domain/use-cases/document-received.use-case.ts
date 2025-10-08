@@ -4,9 +4,7 @@ import { inject, Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class DocumentReceivedUseCase {
-  private readonly _documentReceivedRepository = inject(
-    DocumentReceivedRepository,
-  );
+  private readonly _documentReceivedRepository = inject(DocumentReceivedRepository);
 
   getDataFilter() {
     return this._documentReceivedRepository.getDataFilter();

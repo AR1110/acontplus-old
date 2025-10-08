@@ -1,25 +1,21 @@
-
-import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
-import { InvoiceDetail } from "@billing/domain/models/invoice.model";
-import { InvoiceComprobanteApi, InvoiceDetailApi } from "./invoice-api.model";
-import { fechaString, formatDate, formatDateToString } from "@core/utils/date.util";
-import { DECIMALS } from "@core/constants/global.constants";
-import { roundNumber } from "@core/utils/round-number.utils";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import { impuestoDetailAdapter } from '@shared/adapters/impuesto-detail.adapter';
+import { InvoiceDetail } from '@billing/domain/models/invoice.model';
+import { InvoiceComprobanteApi, InvoiceDetailApi } from './invoice-api.model';
+import { fechaString, formatDate, formatDateToString } from '@core/utils/date.util';
+import { DECIMALS } from '@core/constants/global.constants';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 interface MainAdapt {
-  comprobante: any
-  details: InvoiceDetail[],
-  cuotas: any[],
-  formaPago: any[]
-  infoAdicionalDoc: any[]
+  comprobante: any;
+  details: InvoiceDetail[];
+  cuotas: any[];
+  formaPago: any[];
+  infoAdicionalDoc: any[];
 }
 
 export class InvoiceAdapter {
-
-  static fromApiAll (response:any[]){
-
-    return response.map(item=>{
-
+  static fromApiAll(response: any[]) {
+    return response.map(item => {
       return {
         idCuentaPorCobrar: item.idCuentaPorCobrar,
         idDocumentoElectronico: item.idDocumentoElectronico,
@@ -38,11 +34,10 @@ export class InvoiceAdapter {
         usuarioNombre: item.usuario,
         tiempoCreditoNombre: item.tiempoCredito,
         codEstado: item.codEstado,
-        totalRecords: item.totalRecords
-    }
-    })
+        totalRecords: item.totalRecords,
+      };
+    });
   }
-
 
   static fromApiDetalleCompleto(response: any) {
     const [tempHeader, tempCliente, tempDetalles, datosAdicionalesDoc, tiposIva] = response;
@@ -64,56 +59,59 @@ export class InvoiceAdapter {
         total: header.total,
         tiempoCreditoNombre: header.tiempoCredito,
         empleadoNombre: header.empleado,
-        observacion: header.observacion
+        observacion: header.observacion,
       },
       clienteData: {
         razonSocialComprador: cliente.razonSocialComprador,
         identificacionComprador: cliente.identificacionComprador,
         direccionComprador: cliente.direccionComprador,
-        correo: cliente.correo
+        correo: cliente.correo,
       },
-      detalles: tempDetalles.map((item:any) => {
-        const precioConIva =   item.precioUnitario + item.valorImpuesto;
-         const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+      detalles: tempDetalles.map((item: any) => {
+        const precioConIva = item.precioUnitario + item.valorImpuesto;
+        const total =
+          roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +
+          roundNumber(item.valorImpuesto, DECIMALS.GENERAL);
         return {
-        idNotaEntregaDetalle: item.idNotaEntregaDetalle,
-        codigo: item.codigo,
-        descripcion: item.descripcion,
-        cantidad: item.cantidad,
-        precioUnitario: item.precioUnitario,
-        porcentajeDescuento: item.porcentajeDescuento,
-        valorDescuento: item.valorDescuento,
-        ice: item.ice,
-        precioTotalSinImpuesto: item.precioTotalSinImpuesto,
-        codigoPorcentaje: item.codigoPorcentaje,
-        tarifaImpuesto: item.tarifa,
-        valorImpuesto: item.valorImpuesto,
-        nota: item.nota,
-        bodegaNombre: item.bodega,
-        medidaNombre: item.medida,
-        tipoIvaNombre: item.tipoIva,
-        pvpNombre: item.pvp,
-        precioConIva: roundNumber(precioConIva, DECIMALS.DOS),
-          total:  roundNumber(total, DECIMALS.DOS)
-      }}),
+          idNotaEntregaDetalle: item.idNotaEntregaDetalle,
+          codigo: item.codigo,
+          descripcion: item.descripcion,
+          cantidad: item.cantidad,
+          precioUnitario: item.precioUnitario,
+          porcentajeDescuento: item.porcentajeDescuento,
+          valorDescuento: item.valorDescuento,
+          ice: item.ice,
+          precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+          codigoPorcentaje: item.codigoPorcentaje,
+          tarifaImpuesto: item.tarifa,
+          valorImpuesto: item.valorImpuesto,
+          nota: item.nota,
+          bodegaNombre: item.bodega,
+          medidaNombre: item.medida,
+          tipoIvaNombre: item.tipoIva,
+          pvpNombre: item.pvp,
+          precioConIva: roundNumber(precioConIva, DECIMALS.DOS),
+          total: roundNumber(total, DECIMALS.DOS),
+        };
+      }),
       datosAdicionalesDoc,
-      tiposIva
+      tiposIva,
     };
 
     return result;
   }
 
   static mainAdapt(input: MainAdapt) {
-    const comprobante = this.comprobanteAdapt(input.comprobante)
+    const comprobante = this.comprobanteAdapt(input.comprobante);
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
-      return{
-        nombre : item.name,
-        valor : item.value
-      }
-    })
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item => {
+      return {
+        nombre: item.name,
+        valor: item.value,
+      };
+    });
 
     return {
       infoFactura: comprobante,
@@ -122,9 +120,8 @@ export class InvoiceAdapter {
       infoAdicionalArticulo: [],
       formaPago: input.formaPago,
       cuotas: input.cuotas,
-      infoAdicional: infoAdicionalDoc
-    }
-
+      infoAdicional: infoAdicionalDoc,
+    };
   }
 
   static comprobanteAdapt(obj: any) {
@@ -152,14 +149,14 @@ export class InvoiceAdapter {
       direccionComprador: obj.direccionComprador,
       email: obj.email,
       telefono: obj.telefono,
-      supportId: obj.supportId
-    }
+      supportId: obj.supportId,
+    };
     return result;
   }
 
   static detailAdapt(input: InvoiceDetail[]): InvoiceDetailApi[] {
     const results = input.map((item, index) => {
-      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const cantidadTransaccion = item.quantity * (item.conversion || 1);
       const obj = {
         uuid: generateUuidv4(),
         orderIndex: index + 1,
@@ -184,12 +181,10 @@ export class InvoiceAdapter {
         cantidadTransaccion,
         conversion: item.conversion,
         precioCostoFraccionado: item.costoFraccionado,
-        precioSinSubsidio: item.precioSinSubsidio
-      }
+        precioSinSubsidio: item.precioSinSubsidio,
+      };
       return obj;
-    })
+    });
     return results;
   }
 }
-
-

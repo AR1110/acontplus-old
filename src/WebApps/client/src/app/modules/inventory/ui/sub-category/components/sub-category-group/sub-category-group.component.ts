@@ -16,27 +16,25 @@ interface SubCategoryGroup {
 const _filter = (opt: any[], value: string): string[] => {
   const filterValue = value.toLowerCase();
 
-  return opt.filter((item) =>
-    item.subFamilia.toLowerCase().includes(filterValue),
-  );
+  return opt.filter(item => item.subFamilia.toLowerCase().includes(filterValue));
 };
 
 @Component({
-    selector: 'app-sub-category-group',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatAutocompleteModule,
-        AsyncPipe,
-    ],
-    templateUrl: './sub-category-group.component.html',
-    styles: ``
+  selector: 'app-sub-category-group',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    AsyncPipe,
+  ],
+  templateUrl: './sub-category-group.component.html',
+  styles: ``,
 })
 export class SubCategoryGroupComponent implements OnChanges {
   @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
-  isInputMat = input(false)
+  isInputMat = input(false);
   onSelected = output<number>();
   onEmptyData = output();
   _formBuilder = inject(FormBuilder);
@@ -49,17 +47,15 @@ export class SubCategoryGroupComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['subCategoryGroups']) {
-      this.stateGroupOptions = this.stateForm
-        .get('subCategoryGroup')!
-        .valueChanges.pipe(
-          startWith(''),
-          tap((e) => {
-            if (!isValidField(e)) {
-              this.onEmptyData.emit();
-            }
-          }),
-          map((value) => this._filterGroup(value || '')),
-        );
+      this.stateGroupOptions = this.stateForm.get('subCategoryGroup')!.valueChanges.pipe(
+        startWith(''),
+        tap(e => {
+          if (!isValidField(e)) {
+            this.onEmptyData.emit();
+          }
+        }),
+        map(value => this._filterGroup(value || '')),
+      );
     }
   }
 
@@ -70,11 +66,11 @@ export class SubCategoryGroupComponent implements OnChanges {
   private _filterGroup(value: string): SubCategoryGroup[] {
     if (value) {
       return this.subCategoryGroups
-        .map((group) => ({
+        .map(group => ({
           familia: group.familia,
           subFamilias: _filter(group.subFamilias, value),
         }))
-        .filter((group) => group.subFamilias.length > 0);
+        .filter(group => group.subFamilias.length > 0);
     }
 
     return this.subCategoryGroups;

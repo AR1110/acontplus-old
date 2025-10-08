@@ -1,19 +1,17 @@
-
-import { roundNumber } from "@core/utils/round-number.utils";
-import { TiempoCredito } from "@accounting/shared/models/tiempo-credito.interface";
-import { formatDateToString } from "@core/utils/date.util";
+import { roundNumber } from '@core/utils/round-number.utils';
+import { TiempoCredito } from '@accounting/shared/models/tiempo-credito.interface';
+import { formatDateToString } from '@core/utils/date.util';
 
 // Función para calcular detalles de cuotas basadas en términos de crédito
 interface QuotaProps {
-  id?: number
-  fechaEmision: Date
-  tiemposCredito: TiempoCredito[]
-  idTiempoCredito: number
-  total: number
-  cuotas: any[]
+  id?: number;
+  fechaEmision: Date;
+  tiemposCredito: TiempoCredito[];
+  idTiempoCredito: number;
+  total: number;
+  cuotas: any[];
 }
 export const registerGenerateQuota = (obj: QuotaProps) => {
-
   // Desestructuración de propiedades del objeto para mayor legibilidad
   const { fechaEmision, tiemposCredito, idTiempoCredito, total } = obj;
 
@@ -22,11 +20,11 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
 
   // Manejo del caso en que no se encuentran datos de tiempo de crédito
   if (!dataTiempoCredito) {
-    console.error("Tiempo de crédito no encontrado.");
+    console.error('Tiempo de crédito no encontrado.');
     return {
       cuotas: [] as any[],
-      montoTotalCuota: 0
-    }
+      montoTotalCuota: 0,
+    };
   }
 
   // Cálculo de la cantidad de días por cuota
@@ -65,7 +63,7 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
         nroCuota: nroCuota,
         cuota: 0,
         fechaVencimiento: formatDateToString(fechaEmision),
-        entrada: 1
+        entrada: 1,
       };
     }
 
@@ -77,16 +75,16 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
       nroCuota: nroCuota,
       cuota: roundNumber(valorCuota, 5),
       fechaVencimiento: formatDateToString(fechaVencimiento),
-      entrada: 0
+      entrada: 0,
     };
   });
 
   // Retorno del array de cuotas calculadas
   return {
     cuotas: resultCuotas,
-    montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+    montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0),
   };
-}
+};
 
 export const updateGeneratQCuota = (obj: QuotaProps) => {
   const { fechaEmision, tiemposCredito, idTiempoCredito, total, cuotas } = obj;
@@ -96,11 +94,11 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
 
   // Manejo del caso en que no se encuentran datos de tiempo de crédito
   if (!dataTiempoCredito) {
-    console.error("Tiempo de crédito no encontrado.");
+    console.error('Tiempo de crédito no encontrado.');
     return {
       cuotas: [] as any[],
-      montoTotalCuota: 0
-    }
+      montoTotalCuota: 0,
+    };
   }
 
   // Cálculo de la cantidad de días por cuota
@@ -109,7 +107,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
   // Cálculo del monto de cada cuota
   const valorCuota = total / dataTiempoCredito.numeroCuota;
 
-  const resultCuotas = cuotas.map((cuota) => {
+  const resultCuotas = cuotas.map(cuota => {
     if (!cuota.entrada) {
       const sumDia = cuota.nroCuota * diaCuota;
       // Cálculo de la fecha de vencimiento para la cuota
@@ -122,7 +120,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
         fechaVencimiento: formatDateToString(fechaVencimiento),
         entrada: cuota.entrada,
         idCuotaPorPagar: cuota.idCuotaPorPagar,
-        idCuotaPorCobrar: cuota.idCuotaPorCobrar
+        idCuotaPorCobrar: cuota.idCuotaPorCobrar,
       };
     }
 
@@ -132,18 +130,16 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
       fechaVencimiento: formatDateToString(cuota.fechaVencimiento),
       entrada: cuota.entrada,
       idCuotaPorPagar: cuota.idCuotaPorPagar,
-      idCuotaPorCobrar: cuota.idCuotaPorCobrar
+      idCuotaPorCobrar: cuota.idCuotaPorCobrar,
     };
   });
 
   // Retorno del array de cuotas calculadas
   return {
     cuotas: resultCuotas,
-    montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0)
+    montoTotalCuota: resultCuotas.reduce((acc, curr) => acc + curr.cuota, 0),
   };
-
-}
-
+};
 
 export const isValidGeneratorQuota = (obj: QuotaProps) => {
   let cuotas: any[] = [];
@@ -153,10 +149,9 @@ export const isValidGeneratorQuota = (obj: QuotaProps) => {
     const dataCuota = registerGenerateQuota(obj);
     cuotas = dataCuota.cuotas;
     montoTotalCuota = dataCuota.montoTotalCuota;
-
   }
-  if ((obj.id && obj.id > 0)) {
-    const dataCuota = updateGeneratQCuota(obj)
+  if (obj.id && obj.id > 0) {
+    const dataCuota = updateGeneratQCuota(obj);
     cuotas = dataCuota.cuotas;
     montoTotalCuota = dataCuota.montoTotalCuota;
   }
@@ -167,4 +162,4 @@ export const isValidGeneratorQuota = (obj: QuotaProps) => {
   }
 
   return cuotas;
-}
+};

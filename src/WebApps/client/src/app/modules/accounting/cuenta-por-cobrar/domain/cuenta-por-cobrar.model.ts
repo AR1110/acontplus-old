@@ -1,102 +1,100 @@
-
 // De Api
-import {GroupedEstab} from "@core/models/estab.model";
+import { GroupedEstab } from '@core/models/estab.model';
 
 export interface CuotaAPI {
-    idCuotaPorCobrar: number
-    idCuentaPorCobrar: number
-    nroCuota: string,
-    cuota: number
-    mora: number
-    interes: number
-    diasMora: number
-    abono: number
-    saldoCta: number
-    saldo: number
-    estado: string,
-    saldoOriginal: number
+  idCuotaPorCobrar: number;
+  idCuentaPorCobrar: number;
+  nroCuota: string;
+  cuota: number;
+  mora: number;
+  interes: number;
+  diasMora: number;
+  abono: number;
+  saldoCta: number;
+  saldo: number;
+  estado: string;
+  saldoOriginal: number;
 }
 
 export interface CuentaPorCobrarAPI {
-    codEstab: string
-    idCliente: number
-    identificacionComprador: string
-    razonSocialComprador: string
-    idCuentaPorCobrar: number
-    serieComprobante: string
-    codDoc: string
-    fechaEmision: string
-    fechaVencimiento: string
-    importeTotal: number
-    diasMora: number
-    mora: number
-    abono: number
-    saldo: number
-    saldoDoc: number
-    descripcion: string
-    cuotas: string
+  codEstab: string;
+  idCliente: number;
+  identificacionComprador: string;
+  razonSocialComprador: string;
+  idCuentaPorCobrar: number;
+  serieComprobante: string;
+  codDoc: string;
+  fechaEmision: string;
+  fechaVencimiento: string;
+  importeTotal: number;
+  diasMora: number;
+  mora: number;
+  abono: number;
+  saldo: number;
+  saldoDoc: number;
+  descripcion: string;
+  cuotas: string;
 }
 
 //Se usa internamente
 export interface Cuota {
-    idCuotaPorCobrar: number
-    idCuentaPorCobrar: number
-    nroCuota: string,
-    cuota: number
-    mora: number
-    interes: number
-    diasMora: number
-    abono: number
-    saldoCta: number
-    saldo: number
-    estado: string,
-    saldoOriginal: number
+  idCuotaPorCobrar: number;
+  idCuentaPorCobrar: number;
+  nroCuota: string;
+  cuota: number;
+  mora: number;
+  interes: number;
+  diasMora: number;
+  abono: number;
+  saldoCta: number;
+  saldo: number;
+  estado: string;
+  saldoOriginal: number;
 }
 
 export interface CuentaPorCobrar {
-    codEstab: string
-    idCliente: number
-    identificacionComprador: string
-    razonSocialComprador: string
-    idCuentaPorCobrar: number
-    serieComprobante: string
-    codDoc: string
-    fechaEmision: string
-    fechaVencimiento: string
-    importeTotal: number
-    diasMora: number
-    mora: number
-    abono: number
-    saldo: number
-    saldoDoc: number
-    descripcion: string
-    cuotas: Cuota[]
-    cuotasOriginal: Cuota[]
+  codEstab: string;
+  idCliente: number;
+  identificacionComprador: string;
+  razonSocialComprador: string;
+  idCuentaPorCobrar: number;
+  serieComprobante: string;
+  codDoc: string;
+  fechaEmision: string;
+  fechaVencimiento: string;
+  importeTotal: number;
+  diasMora: number;
+  mora: number;
+  abono: number;
+  saldo: number;
+  saldoDoc: number;
+  descripcion: string;
+  cuotas: Cuota[];
+  cuotasOriginal: Cuota[];
 }
 
 export interface CuentaPorCobrarComprobante {
-    codEstab: string
-    idCliente: number
-    identificacionComprador: string
-    razonSocialComprador: string
-    serieComprobante: string
-    importeTotal: number
-    saldo: number
-    abono: number
-    fechaEmision: string
+  codEstab: string;
+  idCliente: number;
+  identificacionComprador: string;
+  razonSocialComprador: string;
+  serieComprobante: string;
+  importeTotal: number;
+  saldo: number;
+  abono: number;
+  fechaEmision: string;
 }
 
 export interface CuentaPorCobrarProps {
-    idCuentaPorCobrar: number
-    codEstab: string
+  idCuentaPorCobrar: number;
+  codEstab: string;
 }
 
-
 export class DataFilterCuentaPorCobrarResponse {
-  estabs: GroupedEstab[]=[]
-  estadosDoc: any[]=[]
-  tiposDoc: any[]=[]
-  empresas: any[]=[]
-  ciudades: any[]=[]
-  users:any[]=[]
+  estabs: GroupedEstab[] = [];
+  estadosDoc: any[] = [];
+  tiposDoc: any[] = [];
+  empresas: any[] = [];
+  ciudades: any[] = [];
+  users: any[] = [];
 }

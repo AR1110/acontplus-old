@@ -20,7 +20,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   cancel(id: number) {
     return this._http
       .put<ApiResponse>(`${this._url}Cancel/${id}`, {})
-      .pipe(map((response) => response));
+      .pipe(map(response => response));
   }
 
   getAll<T>(parameters: T) {
@@ -29,43 +29,39 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       tipo: 1,
     };
 
-    return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
-      .pipe(
-        map((response) => {
-          if (response.code !== '1') {
-            return { retenciones: [] };
-          }
-          const { retenciones } = JSON.parse(response.payload as string);
-          return {
-            retenciones: (retenciones as RetencionAtsList[]) || [],
-          };
-        }),
-      );
+    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
+      map(response => {
+        if (response.code !== '1') {
+          return { retenciones: [] };
+        }
+        const { retenciones } = JSON.parse(response.payload as string);
+        return {
+          retenciones: (retenciones as RetencionAtsList[]) || [],
+        };
+      }),
+    );
   }
   getDataForm() {
     const parameters = { tipo: 2 };
     const defaultData = this.getDefaultData();
 
-    return this._http
-      .get(`${this._url}?json=${JSON.stringify(parameters)}`)
-      .pipe(
-        map((response) => {
-          if (!isApiResponse(response)) return defaultData;
+    return this._http.get(`${this._url}?json=${JSON.stringify(parameters)}`).pipe(
+      map(response => {
+        if (!isApiResponse(response)) return defaultData;
 
-          try {
-            const payload = JSON.parse(response.payload as string);
-            return {
-              ...defaultData,
-              ...payload,
-              estabs: payload.estabs as GroupedEstab[],
-            };
-          } catch (error) {
-            console.error('Error parsing response:', error);
-            return defaultData;
-          }
-        }),
-      );
+        try {
+          const payload = JSON.parse(response.payload as string);
+          return {
+            ...defaultData,
+            ...payload,
+            estabs: payload.estabs as GroupedEstab[],
+          };
+        } catch (error) {
+          console.error('Error parsing response:', error);
+          return defaultData;
+        }
+      }),
+    );
   }
 
   private getDefaultData() {
@@ -90,7 +86,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   }
   getById(id: number): Observable<RetencionAts> {
     return this._http.get<ApiResponse>(`${this._url} ${id}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return {} as RetencionAts;
         }
@@ -101,14 +97,10 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
   }
   create<T>(data: T): Observable<ApiResponse> {
     console.log(data);
-    return this._http
-      .post<ApiResponse>(`${this._url}`, data)
-      .pipe(map((response) => response));
+    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map(response => response));
   }
   update<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
 
   getDocs<T extends { idCard: string }>(parameters: T) {
@@ -117,17 +109,15 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       tipo: 4,
     };
 
-    return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`)
-      .pipe(
-        map((response) => {
-          if (response.code !== '1') {
-            return { documents: [] };
-          }
-          const { documents } = JSON.parse(response.payload as string);
+    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
+      map(response => {
+        if (response.code !== '1') {
+          return { documents: [] };
+        }
+        const { documents } = JSON.parse(response.payload as string);
 
-          return { documents: documents as RetAtsDocSustento[] };
-        }),
-      );
+        return { documents: documents as RetAtsDocSustento[] };
+      }),
+    );
   }
 }

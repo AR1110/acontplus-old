@@ -26,9 +26,7 @@ export class ThemeService {
   }
 
   #getCurrentTheme(): ThemeClass {
-    return this.#validateThemeCookie(this.#themeCookie)
-      ? this.#themeCookie
-      : 'azure-light';
+    return this.#validateThemeCookie(this.#themeCookie) ? this.#themeCookie : 'azure-light';
   }
 
   #validateThemeCookie(theme: string): theme is ThemeClass {

@@ -41,8 +41,8 @@ export const enum DOC_TYPE {
   IV = 'IV', //Ingresos Varios (Compras No Habituales)
   NE = 'NE', //Nota Entrega
   CDV = 'CDV', //Consolidao diario venta
-  AC='AC', //Ajuste Consolidacion
-  CI='CI'
+  AC = 'AC', //Ajuste Consolidacion
+  CI = 'CI',
 }
 
 export const enum DOC_TYPE_SRI {
@@ -51,7 +51,7 @@ export const enum DOC_TYPE_SRI {
   NC = '04',
   R = '07',
   ND = '05',
-  GR = '06'
+  GR = '06',
 }
 
 export enum REPORT_FORMAT {
@@ -204,9 +204,7 @@ export enum SEPARATOR_KEY_CODE {
   PUNTO_COMA = ';',
   DOS_PUNTOS = ':',
 }
-export const SEPARADORES_REGEX = new RegExp(
-  `[${Object.values(SEPARATOR_KEY_CODE).join('')}]`,
-);
+export const SEPARADORES_REGEX = new RegExp(`[${Object.values(SEPARATOR_KEY_CODE).join('')}]`);
 
 export enum CODE_ROLE {
   ADM = 'ADM',
@@ -224,5 +222,5 @@ export const DECIMALS = {
 };
 
 interface D {
-  nu: 2
+  nu: 2;
 }

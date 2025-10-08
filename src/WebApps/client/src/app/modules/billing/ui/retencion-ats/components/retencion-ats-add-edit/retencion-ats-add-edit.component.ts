@@ -3,17 +3,9 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
-import {
-  MatCard,
-  MatCardActions,
-  MatCardContent,
-  MatCardFooter,
-} from '@angular/material/card';
+import { MatCard, MatCardActions, MatCardContent, MatCardFooter } from '@angular/material/card';
 import { MatAccordion } from '@angular/material/expansion';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -75,9 +67,7 @@ import { formatDate } from '@core/utils/date.util';
 export class RetencionAtsAddEditComponent implements OnInit {
   private readonly _fb = inject(FormBuilder);
   readonly _data = inject<RetencionAts>(MAT_DIALOG_DATA);
-  private readonly _dialogRef = inject(
-    MatDialogRef<RetencionAtsAddEditComponent>,
-  );
+  private readonly _dialogRef = inject(MatDialogRef<RetencionAtsAddEditComponent>);
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _dialogService = inject(DialogService);
   private readonly _tS = inject(ToastrNotificationService);
@@ -220,16 +210,13 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this.infoAdicionalArray.push(infoAdicionalGroup);
   }
   initialLoad() {
-    this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
+    this._retencionAtsUseCase.getDataForm({}).subscribe(response => {
       this.estabs = groupEstabUtil({
         estabs: response.estabs,
         isGroupPuntoEmision: true,
       });
-      const idEstablecimiento =
-        this.estabs.find((x) => x.defaultEstab)?.idEstablecimiento || 0;
-      this.retencionAtsForm
-        .get('idEstablecimiento')
-        ?.setValue(idEstablecimiento);
+      const idEstablecimiento = this.estabs.find(x => x.defaultEstab)?.idEstablecimiento || 0;
+      this.retencionAtsForm.get('idEstablecimiento')?.setValue(idEstablecimiento);
 
       if (idEstablecimiento > 0) {
         this.onSelectEstablecimiento();
@@ -262,22 +249,18 @@ export class RetencionAtsAddEditComponent implements OnInit {
       // console.log(parsedData);
       this.retencionAtsForm.patchValue(parsedData);
       const formatedDate = formatDate(this._data.fechaEmision);
-      this.retencionAtsForm
-        .get('fechaEmision')
-        ?.setValue(formatedDate.toISOString());
+      this.retencionAtsForm.get('fechaEmision')?.setValue(formatedDate.toISOString());
       this.getPeriod();
       this.retAtsDocSustentos = parsedData.documentosSustento;
-      this.retAtsDocSustentos.forEach((doc) => {
+      this.retAtsDocSustentos.forEach(doc => {
         this.addDocSustento(doc);
       });
       this.infoAdicional = parsedData.infoAdicional;
-      this.infoAdicional.forEach((info) => {
+      this.infoAdicional.forEach(info => {
         this.addInfoAdicionalWithValues(info);
       });
     } else {
-      this.retencionAtsForm
-        .get('fechaEmision')
-        ?.setValue(formatDate(new Date()).toISOString());
+      this.retencionAtsForm.get('fechaEmision')?.setValue(formatDate(new Date()).toISOString());
 
       this.retencionAtsForm.get('parteRel')?.setValue('NO');
       this.getPeriod();
@@ -289,20 +272,15 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   onSelectEstablecimiento(): void {
-    const idEstablecimiento =
-      this.retencionAtsForm.get('idEstablecimiento')?.value;
+    const idEstablecimiento = this.retencionAtsForm.get('idEstablecimiento')?.value;
 
     if (idEstablecimiento) {
-      const estab = this.estabs.find(
-        (x) => x.idEstablecimiento == idEstablecimiento,
-      );
+      const estab = this.estabs.find(x => x.idEstablecimiento == idEstablecimiento);
 
       this.puntosEmision = estab?.puntosEmision;
 
       if (this.puntosEmision && this.puntosEmision.length > 0) {
-        const idPuntoEmision = this.puntosEmision.find(
-          (x) => x.defaultPtoEmi,
-        )?.idPuntoEmision;
+        const idPuntoEmision = this.puntosEmision.find(x => x.defaultPtoEmi)?.idPuntoEmision;
 
         if (idPuntoEmision) {
           this.retencionAtsForm.get('idPuntoEmision')?.setValue(idPuntoEmision);
@@ -350,17 +328,16 @@ export class RetencionAtsAddEditComponent implements OnInit {
       size: 'lg',
       data: {
         idProveedor: this.retencionAtsForm.get('idProveedor')?.value,
-        idCard: this.retencionAtsForm.get('identificacionSujetoRetenido')
-          ?.value,
+        idCard: this.retencionAtsForm.get('identificacionSujetoRetenido')?.value,
       },
     });
 
-    dialogRef.subscribe((response) => {
+    dialogRef.subscribe(response => {
       if (typeof response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
           this.retAtsDocSustentos = documents;
-          this.retAtsDocSustentos.forEach((doc) => {
+          this.retAtsDocSustentos.forEach(doc => {
             this.addDocSustento(doc);
           });
         }
@@ -372,7 +349,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     if (this._data && this._data.idRetencionAts > 0) {
       this._retencionAtsUseCase
         .update(this._data.idRetencionAts, this.retencionAtsForm.value)
-        .subscribe((response) => {
+        .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -382,17 +359,15 @@ export class RetencionAtsAddEditComponent implements OnInit {
           }
         });
     } else {
-      this._retencionAtsUseCase
-        .create(this.retencionAtsForm.value)
-        .subscribe((response) => {
-          this._tS.show({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
-          if (response.code === '1') {
-            this._dialogRef.close(response);
-          }
+      this._retencionAtsUseCase.create(this.retencionAtsForm.value).subscribe(response => {
+        this._tS.show({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
         });
+        if (response.code === '1') {
+          this._dialogRef.close(response);
+        }
+      });
     }
   }
 }

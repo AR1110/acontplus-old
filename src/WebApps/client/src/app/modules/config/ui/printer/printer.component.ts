@@ -1,18 +1,18 @@
-import {  Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { PrinterRead } from '@modules/config/domain/models/printing/printer.model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/components/printer-add-edit-modal/printer-add-edit-modal.component';
-import {ApiResponse } from '@core/models/api-response';
+import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {DialogService} from "@core/services/dialog.service";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-printer-page',
@@ -34,7 +34,7 @@ export class PrinterComponent implements OnInit {
   private readonly _modalService = inject(DialogService);
   private readonly _tS = inject(ToastrNotificationService);
 
-  printers = signal<PrinterRead[]>([])
+  printers = signal<PrinterRead[]>([]);
 
   openModalNewOrEdit(item?: PrinterRead) {
     const modalRef = this._modalService.open(PrinterAddEditModalComponent, {
@@ -42,10 +42,9 @@ export class PrinterComponent implements OnInit {
       data: {
         data: structuredClone(item) || {},
         printers: structuredClone(this.printers()),
-
-      }
+      },
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getPrinters();
       }
@@ -54,7 +53,7 @@ export class PrinterComponent implements OnInit {
 
   getPrinters() {
     this.printers.set([]);
-    this._printerUseCase.getPrinters().subscribe((response) => {
+    this._printerUseCase.getPrinters().subscribe(response => {
       this.printers.set(response.printers);
     });
   }
@@ -83,15 +82,11 @@ export class PrinterComponent implements OnInit {
       allowOutsideClick: false,
     });
     if (isConfirmed) {
-      this._printerUseCase
-        .removePrinter(item.id)
-        .subscribe(this.commonResponse);
+      this._printerUseCase.removePrinter(item.id).subscribe(this.commonResponse);
     }
   }
 
   updateStatus(item: PrinterRead) {
-    this._printerUseCase
-      .updateStatus(item.id, item)
-      .subscribe(this.commonResponse);
+    this._printerUseCase.updateStatus(item.id, item).subscribe(this.commonResponse);
   }
 }

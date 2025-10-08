@@ -1,32 +1,29 @@
-
 import {
   SolicitudAutorizacionDetalle,
   SolicitudAutorizacionList,
-} from "@modules/config/domain/models/solicitud-autorizacion.model";
-import {ApiResponse} from "@core/models/api-response";
+} from '@modules/config/domain/models/solicitud-autorizacion.model';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ListSolicitudAutorizacionDetalleMapper {
-
-  static toJson<T>(parameters:Partial<SolicitudAutorizacionList>){
-
+  static toJson<T>(parameters: Partial<SolicitudAutorizacionList>) {
     return JSON.stringify({
       tipo: 4,
-      id: parameters.idSolicitudAutorizacion
-    })
+      id: parameters.idSolicitudAutorizacion,
+    });
   }
 
   static fromJson(response: ApiResponse): SolicitudAutorizacionDetalle[] {
-    const {list=[]} = JSON.parse(response.payload as any);
+    const { list = [] } = JSON.parse(response.payload as any);
 
-    const data = list.map((item:any, index:number)=>{
+    const data = list.map((item: any, index: number) => {
       return {
-         index: index+1,
+        index: index + 1,
         nombre: item.nombre,
         valor: item.valor,
         nuevoValor: item.nuevoValor,
-        obs: item.obs
-      }
-    })
-    return  data
+        obs: item.obs,
+      };
+    });
+    return data;
   }
 }

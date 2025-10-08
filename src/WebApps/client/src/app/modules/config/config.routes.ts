@@ -13,7 +13,7 @@ import { CompanyComponent } from '@modules/config/ui/company/company.component';
 import { ConfigHomeComponent } from './ui/config-home.component';
 import { ShiftComponent } from './ui/shift/shift.component';
 import { Routes } from '@angular/router';
-import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
+import { WarehouseComponent } from '@inventory/ui/warehouse/warehouse.component';
 
 export const routes: Routes = [
   {

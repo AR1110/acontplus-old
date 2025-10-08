@@ -3,7 +3,7 @@ import { UserData } from '@modules/auth/domain/models/user-data.model';
 import { TokenModel } from '../../domain/models/token.model';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import {Session} from "@modules/auth/domain/models/session";
+import { Session } from '@modules/auth/domain/models/session';
 
 @Injectable({
   providedIn: 'root',
@@ -14,11 +14,14 @@ export class TokenLocalStorageRepository implements TokenRepository {
 
   saveSession(session: Session): void {
     localStorage.setItem(this.TOKEN_KEY, session.token);
-    localStorage.setItem(this.SESSION_KEY, JSON.stringify({
-      userData: session.userData,
-      menus: session.menus,
-      permissions: session.permissions
-    }));
+    localStorage.setItem(
+      this.SESSION_KEY,
+      JSON.stringify({
+        userData: session.userData,
+        menus: session.menus,
+        permissions: session.permissions,
+      }),
+    );
   }
 
   getSession(): Session | null {

@@ -1,10 +1,5 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { isApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
@@ -13,13 +8,13 @@ import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-modelo-modal',
-  imports: [ReactiveFormsModule,   ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './modelo-modal.component.html',
   styles: ``,
 })
@@ -45,11 +40,11 @@ export class ModeloModalComponent implements OnInit {
     ]),
     year: new FormControl(0),
   });
-  brands =  signal<Brand[]>([])
+  brands = signal<Brand[]>([]);
   data = inject<Modelo>(MAT_DIALOG_DATA);
   modalIcon = 'add';
   modalTitle = 'Registrar Modelo';
-  series = signal< Serie[]>([])
+  series = signal<Serie[]>([]);
 
   ngOnInit(): void {
     if (this.data.id > 0) {
@@ -68,24 +63,24 @@ export class ModeloModalComponent implements OnInit {
   }
   onBrandGet(brandId: number) {
     this.series.set([]);
-    this.serieService.get({ tipo: 2, brandId }).subscribe(  (response) => {
-        if (isApiResponse(response) && response.code == '1') {
-          this.series.set(JSON.parse(response.payload as string) || []);
-          this.modeloForm.get('serieId')?.enable();
-          // const state = false ? 'disable' : 'enable';
-          // this.modeloForm.controls['serieId'][state]();
-        } else if (this.modeloForm.controls['serieId']) {
-          this.modeloForm.get('serieId')?.disable();
-        }
+    this.serieService.get({ tipo: 2, brandId }).subscribe(response => {
+      if (isApiResponse(response) && response.code == '1') {
+        this.series.set(JSON.parse(response.payload as string) || []);
+        this.modeloForm.get('serieId')?.enable();
+        // const state = false ? 'disable' : 'enable';
+        // this.modeloForm.controls['serieId'][state]();
+      } else if (this.modeloForm.controls.serieId) {
+        this.modeloForm.get('serieId')?.disable();
+      }
     });
   }
   onGet() {
-    this.brandService.get({ tipo: 1 }).subscribe( (response) => {
-        if (isApiResponse(response)) {
-          if (response.code == '1') {
-            this.brands.set(JSON.parse(response.payload as string));
-          }
+    this.brandService.get({ tipo: 1 }).subscribe(response => {
+      if (isApiResponse(response)) {
+        if (response.code == '1') {
+          this.brands.set(JSON.parse(response.payload as string));
         }
+      }
     });
   }
   onModalClose() {
@@ -96,9 +91,9 @@ export class ModeloModalComponent implements OnInit {
       ...this.modeloForm.value,
     };
     if (this.data.id > 0) {
-      this.modeloService.put(this.data.id, dataToSave).subscribe( this.successResponse);
+      this.modeloService.put(this.data.id, dataToSave).subscribe(this.successResponse);
     } else {
-      this.modeloService.post(dataToSave).subscribe( this.successResponse);
+      this.modeloService.post(dataToSave).subscribe(this.successResponse);
     }
   }
   successResponse = (response: object) => {

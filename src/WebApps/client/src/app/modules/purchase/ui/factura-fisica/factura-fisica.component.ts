@@ -29,42 +29,40 @@ import { DialogService } from '@core/services/dialog.service';
 import { FacturaFisicaAddEditModalComponent } from './components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
 
 @Component({
-    selector: 'app-factura-fisica-page',
-    imports: [
-        //modules
-        FormsModule,
-        MatCardModule,
-        MatButtonModule,
-        MatIconModule,
-        MatMenuModule,
-        MatTooltipModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        MatInputModule,
-        //components
-        BreadcrumbComponent,
-        CustomTableContainerComponent,
-        MatDynamicTableComponent,
-        DateRangeSelectionComponent,
-        //Directives
-        FacturaFisicaDetalleDirective
-    ],
-    templateUrl: './factura-fisica.component.html',
-    styles: ``
+  selector: 'app-factura-fisica-page',
+  imports: [
+    //modules
+    FormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatInputModule,
+    //components
+    BreadcrumbComponent,
+    CustomTableContainerComponent,
+    MatDynamicTableComponent,
+    DateRangeSelectionComponent,
+    //Directives
+    FacturaFisicaDetalleDirective,
+  ],
+  templateUrl: './factura-fisica.component.html',
+  styles: ``,
 })
 export class FacturaFisicaComponent implements OnInit {
-
-  private facturaFisicaSvc = inject(FacturaFisicaService)
-  private tS = inject(ToastrNotificationService)
-  private dialogSvc = inject(DialogService)
+  private facturaFisicaSvc = inject(FacturaFisicaService);
+  private tS = inject(ToastrNotificationService);
+  private dialogSvc = inject(DialogService);
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
-  estadosDoc = [] as any[]
-  isSearchAdvanced = signal(false)
-  isLoadingResults = signal(false)
-
+  estadosDoc = [] as any[];
+  isSearchAdvanced = signal(false);
+  isLoadingResults = signal(false);
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -78,7 +76,7 @@ export class FacturaFisicaComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   dataSource = new MatTableDataSource<FacturaFisicaLista>();
 
@@ -97,47 +95,41 @@ export class FacturaFisicaComponent implements OnInit {
     esDatoAdicional: false,
     esBuscarPorNro: false,
     esBuscarUsuario: false,
-    esBuscarCliente: false
-  })
+    esBuscarCliente: false,
+  });
 
   private getDataParams() {
     const params = {
-
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
 
-        codEstab: this.dataSearch().codEstab,
-        idPuntoEmision: getValidId(this.dataSearch().idPuntoEmision),
-        byCliente: this.dataSearch().idCliente,
-        checkBoxFecha: this.dataSearch().checkBoxDate,
-        byUsuario: getValidId(this.dataSearch().idUsuario),
-        idEstadoPago: getValidId(this.dataSearch().idEstadoDoc),
-        fechaInicio:  this.dataSearch().fromDate,
-        fechaFin: this.dataSearch().toDate,
-   //     nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
-    //    infoAdicional: this.dataSearch.infoAdicional ? this.dataSearch.infoAdicional : null,
-        convertToDoc: this.dataSearch().isTransferredToDoc
-
-
+      codEstab: this.dataSearch().codEstab,
+      idPuntoEmision: getValidId(this.dataSearch().idPuntoEmision),
+      byCliente: this.dataSearch().idCliente,
+      checkBoxFecha: this.dataSearch().checkBoxDate,
+      byUsuario: getValidId(this.dataSearch().idUsuario),
+      idEstadoPago: getValidId(this.dataSearch().idEstadoDoc),
+      fechaInicio: this.dataSearch().fromDate,
+      fechaFin: this.dataSearch().toDate,
+      //     nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
+      //    infoAdicional: this.dataSearch.infoAdicional ? this.dataSearch.infoAdicional : null,
+      convertToDoc: this.dataSearch().isTransferredToDoc,
     };
     return params;
   }
 
-
   private successResponseNotaEntregaAll(response: any) {
-
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
+    this.pagination.update(p => ({
       ...p,
       totalRecords: response.totalRecords,
     }));
-
   }
 
   private getNotasEntrega() {
     if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
 
-    this.isLoadingResults.set(true)
+    this.isLoadingResults.set(true);
     this.facturaFisicaSvc
       .getAll(this.getDataParams())
       .pipe(
@@ -145,62 +137,58 @@ export class FacturaFisicaComponent implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         this.successResponseNotaEntregaAll(response);
       });
   }
 
   refresh() {
-    this.getNotasEntrega()
+    this.getNotasEntrega();
   }
 
   ngOnInit(): void {
-    this.isLoadingResults.set(true)
-    this.facturaFisicaSvc.getDataFilter().pipe(
-      switchMap((initialData:any) => {
-
-        this.estabs = initialData.estabs;
-        this.estadosDoc = initialData.estadosDoc;
-
-        if (this.estabs.length > 0) {
-          const dataEstab = this.estabs.find(estab => (estab.defaultEstab));
-          this.puntosEmision = dataEstab?.puntosEmision || [];
-
-          this.dataSearch.update(e => {
-            return {
-              ...e,
-              codEstab: dataEstab?.codEstab,
-              idPuntoEmision: this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0
-            }
-
-          })
-        } else {
-          this.tS.show({
-            type: 'warning',
-            message: 'No tienes asignado Establecimiento!'
-          })
-          return throwError(() => new Error('No tienes asignado Establecimiento'));
-        }
-
-        return this.facturaFisicaSvc.getAll(this.getDataParams())
-
-      })
-    )
+    this.isLoadingResults.set(true);
+    this.facturaFisicaSvc
+      .getDataFilter()
       .pipe(
-        finalize(() => this.isLoadingResults.set(false))
+        switchMap((initialData: any) => {
+          this.estabs = initialData.estabs;
+          this.estadosDoc = initialData.estadosDoc;
+
+          if (this.estabs.length > 0) {
+            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
+            this.puntosEmision = dataEstab?.puntosEmision || [];
+
+            this.dataSearch.update(e => {
+              return {
+                ...e,
+                codEstab: dataEstab?.codEstab,
+                idPuntoEmision:
+                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+              };
+            });
+          } else {
+            this.tS.show({
+              type: 'warning',
+              message: 'No tienes asignado Establecimiento!',
+            });
+            return throwError(() => new Error('No tienes asignado Establecimiento'));
+          }
+
+          return this.facturaFisicaSvc.getAll(this.getDataParams());
+        }),
       )
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe(response => {
         this.successResponseNotaEntregaAll(response);
-      })
-
-
+      });
   }
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
     value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update((ds) => {
+    this.dataSearch.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -208,18 +196,21 @@ export class FacturaFisicaComponent implements OnInit {
     });
   }
 
-  onEstabChange(){
+  onEstabChange() {
     const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
-      this.setDataSearch("idPuntoEmision", this.puntosEmision.find(pto => (pto.defaultPtoEmi))?.idPuntoEmision || 0)
-        this.refresh();
+      this.setDataSearch(
+        'idPuntoEmision',
+        this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+      );
+      this.refresh();
     } else {
-        this.tS.show({
-          type: 'warning',
-          message: 'No tiene puntos de emisión asignados'
-        })
+      this.tS.show({
+        type: 'warning',
+        message: 'No tiene puntos de emisión asignados',
+      });
     }
   }
 
@@ -228,26 +219,21 @@ export class FacturaFisicaComponent implements OnInit {
       return {
         ...e,
         fromDate: range.from,
-        toDate: range.to
-      }
-    })
-    this.refresh()
+        toDate: range.to,
+      };
+    });
+    this.refresh();
   }
 
-  openModalAddEdit(row?: FacturaFisicaLista){
+  openModalAddEdit(row?: FacturaFisicaLista) {
     const dialogSvc = this.dialogSvc.open(FacturaFisicaAddEditModalComponent, {
-      size: 'xl'
-    })
-    dialogSvc.subscribe(result=>{
-
-    })
-
-
+      size: 'xl',
+    });
+    dialogSvc.subscribe(result => {});
   }
-
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

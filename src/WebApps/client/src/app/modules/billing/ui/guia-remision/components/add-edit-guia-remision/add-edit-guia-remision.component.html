@@ -1,9 +1,4 @@
-<app-mat-custom-dialog
-  (close)="close()"
-  [title]="title"
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-/>
+<app-mat-custom-dialog (close)="close()" [title]="title" [containerTemplate]="body" [actionsTemplate]="footer" />
 
 <ng-template #body>
   <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
@@ -134,11 +129,8 @@
           <mat-form-field class="w-100">
             <mat-label>Establecimiento</mat-label>
             <mat-select formControlName="codEstab">
-              @for(item of estabs(); track $index){
-              <mat-option [value]="item.codEstab">{{
-                item.nombreEstab
-              }}</mat-option>
-
+              @for (item of estabs(); track $index) {
+                <mat-option [value]="item.codEstab">{{ item.nombreEstab }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -148,9 +140,7 @@
             <mat-label>Punto Emisión</mat-label>
             <mat-select formControlName="puntoEmisionId">
               @for (item of puntosEmision(); track $index) {
-              <mat-option [value]="item.idPuntoEmision">{{
-                item.ptoEmi
-              }}</mat-option>
+                <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -252,17 +242,10 @@
             <input matInput placeholder="..." formControlName="idCard" />
           </mat-form-field>
         </div>
-        @let destinatarioId =dataForm.get("destinatario.id")?.value || 0 ;
-        @if(destinatarioId>0){
-          <div
-            class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex justify-content-center align-items-center"
-          >
-            <app-theme-button
-              [variant]="'info'"
-              [icon]="'info'"
-              [text]="'Documentos'"
-              (handleClick)="openDocs()"
-            />
+        @let destinatarioId = dataForm.get('destinatario.id')?.value || 0;
+        @if (destinatarioId > 0) {
+          <div class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex justify-content-center align-items-center">
+            <app-theme-button [variant]="'info'" [icon]="'info'" [text]="'Documentos'" (handleClick)="openDocs()" />
           </div>
         }
       </div>
@@ -300,11 +283,7 @@
 
       <div class="row justify-content-end">
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
-          <app-theme-button
-            [variant]="'info'"
-            [icon]="'info'"
-            [text]="'Dato Adicional'"
-          />
+          <app-theme-button [variant]="'info'" [icon]="'info'" [text]="'Dato Adicional'" />
         </div>
       </div>
     </div>

@@ -1,11 +1,8 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { REPORT_CODE, DOC_TYPE } from '@core/constants/global.constants';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { isValidField, removeSpacesInValue } from '@core/utils/utils';
 import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
@@ -19,13 +16,13 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {MatRadioModule} from "@angular/material/radio";
-import {MatDivider} from "@angular/material/divider";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
 type TipoDocSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
 @Component({
@@ -44,15 +41,15 @@ type TipoDocSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
     MatDivider,
     MatFormFieldModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
   ],
 })
-export class ReporteCobrosComponent implements OnInit  {
+export class ReporteCobrosComponent implements OnInit {
   http = inject(HttpClient);
   // VARIABLES Y CONSTANTES
   establecimientos = signal<GroupedEstab[]>([]);
-  puntosEmision =signal<GroupedEstabPuntoEmision[]>([])
-  tiposDoc = signal<TipoDocSelect[]>([])
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  tiposDoc = signal<TipoDocSelect[]>([]);
   subEntidadFinanciera = signal<SubEntidadFinancieraSelectHtmlOnly[]>([]);
   bancos = signal<BancoSelectOnly[]>([]);
   isCustomerSearchSimple = true;
@@ -86,47 +83,40 @@ export class ReporteCobrosComponent implements OnInit  {
   }
 
   getInitialLoad() {
-    this._comprobanteIngresoUseCase.getDataFilter().subscribe((response) => {
-      const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } =
-        response;
+    this._comprobanteIngresoUseCase.getDataFilter().subscribe(response => {
+      const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } = response;
 
       this.establecimientos.set(establecimientos);
 
-      const dataEstab = this.establecimientos().find(
-        (estab) => estab.defaultEstab,
-      );
+      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
 
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.puntosEmision.set(dataEstab.puntosEmision);
 
-        const dataPuntoEmision = this.puntosEmision().find(
-          (ptoEmi) => ptoEmi.defaultPtoEmi,
-        );
+        const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
         if (dataPuntoEmision) {
           this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
       }
-      this.tiposDoc.set(tiposDoc)
+      this.tiposDoc.set(tiposDoc);
       this.subEntidadFinanciera.set(subEntidadesFinanciera);
       this.bancos.set(bancos);
       this.dataSearch.codDoc =
-        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
-          ?.codDoc || '';
+        this.tiposDoc().find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
     });
   }
 
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos().find(
-        (estab) => estab.codEstab === this.dataSearch.codEstab,
+        estab => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.puntosEmision.set(dataEstab.puntosEmision);
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)
-            ?.idPuntoEmision || 0;
+          this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
         return;
       }
     }
@@ -181,9 +171,7 @@ export class ReporteCobrosComponent implements OnInit  {
         codDoc: isValidField(this.dataSearch.codDoc),
         idSubEntidadFinanciera: this.dataSearch.idSubEntidadFinanciera,
         idCustomer:
-          (this.dataSearch.supplierChecked &&
-            isValidField(this.dataSearch.customerId)) ||
-          null,
+          (this.dataSearch.supplierChecked && isValidField(this.dataSearch.customerId)) || null,
         idPuntoEmision: this.dataSearch.idPuntoEmision,
         fechaInicio: this.dataSearch.fromDate,
         fechaFin: this.dataSearch.toDate,
@@ -200,9 +188,7 @@ export class ReporteCobrosComponent implements OnInit  {
       const parameters = {
         reportParams: JSON.stringify({
           codEstab: this.dataSearch.codEstab,
-          codigo: this.dataSearch.documentoChecked
-            ? REPORT_CODE.RCXD
-            : REPORT_CODE.RCXC,
+          codigo: this.dataSearch.documentoChecked ? REPORT_CODE.RCXD : REPORT_CODE.RCXC,
           format,
         }),
         dataParams: JSON.stringify(dataParms),

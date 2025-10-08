@@ -1,10 +1,6 @@
-import {Component, inject, signal, ViewEncapsulation, OnInit} from '@angular/core';
+import { Component, inject, signal, ViewEncapsulation, OnInit } from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {
-  CODE_ESTADO,
-  REPORT_CODE,
-  REPORT_FORMAT,
-} from '@core/constants/global.constants';
+import { CODE_ESTADO, REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -27,18 +23,18 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatMenuModule } from '@angular/material/menu';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatPagination} from "@shared/models/pagination.model";
-import {PageEvent} from "@angular/material/paginator";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {DialogService} from "@core/services/dialog.service";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatPagination } from '@shared/models/pagination.model';
+import { PageEvent } from '@angular/material/paginator';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { DialogService } from '@core/services/dialog.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-caja-modal',
@@ -59,11 +55,10 @@ import {MatButtonModule} from "@angular/material/button";
   encapsulation: ViewEncapsulation.None,
 })
 export class ControlCajaModalComponent implements OnInit {
-
-  private dialogRef = inject(MatDialogRef<ControlCajaModalComponent>)
+  private dialogRef = inject(MatDialogRef<ControlCajaModalComponent>);
   readonly params = inject<{
-    idCaja:number
-    idUsuario: number
+    idCaja: number;
+    idUsuario: number;
   }>(MAT_DIALOG_DATA);
   dataPermisosCaja: PermissionCashAccounting = {
     cerrarCaja: false,
@@ -86,7 +81,7 @@ export class ControlCajaModalComponent implements OnInit {
   };
   page = 1;
   totalRecords = 0;
-  movimientosCaja  = signal<ControlCaja[]>([]);
+  movimientosCaja = signal<ControlCaja[]>([]);
   estadosMovimiento = [
     {
       estado: false,
@@ -108,9 +103,7 @@ export class ControlCajaModalComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
   private format = REPORT_FORMAT.PDF;
 
-
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'index', label: '#', type: 'string' },
     { key: 'fechaApertura', label: 'Fecha Apertura', type: 'string' },
@@ -120,7 +113,7 @@ export class ControlCajaModalComponent implements OnInit {
     { key: 'totalArqueo', label: 'Total', type: 'string' },
     { key: 'statusName', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -136,14 +129,14 @@ export class ControlCajaModalComponent implements OnInit {
         ? null
         : this.dataSearch.statusMovement,
     };
-    this._controlCajaUseCase.getAll(dataSearch).subscribe( (response) => {
-        this.movimientosCaja.set(response.data);
-        this.pagination.update(item=>{
-          return {
-            ...item,
-            totalRecords: response.totalRecords
-          }
-        })
+    this._controlCajaUseCase.getAll(dataSearch).subscribe(response => {
+      this.movimientosCaja.set(response.data);
+      this.pagination.update(item => {
+        return {
+          ...item,
+          totalRecords: response.totalRecords,
+        };
+      });
     });
   }
 
@@ -151,18 +144,16 @@ export class ControlCajaModalComponent implements OnInit {
     try {
       this.getMovimientosCaja();
 
-      this.pS.select('permission').subscribe((response) => {
+      this.pS.select('permission').subscribe(response => {
         this.dataPermisosCaja = response.cashAccounting;
       });
 
-      this._controlCajaUseCase.getDataFilter().subscribe(  (response) => {
-          const estados = response.estados;
-          const dataEstado = estados.find(
-            (estado: any) => estado.codEstado === CODE_ESTADO.NCBR,
-          );
-          if (dataEstado) {
-            this.dataSearch.codEstado = dataEstado.codEstado;
-          }
+      this._controlCajaUseCase.getDataFilter().subscribe(response => {
+        const estados = response.estados;
+        const dataEstado = estados.find((estado: any) => estado.codEstado === CODE_ESTADO.NCBR);
+        if (dataEstado) {
+          this.dataSearch.codEstado = dataEstado.codEstado;
+        }
       });
     } catch (error) {
       console.log(error);
@@ -227,25 +218,23 @@ export class ControlCajaModalComponent implements OnInit {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async (clave) => {
+          preConfirm: async clave => {
             try {
               const obj = {
                 typeCheck: 1,
                 clave,
               };
 
-              const response = await this.userPermissionSvc
-                .checkHasPermission(obj)
-                .toPromise();
-              if(!response) return
+              const response = await this.userPermissionSvc.checkHasPermission(obj).toPromise();
+              if (!response) return;
 
-                if (response.code === '0') {
-                  Swal.showValidationMessage(`${response.message}`);
-                }
-                if (response.code === '1') {
-                  isOpenModal = true;
-                  return response.code;
-                }
+              if (response.code === '0') {
+                Swal.showValidationMessage(`${response.message}`);
+              }
+              if (response.code === '1') {
+                isOpenModal = true;
+                return response.code;
+              }
 
               return true;
             } catch (err) {
@@ -263,12 +252,9 @@ export class ControlCajaModalComponent implements OnInit {
       }
 
       if (isOpenModal) {
-        const modalRef = this.dialogSvc.open(
-          CierreCajaModalComponent,
-          {
-            data: params || {}
-          }
-        );
+        const modalRef = this.dialogSvc.open(CierreCajaModalComponent, {
+          data: params || {},
+        });
         modalRef.subscribe(result => {
           if (result && typeof result === 'object') {
             this.isReloadCaja = true;
@@ -296,15 +282,13 @@ export class ControlCajaModalComponent implements OnInit {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async (clave) => {
+          preConfirm: async clave => {
             const obj = {
               typeCheck: 1,
               clave,
             };
 
-            const response = await this.userPermissionSvc
-              .checkHasPermission(obj)
-              .toPromise();
+            const response = await this.userPermissionSvc.checkHasPermission(obj).toPromise();
 
             if (isApiResponse(response)) {
               if (response.code === '0') {
@@ -318,7 +302,7 @@ export class ControlCajaModalComponent implements OnInit {
             return true;
           },
           allowOutsideClick: () => Swal.isLoading(),
-        }).then((result) => {
+        }).then(result => {
           if (result.isConfirmed) {
             this.generateReport(idControlCaja, this.format);
           }
@@ -380,7 +364,7 @@ export class ControlCajaModalComponent implements OnInit {
       confirmButtonText: `Continuar&nbsp;<i class="fa fa-arrow-right"></i>`,
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
+      inputValidator: value => {
         if (!value) {
           return 'Seleccione el formato de reporte!';
         }
@@ -424,14 +408,9 @@ export class ControlCajaModalComponent implements OnInit {
         toDate = new Date();
       }
 
-      const parts: string[] =
-        this.dataMovientoControCaja.fechaApertura.split(' ');
-      const dateParts: number[] = parts[0]
-        .split('/')
-        .map((part) => parseInt(part, 10));
-      const timeParts: number[] = parts[1]
-        .split(':')
-        .map((part) => parseInt(part, 10));
+      const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
+      const dateParts: number[] = parts[0].split('/').map(part => parseInt(part, 10));
+      const timeParts: number[] = parts[1].split(':').map(part => parseInt(part, 10));
 
       const convertedFromDate: Date = new Date(
         dateParts[2],
@@ -478,31 +457,24 @@ export class ControlCajaModalComponent implements OnInit {
 
   // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
-       this.dialogSvc.open(
-        FiltroDetalleCajaReportModal,
-        {
-          data: params || {},
-        }
-      );
+    this.dialogSvc.open(FiltroDetalleCajaReportModal, {
+      data: params || {},
+    });
   }
 
   // --> Modal Detalle ArqueoCaja
   openModalDetalleArqureoCaja(params: ControlCaja) {
     try {
-       this.dialogSvc.open(
-        DetalleArqueoControlCajaComponent,
-        {
-          data: params || {}
-        }
-      )
+      this.dialogSvc.open(DetalleArqueoControlCajaComponent, {
+        data: params || {},
+      });
     } catch (error) {
       console.log(error);
     }
   }
 
-
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

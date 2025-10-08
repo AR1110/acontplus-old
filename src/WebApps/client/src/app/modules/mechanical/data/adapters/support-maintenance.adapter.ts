@@ -1,38 +1,33 @@
-
-import { formatDateToString } from "@core/utils/date.util";
-import { SupportMaintenanceDetail } from "@mechanical/domain/models/support-maintenance.model";
-import { isValidField } from "@core/utils/utils";
+import { formatDateToString } from '@core/utils/date.util';
+import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
+import { isValidField } from '@core/utils/utils';
 
 interface ToProps {
-  data: any
-  details: SupportMaintenanceDetail[],
-  detailsDeleted: SupportMaintenanceDetail[],
+  data: any;
+  details: SupportMaintenanceDetail[];
+  detailsDeleted: SupportMaintenanceDetail[];
 }
 export class SupportMaintenanceAdapter {
-
   static to(obj: ToProps) {
     const { data, details, detailsDeleted } = obj;
-
 
     const resultData = this.dataTo(data);
     const resultDetalles = this.detailTo(details);
     const resultDetallesDeleted = this.detailTo(detailsDeleted);
 
-    const resultDetallesMerge = [...resultDetalles, ...resultDetallesDeleted]
+    const resultDetallesMerge = [...resultDetalles, ...resultDetallesDeleted];
 
     return {
       //order: resultOrder,
       support: {
         id: resultData.id,
         total: resultData.total,
-        discount: resultData.discount
+        discount: resultData.discount,
       },
       supportDetails: resultDetallesMerge,
       //  customDetails: resultCustomDetails
-    }
+    };
   }
-
-
 
   private static dataTo(data: any) {
     const obj = {
@@ -48,8 +43,8 @@ export class SupportMaintenanceAdapter {
       tip: data.tip,
       total: data.total,
       puntoEmisionId: data.puntoEmisionId,
-      discount: data.discount
-    }
+      discount: data.discount,
+    };
     return obj;
   }
 
@@ -75,13 +70,9 @@ export class SupportMaintenanceAdapter {
         inventory: item.llevaInventario,
         enabled: item.enabled,
         deleted: item.deleted,
-        obs: isValidField(item.obs)
-      }
-    })
+        obs: isValidField(item.obs),
+      };
+    });
     return results;
   }
-
-
 }
-
-

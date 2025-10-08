@@ -36,9 +36,7 @@ import { MatRadioModule } from '@angular/material/radio';
   ],
 })
 export class SubEntidadFinancieraDialogComponent implements OnInit {
-  readonly dialogRef = inject(
-    MatDialogRef<SubEntidadFinancieraDialogComponent>,
-  );
+  readonly dialogRef = inject(MatDialogRef<SubEntidadFinancieraDialogComponent>);
   readonly data = inject<any>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);
@@ -58,10 +56,7 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
   btnText = 'Guardar';
 
   dataForm = new FormGroup({
-    idEntidadFinanciera: new FormControl(0, [
-      Validators.required,
-      this.greaterThanZeroValidator,
-    ]),
+    idEntidadFinanciera: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
     idSubEntidadFinanciera: new FormControl(0),
     codigo: new FormControl('', Validators.required),
     descripcion: new FormControl('', Validators.required),
@@ -70,9 +65,7 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
     interes: new FormControl(0),
   });
 
-  greaterThanZeroValidator(
-    control: AbstractControl<number>,
-  ): ValidationErrors | null {
+  greaterThanZeroValidator(control: AbstractControl<number>): ValidationErrors | null {
     const value = control.value;
     if (value !== null && (isNaN(value) || value <= 0)) {
       return { lessThanZero: true }; // Validation failed
@@ -82,13 +75,9 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
 
   ngOnInit() {
     this.params = { ...this.params, ...this.data };
-    this.dataForm
-      .get('idEntidadFinanciera')
-      ?.setValue(this.params.idEntidadFinanciera);
+    this.dataForm.get('idEntidadFinanciera')?.setValue(this.params.idEntidadFinanciera);
     if (this.params.idSubEntidadFinanciera > 0) {
-      this.dataForm
-        .get('idSubEntidadFinanciera')
-        ?.setValue(this.params.idSubEntidadFinanciera);
+      this.dataForm.get('idSubEntidadFinanciera')?.setValue(this.params.idSubEntidadFinanciera);
       this.dataForm.get('codigo')?.setValue(this.params.codigo);
       this.dataForm.get('descripcion')?.setValue(this.params.descripcion);
       this.dataForm.get('controlCaja')?.setValue(this.params.controlCaja);
@@ -117,7 +106,7 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
       const data = this.dataForm.value;
 
       if (!(this.params.idSubEntidadFinanciera > 0)) {
-        this.useCase.create(data).subscribe((response) => {
+        this.useCase.create(data).subscribe(response => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',
@@ -135,23 +124,21 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
       }
 
       if (this.params.idSubEntidadFinanciera > 0) {
-        this.useCase
-          .update(this.params.idSubEntidadFinanciera, data)
-          .subscribe((response) => {
-            if (response.code === '0') {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
-            }
-            if (response.code === '1') {
-              this.tS.show({
-                type: 'success',
-                message: response.message,
-              });
-              this.dialogRef.close(response);
-            }
-          });
+        this.useCase.update(this.params.idSubEntidadFinanciera, data).subscribe(response => {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+            this.dialogRef.close(response);
+          }
+        });
       }
     } catch (error) {
       console.log(error);

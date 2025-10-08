@@ -1,12 +1,19 @@
-import { roundNumber } from "@core/utils/round-number.utils";
-import { MultiplesPaymentType, PaymentDetail, PaymentHistory } from "@accounting/comprobante-ingreso/domain/comprobante-ingreso";
-import { CuentaPorCobrar, CuentaPorCobrarComprobante, Cuota } from "@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.model";
+import { roundNumber } from '@core/utils/round-number.utils';
+import {
+  MultiplesPaymentType,
+  PaymentDetail,
+  PaymentHistory,
+} from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
+import {
+  CuentaPorCobrar,
+  CuentaPorCobrarComprobante,
+  Cuota,
+} from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.model';
 
 type CuotaExtend = Cuota & {
-  abonoPosfechado: number
-}
+  abonoPosfechado: number;
+};
 class ComprobanteIngresoUtil {
-
   private MAX_NUMBER_ROUND_GENERAL = 3;
   private MAX_NUMBER_ROUND_CUOTA_ABONO = 5;
 
@@ -34,10 +41,10 @@ class ComprobanteIngresoUtil {
 
   getEstadoCuota(item: any) {
     let estado = '';
-    if (item.saldo === 0) estado = 'COBRADA'
-    if (item.saldo > 0) estado = "PENDIENTE PARCIAL";
-    if (item.abono === 0) estado = "PENDIENTE";
-    return estado
+    if (item.saldo === 0) estado = 'COBRADA';
+    if (item.saldo > 0) estado = 'PENDIENTE PARCIAL';
+    if (item.abono === 0) estado = 'PENDIENTE';
+    return estado;
   }
 
   applyReceivedAmountToQuota(cuentasPorCobrar: CuentaPorCobrar[]): CuentaPorCobrar[] {
@@ -47,18 +54,24 @@ class ComprobanteIngresoUtil {
       this.voucher = group;
 
       if (typeof this.receivedAmount !== 'number' || this.receivedAmount > 0) {
+        let valorMovimientoSaldo = 0,
+          historialAbono = 0;
 
-        let valorMovimientoSaldo = 0, historialAbono = 0;
+        const cobrosDetalleFiltered = this.paymentDetails.filter(
+          cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
+        );
 
-        const cobrosDetalleFiltered = this.paymentDetails.filter(cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar)
-
-        const totalAbonoCuenta = roundNumber(cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0), this.MAX_NUMBER_ROUND_GENERAL);
+        const totalAbonoCuenta = roundNumber(
+          cobrosDetalleFiltered.reduce((acc, curr) => acc + curr.abono, 0),
+          this.MAX_NUMBER_ROUND_GENERAL,
+        );
 
         if (cobrosDetalleFiltered.length === 0) {
-
-          const historialCuentasFiltered = this.historialCuentas.filter(cd => (
-            cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar && cd.secuencial === this.sequencia
-          ));
+          const historialCuentasFiltered = this.historialCuentas.filter(
+            cd =>
+              cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
+              cd.secuencial === this.sequencia,
+          );
 
           const dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
@@ -70,7 +83,6 @@ class ComprobanteIngresoUtil {
 
           if (this.receivedAmount <= this.voucher.saldo) {
             historialAbono = this.receivedAmount;
-
           } else if (this.receivedAmount >= this.voucher.saldo) {
             historialAbono = this.voucher.saldo;
           }
@@ -82,15 +94,13 @@ class ComprobanteIngresoUtil {
             saldo: roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
             diasMora: this.voucher.diasMora,
             mora: this.voucher.mora,
-          })
-
+          });
         }
         if (cobrosDetalleFiltered.length > 0) {
           if (totalAbonoCuenta !== roundNumber(this.voucher.saldo, this.MAX_NUMBER_ROUND_GENERAL)) {
-
-            const historialCuentasFiltered = this.historialCuentas.filter(cd => (
-              cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar
-            ));
+            const historialCuentasFiltered = this.historialCuentas.filter(
+              cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
+            );
 
             const dataUltimoCobroDetalle = historialCuentasFiltered.pop();
 
@@ -102,9 +112,8 @@ class ComprobanteIngresoUtil {
 
             if (this.receivedAmount <= valorMovimientoSaldo) {
               historialAbono = this.receivedAmount;
-
             } else {
-              historialAbono = valorMovimientoSaldo
+              historialAbono = valorMovimientoSaldo;
             }
 
             this.historialCuentas.push({
@@ -114,17 +123,15 @@ class ComprobanteIngresoUtil {
               saldo: roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
               diasMora: this.voucher.diasMora,
               mora: this.voucher.mora,
-            })
+            });
           }
         }
       }
 
-
-
       for (const item of group.cuotas) {
         item.abonoPosfechado = 0;
 
-        if (typeof this.receivedAmount !== "number" || this.receivedAmount === 0) return []
+        if (typeof this.receivedAmount !== 'number' || this.receivedAmount === 0) return [];
 
         //Si la cuota no tiene ningún abono
         if (item.abono > 0) {
@@ -135,14 +142,10 @@ class ComprobanteIngresoUtil {
 
         item.cuota = roundNumber(item.cuota, this.MAX_NUMBER_ROUND_GENERAL);
         item.abono = roundNumber(item.abono, this.MAX_NUMBER_ROUND_GENERAL);
-        item.abonoPosfechado = roundNumber(
-          item.abonoPosfechado,
-          this.MAX_NUMBER_ROUND_GENERAL
-        );
+        item.abonoPosfechado = roundNumber(item.abonoPosfechado, this.MAX_NUMBER_ROUND_GENERAL);
         item.estado = this.getEstadoCuota(item);
 
         item.esCuotaAfectada = true; //
-
       }
     }
     return tempVoucherQuotas;
@@ -181,10 +184,7 @@ class ComprobanteIngresoUtil {
       }
 
       this.receivedAmount = this.receivedAmount - item.saldo;
-      this.receivedAmount = roundNumber(
-        this.receivedAmount,
-        this.MAX_NUMBER_ROUND_GENERAL
-      );
+      this.receivedAmount = roundNumber(this.receivedAmount, this.MAX_NUMBER_ROUND_GENERAL);
       this.addPaymentDetail(item, abonoCuota, 0);
       item.saldo = 0;
     }
@@ -243,10 +243,11 @@ class ComprobanteIngresoUtil {
     if (item.cuota == 0) return;
 
     let valorMovimientoSaldo = 0;
-    const cobrosDetalleFiltered = this.paymentDetails.filter(cd => (
-      cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
-      cd.idCuotaPorCobrar === item.idCuotaPorCobrar
-    ))
+    const cobrosDetalleFiltered = this.paymentDetails.filter(
+      cd =>
+        cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
+        cd.idCuotaPorCobrar === item.idCuotaPorCobrar,
+    );
 
     const dataUltimoCobroDetalle = cobrosDetalleFiltered.pop();
     if (dataUltimoCobroDetalle) {
@@ -265,29 +266,31 @@ class ComprobanteIngresoUtil {
       cuota: roundNumber(item.cuota, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
       saldo,
       secuencial: this.sequencia,
-      saldoOriginal: roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO)
+      saldoOriginal: roundNumber(valorMovimientoSaldo, this.MAX_NUMBER_ROUND_CUOTA_ABONO),
     });
     item.saldo = roundNumber(item.saldo, this.MAX_NUMBER_ROUND_GENERAL);
     item.saldoOriginal = roundNumber(item.saldoOriginal - abono, this.MAX_NUMBER_ROUND_GENERAL);
   }
-
 }
 
 export const getTotalesCuota = (voucherQuotas: CuentaPorCobrar[]) => {
-  const { importeTotal, totalAbonoAnterior, totalSaldo, totalSaldoDoc } = voucherQuotas.reduce((total, voucher) => {
-    total.importeTotal += voucher.importeTotal;
-    total.totalSaldo += voucher.saldo;
-    total.totalAbonoAnterior += voucher.abono;
-    total.totalMora += voucher.mora;
-    total.totalSaldoDoc += voucher.saldoDoc;
-    return total;
-  }, {
-    importeTotal: 0,
-    totalAbonoAnterior: 0,
-    totalSaldo: 0,
-    totalMora: 0,
-    totalSaldoDoc: 0
-  })
+  const { importeTotal, totalAbonoAnterior, totalSaldo, totalSaldoDoc } = voucherQuotas.reduce(
+    (total, voucher) => {
+      total.importeTotal += voucher.importeTotal;
+      total.totalSaldo += voucher.saldo;
+      total.totalAbonoAnterior += voucher.abono;
+      total.totalMora += voucher.mora;
+      total.totalSaldoDoc += voucher.saldoDoc;
+      return total;
+    },
+    {
+      importeTotal: 0,
+      totalAbonoAnterior: 0,
+      totalSaldo: 0,
+      totalMora: 0,
+      totalSaldoDoc: 0,
+    },
+  );
 
   return {
     importeTotal: roundNumber(importeTotal, 5),
@@ -296,39 +299,43 @@ export const getTotalesCuota = (voucherQuotas: CuentaPorCobrar[]) => {
     totalSaldoDoc: roundNumber(totalSaldoDoc, 5),
     cambio: 0,
     totalValorAbono: 0,
-    receivedAmount: 0
-  }
+    receivedAmount: 0,
+  };
+};
 
-}
+export const getPaymentSubTotales = (
+  cuotasPorCobrar: CuentaPorCobrar[],
+  multiplesPaymentType: MultiplesPaymentType[],
+  comprobante: CuentaPorCobrarComprobante,
+) => {
+  const { totalValorAbono, totalValorAbonoEfectivo } = multiplesPaymentType.reduce(
+    (prev, curr) => {
+      prev.totalValorAbono += curr.valorAbono;
+      if (curr.paymentTypeCode === 'EFE') {
+        prev.totalValorAbonoEfectivo += curr.valorAbono;
+      }
+      return prev;
+    },
+    {
+      totalValorAbono: 0,
+      totalValorAbonoEfectivo: 0,
+    },
+  );
 
-export const getPaymentSubTotales = (cuotasPorCobrar: CuentaPorCobrar[], multiplesPaymentType: MultiplesPaymentType[], comprobante: CuentaPorCobrarComprobante) => {
-
-
-  const { totalValorAbono, totalValorAbonoEfectivo } = multiplesPaymentType.reduce((prev, curr) => {
-    prev.totalValorAbono += curr.valorAbono;
-    if (curr.paymentTypeCode === "EFE") {
-      prev.totalValorAbonoEfectivo += curr.valorAbono;
-    }
-    return prev;
-  }, {
-    totalValorAbono: 0,
-    totalValorAbonoEfectivo: 0
-  });
-
-
-  const totalSaldo = cuotasPorCobrar.flatMap(item => item.cuotas)
+  const totalSaldo = cuotasPorCobrar
+    .flatMap(item => item.cuotas)
     .reduce((prev, curr) => prev + curr.saldo, 0);
   let valorCambio = 0;
 
   if (totalValorAbonoEfectivo >= comprobante.saldo) {
-    valorCambio = totalValorAbonoEfectivo - comprobante.saldo
+    valorCambio = totalValorAbonoEfectivo - comprobante.saldo;
   }
 
   return {
     totalValorAbono: roundNumber(totalValorAbono, 5),
     totalSaldo: roundNumber(totalSaldo, 5),
-    valorCambio: roundNumber(valorCambio, 5)
-  }
-}
+    valorCambio: roundNumber(valorCambio, 5),
+  };
+};
 
 export default ComprobanteIngresoUtil;

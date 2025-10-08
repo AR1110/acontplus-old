@@ -1,4 +1,4 @@
-import {Component, ElementRef, inject, signal, ViewChild, OnInit} from '@angular/core';
+import { Component, ElementRef, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',
@@ -49,8 +49,8 @@ export class VehicleAddEditModalComponent implements OnInit {
   titleModal = signal('Nuevo Vehículo');
   btnText = signal('Guardar');
 
-  countries  =signal<any[]>([]);
-  vehicleTypes =signal<VehicleTypeSelectHtmlOnly[]>([]);
+  countries = signal<any[]>([]);
+  vehicleTypes = signal<VehicleTypeSelectHtmlOnly[]>([]);
 
   loading = signal(false);
 
@@ -81,7 +81,7 @@ export class VehicleAddEditModalComponent implements OnInit {
   @ViewChild('input') input!: ElementRef<HTMLInputElement>;
   myControlCountry = new FormControl<any>('');
   optionsCountry = signal<any[]>([]);
-  filteredCountryOptions = signal<any[]>([])
+  filteredCountryOptions = signal<any[]>([]);
 
   successResponse = {
     next: (response: ApiResponse) => {
@@ -123,25 +123,25 @@ export class VehicleAddEditModalComponent implements OnInit {
     this.loading.set(true);
     this.vehicleUseCase
       .getDataForm()
-      .pipe(finalize(() => (this.loading.set(false))))
-      .subscribe((response) => {
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe(response => {
         const { countries, vehicleTypes } = response;
         this.countries.set(countries);
         this.vehicleTypes.set(vehicleTypes);
 
         this.optionsCountry.set(countries);
-        this.filteredCountryOptions.set(countries.slice())
+        this.filteredCountryOptions.set(countries.slice());
 
         if (this.data.id > 0) {
           this.titleModal.set('Editar Vehículo');
-          this.btnText.set('Actualizar')
-          this.loading.set( true)
+          this.btnText.set('Actualizar');
+          this.loading.set(true);
           this.vehicleUseCase
             .getId(this.data.id)
-            .pipe(finalize(() => (this.loading.set(false))))
-            .subscribe((response) => {
+            .pipe(finalize(() => this.loading.set(false)))
+            .subscribe(response => {
               // hideLoader()
-              this.customer = response.customer as any;
+              this.customer = response.customer;
               this.dataForm = {
                 ...this.dataForm,
                 ...response.vehicle,
@@ -166,13 +166,12 @@ export class VehicleAddEditModalComponent implements OnInit {
   }
 
   getCountryTitle(countryId: number) {
-    return this.countries().find((item: any) => item.countryId === countryId)
-      ?.description;
+    return this.countries().find((item: any) => item.countryId === countryId)?.description;
   }
 
   filterCountry(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
-    const filteredCountryOptions = this.optionsCountry().filter((o) =>
+    const filteredCountryOptions = this.optionsCountry().filter(o =>
       o.description.toLowerCase().includes(filterValue),
     );
     this.filteredCountryOptions.set(filteredCountryOptions);
@@ -243,7 +242,7 @@ export class VehicleAddEditModalComponent implements OnInit {
     try {
       if (!this.isValidForm()) return;
 
-      this.dataForm.countryId = this.myControlCountry.value as any;
+      this.dataForm.countryId = this.myControlCountry.value;
       const dataParams = {
         customer: this.customer,
         vehicle: this.dataForm,
@@ -253,9 +252,7 @@ export class VehicleAddEditModalComponent implements OnInit {
       }
 
       if (this.data.id > 0) {
-        this.vehicleUseCase
-          .put(this.data.id, dataParams)
-          .subscribe(this.successResponse);
+        this.vehicleUseCase.put(this.data.id, dataParams).subscribe(this.successResponse);
       }
     } catch (error) {
       console.log(error);

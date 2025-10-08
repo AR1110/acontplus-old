@@ -31,7 +31,7 @@ export class SupplierWebRepository extends SupplierRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map((response) => {
+        map(response => {
           let suppliers: SupplierSearch[] = [];
 
           if (response && response.code === '1') {

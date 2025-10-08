@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TokenRepository } from '../repositories/token.repository';
-import {Session} from "@modules/auth/domain/models/session";
+import { Session } from '@modules/auth/domain/models/session';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenUseCase {
   constructor(private tokenRepository: TokenRepository) {}
@@ -40,12 +40,11 @@ export class TokenUseCase {
     return this.tokenRepository.parseJwt();
   }
 
-  getUserData(){
+  getUserData() {
     return this.tokenRepository.getUserData();
   }
 
-  clear(){
+  clear() {
     this.tokenRepository.clear();
   }
-
 }

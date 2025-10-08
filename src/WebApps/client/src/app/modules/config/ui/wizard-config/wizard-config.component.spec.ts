@@ -38,15 +38,58 @@ describe('WizardConfigComponent', () => {
       ],
       providers: [
         { provide: TokenRepository, useValue: { getUserData: jest.fn().mockReturnValue(null) } },
-        { provide: ToastrService, useValue: { success: jest.fn(), error: jest.fn(), warning: jest.fn(), info: jest.fn() } },
+        {
+          provide: ToastrService,
+          useValue: { success: jest.fn(), error: jest.fn(), warning: jest.fn(), info: jest.fn() },
+        },
         { provide: TOASTR_NOTIFICATION_CONFIG, useValue: {} },
         { provide: UserCustomerRepository, useValue: {} },
-        { provide: EstablishmentService, useValue: { getDataForm: jest.fn().mockReturnValue(of({ cantones: [], actividadesEconomica: [], agentesRetencion: [], contribuyentes: [] })), post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) } },
-        { provide: CompanyDemoStepService, useValue: { get: jest.fn().mockReturnValue(of({ code: '1', payload: '{"companyDemoSteps":[]}' })), post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) } },
-        { provide: FirmaElectronicaService, useValue: { post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) } },
-        { provide: CreateDocConfigUseCase, useValue: { execute: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) } },
-        { provide: GetDocConfigFormDataUseCase, useValue: { execute: jest.fn().mockReturnValue(of({ establecimientos: [{ nombreComercial: '', puntosEmision: [] }], tiposDoc: [] })) } },
-        { provide: ActivatedRoute, useValue: { snapshot: { data: {} }, parent: { snapshot: { data: {} } } } },
+        {
+          provide: EstablishmentService,
+          useValue: {
+            getDataForm: jest.fn().mockReturnValue(
+              of({
+                cantones: [],
+                actividadesEconomica: [],
+                agentesRetencion: [],
+                contribuyentes: [],
+              }),
+            ),
+            post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })),
+          },
+        },
+        {
+          provide: CompanyDemoStepService,
+          useValue: {
+            get: jest.fn().mockReturnValue(of({ code: '1', payload: '{"companyDemoSteps":[]}' })),
+            post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })),
+          },
+        },
+        {
+          provide: FirmaElectronicaService,
+          useValue: { post: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) },
+        },
+        {
+          provide: CreateDocConfigUseCase,
+          useValue: { execute: jest.fn().mockReturnValue(of({ code: '1', message: 'ok' })) },
+        },
+        {
+          provide: GetDocConfigFormDataUseCase,
+          useValue: {
+            execute: jest
+              .fn()
+              .mockReturnValue(
+                of({
+                  establecimientos: [{ nombreComercial: '', puntosEmision: [] }],
+                  tiposDoc: [],
+                }),
+              ),
+          },
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { data: {} }, parent: { snapshot: { data: {} } } },
+        },
       ],
     }).compileComponents();
   });

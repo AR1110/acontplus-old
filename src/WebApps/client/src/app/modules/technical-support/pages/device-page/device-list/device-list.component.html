@@ -17,13 +17,7 @@
         <tr>
           <td>{{ $index + 1 }}</td>
           <td>
-            <app-theme-button
-              variant="warning"
-              icon="edit"
-              title="Editar"
-              matStyle="icon"
-              (click)="onEdit(item)"
-            >
+            <app-theme-button variant="warning" icon="edit" title="Editar" matStyle="icon" (click)="onEdit(item)">
             </app-theme-button>
             <app-theme-button
               variant="danger"
@@ -33,12 +27,7 @@
               (handleClick)="askToDelete(item)"
             >
             </app-theme-button>
-            <app-theme-button
-              icon="group"
-              matStyle="icon"
-              title="Clientes"
-              (handleClick)="getCustomers(item.id)"
-            >
+            <app-theme-button icon="group" matStyle="icon" title="Clientes" (handleClick)="getCustomers(item.id)">
             </app-theme-button>
           </td>
           <td>{{ item.name }}</td>
@@ -56,10 +45,7 @@
                 [checked]="item.enabled === 1"
                 (change)="updateStatus(item)"
               />
-              <label
-                class="form-check-label"
-                for="flexSwitchCheckChecked"
-              ></label>
+              <label class="form-check-label" for="flexSwitchCheckChecked"></label>
             </div>
           </td>
         </tr>

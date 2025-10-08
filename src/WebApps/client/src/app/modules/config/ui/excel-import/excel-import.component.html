@@ -1,128 +1,109 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-4"
-    >
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-4">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Módulo</mat-label>
           <mat-select (selectionChange)="handleChangeModule()" [(ngModel)]="data().codeModule">
             @for (item of modules(); track $index) {
-              <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
         @if (data().codeModule) {
-          <a [href]="urlFile" class="d-flex align-items-center start mt-2"  target="_blank">
+          <a [href]="urlFile" class="d-flex align-items-center start mt-2" target="_blank">
             <mat-icon>download</mat-icon> Descargar el Formato
           </a>
-
         }
-
       </div>
-      @if(data().codeModule){
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Seleccionar archivo</mat-label>
-          <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" >
-          <input matInput class="cursor-pointer"  readonly (click)="fileInput.click()">
+      @if (data().codeModule) {
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Seleccionar archivo</mat-label>
+            <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" />
+            <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
 
-          <ng-container matSuffix>
-            <button mat-icon-button (click)="fileInput.click()">
-              <mat-icon>attach_file</mat-icon>
-            </button>
-          </ng-container>
-        </mat-form-field>
-      </div>
-
+            <ng-container matSuffix>
+              <button mat-icon-button (click)="fileInput.click()">
+                <mat-icon>attach_file</mat-icon>
+              </button>
+            </ng-container>
+          </mat-form-field>
+        </div>
       }
 
       <div class="col">
         @if (selection.selected.length) {
-          <app-theme-button
-            type="button"
-            text="Guardar"
-            variant="success"
-            icon="save"
-            (handleClick)="save()"
-          />
+          <app-theme-button type="button" text="Guardar" variant="success" icon="save" (handleClick)="save()" />
         }
       </div>
-
     </div>
-    <mat-divider/>
+    <mat-divider />
   </div>
 
-<!--    <app-theme-button-->
-<!--    [type]="'button'"-->
-<!--    [variant]="'success'"-->
-<!--    [text]="'Nuevo'"-->
-<!--    [icon]="'add'"-->
-<!--    />-->
-  @if (dataSource.data.length>0) {
-
-
+  <!--    <app-theme-button-->
+  <!--    [type]="'button'"-->
+  <!--    [variant]="'success'"-->
+  <!--    [text]="'Nuevo'"-->
+  <!--    [icon]="'add'"-->
+  <!--    />-->
+  @if (dataSource.data.length > 0) {
     <div class="table-container small-table">
       <div class="table-container">
-        <mat-table
-          [dataSource]="dataSource.data"
-          multiTemplateDataRows
-          class="mat-elevation-z8 full-width-table"
-        >
-
-              <ng-container matColumnDef="select" sticky>
-                <mat-header-cell *matHeaderCellDef>
-                  <mat-checkbox (change)="$event ? masterToggle() : null"
-                                [checked]="selection.hasValue()"
-                                [indeterminate]="selection.hasValue() && !isAllSelected()"
-                                [disabled]="isSelectionDisabled()"
-
-                  >
-                  </mat-checkbox>
-                </mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <mat-checkbox (click)="$event.stopPropagation()"
-                                (change)="$event ? selection.toggle(row) : null"
-                                [checked]="selection.isSelected(row)"
-                                [disabled]="!(row.estado==='IMPORTAR')"
-                  >
-                  </mat-checkbox>
-                </mat-cell>
-              </ng-container>
+        <mat-table [dataSource]="dataSource.data" multiTemplateDataRows class="mat-elevation-z8 full-width-table">
+          <ng-container matColumnDef="select" sticky>
+            <mat-header-cell *matHeaderCellDef>
+              <mat-checkbox
+                (change)="$event ? masterToggle() : null"
+                [checked]="selection.hasValue()"
+                [indeterminate]="selection.hasValue() && !isAllSelected()"
+                [disabled]="isSelectionDisabled()"
+              >
+              </mat-checkbox>
+            </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <mat-checkbox
+                (click)="$event.stopPropagation()"
+                (change)="$event ? selection.toggle(row) : null"
+                [checked]="selection.isSelected(row)"
+                [disabled]="!(row.estado === 'IMPORTAR')"
+              >
+              </mat-checkbox>
+            </mat-cell>
+          </ng-container>
 
           @for (col of displayedColumns; track $index) {
-            @if(col==="select") {
-
-            }@else {
-
-            <ng-container [matColumnDef]="col">
-              <mat-header-cell *matHeaderCellDef class="column-header">
-                {{ col }}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="column-cell">
-                {{ element[col] }}
-              </mat-cell>
-            </ng-container>
+            @if (col === 'select') {
+            } @else {
+              <ng-container [matColumnDef]="col">
+                <mat-header-cell *matHeaderCellDef class="column-header">
+                  {{ col }}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="column-cell">
+                  {{ element[col] }}
+                </mat-cell>
+              </ng-container>
             }
           }
 
           <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-          <mat-row *matRowDef="let row; columns: displayedColumns" [ngClass]="{
-          'item-import-register': row.estado==='REGISTRADO',
-          '': row.estado==='IMPORTAR',
-          'item-import-error':  row.estado!=='IMPORTAR' || row.estado!=='REGISTRADO'
-          }"></mat-row>
+          <mat-row
+            *matRowDef="let row; columns: displayedColumns"
+            [ngClass]="{
+              'item-import-register': row.estado === 'REGISTRADO',
+              '': row.estado === 'IMPORTAR',
+              'item-import-error': row.estado !== 'IMPORTAR' || row.estado !== 'REGISTRADO',
+            }"
+          ></mat-row>
         </mat-table>
       </div>
-
     </div>
 
     <pre class="mt-2">
-      Seleccionados: {{selection.selected.length}}
-      Total: {{dataSource.data.length}}
+      Seleccionados: {{ selection.selected.length }}
+      Total: {{ dataSource.data.length }}
     </pre>
   }
 </app-mat-dynamic-card>

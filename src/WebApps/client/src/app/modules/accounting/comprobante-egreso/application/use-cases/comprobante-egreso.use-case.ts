@@ -1,18 +1,15 @@
-import {Injectable} from "@angular/core";
-import {ComprobanteEgresoRepository} from "@accounting/comprobante-egreso/domain/comprobante-egreso.repository";
-
+import { Injectable } from '@angular/core';
+import { ComprobanteEgresoRepository } from '@accounting/comprobante-egreso/domain/comprobante-egreso.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class ComprobanteEgresoUseCase {
-  constructor(private repo: ComprobanteEgresoRepository) {
-  }
+  constructor(private repo: ComprobanteEgresoRepository) {}
 
   getCuotasByIdCuentaPorPagar(idCuentaPorPagar: number) {
     return this.repo.getCuotasByCuentaPorPagarId(idCuentaPorPagar);
-  };
+  }
 
   getDataFormPago(idProveedor: number) {
     return this.repo.getFormaPagoData(idProveedor);

@@ -1,8 +1,7 @@
-
 export interface Employee {
-  idEmpleado: number
-  nroIdentificacion: string
-  nombreCompleto: string
+  idEmpleado: number;
+  nroIdentificacion: string;
+  nombreCompleto: string;
 }
 
-export interface EmployeeSearchDto extends Employee { }
+export interface EmployeeSearchDto extends Employee {}

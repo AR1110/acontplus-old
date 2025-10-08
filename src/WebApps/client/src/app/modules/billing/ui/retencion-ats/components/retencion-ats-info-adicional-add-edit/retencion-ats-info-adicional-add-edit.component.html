@@ -33,9 +33,7 @@
         variant="danger"
         icon="delete"
         matStyle="icon"
-        id="btnDeleteInfoAdicional-{{
-          infoAdicionalGroup().get('uniqueIdDoc')?.value
-        }}"
+        id="btnDeleteInfoAdicional-{{ infoAdicionalGroup().get('uniqueIdDoc')?.value }}"
         (handleClick)="removeInfoAdicional()"
       ></app-theme-button>
     </div>

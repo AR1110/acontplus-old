@@ -58,9 +58,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  private getDialogWidth(
-    size?: 'default' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl',
-  ): string {
+  private getDialogWidth(size?: 'default' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'): string {
     switch (size) {
       case 'sm':
         return '300px';

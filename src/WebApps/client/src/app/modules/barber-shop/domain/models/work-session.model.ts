@@ -1,4 +1,4 @@
-import {Ticket} from "@barber-shop/domain/models/ticket.model";
+import { Ticket } from '@barber-shop/domain/models/ticket.model';
 
 export interface WorkSession {
   id: number; // Heredado de BaseEntity
@@ -12,5 +12,5 @@ export interface WorkSession {
   totalAdvances: number;
 
   tickets?: Ticket[];
- // payments?: BarberPayment[];
+  // payments?: BarberPayment[];
 }

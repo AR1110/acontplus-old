@@ -6,26 +6,21 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo de Reporte: </mat-label>
-          <mat-select
-            (selectionChange)="onChangeEstab()"
-            [(ngModel)]="searchFilters.reportTypeCode"
-          >
+          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="searchFilters.reportTypeCode">
             @for (item of reportTypes(); track $index) {
-              <mat-option [value]="item.code">{{item.name}}</mat-option>
+              <mat-option [value]="item.code">{{ item.name }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-        <mat-checkbox   [(ngModel)]="searchFilters.supplierSelected">Proveedor</mat-checkbox>
-
+        <mat-checkbox [(ngModel)]="searchFilters.supplierSelected">Proveedor</mat-checkbox>
       </div>
       <div class="col">
-        <mat-checkbox  [(ngModel)]="searchFilters.ckCxcVencida">Vencidas</mat-checkbox>
+        <mat-checkbox [(ngModel)]="searchFilters.ckCxcVencida">Vencidas</mat-checkbox>
       </div>
     </div>
-    <mat-divider/>
-
+    <mat-divider />
 
     <div class="row">
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -37,23 +32,20 @@
             (onChangeDateRange)="onDateRangeSelection($event)"
           />
           @if (searchFilters.useDateFilter && !searchFilters.useQuotaDueDateFilter) {
-            <div class="vstack ">
+            <div class="vstack">
               <label>Filtrar fecha por:</label>
-              <mat-radio-group  aria-label="Tipo de fecha"
-                                [(ngModel)]="searchFilters.dateFilterType">
+              <mat-radio-group aria-label="Tipo de fecha" [(ngModel)]="searchFilters.dateFilterType">
                 <mat-radio-button [value]="dateFilterType.emission">Emisión</mat-radio-button>
                 <mat-radio-button [value]="dateFilterType.expiration">Vencimiento</mat-radio-button>
               </mat-radio-group>
-
             </div>
           }
 
-          @if(searchFilters.reportTypeCode===reportTypeCode.RD && searchFilters.useDateFilter){
+          @if (searchFilters.reportTypeCode === reportTypeCode.RD && searchFilters.useDateFilter) {
             <mat-checkbox [(ngModel)]="searchFilters.useQuotaDueDateFilter">
               Filtrar por fecha de vencimiento de las cuotas
             </mat-checkbox>
           }
-
         </div>
       </div>
       <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
@@ -62,14 +54,11 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Establecimiento</mat-label>
-                <mat-select
-                  (selectionChange)="onChangeEstab()"
-                  [(ngModel)]="searchFilters.codEstab"
-                >
+                <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="searchFilters.codEstab">
                   <mat-option [value]="''">Todos</mat-option>
 
                   @for (item of establecimientos(); track $index) {
-                    <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
+                    <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -77,13 +66,11 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Punto Emisión</mat-label>
-                <mat-select
-                  [(ngModel)]="searchFilters.idPuntoEmision"
-                >
+                <mat-select [(ngModel)]="searchFilters.idPuntoEmision">
                   <mat-option [value]="0">Todos</mat-option>
 
                   @for (item of puntosEmision(); track $index) {
-                    <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
+                    <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -91,13 +78,11 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Estado</mat-label>
-                <mat-select
-                  [(ngModel)]="searchFilters.statusCode"
-                >
+                <mat-select [(ngModel)]="searchFilters.statusCode">
                   <mat-option [value]="''">Todos</mat-option>
 
                   @for (item of estadosDoc(); track $index) {
-                    <mat-option [value]="item.codigo">{{item.descripcion}}</mat-option>
+                    <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -111,19 +96,19 @@
                   <mat-option [value]="''">Todos</mat-option>
 
                   @for (item of tiposDoc(); track $index) {
-                    <mat-option [value]="item.codDoc">{{item.descripcion}}</mat-option>
+                    <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
             </div>
             <div class="col">
               @if (searchFilters.supplierSelected) {
-                  <app-supplier-search
-                    [isSimpleMode]="isSearchSupplierSimple"
-                    (supplierSelected)="onSupplierSelected($event)"
-                    [(textSearch)]="searchFilters.supplierName"
-                    (clearSearch)="supplierclearSearch($event)"
-                  />
+                <app-supplier-search
+                  [isSimpleMode]="isSearchSupplierSimple"
+                  (supplierSelected)="onSupplierSelected($event)"
+                  [(textSearch)]="searchFilters.supplierName"
+                  (clearSearch)="supplierclearSearch($event)"
+                />
               }
             </div>
           </div>
@@ -132,19 +117,8 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="Pdf"
-        (handleClick)="getReport('pdf')"
-      />
-      <app-theme-button
-        variant="success"
-        icon="download"
-        text="Excel"
-        (handleClick)="getReport('excel')"
-      />
+      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
+      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')" />
     </div>
-
   </div>
 </app-mat-dynamic-card>

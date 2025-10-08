@@ -1,17 +1,14 @@
-
-import { Component,  inject } from '@angular/core';
-import {   RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
-import {PreloaderService, SettingsService} from "@core/bootstrap";
+import { PreloaderService, SettingsService } from '@core/bootstrap';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  template: `
-    <router-outlet/>
-  `,
+  template: ` <router-outlet /> `,
 })
-export class App {
+export class App implements OnInit, AfterViewInit {
   title = 'Acontplus';
   //temporalmente
   themeOptions = THEME_OPTIONS;
@@ -103,7 +100,6 @@ export class App {
   //     }
   //   });
   // }
-
 
   //new line code
   private readonly preloader = inject(PreloaderService);

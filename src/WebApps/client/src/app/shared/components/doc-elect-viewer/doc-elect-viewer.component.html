@@ -1,7 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="contentTemplate"
-  (close)="onClose()"
-/>
+<app-mat-custom-dialog [containerTemplate]="contentTemplate" (close)="onClose()" />
 
 <ng-template #contentTemplate>
   <div class="document-container" [innerHTML]="safeContent()"></div>

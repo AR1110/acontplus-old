@@ -1,45 +1,49 @@
+import { isDateValid } from '@core/utils/date.util';
+import { ConsolidacionBodega } from '../models/consolidacion-bodega.model';
+import { MedidaProducto } from '../models/measure.model';
 
-
-import { isDateValid } from "@core/utils/date.util"
-import { ConsolidacionBodega } from "../models/consolidacion-bodega.model"
-import { MedidaProducto } from "../models/measure.model"
-
-interface Row  {
-  productId: number
-  bodegaId: number
-  medidaId: number
-  medidas: MedidaProducto[]
-  quantity: number
+interface Row {
+  productId: number;
+  bodegaId: number;
+  medidaId: number;
+  medidas: MedidaProducto[];
+  quantity: number;
 }
-interface MergeProductStockProps  {
-  rows: Row[]
-  row: Row
+interface MergeProductStockProps {
+  rows: Row[];
+  row: Row;
 }
 
 //Merge Item Detalle Documento Venta
 export const mergeProductStock = function (obj: MergeProductStockProps) {
   // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
-  const foundItemByArticuloAndBodega = obj.rows.filter(item => (
-    item.productId === obj.row.productId &&
-    item.bodegaId === obj.row.bodegaId
-  ))
+  const foundItemByArticuloAndBodega = obj.rows.filter(
+    item => item.productId === obj.row.productId && item.bodegaId === obj.row.bodegaId,
+  );
 
-  const { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce((total, item) => {
-    const dataMedidaFraccionado = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO')
-    const dataMedidaPrincipal = item.medidas.find(medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL')
-    if (dataMedidaFraccionado) {
-      const conversionSum = item.quantity * dataMedidaFraccionado.conversion;
-      total.totalCantidadFraccionada += conversionSum;
-    }
-    if (dataMedidaPrincipal) {
-      const conversionSum = item.quantity * dataMedidaPrincipal.conversion;
-      total.totalCantidadPrincipal += conversionSum;
-    }
-    return total;
-  }, {
-    totalCantidadFraccionada: 0,
-    totalCantidadPrincipal: 0
-  });
+  const { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce(
+    (total, item) => {
+      const dataMedidaFraccionado = item.medidas.find(
+        medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO',
+      );
+      const dataMedidaPrincipal = item.medidas.find(
+        medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL',
+      );
+      if (dataMedidaFraccionado) {
+        const conversionSum = item.quantity * dataMedidaFraccionado.conversion;
+        total.totalCantidadFraccionada += conversionSum;
+      }
+      if (dataMedidaPrincipal) {
+        const conversionSum = item.quantity * dataMedidaPrincipal.conversion;
+        total.totalCantidadPrincipal += conversionSum;
+      }
+      return total;
+    },
+    {
+      totalCantidadFraccionada: 0,
+      totalCantidadPrincipal: 0,
+    },
+  );
 
   const cantidad = foundItemByArticuloAndBodega.reduce((prevQuantity, itemCurrent) => {
     prevQuantity += itemCurrent.quantity;
@@ -49,10 +53,9 @@ export const mergeProductStock = function (obj: MergeProductStockProps) {
   // Devuelve el objeto resultante de la fusión.
   return {
     cantidad,
-    cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada
+    cantidadStock: totalCantidadPrincipal + totalCantidadFraccionada,
   };
-}
-
+};
 
 interface GetCantidadStockProps {
   bodegaId: number;
@@ -65,7 +68,7 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
   const { fechaEmision, cantidadStock, consolidacionesFecha, bodegaId } = obj;
 
   const dataConsolidacionFecha = consolidacionesFecha.find(
-    cdataFecha => cdataFecha.idBodega === bodegaId
+    cdataFecha => cdataFecha.idBodega === bodegaId,
   );
 
   if (dataConsolidacionFecha) {
@@ -76,4 +79,4 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
     }
   }
   return cantidadStock;
-}
+};

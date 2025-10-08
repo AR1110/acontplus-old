@@ -4,35 +4,28 @@ import { fechaString } from '@core/utils/date.util';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 export class FacturaFisicaRepositoryMapper {
-
   static fromApiDataFilter(response: any) {
-
-    const {
-      ptoEmision: tempEstabs,
-      estadoDocumento,
-      subcategories
-    } = response;
+    const { ptoEmision: tempEstabs, estadoDocumento, subcategories } = response;
 
     const dataToGroup = {
       estabs: tempEstabs,
-      isGroupPuntoEmision: true
-    }
+      isGroupPuntoEmision: true,
+    };
 
     return {
       estabs: groupEstabUtil(dataToGroup),
       estadosDoc: estadoDocumento.map((item: any) => ({
         idEstado: item.idEstadoPago,
         descripcion: item.descripcion,
-        codigo: item.codigo
+        codigo: item.codigo,
       })),
 
-      subcategorias: subcategories
-
-    }
+      subcategorias: subcategories,
+    };
   }
 
   static fromApiGetAll(response: any[]): FacturaFisicaLista[] {
-    return response.map((item) => {
+    return response.map(item => {
       return {
         id: item.id,
         fechaEmision: item.fechaEmision,
@@ -52,14 +45,7 @@ export class FacturaFisicaRepositoryMapper {
   }
 
   static fromApiDetalleCompleto(response: any) {
-    const {
-      detalles,
-      impuestos,
-      infoAdicional,
-      infoFactura,
-      proveedor,
-      tiempoCredito,
-    } = response;
+    const { detalles, impuestos, infoAdicional, infoFactura, proveedor, tiempoCredito } = response;
 
     const {
       idFacturaCompra: id,
@@ -141,9 +127,8 @@ export class FacturaFisicaRepositoryMapper {
     return result;
   }
 
-
   static fromApiDataForm(response: any) {
-    console.log(response)
+    console.log(response);
     const {
       configDecimales,
       impuestos,
@@ -151,23 +136,19 @@ export class FacturaFisicaRepositoryMapper {
       bodegas,
       categoriasCompra,
       sustentosTributario,
-      subcategories
+      subcategories,
     } = response;
 
     const dataToGroup = {
       bodegas: bodegas,
-      isGroupBodega: true
-    }
+      isGroupBodega: true,
+    };
 
-
-    const  estabs = groupEstabUtil(dataToGroup);
+    const estabs = groupEstabUtil(dataToGroup);
 
     return {
       estabs,
-      sustentosTributario
-
-    }
-
+      sustentosTributario,
+    };
   }
-
 }

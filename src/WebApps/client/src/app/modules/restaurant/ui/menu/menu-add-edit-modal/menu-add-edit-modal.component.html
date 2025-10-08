@@ -6,21 +6,12 @@
 />
 
 <ng-template #body>
-  <form
-    (ngSubmit)="onSave()"
-    id="menuForm"
-    [formGroup]="menuForm"
-  >
+  <form (ngSubmit)="onSave()" id="menuForm" [formGroup]="menuForm">
     <div class="row">
       <div class="col-6 col-md-6 col-sm-12">
         <div class="form-group">
           <label for="title">Nombre</label>
-          <input
-            class="form-control input-group-lg"
-            formControlName="title"
-            id="title"
-            type="text"
-          />
+          <input class="form-control input-group-lg" formControlName="title" id="title" type="text" />
         </div>
       </div>
     </div>
@@ -37,32 +28,20 @@
               ></app-theme-button>
             </span>
           </label>
-          <textarea
-            class="form-control"
-            formControlName="summary"
-            id="summary"
-          ></textarea>
+          <textarea class="form-control" formControlName="summary" id="summary"></textarea>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-6 col-md-6 col-sm-6">
         <div class="form-group">
-          <mat-slide-toggle
-            formControlName="forPromotion"
-            id="forPromotion"
-          >
-            Usar en promoción
-          </mat-slide-toggle>
+          <mat-slide-toggle formControlName="forPromotion" id="forPromotion"> Usar en promoción </mat-slide-toggle>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <app-item-search
-          (selectedEvent)="onItemSelected($event)"
-          [(textSearch)]="itemSearch"
-        />
+        <app-item-search (selectedEvent)="onItemSelected($event)" [(textSearch)]="itemSearch" />
       </div>
     </div>
     <div class="row">

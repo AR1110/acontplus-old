@@ -1,14 +1,14 @@
-import { Quantity } from "@inventory/inventory-adjustment/domain/value-objects/quantity.vo";
-import {Money} from "@inventory/inventory-adjustment/domain/value-objects/money.vo";
-import {ProductId} from "@inventory/product/domain/product-id";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
+import { Quantity } from '@inventory/inventory-adjustment/domain/value-objects/quantity.vo';
+import { Money } from '@inventory/inventory-adjustment/domain/value-objects/money.vo';
+import { ProductId } from '@inventory/product/domain/product-id';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
 
 export class InventoryAdjustmentDetail {
   private constructor(
     private _orderIndex: number,
     private readonly _productId: ProductId,
     private readonly _code: string,
-    private  _warehouseId: number,
+    private _warehouseId: number,
     private _unitOfMeasureId: number,
     private _measures: MedidaProducto[],
     private _quantity: Quantity,
@@ -20,7 +20,7 @@ export class InventoryAdjustmentDetail {
     private _total: Money,
     private readonly _description: string,
     private _notes?: string,
-    private _status = true
+    private _status = true,
   ) {}
 
   static create(params: {
@@ -39,13 +39,12 @@ export class InventoryAdjustmentDetail {
     notes?: string;
     status: boolean;
   }): InventoryAdjustmentDetail {
-
     if (!params.description?.trim()) {
       throw new Error('Description cannot be empty');
     }
 
     // ✨ Value Objects creation with automatic validation
-    const productId = ProductId.from(params.productId)
+    const productId = ProductId.from(params.productId);
     const quantity = Quantity.from(params.quantity);
     const unitConversion = Quantity.from(params.unitConversion);
     const unitPrice = Money.from(params.unitPrice);
@@ -65,33 +64,65 @@ export class InventoryAdjustmentDetail {
       unitPrice,
       costPrice,
       fractionalCostPrice,
-      Money.zero(),                        // ← Will be calculated
+      Money.zero(), // ← Will be calculated
       params.description.trim(),
       params.notes?.trim(),
-      params.status
+      params.status,
     );
 
     return detail;
   }
 
   // Getters
-  get orderIndex(): number { return this._orderIndex; }
-  get productId(): ProductId { return this._productId; }
-  get code(): string { return this._code; }
+  get orderIndex(): number {
+    return this._orderIndex;
+  }
+  get productId(): ProductId {
+    return this._productId;
+  }
+  get code(): string {
+    return this._code;
+  }
 
-  get warehouseId(): number { return this._warehouseId; }
-  get unitOfMeasureId(): number | null { return this._unitOfMeasureId; }
-  get measures(): MedidaProducto[] { return this._measures; }
-  get quantity(): Quantity { return this._quantity; }
-  get transactionQuantity(): Quantity { return this._transactionQuantity; }
-  get unitConversion(): Quantity { return this._unitConversion; }
-  get unitPrice(): Money { return this._unitPrice; }
-  get costPrice(): Money { return this._costPrice; }
-  get fractionalCostPrice(): Money { return this._fractionalCostPrice; }
-  get total(): Money { return this._total; }
-  get description(): string { return this._description; }
-  get notes(): string | undefined { return this._notes; }
-  get status(): boolean { return this._status; }
+  get warehouseId(): number {
+    return this._warehouseId;
+  }
+  get unitOfMeasureId(): number | null {
+    return this._unitOfMeasureId;
+  }
+  get measures(): MedidaProducto[] {
+    return this._measures;
+  }
+  get quantity(): Quantity {
+    return this._quantity;
+  }
+  get transactionQuantity(): Quantity {
+    return this._transactionQuantity;
+  }
+  get unitConversion(): Quantity {
+    return this._unitConversion;
+  }
+  get unitPrice(): Money {
+    return this._unitPrice;
+  }
+  get costPrice(): Money {
+    return this._costPrice;
+  }
+  get fractionalCostPrice(): Money {
+    return this._fractionalCostPrice;
+  }
+  get total(): Money {
+    return this._total;
+  }
+  get description(): string {
+    return this._description;
+  }
+  get notes(): string | undefined {
+    return this._notes;
+  }
+  get status(): boolean {
+    return this._status;
+  }
 
   // ✨ Type-safe operations with Value Objects
   updateQuantity(newQuantity: number): void {
@@ -99,13 +130,13 @@ export class InventoryAdjustmentDetail {
     this.calculateTotal();
   }
 
-  updateMeasure(unitOfMeasureId: number){
-    console.log('udpate meadoe', unitOfMeasureId)
+  updateMeasure(unitOfMeasureId: number) {
+    console.log('udpate meadoe', unitOfMeasureId);
     const dataMedida = this._measures.find(val => val.idMedida === unitOfMeasureId);
     this._unitOfMeasureId = unitOfMeasureId;
     this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);
     this._costPrice = Money.from(dataMedida?.precioCosto || 0);
-    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0)
+    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0);
     this.calculateTotal();
   }
 
@@ -123,8 +154,8 @@ export class InventoryAdjustmentDetail {
     this._warehouseId = newId;
   }
 
-   calculateTotal(): void {
-     this._transactionQuantity = this._unitConversion.multiply(this._quantity.value);
+  calculateTotal(): void {
+    this._transactionQuantity = this._unitConversion.multiply(this._quantity.value);
     this._total = this._unitPrice.multiply(this._quantity.value);
   }
 
@@ -162,7 +193,7 @@ export class InventoryAdjustmentDetail {
       total: this.total.value,
       description: this.description,
       notes: this.notes,
-      status: this._status
+      status: this._status,
     };
   }
 }

@@ -1,39 +1,37 @@
-import { Injectable } from "@angular/core";
-import {ControlCajaRepository} from "@accounting/caja/domain/control-caja.repository";
+import { Injectable } from '@angular/core';
+import { ControlCajaRepository } from '@accounting/caja/domain/control-caja.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class ControlCajaUseCase {
-  constructor(private repo: ControlCajaRepository) { }
+  constructor(private repo: ControlCajaRepository) {}
 
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter()
+  getDataFilter() {
+    return this.repo.getDataFilter();
   }
 
-  getDataForm(){
+  getDataForm() {
     return this.repo.getDataForm();
   }
 
-  getArqueoCaja(id:number){
-    return this.repo.getArqueoCaja(id)
+  getArqueoCaja(id: number) {
+    return this.repo.getArqueoCaja(id);
   }
 
-  getDataFormCashboxClose(){
-    return this.repo.getDataFormCashboxClose()
+  getDataFormCashboxClose() {
+    return this.repo.getDataFormCashboxClose();
   }
 
   post<T>(data: T) {
-    return this.repo.post(data)
+    return this.repo.post(data);
   }
 
   put<T>(id: number, data: T) {
-    return this.repo.put(id, data)
+    return this.repo.put(id, data);
   }
-
 }

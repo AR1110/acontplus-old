@@ -1,10 +1,5 @@
 import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
-import {
-  FormArray,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { FormArray, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -42,7 +37,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   selectTax(tax: any) {
     setTimeout(() => {
       this.tarifaImpuestosFiltered.set(
-        this.tarifaImpuestos().filter((x) => x.idImpuesto === tax.idImpuesto),
+        this.tarifaImpuestos().filter(x => x.idImpuesto === tax.idImpuesto),
       );
     });
   }
@@ -52,9 +47,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   async removeTax() {
-    const taxesArray = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('taxes') as FormArray;
+    const taxesArray = this.docSustentoArray().at(this.indexDoc()).get('taxes') as FormArray;
 
     const taxSelected = taxesArray.controls[this.indexTax()].value;
 
@@ -72,7 +65,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
       if (isConfirmed) {
         this._docSustentoTaxUseCase
           .delete(taxSelected.idRetAtsImpDocSustento)
-          .subscribe((response) => {
+          .subscribe(response => {
             this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
@@ -88,9 +81,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   async removeByIndex() {
-    const taxesArray = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('taxes') as FormArray;
+    const taxesArray = this.docSustentoArray().at(this.indexDoc()).get('taxes') as FormArray;
 
     if (this.indexTax() >= 0 && this.indexTax() < taxesArray.length) {
       taxesArray.removeAt(this.indexTax());
@@ -98,16 +89,13 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   selectTarifa() {
-    const taxes = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('taxes') as FormArray;
+    const taxes = this.docSustentoArray().at(this.indexDoc()).get('taxes') as FormArray;
 
     const taxSelected = taxes.controls[this.indexTax()].value;
 
     taxSelected.tarifa =
-      this.tarifaImpuestosFiltered().find(
-        (x) => x.idTarifaImpuesto === taxSelected.idTarifaImpuesto,
-      )?.tarifa ?? 0;
+      this.tarifaImpuestosFiltered().find(x => x.idTarifaImpuesto === taxSelected.idTarifaImpuesto)
+        ?.tarifa ?? 0;
 
     taxes.controls[this.indexTax()].setValue(taxSelected);
 
@@ -115,9 +103,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   calculateValorImpuesto() {
-    const taxes = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('taxes') as FormArray;
+    const taxes = this.docSustentoArray().at(this.indexDoc()).get('taxes') as FormArray;
 
     const taxSelected = taxes.controls[this.indexTax()].value;
     const tarifa = taxSelected.tarifa ?? 0;
@@ -127,7 +113,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
     taxes.controls[this.indexTax()].setValue(taxSelected);
 
     let totalSinImpuestos = 0;
-    taxes.controls.forEach((x) => {
+    taxes.controls.forEach(x => {
       const baseImponibleValue = x.get('baseImponible')?.value || 0;
       totalSinImpuestos += parseFloat(baseImponibleValue);
     });
@@ -137,8 +123,7 @@ export class DocSustentoTaxComponent implements AfterViewInit {
       ?.setValue(totalSinImpuestos);
 
     const importeTotalAdded =
-      this.docSustentoArray().controls[this.indexDoc()]?.get('importeTotal')
-        ?.value || 0;
+      this.docSustentoArray().controls[this.indexDoc()]?.get('importeTotal')?.value || 0;
 
     let newTotalDoc = 0;
 
@@ -189,23 +174,21 @@ export class DocSustentoTaxComponent implements AfterViewInit {
   }
 
   onSave() {
-    const taxes = this.docSustentoArray()
-      .at(this.indexDoc())
-      .get('taxes') as FormArray;
+    const taxes = this.docSustentoArray().at(this.indexDoc()).get('taxes') as FormArray;
 
     const taxSelected = taxes.controls[this.indexTax()].value;
 
     if (taxSelected.idRetAtsImpDocSustento > 0) {
       this._docSustentoTaxUseCase
         .update(taxSelected.idRetAtsImpDocSustento, taxSelected)
-        .subscribe((response) => {
+        .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoTaxUseCase.create(taxSelected).subscribe((response) => {
+      this._docSustentoTaxUseCase.create(taxSelected).subscribe(response => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

@@ -111,11 +111,11 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
             return [];
           }
           return response;
-        })
+        }),
       )
 
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.openOverlay();
           const results = structuredClone(response);
           this.dataSource.set(results);
@@ -129,7 +129,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
           // }
           // this.makeDynamicTarifa(results)
         },
-        error: (err) => {
+        error: err => {
           this.isLoadingResults.set(false);
           console.log(err);
         },
@@ -228,10 +228,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   onArrowDown(event: KeyboardEvent): void {
     event.preventDefault();
 
-    if (
-      this.overlayHasFocus() &&
-      this.highlightRowIndex < this.dataSource().length - 1
-    ) {
+    if (this.overlayHasFocus() && this.highlightRowIndex < this.dataSource().length - 1) {
       this.highlightRowIndex += 1;
 
       this.onHighlightedRowChange(event);
@@ -310,8 +307,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
 
   getDataProductSale(id: number) {
     this.dataSearch.textSearch = '';
-      this._productUseCase.getForSale(id).subscribe( (response) =>   this.optionSelected.emit(response));
-
+    this._productUseCase.getForSale(id).subscribe(response => this.optionSelected.emit(response));
   }
 
   onClickPaginator() {

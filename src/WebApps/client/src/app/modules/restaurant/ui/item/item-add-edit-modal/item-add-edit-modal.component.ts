@@ -13,6 +13,7 @@ import { RecipeService } from '@restaurant/data/services/recipe.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
 import { ItemService } from '@restaurant/data/services/item.service';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
 
@@ -53,7 +54,7 @@ export class ItemAddEditModalComponent implements OnInit {
     let medidas = [];
     const rows = cell.getRow().getData();
 
-    if (rows.extents !== undefined) {
+    if (rows.extents) {
       medidas = JSON.parse(rows.extents);
     }
 
@@ -78,7 +79,7 @@ export class ItemAddEditModalComponent implements OnInit {
     };
 
     selectList.addEventListener('blur', onChange);
-    selectList.addEventListener('keydown', (e) => {
+    selectList.addEventListener('keydown', e => {
       if (e.keyCode == 13) {
         onChange();
       }
@@ -108,12 +109,12 @@ export class ItemAddEditModalComponent implements OnInit {
     const row = cell.getRow().getData();
     const value = cell.getValue();
 
-    if (row.extents !== undefined) {
+    if (row.extents) {
       medidas = JSON.parse(row.extents);
     }
 
     if (medidas.length === 0) return '';
-    return medidas.find((x: any) => x.idMedida == value).descripcion;
+    return medidas.find((x: any) => x.idMedida == value)?.descripcion;
   };
 
   formatterCostPrice = (cell: any) => {
@@ -244,8 +245,16 @@ export class ItemAddEditModalComponent implements OnInit {
     const newArray = this.recipes().filter((x: Recipe) => x.id !== id);
   }
 
+  rowDeleted(row: any) {
+    const closeRecipes = JSON.parse(JSON.stringify(this.recipes()));
+    const data = row.getData();
+    console.log(data);
+
+    this.recipes.set(closeRecipes.filter((x: any) => x.uuid !== data.uuid));
+  }
+
   getRecipes() {
-    this.#recipeService.getByItem(this.data.id).subscribe((response) => {
+    this.#recipeService.getByItem(this.data.id).subscribe(response => {
       this.recipes.set(response.recipes);
     });
   }
@@ -274,7 +283,7 @@ export class ItemAddEditModalComponent implements OnInit {
       itemJson: this.itemForm.value,
       recipeJson: this.recipes(),
     };
-    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe((response) => {
+    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe(response => {
       Swal.fire({
         icon: response.code === '1' ? 'success' : 'warning',
         html: response.message,
@@ -286,38 +295,54 @@ export class ItemAddEditModalComponent implements OnInit {
   }
 
   onIngredientSelected($event: Ingredient) {
-    this.recipes.update((x) => {
-      return [
-        ...x,
-        {
-          costPrice: 0,
-          extentId: 0,
-          id: 0,
-          itemId: this.data.id,
-          summary: $event.summary,
-          instructions: '',
-          netWeight: 0,
-          quantity: 0,
-          ingredientId: $event.id,
-          productId: $event.productId,
-          precioCosto: 0,
-          weight: 0,
-        },
-      ];
-    });
-    this.getExtent($event.productId);
-  }
+    const productId = Number($event.productId);
 
-  getExtent(productId: number) {
     this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
       const extents = response.extents;
-      this.recipes().forEach((e: Recipe, index: number) => {
+
+      const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
+
+      cloneRecipes.push({
+        costPrice: 0,
+        extentId: 0,
+        id: 0,
+        itemId: this.data.id,
+        summary: $event.summary,
+        instructions: '',
+        netWeight: 0,
+        quantity: 0,
+        ingredientId: $event.id,
+        productId,
+        precioCosto: 0,
+        weight: 0,
+        uuid: generateUuidv4(),
+      });
+
+      const results = cloneRecipes.map((e: Recipe) => {
         if (e.productId === productId) {
           e.extentId = extents[0].idMedida;
           e.precioCosto = extents[0].precioCosto;
           e.extents = JSON.stringify(extents);
         }
+        return e;
       });
+      this.recipes.set(results);
+    });
+  }
+
+  getExtent(productId: number) {
+    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
+      const extents = response.extents;
+
+      const results = this.recipes().map((e: Recipe) => {
+        if (e.productId === productId) {
+          e.extentId = extents[0].idMedida;
+          e.precioCosto = extents[0].precioCosto;
+          e.extents = JSON.stringify(extents);
+        }
+        return e;
+      });
+      this.recipes.set(results);
     });
   }
 }

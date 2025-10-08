@@ -1,21 +1,18 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {
-  REPORT_FORMAT,
-  TIPO_TRANSACCION,
-} from '@core/constants/global.constants';
+import { REPORT_FORMAT, TIPO_TRANSACCION } from '@core/constants/global.constants';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId } from '@core/utils/utils';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { ResumenContableUseCase } from '@accounting/resumen-contable/application/resumen-contable.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSelectModule} from "@angular/material/select";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-resumen-contable',
@@ -26,7 +23,7 @@ import {MatSelectModule} from "@angular/material/select";
     ThemeButtonComponent,
     MatDynamicCardComponent,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
   ],
   templateUrl: './resumen-contable.component.html',
   styles: ``,
@@ -35,7 +32,7 @@ export class ResumenContableComponent implements OnInit {
   private _resumenContableCaseUse = inject(ResumenContableUseCase);
   private sharedSvc = inject(SharedService);
   subcategories = signal<SubCategorySelectHtmlOnly[]>([]);
-  transactionTypes =signal<any[]>([]);
+  transactionTypes = signal<any[]>([]);
 
   isPurchase = false;
 
@@ -48,14 +45,13 @@ export class ResumenContableComponent implements OnInit {
     idSubcategoria: 0,
   };
   getDataFilter() {
-    this._resumenContableCaseUse.getDataFilter().subscribe((response) => {
+    this._resumenContableCaseUse.getDataFilter().subscribe(response => {
       this.subcategories.set(response.subCategories);
       this.transactionTypes.set(response.transactionTypes);
       const dataTipoTransaccion = this.transactionTypes().find(
-        (tt) => tt.codigo === TIPO_TRANSACCION.V,
+        tt => tt.codigo === TIPO_TRANSACCION.V,
       );
-      this.dataSearch.idTipoTransaccion =
-        dataTipoTransaccion?.idTipoTransaccion ?? 0;
+      this.dataSearch.idTipoTransaccion = dataTipoTransaccion?.idTipoTransaccion ?? 0;
     });
   }
 
@@ -65,7 +61,7 @@ export class ResumenContableComponent implements OnInit {
 
   public onChangeTypeTransaccion() {
     this.isPurchase = this.transactionTypes().some(
-      (tt) =>
+      tt =>
         tt.idTipoTransaccion === this.dataSearch.idTipoTransaccion &&
         tt.codigo === TIPO_TRANSACCION.C,
     );

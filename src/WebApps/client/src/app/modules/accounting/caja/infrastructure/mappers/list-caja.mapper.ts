@@ -1,16 +1,15 @@
-import {ApiResponse} from "@core/models/api-response";
-import {ListCajaResponse} from "@accounting/caja/domain/caja.entity";
+import { ApiResponse } from '@core/models/api-response';
+import { ListCajaResponse } from '@accounting/caja/domain/caja.entity';
 
 export class ListCajaMapper {
-
-  static toJson(params:any){
-    return JSON.stringify({ ...params, tipo: 1 })
+  static toJson(params: any) {
+    return JSON.stringify({ ...params, tipo: 1 });
   }
-  static fromJson(response:ApiResponse){
+  static fromJson(response: ApiResponse) {
     const result = new ListCajaResponse();
-    if(response.code==="1"){
+    if (response.code === '1') {
       const cajas = JSON.parse(response.payload as string).cajas;
-      result.data = cajas.map((item:any)=>{
+      result.data = cajas.map((item: any) => {
         return {
           idCaja: item.idCaja,
           descripcion: item.descripcion,
@@ -18,17 +17,14 @@ export class ListCajaMapper {
           actividad: item.actividad,
           usuario: item.usuario,
           turno: item.turno,
-          idTurno:item.idTurno,
+          idTurno: item.idTurno,
           idUsuario: item.idUsuario,
-          nomEstado: item.estado?'Activo': '',
-          totalRecords: item.totalRecords
-        }
-
-      })
-      result.totalRecords = result.data.length>0 ? result.data[0].totalRecords : 0;
+          nomEstado: item.estado ? 'Activo' : '',
+          totalRecords: item.totalRecords,
+        };
+      });
+      result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
     }
     return result;
-
   }
-
 }

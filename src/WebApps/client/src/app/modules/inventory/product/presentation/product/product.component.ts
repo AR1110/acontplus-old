@@ -45,7 +45,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'inventory-product',
@@ -75,9 +75,7 @@ import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-d
 export class ProductComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  @ViewChildren('selectElement') selectElements!: QueryList<
-    ElementRef<HTMLSelectElement>
-  >;
+  @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   pagination = signal(new MatPagination());
   dataSource = new MatTableDataSource<ProductList>();
@@ -121,13 +119,13 @@ export class ProductComponent implements OnInit, AfterViewInit {
     { key: 'stock', label: 'Stock', type: 'string' },
     { key: 'status', label: 'Estado', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
     key: K,
-    value: ReturnType<typeof this.dataSearch>[K]
+    value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update((ds) => {
+    this.dataSearch.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -142,10 +140,10 @@ export class ProductComponent implements OnInit, AfterViewInit {
         finalize(() => {
           this.isLoadingResults = false;
           this.toggleSelectsState();
-        })
+        }),
       )
       .subscribe({
-        next: (response) => {
+        next: response => {
           const [dataForm, responseProduct] = response;
           this.subCategorias.set(dataForm.subCategorias);
           this.medidas.set(dataForm.medidas);
@@ -155,7 +153,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
           this.setResponseGetAll(responseProduct);
         },
-        error: (err) => {
+        error: err => {
           console.error('Error load infrastructure form and products:', err);
         },
       });
@@ -163,16 +161,16 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
+    this.columnsDefs.forEach(col => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
     });
   }
 
-  onEnter($event: Event){
-    if( isValidField(this.dataSearch().textSearch)){
-      this.refresh()
+  onEnter($event: Event) {
+    if (isValidField(this.dataSearch().textSearch)) {
+      this.refresh();
     }
   }
 
@@ -199,7 +197,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   toggleSelectsState(): void {
-    this.selectElements?.forEach((selectRef) => {
+    this.selectElements?.forEach(selectRef => {
       selectRef.nativeElement.disabled = this.isLoadingResults;
     });
   }
@@ -219,7 +217,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -242,9 +240,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
       });
 
       if (isConfirmed) {
-        this._productUseCase
-          .updateStatus(item.idArticulo)
-          .subscribe(this.successResponse);
+        this._productUseCase.updateStatus(item.idArticulo).subscribe(this.successResponse);
       }
     } catch (error) {
       console.log(error);
@@ -272,7 +268,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
       data,
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh();
       }
@@ -291,7 +287,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
 
     if (products.length > 0) {
-      this.pagination.update((p) => ({
+      this.pagination.update(p => ({
         ...p,
         totalRecords: response.totalRecords,
       }));
@@ -319,7 +315,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   private resetDataAfterFetch() {
     this.isLoadingResults = true;
-    this.pagination.update((p) => ({
+    this.pagination.update(p => ({
       ...p,
       totalRecords: 0,
     }));
@@ -344,9 +340,9 @@ export class ProductComponent implements OnInit, AfterViewInit {
         finalize(() => {
           this.isLoadingResults = false;
           this.toggleSelectsState();
-        })
+        }),
       )
-      .subscribe((response) => {
+      .subscribe(response => {
         this.setResponseGetAll(response);
       });
   }
