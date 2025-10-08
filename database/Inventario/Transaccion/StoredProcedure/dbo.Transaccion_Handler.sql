@@ -1,155 +1,272 @@
 --WARNING! ERRORS ENCOUNTERED DURING SQL PARSING!
 USE Acontplus
 GO
+
 CREATE OR ALTER PROCEDURE Transaction_Handler
 AS
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
 DECLARE @RecvReqDlgHandle UNIQUEIDENTIFIER;
 DECLARE @RecvReqMsg XML;
 DECLARE @RecvReqMsgName SYSNAME;
 
---> Data Global
-DECLARE @tipo INT = 1
+-- Declare variables with SQL Server 2022+ optimal data types
+DECLARE @codDoc VARCHAR(2)
+DECLARE @idTransaccion INT;
+DECLARE @fechaTransaccion DATETIME2(7);
+DECLARE @ErrorMessage NVARCHAR(4000);
+DECLARE @StartTime DATETIME2(7) = SYSDATETIME();
 
---> Inventario
-DECLARE @codTran VARCHAR(2) ,@codDoc VARCHAR(2) ,@documentoId INT ,@idTipoTransaccion INT ,@idTipoDocumento INT
-
+-- Service Broker message processing loop
 WHILE (1 = 1)
 BEGIN
-	BEGIN TRY
-		BEGIN TRANSACTION;
+    BEGIN TRY
+        -- Optimized WAITFOR with better timeout management
+        WAITFOR (
+            RECEIVE TOP (1) 
+                @RecvReqDlgHandle = conversation_handle
+               ,@RecvReqMsg       = message_body
+               ,@RecvReqMsgName   = message_type_name 
+            FROM Stock_Queue
+        ), TIMEOUT 500;
 
-		WAITFOR (
-				RECEIVE TOP (1) @RecvReqDlgHandle = conversation_handle
-				,@RecvReqMsg = message_body
-				,@RecvReqMsgName = message_type_name FROM Stock_Queue
-				)
-			,TIMEOUT 5000;
+        IF (@@ROWCOUNT = 0)
+            BEGIN
+                BREAK;
+            END;
 
+        --> Optimized XML parsing
+        WITH XMLParsing AS (SELECT nref.value('(id)[1]','INT') as id FROM @RecvReqMsg.nodes('/msg') as R(nref))
 
-		IF (@@ROWCOUNT = 0)
-		    BEGIN
-			    ROLLBACK TRANSACTION;
-			    BREAK;
-		    END
+        SELECT @idTransaccion = id FROM XMLParsing;
 
-		--declare @targetpProcedure nvarchar(100);
-		--set @targetpProcedure = CAST(@RecvReqMsg AS nvarchar(100))
-		SELECT @codTran     = nref.value('(codTran)[1]','VARCHAR(5)')
-			  ,@codDoc      = nref.value('(codDoc)[1]', 'VARCHAR(5)')
-			  ,@documentoId = nref.value('(documentoId)[1]', 'INT')
-			  ,@tipo        = nref.value('(tipo)[1]','INT')
-		FROM @RecvReqMsg.nodes('/msg') AS R(nref);
+        IF (@RecvReqMsgName = 'StockRequestMessage')
+            BEGIN
+                --> Begin transaction with proper isolation
+                BEGIN TRANSACTION;
+            
+                    --> SQL Server 2022+ optimized transaction lookup
+                    SELECT TOP 1 @fechaTransaccion = tr.fechaEmision
+                                ,@codDoc           = td.codigo
+                    FROM Inventario.Transaccion         tr WITH (INDEX(IX_Transaccion_enterprise_lookup))
+                    INNER JOIN Inventario.TipoDocumento td ON td.idTipoDocumento = tr.idTipoDocumento
+                    WHERE idTransaccion = @idTransaccion
 
-		--IF LEN(@targetpProcedure) > 0
-		--BEGIN
-		--    --execute target procedure (no need to send the reply)
-		--   --exec @targetpProcedure;
-		--END
-        PRINT @RecvReqMsgName
-		IF (@RecvReqMsgName = 'StockRequestMessage')
-		    BEGIN
-			    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = @codTran
+                    --> Adjustment transactions
+                    IF @codDoc = 'CI' 
+                        BEGIN
+                            --> Paso 1: Obtener los últimos ajustes consolidados para cada artículo/bodega
+                            WITH TransaccionActual AS
+                            (
+                                SELECT DISTINCT idArticulo, idBodega
+                                FROM Inventario.TransaccionDetalle WITH (READCOMMITTED)
+                                WHERE idTransaccion = @idTransaccion
+                                  AND estado <> 0
+                            ),
+                            UltimosAjustes AS
+                            (
+                                SELECT td.idArticulo
+                                      ,td.idBodega
+                                      ,td.idTransaccionDetalle
+                                      ,ROW_NUMBER() OVER (PARTITION BY td.idArticulo, td.idBodega ORDER BY tr.fechaEmision DESC) as rn
+                                FROM TransaccionActual                   ta
+                                INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idArticulo = ta.idArticulo 
+                                                                                                AND td.idBodega = ta.idBodega
+                                                                                                AND td.estado = 1
+                                INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion     = td.idTransaccion
+                                INNER JOIN Inventario.TipoTransaccion    tt WITH (READCOMMITTED) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                WHERE tt.codigo = 'A' 
+                            )
+                            UPDATE st SET  idTransaccionDetalle = ua.idTransaccionDetalle
+                            FROM Inventario.Stock     st WITH (ROWLOCK)
+                            INNER JOIN UltimosAjustes ua ON ua.idArticulo = st.idArticulo AND ua.idBodega = st.idBodega AND ua.rn = 1;
 
-			    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDoc
-                
-                --> Actualizar Stock por Bodega 
+                            --> Paso 2: Calcular saldos acumulados para transacciones afectadas
+                            WITH TransaccionesAfectadas AS
+                            (
+                                 SELECT td.idTransaccionDetalle
+                                       ,td.idArticulo
+                                       ,td.idBodega
+                                       ,ta.cantidadTransaccion + 
+                                        SUM(td.cantidadTransaccion) OVER (
+                                            PARTITION BY td.idArticulo, td.idBodega 
+                                            ORDER BY tr.fechaEmision ASC 
+                                            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+                                        ) as nuevoSaldo
+                                    FROM Inventario.TransaccionDetalle       td WITH (READCOMMITTED)
+                                    INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion = td.idTransaccion
+                                    INNER JOIN Inventario.TipoTransaccion    tt WITH (READCOMMITTED) ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                    INNER JOIN Inventario.TransaccionDetalle ta WITH (READCOMMITTED) --> Transaccion Actual
+                                        ON  ta.idTransaccion = @idTransaccion
+                                        AND ta.idArticulo    = td.idArticulo
+                                        AND ta.idBodega      = td.idBodega
+                                    WHERE td.estado = 1
+                                      AND tt.codigo != 'A'
+                                      AND tr.fechaRegistro >= @fechaTransaccion
+                                      AND td.AjusteId IS NULL
+                            )
+                            --> Actualizar todas las transacciones afectadas en UNA sola operación
+                            UPDATE td SET saldo    = af.nuevoSaldo
+                                         ,AjusteId = @idTransaccion
+                            FROM Inventario.TransaccionDetalle td WITH (ROWLOCK)
+                            INNER JOIN TransaccionesAfectadas  af ON af.idTransaccionDetalle = td.idTransaccionDetalle;
 
-                --> Ajuste ID unico
-                IF @codTran = 'A'
-                    BEGIN
-                        UPDATE st 
-                           SET st.consolidacion = (
-                                                    SELECT TOP 1 dt.cantidadTransaccion    
-                                                    FROM Inventario.Transaccion              tr WITH (NOLOCK)
-                                                    INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
-                                                    INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
-                                                    INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-                                                    WHERE dt.idArticulo = st.idArticulo
-                                                      AND dt.idBodega   = st.idBodega
-                                                      AND dt.estado     = 1
-                                                      AND tt.codigo     = 'A'
-                                                    ORDER BY tr.fechaEmision DESC
-                                                  )
-                              ,st.ConsolidacionId = (
-                                                        SELECT TOP 1 tr.idDocumento    
-                                                        FROM Inventario.Transaccion              tr WITH (NOLOCK)
-                                                        INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
-                                                        INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
-                                                        INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-                                                        WHERE dt.idArticulo = st.idArticulo
-                                                          AND dt.idBodega   = st.idBodega
-                                                          AND dt.estado     = 1
-                                                          AND tt.codigo     = 'A'
-                                                        ORDER BY tr.fechaEmision DESC
-                                                     )
-                              ,st.fechaConsolidacion = (
-                                                            SELECT TOP 1 tr.fechaEmision    
-                                                            FROM Inventario.Transaccion              tr WITH (NOLOCK)
-                                                            INNER JOIN Inventario.TransaccionDetalle dt WITH (NOLOCK) ON dt.idTransaccion     = tr.idTransaccion
-                                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento   = tr.idTipoDocumento
-                                                            INNER JOIN Inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
-                                                            WHERE dt.idArticulo = st.idArticulo
-                                                              AND dt.idBodega   = st.idBodega
-                                                              AND dt.estado     = 1
-                                                              AND tt.codigo     = 'A'
-                                                            ORDER BY tr.fechaEmision DESC
-                                                       )
-			            FROM Inventario.Stock                    st WITH (ROWLOCK)
-			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo AND 
-                                                                                      td.idBodega      = st.idBodega
-                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
-			            WHERE tr.idTipoTransaccion = @idTipoTransaccion
-				          AND tr.idTipoDocumento   = @idTipoDocumento
-				          AND tr.idDocumento       = @documentoId
-                    END 
+                            --> Actualazacion de saldo y ajuste
+                            UPDATE Inventario.TransaccionDetalle SET saldo = cantidadTransaccion ,AjusteId = @idTransaccion WHERE idTransaccion = @idTransaccion AND estado <> 0;
 
-                IF @codDoc = 'TB'
-                    BEGIN 
-                        UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
-			            FROM Inventario.Stock                    st WITH (ROWLOCK)
-			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo 
-                                                                                  AND td.idBodega      = st.idBodega
-                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
-			            WHERE tr.idTipoDocumento = @idTipoDocumento
-				          AND tr.idDocumento     = @documentoId
-                    END 
-                ELSE   
-                    BEGIN
-                        UPDATE st SET st.cantidad = Inventario.f_Stock(st.idArticulo,st.idBodega)
-			            FROM Inventario.Stock                    st WITH (ROWLOCK)
-			            INNER JOIN Inventario.TransaccionDetalle td WITH (ROWLOCK) ON td.idArticulo    = st.idArticulo 
-                                                                                  AND td.idBodega      = st.idBodega
-                        INNER JOIN Inventario.Transaccion        tr WITH (ROWLOCK) ON tr.idTransaccion = td.idTransaccion
-			            WHERE tr.idTipoTransaccion = @idTipoTransaccion
-				          AND tr.idTipoDocumento   = @idTipoDocumento
-				          AND tr.idDocumento       = @documentoId
-                    END 
-               
-                --> Actualizar Stock General
-                UPDATE ar
-			        SET ar.stock = (
-					                SELECT SUM(s.cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE s.idArticulo = ar.idArticulo
-					               )
-			    FROM dbo.Articulo ar WITH (ROWLOCK)
-			    WHERE ar.idArticulo IN (
-					    SELECT tr.idArticulo
-					    FROM Inventario.Transaccion              t  WITH (NOLOCK)
-                        INNER JOIN Inventario.TransaccionDetalle tr WITH (NOLOCK) ON tr.idTransaccion = t.idTransaccion
-					    WHERE t.idTipoTransaccion = @idTipoTransaccion
-						  AND t.idTipoDocumento   = @idTipoDocumento
-						  AND t.idDocumento       = @documentoId
-					    )
-		    END
-        END CONVERSATION @RecvReqDlgHandle;
-        COMMIT TRAN
-	END TRY
-	BEGIN CATCH
-		IF @@TRANCOUNT > 0
-		    BEGIN
-			    ROLLBACK TRAN;
-		    END
-		INSERT INTO ErroresSistema (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate)
-		SELECT NEWID(),'/Transaccion/Insert/' + CAST(@RecvReqMsg AS VARCHAR(250)),ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE()
-	END CATCH
+                            WITH TransaccionActualStock AS
+                            (
+                                SELECT DISTINCT idArticulo, idBodega
+                                FROM Inventario.TransaccionDetalle WITH (READCOMMITTED)
+                                WHERE idTransaccion = @idTransaccion
+                                  AND estado <> 0
+                           ),
+                           StockBase AS
+                           (
+                                -- Obtener la transacción base (último ajuste) de cada Stock
+                                SELECT st.idArticulo
+                                      ,st.idBodega
+                                      ,td.cantidadTransaccion as cantidadBase
+                                      ,tr.fechaRegistro       as fechaBase
+                                FROM TransaccionActualStock              ta
+                                INNER JOIN Inventario.Stock              st WITH (READCOMMITTED) ON st.idArticulo = ta.idArticulo 
+                                                                                                AND st.idBodega = ta.idBodega
+                                                                                                AND st.estado = 1
+                                INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idTransaccionDetalle = st.idTransaccionDetalle
+                                INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion        = td.idTransaccion
+                            ),
+                            MovimientosPosteriores AS
+                            (
+                                -- Obtener la suma de movimientos E/S después del ajuste base
+                                SELECT sb.idArticulo
+                                      ,sb.idBodega
+                                      ,ISNULL(SUM(td.cantidadTransaccion), 0) as sumaMovimientos
+                                FROM StockBase                           sb
+                                INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idArticulo = sb.idArticulo
+                                                                                                AND td.idBodega = sb.idBodega
+                                                                                                AND td.estado = 1
+
+                                INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion = td.idTransaccion
+                                                                                                AND tr.fechaRegistro >= sb.fechaBase  -- Solo movimientos posteriores
+
+                                INNER JOIN Inventario.TipoTransaccion tt WITH (READCOMMITTED)    ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                                                                                                AND tt.codigo IN ('E','S')  -- Solo Entradas y Salidas
+                                GROUP BY sb.idArticulo, sb.idBodega
+                            ),
+                            StockFinal AS (
+                                -- Calcular el stock final: base + movimientos posteriores
+                                SELECT sb.idArticulo
+                                      ,sb.idBodega
+                                      ,sb.cantidadBase + ISNULL(mp.sumaMovimientos, 0) as cantidadFinal
+                                FROM StockBase                   sb
+                                LEFT JOIN MovimientosPosteriores mp ON mp.idArticulo = sb.idArticulo AND mp.idBodega = sb.idBodega
+                            )
+                            UPDATE st SET cantidad = sf.cantidadFinal
+                            FROM Inventario.Stock st 
+                            INNER JOIN StockFinal sf ON sf.idArticulo = st.idArticulo AND sf.idBodega = st.idBodega;
+                            
+                        END
+                    --> Regular transactions
+                    ELSE 
+                        BEGIN
+                            --> Calculate and update final stock
+                            UPDATE st SET cantidad = st.cantidad + td.cantidadTransaccion
+                            FROM Inventario.Stock st WITH (ROWLOCK)
+                            INNER JOIN Inventario.TransaccionDetalle td ON td.idArticulo = st.idArticulo AND td.idBodega = st.idBodega
+                            WHERE td.idTransaccion = @idTransaccion
+                              AND td.estado <> 0;
+
+                            WITH SaldosActuales AS
+                            (
+                                SELECT td.idTransaccionDetalle
+                                      ,st.cantidad      as saldoActual
+                                      ,tr.idTransaccion as ajusteId
+                                FROM Inventario.TransaccionDetalle       td
+                                INNER JOIN Inventario.Stock              st WITH (READCOMMITTED) ON st.idBodega = td.idBodega AND st.idArticulo = td.idArticulo
+                                 LEFT JOIN Inventario.TransaccionDetalle tr WITH (READCOMMITTED) ON tr.idTransaccionDetalle = st.idTransaccionDetalle
+                                WHERE td.idTransaccion = @idTransaccion
+                                  AND td.estado <> 0
+                            )
+                            UPDATE td SET saldo    = sa.saldoActual
+                                         ,ajusteId = sa.ajusteId
+                            FROM Inventario.TransaccionDetalle td
+                            INNER JOIN SaldosActuales          sa ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
+                        END;
+
+                    -- Update article total stock
+                    WITH StockTotales AS
+                    (
+                        SELECT st.idArticulo
+                              ,ISNULL(SUM(st.cantidad), 0) as stockTotal
+                        FROM Inventario.Stock st WITH (READCOMMITTED)
+                        WHERE EXISTS
+                        (
+                            SELECT 1 FROM Inventario.TransaccionDetalle td 
+                            WHERE td.idTransaccion = @idTransaccion 
+                              AND td.idArticulo = st.idArticulo
+                              AND td.estado <> 0
+                        )
+                        GROUP BY st.idArticulo
+                    )
+                    UPDATE ar SET stock = st.stockTotal
+                    FROM dbo.Articulo       ar 
+                    INNER JOIN StockTotales st ON st.idArticulo = ar.idArticulo;
+
+                END CONVERSATION @RecvReqDlgHandle;
+                COMMIT TRANSACTION;
+            END
+        ELSE
+            BEGIN
+                END CONVERSATION @RecvReqDlgHandle;
+            END
+
+    END TRY
+
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+        BEGIN
+            ROLLBACK TRANSACTION;
+        END
+
+        SET @ErrorMessage = ERROR_MESSAGE();
+        
+        -- SQL Server 2022+ enhanced error logging with JSON
+        DECLARE @ErrorDetails NVARCHAR(MAX);
+        SET @ErrorDetails = CONCAT(
+            '{"procedure":"', ISNULL(ERROR_PROCEDURE(), 'Transaction_Handler'), '",',
+            '"line":', ERROR_LINE(), ',',
+            '"severity":', ERROR_SEVERITY(), ',',
+            '"state":', ERROR_STATE(), ',',
+            '"number":', ERROR_NUMBER(), ',',
+            '"message":"', REPLACE(@ErrorMessage, '"', '\"'), '",',
+            '"execution_time_ms":', DATEDIFF(MILLISECOND, @StartTime, SYSDATETIME()), ',',
+            '"msg_content":"', ISNULL(CAST(@RecvReqMsg AS NVARCHAR(250)), 'NULL'), '"}'
+        );
+
+        INSERT INTO ErroresSistema WITH (ROWLOCK)
+            (token, method, errorNumber, errorSeverity, errorState, 
+             errorProcedure, errorLine, errorMessage, errorDate, errorDetails)
+        VALUES (
+            NEWID(),
+            '/Transaccion/ServiceBroker/Transaction_Handler',
+            ERROR_NUMBER(),
+            ERROR_SEVERITY(),
+            ERROR_STATE(),
+            ISNULL(ERROR_PROCEDURE(), 'Transaction_Handler'),
+            ERROR_LINE(),
+            @ErrorMessage,
+            SYSDATETIME(),
+            @ErrorDetails
+        );
+
+        -- Proper conversation cleanup with detailed error
+        IF @RecvReqDlgHandle IS NOT NULL
+        BEGIN
+            END CONVERSATION @RecvReqDlgHandle 
+            WITH ERROR = 500 
+            DESCRIPTION = @ErrorMessage;
+        END
+    END CATCH
 END
 GO

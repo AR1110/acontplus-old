@@ -1,30 +1,46 @@
 USE [Acontplus]
 GO 
+--> NUEVO DOCUMENTO PARA EL REGISTRO DE ANULACION DE DOCUMENTOS DE INVENTARIO.
 
---> CREACION DE TABLA PARA REGISTRAR MOVIMIENTOS DE CADA DETALLE DE LA TRANSACCION
+--insert into Inventario.TipoDocumento 
+--(codigo,descripcion,estado,orden)
+--select 'OP','Orden de Producción',1,11
 
---CREATE TABLE Inventario.MovementType (
---    Id INT PRIMARY KEY IDENTITY(1,1) NOT NULL
---   ,Code VARCHAR(25) UNIQUE NOT NULL
---   ,Description VARCHAR(300) NOT NULL
---   ,CreateAt DATETIME2 DEFAULT GETDATE() NOT NULL
---   ,IsActive BIT DEFAULT 1 NOT NULL
---   ,UpdateAt DATETIME2 NULL
---   ,Deleted BIT DEFAULT 0 NULL
---)
+--insert into Inventario.TipoDocumento (codigo,descripcion,estado,orden)
+--select 'AD','Anulacion',1,12
 
---INSERT INTO Inventario.MovementType (Code,Description,IsActive)
---select codigo,descripcion,estado from Inventario.TipoTransaccion
+--insert into dbo.TipoDocumento(codigo,descripcion,fechaRegistro,aplicacionId,secuencial)
+--select 'AD','Anulacion',GETDATE(),1,0
 
---> |||||| TIPO DE MOVIMIENTO PARA REGISTRAR EN LOS DETALLES ||||||||||
+--insert into Inventario.TipoDocumento (codigo,descripcion,estado,orden)
+--select 'AJ','Ajuste',1,13
 
---ALTER TABLE Inventario.TransaccionDetalle ADD MovementTypeId INT CONSTRAINT fk_MovementType_transacion FOREIGN KEY REFERENCES Inventario.MovementType(Id)
+--insert into dbo.TipoDocumento(codigo,descripcion,fechaRegistro,aplicacionId,secuencial)
+--select 'AJ','Ajuste',GETDATE(),1,0
 
---UPDATE td set td.MovementTypeId = (select top 1 mt.Id from Inventario.MovementType mt where mt.Code = tt.codigo)
---from Inventario.TransaccionDetalle td
---INNER JOIN Inventario.Transaccion tr ON tr.idTransaccion = td.idTransaccion
---INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+--insert into configuracionDocumento (idPuntoEmision,idTipoDocumento,ultimaSecuencia,fechaRegistro )
+--SELECT idPuntoEmision,idTipoDocumento,1,getdate()
+--FROM dbo.PuntoEmision pe
+--cross join dbo.TipoDocumento td
+--where pe.estado = 1
+--and td.codigo = 'AD'
 
+--insert into configuracionDocumento (idPuntoEmision,idTipoDocumento,ultimaSecuencia,fechaRegistro )
+--SELECT idPuntoEmision,idTipoDocumento,1,getdate()
+--FROM dbo.PuntoEmision pe
+--cross join dbo.TipoDocumento td
+--where pe.estado = 1
+--and td.codigo = 'AJ'
+
+--> CREACION DE IDTRANSACCIONORIGINAL PARA LOS PROCESO DE ANULACION Y AJUSTES
+
+--alter table Inventario.Transaccion ADD idTransaccionOriginal BIGINT CONSTRAINT fk_TransaccionOriginal_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(IdTransaccion)
+
+--alter table Inventario.Transaccion add default 0 for idDocumento
+
+--alter table Inventario.Transaccion drop constraint U_Code_Transa
+
+--alter table Inventario.Transaccion drop column uniqueId
 
 --> ||| LAS TRANSACCIONES SERAN DATOS UNICOS, SU MOVIMIENTO SERA EN LOS DETALLES DE CADA UNO, PROCESO PARA ACTUALIZAR Y BORRA EL DOBLE REGISTRO DE LAS TRANFERENCIAS 
 
@@ -58,42 +74,61 @@ GO
 
 --ALTER TABLE Inventario.TransaccionDetalle ADD AjusteId BIGINT CONSTRAINT fk_ajuste_kardex_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(idTransaccion)
 -- Id Ajuste
-
-
---SELECT 
---    sd.idBodega,
---    sd.idArticulo,
---    tt.idTransaccion,
---    tt.fechaEmision
---INTO #TempCI
---FROM Inventario.Transaccion              tt WITH (NOLOCK)
---INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
---INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
---WHERE td.codigo = 'CI'
---  AND sd.estado = 1
-
----- Crear índice en la tabla temporal
---CREATE INDEX IX_TempCI ON #TempCI (idBodega, idArticulo, fechaEmision DESC)
-
----- Actualizar usando la tabla temporal
+-- Versión optimizada usando CTEs en lugar de tablas temporales
+--WITH InventarioCI AS (
+--    SELECT 
+--        sd.idBodega,
+--        sd.idArticulo,
+--        tt.idTransaccion,
+--        tt.fechaEmision,
+--        tt.fechaRegistro
+--    FROM Inventario.Transaccion tt WITH (NOLOCK)
+--    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
+--        ON td.idTipoDocumento = tt.idTipoDocumento
+--    INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) 
+--        ON sd.idTransaccion = tt.idTransaccion
+--    WHERE td.codigo = 'CI'
+--      AND sd.estado = 1
+--),
+--TransaccionesConFecha AS (
+--    SELECT 
+--        dt.idTransaccionDetalle,
+--        dt.idBodega,
+--        dt.idArticulo,
+--        tr.fechaRegistro,
+--        td.codigo,
+--        dt.idTransaccion
+--    FROM Inventario.TransaccionDetalle dt WITH (NOLOCK)
+--    INNER JOIN Inventario.Transaccion tr WITH (NOLOCK) 
+--        ON tr.idTransaccion = dt.idTransaccion
+--    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
+--        ON td.idTipoDocumento = tr.idTipoDocumento
+--    WHERE dt.estado = 1
+--),
+--CIConRanking AS (
+--    SELECT 
+--        ci.*,
+--        tcf.idTransaccionDetalle,
+--        tcf.codigo AS tipoTransaccion,
+--        tcf.idTransaccion AS idTransaccionOriginal,
+--        ROW_NUMBER() OVER (
+--            PARTITION BY tcf.idTransaccionDetalle 
+--            ORDER BY ci.fechaEmision DESC
+--        ) as rn
+--    FROM TransaccionesConFecha tcf
+--    LEFT JOIN InventarioCI ci 
+--        ON ci.idBodega = tcf.idBodega 
+--        AND ci.idArticulo = tcf.idArticulo
+--        AND ci.fechaEmision <= tcf.fechaRegistro
+--)
 --UPDATE dt 
---SET dt.AjusteId = CASE  WHEN td.codigo = 'CI' THEN tr.idTransaccion 
---                                              ELSE t.idTransaccion
+--SET dt.AjusteId = CASE 
+--    WHEN cr.tipoTransaccion = 'CI' THEN cr.idTransaccionOriginal
+--    ELSE cr.idTransaccion
 --END
---FROM Inventario.TransaccionDetalle    dt 
---INNER JOIN Inventario.Transaccion     tr WITH (NOLOCK) ON tr.idTransaccion = dt.idTransaccion
---INNER JOIN Inventario.TipoTransaccion tt WITH (NOLOCK) ON tt.idTipoTransaccion = tr.idTipoTransaccion
---INNER JOIN Inventario.TipoDocumento   td WITH (NOLOCK) ON td.idTipoDocumento = tr.idTipoDocumento
---OUTER APPLY (
---    SELECT TOP 1 tc.idTransaccion
---    FROM #TempCI tc
---    WHERE tc.idBodega      = dt.idBodega 
---      AND tc.idArticulo    = dt.idArticulo
---      AND tc.fechaEmision <= tr.fechaEmision
---    ORDER BY tc.fechaEmision DESC
---) t
-
---DROP TABLE #TempCI;
+--FROM Inventario.TransaccionDetalle dt
+--INNER JOIN CIConRanking cr ON cr.idTransaccionDetalle = dt.idTransaccionDetalle
+--WHERE cr.rn = 1 OR cr.rn IS NULL;
 
 
 ----> saldo
@@ -120,16 +155,30 @@ GO
 ----;
 
 
+--select *
+--from Inventario.transacciondetalle td
+--inner join inventario.transaccion tr on tr.idtransaccion = td.idtransaccion
+--inner join Inventario.TipoDocumento  dt on dt.idTipoDocumento = tr.idTipoDocumento
+--inner join Inventario.TipoTransaccion tt on tt.idTipoTransaccion = tr.idTipoTransaccion
+--where tt.codigo = 'S'
+--AND dt.codigo in ('FE','NE','BI')
+--AND td.cantidadTransaccion > 0
+--and td.estado = 1 
+
 --WITH CTE_Saldos AS (
 --    SELECT idTransaccionDetalle
---          ,SUM(td.cantidadTransaccion) OVER (PARTITION BY idArticulo, idBodega, td.ajusteId ORDER BY ts.fechaEmision, idTransaccionDetalle ASC) AS nuevoSaldo
+--          ,SUM(td.cantidadTransaccion) OVER (PARTITION BY idArticulo, idBodega, td.ajusteId ORDER BY ts.fechaRegistro, idTransaccionDetalle ASC) AS nuevoSaldo
+--          ,td.ajusteId
+--          ,ts.fechaRegistro
 --    FROM Inventario.Transaccion              ts WITH (NOLOCK)
 --    INNER JOIN inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = ts.idTipoTransaccion
 --    INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
+--    where td.estado = 1
+--    and td.idArticulo = 485251
+--    and td.idBodega = 229
 --)
---UPDATE td 
---SET td.saldo = sa.nuevoSaldo 
---FROM Inventario.TransaccionDetalle td WITH (NOLOCK)
+--update td set td.saldo = sa.nuevoSaldo
+--from Inventario.TransaccionDetalle td WITH (NOLOCK)
 --INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
 
 
@@ -195,12 +244,4 @@ GO
 
 --alter table Inventario.TipoTransaccion alter column codigo varchar(20)
 
-SELECT * FROM Inventario.TipoTransaccion
-
---update inventario.TipoTransaccion set codigo = 'E', descripcion = 'Entrada' where idTipoTransaccion = 1
---update inventario.TipoTransaccion set codigo = 'S', descripcion = 'Salidas' where idTipoTransaccion = 2
---update inventario.TipoTransaccion set codigo = 'A', descripcion = 'Ajustes' where idTipoTransaccion = 4
-
---UPDATE Inventario.TipoTransaccion SET codigo = 'CMP', descripcion = 'Compras' WHERE idTipoTransaccion = 1
---UPDATE Inventario.TipoTransaccion SET codigo = 'VTA', descripcion = 'Ventas' WHERE idTipoTransaccion = 2
---UPDATE Inventario.TipoTransaccion SET codigo = 'INV', descripcion = 'Movimiento de Inventario' WHERE idTipoTransaccion = 4
+--SELECT * FROM Inventario.TipoTransaccion

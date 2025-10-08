@@ -333,7 +333,7 @@ BEGIN
                              FROM @tblDetails 
                              WHERE llevaInventario = 1
 
-                             EXEC dbo.Transaccion_Handler_Init 'E', 'IV', @idDocumentoIngreso, DEFAULT
+                             EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
                              IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
                                 BEGIN

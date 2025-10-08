@@ -40,11 +40,13 @@ BEGIN
            ,@porcentajeComision NUMERIC(18,5)
            ,@subFamiliasChecked VARCHAR(150) 
            ,@idTarifa           INT
+           ,@idTipoIva          INT
            ,@idEmpresa          INT
            ,@convertToDoc       BIT
            ,@id                 INT
            ,@idCiudad           INT 
-           ,@dirViviendaCliente VARCHAR(150);
+           ,@dirViviendaCliente VARCHAR(150)
+           ,@iva AS VARCHAR(50) = ''
 
     --> Variables
     SELECT @tipo = tipo, @userRoleId = userRoleId FROM OPENJSON(@json) WITH (tipo INT, userRoleId INT)
@@ -424,7 +426,8 @@ BEGIN
 						   ,@idEntidad          INT
                            ,@codDoc             VARCHAR(2)
                            ,@subFamiliasChecked VARCHAR(150)
-                           ,@idTarifa           INT'
+                           ,@idTarifa           INT
+                           ,@idTipoIva          INT'
 
 			SET @sql = 'SELECT tt.articulo
 							  ,tt.codArticulo
@@ -454,7 +457,8 @@ BEGIN
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCostoFraccionado) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCostoFraccionado)) as numeric(18,2))
 						FROM v_InventarioTransaccion tt WITH (NOLOCK)
-                        INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida = tt.idMedida 
+                        INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = tt.idMedida
+                        INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = tt.idArticulo 
 						WHERE tt.idEntidad = @idEntidad 
                           AND tt.estado = 1 
                           AND tt.codTransaccion =''S'' 
@@ -472,6 +476,7 @@ BEGIN
                   ,@idTarifa           = idTarifa
                   ,@porcentajeRenta    = porcentajeRenta
                   ,@porcentajeComision = porcentajeComision
+                  ,@idTipoIva          = idTipoIva
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
@@ -487,6 +492,7 @@ BEGIN
                ,idTarifa           INT
                ,porcentajeRenta    NUMERIC(18,5)
                ,porcentajeComision NUMERIC(18,5)
+               ,idTipoIva          INT
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -495,6 +501,13 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND CAST(tt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 				END
+
+            IF @idTipoIva > 0
+                BEGIN
+                    SELECT TOP 1 @iva = descripcion FROM dbo.TipoIva WHERE idTipoIva = @idTipoIva
+
+                    SET @sql = @sql + 'AND ar.idTipoIva = @idTipoIva '
+                END 
 
 			IF @idArticulo > 0
 				BEGIN
@@ -539,7 +552,7 @@ BEGIN
 				  ,e.nombreComercial	
 				  ,ISNULL(e.telefono, '')                                                       as telefonoEntidad
 				  ,ISNULL(e.direccion, '')                                                      as direccionEntidad			
-				  ,'REPORTE RENTABILIDAD BIENES'                                                as tituloReporte
+				  ,'REPORTE RENTABILIDAD BIENES '+ '- ' + @iva                                  as tituloReporte
 				  ,@usuario                                                                     as usuario
 				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha
                   ,@porcentajeRenta                                                             as porcentajeRenta
@@ -559,6 +572,7 @@ BEGIN
                               ,@codDoc             = @codDoc
                               ,@subFamiliasChecked = @subFamiliasChecked
                               ,@idTarifa           = @idTarifa
+                              ,@idTipoIva          = @idTipoIva
 
 			RETURN
         END 
@@ -578,7 +592,8 @@ BEGIN
 						   ,@idEntidad          INT
                            ,@codDoc             VARCHAR(2)
                            ,@subFamiliasChecked VARCHAR(150)
-                           ,@idTarifa           INT'
+                           ,@idTarifa           INT
+                           ,@idTipoIva          INT'
 
 			SET @sql = 'SELECT cu.IdCard   											                      as rucClienteProveedor
                               ,cu.BusinessName										                      as clienteProveedor
@@ -627,6 +642,7 @@ BEGIN
                   ,@idTarifa           = idTarifa
                   ,@porcentajeRenta    = porcentajeRenta
                   ,@porcentajeComision = porcentajeComision
+                  ,@idTipoIva          = idTipoIva
 			FROM OPENJSON(@json) WITH 
 			(
 				checkBoxArticulo   BIT 
@@ -642,6 +658,7 @@ BEGIN
                ,idTarifa           INT
                ,porcentajeRenta    NUMERIC(18,5)
                ,porcentajeComision NUMERIC(18,5)
+               ,idTipoIva          INT
 			)
 
 			SELECT TOP 1 @usuario = 'Usuario : ' + nombreUsuario FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @idUsuario
@@ -650,6 +667,13 @@ BEGIN
 				BEGIN
 					SET @sql = @sql + 'AND CAST(se.FechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 				END
+
+            IF @idTipoIva > 0
+                BEGIN
+                    SELECT TOP 1 @iva =  descripcion FROM dbo.TipoIva WHERE idTipoIva = @idTipoIva
+
+                    SET @sql = @sql + 'AND ar.idTipoIva = @idTipoIva '
+                END
 
 			IF @idArticulo > 0
 				BEGIN
@@ -694,7 +718,7 @@ BEGIN
 				  ,e.nombreComercial	
 				  ,ISNULL(e.telefono, '')                                                       as telefonoEntidad
 				  ,ISNULL(e.direccion, '')                                                      as direccionEntidad			
-				  ,'REPORTE RENTABILIDAD BIENES'                                                as tituloReporte
+                  ,'REPORTE RENTABILIDAD SERVICIOS '+ '- ' + @iva                               as tituloReporte
 				  ,@usuario                                                                     as usuario
 				  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') +' - ' +  FORMAT(@fechaFin, 'dd/MM/yyyy') as filtroFecha
                   ,@porcentajeRenta                                                             as porcentajeRenta
@@ -714,6 +738,7 @@ BEGIN
                               ,@codDoc             = @codDoc
                               ,@subFamiliasChecked = @subFamiliasChecked
                               ,@idTarifa           = @idTarifa
+                              ,@idTipoIva          = @idTipoIva
 
 			RETURN
         END 

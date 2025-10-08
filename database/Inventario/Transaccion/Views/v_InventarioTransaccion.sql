@@ -2,12 +2,13 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW v_InventarioTransaccion WITH SCHEMABINDING AS (
 SELECT tr.idTransaccion
+      ,tr.idTransaccionOriginal
 	  ,tr.idTipoTransaccion
 	  ,tr.idTipoDocumento
 	  ,tr.idDocumento
 	  ,tr.idUsuario
       ,tr.serieComprobante as nroDocumento
-      ,tr.fechaEmision     as fechaRegistro
+      ,CASE WHEN tt.codigo = 'A' THEN tr.fechaEmision ELSE tr.fechaRegistro END AS fechaRegistro
       ,dt.idTransaccionDetalle
       ,dt.estado
       ,dt.idArticulo
@@ -19,24 +20,12 @@ SELECT tr.idTransaccion
 	  ,dt.precioUnitario
 	  ,dt.precioCosto
       ,dt.precioCostoFraccionado
+      ,dt.AjusteId                                                                  as particion
+      ,dt.saldo
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
 	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
       ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.total END, 0)                       as totalSalida 
-      ,CASE WHEN td.codigo = 'CI' THEN tr.idDocumento 
-                                  ELSE (
-                                            SELECT max(tt.idDocumento)
-                                            FROM Inventario.Transaccion              tt WITH (NOLOCK)
-                                            INNER JOIN Inventario.TipoDocumento      td WITH (NOLOCK) ON td.idTipoDocumento = tt.idTipoDocumento
-                                            INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) ON sd.idTransaccion   = tt.idTransaccion
-                                            WHERE td.codigo = 'CI'
-                                              AND tt.fechaEmision <= tr.fechaEmision 
-                                              AND sd.estado = 1
-                                              AND sd.idBodega   = dt.idBodega
-                                              AND sd.idArticulo = dt.idArticulo
-                                             
-                                       ) 
-       END as particion
       ,ar.idSubFamilia
 	  ,tt.codigo                                                                    as codTransaccion
 	  ,tt.descripcion                                                               as transaccion

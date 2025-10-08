@@ -37,7 +37,7 @@ BEGIN
 						 WHERE de.idEntidad = @idEntidad
 						    AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) 
 							AND CAST(@toDate as date)
-						    AND de.codEstado NOT IN (4,6) )
+						    AND de.codEstado NOT IN (4,6,8) )
 	 	BEGIN
 			SELECT '0' code, 'Aun existen documentos sin autorizar' as 'message'
 		END

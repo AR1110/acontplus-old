@@ -140,7 +140,7 @@ BEGIN
 	--> DataForm
     IF @tipo = 2
 		BEGIN
-            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento,tiposTransaccion'
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento,tipoTransaccion'
 
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			
@@ -152,7 +152,7 @@ BEGIN
 
             SELECT Id,Code,[Description] FROM Inventario.MovementType WHERE Code IN ('A','S','E') AND IsActive = 1
 
-            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI') AND estado = 1
+            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OP') AND estado = 1
 
             SELECT * FROM Inventario.TipoTransaccion WHERE estado = 1 AND codigo IN ('A','S','E')
 
@@ -445,7 +445,23 @@ BEGIN
         BEGIN
             SET @tableNames = 'comprobante,menus,components'
 
+            DECLARE @siglaSubFamilia VARCHAR(20)
+
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            IF EXISTS (SELECT cd.idConsolidacionInventarioDetalle
+	                FROM dbo.ConsolidacionInventarioDetalle cd 
+	                INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
+	                WHERE cd.idConsolidacionInventario = @id 
+                      AND cd.estado = 1
+                      AND ar.siglaFamilia = 'COM')
+                BEGIN
+                    SET @siglaSubFamilia = 'COM'
+                END
+            ELSE
+                BEGIN
+                    SET @siglaSubFamilia = 'RES'
+                END
 
 	        SELECT ci.idConsolidacionInventario
 		          ,ci.idTipoDocumento
@@ -466,8 +482,8 @@ BEGIN
 		          ,cd.descripcion
 		          ,cd.cantidad
 		          ,cd.precioCosto
-		          ,cd.precioActual as precioUnitario
-                  ,me.Id           as MenuId
+		          ,cd.precioActual     as precioUnitario
+                  ,cd.uniqueId
                   ,ar.codigo
 		          ,ar.stock
                   ,ISNULL
@@ -501,10 +517,10 @@ BEGIN
                     ) as principal
                   ,cd.estado
 	        FROM dbo.ConsolidacionInventarioDetalle cd 
-	        INNER JOIN dbo.Articulo                 ar ON ar.idArticulo = cd.idArticulo
-            INNER JOIN Restaurant.Menu              me ON me.ProductId  = ar.idArticulo
+	        INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
 	        WHERE cd.idConsolidacionInventario = @id 
               AND cd.estado = 1
+              AND ar.siglaFamilia = @siglaSubFamilia
             ORDER BY cd.idConsolidacionInventarioDetalle ASC
 
             SELECT cd.idConsolidacionInventarioDetalle
@@ -515,7 +531,7 @@ BEGIN
 		          ,cd.cantidad
 		          ,cd.precioCosto
 		          ,cd.precioActual as precioUnitario
-                  ,mi.MenuId
+                  ,cd.uniqueId
 		          ,ar.codigo
 		          ,ar.stock
                   ,ISNULL
@@ -549,11 +565,18 @@ BEGIN
                     ) as principal
                   ,cd.estado
 	        FROM dbo.ConsolidacionInventarioDetalle cd 
-	        INNER JOIN dbo.Articulo                 ar ON ar.idArticulo = cd.idArticulo
-            INNER JOIN Restaurant.Item              it ON it.ProductId  = ar.idArticulo 
-            INNER JOIN Restaurant.MenuItem          mi ON mi.ItemId     = it.Id
+	        INNER JOIN dbo.Articulo                 ar ON ar.idArticulo   = cd.idArticulo
 	        WHERE cd.idConsolidacionInventario = @id 
               AND cd.estado = 1
+              AND cd.idConsolidacionInventarioDetalle NOT  IN
+              (
+                    SELECT cd.idConsolidacionInventarioDetalle
+	                FROM dbo.ConsolidacionInventarioDetalle cd 
+	                INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
+	                WHERE cd.idConsolidacionInventario = @id 
+                      AND cd.estado = 1
+                      AND ar.siglaFamilia = @siglaSubFamilia
+              )
             ORDER BY cd.idConsolidacionInventarioDetalle ASC
 
             RETURN

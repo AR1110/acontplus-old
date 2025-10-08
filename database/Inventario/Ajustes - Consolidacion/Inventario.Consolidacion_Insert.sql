@@ -56,6 +56,7 @@ BEGIN
         ,descripcion VARCHAR(255) NOT NULL 
         ,conversion NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
+        ,uniqueId VARCHAR(100) NULL
 	)
 
 	BEGIN TRY
@@ -87,15 +88,8 @@ BEGIN
 		)
 
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,conversion,precioCostoFraccionado)
-		SELECT orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,
-		
-		CAST(CAST(precioUnitario AS FLOAT) AS DECIMAL(18,5)),
-		CAST(CAST(precioCosto AS FLOAT) AS DECIMAL(18,5)),
-		
-		total,nota,descripcion,conversion,
-		
-		CAST(CAST(precioCostoFraccionado AS FLOAT) AS DECIMAL(18,5))
+              (orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,conversion,precioCostoFraccionado,uniqueId)
+		SELECT orderIndex,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,total,nota,descripcion,conversion,precioCostoFraccionado,uniqueId
 		
 		
 		FROM OPENJSON (@detalles) WITH 
@@ -113,6 +107,7 @@ BEGIN
 			,nota                   VARCHAR(100) 
 			,descripcion            VARCHAR(255)  
             ,conversion             NUMERIC(18,5)
+            ,uniqueId               VARCHAR(100)
 		)
 	
         
@@ -180,15 +175,15 @@ BEGIN
 
             --> Detalles
 			INSERT INTO dbo.ConsolidacionInventarioDetalle
-				   (idConsolidacionInventario,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,precioActual)
-			SELECT @idConsolidacionInventario,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,precioUnitario
+				   (idConsolidacionInventario,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,uniqueId,precioActual)
+			SELECT @idConsolidacionInventario,idArticulo,idBodega,idMedida,cantidad,descripcion,precioCosto,uniqueId,precioUnitario
 			FROM @tblDetails 
             ORDER BY orderIndex ASC
 
             --> Transaccion
             INSERT INTO Inventario.Transaccion
                    (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
-            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante 
+            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante
             FROM @tbComprobante 
 
             SET @idTransaccion = SCOPE_IDENTITY()
@@ -200,7 +195,7 @@ BEGIN
 
 			UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 			
-            EXEC dbo.Transaccion_Handler_Init @codTran, @codDoc, @idConsolidacionInventario, DEFAULT
+            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
 		COMMIT TRAN 
 		SELECT '1'code,'Registrado Correctamente'[message],@payload as payload

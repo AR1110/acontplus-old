@@ -433,7 +433,7 @@ BEGIN
 			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
                             FROM @tblDetails WHERE llevaInventario = 1
 
-                            EXEC dbo.Transaccion_Handler_Init 'S', 'NE', @idNotaEntrega
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 						END
 
                     --> Servicios

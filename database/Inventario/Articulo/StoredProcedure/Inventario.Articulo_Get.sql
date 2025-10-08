@@ -698,7 +698,9 @@ BEGIN
                 SELECT idTipoDocumento, descripcion, codigoSri,codigo FROM Inventario.TipoDocumento WHERE codigo IN ('FE', 'NE')
 
                 SELECT idTarifa, descripcion, predeterminada FROM dbo.Tarifa WHERE idEntidad = @idEntidad
-                  SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+
+                SELECT idTipoIva,descripcion,codigoPorcentaje FROM TipoIva WITH (NOLOCK) WHERE estado = 1
+
                 RETURN 
             END 
 

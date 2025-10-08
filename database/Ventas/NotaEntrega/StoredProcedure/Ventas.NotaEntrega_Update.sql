@@ -116,7 +116,8 @@ BEGIN
 	
 
 	BEGIN TRY 
-        
+        SELECT '0' code,'Fuera de funcionamiento' AS 'message'
+		RETURN
 
         --> Data Json 
         SELECT @notaEntrega           = notaEntrega

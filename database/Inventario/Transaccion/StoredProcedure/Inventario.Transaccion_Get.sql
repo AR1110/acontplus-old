@@ -55,29 +55,34 @@ BEGIN
 				          ,@particion      INT
 				          ,@codTransaccion VARCHAR(2)'
 
-	        SET @sql = 'SELECT idTransaccion
-							  ,codDoc                                       as tipoDoc
-							  ,codTransaccion
-							  ,idDocumento
-							  ,particion
-                              ,estado
-							  ,nroDocumento
-							  ,clienteProveedor
-							  ,FORMAT(fechaRegistro, ''dd/MM/yyyy HH:mm'') as fechaEmision
-							  ,usuario
-							  ,CASE WHEN estado = 1 THEN ''Activo'' WHEN estado = 0 THEN ''Inactivo'' ELSE ''Transferido'' END as estadoDoc
-							  ,medida 
-							  ,cantidadEntrada 
-				   			  ,IIF(codTransaccion = ''E'' OR codTransaccion = ''A'',precioUnitario,0) as costo          
-							  ,totalEntrada  
-							  ,cantidadSalida  
-							  ,IIF(codTransaccion = ''S'',precioUnitario,0) as venta           
-							  ,totalSalida    
-							  ,IIF(estado = 1,cantidadTransaccion,0 )                                                                                     as cantidadTransaccion
-							  ,SUM(IIF(estado = 1, cantidadTransaccion,0)) OVER (PARTITION BY particion ORDER BY fechaRegistro, idTransaccionDetalle ASC) as saldo
-							  ,precioCosto
-							  ,CAST(precioCosto * (SUM(IIF(codTransaccion = ''S'', -1, 1) * IIF(estado = 1,cantidadTransaccion,0)) OVER (PARTITION BY particion ORDER BY fechaRegistro, idTransaccionDetalle ASC))  AS DECIMAL(20,2)) as totalGeneral
-						FROM v_InventarioTransaccion WITH(NOLOCK)
+	        SET @sql = 'SELECT vt.idTransaccion
+                              ,vt.idTransaccionDetalle
+							  ,vt.codDoc                                       as tipoDoc
+							  ,vt.codTransaccion
+							  ,vt.idDocumento
+							  ,vt.particion
+                              ,vt.estado as estadoDoc
+							  ,vt.nroDocumento
+							  ,CASE WHEN vt.idTransaccionOriginal > 0 THEN vt.documento + '' '' + td.codigo + '': '' + at.serieComprobante
+                                                                      ELSE vt.clienteProveedor
+                               END                                            as clienteProveedor
+							  ,FORMAT(vt.fechaRegistro, ''dd/MM/yyyy HH:mm'') as fechaEmision
+							  ,vt.usuario
+							  ,CASE WHEN vt.estado = 1 THEN ''Activo'' WHEN vt.estado = 0 THEN ''Inactivo'' ELSE ''Transferido'' END as estado
+							  ,vt.medida 
+							  ,vt.cantidadEntrada 
+				   			  ,IIF(vt.codTransaccion = ''E'' OR vt.codTransaccion = ''A'',precioUnitario,0) as costo          
+							  ,vt.totalEntrada  
+							  ,vt.cantidadSalida  
+							  ,IIF(vt.codTransaccion = ''S'',vt.precioUnitario,0) as venta           
+							  ,vt.totalSalida 
+                              ,vt.cantidadTransaccion
+							  ,vt.saldo
+							  ,vt.precioCosto
+							  ,CAST(vt.precioCosto * vt.saldo as numeric(18,2)) as totalGeneral
+						FROM v_InventarioTransaccion       vt
+                        LEFT JOIN Inventario.Transaccion   at ON at.idTransaccion   = vt.idTransaccionOriginal
+                        LEFT JOIN Inventario.TipoDocumento td ON td.idTipoDocumento = at.idTipoDocumento
 						WHERE idArticulo = @idArticulo
 						  AND idBodega   = @idBodega '
 
@@ -105,37 +110,43 @@ BEGIN
 
             IF @estado = 0
                 BEGIN
-                    SET @sql = @sql + 'AND estado IN (1,2) '
+                    SET @sql = @sql + 'AND vt.estado IN (1,2) '
                 END
 
             ELSE 
                 BEGIN
-                    SET @sql = @sql + 'AND estado IN (1,0) '
+                    SET @sql = @sql + 'AND vt.estado IN (1,0) '
                 END 
 
 	        IF @codTransaccion IS NOT NULL
 		        BEGIN
-			        SET @sql = @sql + 'AND codTransaccion = @codTransaccion '
+			        SET @sql = @sql + 'AND vt.codTransaccion = @codTransaccion '
 		        END
 
 	        IF @checkBoxConsolidacion = 1
 		        BEGIN
-			        SET @sql = @sql + 'AND codDoc = ''CI'' '
+			        SET @sql = @sql + 'AND vt.codDoc = ''CI'' '
 		        END
 
-	        IF @checkBoxFecha = 1
+	         IF @checkBoxFecha = 1
 		        BEGIN
-			        SET @sql = @sql + 'AND CAST(fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
+			        SET @sql = @sql + 'AND CAST(vt.fechaRegistro as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
 		        END
 
 	        IF @checkBoxUltimaConsolidacion = 1
 		        BEGIN
-                    SELECT TOP 1 @byParticion = ConsolidacionId FROM Inventario.Stock WHERE idBodega = @byBodega AND idArticulo = @byArticulo AND estado = 1
+                    SELECT TOP 1 @byParticion = td.idTransaccion
+                    FROM Inventario.Stock                    st 
+                    INNER JOIN Inventario.TransaccionDetalle td ON td.idTransaccionDetalle = st.idTransaccionDetalle
+                    INNER JOIN Inventario.Transaccion        tr ON tr.idTransaccion        = td.idTransaccion
+                    WHERE st.idArticulo = @byArticulo
+                      AND st.idBodega = @byBodega
+                      AND st.estado = 1
 
-		            SET @sql = @sql + 'AND particion = @particion '
+		            SET @sql = @sql + 'AND vt.particion = @particion '
 	            END
 
-	        SET @sql = @sql + 'ORDER BY fechaRegistro,idTransaccionDetalle ASC '
+	        SET @sql = @sql + 'ORDER BY vt.fechaRegistro,vt.idTransaccionDetalle ASC '
 
             --> Articulo 
 	        SELECT ar.codigo      as codigo

@@ -177,7 +177,7 @@ BEGIN
                 ,ij.total               
                 ,oi.MedidaId
                 ,ij.Quantity
-                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = ISNULL(i.ProductId, m.ProductId) AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity)) * -1
+                ,(ISNULL((SELECT conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = ISNULL(i.ProductId, m.ProductId) AND idMedida = oi.MedidaID) * ij.Quantity , ij.Quantity))
                 ,1
             FROM Restaurant.OrderItem oi WITH(NOLOCK)
             INNER JOIN Restaurant.[Order] o ON oi.OrderId = o.ID
@@ -682,7 +682,7 @@ BEGIN
             --    INNER JOIN Articulo a WITH (NOLOCK) ON ii.ProductId = a.idArticulo 
             --WHERE a.llevaInventario = 1
 
-            --INSERT INGREDIENTS ITMES
+            --> INSERT INGREDIENTS ITMES
             --INSERT INTO @tblInventory(idArticulo, idBodega, medidaId, idTarifa, cantidad, precioUnitario, precioCosto, precioTotalSinImpuesto, cantidadStock, cantidadTransaccion)
             --SELECT a.idArticulo, bodegaId, i.medidaId, i.feeId, r.quantity * i.quantity, i.price, a.precioCosto, i.total,  cantidadStock, cantidadTransaccion
             --FROM @tblItems i

@@ -164,7 +164,7 @@ BEGIN
               ,codigoOperativo
               ,totalVentas - ISNULL(dv.totalDevoluciones,0)              as totalVentas
         FROM EstablecimientosConteo ec
-        INNER JOIN Devoluciones     dv ON dv.idEntidad = ec.idEntidad ;
+        LEFT JOIN Devoluciones     dv ON dv.idEntidad = ec.idEntidad ;
 
         --> Compras Documentos Electronicos
         WITH DocumentosBase AS
@@ -212,7 +212,10 @@ BEGIN
                   ,CAST(SUM(CASE WHEN CodePercentage = '7' THEN TaxBase ELSE 0 END) AS NUMERIC(18, 2))						  as baseImpExe
                   ,CAST(SUM(CASE WHEN Code = '3' THEN TaxValue ELSE 0 END) AS NUMERIC(18, 2))							      as montoIce
                   ,CAST(SUM(CASE WHEN Code = '2' THEN TaxValue ELSE 0 END) AS NUMERIC(18, 2))							      as montoIva
-            FROM [Recepcion].[DocumentoImpuesto] WITH (NOLOCK)
+            FROM [Recepcion].[DocumentoImpuesto]   di 
+            INNER JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento       = di.DocumentoRecibidoId
+            INNER JOIN Sri.Establecimiento         es ON es.idEstablecimiento = dr.idEstablecimiento
+            WHERE es.idEntidad = @idEntidad
             GROUP BY DocumentoRecibidoId
         ),
         RetencionesAgrupadas AS
@@ -243,19 +246,30 @@ BEGIN
             LEFT JOIN Sri.Establecimiento           es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
             LEFT JOIN Sri.TipoRegimenFiscalExterior st WITH (NOLOCK) ON st.Id                     = ds.tipoRegimenFiscalExteriorId
             WHERE ds.estado = 1
+              AND es.idEntidad = @idEntidad
             GROUP BY ds.numAutDocSustento
         ),
         DocumentosModificados AS 
         (
             SELECT dr.idDocumentoRecibido
                   ,MAX(dr.codDocSustento)					 as docModificado
-                  ,MAX(LEFT(dr.numDocSustento, 3))			 as estabModificado
-                  ,MAX(RIGHT(LEFT(dr.numDocSustento, 7), 3)) as ptoEmiModificado
-                  ,MAX(RIGHT(dr.numDocSustento, 9))			 as secModificado
-                  ,MAX(d.claveAcceso)					     as autModificado
-            FROM FactElect.DocRelacionado        dr WITH (NOLOCK)
-            LEFT JOIN Recepcion.DocumentoRecibido d WITH (NOLOCK) ON d.idDocumento = dr.idDocumentoRecibido
-            GROUP BY dr.idDocumentoRecibido
+                  ,MAX(LEFT(dr.numDocSustento, 3))           as estabModificado
+                  ,MAX(SUBSTRING(dr.numDocSustento, 4, 3))   as ptoEmiModificado
+			      ,MAX(RIGHT(dr.numDocSustento, 9))          as secModificado
+				  ,(
+						SELECT TOP 1 sd.claveAcceso FROM Recepcion.DocumentoRecibido sd
+						INNER JOIN Sri.Establecimiento								 se ON se.idEstablecimiento = sd.idEstablecimiento
+						WHERE sd.customerId = d.customerId 
+						  AND REPLACE(sd.serieComprobante,'-','') = dr.numDocSustento
+						  AND se.idEntidad = es.idEntidad
+				   
+				   ) as autModificado
+            FROM FactElect.DocRelacionado        dr 
+            LEFT JOIN Recepcion.DocumentoRecibido d ON d.idDocumento        = dr.idDocumentoRecibido
+			INNER JOIN Sri.Establecimiento		 es ON es.idEstablecimiento = d.idEstablecimiento
+            WHERE es.idEntidad = @idEntidad
+            GROUP BY dr.idDocumentoRecibido,d.customerId,dr.numDocSustento,es.idEntidad
+            
         )
         INSERT INTO @ComprasAts
         SELECT IIF(db.codDoc = '01', 'FE', 'NC')										   as tipoDoc

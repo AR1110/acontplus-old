@@ -18,24 +18,44 @@ BEGIN
 	SET NOCOUNT ON;
 
     --> Global
-	DECLARE @idUsuario INT ,@idTipoDocumento INT
+	DECLARE @idUsuario INT ,@idEntidad INT
 
     --> Transferencia
-    DECLARE @idEstadoDocumento INT,@codDOc VARCHAR(5)
+    DECLARE @idEstadoDocumento INT,@codDOc VARCHAR(5) ,@idPuntoEmision INT
+
+    --> Data Principal
+    DECLARE @idTransaccionOriginal INT ,@idTransaccion INT ,@serieComprobante VARCHAR(25) ,@idTipoDocumentoIv INT
 	
 	BEGIN TRY 
 
-		--> Variables 
-        SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+		--> Variables
+        SELECT TOP 1 @idTransaccionOriginal = idTransaccion
+        FROM Inventario.Transaccion           tr
+        INNER JOIN Inventario.TipoDocumento   td ON td.idTipoDocumento   = tr.idTipoDocumento
+        INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+        WHERE tr.idDocumento = @id
+          AND td.codigo = 'TB'
+          AND tt.codigo = 'S'
+
+        SELECT TOP 1 @idUsuario = idUsuario ,@idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
 		SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
 
-        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'TB'
+        SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = 'AD'
 		
-		SELECT TOP 1 @codDOc = ep.codigo 
+		SELECT TOP 1 @codDOc         = ep.codigo
+                    ,@idPuntoEmision = tb.idPuntoEmision
 		FROM TransferenciaBodega tb WITH (NOLOCK)
 		INNER JOIN EstadoPago    ep WITH (NOLOCK) ON ep.idEstadoPago = tb.idEstadoDocumento
 		WHERE tb.idTransferenciaBodega = @id
+
+        SELECT TOP 1 @serieComprobante  = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
+        FROM ConfiguracionDocumento    cd
+        INNER JOIN dbo.TipoDocumento   td ON td.idTipoDocumento   = cd.idTipoDocumento
+        INNER JOIN dbo.PuntoEmision    pe ON pe.idPuntoEmision    = cd.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+        WHERE cd.idPuntoEmision = @idPuntoEmision
+          AND td.codigo = 'AD'
 
 		IF @codDOC = 'A'
 			BEGIN
@@ -44,24 +64,37 @@ BEGIN
 			END 
 
 
-		BEGIN TRAN 
-			
+		BEGIN TRAN
+            
 			UPDATE dbo.TransferenciaBodega WITH (ROWLOCK) 
                SET idEstadoDocumento = @idEstadoDocumento
                   ,idUsuario         = @idUsuario
             WHERE idTransferenciaBodega = @id
 
             --> Transaccion
-            UPDATE Inventario.Transaccion WITH (ROWLOCK)
-               SET estado = 0
-            WHERE idTipoDocumento = @idTipoDocumento
-              AND idDocumento     = @id  
+            INSERT INTO Inventario.Transaccion
+                 (idTipoTransaccion,fechaEmision,idTipoDocumento,idUsuario,idEntidad,serieComprobante,idTransaccionOriginal)
+            SELECT idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idUsuario,@idEntidad,@serieComprobante,@idTransaccionOriginal
+            FROM Inventario.Transaccion
+            WHERE idTransaccion = @idTransaccionOriginal
 
-            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) 
-               SET estado = 0
-            WHERE idTransaccion IN (SELECT idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento AND idDocumento = @id )
+            SET @idTransaccion = SCOPE_IDENTITY()
 
-            EXEC dbo.Transaccion_Handler_Init 'SN', 'TB', @id, DEFAULT
+            INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
+                    (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion     ,precioUnitario,precioCosto,precioCostoFraccionado,total)
+			SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion * -1,precioUnitario,precioCosto,precioCostoFraccionado,total
+            FROM Inventario.TransaccionDetalle
+            WHERE idTransaccion = @idTransaccionOriginal
+                AND estado = 1
+
+            UPDATE cd SET cd.ultimaSecuencia = cd.ultimaSecuencia + 1
+            FROM ConfiguracionDocumento cd
+            INNER JOIN TipoDocumento    td ON td.idTipoDocumento = cd.idTipoDocumento 
+            WHERE td.codigo = 'AD'
+                AND cd.idPuntoEmision = @idPuntoEmision
+
+            --> Transaccion
+            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
 		COMMIT TRAN 
 		SELECT '1'code,'Anulado Correctamente'[message]

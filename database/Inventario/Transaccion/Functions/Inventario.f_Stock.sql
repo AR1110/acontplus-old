@@ -33,7 +33,13 @@ BEGIN
 	DECLARE @stock AS NUMERIC(15,5)
 	DECLARE @fechaEmision AS DATETIME
 	
-	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
+	SELECT TOP 1 @fechaEmision = tr.fechaEmision, @cantidadActual = td.cantidadTransaccion
+    FROM Inventario.Stock                    st 
+    INNER JOIN Inventario.TransaccionDetalle td ON td.idTransaccionDetalle = st.idTransaccionDetalle
+    INNER JOIN Inventario.Transaccion        tr ON tr.idTransaccion        = td.idTransaccion
+    WHERE st.idArticulo = @idArticulo
+      AND st.idBodega = @idBodega
+      AND st.estado = 1
 
 	IF @fechaEmision IS NOT NULL
 		BEGIN

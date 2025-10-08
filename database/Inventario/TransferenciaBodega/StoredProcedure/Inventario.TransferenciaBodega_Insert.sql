@@ -19,13 +19,13 @@ BEGIN
     SET LANGUAGE SPANISH;
 
     --> Global
-	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) ,@idTipoDocumento INT ,@idTransferenciaBodega INT ,@idTipoDocumentoIv INT
+	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) ,@idTipoDocumento INT ,@idTransferenciaBodega INT ,@idTipoDocumentoIv INT ,@idTipoTransaccion INT
 
     --> Data Json
     DECLARE @comprobante NVARCHAR(MAX) ,@detalles NVARCHAR(MAX) ,@transaccion VARCHAR(MAX) ,@transaccionDetalle NVARCHAR(MAX)
     
     --> Transferencia
-	DECLARE @secuencial INT ,@idEstadoDocumento INT ,@idPuntoEmision INT ,@fechaEmision DATETIME2
+	DECLARE @secuencial INT ,@idEstadoDocumento INT ,@idPuntoEmision INT ,@fechaEmision DATETIME2 ,@idTransaccion INT
 	
     --> Transaccion 
     DECLARE @serieComprobante VARCHAR(30)
@@ -156,6 +156,8 @@ BEGIN
 
         SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'TB'
 
+        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WHERE codigo = 'S'
+
 		SELECT TOP 1 @secuencial = ultimaSecuencia FROM dbo.ConfiguracionDocumento WITH (NOLOCK) WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
         SELECT TOP 1 @serieComprobante = es.estab + '-' + pe.ptoEmi + '-' +  Helper.F_Auto_Sequential(@secuencial) 
@@ -221,28 +223,20 @@ BEGIN
             --> Transaccion
             INSERT INTO Inventario.Transaccion
                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
-            SELECT idTipoTransaccion,fechaEmision,idTipoDocumento,@idTransferenciaBodega,@idUsuario,@idEntidad,@serieComprobante 
+            SELECT TOP 1 @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idTransferenciaBodega,@idUsuario,@idEntidad,@serieComprobante 
             FROM @tbTransaccion 
 
+            SET @idTransaccion = SCOPE_IDENTITY()
+
             INSERT INTO Inventario.TransaccionDetalle 
-                  (idTransaccion
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
-			SELECT (
-                        SELECT TOP 1 tr.idTransaccion 
-                        FROM Inventario.Transaccion tr 
-                        WHERE tr.idTipoDocumento   = td.idTipoDocumento
-                          AND tr.idTipoTransaccion = td.idTipoTransaccion
-                          AND tr.idDocumento       = @idTransferenciaBodega
-                            
-                    )
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion * IIF(tt.codigo = 'S',-1,1) ,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
+                   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
+			SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion * IIF(tt.codigo = 'S',-1,1) ,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
             FROM @tbTransaccionDetalle            td
             INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = td.idTipoTransaccion
 
-
 			UPDATE ConfiguracionDocumento SET ultimaSecuencia = ultimaSecuencia + 1 WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento
 
-            EXEC dbo.Transaccion_Handler_Init 'SN', 'TB', @idTransferenciaBodega, DEFAULT
+            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
 		COMMIT TRAN
 		SELECT  '1'code,'Registrado Correctamente '[message],@payload as payload

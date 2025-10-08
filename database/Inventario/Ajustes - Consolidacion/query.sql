@@ -35,3 +35,8 @@ select * from ConsolidacionInventario
 select * from Inventario.TipoTransaccion
 
 --select * from Inventario.TipoDocumento
+
+
+alter table ConsolidacionInventarioDetalle ADD uniqueId VARCHAR(100)
+
+

@@ -232,6 +232,9 @@ BEGIN
 		SELECT TOP 1 @uniqueId =  uniqueId FROM Compra.Documento_Ingreso WITH (NOLOCK) WHERE idDocumentoIngreso = @id 
 
 		--> Validacion de la informacion
+         SELECT '0'code,'Fuera de funcionamiento'[message]
+         RETURN
+
         IF (@CustomerId = 0)
             BEGIN
                 SELECT '0'code,'Debe validar el proveedor'[message]

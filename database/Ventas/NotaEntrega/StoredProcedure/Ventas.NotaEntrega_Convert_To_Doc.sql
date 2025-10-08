@@ -80,7 +80,7 @@ BEGIN
 		,nota VARCHAR(100) NULL
 		,descripcion VARCHAR(255) NOT NULL
         ,llevaInventario BIT NOT NULL
-        ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+        ,cantidadTransaccion NUMERIC(18,5) DEFAULT 0 NOT NULL
         ,conversion NUMERIC(18,5) NOT NULL
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
@@ -164,8 +164,8 @@ BEGIN
 		
         --> Detalles
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado)
-		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado 
+              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,conversion,precioCostoFraccionado)
+		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,conversion,precioCostoFraccionado 
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex             INT
@@ -430,7 +430,7 @@ BEGIN
                             WHERE llevaInventario = 1
                             ORDER BY orderIndex ASC
 
-                            --EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @idDocumento, DEFAULT
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 						END
 
                     --> Servicios

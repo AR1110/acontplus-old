@@ -112,7 +112,9 @@ BEGIN
 	)
 
 	BEGIN TRY 
-		
+        SELECT '0'code,'Fuera de Funcionamiento'[message]
+        RETURN
+
         --> Global 
         SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
