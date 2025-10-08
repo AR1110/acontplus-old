@@ -5,6 +5,7 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  output,
   Output,
   SimpleChanges,
   ViewEncapsulation,
@@ -38,6 +39,8 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   @Output() cellEdited = new EventEmitter<unknown>();
   @Output() cellClick = new EventEmitter<unknown>();
+
+  rowDeleted = output<any>();
 
   uniqueIdTabulator: string = generateUuidv4();
   public get refTabulator(): Tabulator {
@@ -164,6 +167,10 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     });
     this._refTabulator.on('rowClick', (e, row) => {
       this.cellClick.emit(row);
+    });
+
+    this._refTabulator.on('rowDeleted', (row) => {
+      this.rowDeleted.emit(row);
     });
   }
 

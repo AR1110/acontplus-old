@@ -1,13 +1,15 @@
-import { ApiResponse } from '@core/models/api-response';
 import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
-import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { ProductSearch } from '@inventory/product/domain/entities/product.entity';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { ApiResponse } from '@core/models/api-response';
 import { imgDefault } from '@core/utils/utils';
 
 export class ProductMapper {
   static fromApiDataFilter(response: ApiResponse) {
-    const { brands, measures, models, subcategories, taxes } = JSON.parse(response.payload as string);
+    const { brands, measures, models, subcategories, taxes } = JSON.parse(
+      response.payload as string,
+    );
     const subCategorias = groupSubCategoryUtil(subcategories);
 
     return {
