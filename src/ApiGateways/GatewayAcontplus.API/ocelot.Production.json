@@ -2,7 +2,7 @@
   "GlobalConfiguration": {
     "BaseUrl": "https://acontplus.com/gateway/",
     "RateLimitOptions": {
-      "ClientIdHeader": "X-Client-Id",
+      "ClientIdHeader": "Client-Id",
       "ClientWhitelist": [
         "acontplus-admin",
         "acontplus-app",

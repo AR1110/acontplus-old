@@ -69,5 +69,10 @@
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Generate commit messages using conventional commit format, keeping the entire message to 50 characters or less. Analyze the changes and use appropriate type prefixes:\n- feat: for new features or significant additions\n- fix: for bug fixes\n- docs: for documentation changes\n- style: for code style/formatting changes\n- refactor: for code restructuring without functionality changes\n- test: for adding or modifying tests\n- chore: for maintenance tasks, build changes, or tooling updates\n- perf: for performance improvements\n- ci: for CI/CD configuration changes\n- build: for build system or dependency changes\n\nBe concise but detailed about what changed, include affected components/libraries, and use relevant emojis. Structure as: type(scope): description\n\nExamples:\n- feat(ng-auth): add JWT refresh 🔐\n- fix(core): fix tax calc bug 🐛\n- docs(ng-comp): update README 📚\n- refactor(utils): restructure converters 🔄"
+    }
+  ],
 }

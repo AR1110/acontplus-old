@@ -2,7 +2,7 @@
   "GlobalConfiguration": {
     "BaseUrl": "https://localhost:7060/",
     "RateLimitOptions": {
-      "ClientIdHeader": "X-Client-Id",
+      "ClientIdHeader": "Client-Id",
       "ClientWhitelist": [
         "acontplus-admin",
         "acontplus-app",
