@@ -1,1 +1,5 @@
-npx lint-staged
+# Run linting
+npm run lint
+
+# Run formatting check
+npm run format:check
