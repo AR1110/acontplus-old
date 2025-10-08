@@ -4,7 +4,7 @@ public class LoginFailedService(ApplicationDbContext context) : ILoginFailedServ
 {
     public async Task AddAsync(LoginFailed loginFailed)
     {
-     //   await context.LoginFaileds.AddAsync(loginFailed);
-      //  await context.SaveChangesAsync();
+        await context.LoginFaileds.AddAsync(loginFailed);
+        await context.SaveChangesAsync();
     }
 }
