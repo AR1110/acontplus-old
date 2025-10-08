@@ -1,0 +1,65 @@
+.role-card {
+  background-color: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 0.75rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para el hover */
+.role-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.role-card.selected {
+  border-color: #ec4899;
+  background-color: #fff1ff;
+  box-shadow: 0 0.5rem 1rem rgba(236, 72, 153, 0.3) !important;
+  transform: scale(1.01);
+}
+
+.logo-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.role-title {
+  font-weight: 800;
+  color: #be185d;
+  font-size: 0.8rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.trade-name {
+  font-weight: 500;
+  color: #343a40;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.detail-value {
+  font-weight: 600;
+  color: #495057;
+}
+
+#continueButton:not(:disabled) {
+  background-color: #ec4899;
+  color: white;
+  transition: background-color 0.3s;
+}
+
+#continueButton:not(:disabled):hover {
+  background-color: #db2777;
+}

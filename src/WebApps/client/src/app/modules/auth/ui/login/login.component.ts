@@ -9,11 +9,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Router, RouterLink } from '@angular/router';
 import {UAParser} from "ua-parser-js";
 import {MatIcon} from "@angular/material/icon";
-import {RoleSelectionModalComponent} from "@modules/auth/ui/auth/role-selection-modal/role-selection-modal.component";
 import {AuthUseCase} from "@modules/auth/domain/use-cases/auth.use-case";
 import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import {DialogService} from "@core/services/dialog.service";
+import {RoleSelectionComponent} from "@modules/auth/ui/login/role-selection/role-selection.component";
 
 @Component({
   selector: 'app-login',
@@ -84,11 +84,14 @@ export class LoginComponent {
       })
   };
 
-  private openRoleSeleccionModal(userRoles: any) {
-    let modalRef = this.dialogSvc.open(RoleSelectionModalComponent, {
+  private openRoleSeleccionModal(userRoles: any, userRolesOriginal: any) {
+    let modalRef = this.dialogSvc.open(RoleSelectionComponent, {
       size: 'lg',
       data: {
-        roles: userRoles
+        roles: userRoles,
+        userRolesOriginal,
+        parserResults: this.parserResults,
+        customerIp: this.customerIp
       }
     })
 
@@ -140,10 +143,9 @@ export class LoginComponent {
       }
 
       const userRoles = response.userRoles;
-      console.log(userRoles)
+      const userRolesOriginal = response.userRolesOriginal;
       if (userRoles.length > 1) {
-        this.openRoleSeleccionModal(userRoles)
-
+        this.openRoleSeleccionModal(userRoles, userRolesOriginal)
         return
       }
       const dataLogin = userRoles[0];

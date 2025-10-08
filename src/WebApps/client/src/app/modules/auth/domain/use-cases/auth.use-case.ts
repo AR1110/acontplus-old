@@ -17,4 +17,15 @@ export class AuthUseCase {
   register(user: User) {
     return this.authRepository.register(user);
   }
+  requestAccess(params:any){
+    return this.authRepository.requestAccess(params)
+  }
+
+  authenticate(params:any){
+    return this.authRepository.authenticate(params)
+  }
+
+  createToken(params:any){
+    return this.authRepository.createToken(params)
+  }
 }

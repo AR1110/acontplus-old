@@ -1,0 +1,87 @@
+.card-auth2f {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.lock-icon {
+  font-size: 3rem;
+}
+
+.title {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.otp-input {
+  width: 40px;
+  height: 50px;
+  text-align: center;
+  font-size: 1.2rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.otp-input:focus {
+  border-color: #3f51b5;
+}
+
+.actions {
+  margin-bottom: 1rem;
+}
+
+.resend {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.resend a {
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.resend a:hover {
+  text-decoration: underline;
+}
+
+/* ✅ Vista de éxito */
+.success-card {
+  text-align: center;
+  padding: 3rem;
+  border-radius: 1rem;
+}
+
+.access {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.text-muted {
+  color: #777;
+}
+
+/* Snackbar styles */
+.snack-success {
+  background-color: #4caf50 !important;
+  color: #fff !important;
+}
+
+.snack-error {
+  background-color: #f44336 !important;
+  color: #fff !important;
+}
