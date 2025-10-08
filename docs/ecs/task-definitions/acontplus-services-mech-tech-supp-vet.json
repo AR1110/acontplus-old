@@ -16,21 +16,14 @@
           "appProtocol": "http"
         }
       ],
-      "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
-      ],
+      "environment": {
+        "name": "ASPNETCORE__ENVIRONMENT",
+        "value": "${ENVIRONMENT}"
+      },
       "secrets": [
         {
           "name": "JwtSettings__SecurityKey",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-        },
-        {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
@@ -60,21 +53,14 @@
           "appProtocol": "http"
         }
       ],
-      "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
-      ],
+      "environment": {
+        "name": "ASPNETCORE__ENVIRONMENT",
+        "value": "${ENVIRONMENT}"
+      },
       "secrets": [
         {
           "name": "JwtSettings__SecurityKey",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-        },
-        {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
@@ -104,21 +90,14 @@
           "appProtocol": "http"
         }
       ],
-      "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
-      ],
+      "environment": {
+        "name": "ASPNETCORE__ENVIRONMENT",
+        "value": "${ENVIRONMENT}"
+      },
       "secrets": [
         {
           "name": "JwtSettings__SecurityKey",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-        },
-        {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
@@ -137,7 +116,9 @@
       }
     }
   ],
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "256",
   "memory": "512"
 }

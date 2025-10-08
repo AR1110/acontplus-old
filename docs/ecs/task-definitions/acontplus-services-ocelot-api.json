@@ -17,7 +17,10 @@
         }
       ],
       "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
+        {
+          "name": "ASPNETCORE__ENVIRONMENT",
+          "value": "${ENVIRONMENT}"
+        },
         {
           "name": "SafeOrigins",
           "value": "https://app.acontplus.com,https://client.acontplus.com,https://demo.acontplus.com,https://admin.acontplus.com,https://invoice.acontplus.com,https://restaurant.acontplus.com,http://localhost:7166,http://localhost:4200"
@@ -25,22 +28,12 @@
         {
           "name": "JwtSettings__ExpirationInMinutes",
           "value": "${ACONTPLUS_JWT_SETTINGS_EXPIRATION_IN_MINUTES}"
-        },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "true" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" }
-      ],
-      "secrets": [
-        {
-          "name": "JwtSettings__SecurityKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-        },
-        {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         }
       ],
+      "secrets": {
+        "name": "JwtSettings__SecurityKey",
+        "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
+      },
       "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
@@ -53,7 +46,9 @@
       }
     }
   ],
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "512",
   "memory": "1024"
 }

@@ -17,17 +17,22 @@
         }
       ],
       "environment": [
-        { "name": "ASPNETCORE__ENVIRONMENT", "value": "${ENVIRONMENT}" },
+        {
+          "name": "ASPNETCORE__ENVIRONMENT",
+          "value": "${ENVIRONMENT}"
+        },
         {
           "name": "JwtSettings__ExpirationInMinutes",
           "value": "900"
         },
-        { "name": "AdvancedLogging__EnableLocalFile", "value": "false" },
-        { "name": "AdvancedLogging__EnableDatabaseLogging", "value": "false" },
-        { "name": "AdvancedLogging__TimeZoneId", "value": "America/Guayaquil" },
-        { "name": "AdvancedLogging__MinimumLogLevel", "value": "Error" },
-        { "name": "TokenCleanup__CheckInterval", "value": "60" },
-        { "name": "TokenCleanup__TopExpiredTokens", "value": "50" }
+        {
+          "name": "TokenCleanup__CheckInterval",
+          "value": "60"
+        },
+        {
+          "name": "TokenCleanup__TopExpiredTokens",
+          "value": "50"
+        }
       ],
       "secrets": [
         {
@@ -35,16 +40,12 @@
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
         },
         {
-          "name": "AdvancedLogging__DatabaseConnectionString",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
-        },
-        {
           "name": "ConnectionStrings__DefaultConnection",
           "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
         },
         {
-          "name":"ApiGateways__Acontplus",
-          "valueFrom":"arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_API_GATEWAY_PRD-CoHQu7"
+          "name": "ApiGateways__Acontplus",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_API_GATEWAY_PRD-CoHQu7"
         }
       ],
       "essential": true,
@@ -59,7 +60,9 @@
       }
     }
   ],
-  "requiresCompatibilities": ["FARGATE"],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "cpu": "256",
   "memory": "512"
 }
