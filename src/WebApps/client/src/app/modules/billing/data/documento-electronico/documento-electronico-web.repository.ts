@@ -101,6 +101,8 @@ export class DocumentoElectronicoWebRepository implements DocumentoElectronicoRe
   getAll<T>(obj: T) {
     const json = JSON.stringify({
       tipo: 1,
+      pageIndex: 1,
+      pageSize: 25,
       ...obj,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
@@ -108,9 +110,9 @@ export class DocumentoElectronicoWebRepository implements DocumentoElectronicoRe
         if (response.code !== '1') {
           return { documentosElectronicos: [] };
         }
-        const [results] = JSON.parse(response.payload as string);
+        const {data} = JSON.parse(response.payload as string);
 
-        return { documentosElectronicos: results as DocumentoElectronico[] };
+        return { documentosElectronicos: data as DocumentoElectronico[] };
       }),
     );
   }

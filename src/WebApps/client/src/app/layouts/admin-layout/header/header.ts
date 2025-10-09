@@ -1,4 +1,14 @@
-import { Component, EventEmitter, Input, Output, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  EventEmitter,
+  inject,
+  input,
+  Input,
+  output,
+  Output,
+  ViewEncapsulation
+} from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +19,7 @@ import { TranslateButton } from '../widgets/translate-button';
 import { GithubButton } from '../widgets/github-button';
 import { UserButton } from '../widgets/user-button';
 import { Branding } from '../widgets/branding';
+import {AdminLayoutService} from "@core/services/admin-layout.service";
 
 @Component({
   selector: 'app-header',
@@ -29,11 +40,13 @@ import { Branding } from '../widgets/branding';
   ],
 })
 export class Header {
-  @Input() showToggle = true;
-  @Input() showBranding = false;
+  adminLayoutSvc = inject(AdminLayoutService)
+  showToggle = input(false);
+   showBranding = input(false);
 
-  @Output() toggleSidenav = new EventEmitter<void>();
-  @Output() toggleSidenavNotice = new EventEmitter<void>();
+   toggleSidenav = output<void>();
+    toggleSidenavNotice = output<void>();
+
 
   toggleFullscreen() {
     if (screenfull.isEnabled) {

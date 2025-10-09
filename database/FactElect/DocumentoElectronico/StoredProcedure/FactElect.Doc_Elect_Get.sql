@@ -1,7 +1,7 @@
 USE AcontPlus
 GO
 
-CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Get @idRol INT,@json NVARCHAR(max)
+CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Get @userRoleId INT,@json NVARCHAR(max), @tableNames NVARCHAR(MAX) OUTPUT
 AS
 BEGIN 
 	SET NOCOUNT ON;
@@ -29,11 +29,12 @@ BEGIN
     -->Variables
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idRol
+	SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     --> Get 
     IF @tipo = 1
-        BEGIN 
+        BEGIN
+            
             SET @params = '@idEntidad              INT
 						  ,@codEstab               VARCHAR(20)
 	                      ,@codDoc                 VARCHAR(10)
@@ -94,9 +95,9 @@ BEGIN
 		        ,pageSize               INT 
 		     )
 
-            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idRol AND viewOthersDocs = 0) 
+            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
 				BEGIN
-                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idRol
+                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
 				END
 
 	        IF @codEstab IS NOT NULL
@@ -152,6 +153,8 @@ BEGIN
 
 
             SET @sql = @sql + 'ORDER BY de.fechaEmision DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
+
+            SET @tableNames ='data'
 	 
 	        EXEC sp_executesql @sql,@params
 				                   ,@idEntidad              = @idEntidad
@@ -171,6 +174,7 @@ BEGIN
     --> FILTERS 
     IF @tipo = 2
         BEGIN
+            SET @tableNames = 'establishments,documents,serviceStatus';
             SELECT idEstablecimiento
                       ,nombreComercial
                       ,codEstab
@@ -178,7 +182,7 @@ BEGIN
                       ,estab + '-' + ptoEmi as ptoEmi
                       ,defaultEstab
                       ,defaultPtoEmi 
-            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @idRol ORDER BY defaultEstab DESC
+            FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 
             SELECT idTipoDocumento,descripcion,codigoSri as codDoc FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri IN ('01','03','04','06','07') ORDER BY codigoSri
 

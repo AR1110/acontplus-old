@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, NgZone, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  inject,
+  computed,
+  ViewChild,
+  ViewEncapsulation, effect
+} from '@angular/core';
 import { MtxProgressModule } from '@ng-matero/extensions/progress';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { CHARTS, ELEMENT_DATA, MESSAGES, STATS } from './data';
@@ -12,6 +22,55 @@ import { MatCardModule } from '@angular/material/card';
 import { SettingsService } from '@core/bootstrap';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
+import {AdminLayoutService} from "@core/services/admin-layout.service";
+
+import {
+  ApexAxisChartSeries,
+  ApexChart,
+  ChartComponent,
+  ApexDataLabels,
+  ApexPlotOptions,
+  ApexYAxis,
+  ApexAnnotations,
+  ApexFill,
+  ApexStroke,
+  ApexGrid
+} from "ng-apexcharts";
+
+export interface Chart1Options  {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: ApexYAxis;
+  xaxis: any; //ApexXAxis;
+  annotations: ApexAnnotations;
+  fill: ApexFill;
+  stroke: ApexStroke;
+  grid: ApexGrid;
+};
+
+export interface Chart2Options  {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  xaxis: ApexXAxis;
+};
+
+
+
+export interface Chart3Options  {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  dataLabels: ApexDataLabels;
+  plotOptions: ApexPlotOptions;
+  yaxis: Partial<ApexYAxis>;
+  xaxis: Partial<ApexXAxis>;
+  grid: ApexGrid;
+  colors: string[];
+  legend: ApexLegend;
+};
 
 @Component({
   selector: 'app-dashboard',
@@ -28,20 +87,170 @@ import { Subscription } from 'rxjs';
     MatTabsModule,
     MtxProgressModule,
     MtxAlertModule,
+    ChartComponent,
   ],
+ // encapsulation: ViewEncapsulation.None
 })
 export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
   private readonly settings = inject(SettingsService);
+  private adminLayoutSvc = inject(AdminLayoutService);
 
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = ELEMENT_DATA;
 
   messages = MESSAGES;
 
+  @ViewChild("chart1") chart1!: ChartComponent;
+  public chart1Options: Chart1Options = {
+    series: [
+      {
+        data: []
+      }
+    ],
+    annotations: {
+      points: [
+
+      ]
+    },
+    chart: {
+      height: 350,
+      type: "bar"
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "50%",
+        borderRadius: 20
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    stroke: {
+      width: 2
+    },
+
+    grid: {
+      row: {
+        colors: ["#fff", "#f2f2f2"]
+      }
+    },
+    xaxis: {
+      labels: {
+        rotate: -45
+      },
+      categories: [ ],
+      tickPlacement: "on"
+    },
+    yaxis: {
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "horizontal",
+        shadeIntensity: 0.25,
+        gradientToColors: undefined,
+        inverseColors: true,
+        opacityFrom: 0.85,
+        opacityTo: 0.85,
+        stops: [50, 0, 100]
+      }
+    }
+  };
+
+  @ViewChild("chart2") chart2!: ChartComponent;
+  public chart2Options: Chart2Options = {
+    series: [
+      {
+        name: "basic",
+        data: []
+      }
+    ],
+    chart: {
+      type: "bar",
+      height: 350
+    },
+    plotOptions: {
+      bar: {
+        horizontal: true
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    xaxis: {
+      categories: [ ]
+    }
+  };
+
+
+  @ViewChild("chart3") chart3!: ChartComponent;
+  public chart3Options: Chart3Options = {
+    series: [
+      {
+        name: "Total",
+        data: []
+      }
+    ],
+    chart: {
+      height: 350,
+      type: "bar",
+      events: {
+        click: function(chart, w, e) {
+          // console.log(chart, w, e)
+        }
+      }
+    },
+    colors: [
+      "#008FFB",
+      "#00E396",
+      "#FEB019",
+      "#FF4560",
+      "#775DD0",
+      "#546E7A",
+      "#26a69a",
+      "#D10CE8"
+    ],
+    plotOptions: {
+      bar: {
+        columnWidth: "45%",
+        distributed: true
+      }
+    },
+    dataLabels: {
+      enabled: false
+    },
+    legend: {
+      show: false
+    },
+    grid: {
+      show: false
+    },
+    xaxis: {
+      categories: [ ],
+      labels: {
+        style: {
+          colors: [
+            "#008FFB",
+            "#00E396",
+            "#FEB019",
+            "#FF4560",
+            "#775DD0",
+            "#546E7A",
+            "#26a69a",
+            "#D10CE8"
+          ],
+          fontSize: "12px"
+        }
+      }
+    },
+    yaxis: {
+
+    }
+  };
+
   charts = CHARTS;
-  // chart1?: ApexCharts;
-  // chart2?: ApexCharts;
 
   stats = STATS;
 
@@ -84,16 +293,131 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   introducingItem = this.introducingItems[this.getRandom(0, 4)];
 
+  statistics = computed(()=>{
+    const {userCount, supplierCount, customerCount, itemCount} = this.adminLayoutSvc.getStatistics()
+    return [
+      {
+        title: 'Usuarios',
+        count: userCount,
+        progress: {
+          value: 50,
+        },
+        color: 'bg-azure-50',
+      },
+      {
+        title: 'Proveedor',
+        count: supplierCount,
+        progress: {
+          value: 70,
+        },
+        color: 'bg-blue-50',
+      },
+      {
+        title: 'Clientes',
+        count: customerCount,
+        progress: {
+          value: 80,
+        },
+        color: 'bg-green-50',
+      },
+      {
+        title: 'Productos',
+        count: itemCount,
+        progress: {
+          value: 40,
+        },
+        color: 'bg-cyan-50',
+      }
+    ]
+  })
+
+  constructor() {
+    effect(() => {
+      this.renderChart1();
+      this.renderChart2();
+      this.renderChart3()
+
+    });
+  }
+
+  renderChart1(){
+    const newData = this.adminLayoutSvc.emittedDocuments().map((x:any)=>x.total);
+    const newLabels = this.adminLayoutSvc.emittedDocuments().map((x:any)=>x.document)
+
+
+    if (this.chart1) {
+      const updatedOptions = {
+        ...this.chart1Options,          // mantiene todo
+        series: [{ name: 'Documentos', data: newData }],
+        xaxis: { ...this.chart1Options.xaxis, categories: newLabels,  labels: {
+            rotate: -45,
+            rotateAlways: true,
+          } }
+      };
+
+      this.chart1.updateOptions(updatedOptions, false, true);
+
+    }
+  }
+
+  renderChart2(){
+    const newData = this.adminLayoutSvc.anotherSalesDocs().map((x:any)=>x.total);
+    const newLabels = this.adminLayoutSvc.anotherSalesDocs().map((x:any)=>x.document)
+
+
+    if (this.chart2) {
+      const updatedOptions = {
+        ...this.chart2Options,          // mantiene todo
+        series: [{ name: 'Documentos', data: newData }],
+        xaxis: { ...this.chart2Options.xaxis, categories: newLabels}
+      };
+
+      this.chart2.updateOptions(updatedOptions, false, true);
+
+    }
+  }
+
+  renderChart3(){
+    const newData = this.adminLayoutSvc.receivedDocuments().map((x:any)=>x.total);
+    const newLabels = this.adminLayoutSvc.receivedDocuments().map((x:any)=>x.document)
+
+
+    if (this.chart3) {
+      const updatedOptions = {
+        ...this.chart3Options,          // mantiene todo
+        series: [{ name: 'Total', data: newData }],
+        xaxis: { ...this.chart3Options.xaxis, categories: newLabels,  labels: {
+            rotate: -45,
+            rotateAlways: true,
+          } }
+      };
+
+      this.chart3.updateOptions(updatedOptions, false, true);
+
+    }
+  }
+
+
   ngOnInit() {
     this.notifySubscription = this.settings.notify.subscribe(opts => {
       console.log(opts);
 
       this.updateCharts();
     });
+
+
+
+
   }
 
   ngAfterViewInit() {
     this.ngZone.runOutsideAngular(() => this.initCharts());
+
+
+      const apexStyles = document.querySelectorAll('style[id^="apexcharts"]');
+      apexStyles.forEach(s => s.remove());
+
+
   }
 
   ngOnDestroy() {
