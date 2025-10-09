@@ -105,5 +105,6 @@ export class TokenLocalStorageRepository implements TokenRepository {
   clear(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.SESSION_KEY);
+    location.reload();
   }
 }

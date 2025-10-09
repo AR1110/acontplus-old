@@ -1,10 +1,10 @@
 <mat-toolbar>
-  @if (showToggle) {
+  @if (showToggle()) {
     <button mat-icon-button (click)="toggleSidenav.emit()">
       <mat-icon>menu</mat-icon>
     </button>
   }
-  @if (showBranding) {
+  @if (showBranding()) {
     <app-branding />
   }
 
@@ -20,7 +20,9 @@
     <mat-icon>fullscreen</mat-icon>
   </button>
 
+  @if (this.adminLayoutSvc.getNotifications().length) {
   <app-notification class="hide-small" />
+  }
 
   <app-user />
 
