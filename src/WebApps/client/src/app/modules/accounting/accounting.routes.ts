@@ -25,7 +25,7 @@ export const routes: Routes = [
     data: { breadcrumb: 'Contabilidad' },
   },
   {
-    path: 'cashbox-page',
+    path: 'cashboxes',
     title: 'Caja',
     component: CajaComponent,
     data: {

@@ -12,7 +12,7 @@ export const routes: Routes = [
     data: { breadcrumb: 'Veterinaria' },
   },
   {
-    path: 'breed-page',
+    path: 'breeds',
     title: 'Razas',
     component: BreedPageComponent,
     data: {
@@ -20,7 +20,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'pet-page',
+    path: 'pets',
     title: 'Mascotas',
     component: PetPageComponent,
     data: {
@@ -28,7 +28,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'medical-history-page',
+    path: 'medical-history',
     title: 'Registro Clínico',
     component: MedicalHistoryPageComponent,
     data: {
@@ -36,7 +36,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'stats-page',
+    path: 'stats',
     title: 'Estadísticas',
     component: StatsPageComponent,
     data: {

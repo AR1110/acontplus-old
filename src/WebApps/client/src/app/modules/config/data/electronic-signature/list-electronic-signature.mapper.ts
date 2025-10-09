@@ -6,8 +6,8 @@ export class ListElectronicSignatureMapper {
   static fromJson(response: ApiResponse): ElectronicSignatureListResponse {
     const result = new ElectronicSignatureListResponse();
     if (response.code === '1') {
-      const [signatures] = JSON.parse(response.payload as any);
-      result.data = signatures.map((item: any, index: number) => {
+      const {electronicSignatures}= JSON.parse(response.payload as any);
+      result.data = electronicSignatures.map((item: any, index: number) => {
         return {
           index: index + 1,
           idFirmaElectronica: item.idFirmaElectronica,

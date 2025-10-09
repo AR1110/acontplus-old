@@ -9,7 +9,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Config.Estab_Asig_Get @idRol INT,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Config.Estab_Asig_Get @userRoleId INT,@json VARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -28,7 +28,7 @@ BEGIN
 
 	IF @idUsuarioRol IS NULL
 		BEGIN
-			SET @idUsuarioRol = @idRol
+			SET @idUsuarioRol = @userRoleId
 		END 
 
 	SELECT * FROM ( SELECT 

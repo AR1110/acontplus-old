@@ -81,7 +81,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<ProductList>();
   isLoadingResults = false;
   pageEvent!: PageEvent;
-  dataSearch = model({
+  dataSearch = {
     filterMode: 4,
     textSearch: null as string | null,
     checkBoxFraccionado: false,
@@ -93,7 +93,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
     idMedida: 0,
     idModelo: 0,
     idTipoIva: 0,
-  });
+  };
   isSearchAdvanced = signal(false);
   subCategorias = signal<any[]>([]);
   medidas = signal<any[]>([]);
@@ -121,17 +121,16 @@ export class ProductComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
-  setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
+  setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
-    value: ReturnType<typeof this.dataSearch>[K],
+    value: (typeof this.dataSearch)[K]
   ) {
-    this.dataSearch.update(ds => {
-      return {
-        ...ds,
-        [key]: value,
-      };
-    });
+    this.dataSearch = {
+      ...this.dataSearch,
+      [key]: value,
+    };
   }
+
 
   ngOnInit() {
     this.resetDataAfterFetch();
@@ -169,7 +168,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   onEnter($event: Event) {
-    if (isValidField(this.dataSearch().textSearch)) {
+    if (isValidField(this.dataSearch.textSearch)) {
       this.refresh();
     }
   }
@@ -296,19 +295,19 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   private getDataParams() {
     const params = {
-      bySubFamilia: getValidId(this.dataSearch().bySubFamilia),
-      byMedida: getValidId(this.dataSearch().idMedida),
-      byMarca: getValidId(this.dataSearch().idMarca),
-      byModelo: getValidId(this.dataSearch().idModelo),
-      byTipoIva: getValidId(this.dataSearch().idTipoIva),
+      bySubFamilia: getValidId(this.dataSearch.bySubFamilia),
+      byMedida: getValidId(this.dataSearch.idMedida),
+      byMarca: getValidId(this.dataSearch.idMarca),
+      byModelo: getValidId(this.dataSearch.idModelo),
+      byTipoIva: getValidId(this.dataSearch.idTipoIva),
 
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      bySearch: isValidField(this.dataSearch().textSearch),
-      status: this.dataSearch().status,
-      byStock: this.dataSearch().byStock,
-      checkBoxFraccionado: this.dataSearch().checkBoxFraccionado,
-      checkBoxInventario: this.dataSearch().checkBoxInventario,
+      bySearch: isValidField(this.dataSearch.textSearch),
+      status: this.dataSearch.status,
+      byStock: this.dataSearch.byStock,
+      checkBoxFraccionado: this.dataSearch.checkBoxFraccionado,
+      checkBoxInventario: this.dataSearch.checkBoxInventario,
     };
     return params;
   }
@@ -362,5 +361,4 @@ export class ProductComponent implements OnInit, AfterViewInit {
       this.refresh();
     }
   };
-  protected readonly statusTab = MECHANICAL_STATUS;
 }

@@ -15,7 +15,7 @@ GO
 -- Restaurant.Item_Get 139, '{"tipo":4, "pageIndex":1,"pageSize":10 }', ''
 -- Restaurant.Item_Get 847, '{"tipo":1,"pageIndex":1,"pageSize":25,"idSubFamilia":null,"textSearch":"COSTI"}', ''
 
-ALTER   PROCEDURE [Restaurant].[Item_Get]
+CREATE OR ALTER   PROCEDURE [Restaurant].[Item_Get]
     @userRoleId INT
    ,@json NVARCHAR(MAX)
    ,@tableNames NVARCHAR(MAX) OUTPUT

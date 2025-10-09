@@ -42,7 +42,7 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'product',
+    path: 'products',
     title: 'Productos',
     component: ProductComponent,
     data: {

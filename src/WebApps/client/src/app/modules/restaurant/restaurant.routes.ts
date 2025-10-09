@@ -12,7 +12,7 @@ export const routes: Route[] = [
     data: { breadcrumb: 'Restaurante' },
   },
   {
-    path: 'products-page',
+    path: 'products',
     title: 'Productos',
     component: ProductsPageComponent,
     data: {
@@ -31,7 +31,7 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'infrastructure-page',
+    path: 'infrastructure',
     title: 'Restaurant Infrastructure',
     component: InfrastructurePageComponent,
     data: {

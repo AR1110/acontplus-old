@@ -1,6 +1,6 @@
 USE ACONTPLUS 
 --CONFIGURACION 
---SELECT * FROM AcontplusAdmin.Config.Menu WHERE Code='CFG'
+--SELECT * FROM AcontplusAdmin.Config.Menu WHERE Code='VET'
 --SELECT mm.* FROM AcontplusAdmin.Config.Menu m
 --INNER JOIN AcontplusAdmin.Config.Menu mm ON mm.ParentId = m.Id
 --WHERE m.Code='CFG'
@@ -19,3 +19,37 @@ UPDATE AcontplusAdmin.Config.Menu SET Url='credit-time' WHERE Code='TIE'
 UPDATE AcontplusAdmin.Config.Menu SET Url='electronic-signature' WHERE Code='FIR'
 UPDATE AcontplusAdmin.Config.Menu SET Url='warehouse' WHERE Code='BOD'
 --UPDATE AcontplusAdmin.Config.Menu SET Url='shift' WHERE Code='FIR'
+
+--VET
+UPDATE AcontplusAdmin.Config.Menu SET Url='vet' WHERE  Code='VET'
+--select * from  AcontplusAdmin.Config.Menu WHERE parentId = 1
+UPDATE AcontplusAdmin.Config.Menu SET Url='stats' WHERE  Code='AVE'
+UPDATE AcontplusAdmin.Config.Menu SET Url='pets' WHERE  Code='MAS'
+UPDATE AcontplusAdmin.Config.Menu SET Url='breeds' WHERE  Code='RAZ'
+UPDATE AcontplusAdmin.Config.Menu SET Url='medical-history' WHERE  Code='REG'
+
+--INVENTORY
+--select * from  AcontplusAdmin.Config.Menu WHERE Code='AL'
+--select * from  AcontplusAdmin.Config.Menu WHERE parentId = 7
+UPDATE AcontplusAdmin.Config.Menu SET Url='inventory' WHERE  Code='AL' 
+UPDATE AcontplusAdmin.Config.Menu SET Url='products' WHERE  Code='ART'
+UPDATE AcontplusAdmin.Config.Menu SET Url='tags' WHERE  Code='ETI'
+
+--CONTABILIDAD
+--select * from  AcontplusAdmin.Config.Menu WHERE Code='AWC'
+--select * from  AcontplusAdmin.Config.Menu WHERE parentId = 15
+UPDATE AcontplusAdmin.Config.Menu SET Url='accounting' WHERE  Code='AWC'
+UPDATE AcontplusAdmin.Config.Menu SET Url='cashboxes', ParentId=15 WHERE  Code='CAJ'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='medical-history' WHERE  Code='REG'
+
+--REPORTES
+--INSERT INTO AcontplusAdmin.Config.Menu (AplicacionId, Code, Icon, Order, Url) VALUES(1,'REP','Reportes','' )
+
+--RESTAURANTE
+select * from  AcontplusAdmin.Config.Menu WHERE Code='REST'
+select * from  AcontplusAdmin.Config.Menu WHERE parentId = 6
+
+UPDATE AcontplusAdmin.Config.Menu SET Url='restaurant' WHERE  Code='REST'
+UPDATE AcontplusAdmin.Config.Menu SET Url='infrastructure' WHERE  Code='RINF'
+UPDATE AcontplusAdmin.Config.Menu SET Url='products' WHERE  Code='RPRO'
+

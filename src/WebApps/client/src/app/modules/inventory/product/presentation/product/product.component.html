@@ -7,7 +7,7 @@
         <div class="hstack gap-2">
           <mat-form-field class="w-100">
             <mat-label>Modo Filtro</mat-label>
-            <mat-select [(ngModel)]="dataSearch().filterMode" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.filterMode" (selectionChange)="refresh()">
               <mat-option [value]="4">Descripción</mat-option>
               <mat-option [value]="2">Código</mat-option>
               <mat-option [value]="3">Código Barra</mat-option>
@@ -17,7 +17,7 @@
           </mat-form-field>
           <mat-form-field class="w-100">
             <mat-label>Buscar</mat-label>
-            <input matInput [(ngModel)]="dataSearch().textSearch" (keydown.enter)="onEnter($event)" placeholder="..." />
+            <input matInput [(ngModel)]="dataSearch.textSearch" (keydown.enter)="onEnter($event)" placeholder="..." />
             <span matSuffix>
               <button type="button" mat-icon-button (click)="refresh()">
                 <mat-icon>search</mat-icon>
@@ -55,7 +55,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Medida</mat-label>
-            <mat-select [(ngModel)]="dataSearch().idMedida" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.idMedida" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of medidas(); track $index) {
                 <mat-option [value]="item.idMedida">
@@ -68,7 +68,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Marca</mat-label>
-            <mat-select [(ngModel)]="dataSearch().idMarca" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.idMarca" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of marcas(); track $index) {
                 <mat-option [value]="item.idMarca">
@@ -81,7 +81,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Modelo</mat-label>
-            <mat-select [(ngModel)]="dataSearch().idModelo" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.idModelo" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of modelos(); track $index) {
                 <mat-option [value]="item.idModelo">
@@ -97,7 +97,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Tipo Iva</mat-label>
-            <mat-select [(ngModel)]="dataSearch().idTipoIva" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.idTipoIva" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of tiposIva(); track $index) {
                 <mat-option [value]="item.idTipoIva">
@@ -111,7 +111,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Stock</mat-label>
-            <mat-select [(ngModel)]="dataSearch().byStock" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.byStock" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               <mat-option [value]="1">Con Stock</mat-option>
               <mat-option [value]="2">Sin Stock</mat-option>
@@ -122,7 +122,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Estado</mat-label>
-            <mat-select [(ngModel)]="dataSearch().status" (selectionChange)="refresh()">
+            <mat-select [(ngModel)]="dataSearch.status" (selectionChange)="refresh()">
               <mat-option [value]="null">Todos</mat-option>
               <mat-option [value]="1">Activo</mat-option>
               <mat-option [value]="0">Inactivo</mat-option>
@@ -134,11 +134,11 @@
           <div class="form-group d-flex flex-column">
             <label>Fraccionado</label>
             <mat-checkbox
-              [(ngModel)]="dataSearch().checkBoxFraccionado"
+              [(ngModel)]="dataSearch.checkBoxFraccionado"
               (change)="refresh()"
               [disabled]="isLoadingResults"
             >
-              @if (dataSearch().checkBoxFraccionado) {
+              @if (dataSearch.checkBoxFraccionado) {
                 <span>Si</span>
               } @else {
                 <span>No</span>
@@ -148,11 +148,11 @@
           <div class="form-group d-flex flex-column">
             <label>Inventario</label>
             <mat-checkbox
-              [(ngModel)]="dataSearch().checkBoxInventario"
+              [(ngModel)]="dataSearch.checkBoxInventario"
               (change)="refresh()"
               [disabled]="isLoadingResults"
             >
-              @if (dataSearch().checkBoxInventario) {
+              @if (dataSearch.checkBoxInventario) {
                 <span>Si</span>
               } @else {
                 <span>No</span>
