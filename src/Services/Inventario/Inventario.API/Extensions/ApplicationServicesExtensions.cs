@@ -33,7 +33,7 @@ public static class ApplicationServicesExtensions
         [
             "Inventario.Application.Services",
             "Inventario.Infrastructure.Repositories",
-            "Common.S3Application.Services",
+            "Acontplus.S3Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories"
         ];
 
