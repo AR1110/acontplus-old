@@ -68,6 +68,7 @@ export class ProductMapper {
     return data.map((item: any, index: number) => {
       return {
         index: index + 1,
+        id: item.idArticulo,
         idArticulo: item.idArticulo,
         idMedida: item.idMedida,
         code_unique: item.code_unique,

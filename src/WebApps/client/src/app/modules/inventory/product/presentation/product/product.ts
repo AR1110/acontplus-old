@@ -2,7 +2,6 @@ import {
   Component,
   ElementRef,
   inject,
-  model,
   QueryList,
   signal,
   TemplateRef,
@@ -45,6 +44,8 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import {MtxPopoverModule} from "@ng-matero/extensions/popover";
+import {ProductStock} from "@inventory/product/presentation/components/product-stock/product-stock";
 
 @Component({
   selector: 'inventory-product',
@@ -68,6 +69,8 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
+    MtxPopoverModule,
+    ProductStock
   ],
   templateUrl: './product.html',
 })
@@ -76,6 +79,9 @@ export class Product implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  @ViewChild('stockTemplate') stockTemplate!: TemplateRef<any>;
+
+
   pagination = signal(new MatPagination());
   dataSource = new MatTableDataSource<ProductList>();
   isLoadingResults = signal(false);
@@ -115,7 +121,7 @@ export class Product implements OnInit, AfterViewInit {
     { key: 'descripcion', label: 'Descripción', type: 'string' },
     { key: 'subFamilia', label: 'SubFamilia', type: 'string' },
     { key: 'medida', label: 'Medida', type: 'string' },
-    { key: 'stock', label: 'Stock', type: 'string' },
+    { key: 'stock', label: 'Stock',  type: 'template' },
     { key: 'status', label: 'Estado', type: 'template' },
   ];
   columns: string[] = this.columnsDefs.map(colDef => colDef.key);
@@ -162,6 +168,10 @@ export class Product implements OnInit, AfterViewInit {
     this.columnsDefs.forEach(col => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
+      }
+
+      if(col.key==="stock"){
+        col.templateOutlet = this.stockTemplate;
       }
     });
   }

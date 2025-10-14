@@ -1,5 +1,5 @@
 <app-mat-custom-dialog
-  [title]="title"
+  [title]="title()"
   (close)="close()"
   [containerTemplate]="body"
   [actionsTemplate]="footer"
@@ -110,7 +110,7 @@
     <div class="row">
       <div class="col-12 col-xxl-8 col-xl-8 col-lg-8 col-md-12">
         <app-tabulator
-          [tableData]="productTarifa"
+          [tableData]="productTarifa()"
           [options]="tabulatorOptions"
           (cellEdited)="cellEdited($event)"
         ></app-tabulator>
@@ -123,7 +123,7 @@
     [type]="'button'"
     [variant]="'success'"
     [icon]="isUpdate() ? 'edit' : 'save'"
-    [text]="btnText"
+    [text]="btnText()"
     (handleClick)="save()"
   />
   <app-theme-button [type]="'button'" [variant]="'dark'" [icon]="'clear'" [text]="'Cerrar'" (handleClick)="close()" />

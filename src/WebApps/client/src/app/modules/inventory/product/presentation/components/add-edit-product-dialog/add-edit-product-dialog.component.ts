@@ -151,6 +151,7 @@ export class AddEditProductDialogComponent implements OnInit {
     idTipoIva: 0,
     idTipoIce: 0,
     precioCosto: 0.1,
+    precioCostoConIva: 0,
     precioSinSubsidio: 0,
     llevaInventario: false,
     datosAdicionales: false,

@@ -76,12 +76,11 @@ export class FraccProductListComponent implements OnInit {
       .execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe(response => {
-        console.log(response);
-        this.dataSource.set(response.payload?.data || []);
+        this.dataSource.set(response.payload?.data ?? []);
         this.pagination.update(item => {
           return {
             ...item,
-            totalRecords: response.payload?.totalRecords || 0,
+            totalRecords: response.payload?.totalRecords ?? 0,
           };
         });
       });

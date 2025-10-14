@@ -63,6 +63,39 @@ export class Sidemenu {
         },
       },
       ...resultMenus,
+      {
+        "route": "menu-level",
+        "name": "menu-level",
+        "type": "sub",
+        "icon": "subject",
+        "children": [
+          {
+            "route": "level-1-1",
+            "name": "level-1-1",
+            "type": "sub",
+            "children": [
+              {
+                "route": "level-2-1",
+                "name": "level-2-1",
+                "type": "link",
+              },
+              {
+                "route": "level-2-2",
+                "name": "level-2-2",
+                "type": "link"
+              }
+            ]
+          },
+          {
+            "route": "level-1-2",
+            "name": "level-1-2",
+            "type": "link"
+          }
+        ],
+        "permissions": {
+          "only": "ADMIN"
+        }
+      }
     ];
   });
 

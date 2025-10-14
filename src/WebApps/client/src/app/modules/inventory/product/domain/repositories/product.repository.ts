@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 import {
+  GetProductEstabStockResult,
   GetProductPurchaseResult,
   ProductDataForm,
   ProductGetIdResult,
@@ -23,4 +24,5 @@ export abstract class ProductRepository {
   abstract put<T>(id: number, obj: T): Observable<ApiResponse>;
   abstract getId(id: number): Observable<ProductGetIdResult>;
   abstract listProductWithPrices(params: any): Observable<any>;
+  abstract getEstabStock(id: number): Observable<GetProductEstabStockResult>;
 }

@@ -1,5 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
+import {BaseUseCase} from "@core/base-use-case";
+import { GetProductEstabStockResult} from "@inventory/product/domain/entities/product.entity";
 
 @Injectable({
   providedIn: 'root',
@@ -57,4 +59,14 @@ export class ProductUseCase {
   // delete(id: number) {
   //   return this.repo.delete(id)
   // }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class GetEstabStockUseCase implements BaseUseCase<GetProductEstabStockResult, number> {
+  private repo = inject(ProductRepository);
+  execute(id: number) {
+    return this.repo.getEstabStock(id);
+  }
 }

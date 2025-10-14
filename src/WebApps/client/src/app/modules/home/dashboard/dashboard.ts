@@ -6,22 +6,14 @@ import {
   OnInit,
   inject,
   computed,
-  ViewChild, effect
+  ViewChild,
+  effect,
 } from '@angular/core';
-import { MtxProgressModule } from '@ng-matero/extensions/progress';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { CHARTS, ELEMENT_DATA, MESSAGES, STATS } from './data';
-import { MtxAlertModule } from '@ng-matero/extensions/alert';
-import { MatButtonModule } from '@angular/material/button';
-import { MatTableModule } from '@angular/material/table';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { SettingsService } from '@core/bootstrap';
-import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
-import {AdminLayoutService} from "@core/services/admin-layout.service";
+import { AdminLayoutService } from '@core/services/admin-layout.service';
 
 import {
   ApexAxisChartSeries,
@@ -33,10 +25,10 @@ import {
   ApexAnnotations,
   ApexFill,
   ApexStroke,
-  ApexGrid
-} from "ng-apexcharts";
+  ApexGrid,
+} from 'ng-apexcharts';
 
-export interface Chart1Options  {
+export interface Chart1Options {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
@@ -47,19 +39,17 @@ export interface Chart1Options  {
   fill: ApexFill;
   stroke: ApexStroke;
   grid: ApexGrid;
-};
+}
 
-export interface Chart2Options  {
+export interface Chart2Options {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
   plotOptions: ApexPlotOptions;
   xaxis: ApexXAxis;
-};
+}
 
-
-
-export interface Chart3Options  {
+export interface Chart3Options {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   dataLabels: ApexDataLabels;
@@ -69,26 +59,14 @@ export interface Chart3Options  {
   grid: ApexGrid;
   colors: string[];
   legend: ApexLegend;
-};
+}
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
-  imports: [
-    RouterLink,
-    MatButtonModule,
-    MatCardModule,
-    MatChipsModule,
-    MatListModule,
-    MatGridListModule,
-    MatTableModule,
-    MatTabsModule,
-    MtxProgressModule,
-    MtxAlertModule,
-    ChartComponent,
-  ],
- // encapsulation: ViewEncapsulation.None
+  imports: [MatCardModule, ChartComponent],
+  // encapsulation: ViewEncapsulation.None
 })
 export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   private readonly ngZone = inject(NgZone);
@@ -100,153 +78,147 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   messages = MESSAGES;
 
-  @ViewChild("chart1") chart1!: ChartComponent;
+  @ViewChild('chart1') chart1!: ChartComponent;
   public chart1Options: Chart1Options = {
     series: [
       {
-        data: []
-      }
+        data: [],
+      },
     ],
     annotations: {
-      points: [
-
-      ]
+      points: [],
     },
     chart: {
       height: 350,
-      type: "bar"
+      type: 'bar',
     },
     plotOptions: {
       bar: {
-        columnWidth: "50%",
-        borderRadius: 20
-      }
+        columnWidth: '50%',
+        borderRadius: 20,
+      },
     },
     dataLabels: {
-      enabled: false
+      enabled: false,
     },
     stroke: {
-      width: 2
+      width: 2,
     },
 
     grid: {
       row: {
-        colors: ["#fff", "#f2f2f2"]
-      }
+        colors: ['#fff', '#f2f2f2'],
+      },
     },
     xaxis: {
       labels: {
-        rotate: -45
+        rotate: -45,
       },
-      categories: [ ],
-      tickPlacement: "on"
+      categories: [],
+      tickPlacement: 'on',
     },
-    yaxis: {
-    },
+    yaxis: {},
     fill: {
-      type: "gradient",
+      type: 'gradient',
       gradient: {
-        shade: "light",
-        type: "horizontal",
+        shade: 'light',
+        type: 'horizontal',
         shadeIntensity: 0.25,
         gradientToColors: undefined,
         inverseColors: true,
         opacityFrom: 0.85,
         opacityTo: 0.85,
-        stops: [50, 0, 100]
-      }
-    }
+        stops: [50, 0, 100],
+      },
+    },
   };
 
-  @ViewChild("chart2") chart2!: ChartComponent;
+  @ViewChild('chart2') chart2!: ChartComponent;
   public chart2Options: Chart2Options = {
     series: [
       {
-        name: "basic",
-        data: []
-      }
+        name: 'basic',
+        data: [],
+      },
     ],
     chart: {
-      type: "bar",
-      height: 350
+      type: 'bar',
+      height: 350,
     },
     plotOptions: {
       bar: {
-        horizontal: true
-      }
+        horizontal: true,
+      },
     },
     dataLabels: {
-      enabled: false
+      enabled: false,
     },
     xaxis: {
-      categories: [ ]
-    }
+      categories: [],
+    },
   };
 
-
-  @ViewChild("chart3") chart3!: ChartComponent;
+  @ViewChild('chart3') chart3!: ChartComponent;
   public chart3Options: Chart3Options = {
     series: [
       {
-        name: "Total",
-        data: []
-      }
+        name: 'Total',
+        data: [],
+      },
     ],
     chart: {
       height: 350,
-      type: "bar",
+      type: 'bar',
       events: {
-        click: function(chart, w, e) {
+        click: function (chart, w, e) {
           // console.log(chart, w, e)
-        }
-      }
+        },
+      },
     },
     colors: [
-      "#008FFB",
-      "#00E396",
-      "#FEB019",
-      "#FF4560",
-      "#775DD0",
-      "#546E7A",
-      "#26a69a",
-      "#D10CE8"
+      '#008FFB',
+      '#00E396',
+      '#FEB019',
+      '#FF4560',
+      '#775DD0',
+      '#546E7A',
+      '#26a69a',
+      '#D10CE8',
     ],
     plotOptions: {
       bar: {
-        columnWidth: "45%",
-        distributed: true
-      }
+        columnWidth: '45%',
+        distributed: true,
+      },
     },
     dataLabels: {
-      enabled: false
+      enabled: false,
     },
     legend: {
-      show: false
+      show: false,
     },
     grid: {
-      show: false
+      show: false,
     },
     xaxis: {
-      categories: [ ],
+      categories: [],
       labels: {
         style: {
           colors: [
-            "#008FFB",
-            "#00E396",
-            "#FEB019",
-            "#FF4560",
-            "#775DD0",
-            "#546E7A",
-            "#26a69a",
-            "#D10CE8"
+            '#008FFB',
+            '#00E396',
+            '#FEB019',
+            '#FF4560',
+            '#775DD0',
+            '#546E7A',
+            '#26a69a',
+            '#D10CE8',
           ],
-          fontSize: "12px"
-        }
-      }
+          fontSize: '12px',
+        },
+      },
     },
-    yaxis: {
-
-    }
+    yaxis: {},
   };
 
   charts = CHARTS;
@@ -292,8 +264,9 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   introducingItem = this.introducingItems[this.getRandom(0, 4)];
 
-  statistics = computed(()=>{
-    const {userCount, supplierCount, customerCount, itemCount} = this.adminLayoutSvc.getStatistics()
+  statistics = computed(() => {
+    const { userCount, supplierCount, customerCount, itemCount } =
+      this.adminLayoutSvc.getStatistics();
     return [
       {
         title: 'Usuarios',
@@ -326,95 +299,88 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
           value: 40,
         },
         color: 'bg-cyan-50',
-      }
-    ]
-  })
+      },
+    ];
+  });
 
   constructor() {
     effect(() => {
       this.renderChart1();
       this.renderChart2();
-      this.renderChart3()
-
+      this.renderChart3();
     });
   }
 
-  renderChart1(){
-    const newData = this.adminLayoutSvc.emittedDocuments().map((x:any)=>x.total);
-    const newLabels = this.adminLayoutSvc.emittedDocuments().map((x:any)=>x.document)
-
+  renderChart1() {
+    const newData = this.adminLayoutSvc.emittedDocuments().map((x: any) => x.total);
+    const newLabels = this.adminLayoutSvc.emittedDocuments().map((x: any) => x.document);
 
     if (this.chart1) {
       const updatedOptions = {
-        ...this.chart1Options,          // mantiene todo
+        ...this.chart1Options, // mantiene todo
         series: [{ name: 'Documentos', data: newData }],
-        xaxis: { ...this.chart1Options.xaxis, categories: newLabels,  labels: {
+        xaxis: {
+          ...this.chart1Options.xaxis,
+          categories: newLabels,
+          labels: {
             rotate: -45,
             rotateAlways: true,
-          } }
+          },
+        },
       };
 
       this.chart1.updateOptions(updatedOptions, false, true);
-
     }
   }
 
-  renderChart2(){
-    const newData = this.adminLayoutSvc.anotherSalesDocs().map((x:any)=>x.total);
-    const newLabels = this.adminLayoutSvc.anotherSalesDocs().map((x:any)=>x.document)
-
+  renderChart2() {
+    const newData = this.adminLayoutSvc.anotherSalesDocs().map((x: any) => x.total);
+    const newLabels = this.adminLayoutSvc.anotherSalesDocs().map((x: any) => x.document);
 
     if (this.chart2) {
       const updatedOptions = {
-        ...this.chart2Options,          // mantiene todo
+        ...this.chart2Options, // mantiene todo
         series: [{ name: 'Documentos', data: newData }],
-        xaxis: { ...this.chart2Options.xaxis, categories: newLabels}
+        xaxis: { ...this.chart2Options.xaxis, categories: newLabels },
       };
 
       this.chart2.updateOptions(updatedOptions, false, true);
-
     }
   }
 
-  renderChart3(){
-    const newData = this.adminLayoutSvc.receivedDocuments().map((x:any)=>x.total);
-    const newLabels = this.adminLayoutSvc.receivedDocuments().map((x:any)=>x.document)
-
+  renderChart3() {
+    const newData = this.adminLayoutSvc.receivedDocuments().map((x: any) => x.total);
+    const newLabels = this.adminLayoutSvc.receivedDocuments().map((x: any) => x.document);
 
     if (this.chart3) {
       const updatedOptions = {
-        ...this.chart3Options,          // mantiene todo
+        ...this.chart3Options, // mantiene todo
         series: [{ name: 'Total', data: newData }],
-        xaxis: { ...this.chart3Options.xaxis, categories: newLabels,  labels: {
+        xaxis: {
+          ...this.chart3Options.xaxis,
+          categories: newLabels,
+          labels: {
             rotate: -45,
             rotateAlways: true,
-          } }
+          },
+        },
       };
 
       this.chart3.updateOptions(updatedOptions, false, true);
-
     }
   }
-
 
   ngOnInit() {
     this.notifySubscription = this.settings.notify.subscribe(opts => {
       this.updateCharts();
     });
-
-
-
-
   }
 
   ngAfterViewInit() {
     this.ngZone.runOutsideAngular(() => this.initCharts());
 
-
-      const apexStyles = document.querySelectorAll('style[id^="apexcharts"]');
-      apexStyles.forEach(s => s.remove());
-
-
+    const apexStyles = document.querySelectorAll('style[id^="apexcharts"]');
+    apexStyles.forEach(s => s.remove());
   }
 
   ngOnDestroy() {

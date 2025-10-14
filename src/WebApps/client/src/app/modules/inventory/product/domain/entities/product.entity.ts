@@ -116,3 +116,8 @@ export interface ValidateProductStockParams {
   idBodega: number;
   idMedida: number;
 }
+
+
+export interface GetProductEstabStockResult {
+  estabsWarehouses: any[];
+}

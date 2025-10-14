@@ -19,6 +19,9 @@ import { ProductGetIdMapper } from '@inventory/product/infrastructure/product/ma
 import { ListProductWithPricesUseCaseMapper } from '@inventory/product/infrastructure/product/mappers/list-product-with-prices.mapper';
 import { SaveProductMapper } from '@inventory/product/infrastructure/product/mappers/save-product.mapper';
 import { GetProductPurchaseMapper } from '@inventory/product/infrastructure/product/mappers/get-product-purchase.mapper';
+import {
+  GetProductEstabsStockMapper
+} from "@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -235,5 +238,19 @@ export class ProductRepositoryImpl implements ProductRepository {
         },
       })
       .pipe(map(response => ListProductWithPricesUseCaseMapper.fromJson(response)));
+  }
+
+   getEstabStock(id: number): Observable<any> {
+     const json = JSON.stringify({
+       idArticulo: id,
+       tipo: 10,
+     })
+    return  this._http.get<ApiResponse>(`${this._url}${id}`, {
+      params: {
+        json,
+      }
+    }).pipe(
+      map(response=>GetProductEstabsStockMapper.fromJson(response))
+    )
   }
 }

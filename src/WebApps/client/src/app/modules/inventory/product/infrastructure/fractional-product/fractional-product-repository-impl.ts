@@ -4,11 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { FractionalProductRepository } from '@inventory/product/domain/repositories/fractional-product.repository';
 import { FractionalProductGetAllMapper } from '@inventory/product/infrastructure/fractional-product/fractional-product-get-all.mapper';
 import {
-  FractionalProductDataGetId,
   FractionalProductDataSave,
 } from '@inventory/product/domain/entities/fractional-product.model';
 import { FractionalProductPostMapper } from '@inventory/product/infrastructure/fractional-product/fractional-product-post.mapper';
@@ -28,7 +26,6 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
     return this._http
       .get(`${this._url}`, {
         params,
-        context: getNoLoader(),
       })
       .pipe(map(response => FractionalProductGetAllMapper.fromJson(response)));
   }

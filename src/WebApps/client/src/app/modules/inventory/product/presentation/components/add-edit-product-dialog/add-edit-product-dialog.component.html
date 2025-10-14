@@ -163,17 +163,23 @@
 
             <div class="col">
               <mat-form-field class="w-100">
+                <mat-label>Precio Costo Con Iva:</mat-label>
+                <input
+                  type="number"
+                  matInput
+                  disabled
+                  placeholder="0.00"
+                  [(ngModel)]="data.precioCostoConIva"
+                />
+              </mat-form-field>
+            </div>
+
+            <div class="col">
+              <mat-form-field class="w-100">
                 <mat-label>Precio Sin Subsidio:</mat-label>
                 <input type="number" matInput [(ngModel)]="data.precioSinSubsidio" placeholder="0.00" />
               </mat-form-field>
             </div>
-            @if (!showStatus) {
-              <div class="col">
-                <mat-checkbox [(ngModel)]="data.estado">
-                  {{ data.estado ? 'Activo' : 'Inactivo' }}
-                </mat-checkbox>
-              </div>
-            }
           </div>
 
           <div class="row m-0 p-0">
@@ -192,7 +198,7 @@
             </div>
           </div>
 
-          <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+          <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Adicionales:</mat-label>
@@ -232,6 +238,14 @@
             <div class="col text-center">
               <mat-checkbox [(ngModel)]="data.productoFraccionable"> Fraccionable </mat-checkbox>
             </div>
+
+            @if (!showStatus) {
+              <div class="col">
+                <mat-checkbox [(ngModel)]="data.estado">
+                  {{ data.estado ? 'Activo' : 'Inactivo' }}
+                </mat-checkbox>
+              </div>
+            }
           </div>
         </div>
       </div>

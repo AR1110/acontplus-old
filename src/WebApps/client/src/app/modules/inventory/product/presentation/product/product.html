@@ -215,4 +215,31 @@
   <ng-template #statusTemplate let-item>
     <div [innerHTML]="item.estado | primaryStatus"></div>
   </ng-template>
+
+  <ng-template #stockTemplate let-item>
+    @let bgSuccess = item.stock > 0;
+    @let bgDanger = item.stock <= 0;
+    @let bgWarning = item.stock > 0 && item.stock <= 5;
+    @let bgInfo = item.stock > 5;
+
+
+      <span
+        [class.bg-success]="bgSuccess"
+        [class.bg-danger]="bgDanger"
+        class="badge font-weight-100 cursor-pointer"
+            #popoverTrigger="mtxPopoverTrigger"
+            [mtxPopoverTriggerFor]="popover"
+            [mtxPopoverTriggerData]="{ id: item.id }"
+        mtxPopoverTriggerOn="click"
+
+      >{{item.stock}}</span>
+  </ng-template>
+
+  <mtx-popover #popover="mtxPopover">
+    <ng-template mtxPopoverContent let-id="id">
+      <app-product-stock [id]="id" />
+    </ng-template>
+  </mtx-popover>
+
+
 </app-mat-dynamic-card>

@@ -63,8 +63,8 @@ export class AddEditFractionalProductComponent implements OnInit {
   private $fractionalProductGetIdUseCase = inject(FractionalProductGetIdUseCase);
   private tS = inject(ToastrNotificationService);
 
-  title = 'Nuevo Artículo Fraccionado';
-  btnText = 'Guardar';
+  title = signal('Nuevo Artículo Fraccionado');
+  btnText = signal('Guardar');
 
   medidas = signal<any[]>([]);
 
@@ -147,16 +147,15 @@ export class AddEditFractionalProductComponent implements OnInit {
     height: null, // Elimina la altura fija para que sea auto
   };
 
-  articuloPrincipalTarifa = [] as any[];
-  productTarifa: any[] = [];
-  tarifas = [] as any[];
-  private decimal = {
+  articuloPrincipalTarifa = signal<any[]>([]);
+  productTarifa = signal<any[]>([]);
+  tarifas = signal<any[]>([]);
+  private decimal = signal({
     nroPrecio: DECIMALS.GENERAL,
-  };
+  });
   isUpdate() {
     return this.params.id > 0;
   }
-
   isAdd() {
     return !(this.params.id > 0);
   }
@@ -198,10 +197,6 @@ export class AddEditFractionalProductComponent implements OnInit {
     let precioConIva = parseFloat(data.precioConIva);
     let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
 
-    console.log(row);
-    console.log(column);
-    console.log(oldValue);
-    console.log(value);
     if (oldValue === value) {
       return;
     }
@@ -258,8 +253,8 @@ export class AddEditFractionalProductComponent implements OnInit {
 
     const utilidad = pricingCalculateUtil.getValueUtility(precioVenta, precioCosto);
 
-    precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
-    precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
+    precioVenta = roundNumber(precioVenta, this.decimal().nroPrecio);
+    precioConIva = roundNumber(precioConIva, this.decimal().nroPrecio);
 
     const obj = {
       precioVenta,
@@ -278,11 +273,11 @@ export class AddEditFractionalProductComponent implements OnInit {
       this.medidas.set(response.medidas);
       this.data.idMedida = this.medidas().length > 0 ? this.medidas()[0].idMedida : 0;
 
-      this.tarifas = response.tarifas;
+      this.tarifas.set(response.tarifas);
 
       if (this.isUpdate()) {
-        this.title = 'Editar Artículo Fraccionado';
-        this.btnText = 'Actualizar';
+        this.title.set('Editar Artículo Fraccionado');
+        this.btnText.set('Actualizar');
         this.loadDataUpdate();
       }
 
@@ -294,9 +289,12 @@ export class AddEditFractionalProductComponent implements OnInit {
 
   private loadDataUpdate() {
     this.$fractionalProductGetIdUseCase.execute(this.params.id).subscribe(response => {
-      console.log(response);
-      this.data = response.payload?.data;
-      this.productTarifa = response.payload?.productPvps;
+      if( response.payload){
+      const {data, productPvps} = response.payload;
+      this.data = data;
+      this.productTarifa.set(productPvps);
+
+      }
     });
   }
 
@@ -317,15 +315,16 @@ export class AddEditFractionalProductComponent implements OnInit {
         this.data = response.data;
 
         const productoTarifas = structuredClone(response.productPvps);
-        this.articuloPrincipalTarifa = structuredClone(productoTarifas);
+        this.articuloPrincipalTarifa.set(structuredClone(productoTarifas));
 
-        this.productTarifa = structuredClone(productoTarifas).map(item => {
+        const productTarifa = structuredClone(productoTarifas).map(item => {
           item.precioVenta = 0;
           item.precioConIva = 0;
           item.porcentajeUtilidad = 0;
           item.utilidad = 0;
           return item;
         });
+        this.productTarifa.set(productTarifa);
       });
     } catch (error) {
       console.log(error);
@@ -333,10 +332,10 @@ export class AddEditFractionalProductComponent implements OnInit {
   }
 
   recalculateTarifaAdd() {
-    if (this.productTarifa.length === 0) return;
+    if (this.productTarifa().length === 0) return;
 
     const precioCosto = this.data.precioCostoFraccionado;
-    const porcentajeIva = this.productTarifa[0].porcentajeIva;
+    const porcentajeIva = this.productTarifa()[0].porcentajeIva;
     if (!getValidId(precioCosto)) {
       this.tS.show({
         type: 'warning',
@@ -353,20 +352,20 @@ export class AddEditFractionalProductComponent implements OnInit {
     }
 
     try {
-      for (const val of this.productTarifa) {
+      for (const val of this.productTarifa()) {
         val.porcentajeIva = porcentajeIva;
 
         const precioVenta = pricingCalculateUtil.calculatePriceSale(
           val.precioConIva,
           val.porcentajeIva,
         );
-        val.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
+        val.precioVenta = roundNumber(precioVenta, this.decimal().nroPrecio);
 
         const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           val.precioVenta,
           val.porcentajeIva,
         );
-        val.precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
+        val.precioConIva = roundNumber(precioConIva, this.decimal().nroPrecio);
 
         const porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
           precioVenta,
@@ -405,7 +404,8 @@ export class AddEditFractionalProductComponent implements OnInit {
 
     const precioCosto = Number(this.data.precioCostoFraccionado);
 
-    this.articuloPrincipalTarifa.forEach((item, index) => {
+    const productTarifa = structuredClone(this.productTarifa())
+    this.articuloPrincipalTarifa().forEach((item, index) => {
       const precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
         precioCosto,
         item.porcentajeUtilidad,
@@ -416,12 +416,13 @@ export class AddEditFractionalProductComponent implements OnInit {
         item.porcentajeIva,
       );
 
-      this.productTarifa[index].precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
-      this.productTarifa[index].precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
-      this.productTarifa[index].porcentajeUtilidad = item.porcentajeUtilidad;
+      productTarifa[index].precioVenta = roundNumber(precioVenta, this.decimal().nroPrecio);
+      productTarifa[index].precioConIva = roundNumber(precioConIva, this.decimal().nroPrecio);
+      productTarifa[index].porcentajeUtilidad = item.porcentajeUtilidad;
       const utilidad = pricingCalculateUtil.getValueUtility(item.precioVenta, precioCosto);
-      this.productTarifa[index].utilidad = roundNumber(utilidad, DECIMALS.GENERAL);
+      productTarifa[index].utilidad = roundNumber(utilidad, DECIMALS.GENERAL);
     });
+    this.productTarifa.set(productTarifa);
   }
 
   save() {
@@ -474,7 +475,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     const data = {
       id: this.params.id,
       data: structuredClone(this.data),
-      pvps: structuredClone(this.productTarifa),
+      pvps: structuredClone(this.productTarifa()),
     };
 
     if (this.isAdd()) {

@@ -1,10 +1,10 @@
-@if (isShowAlert) {
+<!-- @if (isShowAlert) {
   <mtx-alert type="info" dismissible (closed)="onAlertDismiss()">
     <a [href]="introducingItem.link" target="_blank">{{ introducingItem.name }}</a>
     - {{ introducingItem.description }}
     <a [href]="introducingItem.link" target="_blank">Learn more!</a>
   </mtx-alert>
-}
+} -->
 
 <div class="row">
   <!-- Statistics -->
@@ -16,13 +16,13 @@
         </mat-card-header>
         <mat-card-content>
           <h2 class="m-t-0 m-b-8">{{ stat.count }}</h2>
-          <mtx-progress
+          <!-- <mtx-progress
             [value]="stat.progress.value"
             height="2px"
             foreground="rgba(255,255,255,1)"
             background="rgba(0,0,0,.4)"
-          />
-<!--          <small class="text-muted">Monthly</small>-->
+          /> -->
+          <!--          <small class="text-muted">Monthly</small>-->
         </mat-card-content>
       </mat-card>
     </div>
@@ -69,7 +69,6 @@
             [xaxis]="chart2Options.xaxis"
           ></apx-chart>
         </div>
-
       </mat-card-content>
     </mat-card>
   </div>
@@ -93,7 +92,6 @@
             [grid]="chart3Options.grid"
           ></apx-chart>
         </div>
-
       </mat-card-content>
     </mat-card>
   </div>
