@@ -6,8 +6,7 @@ import {
   OnInit,
   inject,
   computed,
-  ViewChild,
-  ViewEncapsulation, effect
+  ViewChild, effect
 } from '@angular/core';
 import { MtxProgressModule } from '@ng-matero/extensions/progress';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -400,8 +399,6 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     this.notifySubscription = this.settings.notify.subscribe(opts => {
-      console.log(opts);
-
       this.updateCharts();
     });
 

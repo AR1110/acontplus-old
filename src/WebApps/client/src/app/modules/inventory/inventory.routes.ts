@@ -11,9 +11,8 @@ import { InvModelPageComponent } from '@inventory/ui/inv-model-page/inv-model-pa
 import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.component';
 import { TagsComponent } from '@inventory/ui/tags/tags.component';
 import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
-import { ProductComponent } from '@inventory/product/presentation/product/product.component';
+import { Product } from '@inventory/product/presentation/product/product';
 import { TransferenciaBodegaComponent } from '@inventory/ui/transferencia-bodega/transferencia-bodega.component';
-import { WarehouseComponent } from '@inventory/ui/warehouse/warehouse.component';
 import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
 import { InventoryHomeComponent } from './ui/inventory-home.component';
 import { WarehouseTransferComponent } from '@inventory/ui/warehouse-transfer/warehouse-transfer.component';
@@ -44,7 +43,7 @@ export const routes: Route[] = [
   {
     path: 'products',
     title: 'Productos',
-    component: ProductComponent,
+    component: Product,
     data: {
       breadcrumb: 'Productos',
     },

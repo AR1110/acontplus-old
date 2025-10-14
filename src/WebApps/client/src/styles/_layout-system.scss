@@ -1,0 +1,260 @@
+// _complete-layout-system.scss
+
+// Variables
+$grid-columns: 12;
+$grid-gutter-width: 1rem;
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3
+);
+
+.custom {
+  // Reset básico
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  // Grid básico
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: calc(var(--gutter, #{$grid-gutter-width}) * -0.5);
+    margin-left: calc(var(--gutter, #{$grid-gutter-width}) * -0.5);
+
+    > * {
+      padding-right: calc(var(--gutter, #{$grid-gutter-width}) * 0.5);
+      padding-left: calc(var(--gutter, #{$grid-gutter-width}) * 0.5);
+    }
+  }
+
+  // Sistema de columnas responsive
+  .row-cols {
+    &-auto > * { flex: 0 0 auto; width: auto; }
+    &-1 > * { flex: 0 0 auto; width: 100%; }
+    &-2 > * { flex: 0 0 auto; width: 50%; }
+    &-3 > * { flex: 0 0 auto; width: 33.333333%; }
+    &-4 > * { flex: 0 0 auto; width: 25%; }
+    &-5 > * { flex: 0 0 auto; width: 20%; }
+    &-6 > * { flex: 0 0 auto; width: 16.666667%; }
+  }
+
+  // Breakpoints para row-cols
+  @each $breakpoint, $width in $grid-breakpoints {
+    @if $width > 0 {
+      @media (min-width: $width) {
+        .row-cols-#{$breakpoint} {
+          &-auto > * { flex: 0 0 auto; width: auto; }
+          &-1 > * { flex: 0 0 auto; width: 100%; }
+          &-2 > * { flex: 0 0 auto; width: 50%; }
+          &-3 > * { flex: 0 0 auto; width: 33.333333%; }
+          &-4 > * { flex: 0 0 auto; width: 25%; }
+          &-5 > * { flex: 0 0 auto; width: 20%; }
+          &-6 > * { flex: 0 0 auto; width: 16.666667%; }
+        }
+      }
+    }
+  }
+
+  // Sistema completo de Gaps
+  @each $breakpoint, $width in $grid-breakpoints {
+    @if $width == 0 {
+      @each $key, $value in $spacers {
+        .g-#{$key} { gap: $value; }
+        .gx-#{$key} { column-gap: $value; }
+        .gy-#{$key} { row-gap: $value; }
+      }
+    } @else {
+      @media (min-width: $width) {
+        @each $key, $value in $spacers {
+          .g-#{$breakpoint}-#{$key} { gap: $value; }
+          .gx-#{$breakpoint}-#{$key} { column-gap: $value; }
+          .gy-#{$breakpoint}-#{$key} { row-gap: $value; }
+        }
+      }
+    }
+  }
+
+  // Gaps específicos
+  .gap-0 { gap: 0; }
+  .gap-1 { gap: 0.25rem; }
+  .gap-2 { gap: 0.5rem; }
+  .gap-3 { gap: 1rem; }
+  .gap-4 { gap: 1.5rem; }
+  .gap-5 { gap: 3rem; }
+
+  // Gaps personalizados
+  .gap-sm { gap: 0.5rem; }
+  .gap-md { gap: 1rem; }
+  .gap-lg { gap: 1.5rem; }
+  .gap-xl { gap: 2rem; }
+
+  // Stack vertical (vstack)
+  .vstack {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-self: stretch;
+    gap: 0.5rem;
+  }
+
+  // Stack horizontal (hstack)
+  .hstack {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+    align-items: center;
+    align-self: stretch;
+    gap: 0.5rem;
+  }
+
+  // Utilidades Flex
+  .d-flex { display: flex; }
+  .d-inline-flex { display: inline-flex; }
+  .flex-row { flex-direction: row; }
+  .flex-row-reverse { flex-direction: row-reverse; }
+  .flex-column { flex-direction: column; }
+  .flex-column-reverse { flex-direction: column-reverse; }
+  .flex-wrap { flex-wrap: wrap; }
+  .flex-nowrap { flex-wrap: nowrap; }
+  .flex-wrap-reverse { flex-wrap: wrap-reverse; }
+  .flex-fill { flex: 1 1 auto; }
+  .flex-grow-0 { flex-grow: 0; }
+  .flex-grow-1 { flex-grow: 1; }
+  .flex-shrink-0 { flex-shrink: 0; }
+  .flex-shrink-1 { flex-shrink: 1; }
+
+  // Justify content
+  .justify-content-start { justify-content: flex-start; }
+  .justify-content-end { justify-content: flex-end; }
+  .justify-content-center { justify-content: center; }
+  .justify-content-between { justify-content: space-between; }
+  .justify-content-around { justify-content: space-around; }
+  .justify-content-evenly { justify-content: space-evenly; }
+
+  // Align items
+  .align-items-start { align-items: flex-start; }
+  .align-items-end { align-items: flex-end; }
+  .align-items-center { align-items: center; }
+  .align-items-baseline { align-items: baseline; }
+  .align-items-stretch { align-items: stretch; }
+
+  // Align self
+  .align-self-start { align-self: flex-start; }
+  .align-self-end { align-self: flex-end; }
+  .align-self-center { align-self: center; }
+  .align-self-baseline { align-self: baseline; }
+  .align-self-stretch { align-self: stretch; }
+
+  // Grid columns
+  @for $i from 1 through $grid-columns {
+    .col-#{$i} {
+      flex: 0 0 auto;
+      width: percentage($i / $grid-columns);
+    }
+  }
+
+  // Responsive grid columns
+  @each $breakpoint, $width in $grid-breakpoints {
+    @if $width > 0 {
+      @media (min-width: $width) {
+        @for $i from 1 through $grid-columns {
+          .col-#{$breakpoint}-#{$i} {
+            flex: 0 0 auto;
+            width: percentage($i / $grid-columns);
+          }
+        }
+      }
+    }
+  }
+
+  // Orden
+  .order-first { order: -1; }
+  .order-last { order: 999; }
+  @for $i from 0 through 5 {
+    .order-#{$i} { order: $i; }
+  }
+
+  // Margin y Padding
+  @each $breakpoint, $width in $grid-breakpoints {
+    @if $width == 0 {
+      @each $prop, $abbrev in (margin: m, padding: p) {
+        @each $size, $value in $spacers {
+          .#{$abbrev}-#{$size} { #{$prop}: $value; }
+          .#{$abbrev}t-#{$size},
+          .#{$abbrev}y-#{$size} {
+            #{$prop}-top: $value;
+          }
+          .#{$abbrev}r-#{$size},
+          .#{$abbrev}x-#{$size} {
+            #{$prop}-right: $value;
+          }
+          .#{$abbrev}b-#{$size},
+          .#{$abbrev}y-#{$size} {
+            #{$prop}-bottom: $value;
+          }
+          .#{$abbrev}l-#{$size},
+          .#{$abbrev}x-#{$size} {
+            #{$prop}-left: $value;
+          }
+        }
+      }
+    } @else {
+      @media (min-width: $width) {
+        @each $prop, $abbrev in (margin: m, padding: p) {
+          @each $size, $value in $spacers {
+            .#{$abbrev}-#{$breakpoint}-#{$size} { #{$prop}: $value; }
+            .#{$abbrev}t-#{$breakpoint}-#{$size},
+            .#{$abbrev}y-#{$breakpoint}-#{$size} {
+              #{$prop}-top: $value;
+            }
+            .#{$abbrev}r-#{$breakpoint}-#{$size},
+            .#{$abbrev}x-#{$breakpoint}-#{$size} {
+              #{$prop}-right: $value;
+            }
+            .#{$abbrev}b-#{$breakpoint}-#{$size},
+            .#{$abbrev}y-#{$breakpoint}-#{$size} {
+              #{$prop}-bottom: $value;
+            }
+            .#{$abbrev}l-#{$breakpoint}-#{$size},
+            .#{$abbrev}x-#{$breakpoint}-#{$size} {
+              #{$prop}-left: $value;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Utilidades de display responsive
+  @each $breakpoint, $width in $grid-breakpoints {
+    @if $width == 0 {
+      .d-none { display: none; }
+      .d-block { display: block; }
+      .d-inline { display: inline; }
+      .d-inline-block { display: inline-block; }
+    } @else {
+      @media (min-width: $width) {
+        .d-#{$breakpoint}-none { display: none; }
+        .d-#{$breakpoint}-block { display: block; }
+        .d-#{$breakpoint}-inline { display: inline; }
+        .d-#{$breakpoint}-inline-block { display: inline-block; }
+      }
+    }
+  }
+}

@@ -107,7 +107,7 @@ export class AdminLayoutComponent implements OnDestroy {
   }
 
   ngOnInit(){
-    this.adminLayoutSvc.loadDashboardData()
+   // this.adminLayoutSvc.loadDashboardData()
   }
 
   ngOnDestroy() {

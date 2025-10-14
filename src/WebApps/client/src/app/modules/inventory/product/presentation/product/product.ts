@@ -42,7 +42,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -70,16 +69,16 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
   ],
-  templateUrl: './product.component.html',
+  templateUrl: './product.html',
 })
-export class ProductComponent implements OnInit, AfterViewInit {
+export class Product implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
   pagination = signal(new MatPagination());
   dataSource = new MatTableDataSource<ProductList>();
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
   pageEvent!: PageEvent;
   dataSearch = {
     filterMode: 4,
@@ -137,7 +136,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
     this.initLoad()
       .pipe(
         finalize(() => {
-          this.isLoadingResults = false;
+          this.isLoadingResults.set(false);
           this.toggleSelectsState();
         }),
       )
@@ -197,7 +196,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
 
   toggleSelectsState(): void {
     this.selectElements?.forEach(selectRef => {
-      selectRef.nativeElement.disabled = this.isLoadingResults;
+      selectRef.nativeElement.disabled = this.isLoadingResults();
     });
   }
 
@@ -294,7 +293,7 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   private getDataParams() {
-    const params = {
+    return {
       bySubFamilia: getValidId(this.dataSearch.bySubFamilia),
       byMedida: getValidId(this.dataSearch.idMedida),
       byMarca: getValidId(this.dataSearch.idMarca),
@@ -309,11 +308,10 @@ export class ProductComponent implements OnInit, AfterViewInit {
       checkBoxFraccionado: this.dataSearch.checkBoxFraccionado,
       checkBoxInventario: this.dataSearch.checkBoxInventario,
     };
-    return params;
   }
 
   private resetDataAfterFetch() {
-    this.isLoadingResults = true;
+    this.isLoadingResults.set(true);
     this.pagination.update(p => ({
       ...p,
       totalRecords: 0,
@@ -330,14 +328,14 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
   private getProducts() {
-    if (this.isLoadingResults) return; // Prevenir múltiples llamadas
+    if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
 
     this.resetDataAfterFetch();
     this._productUseCase
       .getAll(this.getDataParams())
       .pipe(
         finalize(() => {
-          this.isLoadingResults = false;
+          this.isLoadingResults.set(false);
           this.toggleSelectsState();
         }),
       )

@@ -37,7 +37,7 @@
                   <button
                     mat-icon-button
                     aria-label="Add"
-                    appSubCategoryModal
+                    appSubCategory
                     (onResult)="resultModalSubFamilia($event)"
                     type="button"
                     tabindex="-1"
@@ -242,7 +242,7 @@
         <!--        <mat-icon class="example-tab-icon">thumb_up</mat-icon>-->
         Adicionales
       </ng-template>
-      <div class="my-2 m-2 p-0">
+      <div class="my-2 m-3 p-0">
         <div class="d-grid gap-3">
           <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
             <div class="col">
@@ -387,7 +387,7 @@
 
     <mat-tab>
       <ng-template mat-tab-label>Ubicación</ng-template>
-      <div class="my-2 m-2 p-0">
+      <div class="my-2 m-3 p-0">
         <div class="d-grid gap-3">
           @if (isAdd()) {
             <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3 row-cols-1 g-2">
@@ -443,7 +443,7 @@
     @if (isUpdate()) {
       <mat-tab>
         <ng-template mat-tab-label>Código Barras</ng-template>
-        <div class="my-2 m-2 p-0">
+        <div class="my-2 m-3 p-0">
           <div class="row justify-content-md-center mx-2">
             <div class="col-md-auto">
               @if (selectedTab() === 3) {

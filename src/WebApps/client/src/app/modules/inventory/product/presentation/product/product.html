@@ -28,13 +28,13 @@
       </div>
       <div class="col">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoadingResults">
+          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoadingResults()">
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults">
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
             <mat-icon>refresh</mat-icon>
           </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoadingResults">
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoadingResults()">
             <mat-icon>filter_list</mat-icon>
           </button>
         </div>
@@ -136,7 +136,7 @@
             <mat-checkbox
               [(ngModel)]="dataSearch.checkBoxFraccionado"
               (change)="refresh()"
-              [disabled]="isLoadingResults"
+              [disabled]="isLoadingResults()"
             >
               @if (dataSearch.checkBoxFraccionado) {
                 <span>Si</span>
@@ -150,7 +150,7 @@
             <mat-checkbox
               [(ngModel)]="dataSearch.checkBoxInventario"
               (change)="refresh()"
-              [disabled]="isLoadingResults"
+              [disabled]="isLoadingResults()"
             >
               @if (dataSearch.checkBoxInventario) {
                 <span>Si</span>
@@ -165,7 +165,7 @@
   </div>
 
   <app-mat-dynamic-table
-    [isLoadingData]="isLoadingResults"
+    [isLoadingData]="isLoadingResults()"
     [tableData]="dataSource.data"
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
