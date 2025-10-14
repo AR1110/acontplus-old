@@ -133,18 +133,18 @@ export class InventoryAdjustmentComponent {
     });
   }
 
-  // ngOnInit() {
-  //   this.$formDataUseCase.execute().subscribe((response) => {
-  //     this.$inventoryAdjustmentStore.setMainFormData(response)
-  //     this.tiposDoc.set(response.tiposDoc);
-  //     this.estabs.set(response.estabs);
-  //     const dataEstab = this.estabs().find(e=>e.defaultEstab);
-  //     if(dataEstab) {
-  //       this.dataFilter.estabId = dataEstab.idEstablecimiento;
-  //     }
-  //      this.refresh()
-  //   });
-  // }
+  ngOnInit() {
+    this.inventorySvc.formDataUseCase.execute().subscribe((response) => {
+      this.$inventoryAdjustmentStore.setMainFormData(response)
+      this.tiposDoc.set(response.tiposDoc);
+      this.estabs.set(response.estabs);
+      const dataEstab = this.estabs().find(e=>e.defaultEstab);
+      if(dataEstab) {
+        this.dataFilter.estabId = dataEstab.idEstablecimiento;
+      }
+       this.refresh()
+    });
+  }
 
   addEdit(item?: InventoryAdjustmentListDto) {
     const ref = this._dialogSvc.open(InventoryAdjustmentAddEditComponent, {

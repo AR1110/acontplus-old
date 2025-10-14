@@ -245,10 +245,11 @@ export class ProductRepositoryImpl implements ProductRepository {
        idArticulo: id,
        tipo: 10,
      })
-    return  this._http.get<ApiResponse>(`${this._url}${id}`, {
+    return  this._http.get<ApiResponse>(`${this._url}`, {
       params: {
         json,
-      }
+      },
+      context: getNoLoader(),
     }).pipe(
       map(response=>GetProductEstabsStockMapper.fromJson(response))
     )

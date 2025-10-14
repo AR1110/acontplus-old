@@ -130,7 +130,7 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'inventory-adjustment',
+    path: 'inventory-adjustments',
     component: InventoryAdjustmentComponent,
     data: {
       breadcrumb: 'Ajuste Inventario',

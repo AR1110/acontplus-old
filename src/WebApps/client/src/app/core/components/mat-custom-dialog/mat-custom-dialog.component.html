@@ -25,6 +25,8 @@
 </mat-dialog-content>
 <mat-dialog-actions [align]="align()">
   <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
+  <ng-content select="actions"></ng-content>
+
   @if (this.options().showButtonClose) {
     <app-theme-button
       variant="dark"

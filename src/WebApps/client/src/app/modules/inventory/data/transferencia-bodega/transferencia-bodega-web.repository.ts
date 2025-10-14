@@ -21,9 +21,7 @@ export class TransferenciaBodegaWebRepository implements TransferenciaBodegaRepo
       ...obj,
     });
     return this._http
-      .get(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this._url}?json=${json}`)
       .pipe(map(response => TransferenciaBodegaMapper.fromApiAll(response)));
   }
 
@@ -32,9 +30,7 @@ export class TransferenciaBodegaWebRepository implements TransferenciaBodegaRepo
       tipo: 2,
     });
     return this._http
-      .get(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this._url}?json=${json}`)
       .pipe(map(response => TransferenciaBodegaMapper.fromApiFilter(response)));
   }
 

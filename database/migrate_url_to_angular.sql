@@ -28,12 +28,20 @@ UPDATE AcontplusAdmin.Config.Menu SET Url='pets' WHERE  Code='MAS'
 UPDATE AcontplusAdmin.Config.Menu SET Url='breeds' WHERE  Code='RAZ'
 UPDATE AcontplusAdmin.Config.Menu SET Url='medical-history' WHERE  Code='REG'
 
---INVENTORY
+--ALMACEN
 --select * from  AcontplusAdmin.Config.Menu WHERE Code='AL'
 --select * from  AcontplusAdmin.Config.Menu WHERE parentId = 7
 UPDATE AcontplusAdmin.Config.Menu SET Url='inventory' WHERE  Code='AL' 
 UPDATE AcontplusAdmin.Config.Menu SET Url='products' WHERE  Code='ART'
 UPDATE AcontplusAdmin.Config.Menu SET Url='tags' WHERE  Code='ETI'
+
+
+--ALMACEN
+--select * from  AcontplusAdmin.Config.Menu WHERE Code='INV'
+--select * from  AcontplusAdmin.Config.Menu WHERE parentId = 13 
+UPDATE AcontplusAdmin.Config.Menu SET Url='kardex' WHERE  Code='KAR'
+UPDATE AcontplusAdmin.Config.Menu SET Url='inventory-adjustments' WHERE  Code='CINV'
+
 
 --CONTABILIDAD
 --select * from  AcontplusAdmin.Config.Menu WHERE Code='AWC'

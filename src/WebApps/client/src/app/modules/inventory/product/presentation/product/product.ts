@@ -113,6 +113,10 @@ export class Product implements OnInit, AfterViewInit {
   private $dialogSvc = inject(DialogService);
   private wasEmptyBefore = false; // Indica si alguna vez el campo estuvo vacío
 
+  positionStart: any = 'below';
+  positionEnd: any = 'center';
+
+
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },

@@ -7,12 +7,32 @@ export class GetProductEstabsStockMapper {
   }
 
   static fromJson(response: ApiResponse): GetProductEstabStockResult {
+    const  result = {
+    establishments : [] as any[]
 
-    console.log(JSON.parse(response.payload as string))
-
-    return {
-      estabsWarehouses: []
     }
+    if(response.code === '1'){
+      const {establishments} = JSON.parse(response.payload as string);
+      console.log(establishments)
+      result.establishments = establishments.map((item: any, index: number) => {
+        const warehouses = JSON.parse(item.warehouses);
+        console.log(warehouses)
+        return {
+          index,
+          nameEstab: item.branchOffice,
+          warehouses: warehouses.map((item: any) => {
+            return {
+              nameWarehouse: item.bodega,
+              stock: item.stock,
+              ubication: item.ubicacion,
+            }
+          })
+        }
+      })
+
+    }
+
+    return result;
 
   }
 }

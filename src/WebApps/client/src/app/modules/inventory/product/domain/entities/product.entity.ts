@@ -119,5 +119,5 @@ export interface ValidateProductStockParams {
 
 
 export interface GetProductEstabStockResult {
-  estabsWarehouses: any[];
+  establishments: any[];
 }
