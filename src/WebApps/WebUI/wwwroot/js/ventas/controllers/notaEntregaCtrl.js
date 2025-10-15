@@ -11,7 +11,6 @@
     let fS = {};
     let modalSvc = {};
     let TIPO_DOC_NE = {};
-    const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {}
 
     app.controller('notaEntregaCtrl', notaEntregaCtrl);
@@ -771,6 +770,9 @@
         let facturaSvc = $injector.get('facturaService');
         let userCustomerPermissionSvc = $injector.get('userCustomerPermissionService');
         let productUtil = $injector.get('productUtil');
+        const policyService = $injector.get('PolicyService');
+
+
         let infoAdicionalConfig = [];
         let isSetInfoAdicionalConfig = true;
 
@@ -1211,18 +1213,7 @@
                 }
 
                 //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
-                if ($scope.formasPago.length > 0) {
-                    let dataFormaPago = $scope.formasPago.find(item => {
-                        if ($scope.config.idFormaPagoSri > 0) {
-                            return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
-                        } else {
-                            return (item.codigo === '01');
-                        }
-                    });
-                    if (dataFormaPago) {
-                        $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
-                    }
-                }
+                setDefaultFormPagoSri()
 
 
                 if ($scope.vendedores.length > 0 && !$scope.config.multipleVendedor) {
@@ -1277,6 +1268,7 @@
                         $scope.dataFormaPago.plazo = dataTiempoCredito.diasCredito;
                     }
                 }
+                setDefaultFormPagoSri()
                 isSetInfoAdicionalConfig = false;
                 counterGridOptions();
             }
@@ -1373,6 +1365,21 @@
             });
         }
 
+        function setDefaultFormPagoSri() {
+            if ($scope.formasPago.length > 0) {
+                let dataFormaPago = $scope.formasPago.find(item => {
+                    if ($scope.config.idFormaPagoSri > 0) {
+                        return (item.idFormaPagoSri === $scope.config.idFormaPagoSri);
+                    } else {
+                        return (item.codigo === '01');
+                    }
+                });
+                if (dataFormaPago) {
+                    $scope.dataFormaPago.idFormaPagoSri = dataFormaPago.idFormaPagoSri;
+                }
+            }
+
+        }
 
 
 
@@ -2617,6 +2624,8 @@
                 let cuotas = validateCuota();
 
                 if (cuotas && cuotas.length === 0) return
+
+                await policyService.sendMaxDocuments();
 
 
                 Swal.fire({
