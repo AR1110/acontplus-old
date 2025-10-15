@@ -19,8 +19,8 @@ import { ProductUbicationRepository } from '@inventory/product/domain/repositori
 import { ProductUbicationRepositoryImpl } from '@inventory/product/infrastructure/product-ubication/product-ubication-repository-impl';
 import { TagRepository } from '@inventory/domain/repositories/tag.repository';
 import { TagWebRepository } from '@inventory/data/tag/tag-web.repository';
-import { TransferenciaBodegaRepository } from '@inventory/domain/repositories/transferencia-bodega.repository';
-import { TransferenciaBodegaWebRepository } from '@inventory/data/transferencia-bodega/transferencia-bodega-web.repository';
+import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
+import { WarehouseTransferHttpRepository } from '@inventory/data/warehouse-transfer/warehouse-transfer-http.repository';
 import { WarehouseRepository } from '@inventory/domain/repositories/warehouse.repository';
 import { WarehouseRepositoryImpl } from '@inventory/data/warehouse/warehouse-repository.impl';
 import { InventoryAdjustmentRepository } from '@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository';
@@ -69,8 +69,8 @@ export const DATA_INVENTORY_IOC: Provider[] = [
     useClass: TagWebRepository,
   },
   {
-    provide: TransferenciaBodegaRepository,
-    useClass: TransferenciaBodegaWebRepository,
+    provide: WarehouseTransferRepository,
+    useClass: WarehouseTransferHttpRepository,
   },
   {
     provide: WarehouseRepository,

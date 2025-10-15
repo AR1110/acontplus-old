@@ -12,7 +12,6 @@ import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.compo
 import { TagsComponent } from '@inventory/ui/tags/tags.component';
 import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
 import { Product } from '@inventory/product/presentation/product/product';
-import { TransferenciaBodegaComponent } from '@inventory/ui/transferencia-bodega/transferencia-bodega.component';
 import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
 import { InventoryHomeComponent } from './ui/inventory-home.component';
 import { WarehouseTransferComponent } from '@inventory/ui/warehouse-transfer/warehouse-transfer.component';
@@ -122,14 +121,6 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'transferencia-bodega',
-    component: TransferenciaBodegaComponent,
-    data: {
-      breadcrumb: 'Transferencia de Mercaderia',
-    },
-  },
-
-  {
     path: 'inventory-adjustments',
     component: InventoryAdjustmentComponent,
     data: {
@@ -140,7 +131,8 @@ export const routes: Route[] = [
     path: 'warehouse-transfer',
     component: WarehouseTransferComponent,
     data: {
-      breadcrumb: 'Transferencia de Bodega',
+      breadcrumb: 'Transferencia de Mercaderia',
+
     },
   },
 ];

@@ -22,6 +22,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
 
       if (!existingItem) {
         acc.push({
+          id: item.idEstablecimiento,
           idEstablecimiento: item.idEstablecimiento,
           nombreComercial: item.nombreComercial,
           nombreEstab: item.nombreComercial,
@@ -74,6 +75,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
 
       if (!existingItem) {
         acc.push({
+          id: item.idEstablecimiento,
           idEstablecimiento: item.idEstablecimiento,
           nombreComercial: item.nombreComercial,
           nombreEstab: item.nombreComercial,

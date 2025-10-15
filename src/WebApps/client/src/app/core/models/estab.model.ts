@@ -2,6 +2,7 @@ import { BodegaEstablecimiento } from './bodega.model';
 import { PuntoEmisionEstablecimiento } from './punto-emision.model';
 
 export interface Establecimiento {
+  id?: number
   idEstab_Asig: number;
   codEstab_Asig: string;
   idUsuarioRol: number;
@@ -36,7 +37,7 @@ export interface GroupedEstabBodega
 export interface GroupedEstab
   extends Pick<
     Establecimiento,
-    'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
+    'id' | 'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
   > {
   nombreEstab: string;
   puntosEmision: GroupedEstabPuntoEmision[];

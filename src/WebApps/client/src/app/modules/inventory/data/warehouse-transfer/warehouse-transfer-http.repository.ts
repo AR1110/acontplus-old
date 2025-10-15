@@ -5,13 +5,15 @@ import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { TransferenciaBodegaRepository } from '@inventory/domain/repositories/transferencia-bodega.repository';
-import { TransferenciaBodegaMapper } from './transferencia-bodega.mapper';
+import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
+import { TransferenciaBodegaMapper } from './warehouse-transfer.mapper';
+import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
+import {WarehouseTransferDataFormMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-data-form.mapper";
 
 @Injectable({
   providedIn: 'root',
 })
-export class TransferenciaBodegaWebRepository implements TransferenciaBodegaRepository {
+export class WarehouseTransferHttpRepository implements WarehouseTransferRepository {
   private _url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.TRANSFERENCIA_BODEGA}`;
   private _http = inject(HttpClient);
 
@@ -32,6 +34,13 @@ export class TransferenciaBodegaWebRepository implements TransferenciaBodegaRepo
     return this._http
       .get(`${this._url}?json=${json}`)
       .pipe(map(response => TransferenciaBodegaMapper.fromApiFilter(response)));
+  }
+
+  getDataForm(): Observable<WarehouseTransferDataFormResult> {
+    const json = WarehouseTransferDataFormMapper.toJson();
+    return this._http
+      .get(`${this._url}?json=${json}`)
+      .pipe(map(response => WarehouseTransferDataFormMapper.fromJson(response)));
   }
 
   post<T>(data: T) {

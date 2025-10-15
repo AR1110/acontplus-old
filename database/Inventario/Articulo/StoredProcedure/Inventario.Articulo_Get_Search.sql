@@ -14,7 +14,7 @@ GO
 -- Description:	<Description,,>
 -- Test : EXEC [Almacen].[Articulo_Get_Search] 32 ,'[{"busqueda":"galle"}]'
 -- =============================================
-CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Search @userRoleId INT ,@json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Search @userRoleId INT ,@json NVARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from

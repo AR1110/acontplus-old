@@ -5,7 +5,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatIconButton } from '@angular/material/button';
 import {   MatMenuModule } from '@angular/material/menu';
-import { TransferenciaBodegaUseCase } from '@inventory/domain/usecases/transferencia-bodega.use-case';
+import { WarehouseTransferUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
@@ -44,7 +44,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WarehouseTransferComponent implements OnInit {
-  private _useCase = inject(TransferenciaBodegaUseCase);
+  private _useCase = inject(WarehouseTransferUseCase);
   private noti = inject(ToastrNotificationService)
   private dgSvc = inject(DialogService)
 
@@ -87,8 +87,12 @@ export class WarehouseTransferComponent implements OnInit {
   }
 
   openAddEditDialog() {
+    console.log("openAddEditDialog");
     this.dgSvc.open(WarehouseTransferAddEdit, {
-      size: 'xl'
+      size: 'xl',
+      data: {
+        id: 0
+      }
     }).subscribe(result => {
       if(result && typeof result === 'object') {
         this.refresh();
