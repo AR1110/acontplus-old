@@ -45,7 +45,9 @@
                     template: PATH_HTML + 'Shared/_ModalTransferenciaBodega.cshtml',
                     isRenderRazorPartial: true,
                     size: 'xl',
-                    params: {}
+                    params: {
+                        tipo: 'NUEVO'
+                    }
                 })
                 modalRef.result.then(result => {
                     if (typeof result === 'object') {
@@ -57,7 +59,7 @@
             }
         }
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             getList()
         }
 
@@ -69,11 +71,11 @@
             getList()
         }
 
-         function getList () {
+        function getList() {
 
             try {
 
-                if ( $scope.dataSearch.nroSecuencial) {
+                if ($scope.dataSearch.nroSecuencial) {
                     if (
                         !fS.validAndFormatedRangeSequential($scope.dataSearch.nroSecuencial)
                     ) {
@@ -190,6 +192,7 @@
                         size: 'xl',
                         params: {
                             data: response,
+                            tipo: 'EDITAR'
                         }
                     })
                     modalRef.result.then(result => {
@@ -207,12 +210,48 @@
             }
         }
 
+
+
+        $scope.openModalDuplicate = async (item) => {
+            try {
+                showLoader();
+
+                transBodegaSvc.getId(item.idTransferenciaBodega).then(response => {
+                    let modalRef = modalSvc.openModalCustom({
+                        controller: 'ModalTransferenciaBodegaCtrl',
+                        template: PATH_HTML + 'Shared/_ModalTransferenciaBodega.cshtml',
+                        isRenderRazorPartial: true,
+                        size: 'xl',
+                        params: {
+                            data: response,
+                            tipo: 'DUPLICAR'
+                        }
+                    })
+                    modalRef.result.then(result => {
+                        if (typeof result === 'object') {
+                            getList()
+                        }
+                    })
+                }).catch(error => {
+                    console.log(error)
+                }).finally(() => hideLoader())
+
+            } catch (error) {
+                hideLoader();
+                console.log(error)
+            }
+        }
+
+
         $scope.openModalDetalle = async (item) => {
             try {
-                showLoader(); 
+                showLoader();
                 let fileCtrl = nombreModalInventario.TRANSFERENCIA_BODEGA.fileCtrl;
                 let ctrl = nombreModalInventario.TRANSFERENCIA_BODEGA.controllers['D'];
                 let template = nombreModalInventario.TRANSFERENCIA_BODEGA.templates['D'];
+                console.log(fileCtrl)
+                console.log(ctrl)
+                console.log(template)
                 let controller = (await import(fileCtrl))[ctrl];
 
                 let modalRef = modalSvc.open({
@@ -221,7 +260,7 @@
                     isRenderRazorPartial: true,
                     size: 'xl',
                     params: {
-                        id: item.idTransferenciaBodega 
+                        id: item.idTransferenciaBodega
                     }
                 })
                 modalRef.result.then(result => {
@@ -230,7 +269,7 @@
                     }
                 })
 
-               
+
             } catch (error) {
                 console.log(error)
             } finally {
@@ -273,7 +312,7 @@
 
 
 
-        //Reporte 
+        //Reporte
         $scope.getReport = function (item) {
 
             let format = 'pdf';
@@ -310,14 +349,14 @@
     app.controller('ModalTransferenciaBodegaCtrl', ModalTransferenciaBodegaCtrl);
 
     ModalTransferenciaBodegaCtrl.$inject = [
-        "$scope", 
-        "$timeout", 
+        "$scope",
+        "$timeout",
         "$uibModalInstance",
         '$injector',
         "params"
     ];
 
-    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, $injector,   params) {
+    function ModalTransferenciaBodegaCtrl($scope, $timeout, $uibModalInstance, $injector, params) {
 
         const articuloSvc = $injector.get('articuloService');
         const modalSvc = $injector.get('modalService');
@@ -355,8 +394,8 @@
             $scope.gridApi = gridApi;
             if ($scope.gridApi) {
                 $timeout(() => {
-                    $scope.gridApi.core.handleWindowResize(); 
-                     $scope.gridApi.grid.refresh();
+                    $scope.gridApi.core.handleWindowResize();
+                    $scope.gridApi.grid.refresh();
                 }, 5);
             }
 
@@ -365,13 +404,13 @@
                 if (ev.which == 13 || ev.keyCode == '13') {
                     $scope.setFocusArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
             })
 
             gridApi.edit.on.afterCellEdit($scope, (rowEntity, colDef, newValue, oldValue) => {
 
-                //Validar campos                 
+                //Validar campos
                 if (rowEntity[colDef.field] === "" || rowEntity[colDef.field] === undefined || rowEntity[colDef.field] === null) {
                     rowEntity[colDef.field] = oldValue;
                 }
@@ -379,7 +418,7 @@
                 if (colDef.field === "idMedida" && rowEntity.idMedida == oldValue) return
                 if (colDef.field === "cantidad" && rowEntity.cantidad == oldValue) return
 
-               
+
 
                 //Verificacion del stock
                 if (["idMedida", "cantidad"].includes(colDef.field)) {
@@ -413,7 +452,7 @@
                 // Si la cantidad no ha cambiado, no realizar más acciones.
                 if (dataItemMerge.cantidad == oldValue) return;
 
- 
+
                 showLoader();
 
                 articuloSvc.checkNotificationStock({
@@ -480,7 +519,7 @@
             }, 100);
         }
 
-        //Set Total Row 
+        //Set Total Row
         $scope.setTotal = function (rowEntity) {
             let total = rowEntity.cantidad * rowEntity.precioUnitario;
             rowEntity.total = fS.roundNumber(total, 5); //Total Precio Venta
@@ -576,21 +615,21 @@
                 width: '8%',
                 minWidth: '100'
             },
-            // { 
+            // {
             //     name: 'codigoTipoIva', field: 'codigoTipoIva', allowCellFocus: false, type:'string',
             //     enableCellEdit: false, width: '8%', minWidth:'100', enableColumnMenu: false, visible: false
             // },
-            // { 
-            //     name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false, 
+            // {
+            //     name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false,
             //     enableCellEdit: false, width: '8%', minWidth:'100', type:'string',
-            //     enableColumnMenu: false, visible: true 
+            //     enableColumnMenu: false, visible: true
             // },
-            // { 
-            //     name: 'Stock', field: 'stock', allowCellFocus: false, 
+            // {
+            //     name: 'Stock', field: 'stock', allowCellFocus: false,
             //     enableCellEdit: false, width: '5%', minWidth:'65', type:'number',
             //     enableColumnMenu: false, visible: true,  aggregationType: uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
             //         aggregation.rendered = form.roundNumber(aggregation.value,2)
-            //      }, aggregationLabel: "$",  
+            //      }, aggregationLabel: "$",
             // },
             {
                 name: 'P. Costo Unitario',
@@ -620,6 +659,13 @@
             }
         ]
 
+        function isAdd() {
+            return params.tipo === 'NUEVO';
+        }
+
+        function isUpdate() {
+            return params.tipo === 'EDITAR'
+        }
 
         initiload();
         async function initiload() {
@@ -634,6 +680,53 @@
 
                 if ($scope.establecimientosOrigen.length === 0) {
                     tS.toastr('info', 'No tienes asignado ningún Establecimiento');
+                    return
+                }
+
+                if (params.tipo === 'DUPLICAR') {
+
+                    let { comprobante, detalles } = params.data;
+
+                    let dataEstabOrigen = $scope.establecimientosOrigen
+                        .filter((es) => es.puntosEmision.some((pp) => pp.idPuntoEmision === comprobante.idPuntoEmision))
+                        .reduce((acc, curr) => {
+                            return curr;
+                        }, {});
+                    let dataEstabDestino = $scope.establecimientosOrigen
+                        .filter((es) => es.bodegas.some((pp) => pp.idBodega === comprobante.idBodegaDestino))
+                        .reduce((acc, curr) => {
+                            return curr
+                        }, {});
+
+                    $scope.data = {
+                        ...comprobante,
+                        idTransferenciaBodega: 0
+                    };
+
+                    $scope.data.codEstabOrigen = dataEstabOrigen.codEstab;
+                    $scope.data.codEstabDestino = dataEstabDestino.codEstab;
+
+                    //Punto de Emision
+                    $scope.puntosEmision = dataEstabOrigen.puntosEmision;
+
+                    //Bodega Origen
+                    $scope.bodegasOrigen = dataEstabOrigen.bodegas;
+
+
+                    //Bodega Destino
+                    $scope.bodegasDestino = dataEstabDestino.bodegas;
+                    $scope.gridOptions.data = detalles.map(item => {
+                        return {
+                            ...item,
+                            idTransferenciaBodegaDetalle: 0
+                        }
+                    });
+                    enumGridOptions();
+                    $scope.tituloModal = 'Duplicar';
+                    $scope.btnText = 'Guardar';
+                    $scope.iconModal = 'ti-save';
+
+
                     return
                 }
 
@@ -659,13 +752,13 @@
                     //Punto de Emision
                     $scope.puntosEmision = dataEstabOrigen.puntosEmision;
 
-                    //Bodega Origen 
+                    //Bodega Origen
                     $scope.bodegasOrigen = dataEstabOrigen.bodegas;
 
 
-                    //Bodega Destino 
+                    //Bodega Destino
                     $scope.bodegasDestino = dataEstabDestino.bodegas;
-                    $scope.gridOptions.data = detalles; 
+                    $scope.gridOptions.data = detalles;
                     enumGridOptions();
                     $scope.tituloModal = 'Editar';
                     $scope.btnText = 'Actualizar';
@@ -677,7 +770,7 @@
                     const dataEstab = $scope.establecimientosOrigen.find(estab => (estab.defaultEstab));
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegasOrigen = dataEstab.bodegas;
-                    //Codigo Establecimiento 
+                    //Codigo Establecimiento
                     $scope.data.codEstabOrigen = dataEstab.codEstab;
                     $scope.cloneCodEstabOrigen = dataEstab.codEstab;
 
@@ -728,7 +821,7 @@
 
                     $scope.puntosEmision = dataEstab.puntosEmision;
                     $scope.bodegasOrigen = dataEstab.bodegas;
-                    //Codigo Establecimiento 
+                    //Codigo Establecimiento
                     $scope.data.codEstabOrigen = dataEstab.codEstab;
                     $scope.cloneCodEstabOrigen = dataEstab.codEstab;
 
@@ -744,7 +837,7 @@
                     }
                     $scope.data.codEstabDestino = null;
                     $scope.data.idBodegaDestino = 0;
-                    for(let item of $scope.gridOptions.data){
+                    for (let item of $scope.gridOptions.data) {
                         item.cantidad = 0;
                     }
                     $scope.$apply();
@@ -827,33 +920,33 @@
             }
         }
 
-        function openModalAdvancedSearch(){ 
+        function openModalAdvancedSearch() {
 
             let modalRef = modalSvc.openWithComponent({
-                 component: 'transferenciaBodegaAdvancedSearch',
-                 size: 'xl',
-                 params: {
+                component: 'transferenciaBodegaAdvancedSearch',
+                size: 'xl',
+                params: {
                     bodegasOrigen: structuredClone($scope.bodegasOrigen),
                     bodegaOrigenId: $scope.data.idBodegaOrigen,
                     subFamilias: structuredClone(subFamilias)
-                 }
+                }
             })
 
-            modalRef.result.then(response=>{ 
-                if(response && response.articlesSelected         ){
-                    const merge = [...$scope.gridOptions.data, ...response.articlesSelected ].reduce((acc, item) => {
+            modalRef.result.then(response => {
+                if (response && response.articlesSelected) {
+                    const merge = [...$scope.gridOptions.data, ...response.articlesSelected].reduce((acc, item) => {
                         acc[item.idArticulo] = item;
                         return acc;
-                      }, {});
-                      
-                      // Convertir el objeto de vuelta a un array
-                      const listaUnida = Object.values(merge);
-                      $scope.gridOptions.data = structuredClone(listaUnida)
+                    }, {});
 
-                } 
+                    // Convertir el objeto de vuelta a un array
+                    const listaUnida = Object.values(merge);
+                    $scope.gridOptions.data = structuredClone(listaUnida)
+
+                }
 
 
-            }) 
+            })
         }
 
         function addRow() {
@@ -875,22 +968,23 @@
         }
 
         $scope.addItem = function (entity, item, medidas) {
-            
-            let dataMedida = medidas.find(m=>m.defaultMedida);
+
+            let dataMedida = medidas.find(m => m.defaultMedida);
 
             entity.codigo = item.codigoArticulo;
             entity.idArticulo = item.idArticulo;
             entity.descripcion = item.descripcion;
             entity.stock = item.stock;
             entity.precioActual = dataMedida.precioCostoFraccionado;
-            entity.total = dataMedida.precioCosto;
+            //    entity.total = dataMedida.precioCosto;
             entity.llevaInventario = item.llevaInventario;
-            entity.medidas = medidas; //Lista Medida 
-            entity.idMedida = dataMedida.idMedida; //Medida por defecto    
+            entity.medidas = medidas; //Lista Medida
+            entity.idMedida = dataMedida.idMedida; //Medida por defecto
             entity.conversion = dataMedida.conversion;
             entity.precioCosto = dataMedida.precioCosto;
             entity.precioUnitario = dataMedida.precioUnitario;
             entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
+            $scope.setTotal(entity);
         }
 
 
@@ -1054,7 +1148,7 @@
                     data: $scope.data,
                     detalles: $scope.gridOptions.data,
                     tiposTransaccion: $scope.tiposTransaccion,
-                    tipoDocumento : $scope.tipoDocumento,
+                    tipoDocumento: $scope.tipoDocumento,
                     itemsDeleted
                 })
                 showLoader();

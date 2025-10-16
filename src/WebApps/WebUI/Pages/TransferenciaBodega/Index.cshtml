@@ -130,8 +130,11 @@
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu">
                                         <button class="dropdown-item" type="button" ng-click="openModalDetalle(item)"><i
                                                 class="ti-menu"></i> Detalle</button>
-                                        <button class="dropdown-item" type="button" ng-click="openModalEditar(item)"><i
-                                                class="ti-pencil"></i> Editar</button>
+                                        <button class="dropdown-item" type="button" ng-if="item.estadoCodigo!=='A'"
+                                            ng-click="openModalEditar(item)"><i class="ti-pencil"></i> Editar</button>
+                                        <button class="dropdown-item" type="button"
+                                            ng-click="openModalDuplicate(item)"><i class="ti-file"></i>
+                                            Duplicar</button>
                                         <button class="dropdown-item" type="button" ng-click="askToDelete(item)"><i
                                                 class="ti-na"></i> Anular</button>
                                         <button class="dropdown-item" type="button" ng-click="getReport(item)"><i
