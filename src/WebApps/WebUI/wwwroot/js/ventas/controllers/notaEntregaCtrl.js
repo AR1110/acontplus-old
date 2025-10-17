@@ -1464,7 +1464,7 @@
                 enableCellEdit: false,
                 width: '12%',
                 minWidth: '100',
-                cellTemplate: CELL_TEMPLATE_OPTION,
+                cellTemplate: isRegister() ? CELL_TEMPLATE_OPTION : '',
             },
             {
                 name: 'N°',
@@ -1490,10 +1490,13 @@
             {
                 name: "Descripción",
                 field: "descripcion",
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario !== true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario !== true;
+                    }
+                    return false;
                 },
                 cellTooltip: function (row) {
                     return row.entity.descripcion;
@@ -1504,7 +1507,8 @@
             {
                 name: 'Cant.',
                 field: 'cantidad',
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'number',
                 width: '6%',
                 minWidth: '50'
@@ -1514,9 +1518,9 @@
                 field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.medida,
-                enableCellEditOnFocus: ventaDetailPermission.medida,
-                allowCellFocus: ventaDetailPermission.medida,
+                enableCellEdit: isRegister() && ventaDetailPermission.medida,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.medida,
+                allowCellFocus: isRegister() && ventaDetailPermission.medida,
                 editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         return {
@@ -1540,9 +1544,9 @@
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: ventaDetailPermission.tipoIva,
-                allowCellFocus: ventaDetailPermission.tipoIva,
-                enableCellEditOnFocus: ventaDetailPermission.tipoIva,
+                enableCellEdit: isRegister() && ventaDetailPermission.tipoIva,
+                allowCellFocus: isRegister() && ventaDetailPermission.tipoIva,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.tipoIva,
                 //    visible: config.porcentajeIva
             },
             {
@@ -1552,9 +1556,9 @@
                 minWidth: '80',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.tarifa,
-                enableCellEditOnFocus: ventaDetailPermission.tarifa,
-                allowCellFocus: ventaDetailPermission.tarifa,
+                enableCellEdit: isRegister() && ventaDetailPermission.tarifa,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.tarifa,
+                allowCellFocus: isRegister() && ventaDetailPermission.tarifa,
                 editDropdownOptionsFunction: (rowEntity) => {
                     return rowEntity.articuloTarifas.map(val => ({
                         id: val.idTarifa,
@@ -1565,14 +1569,17 @@
             {
                 name: 'Precio U.',
                 field: 'precioUnitario',
-                enableCellEditOnFocus: true,
+                enableCellEditOnFocus: isRegister(),
                 enableColumnMenu: false,
-                allowCellFocus: true,
+                allowCellFocus: isRegister(),
                 type: 'number',
                 width: '8%',
                 minWidth: '90',
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario : true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario : true;
+                    }
+                    return false;
                 },
                 // cellFilter: "currency:'$'",
             },
@@ -1581,13 +1588,16 @@
                 field: 'precioConIva',
                 min: 0,
                 type: 'number',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                allowCellFocus: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 width: '7%',
                 minWidth: '90',
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
+                    }
+                    return false;
                 },
                 // cellFilter: "currency:'$'",
             },
@@ -1597,9 +1607,9 @@
                 // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
                 // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
                 // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                allowCellFocus: isRegister(),
+                enableCellEditOnFocus: isRegister(),
 
                 min: 0,
                 width: '4%',
@@ -1615,9 +1625,9 @@
                 // enableCellEdit: ventaDetailPermission.descuento,
                 // enableCellEditOnFocus: ventaDetailPermission.descuento,
                 // allowCellFocus: ventaDetailPermission.descuento,
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                allowCellFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
+                allowCellFocus: isRegister(),
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -1681,8 +1691,8 @@
             {
                 name: 'Nota',
                 field: 'nota',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'string',
                 width: '15%',
                 minWidth: '100'
@@ -1694,8 +1704,8 @@
                 cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'number',
                 width: '11%',
                 minWidth: '100'
@@ -2400,6 +2410,8 @@
             return true;
         }
 
+        $scope.isRegister = isRegister;
+        $scope.isUpdate = isUpdate;
 
         function isRegister() {
             return (params.action === 'NUEVO' || params.action === 'DUPLICAR');

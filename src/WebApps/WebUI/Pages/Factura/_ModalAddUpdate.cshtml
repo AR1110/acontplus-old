@@ -126,33 +126,10 @@
                 </div>
                 <!--End New-Duplicate Doc-->
                 <!--Start Update-->
-                <div class="input-group" ng-if="data.idFactura>0">
-                    <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice"
-                        class="form-control border-select" ng-model="cliente.nombreFiscal" cliente-search-drtv
-                        on-select="onSelectedClienteChange(result)" on-keyup-cliente="onKeyupCustomer()"
-                        placeholder="Ingrese C.I o Nombre Comercial" autocomplete="off" onclick="select();">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary btn-xs border-select"
-                            id="btnNewCustomerDocument" btn-cliente result-modal="onSelectedClienteChange(result)">
-                            <i class="fa fa-plus fa-xs"></i>
-                        </button>
+                <input type="text" id="clienteSearchInvoice" name="clienteSearchInvoice" ng-if="data.idFactura>0"
+                    class="form-control border-select" ng-model="cliente.nombreFiscal" disabled>
 
-                        <button type="button" class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0"
-                            btn-cliente result-modal="onSelectedClienteChange(result)" params="cliente" tabindex="-1">
-                            <i class="fa fa-edit fa-xs"></i>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary btn-xs" btn-cliente-lista
-                            result-modal="onSelectedClienteChange(result)" tabindex="-1">
-                            <i class="fa fa-search fa-xs"></i>
-                        </button>
 
-                        <button type="button" cliente-info-popover customer="cliente"
-                            info-adicional-documento="infoAdicionalDocumento" popover-placement='top'
-                            class="btn btn-outline-secondary btn-xs" ng-if="cliente.idCliente>0" tabindex="-1">
-                            <i class="fa fa-info fa-xs"></i>
-                        </button>
-                    </div>
-                </div>
                 <script type="text/ng-template" id="customerSearchSaleTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
                                 <span class="item-title"><b> {{match.model.numeroIdentificacion}}</b> - {{match.model.nombreFiscal}}</span>
@@ -184,8 +161,8 @@
         <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
             <div class="form-group">
                 <label for="bodegas">Bodega</label>
-                <select name="bodegas" id="bodegas" class="form-control border-select" ng-model="data.idBodega"
-                    ng-change="onChangeBodega()" tabindex="-1">
+                <select name="bodegas" id="bodegas" ng-disabled="!isRegister()" class="form-control border-select"
+                    ng-model="data.idBodega" ng-change="onChangeBodega()" tabindex="-1">
                     <option ng-value="item.idBodega" ng-repeat="item in bodegas">
                         {{item.descripcion}}
                     </option>
@@ -202,12 +179,20 @@
                         <i class="fas fa-info-circle fa-xs"></i>
                     </span>
                 </label>
-                <select id="tarifas" class="form-control border-select" ng-model="data.idTarifa"
+                <select id="tarifas" ng-if="isRegister()" class="form-control border-select" ng-model="data.idTarifa"
                     ng-change="onChangeTarifaGeneral()" tabindex="-1" ng-disabled="!permisoComprobanteVenta.tarifa">
                     <option ng-value="item.idTarifa" ng-repeat="item in tarifas">
                         {{item.descripcion}}
                     </option>
                 </select>
+
+                <select id="tarifas" ng-if="isUpdate()" class="form-control border-select" ng-model="data.idTarifa"
+                    tabindex="-1" disabled>
+                    <option ng-value="item.idTarifa" ng-repeat="item in tarifas">
+                        {{item.descripcion}}
+                    </option>
+                </select>
+
             </div>
         </div>
     </div>
@@ -254,7 +239,7 @@
     <div class="row">
         <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
             <div class="row">
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12" ng-if="isRegister()">
                     <label for="">Buscar por Artículo</label>
 
                     <custom-search-articulo id-bodega="data.idBodega" on-select="onSelect(params)" es-venta="true"
@@ -266,16 +251,13 @@
                     </md-autocomplete-articulo-component> *@
                 </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="isRegister()">
                     <div class="form-group">
                         <label for="searchBarcode">Buscar por Código</label>
                         <custom-search-articulo-barcode es-venta="true" id-bodega="data.idBodega"
                             on-select="onSelect(params)" es-venta="true" items="gridOptions.data"
                             fecha-emision="data.fechaEmision"
                             ref-producto-venta="refProductoVenta"></custom-search-articulo-barcode>
-                        @* <articulo-search-barcode tipo-doc="tipoDoc"
-                        set-item-articulo-en-detalle="setItemArticuloEnDetalle(item)"
-                        id-bodega="data.idBodega"></articulo-search-barcode> *@
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12" ng-if="config.multipleVendedor">
@@ -315,7 +297,7 @@
         <div class="col-xl-9 col-lg-9 col-md-6 col-sm-12 col-12">
             <div class="row mt-2">
                 <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
+                    <div class="form-group" ng-if="isRegister()">
                         <label>% Descuento</label>
                         <div class="input-group">
                             <input ng-model="data.porcentajeDescuento"
@@ -330,10 +312,15 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group" ng-if="isUpdate()">
+                        <input ng-model="data.porcentajeDescuento" ng-disabled="true" decimal
+                            class="form-control border-select" />
+                    </div>
                 </div>
 
                 <div class="col-lg-3 col-md-6 col-sm-12 col-12">
-                    <div class="form-group">
+                    <div class="form-group" ng-if="isRegister()">
                         <label>Descuento</label>
                         <div class="input-group">
                             <input ng-model="data.totalDescuento" id="totalDescuento"
@@ -348,6 +335,12 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="form-group" ng-if="isUpdate()">
+                        <input ng-model="data.totalDescuento" ng-disabled="true" decimal
+                            class="form-control border-select" />
+                    </div>
+
                 </div>
 
                 @* <div class="col-lg-2 col-md-6 col-sm-12 col-12">

@@ -27,7 +27,7 @@
     ]
 
     function notaCreditoClienteCtrl($scope, $injector, decodeToken) {
-                const docElectSvc = $injector.get('docElectService');
+        const docElectSvc = $injector.get('docElectService');
 
 
         notaCreditoSvc = $injector.get('notaCreditoService');
@@ -582,7 +582,7 @@
                 enableCellEdit: false,
                 width: '5%',
                 minWidth: '50',
-                cellTemplate: CELL_TEMPLATE_OPTION,
+                cellTemplate: isRegister() ? CELL_TEMPLATE_OPTION : '',
             },
             {
                 name: 'N°',
@@ -608,10 +608,13 @@
             {
                 name: "Descripción",
                 field: "descripcion",
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario !== true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario !== true;
+                    }
+                    return false;
                 },
                 cellTooltip: function (row) {
                     return row.entity.descripcion;
@@ -622,7 +625,8 @@
             {
                 name: 'Cant.',
                 field: 'cantidad',
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 min: 1,
                 type: 'number',
                 width: '6%',
@@ -633,9 +637,9 @@
                 field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.medida.update,
-                enableCellEditOnFocus: ventaDetailPermission.medida.update,
-                allowCellFocus: ventaDetailPermission.medida.update,
+                enableCellEdit: isRegister() && ventaDetailPermission.medida.update,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.medida.update,
+                allowCellFocus: isRegister() && ventaDetailPermission.medida.update,
                 editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         return {
@@ -666,9 +670,9 @@
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: ventaDetailPermission.tipoIva.update,
-                allowCellFocus: ventaDetailPermission.tipoIva.update,
-                enableCellEditOnFocus: ventaDetailPermission.tipoIva.update,
+                enableCellEdit: isRegister() && ventaDetailPermission.tipoIva.update,
+                allowCellFocus: isRegister() && ventaDetailPermission.tipoIva.update,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.tipoIva.update,
                 //    visible: config.porcentajeIva
             },
             {
@@ -678,9 +682,9 @@
                 minWidth: '80',
                 cellFilter: 'mapTarifa:row.entity.articuloTarifas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: ventaDetailPermission.tarifa.update,
-                enableCellEditOnFocus: ventaDetailPermission.tarifa.update,
-                allowCellFocus: ventaDetailPermission.tarifa.update,
+                enableCellEdit: isRegister() && ventaDetailPermission.tarifa.update,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.tarifa.update,
+                allowCellFocus: isRegister() && ventaDetailPermission.tarifa.update,
                 editDropdownOptionsFunction: (rowEntity) => {
                     return rowEntity.articuloTarifas.map(val => ({
                         id: val.idTarifa,
@@ -691,14 +695,17 @@
             {
                 name: 'Precio U.',
                 field: 'precioUnitario',
-                enableCellEditOnFocus: true,
+                enableCellEditOnFocus: isRegister(),
                 enableColumnMenu: false,
-                allowCellFocus: true,
+                allowCellFocus: isRegister(),
                 type: 'number',
                 width: '8%',
                 minWidth: '100',
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioUnitario.update : true;
+                    }
+                    return false;
                 },
                 // cellFilter: "currency:'$'",
             },
@@ -707,22 +714,25 @@
                 field: 'precioConIva',
                 min: 0,
                 type: 'number',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                allowCellFocus: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 width: '7%',
                 minWidth: '90',
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario ? ventaDetailPermission.precioConIva : true;
+                    }
+                    return false;
                 },
                 // cellFilter: "currency:'$'",
             },
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: ventaDetailPermission.porcentajeDescuento,
-                allowCellFocus: ventaDetailPermission.porcentajeDescuento,
-                enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
+                enableCellEdit: isRegister() && ventaDetailPermission.porcentajeDescuento,
+                allowCellFocus: isRegister() && ventaDetailPermission.porcentajeDescuento,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.porcentajeDescuento,
                 min: 0,
                 width: '4%',
                 minWidth: '60',
@@ -734,9 +744,9 @@
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: ventaDetailPermission.descuento,
-                enableCellEditOnFocus: ventaDetailPermission.descuento,
-                allowCellFocus: ventaDetailPermission.descuento,
+                enableCellEdit: isRegister() && ventaDetailPermission.descuento,
+                enableCellEditOnFocus: isRegister() && ventaDetailPermission.descuento,
+                allowCellFocus: isRegister() && ventaDetailPermission.descuento,
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -800,8 +810,8 @@
             {
                 name: 'Nota',
                 field: 'nota',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'string',
                 width: '15%',
                 minWidth: '100'
@@ -813,8 +823,8 @@
                 cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'number',
                 width: '11%',
                 minWidth: '100'
@@ -1140,8 +1150,8 @@
                         }
 
                         facturaSvc.getForCreditNote(json).then(response => {
-                           $scope.facturas = response.facturas || [];
-                           $scope.dataSearch.totalRecords = $scope.facturas.length>0 ? $scope.facturas[0].totalRecords: 0
+                            $scope.facturas = response.facturas || [];
+                            $scope.dataSearch.totalRecords = $scope.facturas.length > 0 ? $scope.facturas[0].totalRecords : 0
                         }).catch(error => {
                             console.log(error)
                         })
@@ -1498,6 +1508,9 @@
         $scope.getDataAdditionalDocument = function (result) {
             $scope.infoAdicionalDocumento = result;
         }
+
+        $scope.isUpdate = isUpdate;
+        $scope.isRegister = isRegister;
 
         function isUpdate() {
             return $scope.data.idNotaCredito > 0;

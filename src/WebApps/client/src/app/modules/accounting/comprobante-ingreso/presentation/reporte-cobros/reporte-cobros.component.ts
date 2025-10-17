@@ -55,6 +55,7 @@ export class ReporteCobrosComponent implements OnInit  {
   tiposDoc = signal<TipoDocSelect[]>([])
   subEntidadFinanciera = signal<SubEntidadFinancieraSelectHtmlOnly[]>([]);
   bancos = signal<BancoSelectOnly[]>([]);
+  users = signal<any[]>([]);
   isCustomerSearchSimple = true;
   dataSearch = {
     codEstab: '',
@@ -74,6 +75,8 @@ export class ReporteCobrosComponent implements OnInit  {
     reference: '',
     loteChecked: false,
     lote: '',
+    userChecked: false,
+    userId: 0
   };
   // Services
   private tS = inject(ToastrNotificationService);
@@ -113,6 +116,7 @@ export class ReporteCobrosComponent implements OnInit  {
       this.dataSearch.codDoc =
         this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
           ?.codDoc || '';
+      this.users.set(response.users);
     });
   }
 
@@ -174,6 +178,8 @@ export class ReporteCobrosComponent implements OnInit  {
         }
       }
 
+      const userId = this.dataSearch.userChecked ? this.dataSearch.userId : null;
+
       const dataParms = {
         tipo: this.dataSearch.documentoChecked ? 1 : 2,
         format,
@@ -195,6 +201,7 @@ export class ReporteCobrosComponent implements OnInit  {
         reference: removeSpacesInValue(this.dataSearch.reference),
         loteChecked: this.dataSearch.loteChecked,
         lote: removeSpacesInValue(this.dataSearch.lote),
+        userId
       };
 
       const parameters = {

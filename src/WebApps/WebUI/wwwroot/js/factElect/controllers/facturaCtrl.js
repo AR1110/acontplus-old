@@ -372,13 +372,13 @@
             };
         }
 
-        async function openModalRegistrarSolicitudAuth(data){
+        async function openModalRegistrarSolicitudAuth(data) {
             let fileCtrl = nombreModalCommon.SOLICITUD_AUTORIZACION.fileCtrl;
             let ctrl = nombreModalCommon.SOLICITUD_AUTORIZACION.controller;
             let template = nombreModalCommon.SOLICITUD_AUTORIZACION.template;
             let controller = (await import(fileCtrl))[ctrl];
 
-            const {vendedores, config} = mainDataForm;
+            const { vendedores, config } = mainDataForm;
 
             let modalRef = modalSvc.open({
                 controller,
@@ -388,7 +388,7 @@
                     vendedores,
                     esMultipleVendedor: config.multipleVendedor,
                     data,
-                } ,
+                },
             })
 
         }
@@ -549,8 +549,8 @@
                     if (result && typeof result === 'object' && result.esAnulado) {
 
                         if (typeof $scope.permisoEditarDoc === "object" && $scope.permisoEditarDoc.requiereClave) {
-                        //    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
-                        $solicitudAutorizacionSvc.update(paramsPermission)
+                            //    userCustomerPermissionSvc.updateRequestKey(paramsPermission);
+                            $solicitudAutorizacionSvc.update(paramsPermission)
                         }
                         $scope.getFacturas();
                     }
@@ -1586,7 +1586,7 @@
                     enableCellEdit: false,
                     width: "12%",
                     minWidth: "100",
-                    cellTemplate: CELL_TEMPLATE_OPTION,
+                    cellTemplate: isRegister() && CELL_TEMPLATE_OPTION,
                 },
                 {
                     name: "N°",
@@ -1612,10 +1612,13 @@
                 {
                     name: "Descripción",
                     field: "descripcion",
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     cellEditableCondition: function (scope) {
-                        return scope.row.entity.llevaInventario !== true;
+                        if (isRegister()) {
+                            return scope.row.entity.llevaInventario !== true;
+                        }
+                        return false;
                     },
                     cellTooltip: function (row) {
                         return row.entity.descripcion;
@@ -1626,7 +1629,8 @@
                 {
                     name: "Cant.",
                     field: "cantidad",
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     min: 1,
                     type: "number",
                     width: "6%",
@@ -1637,9 +1641,9 @@
                     field: "idMedida",
                     cellFilter: "mapMedida:row.entity.medidas",
                     editableCellTemplate: "ui-grid/dropdownEditor",
-                    enableCellEdit: ventaDetailPermission.medida,
-                    enableCellEditOnFocus: ventaDetailPermission.medida,
-                    allowCellFocus: ventaDetailPermission.medida,
+                    enableCellEdit: isRegister() && ventaDetailPermission.medida,
+                    enableCellEditOnFocus: isRegister() && ventaDetailPermission.medida,
+                    allowCellFocus: isRegister() && ventaDetailPermission.medida,
                     editDropdownOptionsFunction: function (rowEntity) {
                         return rowEntity.medidas.map(function (val) {
                             return {
@@ -1669,9 +1673,9 @@
                     cellFilter: "cellFilterTipoIva:this",
                     editDropdownValueLabel: "descripcion",
                     editDropdownIdLabel: "idTipoIva",
-                    enableCellEdit: ventaDetailPermission.tipoIva,
-                    allowCellFocus: ventaDetailPermission.tipoIva,
-                    enableCellEditOnFocus: ventaDetailPermission.tipoIva,
+                    enableCellEdit: isRegister() && ventaDetailPermission.tipoIva,
+                    allowCellFocus: isRegister() && ventaDetailPermission.tipoIva,
+                    enableCellEditOnFocus: isRegister() && ventaDetailPermission.tipoIva,
                     //    visible: config.porcentajeIva
                 },
                 {
@@ -1681,9 +1685,9 @@
                     minWidth: "80",
                     cellFilter: "mapTarifa:row.entity.articuloTarifas",
                     editableCellTemplate: "ui-grid/dropdownEditor",
-                    enableCellEdit: ventaDetailPermission.tarifa,
-                    enableCellEditOnFocus: ventaDetailPermission.tarifa,
-                    allowCellFocus: ventaDetailPermission.tarifa,
+                    enableCellEdit: isRegister() && ventaDetailPermission.tarifa,
+                    enableCellEditOnFocus: isRegister() && ventaDetailPermission.tarifa,
+                    allowCellFocus: isRegister() && ventaDetailPermission.tarifa,
                     editDropdownOptionsFunction: (rowEntity) => {
                         return rowEntity.articuloTarifas.map((val) => ({
                             id: val.idTarifa,
@@ -1694,16 +1698,21 @@
                 {
                     name: "Precio U.",
                     field: "precioUnitario",
-                    enableCellEditOnFocus: true,
+                    enableCellEditOnFocus: isRegister(),
                     enableColumnMenu: false,
-                    allowCellFocus: true,
+                    allowCellFocus: isRegister(),
                     type: "number",
                     width: "8%",
                     minWidth: "90",
                     cellEditableCondition: function (scope) {
-                        return scope.row.entity.llevaInventario
-                            ? ventaDetailPermission.precioUnitario
-                            : true;
+
+                        if (isRegister()) {
+                            return scope.row.entity.llevaInventario
+                                ? ventaDetailPermission.precioUnitario
+                                : true;
+
+                        }
+                        return false;
                     },
                     // cellFilter: "currency:'$'",
                 },
@@ -1712,9 +1721,9 @@
                     field: "precioConIva",
                     min: 0,
                     type: "number",
-                    enableCellEdit: true,
-                    allowCellFocus: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    allowCellFocus: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     width: "7%",
                     minWidth: "90",
                     cellEditableCondition: function (scope) {
@@ -1730,9 +1739,9 @@
                     // enableCellEdit: ventaDetailPermission.porcentajeDescuento,
                     // allowCellFocus: ventaDetailPermission.porcentajeDescuento,
                     // enableCellEditOnFocus: ventaDetailPermission.porcentajeDescuento,
-                    enableCellEdit: true,
-                    allowCellFocus: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    allowCellFocus: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     min: 0,
                     width: "4%",
                     minWidth: "60",
@@ -1747,9 +1756,9 @@
                     // enableCellEdit: ventaDetailPermission.descuento,
                     // enableCellEditOnFocus: ventaDetailPermission.descuento,
                     // allowCellFocus: ventaDetailPermission.descuento,
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
-                    allowCellFocus: true,
+                    enableCellEdit: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
+                    allowCellFocus: isRegister(),
                     min: 0,
                     type: "number",
                     width: "4%",
@@ -1813,8 +1822,8 @@
                 {
                     name: "Nota",
                     field: "nota",
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     type: "string",
                     width: "15%",
                     minWidth: "100",
@@ -1826,8 +1835,8 @@
                     cellFilter: "cellFilterBodega:this",
                     editDropdownValueLabel: "descripcion",
                     editDropdownIdLabel: "idBodega",
-                    enableCellEdit: true,
-                    enableCellEditOnFocus: true,
+                    enableCellEdit: isRegister(),
+                    enableCellEditOnFocus: isRegister(),
                     type: "number",
                     width: "11%",
                     minWidth: "100",
@@ -2256,7 +2265,7 @@
             }
         }
 
-        $scope.onChangeTarifaGeneral =  function () {
+        $scope.onChangeTarifaGeneral = function () {
             if (!$scope.permisoComprobanteVenta.tarifa) {
                 $scope.data.idTarifa = $scope.dataClone.idTarifa;
                 tS.toastr("warning", "No tienes permiso para realizar esta acción");
@@ -2266,7 +2275,7 @@
             let tarifa = $scope.tarifas.find(
                 (item) => item.idTarifa === $scope.data.idTarifa
             );
-              Swal.fire({
+            Swal.fire({
                 html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
                 icon: "warning",
                 showCancelButton: true,
@@ -2274,7 +2283,7 @@
                 confirmButtonText: `Sí, cambiar!`,
                 cancelButtonText: "No, cancelar!",
                 allowOutsideClick: false,
-            }).then(result=>{
+            }).then(result => {
 
 
                 if (result.isConfirmed) {
@@ -2840,8 +2849,8 @@
                 return;
             }
 
-            if($scope.infoAdicionalDocumento.length>0){
-                if($scope.infoAdicionalDocumento.some(item=>!fS.isValidField(item.nombre) || !fS.isValidField(item.valor))){
+            if ($scope.infoAdicionalDocumento.length > 0) {
+                if ($scope.infoAdicionalDocumento.some(item => !fS.isValidField(item.nombre) || !fS.isValidField(item.valor))) {
                     tS.toastr(
                         "warning",
                         "En información adicional del documento algunos campos estan vaciós"
@@ -2852,6 +2861,9 @@
 
             return true;
         }
+
+        $scope.isRegister = isRegister;
+        $scope.isUpdate = isUpdate;
 
         function isRegister() {
             return params.action === "NUEVO" || params.action === "DUPLICAR";
@@ -2964,12 +2976,12 @@
 
                 if (cuotas && cuotas.length === 0) return;
 
-                 const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
+                const responseValidateNormativeSri = await docElectSvc.validateNormativeSri({
                     accion: 'guardar',
-                    identificacion:  $scope.cliente.numeroIdentificacion,
-                   importeTotal: $scope.data.total,
-                   idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
-                   codDoc: '01'
+                    identificacion: $scope.cliente.numeroIdentificacion,
+                    importeTotal: $scope.data.total,
+                    idFormaPago: $scope.dataFormaPago.idFormaPagoSri,
+                    codDoc: '01'
                 })
 
                 if (isRegister()) {
