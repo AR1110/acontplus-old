@@ -33,14 +33,28 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
       .pipe(
         map(response => {
           const result = {
-            data: [],
-          };
-
-          if (response.code === '1') {
-            result.data = ComprobanteIngresoMapper.fromApiGetAll(
-              JSON.parse(response.payload as string),
-            ).data;
+            establecimientos: [] as GroupedEstab[],
+            tiposDoc :[],
+            subEntidadesFinanciera:[],
+            bancos :[],
+            users: []
           }
+          if(response.code==="0") {
+            return result;
+          }
+
+          const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco, users } = JSON.parse(response.payload as string);
+
+          result.establecimientos = groupEstabUtil({
+            estabs: ptoEmision,
+            isGroupPuntoEmision: true,
+          });
+
+
+          result.tiposDoc = tipoDocumento;
+          result.subEntidadesFinanciera = subEntidadFinanciera;
+          result.bancos = banco;
+          result.users = users;
           return result;
         }),
       );

@@ -2,7 +2,7 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-radio-group [(ngModel)]="dataSearch.documentoChecked" aria-label="Select an option">
           <mat-radio-button [value]="true">Documento</mat-radio-button>
@@ -14,6 +14,9 @@
       </div>
       <div class="col">
         <mat-checkbox [(ngModel)]="dataSearch.supplierChecked">Cliente</mat-checkbox>
+      </div>
+      <div class="col">
+        <mat-checkbox [(ngModel)]="dataSearch.userChecked">Usuario</mat-checkbox>
       </div>
     </div>
 
@@ -99,7 +102,7 @@
       }
     </div>
 
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Nro Documento:</mat-label>
@@ -125,6 +128,21 @@
           <ng-container matSuffix>
             <mat-checkbox [(ngModel)]="dataSearch.loteChecked"></mat-checkbox>
           </ng-container>
+        </mat-form-field>
+      </div>
+
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Usuario:</mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.userId"
+          >
+            <mat-option [value]="0">Todos</mat-option>
+
+            @for (item of users(); track $index) {
+              <mat-option [value]="item.idUsuario">{{item.nombreUsuario}}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
       </div>
     </div>

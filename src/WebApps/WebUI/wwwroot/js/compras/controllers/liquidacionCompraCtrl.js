@@ -62,7 +62,7 @@
             $scope.totalSaldo = fS.roundNumber(totalSaldo, 5);
         }
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             $scope.getLiquidacionesCompra();
         }
 
@@ -314,7 +314,7 @@
 
         }
 
-        //Reporte 
+        //Reporte
         $scope.getReport = function (item) {
             try {
                 let format = 'pdf';
@@ -345,9 +345,9 @@
 
 
     /**
-     * 
+     *
      * REGISTRAR Y ACTUALIZAR EL DOCUMENTO LC
-     * 
+     *
      */
     app.controller('modalLiquicionCompraCtrl', modalLiquicionCompraCtrl);
 
@@ -382,7 +382,7 @@
         }
         $scope.proveedor = {};
 
-        //Informacion adicional del documento 
+        //Informacion adicional del documento
         $scope.infoAdicionalDocumento = [];
 
         $scope.cuotas = [];
@@ -411,7 +411,7 @@
                 if (ev.which == 13 || ev.keyCode == '13') {
                     setFocusArticulo();
                     $scope.gridApi.grid.cellNav.clearFocus();
-                    // ev.stopPropagation();   
+                    // ev.stopPropagation();
                 }
             })
 
@@ -433,6 +433,8 @@
                 setCalculoTotales(colDef.field, rowEntity, oldValue);
             })
         }
+
+
 
         function calculateTotalItems(items) {
             return items.map(item => {
@@ -543,14 +545,15 @@
         }
 
         function setColumnDefs() {
+            const cellTemplate = `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
+                           <a  ng-click="grid.appScope.openModalArticle(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a>
+                        `;
             $scope.gridOptions.columnDefs = [{
                 name: 'Op.',
                 enableCellEdit: false,
                 width: '5%',
                 minWidth: '100',
-                cellTemplate: `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
-                           <a  ng-click="grid.appScope.openModalArticle(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a>
-                        `
+                cellTemplate: isRegister() ? cellTemplate : ''
             },
             {
                 name: 'N°',
@@ -571,10 +574,13 @@
             {
                 name: "descripción",
                 field: "descripcion",
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 cellEditableCondition: function (scope) {
-                    return scope.row.entity.llevaInventario !== true;
+                    if (isRegister()) {
+                        return scope.row.entity.llevaInventario !== true;
+                    }
+                    return false;
                 },
                 cellTooltip: function (row) {
                     return row.entity.descripcion;
@@ -585,7 +591,8 @@
             {
                 name: 'Cant.',
                 field: 'cantidad',
-                enableCellEditOnFocus: true,
+                enableCellEditOnFocus: isRegister(),
+                enableCellEdit: isRegister(),
                 validators: {
                     required: true
                 },
@@ -599,8 +606,8 @@
                 field: 'idMedida',
                 cellFilter: 'mapMedida:row.entity.medidas',
                 editableCellTemplate: 'ui-grid/dropdownEditor',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 editDropdownOptionsFunction: function (rowEntity) {
                     return rowEntity.medidas.map(function (val) {
                         return {
@@ -624,15 +631,16 @@
                 cellFilter: 'cellFilterTipoIva:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idTipoIva',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 //    visible: config.porcentajeIva
             },
             {
                 name: 'Precio U.',
                 field: 'precioUnitario',
                 min: 0,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 // cellFilter: "currency:'$':5",
                 type: 'number',
                 width: '7%',
@@ -642,9 +650,9 @@
             {
                 name: '%',
                 field: 'porcentajeDescuento',
-                enableCellEdit: true,
-                allowCellFocus: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                allowCellFocus: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 min: 0,
                 width: '4%',
                 minWidth: '60',
@@ -656,9 +664,9 @@
             {
                 name: 'Desc.',
                 field: 'valorDescuento',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
-                allowCellFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
+                allowCellFocus: isRegister(),
                 min: 0,
                 type: 'number',
                 width: '4%',
@@ -709,9 +717,9 @@
             {
                 name: 'Ice',
                 field: 'ice',
-                allowCellFocus: true,
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                allowCellFocus: isRegister(),
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'number',
                 width: '6%',
                 minWidth: '60',
@@ -724,8 +732,8 @@
                 cellFilter: 'cellFilterBodega:this',
                 editDropdownValueLabel: 'descripcion',
                 editDropdownIdLabel: 'idBodega',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'number',
                 width: '11%',
                 minWidth: '100'
@@ -734,8 +742,8 @@
             {
                 name: 'Nota',
                 field: 'nota',
-                enableCellEdit: true,
-                enableCellEditOnFocus: true,
+                enableCellEdit: isRegister(),
+                enableCellEditOnFocus: isRegister(),
                 type: 'string',
                 width: '15%',
                 minWidth: '100'
@@ -754,8 +762,8 @@
 
 
         /**
-     * 
-     * @param {*} entity Datos del Articulo 
+     *
+     * @param {*} entity Datos del Articulo
      */
         $scope.deleteRow = async function (rowEntity) {
 
@@ -772,7 +780,7 @@
                     });
                 }
 
-                //Recalculamos los totales 
+                //Recalculamos los totales
                 setCalculoTotales("cantidad", rowEntity, 0);
                 counterGridOptions();
                 $scope.$apply();
@@ -1096,11 +1104,11 @@
                 let dataMedida = medidas.find(medida => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(ti => ti.codigoPorcentaje === articulo.codigoPorcentaje);
 
- 
+
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
-                entity.descripcion = articulo.descripcion; 
+                entity.descripcion = articulo.descripcion;
                 entity.etiquetas = etiquetas;
 
                 //Medidas
@@ -1111,7 +1119,7 @@
                 entity.precioUnitario = fS.roundNumber(dataMedida.precioUnitario, $scope.decimal.nroPrecio)
                 entity.precioCostoFraccionado = dataMedida.precioCostoFraccionado;
 
-                //IVA 
+                //IVA
                 entity.idImpuesto = dataTarifaImpuesto.idImpuesto;
                 entity.idTipoIva = articulo.idTipoIva;
                 entity.codigoPorcentaje = articulo.codigoPorcentaje;
@@ -1162,9 +1170,9 @@
 
 
         /**
-       * 
-       * @param {*} colField nombre de la columnas 
-       * @param {*} rowEntity datos del item 
+       *
+       * @param {*} colField nombre de la columnas
+       * @param {*} rowEntity datos del item
        * @param {*} oldValue valor anterior de la columna
        */
         function setCalculoTotales(colField, rowEntity, oldValue) {
@@ -1185,7 +1193,7 @@
         }
 
         /**
-         * Calculamos todos los totales y subtotales del comprobantes 
+         * Calculamos todos los totales y subtotales del comprobantes
          */
         function recalculateTotalsSimple() {
             drawTotalsTarifaImpuesto();
@@ -1206,7 +1214,7 @@
                 gridOptionsSvc.setPorcentajeDescuentoAll(
                     $scope.gridOptions, $scope.data, $scope.decimal, gridOptionsSvc.calculoColDef
                 )
-                //redondeo del numero porcentaje 
+                //redondeo del numero porcentaje
                 $scope.data.porcentajeDescuento = fS.roundNumber($scope.data.porcentajeDescuento, $scope.decimal.nroTotalSubTotal)
                 recalculateTotalsSimple();
             } else {
@@ -1214,7 +1222,7 @@
             }
         }
 
-        //Calcular Porcentaje  Descuento 
+        //Calcular Porcentaje  Descuento
         $scope.calcularDescuento = function () {
             try {
                 if ($scope.gridOptions.data.length === 0) {
@@ -1247,9 +1255,16 @@
             $scope.infoAdicionalDocumento = result;
         }
 
+        $scope.isRegister = isRegister;
+        $scope.isUpdate = isUpdate;
 
-        const isRegister = () => !($scope.data.idLiquidacionCompra > 0);
-        const isUpdate = () => ($scope.data.idLiquidacionCompra > 0);
+
+        function isRegister() {
+            return !($scope.data.idLiquidacionCompra > 0)
+        }
+        function isUpdate() {
+            return ($scope.data.idLiquidacionCompra > 0)
+        }
 
         const validateCuota = function () {
             let objParamsCuota = {

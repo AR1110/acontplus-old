@@ -9,8 +9,8 @@
         let service = {};
         let mS = $injector.get('mainService');
         /**
-         * 
-         * @param {object} query  
+         *
+         * @param {object} query
          * @returns array
          */
         service.getDataForm = function (query) {
@@ -143,8 +143,8 @@
                     <table class="table table-hover table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th><small>N°</small></th>                              
-                                <th><small>Tipo. Doc.</small></th>                                                              
+                                <th><small>N°</small></th>
+                                <th><small>Tipo. Doc.</small></th>
                                 <th><small>Total</small></th>
                                 <th><small>Abono</small></th>
                                 <th><small>Saldo</small></th>
@@ -156,7 +156,7 @@
                     for (let pendientAccount of pendientAccounts) {
                         html += ` <tr>
                         <td>${index++}</td>
-                        <td>${pendientAccount.documento}</td>                        
+                        <td>${pendientAccount.documento}</td>
                         <td>$${pendientAccount.importeTotal}</td>
                         <td>$${pendientAccount.abono}</td>
                         <td>$${pendientAccount.saldo}</td>
@@ -190,7 +190,7 @@
     }])
 
     /**
-     * Nota Entrega 
+     * Nota Entrega
      */
 
     app.factory('notaEntregaService', ['$injector', function ($injector) {
@@ -219,7 +219,7 @@
                     let estadosDoc = mainData[1];
 
                     let dataToGroup = {
-                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                        estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
                     }
                     let estabs = fS.groupingEstab(dataToGroup);
 
@@ -304,10 +304,10 @@
 
 
         /**
-         * tipo 1: get notas entrega 
-         * tipo 2: get invoices for credit note 
+         * tipo 1: get notas entrega
+         * tipo 2: get invoices for credit note
          * tipo 3: get estabs, ptos. emisiones para los filtros
-         * @returns 
+         * @returns
          */
 
         service.get = (params) => {
@@ -469,7 +469,7 @@
             infoAdicionalDocumento = infoAdicionalDocumento || [];
             let infoAdicionalDocumentoMapped = infoAdicionalDocumento.map(item => {
                 return {
-                    // uuid: item.uniqueRowDetalle, //uid de articulo detalle 
+                    // uuid: item.uniqueRowDetalle, //uid de articulo detalle
                     idInfoAdicional: item.idInfoAdicional,
                     idInfoAdicionalDoc: item.idInfoAdicionalDoc,
                     nombre: item.nombre,
@@ -553,8 +553,8 @@
 
         /**
          * Detalle Mapper Nota Entrega
-         * @param {*} detalles 
-         * @returns 
+         * @param {*} detalles
+         * @returns
          */
         service.detalleMapperTo = function (detalles) {
             let tempDetails = [];
@@ -595,10 +595,10 @@
         }
 
         /**
-         * 
-         * @param {*} rowEntity 
+         *
+         * @param {*} rowEntity
          * @param {*} fechaEmision unicamente se envia desde el controlador de NotaEntregaCtrl
-         * @returns 
+         * @returns
          */
         service.getCantidadStock = function (rowEntity, fechaEmision) {
             let fechaEmisionValidate = null;
@@ -628,7 +628,7 @@
 
                     //si fecha documento creado es anterior a fecha consolidacion articulo
                     if (fechaEmisionDocCreado >= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo
                         if (fechaEmisionValidate <= dataConsolidacionFecha.fechaConsolidacion) {
                             return {
                                 cantidadStock: rowEntity.cantidadOriginal * rowEntity.conversion,
@@ -647,7 +647,7 @@
 
                     //si fecha documento creado es anterior a fecha consolidacion articulo
                     if (fechaEmisionDocCreado <= dataConsolidacionFecha.fechaConsolidacion) {
-                        //si fecha emision actual creado es anterior a fecha consolidacion articulo 
+                        //si fecha emision actual creado es anterior a fecha consolidacion articulo
                         if (fechaEmisionValidate >= dataConsolidacionFecha.fechaConsolidacion) {
                             cantidadStock = rowEntity.cantidad * rowEntity.conversion;
 
@@ -1033,11 +1033,11 @@
         //     })
         // }
 
-        service.anular = function(id, infoAdicional){
+        service.anular = function (id, infoAdicional) {
             let data = {
                 infoAdicional
             }
-            return mS.getData('put',  `${url}Cancel/${id}`, {data})
+            return mS.getData('put', `${url}Cancel/${id}`, { data })
 
         }
 
@@ -1060,7 +1060,7 @@
         }
 
 
-        //Conversion nota entrega a FACTURA  
+        //Conversion nota entrega a FACTURA
         service.getDataFormConvert = function () {
             let json = JSON.stringify({
                 tipo: 9
@@ -1202,7 +1202,7 @@
     }])
 
     /**
-     * Proforma 
+     * Proforma
      */
     app.factory('proformaService', ['$injector', function ($injector) {
         let url = `${URL_API}Proforma/`;
@@ -1276,9 +1276,9 @@
 
 
         /**
-         * tipo 1: get proformas  
+         * tipo 1: get proformas
          * tipo 3: get estabs, ptos. emisiones para los filtros
-         * @returns 
+         * @returns
          */
         service.get = (params) => {
             if (!("tipo" in params)) {
@@ -1298,7 +1298,7 @@
                         let estadosDoc = mainData[1];
 
                         let dataToGroup = {
-                            estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision 
+                            estabs: tempEstabsAndPtosEmision, //Establecimientos con puntos de emision
                         }
                         let estabs = fS.groupingEstab(dataToGroup);
 
@@ -1311,7 +1311,7 @@
             })
         }
 
-        //se a mas de listar en modulo de proformas en Aprobacion Documento 
+        //se a mas de listar en modulo de proformas en Aprobacion Documento
         service.getAll = function (query) {
 
             return mS.getData('get', url + 'Get?json=' + JSON.stringify(Object.assign(query, { tipo: 1 }))).then(response => {
@@ -1548,7 +1548,7 @@
 
                         let precioConIva = pricingUtils.calcularPrecioConIva(itemPrincipal.precioUnitario, itemPrincipal.tarifa);
 
-                          let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos);
+                        let total = fS.roundNumber(itemPrincipal.precioTotalSinImpuesto, pricingUtils.max_dos) + fS.roundNumber(itemPrincipal.valorImpuesto, pricingUtils.max_dos);
 
                         let obj = {
                             n: index + 1,
@@ -1926,7 +1926,7 @@
                 idFormaPagoSri: fS.isValidField(data.idFormaPagoSri),
                 estado: data.estado || true,
                 infoCrediticia: data.dataInfoCred && JSON.stringify(data.dataInfoCred),
-                configValorBruto : data.configValorBruto || null
+                configValorBruto: data.configValorBruto || null
             }
 
         }
@@ -1988,16 +1988,16 @@
                         idFormaPagoSri: data.idFormaPagoSri,
                         dataInfoCred: JSON.parse(infoCrediticia) || {},
                         nota: data.nota,
-                        configValorBruto : data.configValorBruto || false
+                        configValorBruto: data.configValorBruto || false
                     }
                 }
             })
         }
 
         /**
-         * 
+         *
          * @param {object} query  {textSearch}
-         * @returns 
+         * @returns
          */
         service.search = function (query) {
             if (!query) {
@@ -2124,9 +2124,9 @@
                     let [mainData] = JSON.parse(response.payload);
                     let clienteRepository = mainData[0];
 
-                    if(!clienteRepository){
-                    callback(codigoIdentificacion)
-                    return 
+                    if (!clienteRepository) {
+                        callback(codigoIdentificacion)
+                        return
                     }
 
 
@@ -2370,7 +2370,7 @@
                 if (response.code === "1") {
                     let { empresa } = JSON.parse(response.payload);
                     data = empresa[0];
-                } 
+                }
                 return data;
             })
         }
@@ -2413,7 +2413,7 @@
 
 
     app.factory('creditoGaranteService', ['$injector', function ($injector) {
-       // let url = `${URL_API}CreditoGarante`;
+        // let url = `${URL_API}CreditoGarante`;
         const url = 'Contabilidad/CuentaPorCobrar/';
         let mS = $injector.get('mainService');
         return {
@@ -2431,7 +2431,7 @@
                     guarantors: []
                 }
                 if (response && response.guarantors) {
-                    let { guarantors } =  response
+                    let { guarantors } = response
                     result.guarantors = guarantors;
                 }
                 return result;

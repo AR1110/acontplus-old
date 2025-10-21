@@ -39,8 +39,8 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
     $scope.codDoc = data.codDoc
     $scope.comprobante = data.comprobante + ': ' + data.serieComprobante
 
-    let idInstance = "7103845341"
-    let apiTokenInstance = "a59cd09ed1f449d8981586c7cf24526dfa9c8e6eedf1489b8c";
+    let idInstance = "7105339938"
+    let apiTokenInstance = "0c11cf9251b44ef5abbc774cd05aa3b1a36389838ca7436991";
 
 
     function createDataParamDocSri({ idDocumentoElectronico, codDoc }) {
@@ -290,7 +290,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
             tipoDocNombre = 'Proforma';
         }
 
-        if(telefonoEstab){
+        if (telefonoEstab) {
             contactoNombre = `Contactos: ${telefonoEstab}`
         }
 
@@ -303,10 +303,10 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
         //                     'Optimiza tu facturación con **Acontplus**. Visita nuestro sitio web para conocer más:\n' +
         //                     '👉 https://acontplus.com.ec';
 
-                            return {
-                                mainMessage,
-                                promoMessage
-                            }
+        return {
+            mainMessage,
+            promoMessage
+        }
     }
 
 
@@ -318,7 +318,7 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                 let payload = {
                     chatId: phoneNumberFormatter($scope.whatsapp.number),
                     //message: message ? message : $scope.whatsapp.message,
-                    message: message ? message:  getMessageText().mainMessage
+                    message: message ? message : getMessageText().mainMessage
                 }
 
                 $http.post(url, payload).then(
@@ -380,8 +380,8 @@ function modalSendWhatsAppCtrl($scope, $http, uibModal, tS, mS, commonSvc, param
                             // }, 2000)
 
                             setTimeout(() => {
-                             //   sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
-                             sendSms(getMessageText().promoMessage)
+                                //   sendSms(`*_Por favor responda con un OK y agregue este número a sus contactos_*`)
+                                sendSms(getMessageText().promoMessage)
                                 saveHistory()
                             }, 3000)
                         }
