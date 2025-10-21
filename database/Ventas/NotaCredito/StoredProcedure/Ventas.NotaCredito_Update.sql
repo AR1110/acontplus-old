@@ -317,7 +317,6 @@ BEGIN
             --> Contabilidad 
             UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK)
                SET fechaEmision     = @fechaEmision
-                  ,importeTotal     = @importeTotal 
             WHERE idDocumento = @id
               AND codDoc = '04'
 

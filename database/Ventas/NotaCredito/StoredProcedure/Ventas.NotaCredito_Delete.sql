@@ -50,6 +50,7 @@ BEGIN
 
         SELECT TOP 1 @idDocumentoElectronico = de.idDocumentoElectronico
                     ,@idPuntoEmision         = de.idPuntoEmision
+                    ,@idFactura              = nc.idFactura
         FROM dbo.NotaCredito                nc
         INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = nc.idDocumentoElectronico
         WHERE nc.idNotaCredito = @id

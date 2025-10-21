@@ -29,7 +29,8 @@ BEGIN
     
     --> Transaccion 
     DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@serieComprobante VARCHAR(30) ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50) ,@valor INT = 1
-	
+
+    DECLARE @fechaRegistro DATETIME2 = GETDATE()
 	
     DECLARE @tbComprobante AS TABLE(
          idPuntoEmision INT NOT NULL
@@ -136,7 +137,12 @@ BEGIN
         IF @codTran = 'S'
             BEGIN
                 SET @valor = -1
-            END 
+            END
+
+        IF @codDoc = 'A'
+            BEGIN
+                SET @fechaRegistro = @fechaEmision
+            END
 
         --> Validacion de informacion
         IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
@@ -182,8 +188,8 @@ BEGIN
 
             --> Transaccion
             INSERT INTO Inventario.Transaccion
-                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
-            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante
+                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante,fechaRegistro)
+            SELECT  idTipoTransaccion,fechaEmision,idTipoDocumento,@idConsolidacionInventario,@idUsuario,@idEntidad,@serieComprobante,@fechaRegistro
             FROM @tbComprobante 
 
             SET @idTransaccion = SCOPE_IDENTITY()

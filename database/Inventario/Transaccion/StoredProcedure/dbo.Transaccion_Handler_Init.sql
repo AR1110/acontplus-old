@@ -20,8 +20,6 @@ DECLARE @RequestMsg xml;
         SET @RequestMsg = (SELECT @id as id FOR XML PATH ('msg'));
  		 --SELECT @RequestMsg = @xmlParams;
          --print cast(@requestMsg  as varchar(max));
-
-		 --SELECT @RequestMsg = @ProcedureName;
        
 		--Send the Message
 		SEND ON CONVERSATION @InitDlgHandle MESSAGE TYPE [StockRequestMessage](@RequestMsg);

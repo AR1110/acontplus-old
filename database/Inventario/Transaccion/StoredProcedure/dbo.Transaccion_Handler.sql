@@ -1,4 +1,3 @@
---WARNING! ERRORS ENCOUNTERED DURING SQL PARSING!
 USE Acontplus
 GO
 
@@ -6,6 +5,8 @@ CREATE OR ALTER PROCEDURE Transaction_Handler
 AS
 SET NOCOUNT ON;
 SET XACT_ABORT ON;
+SET NOCOUNT ON;
+SET LANGUAGE SPANISH;
 
 DECLARE @RecvReqDlgHandle UNIQUEIDENTIFIER;
 DECLARE @RecvReqMsg XML;
@@ -171,11 +172,20 @@ BEGIN
                     ELSE 
                         BEGIN
                             --> Calculate and update final stock
-                            UPDATE st SET cantidad = st.cantidad + td.cantidadTransaccion
+                            UPDATE st SET cantidad = st.cantidad + ag.cantidadTotal
                             FROM Inventario.Stock st WITH (ROWLOCK)
-                            INNER JOIN Inventario.TransaccionDetalle td ON td.idArticulo = st.idArticulo AND td.idBodega = st.idBodega
-                            WHERE td.idTransaccion = @idTransaccion
-                              AND td.estado <> 0;
+                            INNER JOIN
+                            (
+                                SELECT idArticulo
+                                      ,idBodega
+                                      ,SUM(cantidadTransaccion) as cantidadTotal
+                                FROM Inventario.TransaccionDetalle
+                                WHERE idTransaccion = @idTransaccion
+                                  AND estado <> 0
+                                GROUP BY idArticulo, idBodega
+
+                            ) ag ON ag.idArticulo = st.idArticulo AND ag.idBodega = st.idBodega;
+                            
 
                             WITH SaldosActuales AS
                             (

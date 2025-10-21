@@ -44,8 +44,6 @@ GO
 
 --> ||| LAS TRANSACCIONES SERAN DATOS UNICOS, SU MOVIMIENTO SERA EN LOS DETALLES DE CADA UNO, PROCESO PARA ACTUALIZAR Y BORRA EL DOBLE REGISTRO DE LAS TRANFERENCIAS 
 
---ALTER TABLE Inventario.TransaccionDetalle ALTER COLUMN MovementTypeId INT NOT NULL
-
 --UPDATE dt SET 
 --       dt.idTransaccion  = 
 --       (
@@ -75,60 +73,60 @@ GO
 --ALTER TABLE Inventario.TransaccionDetalle ADD AjusteId BIGINT CONSTRAINT fk_ajuste_kardex_transacion FOREIGN KEY REFERENCES Inventario.Transaccion(idTransaccion)
 -- Id Ajuste
 -- Versión optimizada usando CTEs en lugar de tablas temporales
---WITH InventarioCI AS (
---    SELECT 
---        sd.idBodega,
---        sd.idArticulo,
---        tt.idTransaccion,
---        tt.fechaEmision,
---        tt.fechaRegistro
---    FROM Inventario.Transaccion tt WITH (NOLOCK)
---    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
---        ON td.idTipoDocumento = tt.idTipoDocumento
---    INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) 
---        ON sd.idTransaccion = tt.idTransaccion
---    WHERE td.codigo = 'CI'
---      AND sd.estado = 1
---),
---TransaccionesConFecha AS (
---    SELECT 
---        dt.idTransaccionDetalle,
---        dt.idBodega,
---        dt.idArticulo,
---        tr.fechaRegistro,
---        td.codigo,
---        dt.idTransaccion
---    FROM Inventario.TransaccionDetalle dt WITH (NOLOCK)
---    INNER JOIN Inventario.Transaccion tr WITH (NOLOCK) 
---        ON tr.idTransaccion = dt.idTransaccion
---    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
---        ON td.idTipoDocumento = tr.idTipoDocumento
---    WHERE dt.estado = 1
---),
---CIConRanking AS (
---    SELECT 
---        ci.*,
---        tcf.idTransaccionDetalle,
---        tcf.codigo AS tipoTransaccion,
---        tcf.idTransaccion AS idTransaccionOriginal,
---        ROW_NUMBER() OVER (
---            PARTITION BY tcf.idTransaccionDetalle 
---            ORDER BY ci.fechaEmision DESC
---        ) as rn
---    FROM TransaccionesConFecha tcf
---    LEFT JOIN InventarioCI ci 
---        ON ci.idBodega = tcf.idBodega 
---        AND ci.idArticulo = tcf.idArticulo
---        AND ci.fechaEmision <= tcf.fechaRegistro
---)
---UPDATE dt 
---SET dt.AjusteId = CASE 
---    WHEN cr.tipoTransaccion = 'CI' THEN cr.idTransaccionOriginal
---    ELSE cr.idTransaccion
---END
---FROM Inventario.TransaccionDetalle dt
---INNER JOIN CIConRanking cr ON cr.idTransaccionDetalle = dt.idTransaccionDetalle
---WHERE cr.rn = 1 OR cr.rn IS NULL;
+WITH InventarioCI AS (
+    SELECT 
+        sd.idBodega,
+        sd.idArticulo,
+        tt.idTransaccion,
+        tt.fechaEmision,
+        tt.fechaRegistro
+    FROM Inventario.Transaccion tt WITH (NOLOCK)
+    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
+        ON td.idTipoDocumento = tt.idTipoDocumento
+    INNER JOIN Inventario.TransaccionDetalle sd WITH (NOLOCK) 
+        ON sd.idTransaccion = tt.idTransaccion
+    WHERE td.codigo = 'CI'
+      AND sd.estado = 1
+),
+TransaccionesConFecha AS (
+    SELECT 
+        dt.idTransaccionDetalle,
+        dt.idBodega,
+        dt.idArticulo,
+        tr.fechaRegistro,
+        td.codigo,
+        dt.idTransaccion
+    FROM Inventario.TransaccionDetalle dt WITH (NOLOCK)
+    INNER JOIN Inventario.Transaccion tr WITH (NOLOCK) 
+        ON tr.idTransaccion = dt.idTransaccion
+    INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) 
+        ON td.idTipoDocumento = tr.idTipoDocumento
+    WHERE dt.estado = 1
+),
+CIConRanking AS (
+    SELECT 
+        ci.*,
+        tcf.idTransaccionDetalle,
+        tcf.codigo AS tipoTransaccion,
+        tcf.idTransaccion AS idTransaccionOriginal,
+        ROW_NUMBER() OVER (
+            PARTITION BY tcf.idTransaccionDetalle 
+            ORDER BY ci.fechaEmision DESC
+        ) as rn
+    FROM TransaccionesConFecha tcf
+    LEFT JOIN InventarioCI ci 
+        ON ci.idBodega = tcf.idBodega 
+        AND ci.idArticulo = tcf.idArticulo
+        AND ci.fechaEmision <= tcf.fechaRegistro
+)
+UPDATE dt 
+SET dt.AjusteId = CASE 
+    WHEN cr.tipoTransaccion = 'CI' THEN cr.idTransaccionOriginal
+    ELSE cr.idTransaccion
+END
+FROM Inventario.TransaccionDetalle dt
+INNER JOIN CIConRanking cr ON cr.idTransaccionDetalle = dt.idTransaccionDetalle
+WHERE cr.rn = 1 OR cr.rn IS NULL;
 
 
 ----> saldo
@@ -155,33 +153,41 @@ GO
 ----;
 
 
---select *
+--update td set td.cantidadTransaccion = (td.cantidad * td.conversion) * - 1  
 --from Inventario.transacciondetalle td
 --inner join inventario.transaccion tr on tr.idtransaccion = td.idtransaccion
 --inner join Inventario.TipoDocumento  dt on dt.idTipoDocumento = tr.idTipoDocumento
 --inner join Inventario.TipoTransaccion tt on tt.idTipoTransaccion = tr.idTipoTransaccion
 --where tt.codigo = 'S'
---AND dt.codigo in ('FE','NE','BI')
+--AND dt.codigo in ('FE','NE','BI','TB')
 --AND td.cantidadTransaccion > 0
---and td.estado = 1 
+--and td.estado = 1
 
---WITH CTE_Saldos AS (
---    SELECT idTransaccionDetalle
---          ,SUM(td.cantidadTransaccion) OVER (PARTITION BY idArticulo, idBodega, td.ajusteId ORDER BY ts.fechaRegistro, idTransaccionDetalle ASC) AS nuevoSaldo
---          ,td.ajusteId
---          ,ts.fechaRegistro
---    FROM Inventario.Transaccion              ts WITH (NOLOCK)
---    INNER JOIN inventario.TipoTransaccion    tt WITH (NOLOCK) ON tt.idTipoTransaccion = ts.idTipoTransaccion
---    INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
---    where td.estado = 1
---    and td.idArticulo = 485251
---    and td.idBodega = 229
---)
---update td set td.saldo = sa.nuevoSaldo
---from Inventario.TransaccionDetalle td WITH (NOLOCK)
---INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
+--select td.*  
+--from Inventario.transacciondetalle td
+--inner join inventario.transaccion tr on tr.idtransaccion = td.idtransaccion
+--inner join Inventario.TipoDocumento  dt on dt.idTipoDocumento = tr.idTipoDocumento
+--inner join Inventario.TipoTransaccion tt on tt.idTipoTransaccion = tr.idTipoTransaccion
+--where tt.codigo = 'S'
+--AND dt.codigo in ('FE','NE','BI','TB')
+--AND td.cantidadTransaccion > 0
+--and td.estado = 1
 
 
+WITH CTE_Saldos AS (
+    SELECT idTransaccionDetalle
+          ,SUM(td.cantidadTransaccion) OVER (PARTITION BY td.idArticulo, td.idBodega, td.ajusteId ORDER BY ts.fechaRegistro, td.idTransaccionDetalle ASC) AS nuevoSaldo
+    FROM Inventario.Transaccion              ts WITH (NOLOCK)
+    INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
+    where td.estado = 1
+
+)
+update td set td.saldo = sa.nuevoSaldo
+from Inventario.TransaccionDetalle td WITH (NOLOCK)
+INNER JOIN CTE_Saldos              sa WITH (NOLOCK) ON sa.idTransaccionDetalle = td.idTransaccionDetalle;
+
+
+--update Inventario.TransaccionDetalle set saldo = 0 where saldo is null and estado in (0,2)
 
 --alter table Inventario.TransaccionDetalle alter column saldo numeric(18,5) not null
 
@@ -190,23 +196,25 @@ GO
 --> MODIFICAION EN STOK PARA EL CALCULO DE LA ULTIMA TRNSACCION
 --alter table Inventario.Stock add idTransaccionDetalle BIGINT CONSTRAINT FK_Stock_TransaccionDetalle FOREIGN KEY REFERENCES Inventario.TransaccionDetalle(idTransaccionDetalle)
 
---update st set
---  st. idTransaccionDetalle = 
---       (
---         select top 1 td.idTransaccionDetalle
---         FROM Inventario.Transaccion              tr
---        INNER JOIN Inventario.TransaccionDetalle td ON td.idTransaccion     = tr.idTransaccion
---        INNER JOIN Inventario.TipoTransaccion    tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
---        WHERE td.idArticulo = st.idArticulo 
---            AND td.idBodega = st.idBodega
---            AND tt.codigo = 'A'
---            and tr.idDocumento = st.ConsolidacionId
-         
---       )
-
+--UPDATE st 
+--SET st.idTransaccionDetalle = subq.idTransaccionDetalle
 --FROM Inventario.Stock st
-
---WHERE ConsolidacionId is NOT null
+--INNER JOIN (
+--    SELECT td.idArticulo,
+--           td.idBodega,
+--           td.idTransaccionDetalle,
+--           ROW_NUMBER() OVER (
+--               PARTITION BY td.idArticulo, td.idBodega 
+--               ORDER BY tr.fechaRegistro DESC, td.idTransaccionDetalle DESC
+--           ) as rn
+--    FROM Inventario.Transaccion              tr
+--    INNER JOIN Inventario.TransaccionDetalle td ON td.idTransaccion = tr.idTransaccion
+--    INNER JOIN Inventario.TipoTransaccion    tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+--    WHERE tt.codigo = 'A'
+--      AND td.estado = 1
+--) subq ON subq.idArticulo = st.idArticulo 
+--      AND subq.idBodega = st.idBodega
+--      AND subq.rn = 1;
 
 
 
@@ -224,24 +232,3 @@ GO
 --where td.estado = 0
 
 
---ALTER TABLE Inventario.TransaccionDetalle add deleted BIT DEFAULT 0
-
-
---UPDATE Inventario.TransaccionDetalle set deleted = CASE estado WHEN 1 THEN 0
---                                                               WHEN 0 THEN 1
---                                                               WHEN 2 THEN 0
---                                                               else 0
---                                                   end
-
---ALTER TABLE Inventario.TransaccionDetalle alter column deleted BIT NOT NULL
-
-
---ALTER TABLE Inventario.TransaccionDetalle add processed BIT DEFAULT 0
-
---UPDATE Inventario.TransaccionDetalle SET processed = 1
-
---ALTER TABLE Inventario.TransaccionDetalle ALTER COLUMN processed BIT NOT NULL
-
---alter table Inventario.TipoTransaccion alter column codigo varchar(20)
-
---SELECT * FROM Inventario.TipoTransaccion

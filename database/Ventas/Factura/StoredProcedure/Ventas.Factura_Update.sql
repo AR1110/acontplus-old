@@ -398,8 +398,7 @@ BEGIN
             
             -->Forma Pago
             UPDATE fp WITH (ROWLOCK) 
-               SET fp.abono          = py.total
-                  ,fp.idFormaPagoSri = py.idFormaPagoSri
+               SET fp.idFormaPagoSri = py.idFormaPagoSri
             FROM dbo.FormaPagoFactura fp
             INNER JOIN @payment       py ON py.idFormaPagoFactura = fp.idFormaPagoFactura
 
@@ -415,7 +414,6 @@ BEGIN
 
             UPDATE cc 
                SET cc.fechaVencimiento = ct.fechaVencimiento
-		          ,cc.cuota            = ct.cuota
                   ,diasMora            = 0
                   ,mora                = 0
 	        FROM Contabilidad.CuotaPorCobrar cc WITH (ROWLOCK)

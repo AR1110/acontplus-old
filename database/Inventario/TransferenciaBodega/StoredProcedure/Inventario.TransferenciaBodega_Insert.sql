@@ -222,7 +222,7 @@ BEGIN
 
             --> Transaccion
             INSERT INTO Inventario.Transaccion
-                  (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
+                      (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,idUsuario,idEntidad,serieComprobante)
             SELECT TOP 1 @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idTransferenciaBodega,@idUsuario,@idEntidad,@serieComprobante 
             FROM @tbTransaccion 
 

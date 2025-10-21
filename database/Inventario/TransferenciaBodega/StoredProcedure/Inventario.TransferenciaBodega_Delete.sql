@@ -63,6 +63,11 @@ BEGIN
 				RETURN 
 			END 
 
+        IF @idTransaccionOriginal IS NULL
+            BEGIN
+                SELECT  '0'code,'La Transferencia tiene error de origen'[message]
+				RETURN 
+            END 
 
 		BEGIN TRAN
             

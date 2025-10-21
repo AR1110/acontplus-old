@@ -105,7 +105,7 @@ BEGIN
 
             IF @codDoc = 'CI'
                 BEGIN
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, deleted = 1 WHERE idTransaccion = @idTransaccion
+                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
                 END
             ELSE
                 BEGIN

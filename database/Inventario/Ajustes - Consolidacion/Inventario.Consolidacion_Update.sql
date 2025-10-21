@@ -122,7 +122,13 @@ BEGIN
             BEGIN
                 SELECT '0'code, 'No puedes anular consolidaciones es un documento de ajuste' as [message]
                 RETURN
-            END 
+            END
+
+        IF @idTransaccionOriginal IS NULL
+            BEGIN
+                SELECT  '0'code,'La Transaccion tiene error de origen'[message]
+				RETURN 
+            END
 
 		BEGIN TRAN 
             --> Comprobante

@@ -309,7 +309,7 @@ BEGIN
 			INNER JOIN @tbComprobante jlc ON lc.idLiquidacionCompra = jlc.idLiquidacionCompra
 
             --> Forma pago
-            UPDATE FormaPagoLiquidacion SET abono = @importeTotal WHERE idLiquidacionCompra = @id
+            --UPDATE FormaPagoLiquidacion SET abono = @importeTotal WHERE idLiquidacionCompra = @id
 
             --> Detalles 
 			--UPDATE lcd WITH (ROWLOCK)
@@ -348,7 +348,6 @@ BEGIN
 
             UPDATE cp SET 
                    cp.fechaVencimiento = tc.fechaVencimiento
-                  ,cp.cuota            = tc.cuota
             FROM Contabilidad.CuotaPorPagar cp WITH (ROWLOCK)
             INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
 

@@ -61,7 +61,7 @@ IF EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID('Inventario.Tra
 GO
 
 CREATE NONCLUSTERED INDEX IX_TransaccionDetalle_enterprise_perf 
-ON Inventario.TransaccionDetalle (idArticulo, idBodega, estado, idTransaccion , processed, deleted ,MovementTypeId) 
+ON Inventario.TransaccionDetalle (idArticulo, idBodega, estado, idTransaccion ) 
 INCLUDE (cantidadTransaccion, ajusteId, saldo, idTransaccionDetalle)
 WITH (OPTIMIZE_FOR_SEQUENTIAL_KEY = ON, DATA_COMPRESSION = PAGE);
 GO

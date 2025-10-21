@@ -486,36 +486,6 @@ BEGIN
 			SELECT @idAprob_Document,@idFactura ,@idNotaEntrega ,@idUsuario,dbo.ufnGetDateEcuador()
             FROM @tbComprobante
 
-            --IF @docOrigen = 'NE'
-            --    BEGIN
-            --        UPDATE it SET   
-            --               it.estado = 2
-            --        FROM Inventario.Transaccion           it WITH (ROWLOCK)
-            --        INNER JOIN Inventario.TipoDocumento   td WITH (ROWLOCK) ON td.idTipoDocumento   = it.idTipoDocumento
-            --        INNER JOIN Inventario.TipoTransaccion tt WITH (ROWLOCK) ON tt.idTipoTransaccion = it.idTipoTransaccion 
-            --        WHERE td.codigo = 'NE'
-            --          AND tt.codigo = 'S'
-            --          AND it.idDocumento IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document)
-
-            --        UPDATE dt SET   
-            --               dt.estado              = 2
-            --              ,dt.cantidadTransaccion = 0
-            --        FROM Inventario.TransaccionDetalle    dt WITH (ROWLOCK)
-            --        INNER JOIN Inventario.Transaccion     it WITH (ROWLOCK) ON it.idTransaccion     = dt.idTransaccion
-            --        INNER JOIN Inventario.TipoDocumento   td WITH (ROWLOCK) ON td.idTipoDocumento   = it.idTipoDocumento
-            --        INNER JOIN Inventario.TipoTransaccion tt WITH (ROWLOCK) ON tt.idTipoTransaccion = it.idTipoTransaccion 
-            --        WHERE td.codigo = 'NE'
-            --          AND tt.codigo = 'S'
-            --          AND it.idDocumento IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document)
-
-            --        UPDATE cs SET
-            --            cs.Estado = 2
-            --        FROM Contabilidad.Servicio cs 
-            --        INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cs.TipoDocumentoId
-            --        WHERE td.codigo = 'NE'
-            --          AND cs.DocumentoId IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document) 
-            --    END 
-            
 
 		COMMIT TRAN
 		SELECT '1'code,'Registrado Exitosamente' as 'message'

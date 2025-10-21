@@ -735,7 +735,7 @@ BEGIN
                                AND af.idMedida = tb.medidaId),tb.precioCosto)
                     FROM @tblInventory tb
 
-                   EXEC dbo.Transaccion_Handler_Init 'S', @codDocTran, @documentoId, DEFAULT
+                   EXEC dbo.Transaccion_Handler_Init @idTransaccion
                 END
 
         END
