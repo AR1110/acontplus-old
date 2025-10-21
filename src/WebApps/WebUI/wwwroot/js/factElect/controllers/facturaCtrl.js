@@ -2833,12 +2833,14 @@
             // }
 
             //validacion de calculos
-            let dataValicion = gridOptionsSvc.validarCalculosPorProducto(
-                $scope.gridOptions.data
-            );
-            if (!dataValicion.esValido) {
-                console.log(dataValicion);
-                return;
+            if (isRegister()) {
+                let dataValicion = gridOptionsSvc.validarCalculosPorProducto(
+                    $scope.gridOptions.data
+                );
+                if (!dataValicion.esValido) {
+                    console.log(dataValicion);
+                    return;
+                }
             }
 
             if ($scope.data.total <= 0) {
