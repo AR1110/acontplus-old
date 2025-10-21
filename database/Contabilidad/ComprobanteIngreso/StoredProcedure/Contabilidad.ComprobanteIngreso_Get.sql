@@ -323,7 +323,7 @@ BEGIN
     IF @tipo = 4
         BEGIN
 
-            SET @tableNames = 'ptoEmision,tipoDocumento,subEntidadFinanciera,banco'
+              SET @tableNames = 'ptoEmision,tipoDocumento,subEntidadFinanciera,banco,users'
 
             SELECT idEstablecimiento
                   ,nombreComercial
@@ -331,17 +331,17 @@ BEGIN
                   ,idPuntoEmision
                   ,ptoEmi + '-' + estab as ptoEmi
                   ,defaultEstab
-                  ,defaultPtoEmi
+                  ,defaultPtoEmi 
             FROM v_PtoEmi_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @userRoleId
+            WHERE idUsuarioRol = @userRoleId 
             ORDER BY defaultEstab DESC
-
+            
             SELECT idTipoDocumento
                 , descripcion
                 , codigoSri
                 , codigo AS codDoc
             FROM dbo.TipoDocumento
-            WITH (NOLOCK)
+            WITH (NOLOCK) 
             WHERE codigo IN ('FV','NE')
 
             SELECT idSubEntidadFinanciera
@@ -355,8 +355,10 @@ BEGIN
                     , controlCaja
             FROM SubEntidadFinanciera
             WHERE idEntidad = @idEntidad
-
+            
             SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
+
+			SELECT idUsuario, nombreUsuario FROM v_usuario WHERE idEntidad = @idEntidad
             RETURN
         END
 

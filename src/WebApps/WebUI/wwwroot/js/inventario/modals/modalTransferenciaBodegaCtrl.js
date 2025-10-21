@@ -3,27 +3,27 @@ export {
     ModalTransferenciaBodegaDetalleCtrl
 }
 ModalTransferenciaBodegaDetalleCtrl.$inject = [
-    '$scope', 
-    '$uibModalInstance',  
-    '$inject', 
+    '$scope',
+    '$uibModalInstance',
+    '$injector',
     'params'
 ]
-function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,   params){
-    const transferenciaBodegaSvc = $inject('transferenciaBodegaService');
+function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $injector, params) {
+    const transferenciaBodegaSvc = $injector.get('transferenciaBodegaService');
 
 
-        
+
     $scope.gridOptions = {
         enableColumnMenus: false,
         enableSorting: false,
         enableFiltering: false,
         enableRowHashing: false,
         enableColumnReordering: true,
-        showGridFooter: false,            
+        showGridFooter: false,
     }
 
- 
-    $scope.gridOptions.columnDefs = [        
+
+    $scope.gridOptions.columnDefs = [
         {
             name: 'N°',
             field: 'num',
@@ -80,28 +80,28 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,
         },
         {
             name: 'Medida',
-            field: 'medida',  
+            field: 'medida',
             enableCellEdit: false,
-            enableCellEditOnFocus: false, 
+            enableCellEditOnFocus: false,
             type: 'number',
             width: '8%',
             minWidth: '100'
         },
-        // { 
+        // {
         //     name: 'codigoTipoIva', field: 'codigoTipoIva', allowCellFocus: false, type:'string',
         //     enableCellEdit: false, width: '8%', minWidth:'100', enableColumnMenu: false, visible: false
         // },
-        // { 
-        //     name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false, 
+        // {
+        //     name: 'Iva', field: 'nombreTipoIva', allowCellFocus: false,
         //     enableCellEdit: false, width: '8%', minWidth:'100', type:'string',
-        //     enableColumnMenu: false, visible: true 
+        //     enableColumnMenu: false, visible: true
         // },
-        // { 
-        //     name: 'Stock', field: 'stock', allowCellFocus: false, 
+        // {
+        //     name: 'Stock', field: 'stock', allowCellFocus: false,
         //     enableCellEdit: false, width: '5%', minWidth:'65', type:'number',
         //     enableColumnMenu: false, visible: true,  aggregationType: uiGridConstants.aggregationTypes.sum,customTreeAggregationFinalizerFn: function (aggregation) {
         //         aggregation.rendered = form.roundNumber(aggregation.value,2)
-        //      }, aggregationLabel: "$",  
+        //      }, aggregationLabel: "$",
         // },
         {
             name: 'P. Costo',
@@ -111,7 +111,7 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,
             enableColumnMenu: false,
             type: 'number',
             width: '8%',
-            minWidth: '100',                
+            minWidth: '100',
             // aggregationType: uiGridConstants.aggregationTypes.sum,
             // footerCellFilter: 'number:2',
             // cellFilter: "currency:'$'",
@@ -131,10 +131,10 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,
             // aggregationLabel: "$",
         }
     ]
-     
+
 
     initiload();
-    async function initiload(){
+    async function initiload() {
         try {
             showLoader();
             transferenciaBodegaSvc.getIdDetalle(params.id).then(response => {
@@ -142,28 +142,28 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $inject,
                 $scope.data = dataDocumento;
                 $scope.gridOptions.data = detalleDocumento;
 
-                enumGridOptions(); 
+                enumGridOptions();
             }).catch(error => {
                 console.log(error)
             }).finally(() => hideLoader())
 
-       
-            
+
+
         } catch (error) {
             console.log(error)
-        }             
+        }
     }
 
     function enumGridOptions() {
         let num = 1;
-        
-        for(let item of $scope.gridOptions.data){
-            item.num = num ++;
-        }      
+
+        for (let item of $scope.gridOptions.data) {
+            item.num = num++;
+        }
     }
 
 
-    $scope.closeModal = function() {
+    $scope.closeModal = function () {
         $uibModalInstance.close();
     }
 

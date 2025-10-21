@@ -914,7 +914,10 @@
                         $scope.data.idBodega = dataBodega.idBodega;
                         $scope.dataClone.idBodega = $scope.data.idBodega;
                     }
-                    $scope.gridOptions.data = detalles;
+                    $scope.gridOptions.data = detalles.map(item=>({
+                        ...item,
+                        id: 0
+                    }));
                     $scope.isDocOrderProduction = params.isDocOrderProduction;
                     setCountIndex();
                     //  $scope.onChangeTipoDocumento();
