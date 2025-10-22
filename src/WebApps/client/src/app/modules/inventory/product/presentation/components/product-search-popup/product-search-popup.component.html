@@ -1,87 +1,186 @@
-<div class="modal-body">
-  <div class="input-group input-group-lg">
+<div class="container-product-search-popup">
+  <!-- Search Input -->
+  <mat-form-field>
     <input
-      type="text"
-      class="form-control"
       #txtSearch
+      type="text"
+      matInput
+      [value]="dataSearch().textSearch"
       (input)="applyFilter(txtSearch.value)"
-      [value]="dataSearch.textSearch"
       placeholder="Ingrese descripción o código del producto"
+      aria-label="Buscar producto"
+      autocomplete="off"
     />
-    <span class="input-group-text" id="inputGroup-sizing-lg">Esc</span>
-  </div>
+    <ng-container matSuffix>
+      <kbd>Esc</kbd>
+    </ng-container>
+  </mat-form-field>
 
-  <ng-template #popContent>Hello, <b>Mundo</b>!</ng-template>
-
+  <!-- Table Container -->
   <section class="table-container small-table section-container-table mt-1">
-    @if (isLoadingResults || isRateLimitReached) {
-      <div [ngClass]="{ 'loading-shade': isLoadingResults }">
-        @if (isLoadingResults) {
-          <mat-spinner></mat-spinner>
+
+    <!-- Loading Overlay -->
+    @if (isLoadingResults() || isRateLimitReached()) {
+      <div class="loading-shade">
+        @if (isLoadingResults()) {
+          <mat-spinner [diameter]="50"></mat-spinner>
+        }
+        @if (isRateLimitReached()) {
+          <div class="no-results-message">
+            <p>No se encontraron resultados</p>
+          </div>
         }
       </div>
     }
-    <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
-      @for (column of columns; track $index) {
+
+    <!-- Data Table -->
+    <table
+      mat-table
+      [dataSource]="dataSource()"
+      class="mat-elevation-z0"
+      role="grid"
+      aria-label="Tabla de productos"
+    >
+
+      <!-- Dynamic Column Definitions -->
+      @for (column of columns(); track column.columnDef) {
         <ng-container [matColumnDef]="column.columnDef">
-          <th mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
-          <td mat-cell *matCellDef="let element; let i = index" [ngClass]="{ highlighted: highlightRowIndex === i }">
+
+          <!-- Header -->
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [attr.aria-label]="column.header"
+          >
+            {{ column.header }}
+          </th>
+
+          <!-- Cell -->
+          <td
+            mat-cell
+            *matCellDef="let element; let i = index"
+            [class.highlighted]="highlightRowIndex() === i"
+            [attr.aria-selected]="highlightRowIndex() === i"
+          >
+
+            <!-- Código Column -->
             @if (column.columnDef === 'codigo') {
-              {{ element.codigo.length > 12 ? element.codigo.slice(0, 12) + '...' : element.codigo }}
-            } @else if (column.columnDef === 's3ObjectUrl') {
-              <img
-                class="rounded"
-                [ngClass]="{ 'img-thumbnail': !element.s3ObjectUrl }"
-                width="80"
-                src="{{ element.s3ObjectUrl }}"
-                alt=""
-              />
-            } @else if (column.columnDef === 'stock') {
-              @if (element.stock <= 0) {
-                <h4 class="badge bg-danger font-weight-100">
-                  {{ element.stock }}
-                </h4>
-              }
-              @if (element.stock > 0) {
-                <h4 class="badge bg-success font-weight-100">
-                  {{ element.stock }}
-                </h4>
-              }
-            } @else {
-              {{ element[column.columnDef] }}
+              <span [title]="element.codigo">
+                {{ element.codigo.length > 12 ? element.codigo.slice(0, 12) + '...' : element.codigo }}
+              </span>
             }
+
+            <!-- Image Column -->
+            @else if (column.columnDef === 's3ObjectUrl') {
+              <img
+                class="rounded product-thumbnail"
+                [class.img-thumbnail]="!element.s3ObjectUrl"
+                [src]="element.s3ObjectUrl"
+                [alt]="'Imagen de ' + element.descripcion"
+                width="80"
+                height="80"
+                loading="lazy"
+              />
+            }
+
+            <!-- Stock Column -->
+            @else if (column.columnDef === 'stock') {
+              <span
+                class="badge font-weight-100"
+                [class.bg-danger]="element.stock <= 0"
+                [class.bg-success]="element.stock > 0"
+                [attr.aria-label]="'Stock: ' + element.stock"
+              >
+                {{ element.stock }}
+              </span>
+            }
+
+            <!-- Position Column -->
+            @else if (column.columnDef === 'position') {
+              {{ i + 1 + (pagination().pageIndex * pagination().pageSize) }}
+            }
+
+            <!-- Default Column -->
+            @else {
+              {{ element[column.columnDef] ?? '-' }}
+            }
+
           </td>
         </ng-container>
       }
-      <!-- @for (column of productTarifas; track $index) {
-      <ng-container [matColumnDef]="column.tarifa">
-        <th mat-header-cell *matHeaderCellDef> {{column.tarifa}} </th>
-        <td mat-cell *matCellDef="let element">
 
+      <!-- Header Row -->
+      <tr
+        mat-header-row
+        *matHeaderRowDef="visibleColumns(); sticky: true"
+      ></tr>
 
-        </td>
-      </ng-container>
-      } -->
+      <!-- Data Rows -->
+      <tr
+        mat-row
+        *matRowDef="let row; columns: visibleColumns(); let i = index"
+        (click)="selectRow(row)"
+        (mouseenter)="onMouseEnter(i)"
+        [class.row-highlighted]="highlightRowIndex() === i"
+        [class.cursor-pointer]="true"
+        role="row"
+        [attr.aria-rowindex]="i + 1"
+        tabindex="0"
+      ></tr>
 
-      <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: visibleColumns" (click)="selectRow(row)"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center" colspan="13">Sin registro</td>
-      </tr>
+      <!-- No Data Row -->
+      @if (dataSource().length === 0 && !isLoadingResults()) {
+        <tr class="mat-row no-data-row">
+          <td
+            class="mat-cell text-center"
+            [attr.colspan]="visibleColumns().length"
+          >
+            <div class="no-data-message">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <p>No se encontraron productos</p>
+              <small>Intenta con otra búsqueda</small>
+            </div>
+          </td>
+        </tr>
+      }
     </table>
   </section>
 
+  <!-- Paginator -->
   <mat-paginator
     #paginator
     class="demo-paginator"
     (page)="handlePageEvent($event)"
-    [length]="pagination.totalRecords"
-    [pageSize]="pagination.pageSize"
+    [length]="pagination().totalRecords"
+    [pageSize]="pagination().pageSize"
     [showFirstLastButtons]="true"
-    [pageSizeOptions]="pagination.pageSizeOptions"
-    [pageIndex]="pagination.pageIndex"
-    aria-label="Select page"
-  >
-  </mat-paginator>
+    [pageSizeOptions]="pagination().pageSizeOptions"
+    [pageIndex]="pagination().pageIndex"
+    [disabled]="isLoadingResults()"
+    aria-label="Seleccionar página"
+  ></mat-paginator>
+
+  <!-- Keyboard Shortcuts Help (Optional) -->
+  @if (dataSource().length > 0) {
+    <div class="keyboard-shortcuts">
+      <small class="text-muted">
+        <kbd>↑</kbd> <kbd>↓</kbd> Navegar |
+        <kbd>Enter</kbd> Seleccionar |
+        <kbd>Esc</kbd> Cerrar
+      </small>
+    </div>
+  }
 </div>

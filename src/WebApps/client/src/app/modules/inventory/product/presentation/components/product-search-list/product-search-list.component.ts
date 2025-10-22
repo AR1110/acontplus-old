@@ -53,18 +53,18 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
   rowSelected = output<any>();
   onClickPaginator = output<void>();
 
-  dataSource = new MatTableDataSource([]);
+  dataSource = signal<any[]>([]);
 
   visibleColumns: string[] = [];
   mainColumns = [
-    { columnDef: 'position', header: 'No.' },
-    { columnDef: 'codigo', header: 'Código' },
-    { columnDef: 's3ObjectUrl', header: 'Img' },
-    { columnDef: 'descripcion', header: 'Descripción' },
+    { columnDef: 'index', header: 'No.' },
+    { columnDef: 'code', header: 'Código' },
+    { columnDef: 'imageUrl', header: 'Img' },
+    { columnDef: 'description', header: 'Descripción' },
     { columnDef: 'stock', header: 'Stock' },
-    { columnDef: 'iva', header: 'Iva' },
-    { columnDef: 'subFamilia', header: 'SubFamilia' },
-    { columnDef: 'medida', header: 'Medida' },
+    { columnDef: 'vat', header: 'Iva' },
+    { columnDef: 'subFamily', header: 'SubFamilia' },
+    { columnDef: 'measure', header: 'Medida' },
     // { columnDef: 'marca', header: 'Marca', },
   ];
   columns = structuredClone(this.mainColumns);
@@ -77,7 +77,6 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
   }
 
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
     this.rowsEmitter.emit(this.rows);
   }
 
@@ -89,14 +88,14 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
 
       if (this.tableData().length > 0) {
         const dataResult = this.tableData()[0];
-        this.productTarifas.set(dataResult.tarifas);
+        this.productTarifas.set(dataResult.prices);
         this.pagination.totalRecords = dataResult.totalRecords;
       }
 
       for (const item of this.productTarifas()) {
         this.columns.push({
-          header: item.tarifa,
-          columnDef: item.tarifa,
+          header: item.name,
+          columnDef: item.name,
         });
       }
 
@@ -107,9 +106,9 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
 
   makeDynamicTarifa(results: any) {
     const mapped = results.map((item: any) => {
-      const { tarifas, ...restItem } = item;
-      const tarifasObj = tarifas.reduce((obj: any, item: any) => {
-        obj[item.tarifa] = item.precio;
+      const { prices, ...restItem } = item;
+      const tarifasObj = prices.reduce((obj: any, item: any) => {
+        obj[item.name] = item.price;
         return obj;
       }, {});
       return {
@@ -117,8 +116,7 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
         ...tarifasObj,
       };
     });
-    this.dataSource = new MatTableDataSource(mapped);
-    this.dataSource.sort = this.sort;
+    this.dataSource.set(mapped);
   }
 
   onPageEvent(event: PageEvent) {

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {DialogRef} from "@angular/cdk/dialog";
+import {Dialog, DialogRef} from "@angular/cdk/dialog";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -19,6 +19,14 @@ import Swal from "sweetalert2";
 import {
   ProductSearchOverlayComponent
 } from "@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component";
+import {
+  ProductSearchPopupComponent
+} from "@inventory/product/presentation/components/product-search-popup/product-search-popup.component";
+import {UniversalSearch} from "@inventory/product/presentation/components/universal-search/universal-search.component";
+import {
+  SearchInputTrigger
+} from "@inventory/product/presentation/components/search-input-trigger/search-input-trigger.component";
+import {SearchDialogService} from "@inventory/product/presentation/components/search-dialog";
 
 
 interface CommonType  {id:number, code: string, name:string}
@@ -35,7 +43,9 @@ interface CommonType  {id:number, code: string, name:string}
     MatDatepickerToggle,
     ReactiveFormsModule,
     FormsModule,
-    ProductSearchOverlayComponent
+    ProductSearchOverlayComponent,
+    UniversalSearch,
+    SearchInputTrigger
   ],
   templateUrl: './warehouse-transfer-add-edit.html',
   styleUrl: './warehouse-transfer-add-edit.scss',
@@ -44,8 +54,10 @@ interface CommonType  {id:number, code: string, name:string}
 })
 export class WarehouseTransferAddEdit {
   private dgSvc = inject(DialogService);
+  private dg = inject(Dialog)
   private dataFormUseCase = inject(WarehouseTransferDataFormUseCase);
   private notiSvc = inject(ToastrNotificationService);
+  private searchService = inject(SearchDialogService)
 
   private dialogRef  = inject(DialogRef<WarehouseTransferAddEdit>);
   private params = inject<{id: number}>(MAT_DIALOG_DATA);
@@ -158,6 +170,35 @@ export class WarehouseTransferAddEdit {
 
   ngOnInit(){
     this.loadDataForm()
+
+    const items: any[] = [
+      { title: 'Dashboard', description: 'Open main dashboard' },
+      { title: 'Users', description: 'Manage users & permissions' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+      { title: 'Reports', description: 'View analytics & metrics' },
+    ];
+    this.searchService.setItems(items);
   }
 
 
@@ -226,6 +267,25 @@ export class WarehouseTransferAddEdit {
 
 
   }
+
+
+
+  searchProduct(): void {
+    const dialogRef = this.dgSvc.open(ProductSearchPopupComponent, {
+      size: 'lg',
+
+      data: {
+        textSearch: '',
+        searchPurchase: false,
+        searchSale: true
+      }
+    });
+
+
+  }
+
+
+
 
   close(){
 

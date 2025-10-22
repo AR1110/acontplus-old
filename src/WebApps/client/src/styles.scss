@@ -102,3 +102,17 @@ table {
 }
 
 
+.search-dialog-panel {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex;
+  justify-content: center;
+}
+
+.search-dialog-backdrop {
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+
+
