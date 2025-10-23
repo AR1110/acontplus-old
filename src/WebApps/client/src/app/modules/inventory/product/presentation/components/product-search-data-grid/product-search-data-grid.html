@@ -1,0 +1,50 @@
+<div class="u-search">
+  <mat-form-field appearance="outline"    >
+    <mat-icon matPrefix>search</mat-icon>
+    <input #searchInput
+      matInput
+      type="text"
+      [placeholder]="placeholder()"
+      [formControl]="searchControl"
+      aria-label="Search"
+      autofocus
+    />
+    @if (searchControl.value) {
+      <button   matSuffix mat-icon-button (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+    }
+  </mat-form-field>
+
+  <app-data-grid
+    [data]="list()"
+    [columns]="columns()"
+    [loading]="loading()"
+    [keyboardNavigation]="true"
+    (focusedRowChange)="onFocusedRowChange($event)"
+    [showPaginator]="true"
+    [cellTemplate]="{ dataDescription: descriptionTpl}"
+  ></app-data-grid>
+  <ng-template #descriptionTpl let-row let-index="index" let-col="colDef">
+    <div class="d-flex flex-column gap-1">
+      <span class="font-medium fw-semibold">{{row.code}}</span>
+      <span>{{row.description}}</span>
+       </div>
+  </ng-template>
+
+
+  <mat-divider></mat-divider>
+  <div class="footer">
+    <div class="hint">
+      <mat-icon>keyboard_double_arrow_up</mat-icon> / <mat-icon>keyboard_double_arrow_down</mat-icon>
+      Move
+    </div>
+    <div class="hint">
+      <mat-icon>check</mat-icon> Enter
+    </div>
+    <div class="hint">
+      <mat-icon>escape</mat-icon> Esc
+    </div>
+  </div>
+</div>

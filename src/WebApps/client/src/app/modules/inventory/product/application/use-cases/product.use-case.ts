@@ -21,7 +21,7 @@ export class ProductUseCase {
     return this.repo.getDataForm();
   }
 
-  search = <T extends { textSearch: string; pageIndex?: number; pageSize?: number }>(obj: T) => {
+  search(obj: any)  {
     return this.repo.search(obj);
   };
 

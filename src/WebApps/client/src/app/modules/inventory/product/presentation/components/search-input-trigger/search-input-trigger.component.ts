@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { SearchDialogService } from '../search-dialog';
 import {MatIcon} from "@angular/material/icon";
-import {MatInput, MatInputModule} from "@angular/material/input";
+import { MatInputModule} from "@angular/material/input";
 import {MatIconButton} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
@@ -13,7 +13,7 @@ import {AddEditProductDirective} from "@inventory/product/presentation/directive
   imports: [MatIcon, MatFormFieldModule, MatInputModule, MatIconButton, AddEditProductDirective]
 })
 export class SearchInputTrigger {
-  constructor(private searchService: SearchDialogService) {}
+  private searchService = inject(SearchDialogService);
 
   openSearch() {
     this.searchService.open();

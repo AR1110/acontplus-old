@@ -1,15 +1,12 @@
-import {Injectable, HostListener, inject} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { SearchResult } from './universal-search/universal-search.component';
+import {Injectable, inject} from '@angular/core';
 import {
-  UniversalSearchDialog
-} from "@inventory/product/presentation/components/universal-search-dialog/universal-search-dialog.component";
+  ProductSearchDialog,
+} from "@inventory/product/presentation/components/product-search-dialog/product-search-dialog";
 import {DialogService} from "@core/services/dialog.service";
 
 @Injectable({ providedIn: 'root' })
 export class SearchDialogService {
   private dgSvc = inject(DialogService)
-  private items: SearchResult[] = [];
 
   constructor( ) {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -23,18 +20,14 @@ export class SearchDialogService {
     });
   }
 
-  setItems(items: SearchResult[]) {
-    this.items = items;
-  }
-
-  open(displayMode?: 'list' | 'card' | 'table') {
+  open() {
     // avoid opening multiple dialogs
-    if (document.querySelector('.search-dialog-panel')) return;
+    if (document.querySelector('.dialog-shell')) return;
 
-    const ref = this.dgSvc.open(UniversalSearchDialog, {
+    const ref = this.dgSvc.open(ProductSearchDialog, {
       size: 'xl',
       disableClose: false,
-      data: { items: this.items, displayMode }
+      data: {  }
     });
 
     return ref;

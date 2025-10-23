@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UniversalSearchDialogComponent } from './universal-search-dialog.component';
+import { UniversalSearchDialogComponent } from './product-search-dialog';
 
 describe('UniversalSearchDialogComponent', () => {
   let component: UniversalSearchDialogComponent;
