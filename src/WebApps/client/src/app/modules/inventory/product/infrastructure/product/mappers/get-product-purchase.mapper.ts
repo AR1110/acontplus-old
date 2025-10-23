@@ -9,7 +9,6 @@ export class GetProductPurchaseMapper {
 
   static fromJson(response: ApiResponse): GetProductPurchaseResult {
     const result = new GetProductPurchaseResult();
-    console.log(JSON.parse(response.payload as string));
     const { product, measures, fractionedMeasures, tags } = JSON.parse(response.payload as string);
     const data = product[0];
     const articulo = {

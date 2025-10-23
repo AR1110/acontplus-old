@@ -1,18 +1,26 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {MatSelectModule} from "@angular/material/select";
 import {MatInput} from "@angular/material/input";
 import {FormControl, ReactiveFormsModule} from "@angular/forms";
+import {GroupedEstabBodega} from "@core/models/estab.model";
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DataGrid} from "@shared/components/data-grid/data-grid";
+import {DataGridColumn} from "@shared/components/data-grid/types";
+import {GetMassTransferProductsUseCase} from "@inventory/domain/usecases/warehouse-transfer.use-case";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
+import {ValidatorUtils} from "@core/utils/utils";
+import {PageEvent} from "@angular/material/paginator";
 
-interface SubFamilia {
-  idSubFamilia: number;
-  subFamilia: string;
+interface SubCategory {
+  id: number;
+  name: string;
 }
 
-interface Familia {
-  familia: string;
-  subFamilias: SubFamilia[];
+interface Category {
+  name: string;
+  subCategories: SubCategory[];
 }
 
 @Component({
@@ -21,37 +29,67 @@ interface Familia {
     MatSelectModule,
     MatInput,
     MatCustomDialogComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    DataGrid
   ],
   templateUrl: './warehouse-transfer-filter-advanced.html',
   styleUrl: './warehouse-transfer-filter-advanced.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WarehouseTransferFilterAdvanced {
+  private getMassTransferProductsUseCase = inject(GetMassTransferProductsUseCase);
   private dgRef = inject(MatDialogRef<WarehouseTransferFilterAdvanced>);
-  private params = inject(MAT_DIALOG_DATA);
+  private notiSvc = inject(ToastrNotificationService)
+  private params = inject<{
+    sourceWarehouses: GroupedEstabBodega[];
+    sourceWarehouseId: number;
+    categories: any[];
+  }>(MAT_DIALOG_DATA);
 
-  checkedSubCategorias = new FormControl<(number | string)[]>([]);
-  subCategorias: Familia[] = [];
+  sourceWarehouseText = signal<string | undefined>('');
+  categories = signal<Category[]>([]);
+
+  checkedCategories = new FormControl<(number | string)[]>([]);
   allValue = 'SELECT_ALL';
 
+  columns: DataGridColumn[] = [
+    { header: 'Nro.', field: 'index' },
+    { header: 'Código', field: 'code' },
+    { header: 'Descripción', field: 'description' },
+    { header: 'Cantidad', field: 'quantity' },
+    { header: 'Medida', field: 'measure' },
+    { header: 'Precio Costo', field: 'costPrice',
+      type: 'currency',
+      typeParameter: { currencyCode: '$' },
+
+    },
+    { header: 'Total', field: 'total',
+      type: 'currency',
+      typeParameter: { currencyCode: '$' },
+    },
+  ];
+
+  list = signal<any[]>([]);
+  rowSelected = signal<any[]>([]);
+
+  query = {
+    page: 0,
+    per_page: 100
+  }
+  totalRecords = signal(0)
+
+  log(e: any) {
+    console.log(e);
+  }
+
   ngOnInit() {
-    // Datos de ejemplo
-    this.subCategorias = [
-      {
-        familia: 'COMBOS',
-        subFamilias: [
-          { idSubFamilia: 1, subFamilia: 'COMBO2' },
-          { idSubFamilia: 2, subFamilia: 'COMBO1' }
-        ]
-      },
-      {
-        familia: 'INGREDIENTES',
-        subFamilias: [
-          { idSubFamilia: 3, subFamilia: 'VEGETALES' }
-        ]
-      }
-    ];
+
+    this.categories.set(this.params.categories);
+    console.log(this.params.categories);
+    this.sourceWarehouseText.set(
+      this.params.sourceWarehouses.find(w => w.idBodega === this.params.sourceWarehouseId)?.descripcion
+    );
   }
 
   toggleSelectAll(event: any) {
@@ -59,20 +97,20 @@ export class WarehouseTransferFilterAdvanced {
       if (event.source.selected) {
         // Seleccionar todo
         const allIds = this.getAllSubfamiliaIds();
-        const allGroups = this.subCategorias.map(f => 'GROUP_' + f.familia);
-        this.checkedSubCategorias.setValue([this.allValue, ...allGroups, ...allIds], { emitEvent: false });
+        const allGroups = this.categories().map(f => 'GROUP_' + f.name);
+        this.checkedCategories.setValue([this.allValue, ...allGroups, ...allIds], { emitEvent: false });
       } else {
         // Deseleccionar todo
-        this.checkedSubCategorias.setValue([], { emitEvent: false });
+        this.checkedCategories.setValue([], { emitEvent: false });
       }
     }
   }
 
-  toggleGroup(event: any, familia: Familia) {
+  toggleGroup(event: any, familia: Category) {
     if (event.isUserInput) {
-      const currentValue = this.checkedSubCategorias.value || [];
-      const groupKey = 'GROUP_' + familia.familia;
-      const groupIds = familia.subFamilias.map(sf => sf.idSubFamilia);
+      const currentValue = this.checkedCategories.value || [];
+      const groupKey = 'GROUP_' + familia.name;
+      const groupIds = familia.subCategories.map(sf => sf.id);
 
       if (event.source.selected) {
         // Seleccionar grupo - agregar todas las subfamilias
@@ -82,7 +120,7 @@ export class WarehouseTransferFilterAdvanced {
             newValue.push(id);
           }
         });
-        this.checkedSubCategorias.setValue(newValue, { emitEvent: false });
+        this.checkedCategories.setValue(newValue, { emitEvent: false });
         this.checkIfAllSelected();
       } else {
         // Deseleccionar grupo - quitar todas las subfamilias
@@ -91,27 +129,24 @@ export class WarehouseTransferFilterAdvanced {
         );
         // Quitar "Seleccionar todo" también
         const finalValue = newValue.filter(v => v !== this.allValue);
-        this.checkedSubCategorias.setValue(finalValue, { emitEvent: false });
+        this.checkedCategories.setValue(finalValue, { emitEvent: false });
       }
     }
   }
 
   onSelectionChange(event: any) {
-    const selected = this.checkedSubCategorias.value || [];
-
-    // Actualizar checkboxes de grupos basado en subfamilias seleccionadas
     this.updateGroupCheckboxes();
     this.checkIfAllSelected();
   }
 
   private updateGroupCheckboxes() {
-    const selected = this.checkedSubCategorias.value || [];
+    const selected = this.checkedCategories.value || [];
     const newValue = [...selected];
     let changed = false;
 
-    this.subCategorias.forEach(familia => {
-      const groupKey = 'GROUP_' + familia.familia;
-      const groupIds = familia.subFamilias.map(sf => sf.idSubFamilia);
+    this.categories().forEach(familia => {
+      const groupKey = 'GROUP_' + familia.name;
+      const groupIds = familia.subCategories.map(sf => sf.id);
       const allGroupSelected = groupIds.every(id => selected.includes(id));
       const someGroupSelected = groupIds.some(id => selected.includes(id));
 
@@ -128,31 +163,31 @@ export class WarehouseTransferFilterAdvanced {
     });
 
     if (changed) {
-      this.checkedSubCategorias.setValue(newValue, { emitEvent: false });
+      this.checkedCategories.setValue(newValue, { emitEvent: false });
     }
   }
 
   private checkIfAllSelected() {
-    const selected = this.checkedSubCategorias.value || [];
+    const selected = this.checkedCategories.value || [];
     const allIds = this.getAllSubfamiliaIds();
     const allSelected = allIds.every(id => selected.includes(id));
 
     if (allSelected && !selected.includes(this.allValue)) {
-      this.checkedSubCategorias.setValue([...selected, this.allValue], { emitEvent: false });
+      this.checkedCategories.setValue([...selected, this.allValue], { emitEvent: false });
     } else if (!allSelected && selected.includes(this.allValue)) {
       const newValue = selected.filter(v => v !== this.allValue);
-      this.checkedSubCategorias.setValue(newValue, { emitEvent: false });
+      this.checkedCategories.setValue(newValue, { emitEvent: false });
     }
   }
 
   private getAllSubfamiliaIds(): number[] {
-    return this.subCategorias.flatMap(f =>
-      f.subFamilias.map(sf => sf.idSubFamilia)
+    return this.categories().flatMap(f =>
+      f.subCategories.map(sf => sf.id)
     );
   }
 
   getDisplayValue(): string {
-    const selected = this.checkedSubCategorias.value || [];
+    const selected = this.checkedCategories.value || [];
 
     // Filtrar solo los IDs numéricos (subfamilias reales)
     const subfamiliaIds = selected.filter(val => typeof val === 'number') as number[];
@@ -163,10 +198,10 @@ export class WarehouseTransferFilterAdvanced {
 
     // Obtener los nombres de las subfamilias seleccionadas
     const nombres: string[] = [];
-    this.subCategorias.forEach(familia => {
-      familia.subFamilias.forEach(sf => {
-        if (subfamiliaIds.includes(sf.idSubFamilia)) {
-          nombres.push(sf.subFamilia);
+    this.categories().forEach(familia => {
+      familia.subCategories.forEach(sf => {
+        if (subfamiliaIds.includes(sf.id)) {
+          nombres.push(sf.name);
         }
       });
     });
@@ -174,9 +209,43 @@ export class WarehouseTransferFilterAdvanced {
     return nombres.join(', ');
   }
 
-  close() {
-    console.log(this.checkedSubCategorias);
- //   this.dgRef.close();
+  search(){
+
+    if (!(this.params.sourceWarehouseId > 0)) {
+      this.notiSvc.warning({
+        message: 'Seleccione Bodega Origen'
+      })
+      return
+    }
+
+    const subCategories = this.checkedCategories.value?.filter(Number).join(",");
+  //  let selectedSubfamilias = $scope.selectedSubfamilias().map(sub => sub.idSubFamilia).join(",");
+
+
+    let params = {
+      sourceWarehouseId: this.params.sourceWarehouseId,
+      subCategories: ValidatorUtils.isValidField(subCategories)
+    }
+
+    this.rowSelected.set([])
+    this.totalRecords.set(0)
+    this.getMassTransferProductsUseCase.execute(params).subscribe(result => {
+      this.list.set(result.products);
+      this.totalRecords.set(result.totalRecords)
+
+    })
+
   }
 
+  getNextPage(e: PageEvent) {
+    this.query.page = e.pageIndex;
+    this.query.per_page = e.pageSize;
+
+  }
+
+
+  close() {
+    console.log(this.checkedCategories);
+    this.dgRef.close();
+  }
 }

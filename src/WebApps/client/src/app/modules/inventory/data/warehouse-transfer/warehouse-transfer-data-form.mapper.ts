@@ -5,7 +5,7 @@ export class WarehouseTransferDataFormMapper {
 
   static toJson() {
     return JSON.stringify({
-      tipo: 3
+      tipo: 3,
     })
   }
 
@@ -15,7 +15,7 @@ export class WarehouseTransferDataFormMapper {
       establishments: [] as GroupedEstab[],
       transactionTypes: [],
       documentTypes: [],
-      subFamilies: [],
+      categories: [],
     };
     if (response !== null && typeof response === "object") {
       const { ptoEmision, bodega, tipoTransaccion, tipoDocumento } =
@@ -40,24 +40,25 @@ export class WarehouseTransferDataFormMapper {
           name: item.descripcion,
         }
       });
-      data.subFamilies = response.subFamilias.reduce( (
+      data.categories = response.subFamilias.reduce( (
           acc:any,
           obj:any
         )=> {
-          let key = obj.name;
+          let key = obj.idFamilia;
           let existingGroup = acc.find(function (group:any) {
-            return group.name === key;
+            return group.id === key;
           });
 
           if (existingGroup) {
-            existingGroup.subFamilias.push({
+            existingGroup.subCategories.push({
               id: obj.idSubFamilia,
               name: obj.nomSubFamilia,
             });
           } else {
             acc.push({
-              name: key,
-              subFamilias: [
+              name: obj.nomFamilia,
+              id: obj.idFamilia,
+              subCategories: [
                 {
                   id: obj.idSubFamilia,
                   name: obj.nomSubFamilia,

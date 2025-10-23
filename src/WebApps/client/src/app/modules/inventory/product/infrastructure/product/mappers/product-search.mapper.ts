@@ -4,10 +4,10 @@ import { ApiResponse } from "@core/models/api-response";
 export class ProductSearchMapper {
   static toJson(obj: any): any {
     return JSON.stringify({
-      pageIndex: obj.pageIndex ?? 1,
-      pageSize: obj.pageSize ?? 15,
-      search: obj.textSearch || obj.q, // 'busqueda' → 'search'
-      busqueda: obj.textSearch || obj.q, // 'busqueda' → 'search'
+      pageIndex: obj.page || obj.pageIndex || 1,
+      pageSize: obj.per_page || obj.pageSize || 15,
+      search: obj.textSearch || obj.q || obj.search, // 'busqueda' → 'search'
+      busqueda: obj.textSearch || obj.q || obj.search, // 'busqueda' → 'search'
     });
   }
 

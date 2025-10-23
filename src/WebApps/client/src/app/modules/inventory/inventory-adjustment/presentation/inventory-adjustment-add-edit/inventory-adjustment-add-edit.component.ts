@@ -26,7 +26,7 @@ import { InventoryAdjustmentService } from '@inventory/inventory-adjustment/doma
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ValidationException } from '@core/domain';
 import { setDateWithCurrentTime } from '@core/utils/date.util';
-import { ValidateProductStock } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { ValidateProductStockUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 import DecimalUtil from '@core/utils/decimal.util';
 import { MatTooltip } from '@angular/material/tooltip';
 
@@ -49,7 +49,7 @@ import { MatTooltip } from '@angular/material/tooltip';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryAdjustmentAddEditComponent implements OnInit {
-  private $validateProductStock = inject(ValidateProductStock);
+  private $validateProductStock = inject(ValidateProductStockUseCase);
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentAddEditComponent>);
   private params = inject(MAT_DIALOG_DATA);

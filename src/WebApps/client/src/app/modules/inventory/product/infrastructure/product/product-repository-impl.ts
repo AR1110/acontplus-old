@@ -137,6 +137,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   getForPurchase(id: number) {
+    console.log(id)
     const params = {
       json: GetProductPurchaseMapper.toJson(id),
     };

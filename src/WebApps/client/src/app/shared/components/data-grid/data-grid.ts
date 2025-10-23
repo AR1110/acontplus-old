@@ -210,7 +210,12 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     return cols;
   });
 
-  hasNoResult = computed(() => (!this.dataSource.data || this.dataSource.data.length === 0) && !this.loading());
+  hasNoResult = computed(() => {
+    console.log(this.data())
+
+    return  (this.data().length === 0) && !this.loading();
+
+  });
   whetherShowSummary = computed(() => this.showSummary());
 
   constructor() {

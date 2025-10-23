@@ -73,7 +73,18 @@
 
     <div class="row">
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <app-search-input-trigger/>
+        <mat-form-field class="w-100">
+          <input matInput placeholder="Search... (Ctrl + K)" readonly (click)="openSearch()" tabindex="0"  />
+          <ng-container matSuffix>
+            <button mat-icon-button (click)="openSearch()">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button   appAddEditProduct>
+              <mat-icon>add</mat-icon>
+            </button>
+          </ng-container>
+        </mat-form-field>
+
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-end">
         <app-theme-button
@@ -85,7 +96,25 @@
         />
       </div>
     </div>
-    hola
+
+
+
+      <app-tabulator
+        [columnNames]="columns()"
+        [tableData]="details()"
+        [options]="{
+          height: '100%',
+          dataTreeSelectPropagate: false,
+        }"
+        (cellEdited)="cellEdited($event)"
+      />
+
+    <div class="d-flex gap-3 justify-content-center align-items-center">
+      <span class="fw-medium">Total:</span>
+      <span class="">{{ total() }}</span>
+    </div>
+
+
   </section>
   <section ngProjectAs="actions">
     <app-theme-button

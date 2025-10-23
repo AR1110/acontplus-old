@@ -42,3 +42,12 @@ export class WarehouseTransferDataFormUseCase implements BaseUseCase<WarehouseTr
   }
 }
 
+@Injectable({
+  providedIn: 'root',
+})
+export class GetMassTransferProductsUseCase implements BaseUseCase<any, any>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(obj:any) {
+    return this.repo.getMassTransferProducts(obj);
+  }
+}

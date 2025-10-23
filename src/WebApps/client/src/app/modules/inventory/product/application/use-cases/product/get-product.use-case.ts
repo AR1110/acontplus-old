@@ -63,7 +63,7 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
 @Injectable({
   providedIn: 'root',
 })
-export class ValidateProductStock implements BaseUseCase<ApiResponse, ValidateProductStockParams> {
+export class ValidateProductStockUseCase implements BaseUseCase<ApiResponse, ValidateProductStockParams> {
   private repo = inject(ProductRepository);
 
   execute(params: ValidateProductStockParams) {
