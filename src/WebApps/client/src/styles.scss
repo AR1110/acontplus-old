@@ -5,6 +5,7 @@
 @use "styles/helpers";
 @use "styles/plugins";
 @use "styles/custom";
+@use "styles/_custom-button";
 //@use "styles/_layout-system.scss";
 // @use '@angular/material' as mat;
 // @use 'sass:map';
@@ -100,5 +101,19 @@ table {
 .mat-mdc-radio-button ~ .mat-mdc-radio-button {
   margin-left: 16px;
 }
+
+
+.search-dialog-panel {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex;
+  justify-content: center;
+}
+
+.search-dialog-backdrop {
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.45);
+}
+
 
 

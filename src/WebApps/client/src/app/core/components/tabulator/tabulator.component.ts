@@ -37,8 +37,8 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
    */
   @Input() theme: 'default' | 'semantic-ui' = 'default';
 
-  @Output() cellEdited = new EventEmitter<unknown>();
-  @Output() cellClick = new EventEmitter<unknown>();
+   cellEdited = output<unknown>();
+   cellClick = output<unknown>();
 
   rowDeleted = output<any>();
 
@@ -64,7 +64,6 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.initializeTable();
       this.applyTheme();
-      this.registerEvents();
     });
   }
 

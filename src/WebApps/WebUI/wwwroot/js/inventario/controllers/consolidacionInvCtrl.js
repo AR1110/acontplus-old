@@ -914,7 +914,7 @@
                         $scope.data.idBodega = dataBodega.idBodega;
                         $scope.dataClone.idBodega = $scope.data.idBodega;
                     }
-                    $scope.gridOptions.data = detalles.map(item=>({
+                    $scope.gridOptions.data = detalles.map(item => ({
                         ...item,
                         id: 0
                     }));

@@ -1,0 +1,39 @@
+/* Estilos compartidos */
+.small-button {
+  width: 23px;            /* tamaño pequeño */
+  height: 23px;
+  border-radius: 50%;      /* circular */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Botón Editar */
+.btn-edit {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #15803d;
+}
+
+/* Botón Eliminar */
+.btn-remove {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-remove:hover {
+  background-color: #b91c1c;
+}

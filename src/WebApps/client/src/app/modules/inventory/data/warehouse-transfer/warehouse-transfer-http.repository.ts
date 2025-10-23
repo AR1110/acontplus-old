@@ -9,6 +9,7 @@ import { WarehouseTransferRepository } from '@inventory/domain/repositories/ware
 import { TransferenciaBodegaMapper } from './warehouse-transfer.mapper';
 import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
 import {WarehouseTransferDataFormMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-data-form.mapper";
+import {GetMassTransferProductsMapper} from "@inventory/data/warehouse-transfer/get-mass-transfer-products.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -64,5 +65,12 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
 
   updateStatus(id: number) {
     return this._http.delete<ApiResponse>(`${this._url}${id}`);
+  }
+
+  getMassTransferProducts(obj:any){
+    const json = GetMassTransferProductsMapper.toJson(obj);
+    return this._http
+      .get(`${this._url}?json=${json}`)
+      .pipe(map(response => GetMassTransferProductsMapper.fromJson(response)));
   }
 }

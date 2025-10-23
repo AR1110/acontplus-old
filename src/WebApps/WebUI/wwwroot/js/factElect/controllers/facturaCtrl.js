@@ -10,6 +10,7 @@
     let fS = {};
     let modalSvc = {};
     let tipoDoc = {};
+    const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {};
 
     app.controller("facturaCtrl", facturaCtrl);
@@ -27,8 +28,7 @@
         nombreModalVenta = $injector.get("nombreModalVenta");
 
         const nombreModalCommon = $injector.get('nombreModalCommon');
-        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService');
-        const policyService = $injector.get('PolicyService');
+        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
 
         let DOC_TYPE = $injector.get("DOC_TYPE");
         const CODE_REPORT = $injector.get("CODE_REPORT");
@@ -310,9 +310,6 @@
 
         $scope.openModalInvoiceNew = async () => {
             try {
-
-                await policyService.sendMaxDocuments();
-
                 modalSvc
                     .openModalCustom({
                         controller: "modalFacturaCtrl",
@@ -453,9 +450,6 @@
 
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
-
-                await policyService.sendMaxDocuments();
-
                 facturaSvc
                     .getId(item.idDocumento)
                     .then((response) => {

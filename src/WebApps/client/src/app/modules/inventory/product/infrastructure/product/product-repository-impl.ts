@@ -22,6 +22,7 @@ import { GetProductPurchaseMapper } from '@inventory/product/infrastructure/prod
 import {
   GetProductEstabsStockMapper
 } from "@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper";
+import {ProductSearchMapper} from "@inventory/product/infrastructure/product/mappers/product-search.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -99,27 +100,15 @@ export class ProductRepositoryImpl implements ProductRepository {
       );
   }
 
-  search<T extends { textSearch: string; pageIndex?: number; pageSize?: number }>(
+  search<T extends { textSearch: string; pageIndex?: number; pageSize?: number, q?: string }>(
     data: T,
-  ): Observable<ProductSearch[]> {
-    const json = JSON.stringify({
-      pageIndex: data.pageIndex ?? 1,
-      pageSize: data.pageSize ?? 15,
-      busqueda: data.textSearch,
-    });
+  ): Observable<any> {
+    const json = ProductSearchMapper.toJson(data);
     return this._http
       .get<ApiResponse>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(
-        map(response => {
-          if (response.code === '1') {
-            const results = (response.payload && JSON.parse(response.payload as string)) || [];
-            return ProductMapper.searchFrom(results);
-          }
-          return [];
-        }),
-      );
+      .pipe( map(response => ProductSearchMapper.fromJson(response)));
   }
 
   getForSale(id: number) {
@@ -148,6 +137,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   getForPurchase(id: number) {
+    console.log(id)
     const params = {
       json: GetProductPurchaseMapper.toJson(id),
     };

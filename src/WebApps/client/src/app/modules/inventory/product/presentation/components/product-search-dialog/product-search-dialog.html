@@ -1,0 +1,70 @@
+<div class="u-search">
+  <mat-form-field appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+
+    <!-- 🔹 Input nativo, keyup disparará la búsqueda -->
+    <input
+      #searchInput
+      matInput
+      type="text"
+      placeholder="Buscar producto..."
+      aria-label="Search"
+      autofocus
+      (input)="search()"
+    />
+
+    <!-- 🔹 Botón limpiar solo si hay texto -->
+    @if (searchInput.value.length > 0) {
+      <button
+        matSuffix
+        mat-icon-button
+        (click)="clearSearch()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+
+    }
+  </mat-form-field>
+
+  <!-- 🧩 DataGrid -->
+  <app-data-grid
+    [data]="list()"
+    [columns]="columns()"
+    [loading]="loading()"
+    [keyboardNavigation]="true"
+    [showPaginator]="true"
+    [pageOnFront]="false"
+    [pageIndex]="query.page"
+    [pageSize]="query.per_page"
+    [pageSizeOptions]="[5, 10, 20]"
+    [length]="total()"
+    [cellTemplate]="{ dataDescription: descriptionTpl }"
+    (page)="getNextPage($event)"
+    (focusedRowChange)="onFocusedRowChange($event)"
+    (rowClick)="rowClick($event)"
+  ></app-data-grid>
+
+  <!-- 🔹 Template para descripción de producto -->
+  <ng-template #descriptionTpl let-row let-index="index" let-col="colDef">
+    <div class="d-flex flex-column gap-1">
+      <span class="font-medium fw-semibold">{{ row.code }}</span>
+      <span>{{ row.description }}</span>
+    </div>
+  </ng-template>
+
+  <!-- 🔹 Footer con atajos de teclado -->
+  <mat-divider></mat-divider>
+  <div class="footer">
+    <div class="hint">
+      <mat-icon>keyboard_double_arrow_up</mat-icon> /
+      <mat-icon>keyboard_double_arrow_down</mat-icon>
+      Mover
+    </div>
+    <div class="hint">
+      <mat-icon>check</mat-icon> Enter
+    </div>
+    <div class="hint">
+      <mat-icon>escape</mat-icon> Esc
+    </div>
+  </div>
+</div>

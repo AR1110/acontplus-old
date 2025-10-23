@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {DialogRef} from "@angular/cdk/dialog";
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import { DialogRef} from "@angular/cdk/dialog";
 import {MAT_DIALOG_DATA} from "@angular/material/dialog";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
@@ -16,9 +16,24 @@ import {WarehouseTransferDataFormUseCase} from "@inventory/domain/usecases/wareh
 import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision} from "@core/models/estab.model";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
 import Swal from "sweetalert2";
+import {SearchDialogService} from "@shared/services/search-dialog";
+import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
+import {MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
 import {
-  ProductSearchOverlayComponent
-} from "@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component";
+  ProductSearchDialog
+} from "@inventory/product/presentation/components/product-search-dialog/product-search-dialog";
+import {
+  GetProductPurchaseUseCase,
+  ValidateProductStockUseCase
+} from "@inventory/product/application/use-cases/product/get-product.use-case";
+import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {roundNumber} from "@core/utils/round-number.utils";
+import DecimalUtil from "@core/utils/decimal.util";
+import {Money} from "@inventory/inventory-adjustment/domain/value-objects/money.vo";
+import {mergeStockItems} from "@inventory/product/domain/utils/stock.utils";
+import {firstValueFrom, take} from "rxjs";
 
 
 interface CommonType  {id:number, code: string, name:string}
@@ -35,7 +50,10 @@ interface CommonType  {id:number, code: string, name:string}
     MatDatepickerToggle,
     ReactiveFormsModule,
     FormsModule,
-    ProductSearchOverlayComponent
+    AddEditProductDirective,
+    MatIcon,
+    MatIconButton,
+    TabulatorComponent
   ],
   templateUrl: './warehouse-transfer-add-edit.html',
   styleUrl: './warehouse-transfer-add-edit.scss',
@@ -46,6 +64,11 @@ export class WarehouseTransferAddEdit {
   private dgSvc = inject(DialogService);
   private dataFormUseCase = inject(WarehouseTransferDataFormUseCase);
   private notiSvc = inject(ToastrNotificationService);
+  private searchService = inject(SearchDialogService);
+  private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
+  private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
+
+
 
   private dialogRef  = inject(DialogRef<WarehouseTransferAddEdit>);
   private params = inject<{id: number}>(MAT_DIALOG_DATA);
@@ -62,9 +85,7 @@ export class WarehouseTransferAddEdit {
 
   transactionTypes = signal<CommonType[]>([])
   documentTypes = signal<CommonType[]>([])
-  subFamilies = signal<CommonType[]>([])
-
-  subCategories = signal([]);
+  categories = signal<CommonType[]>([])
 
   dataForm = {
     sourceEstablishmentId: 0,
@@ -79,7 +100,189 @@ export class WarehouseTransferAddEdit {
 
   cloneSourceEstablishmentId = signal(0);
 
+  uuidRow = signal('')
+
   details = signal<any[]>([])
+  detailsDeleted = signal<any[]>([])
+
+  comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
+    const column: any = cell.getColumn().getField();
+    const data: any = cell.getData();
+    // const oldValue = cell.getOldValue();
+    // const value = cell.getValue();
+
+    const editor: any = document.createElement('select');
+
+    if (column === 'measureId') {
+      for (const m of data.measures) {
+        const opt = document.createElement('option');
+        opt.value = m.idMedida.toString();
+        opt.innerHTML = m.descripcion;
+        editor.appendChild(opt);
+      }
+    }
+
+    editor.style.padding = '3px';
+    editor.style.width = '100%';
+    editor.style.boxSizing = 'border-box';
+
+    editor.value = Number(cell.getValue());
+
+    onRendered(function () {
+      editor.focus();
+      editor.style.css = '100%';
+    });
+
+    function successFunc() {
+      success(editor.value);
+    }
+
+    editor.addEventListener('change', successFunc);
+    editor.addEventListener('blur', successFunc);
+
+    return editor;
+  };
+
+
+  columns = signal([
+    {
+      formatter: 'rownum',
+      headerSort: false,
+      hozAlign: 'center',
+    },
+    {
+      title: 'Op.',
+      formatter: (cell: any) => {
+        const rowData = cell.getRow().getData();
+
+        // contenedor de botones
+        const buttonHolder = document.createElement('div');
+        buttonHolder.style.display = 'flex';
+        buttonHolder.style.gap = '4px'; // espacio entre botones
+        buttonHolder.style.justifyContent = 'center';
+        buttonHolder.style.alignItems = 'center';
+
+        // Botón Eliminar
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    `;
+        delBtn.classList.add('small-button', 'btn-remove');
+        delBtn.addEventListener('click', () => {
+          this.deleteRow(rowData)
+        });
+
+        // Botón Editar
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" fill="currentColor"/>
+      </svg>
+    `;
+        editBtn.classList.add('small-button', 'btn-edit');
+        editBtn.addEventListener('click', () => {
+          console.log('Editar:', rowData);
+        });
+
+        // Agregar botones al contenedor
+        buttonHolder.appendChild(editBtn);
+        buttonHolder.appendChild(delBtn);
+
+        return buttonHolder;
+      },
+      width: 100,
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+    },
+    {
+      title: 'Código',
+      field: 'code',
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+      width: '8px',
+    },
+    {
+      title: 'Producto',
+      field: 'description',
+      editor: false,
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+      width: '40px',
+    },
+    {
+      title: 'Cant.',
+      field: 'quantity',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      width: '7px',
+
+      validator: ['required'],
+      editor: 'number',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+    },
+    {
+      title: 'Medida',
+      field: 'measureId',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editor: this.comboEditor,
+      formatter: function (cell: any) {
+        const data = cell.getData();
+        for (const m of data.measures) {
+          if (m.idMedida == cell.getValue()) {
+            return m.descripcion;
+          }
+        }
+      },
+      validator: 'required',
+      width: '9px',
+    },
+
+    {
+      title: 'Precio Costo.',
+      field: 'costPrice',
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+      width: '9px',
+      validator: ['required'],
+      editor: 'number',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      formatterParams: { precision: false },
+    },
+    {
+      title: 'Total',
+      field: 'total',
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+      width: '6px',
+    },
+  ]);
+
+  total = computed(() => {
+    const totalValue = this.details().reduce((acc, item) => {
+      return DecimalUtil.addAsNumber(acc, item.total); // sumamos cada item
+    }, 0); // valor inicial
+    return roundNumber(totalValue);
+  });
 
   isAdd (){
     return this.params.id === 0;
@@ -90,7 +293,12 @@ export class WarehouseTransferAddEdit {
 
   openFilterAdvanced (){
     this.dgSvc.open(WarehouseTransferFilterAdvanced, {
-      size: 'xl'
+      size: 'xl',
+      data: {
+        sourceWarehouses: structuredClone(this.sourceWarehouses()),
+        sourceWarehouseId: this.dataForm.sourceWarehouseId,
+        categories: structuredClone(this.categories()),
+      }
       }
     ).subscribe(result => {
       console.log(result);
@@ -103,7 +311,7 @@ export class WarehouseTransferAddEdit {
       this.destinationEstablishments.set(response.establishments);
       this.transactionTypes.set(response.transactionTypes);
       this.documentTypes.set(response.documentTypes);
-      this.subFamilies.set(response.subFamilies);
+      this.categories.set(response.categories);
 
       if (this.sourceEstablishments().length === 0) {
         this.notiSvc.warning({
@@ -156,8 +364,16 @@ export class WarehouseTransferAddEdit {
     }
   }
 
+  constructor() {
+    this.searchService.setDefaultComponent(ProductSearchDialog);
+  }
+
   ngOnInit(){
-    this.loadDataForm()
+     this.loadDataForm();
+
+    this.searchService.onResult().subscribe(result => {
+      this.handleSearchResult(result);
+    });
   }
 
 
@@ -222,9 +438,212 @@ export class WarehouseTransferAddEdit {
 
   }
 
-  selectProduct($event:any){
+  openSearch(): void {
+    this.searchService.open(ProductSearchDialog)?.subscribe(result => {
+      this.handleSearchResult(result);
+    });
+  }
+  private handleSearchResult(result: any): void {
+    if (!result || typeof result !== 'object') return;
+
+    this.getProductPurchaseUseCase.execute(result.id).pipe(take(1)).subscribe({
+      next: (response) => {
+        const { data, measures } = response;
+
+        if (!data || !Array.isArray(measures)) {
+          console.error('Invalid product or measures data');
+          return;
+        }
+
+        const tempDetails = structuredClone(this.details());
+        const existingIndex = tempDetails.findIndex((v: any) => v.productId === data.id);
+
+        const measure = existingIndex !== -1
+          ? measures.find(m => m.idMedida === Number(tempDetails[existingIndex].measureId))
+          : measures.find(m => m.defaultMedida);
+
+        if (!measure) {
+          console.error('No corresponding measure found');
+          return;
+        }
+
+        const entity = existingIndex !== -1
+          ? tempDetails[existingIndex]
+          : {
+            uuid: generateUuidv4(),
+            id: 0,
+            productId: data.id,
+            quantity: 1,
+            status: true,
+          };
+
+        Object.assign(entity, {
+          code: data.code,
+          description: data.description,
+          stock: data.stock,
+          hasInventory: data.hasInventory,
+          measures,
+          measureId: measure.idMedida,
+          convertion: measure.conversion,
+          costPrice: measure.precioCosto,
+          unitPrice: measure.precioUnitario,
+          fractionalCostPrice: measure.precioCostoFraccionado,
+          warehouseId: this.dataForm.sourceWarehouseId,
+        });
+
+        entity.total = roundNumber(entity.quantity * entity.costPrice);
+
+        if (existingIndex !== -1) {
+          entity.quantity += 1;
+          this.uuidRow.set(entity.uuid);
+        } else {
+          tempDetails.push(entity);
+          this.uuidRow.set(entity.uuid);
+        }
+
+        this.details.set(tempDetails);
+      },
+      error: (err) => {
+        console.error('Error getting product:', err);
+      },
+    });
+  }
 
 
+  private async validateStock(details: any[], fn: (cont: boolean) => void): Promise<void> {
+    try {
+      const dataMergeStock = mergeStockItems(details);
+      console.log("dataMergeStock", dataMergeStock);
+
+      const response = await firstValueFrom(
+        this.$validateProductStockUseCase.execute({
+          cantidad: dataMergeStock.quantity,
+          idArticulo: dataMergeStock.productId,
+          idBodega: dataMergeStock.warehouseId,
+          idMedida: dataMergeStock.measureId,
+        })
+      );
+      const { code, message, titleSms } = response;
+
+      //  Caso aprobado directamente
+      if (code === '1') {
+        fn(true);
+        return;
+      }
+
+      // ⚠ Mostrar alerta y esperar decisión del usuario
+      const { isConfirmed } = await Swal.fire({
+        title: `<small>${titleSms}</small>`,
+        icon: 'warning',
+        html: `<small>${message}</small>`,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+
+      if (isConfirmed) {
+        // code === '0' → rechazar
+        // code === '2' → aceptar bajo advertencia
+        fn(code === '2');
+      }
+
+    } catch (error) {
+      console.error('Error validating stock:', error);
+      fn(false);
+    }
+  }
+
+
+  async cellEdited(cell: any): Promise<void> {
+    const column = cell.getColumn().getField();
+    const oldValue = parseFloat(cell.getOldValue());
+    const newValue = parseFloat(cell.getValue());
+    const data = { ...cell.getData() }; // copia superficial
+    const oldData = cell.getRow().getData();
+
+    // 🔹 Validaciones básicas
+    if (newValue === oldValue || isNaN(newValue) || cell.getValue() === '' || newValue < 0) {
+      cell.setValue(oldValue);
+      return;
+    }
+
+    // 🔹 Lógica según columna
+    switch (column) {
+      case 'quantity': {
+        const updatedDetails = this.updateDetailInList(data.uuid, data);
+        const isValid = await this.validateStockAsync(updatedDetails);
+        if (!isValid) {
+          data[column] = oldValue;
+        }
+        break;
+      }
+
+      case 'measureId': {
+        const selectedMeasure = data.measures.find((m: any) => m.idMedida === Number(newValue));
+
+        if (!selectedMeasure) {
+          console.error('No se encontró la medida seleccionada');
+          data[column] = oldValue;
+          break;
+        }
+
+        Object.assign(data, {
+          unitPrice: selectedMeasure.precioUnitario || 0,
+          costPrice: selectedMeasure.precioCosto || 0,
+          fractionalCostPrice: selectedMeasure.precioCostoFraccionado || 0,
+        });
+
+        const updatedDetails = this.updateDetailInList(data.uuid, data);
+        const isValid = await this.validateStockAsync(updatedDetails);
+
+        if (!isValid) {
+          data.measureId = oldData.measureId;
+        }
+
+        break;
+      }
+
+      default:
+        // Otras columnas editables
+        break;
+    }
+
+    // 🔹 Recalcular total
+    data.total = DecimalUtil.multiplyAsNumber(data.quantity, data.costPrice);
+
+    // 🔹 Actualizar lista
+    this.details.set(this.details().map(item => (item.uuid === data.uuid ? data : item)));
+  }
+  private updateDetailInList(uuid: string, newData: any): any[] {
+    return this.details().map(item => (item.uuid === uuid ? { ...newData } : item));
+  }
+  private validateStockAsync(details: any[]): Promise<boolean> {
+    return new Promise(resolve => {
+      this.validateStock(details, (cont: boolean) => resolve(cont));
+    });
+  }
+
+
+  async deleteRow (row:any) {
+    const { isConfirmed } = await Swal.fire({
+      icon: 'warning',
+      title: 'Eliminar Articulo',
+      html: `<small>Esta seguro de eliminar este articulo ${row.description}</small>`,
+      showConfirmButton: true,
+      showDenyButton: true,
+      allowOutsideClick: false,
+      confirmButtonText: 'Si',
+      denyButtonText: 'No'
+    })
+    if(!isConfirmed) return;
+
+    const filteredResults = this.details().filter(item => item.uuid !== row.uuid);
+    if(row.id>0){
+      this.detailsDeleted.update(res=>[...res, {
+        ...row,
+        status: false
+      }]);
+    }
+    this.details.set(filteredResults);
   }
 
   close(){

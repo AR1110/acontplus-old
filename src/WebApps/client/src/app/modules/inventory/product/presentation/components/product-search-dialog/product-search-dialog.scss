@@ -1,0 +1,28 @@
+.u-search {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 10px;
+}
+
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 6px 2px;
+  align-items: center;
+}
+
+
+:host ::ng-deep .label {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: #ffb74d;
+}
+:host ::ng-deep .data-grid {
+  height: 400px;
+}
+
