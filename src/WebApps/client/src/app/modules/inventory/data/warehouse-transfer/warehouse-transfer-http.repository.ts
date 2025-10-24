@@ -14,6 +14,7 @@ import {
   WarehouseTransferGenerateSerieMapper
 } from "@inventory/data/warehouse-transfer/warehouse-transfer-generate-serie.mapper";
 import {WarehouseTransferSaveMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-save.mapper";
+import {WarehouseTransferGetByIdMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-get-by-id.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -49,8 +50,8 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
   }
 
   post<T>(obj: T) {
-    const data = WarehouseTransferSaveMapper.toJson(obj);
-    return this._http.post<ApiResponse>(`${this._url}`, { data });
+    const dto = WarehouseTransferSaveMapper.toJson(obj);
+    return this._http.post<ApiResponse>(`${this._url}`, dto);
   }
   put<T>(id: number, data: T) {
     return this._http.put<ApiResponse>(
@@ -79,5 +80,11 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
         .get(`${this._url}?json=${json}`)
         .pipe(map(response => WarehouseTransferGenerateSerieMapper.fromJson(response)));
 
+  }
+
+  getById(id: number): Observable<any> {
+    return this._http.get(`${this._url}/GetId/${id}`).pipe(
+      map(response => WarehouseTransferGetByIdMapper.fromJson(response))
+    )
   }
 }

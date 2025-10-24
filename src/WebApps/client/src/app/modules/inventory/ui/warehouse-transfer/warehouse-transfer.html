@@ -57,6 +57,7 @@
           <mat-label>Nro. Secuencial</mat-label>
           <input matInput [(ngModel)]="dataSearch.nroSecuencial"
           placeholder="Ej.: 9 o 2-5"
+                 (keydown.enter)="refresh()"
           />
         </mat-form-field>
       </div>
@@ -72,32 +73,18 @@
 
     }
 
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [templateOp]="templateOp"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
-    >
-    </app-mat-dynamic-table>
+    <app-data-grid
+      [data]="list()"
+      [columns]="columns"
+      [length]="pagination().totalRecords"
+      [loading]="isLoadingResults()"
+      [pageOnFront]="false"
+      [pageIndex]="pagination().pageIndex"
+      [pageSize]="pagination().pageSize"
+      [pageSizeOptions]="pagination().pageSizeOptions"
+      (page)="handlePageEvent($event)"
+
+    ></app-data-grid>
+
   </div>
-
-  <ng-template #templateOp let-item="item">
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-      <mat-icon>more_vert</mat-icon>
-    </button>
-
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item appActionEdit>
-        <mat-icon>update</mat-icon>
-        <span>Editar</span>
-      </button>
-      <button mat-menu-item appActionDelete>
-        <mat-icon>delete</mat-icon>
-        <span>Eliminar</span>
-      </button>
-    </mat-menu>
-  </ng-template>
 </app-mat-dynamic-card>

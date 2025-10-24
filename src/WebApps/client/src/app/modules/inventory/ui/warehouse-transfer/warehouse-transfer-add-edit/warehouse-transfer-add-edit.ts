@@ -90,7 +90,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   private saveUseCase = inject(WarehouseTransferSaveUseCase)
 
   private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
-  private params = inject<{ id: number }>(MAT_DIALOG_DATA);
+  private params = inject<{ id: number, operation: 'add' | 'edit' | 'duplicate', data: any }>(MAT_DIALOG_DATA);
 
   isSaving = signal(false);
   title = signal('Nueva Transferencia');
@@ -305,10 +305,14 @@ export class WarehouseTransferAddEdit implements OnInit {
   });
 
   isAdd() {
-    return this.params.id === 0;
+    return this.params.operation === 'add';
   }
   isEdit() {
-    return this.params.id > 0;
+    return this.params.operation==='edit';
+  }
+
+  isDuplicate() {
+    return this.params.operation === 'duplicate'
   }
 
   openFilterAdvanced() {
@@ -346,6 +350,15 @@ export class WarehouseTransferAddEdit implements OnInit {
       }
 
       if (this.isEdit()) {
+      }
+
+      if(this.isDuplicate()){
+        const {details, header} = this.params.data;
+
+        this.details.set(details.map((item:any)=>({
+          ...item,
+          id: 0,
+        })));
       }
     });
   }
@@ -809,9 +822,13 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   private commonResponse = (response: any)=> {
+    if (response.code === '0') {
+      this.notiSvc.warning({ message: response.message });
+      return
+    }
     if (response.code === '1') {
       this.notiSvc.success({ message: 'La transferencia se guardó correctamente.' });
-      this.close();
+      this.dialogRef.close(response);
     } else {
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
     }

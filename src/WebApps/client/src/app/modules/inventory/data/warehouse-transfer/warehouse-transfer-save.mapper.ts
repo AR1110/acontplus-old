@@ -32,7 +32,7 @@ export class WarehouseTransferSaveMapper {
     const destino = this.mapDetailToDto(details, idTipoTransaccionDestino, idTipoDocumento, data.destinationWarehouseId);
 
     // Combinar detalles
-    const transaccionDetalle = [...origen, ...destino].map((item, i) => ({
+    const transaccionDetalles = [...origen, ...destino].map((item, i) => ({
       ...item,
       orderIndex: i + 1,
     }));
@@ -41,6 +41,7 @@ export class WarehouseTransferSaveMapper {
       ...origen,
       ...detailsDeleted.map((item:any, i: number) => ({ ...item, orderIndex: i + 1 })),
     ];
+    console.log(comprobante)
 
     // --- Resultado final ---
     return {
@@ -58,7 +59,7 @@ export class WarehouseTransferSaveMapper {
           fechaEmision: comprobante.fechaEmision,
         },
       ],
-      transaccionDetalle,
+      transaccionDetalles,
     };
   }
 
@@ -70,8 +71,8 @@ export class WarehouseTransferSaveMapper {
       idPuntoEmision: header.puntoEmisionId,
       idBodegaOrigen: header.sourceWarehouseId,
       idBodegaDestino: header.destinationWarehouseId,
-      fechaEmision: formatDateToString(header.issueDate),
-      observacion: header.observacion,
+      fechaEmision:  formatDateToString(header.issueDate),
+      observacion: header.obs,
       total: header.total,
     };
   }

@@ -13,7 +13,7 @@ export class TransferenciaBodegaMapper {
       result.data = tranferencias.map((item: any, index: number) => {
         return {
           index: index + 1,
-          idTransferenciaBodega: item.idTransferenciaBodega,
+          id: item.idTransferenciaBodega,
           idTipoDocumento: item.idTipoDocumento,
           codEstab: item.codEstab,
           nroDoc: item.nroDoc,

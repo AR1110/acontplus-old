@@ -71,3 +71,14 @@ export class WarehouseTransferSaveUseCase implements BaseUseCase<any, any>{
     return this.repo.post(obj);
   }
 }
+
+
+@Injectable({
+  providedIn: "root"
+})
+export class WarehouseTransferGetByIdUseCase implements BaseUseCase<any, number>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(id: number) {
+    return this.repo.getById(id);
+  }
+}

@@ -4,7 +4,7 @@ public record CreateTransferenciaBodegaDto
 {
     public ComprobanteTransferenciaBodegaDto Comprobante { get; set; } = new();
     public List<TransferenciaBodegaDetalleDto> Detalles { get; set; } = new();
-    public TransaccionTransferenciaBodegaDto Transaccion { get; set; } = new();
+    public List<TransaccionTransferenciaBodegaDto> Transaccion { get; set; } = new();
     public List<TransaccionTransferenciaBodegaDetalleDto> TransaccionDetalles { get; set; } = new();
 }
 
@@ -21,7 +21,7 @@ public record ComprobanteTransferenciaBodegaDto
     public int IdPuntoEmision { get; set; }
     public int IdBodegaOrigen { get; set; }
     public int IdBodegaDestino { get; set; }
-    public DateTime FechaEmision { get; set; }
+    public string FechaEmision { get; set; }
     public string? Observacion { get; set; }
     public decimal Total { get; set; }
 }
@@ -42,12 +42,13 @@ public record TransaccionTransferenciaBodegaDto
 {
     public int IdTipoTransaccion { get; set; }
     public int IdTipoDocumento { get; set; }
-    public DateTime FechaEmision { get; set; }
+    public string FechaEmision { get; set; }
 }
 
 public record TransaccionTransferenciaBodegaDetalleDto
 {
-    public int IdTransaccion { get; set; }
+    public int IdTipoTransaccion { get; set; }
+    public int IdTipoDocumento { get; set; }
     public int IdArticulo { get; set; }
     public int IdBodega { get; set; }
     public int IdMedida { get; set; }

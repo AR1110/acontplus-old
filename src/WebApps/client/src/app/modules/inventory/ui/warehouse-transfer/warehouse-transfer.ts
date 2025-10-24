@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@ang
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatIconButton } from '@angular/material/button';
-import {   MatMenuModule } from '@angular/material/menu';
-import { WarehouseTransferUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import {
+  WarehouseTransferGetByIdUseCase,
+  WarehouseTransferUseCase
+} from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import { MatPagination } from '@shared/models/pagination.model';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
@@ -23,6 +23,8 @@ import {DialogService} from "@core/services/dialog.service";
 import {
   WarehouseTransferAddEdit
 } from "@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit";
+import {DataGrid} from "@shared/components/data-grid/data-grid";
+import {DataGridColumn} from "@shared/components/data-grid/types";
 
 @Component({
   selector: 'app-warehouse-transfer',
@@ -30,14 +32,13 @@ import {
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatDynamicCardComponent,
-    MatDynamicTableComponent,
     MatFormFieldModule,
     MatIcon,
     MatIconButton,
-    MatMenuModule,
     MatSelectModule,
     FormsModule,
-    MatInput
+    MatInput,
+    DataGrid
   ],
   templateUrl: './warehouse-transfer.html',
   styleUrl: './warehouse-transfer.scss',
@@ -45,24 +46,68 @@ import {
 })
 export class WarehouseTransfer implements OnInit {
   private _useCase = inject(WarehouseTransferUseCase);
+  private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase)
   private noti = inject(ToastrNotificationService)
   private dgSvc = inject(DialogService)
+  list = signal<any[]>([]);
 
-  dataSource = signal<any[]>([]);
+  columns: DataGridColumn[] = [
+    { header: 'Nro.', field: 'index' },
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'nroDoc', label: 'Nro. Doc.', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'nomBodegaOrigen', label: 'Bodega Origen', type: 'string' },
-    { key: 'nomBodegaDestino', label: 'Bodega Destino', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'obs', label: 'Observación', type: 'number' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
+    {
+      header: 'Op,',
+      field: 'operation',
+      width: '220px',
+      pinned: 'right',
+      right: '0px',
+      type: 'button',
+      buttons: [
+        {
+          type: 'icon',
+          icon: 'file_copy',
+          tooltip: 'Duplicar',
+          click: (rowData) => this.handleDuplicated(rowData),
+        },
+        {
+          type: 'icon',
+          icon: 'edit',
+          tooltip: 'Editar',
+          click: () => alert('edit'),
+        },
+        {
+          type: 'icon',
+          icon: 'cancel',
+          tooltip: 'Anular',
+          color: 'warn',
+          pop: 'Confirm delete?',
+          click: () => alert('delete'),
+        },
+        {
+          type: 'icon',
+          icon: 'more_vert',
+          tooltip: 'More',
+          children: [
+            {
+              icon: 'description',
+              text: 'Detalle',
+            },
+            {
+              icon: 'download',
+              text: 'Reporte',
+              click: () => alert('Disable alerts'),
+            },
+          ],
+        },
+      ],
+    },
+    { header: 'Nro. Doc.', field: 'nroDoc' },
+    { header: 'Fecha Emision', field: 'fechaEmision' },
+    { header: 'Bodega Origen', field: 'nomBodegaOrigen'},
+    { header: 'Bodega Destino', field: 'nomBodegaDestino'},
+    { header: 'Total', field: 'total', type: 'number' },
+    { header: 'Observación', field: 'obs',  },
+    { header: 'Estado', field: 'nomEstado' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
-
   pagination = signal(new MatPagination());
 
   isLoadingResults = signal(false);
@@ -82,16 +127,37 @@ export class WarehouseTransfer implements OnInit {
 
   isMoreFilter = signal(false);
 
+
+  onChangeEstab() {
+    const dataEstab = this.estabs.find(e => e.codEstab === this.dataSearch.codEstab);
+    if (dataEstab) {
+      this.puntosEmision = dataEstab?.puntosEmision;
+      const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
+      if (dataPtoEmi) {
+        this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
+        this.getAll();
+      }
+    }
+  }
+
+  onChangeDateRange(event: any) {
+    this.dataSearch.fromDate = event.from;
+    this.dataSearch.toDate = event.to;
+    this.refresh();
+  }
+
   refresh() {
+
     this.getAll();
   }
 
-  openAddEditDialog() {
-    console.log("openAddEditDialog");
+  openAddEditDialog(operation: 'add' | 'edit' | 'duplicate'='add', id?: number, data?: any) {
     this.dgSvc.open(WarehouseTransferAddEdit, {
       size: 'xl',
       data: {
-        id: 0
+        id: 0,
+        operation,
+        data
       }
     }).subscribe(result => {
       if(result && typeof result === 'object') {
@@ -149,7 +215,7 @@ export class WarehouseTransfer implements OnInit {
       .getAll(this.getParams())
       .pipe(finalize(() => (this.isLoadingResults.set(false))))
       .subscribe(response => {
-        this.dataSource.set(response.data);
+        this.list.set(response.data);
         this.pagination.set({
           ...this.pagination(),
           totalRecords: response.totalRecords,
@@ -158,7 +224,12 @@ export class WarehouseTransfer implements OnInit {
   }
 
   private getFilterData() {
-    this._useCase.getDataFilter().subscribe(response => {
+    this.isLoadingResults.set(true);
+    this._useCase.getDataFilter()
+      .pipe(
+        finalize(() => (this.isLoadingResults.set(false)))
+      )
+      .subscribe(response => {
       this.estabs = response.estabs;
 
       const dataEstab = this.estabs.find(e => e.defaultEstab);
@@ -178,26 +249,14 @@ export class WarehouseTransfer implements OnInit {
   }
 
   ngOnInit() {
-    //this.getFilterData();
-    console.log(formatDateToString(new Date()))
+    this.getFilterData();
   }
 
-  onChangeEstab() {
-    const dataEstab = this.estabs.find(e => e.codEstab === this.dataSearch.codEstab);
-    if (dataEstab) {
-      this.puntosEmision = dataEstab?.puntosEmision;
-      const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
-      if (dataPtoEmi) {
-        this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
-        this.getAll();
-      }
-    }
-  }
 
-  onChangeDateRange(event: any) {
-    this.dataSearch.fromDate = event.from;
-    this.dataSearch.toDate = event.to;
-    this.refresh();
+  handleDuplicated(rowData:any) {
+    this._getByIdUseCase.execute(rowData.id).subscribe(response => {
+      this.openAddEditDialog('duplicate', rowData.id, response);
+    })
   }
 
   handlePageEvent(e: PageEvent) {
