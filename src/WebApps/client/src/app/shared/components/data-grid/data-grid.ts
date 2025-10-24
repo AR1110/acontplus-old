@@ -138,7 +138,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   infiniteScrollDisabled = input<boolean>(false);
 
   // Keyboard Navigation
-  keyboardNavigation = input<boolean>(true);
+  keyboardNavigation = input<boolean>(false);
 
   focusedRowIndex = computed(()=>this._keyboardNavService.focusedRowIndex()); // Vinculado al servicio
   // Sorting
@@ -211,8 +211,6 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   });
 
   hasNoResult = computed(() => {
-    console.log(this.data())
-
     return  (this.data().length === 0) && !this.loading();
 
   });

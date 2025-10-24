@@ -28,13 +28,13 @@
       </div>
       <div class="col">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoadingResults()">
+          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoading()">
             <mat-icon>add</mat-icon>
           </button>
-          <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
+          <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
             <mat-icon>refresh</mat-icon>
           </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoadingResults()">
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoading()">
             <mat-icon>filter_list</mat-icon>
           </button>
         </div>
@@ -136,7 +136,7 @@
             <mat-checkbox
               [(ngModel)]="dataSearch.checkBoxFraccionado"
               (change)="refresh()"
-              [disabled]="isLoadingResults()"
+              [disabled]="isLoading()"
             >
               @if (dataSearch.checkBoxFraccionado) {
                 <span>Si</span>
@@ -150,7 +150,7 @@
             <mat-checkbox
               [(ngModel)]="dataSearch.checkBoxInventario"
               (change)="refresh()"
-              [disabled]="isLoadingResults()"
+              [disabled]="isLoading()"
             >
               @if (dataSearch.checkBoxInventario) {
                 <span>Si</span>
@@ -164,63 +164,83 @@
     }
   </div>
 
-  <app-mat-dynamic-table
-    [isLoadingData]="isLoadingResults()"
-    [tableData]="dataSource.data"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [templateOp]="templateOp"
-    [paginationConfig]="pagination()"
-    [enablePagination]="true"
-    (pageEvent)="handlePageEvent($event)"
-  >
-  </app-mat-dynamic-table>
 
-  <ng-template #templateOp let-item="item">
+  <app-data-grid
+    [data]="list()"
+    [columns]="columns"
+    [length]="total()"
+    [loading]="isLoading()"
+    [pageOnFront]="false"
+    [pageIndex]="query.page"
+    [pageSize]="query.per_page"
+    [pageSizeOptions]="[10, 25, 50, 100]"
+    (page)="getNextPage($event)"
+    [cellTemplate]="{
+    estado: statusTemplate,
+    stock: stockTemplate ,
+    operation: templateOp,
+    dataDescription: descriptionTpl
+    }"
+    [expandable]="true"
+    [expansionTemplate]="expansionTpl"
+  ></app-data-grid>
+
+  <ng-template #expansionTpl let-row>
+    {{ row.descripcion }}
+  </ng-template>
+
+  <ng-template #templateOp let-row >
     <div class="d-flex flex-row gap-1">
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
         <mat-icon>more_vert</mat-icon>
       </button>
 
       <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="updateStock(item)">
+        <button mat-menu-item (click)="updateStock(row)">
           <mat-icon>update</mat-icon>
           <span>Actualizar Stock</span>
         </button>
-        <button mat-menu-item (click)="askToUpdateStatus(item)">
+        <button mat-menu-item (click)="askToUpdateStatus(row)">
           <mat-icon>delete</mat-icon>
           <span>Eliminar</span>
         </button>
 
-        <button mat-menu-item (click)="onPhotoModal(item)">
+        <button mat-menu-item (click)="onPhotoModal(row)">
           <mat-icon>add_a_photo</mat-icon>
           <span>Imagenes</span>
         </button>
 
-        <button mat-menu-item appCompraHabitualHistorial [params]="item">
+        <button mat-menu-item appCompraHabitualHistorial [params]="row">
           <mat-icon>history</mat-icon>
           <span>Hist. compras</span>
         </button>
       </mat-menu>
 
-      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="row.idArticulo">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
+      <button mat-icon-button appProductKardexModal [params]="row" matTooltip="Kardex">
         <mat-icon>timeline</mat-icon>
       </button>
     </div>
   </ng-template>
 
-  <ng-template #statusTemplate let-item>
-    <div [innerHTML]="item.estado | primaryStatus"></div>
+  <ng-template #descriptionTpl let-row  >
+    <div class="d-flex flex-column gap-1">
+      <span class="font-medium fw-semibold">{{ row.codigo }}</span>
+      <span>{{ row.descripcion }}</span>
+    </div>
   </ng-template>
 
-  <ng-template #stockTemplate let-item>
-    @let bgSuccess = item.stock > 0;
-    @let bgDanger = item.stock <= 0;
-    @let bgWarning = item.stock > 0 && item.stock <= 5;
-    @let bgInfo = item.stock > 5;
+  <ng-template #statusTemplate let-row >
+    <div [innerHTML]="row.estado | primaryStatus"></div>
+  </ng-template>
+
+  <ng-template #stockTemplate let-row >
+    @let bgSuccess = row.stock > 0;
+    @let bgDanger = row.stock <= 0;
+    @let bgWarning = row.stock > 0 && row.stock <= 5;
+    @let bgInfo = row.stock > 5;
 
 
       <span
@@ -229,10 +249,10 @@
         class="badge font-weight-100 cursor-pointer"
             #popoverTrigger="mtxPopoverTrigger"
             [mtxPopoverTriggerFor]="popover"
-            [mtxPopoverTriggerData]="{ id: item.id }"
+            [mtxPopoverTriggerData]="{ id: row.id }"
         mtxPopoverTriggerOn="click"
 
-      >{{item.stock}}</span>
+      >{{row.stock}}</span>
   </ng-template>
 
   <mtx-popover #popover="mtxPopover" [arrowWidth]="900" [arrowHeight]="100"  [position]="[positionStart, positionEnd]">

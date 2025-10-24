@@ -4,11 +4,8 @@ import {
   inject,
   QueryList,
   signal,
-  TemplateRef,
-  ViewChild,
   ViewChildren,
   OnInit,
-  AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,9 +13,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {  PageEvent } from '@angular/material/paginator';
+import {   MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ApiResponse } from '@core/models/api-response';
@@ -29,8 +25,6 @@ import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components
 import { ProductKardexModalDirective } from '@inventory/product/presentation/directives/product-kardex-modal.directive';
 import { StockService } from '@inventory/data/services/stock.service';
 import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
-
-import { MatPagination } from '@shared/models/pagination.model';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -39,16 +33,16 @@ import { ProductList } from '@inventory/product/domain/entities/product.entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import {MtxPopoverModule} from "@ng-matero/extensions/popover";
 import {ProductStock} from "@inventory/product/presentation/components/product-stock/product-stock";
+import {DataGrid} from "@shared/components/data-grid/data-grid";
+import {DataGridColumn} from "@shared/components/data-grid/types";
 
 @Component({
-  selector: 'inventory-product',
+  selector: 'app-inventory-product',
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -64,28 +58,24 @@ import {ProductStock} from "@inventory/product/presentation/components/product-s
     MatCheckboxModule,
     MatSelectModule,
     SubCategoryGroupComponent,
-    MatDynamicTableComponent,
     MatDynamicCardComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
     MtxPopoverModule,
-    ProductStock
+    ProductStock,
+    DataGrid
   ],
   templateUrl: './product.html',
+  styles: `
+    :host ::ng-deep .data-grid {
+      height: 400px;
+    }
+
+  `
 })
-export class Product implements OnInit, AfterViewInit {
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+export class Product implements OnInit  {
   @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
-  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
-  @ViewChild('stockTemplate') stockTemplate!: TemplateRef<any>;
-
-
-  pagination = signal(new MatPagination());
-  dataSource = new MatTableDataSource<ProductList>();
-  isLoadingResults = signal(false);
-  pageEvent!: PageEvent;
   dataSearch = {
     filterMode: 4,
     textSearch: null as string | null,
@@ -111,24 +101,36 @@ export class Product implements OnInit, AfterViewInit {
   private stockSvc = inject(StockService);
   private tS = inject(ToastrNotificationService);
   private $dialogSvc = inject(DialogService);
-  private wasEmptyBefore = false; // Indica si alguna vez el campo estuvo vacío
 
   positionStart: any = 'below';
   positionEnd: any = 'center';
 
-
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 's3ObjectUrl', label: 'Imagen', type: 'image' },
-    { key: 'codigo', label: 'Código', type: 'string' },
-    { key: 'descripcion', label: 'Descripción', type: 'string' },
-    { key: 'subFamilia', label: 'SubFamilia', type: 'string' },
-    { key: 'medida', label: 'Medida', type: 'string' },
-    { key: 'stock', label: 'Stock',  type: 'template' },
-    { key: 'status', label: 'Estado', type: 'template' },
+  columns: DataGridColumn[] = [
+    { header: 'Nro.', field: 'index', showExpand: true  },
+    {
+      header: 'Op.',
+      field: 'operation',
+    },
+    {
+      header: 'Descripción',
+      field: 'dataDescription',
+      width: '300px',
+    },
+    { header: 'Imagen', field: 's3ObjectUrl', type: 'image' },
+    { header: 'SubFamilia', field: 'subFamilia' },
+    { header: 'Medida', field: 'medida' },
+    { header: 'Stock', field: 'stock' },
+    { header: 'Estado', field: 'estado', type: 'boolean' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  list = signal<ProductList[]>([]);
+  total = signal(0);
+  isLoading = signal(false);
+
+  query = {
+    page: 0,
+    per_page: 10,
+  };
+
 
   setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
@@ -146,7 +148,7 @@ export class Product implements OnInit, AfterViewInit {
     this.initLoad()
       .pipe(
         finalize(() => {
-          this.isLoadingResults.set(false);
+          this.isLoading.set(false);
           this.toggleSelectsState();
         }),
       )
@@ -166,51 +168,15 @@ export class Product implements OnInit, AfterViewInit {
         },
       });
   }
-
-  ngAfterViewInit(): void {
-    // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
-      if (col.type === 'template') {
-        col.templateOutlet = this.statusTemplate;
-      }
-
-      if(col.key==="stock"){
-        col.templateOutlet = this.stockTemplate;
-      }
-    });
-  }
-
   onEnter($event: Event) {
     if (isValidField(this.dataSearch.textSearch)) {
       this.refresh();
     }
   }
 
-  onSearch(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const searchValue = isValidField(target.value);
-    this.setDataSearch('textSearch', searchValue);
-
-    if (!searchValue) {
-      if (this.wasEmptyBefore) {
-        return;
-      }
-
-      this.wasEmptyBefore = true;
-      this.applyFilter();
-    } else {
-      this.wasEmptyBefore = false;
-      this.applyFilter();
-    }
-  }
-
-  applyFilter(): void {
-    this.getProducts();
-  }
-
   toggleSelectsState(): void {
     this.selectElements?.forEach(selectRef => {
-      selectRef.nativeElement.disabled = this.isLoadingResults();
+      selectRef.nativeElement.disabled = this.isLoading();
     });
   }
 
@@ -225,19 +191,6 @@ export class Product implements OnInit, AfterViewInit {
 
   onEmptyDataSubCategory() {
     this.setDataSearch('bySubFamilia', 0);
-  }
-
-  handlePageEvent(e: PageEvent) {
-    this.pageEvent = e;
-    this.pagination.update(pag => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
-    this.getProducts();
   }
 
   async askToUpdateStatus(item: ProductList) {
@@ -294,16 +247,8 @@ export class Product implements OnInit, AfterViewInit {
       position: index + 1,
     }));
 
-    this.dataSource = new MatTableDataSource(products);
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-
-    if (products.length > 0) {
-      this.pagination.update(p => ({
-        ...p,
-        totalRecords: response.totalRecords,
-      }));
-    }
+    this.list.set(products);
+    this.total.set(products.length> 0 ? products[0].totalRecords : 0)
   }
 
   private getDataParams() {
@@ -314,8 +259,8 @@ export class Product implements OnInit, AfterViewInit {
       byModelo: getValidId(this.dataSearch.idModelo),
       byTipoIva: getValidId(this.dataSearch.idTipoIva),
 
-      pageIndex: this.pagination().pageIndex + 1,
-      pageSize: this.pagination().pageSize,
+      pageIndex: this.query.page + 1,
+      pageSize: this.query.per_page,
       bySearch: isValidField(this.dataSearch.textSearch),
       status: this.dataSearch.status,
       byStock: this.dataSearch.byStock,
@@ -325,12 +270,8 @@ export class Product implements OnInit, AfterViewInit {
   }
 
   private resetDataAfterFetch() {
-    this.isLoadingResults.set(true);
-    this.pagination.update(p => ({
-      ...p,
-      totalRecords: 0,
-    }));
-
+    this.isLoading.set(true);
+    this.total.set(0);
     this.toggleSelectsState();
   }
 
@@ -342,14 +283,14 @@ export class Product implements OnInit, AfterViewInit {
   }
 
   private getProducts() {
-    if (this.isLoadingResults()) return; // Prevenir múltiples llamadas
+    if (this.isLoading()) return; // Prevenir múltiples llamadas
 
     this.resetDataAfterFetch();
     this._productUseCase
       .getAll(this.getDataParams())
       .pipe(
         finalize(() => {
-          this.isLoadingResults.set(false);
+          this.isLoading.set(false);
           this.toggleSelectsState();
         }),
       )
@@ -373,4 +314,10 @@ export class Product implements OnInit, AfterViewInit {
       this.refresh();
     }
   };
+
+  getNextPage(e: PageEvent) {
+    this.query.page = e.pageIndex;
+    this.query.per_page = e.pageSize;
+    this.refresh()
+  }
 }

@@ -1,42 +1,60 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import { DialogRef} from "@angular/cdk/dialog";
-import {MAT_DIALOG_DATA} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInput} from "@angular/material/input";
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {DialogService} from "@core/services/dialog.service";
 import {
-  WarehouseTransferFilterAdvanced
-} from "@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced";
-import {WarehouseTransferDataFormUseCase} from "@inventory/domain/usecases/warehouse-transfer.use-case";
-import {GroupedEstab, GroupedEstabBodega, GroupedEstabPuntoEmision} from "@core/models/estab.model";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import Swal from "sweetalert2";
-import {SearchDialogService} from "@shared/services/search-dialog";
-import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
+import { DialogRef } from '@angular/cdk/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
 import {
-  ProductSearchDialog
-} from "@inventory/product/presentation/components/product-search-dialog/product-search-dialog";
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerToggle,
+} from '@angular/material/datepicker';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { DialogService } from '@core/services/dialog.service';
+import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
+import {
+  WarehouseTransferDataFormUseCase,
+  WarehouseTransferGenerateSerieUseCase,
+} from '@inventory/domain/usecases/warehouse-transfer.use-case';
+import {
+  GroupedEstab,
+  GroupedEstabBodega,
+  GroupedEstabPuntoEmision,
+} from '@core/models/estab.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import Swal from 'sweetalert2';
+import { SearchDialogService } from '@shared/services/search-dialog';
+import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
 import {
   GetProductPurchaseUseCase,
-  ValidateProductStockUseCase
-} from "@inventory/product/application/use-cases/product/get-product.use-case";
-import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {roundNumber} from "@core/utils/round-number.utils";
-import DecimalUtil from "@core/utils/decimal.util";
-import {Money} from "@inventory/inventory-adjustment/domain/value-objects/money.vo";
-import {mergeStockItems} from "@inventory/product/domain/utils/stock.utils";
-import {firstValueFrom, take} from "rxjs";
+  ValidateProductStockUseCase,
+} from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { roundNumber } from '@core/utils/round-number.utils';
+import DecimalUtil from '@core/utils/decimal.util';
+import { mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
+import { firstValueFrom, take } from 'rxjs';
+import { ValidatorUtils } from '@core/utils/utils';
+import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 
-
-interface CommonType  {id:number, code: string, name:string}
+interface CommonType {
+  id: number;
+  code: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-warehouse-transfer-add-edit',
@@ -53,27 +71,26 @@ interface CommonType  {id:number, code: string, name:string}
     AddEditProductDirective,
     MatIcon,
     MatIconButton,
-    TabulatorComponent
+    TabulatorComponent,
   ],
   templateUrl: './warehouse-transfer-add-edit.html',
   styleUrl: './warehouse-transfer-add-edit.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
 })
-export class WarehouseTransferAddEdit {
+export class WarehouseTransferAddEdit implements OnInit {
   private dgSvc = inject(DialogService);
   private dataFormUseCase = inject(WarehouseTransferDataFormUseCase);
   private notiSvc = inject(ToastrNotificationService);
   private searchService = inject(SearchDialogService);
   private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
+  private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
 
+  private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
+  private params = inject<{ id: number }>(MAT_DIALOG_DATA);
 
-
-  private dialogRef  = inject(DialogRef<WarehouseTransferAddEdit>);
-  private params = inject<{id: number}>(MAT_DIALOG_DATA);
-
-  title = signal('Nueva Transferencia')
+  title = signal('Nueva Transferencia');
   btnText = signal('Guardar');
   btnIcon = signal('save');
 
@@ -83,9 +100,9 @@ export class WarehouseTransferAddEdit {
   destinationWarehouses = signal<GroupedEstabBodega[]>([]);
   emissionPoints = signal<GroupedEstabPuntoEmision[]>([]);
 
-  transactionTypes = signal<CommonType[]>([])
-  documentTypes = signal<CommonType[]>([])
-  categories = signal<CommonType[]>([])
+  transactionTypes = signal<CommonType[]>([]);
+  documentTypes = signal<CommonType[]>([]);
+  categories = signal<CommonType[]>([]);
 
   dataForm = {
     sourceEstablishmentId: 0,
@@ -96,14 +113,15 @@ export class WarehouseTransferAddEdit {
     sourceWarehouseId: 0,
     destinationWarehouseId: 0,
     obs: null,
-  }
+    issueDateCreated: null as Date | null,
+  };
 
   cloneSourceEstablishmentId = signal(0);
 
-  uuidRow = signal('')
+  uuidRow = signal('');
 
-  details = signal<any[]>([])
-  detailsDeleted = signal<any[]>([])
+  details = signal<any[]>([]);
+  detailsDeleted = signal<any[]>([]);
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     const column: any = cell.getColumn().getField();
@@ -143,7 +161,6 @@ export class WarehouseTransferAddEdit {
     return editor;
   };
 
-
   columns = signal([
     {
       formatter: 'rownum',
@@ -174,7 +191,7 @@ export class WarehouseTransferAddEdit {
     `;
         delBtn.classList.add('small-button', 'btn-remove');
         delBtn.addEventListener('click', () => {
-          this.deleteRow(rowData)
+          this.deleteRow(rowData);
         });
 
         // Botón Editar
@@ -284,28 +301,29 @@ export class WarehouseTransferAddEdit {
     return roundNumber(totalValue);
   });
 
-  isAdd (){
+  isAdd() {
     return this.params.id === 0;
   }
-  isEdit (){
+  isEdit() {
     return this.params.id > 0;
   }
 
-  openFilterAdvanced (){
-    this.dgSvc.open(WarehouseTransferFilterAdvanced, {
-      size: 'xl',
-      data: {
-        sourceWarehouses: structuredClone(this.sourceWarehouses()),
-        sourceWarehouseId: this.dataForm.sourceWarehouseId,
-        categories: structuredClone(this.categories()),
-      }
-      }
-    ).subscribe(result => {
-      console.log(result);
-    })
+  openFilterAdvanced() {
+    this.dgSvc
+      .open(WarehouseTransferFilterAdvanced, {
+        size: 'xl',
+        data: {
+          sourceWarehouses: structuredClone(this.sourceWarehouses()),
+          sourceWarehouseId: this.dataForm.sourceWarehouseId,
+          categories: structuredClone(this.categories()),
+        },
+      })
+      .subscribe(result => {
+        console.log(result);
+      });
   }
 
-  loadDataForm(){
+  loadDataForm() {
     this.dataFormUseCase.execute().subscribe(response => {
       this.sourceEstablishments.set(response.establishments);
       this.destinationEstablishments.set(response.establishments);
@@ -316,51 +334,52 @@ export class WarehouseTransferAddEdit {
       if (this.sourceEstablishments().length === 0) {
         this.notiSvc.warning({
           message: 'No tienes asignado ningún Establecimiento',
-        })
+        });
         throw new Error('No tienes asignado ningún Establecimiento');
       }
 
-      if(this.isAdd()){
+      if (this.isAdd()) {
         this.setDataAdd();
       }
 
-      if(this.isEdit()){
-
+      if (this.isEdit()) {
       }
-    })
+    });
   }
 
-  setDataAdd(){
+  setDataAdd() {
     this.title.set('Nueva Transferencia');
     this.btnText.set('Guardar');
     this.btnIcon.set('save');
 
-    const dataEstab = this.sourceEstablishments().find(estab => (estab.defaultEstab));
-    if(!dataEstab){
+    const dataEstab = this.sourceEstablishments().find(estab => estab.defaultEstab);
+    if (!dataEstab) {
       this.notiSvc.warning({
         message: 'No se encontró Estblecimiento por defecto',
-      })
+      });
       throw new Error('No se encontró Estblecimiento por defecto');
     }
     this.emissionPoints.set(dataEstab.puntosEmision);
     this.sourceWarehouses.set(dataEstab.bodegas);
     //Codigo Establecimiento
-    this.dataForm.sourceEstablishmentId = dataEstab.id ??0;
-    this.cloneSourceEstablishmentId.set(dataEstab.id ??0);
+    this.dataForm.sourceEstablishmentId = dataEstab.id ?? 0;
+    this.cloneSourceEstablishmentId.set(dataEstab.id ?? 0);
 
     if (this.emissionPoints().length > 0) {
-      this.dataForm.puntoEmisionId = this.emissionPoints().find(ptoEmi => (ptoEmi.defaultPtoEmi))?.idPuntoEmision ?? 0;
+      this.dataForm.puntoEmisionId =
+        this.emissionPoints().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
       this.notiSvc.warning({
         message: 'No tienes asignado ningún Punto de Emisión',
-      })
+      });
     }
     if (this.sourceWarehouses().length > 0) {
-      this.dataForm.sourceWarehouseId = this.sourceWarehouses().find(bodega => (bodega.defaultBodega))?.idBodega ?? 0;
+      this.dataForm.sourceWarehouseId =
+        this.sourceWarehouses().find(bodega => bodega.defaultBodega)?.idBodega ?? 0;
     } else {
       this.notiSvc.warning({
         message: 'No tienes asignado ninguna Bodega',
-      })
+      });
     }
   }
 
@@ -368,74 +387,80 @@ export class WarehouseTransferAddEdit {
     this.searchService.setDefaultComponent(ProductSearchDialog);
   }
 
-  ngOnInit(){
-     this.loadDataForm();
+  ngOnInit() {
+    this.loadDataForm();
 
     this.searchService.onResult().subscribe(result => {
       this.handleSearchResult(result);
     });
   }
 
+  async changeEstabSource() {
+    const { isConfirmed } = await Swal.fire({
+      title: '<small>Cambiar Establecimiento?</small>',
+      html: '<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si!',
+      cancelButtonText: 'No!',
+      reverseButtons: false,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
 
-  async changeEstabSource () {
-      const { isConfirmed } = await Swal.fire({
-        title: '<small>Cambiar Establecimiento?</small>',
-        html: "<small>Esta seguro de cambiar <b>Punto de Emisión</b> y la <b>Bodega</b>?</small>",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Si!',
-        cancelButtonText: 'No!',
-        reverseButtons: false,
-        allowOutsideClick: false,
-        allowEscapeKey: false
-      })
+    if (!isConfirmed) {
+      this.dataForm.sourceEstablishmentId = this.cloneSourceEstablishmentId();
+      return;
+    }
 
-      if(!isConfirmed){
-        this.dataForm.sourceEstablishmentId = this.cloneSourceEstablishmentId();
-        return
-      }
+    const dataEstab = this.sourceEstablishments().find(
+      estab => estab.id === this.dataForm.sourceEstablishmentId,
+    );
 
-        const dataEstab = this.sourceEstablishments().find(estab => estab.id === this.dataForm.sourceEstablishmentId);
-      if (dataEstab) {
-        this.cloneSourceEstablishmentId.set(dataEstab.id ?? 0);
-        this.emissionPoints.set(dataEstab.puntosEmision);
-        this.sourceWarehouses.set(dataEstab.bodegas);
-      }
+    if (dataEstab) {
+      this.cloneSourceEstablishmentId.set(dataEstab.id ?? 0);
+      this.emissionPoints.set(dataEstab.puntosEmision);
+      this.sourceWarehouses.set(dataEstab.bodegas);
+    }
 
-        if (this.emissionPoints().length > 0) {
-          this.dataForm.puntoEmisionId = this.emissionPoints().find(ptoEmi => (ptoEmi.defaultPtoEmi))?.idPuntoEmision ?? 0;
-        } else {
-          this.notiSvc.warning({
-            message: 'No tienes asignado ningún Punto de Emisión a este Establecimiento',
-          })
-        }
-        if (this.sourceWarehouses().length > 0) {
-          this.dataForm.sourceWarehouseId = this.sourceWarehouses().find(bodega => (bodega.defaultBodega))?.idBodega ?? 0;
-        } else {
-          this.notiSvc.warning({
-            message: 'No tienes asignado ninguna Bodega a este Establecimiento',
-          })
-        }
-        this.dataForm.sourceEstablishmentId = 0;
-        this.dataForm.sourceWarehouseId = 0;
-        this.details.set(this.details().map(item => ({...item, cantidad: 0})))
+    if (this.emissionPoints().length > 0) {
+      this.dataForm.puntoEmisionId =
+        this.emissionPoints().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision ?? 0;
+    } else {
+      this.notiSvc.warning({
+        message: 'No tienes asignado ningún Punto de Emisión a este Establecimiento',
+      });
+    }
+    if (this.sourceWarehouses().length > 0) {
+      this.dataForm.sourceWarehouseId =
+        this.sourceWarehouses().find(bodega => bodega.defaultBodega)?.idBodega ?? 0;
+    } else {
+      this.notiSvc.warning({
+        message: 'No tienes asignado ninguna Bodega a este Establecimiento',
+      });
+    }
+    this.dataForm.destinationEstablishmentId = 0;
+    this.dataForm.destinationWarehouseId = 0;
+    this.details.set(this.details().map(item => ({ ...item, cantidad: 0 })));
   }
 
-
-  changeEstabDestination(){
-    const dataEstab = this.destinationEstablishments().find(item => item.id === this.dataForm.destinationEstablishmentId);
-    if(dataEstab){
-      this.destinationWarehouses.set(structuredClone(dataEstab.bodegas).filter(item=>{
-        return item.idBodega !== this.dataForm.sourceWarehouseId;
-      }));
+  changeEstabDestination() {
+    const dataEstab = this.destinationEstablishments().find(
+      item => item.id === this.dataForm.destinationEstablishmentId,
+    );
+    if (dataEstab) {
+      this.destinationWarehouses.set(
+        structuredClone(dataEstab.bodegas).filter(item => {
+          return item.idBodega !== this.dataForm.sourceWarehouseId;
+        }),
+      );
     }
     this.dataForm.destinationWarehouseId = 0;
     if (this.destinationWarehouses().length === 0) {
       this.notiSvc.warning({
-        message: 'No tienes asignado ninguna Bodega',
-      })
+        message: 'No tienes bodega destino disponible para este Establecimiento',
+      });
     }
-
   }
 
   openSearch(): void {
@@ -446,74 +471,77 @@ export class WarehouseTransferAddEdit {
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
 
-    this.getProductPurchaseUseCase.execute(result.id).pipe(take(1)).subscribe({
-      next: (response) => {
-        const { data, measures } = response;
+    this.getProductPurchaseUseCase
+      .execute(result.id)
+      .pipe(take(1))
+      .subscribe({
+        next: response => {
+          const { data, measures } = response;
 
-        if (!data || !Array.isArray(measures)) {
-          console.error('Invalid product or measures data');
-          return;
-        }
+          if (!data || !Array.isArray(measures)) {
+            console.error('Invalid product or measures data');
+            return;
+          }
 
-        const tempDetails = structuredClone(this.details());
-        const existingIndex = tempDetails.findIndex((v: any) => v.productId === data.id);
+          const tempDetails = structuredClone(this.details());
+          const existingIndex = tempDetails.findIndex((v: any) => v.productId === data.id);
 
-        const measure = existingIndex !== -1
-          ? measures.find(m => m.idMedida === Number(tempDetails[existingIndex].measureId))
-          : measures.find(m => m.defaultMedida);
+          const measure =
+            existingIndex !== -1
+              ? measures.find(m => m.idMedida === Number(tempDetails[existingIndex].measureId))
+              : measures.find(m => m.defaultMedida);
 
-        if (!measure) {
-          console.error('No corresponding measure found');
-          return;
-        }
+          if (!measure) {
+            console.error('No corresponding measure found');
+            return;
+          }
 
-        const entity = existingIndex !== -1
-          ? tempDetails[existingIndex]
-          : {
-            uuid: generateUuidv4(),
-            id: 0,
-            productId: data.id,
-            quantity: 1,
-            status: true,
-          };
+          const entity =
+            existingIndex !== -1
+              ? tempDetails[existingIndex]
+              : {
+                  uuid: generateUuidv4(),
+                  id: 0,
+                  productId: data.id,
+                  quantity: 1,
+                  status: true,
+                };
 
-        Object.assign(entity, {
-          code: data.code,
-          description: data.description,
-          stock: data.stock,
-          hasInventory: data.hasInventory,
-          measures,
-          measureId: measure.idMedida,
-          convertion: measure.conversion,
-          costPrice: measure.precioCosto,
-          unitPrice: measure.precioUnitario,
-          fractionalCostPrice: measure.precioCostoFraccionado,
-          warehouseId: this.dataForm.sourceWarehouseId,
-        });
+          Object.assign(entity, {
+            code: data.code,
+            description: data.description,
+            stock: data.stock,
+            hasInventory: data.hasInventory,
+            measures,
+            measureId: measure.idMedida,
+            convertion: measure.conversion,
+            costPrice: measure.precioCosto,
+            unitPrice: measure.precioUnitario,
+            fractionalCostPrice: measure.precioCostoFraccionado,
+            warehouseId: this.dataForm.sourceWarehouseId,
+          });
 
-        entity.total = roundNumber(entity.quantity * entity.costPrice);
+          entity.total = roundNumber(entity.quantity * entity.costPrice);
 
-        if (existingIndex !== -1) {
-          entity.quantity += 1;
-          this.uuidRow.set(entity.uuid);
-        } else {
-          tempDetails.push(entity);
-          this.uuidRow.set(entity.uuid);
-        }
+          if (existingIndex !== -1) {
+            entity.quantity += 1;
+            this.uuidRow.set(entity.uuid);
+          } else {
+            tempDetails.push(entity);
+            this.uuidRow.set(entity.uuid);
+          }
 
-        this.details.set(tempDetails);
-      },
-      error: (err) => {
-        console.error('Error getting product:', err);
-      },
-    });
+          this.details.set(tempDetails);
+        },
+        error: err => {
+          console.error('Error getting product:', err);
+        },
+      });
   }
-
 
   private async validateStock(details: any[], fn: (cont: boolean) => void): Promise<void> {
     try {
       const dataMergeStock = mergeStockItems(details);
-      console.log("dataMergeStock", dataMergeStock);
 
       const response = await firstValueFrom(
         this.$validateProductStockUseCase.execute({
@@ -521,7 +549,7 @@ export class WarehouseTransferAddEdit {
           idArticulo: dataMergeStock.productId,
           idBodega: dataMergeStock.warehouseId,
           idMedida: dataMergeStock.measureId,
-        })
+        }),
       );
       const { code, message, titleSms } = response;
 
@@ -531,7 +559,6 @@ export class WarehouseTransferAddEdit {
         return;
       }
 
-      // ⚠ Mostrar alerta y esperar decisión del usuario
       const { isConfirmed } = await Swal.fire({
         title: `<small>${titleSms}</small>`,
         icon: 'warning',
@@ -545,13 +572,11 @@ export class WarehouseTransferAddEdit {
         // code === '2' → aceptar bajo advertencia
         fn(code === '2');
       }
-
     } catch (error) {
       console.error('Error validating stock:', error);
       fn(false);
     }
   }
-
 
   async cellEdited(cell: any): Promise<void> {
     const column = cell.getColumn().getField();
@@ -560,13 +585,11 @@ export class WarehouseTransferAddEdit {
     const data = { ...cell.getData() }; // copia superficial
     const oldData = cell.getRow().getData();
 
-    // 🔹 Validaciones básicas
     if (newValue === oldValue || isNaN(newValue) || cell.getValue() === '' || newValue < 0) {
       cell.setValue(oldValue);
       return;
     }
 
-    // 🔹 Lógica según columna
     switch (column) {
       case 'quantity': {
         const updatedDetails = this.updateDetailInList(data.uuid, data);
@@ -603,14 +626,11 @@ export class WarehouseTransferAddEdit {
       }
 
       default:
-        // Otras columnas editables
         break;
     }
 
-    // 🔹 Recalcular total
     data.total = DecimalUtil.multiplyAsNumber(data.quantity, data.costPrice);
 
-    // 🔹 Actualizar lista
     this.details.set(this.details().map(item => (item.uuid === data.uuid ? data : item)));
   }
   private updateDetailInList(uuid: string, newData: any): any[] {
@@ -622,8 +642,7 @@ export class WarehouseTransferAddEdit {
     });
   }
 
-
-  async deleteRow (row:any) {
+  async deleteRow(row: any) {
     const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       title: 'Eliminar Articulo',
@@ -632,22 +651,142 @@ export class WarehouseTransferAddEdit {
       showDenyButton: true,
       allowOutsideClick: false,
       confirmButtonText: 'Si',
-      denyButtonText: 'No'
-    })
-    if(!isConfirmed) return;
+      denyButtonText: 'No',
+    });
+    if (!isConfirmed) return;
 
     const filteredResults = this.details().filter(item => item.uuid !== row.uuid);
-    if(row.id>0){
-      this.detailsDeleted.update(res=>[...res, {
-        ...row,
-        status: false
-      }]);
+    if (row.id > 0) {
+      this.detailsDeleted.update(res => [
+        ...res,
+        {
+          ...row,
+          status: false,
+        },
+      ]);
     }
     this.details.set(filteredResults);
   }
 
-  close(){
+  private isValidForm(): boolean {
+    const {
+      sourceEstablishmentId,
+      sourceWarehouseId,
+      destinationWarehouseId,
+      puntoEmisionId,
+      issueDate,
+      issueDateCreated,
+    } = this.dataForm;
 
+    // Función auxiliar para mostrar advertencias
+    const warn = (message: string) => {
+      this.notiSvc.warning({ message });
+    };
+
+    // Validaciones de campos obligatorios
+    if (!ValidatorUtils.isValidField(sourceEstablishmentId))
+      return (warn('Seleccione Establecimiento Origen'), false);
+    if (!ValidatorUtils.isValidField(sourceWarehouseId))
+      return (warn('Seleccione la Bodega Origen'), false);
+    if (!ValidatorUtils.isValidField(destinationWarehouseId))
+      return (warn('Seleccione la Bodega Destino'), false);
+    if (sourceWarehouseId === destinationWarehouseId)
+      return (warn('No puedes transferir los productos a la misma bodega!'), false);
+    if (!ValidatorUtils.isValidField(puntoEmisionId))
+      return (warn('Seleccione el Punto de Emisión'), false);
+    if (!ValidatorUtils.isValidField(issueDate))
+      return (warn('Ingrese la Fecha de emisión'), false);
+
+    // Validar fecha no futura
+    if (dateIsAfterCurrentDate(issueDate)) {
+      warn('La fecha de emisión del documento no puede ser posterior a la fecha actual.');
+      return false;
+    }
+
+    // Ajustar fecha de emisión
+    const fechaAjustada = ajustarFechaEmisionModificada({
+      fechaEmision: issueDate,
+      fechaEmisionDocCreado: issueDateCreated, // corregido nombre de parámetro
+    });
+
+    if (!fechaAjustada) {
+      console.error('Error al ajustar la fecha de emisión.');
+      return false;
+    }
+
+    this.dataForm.issueDate = fechaAjustada;
+
+    // Validación del detalle
+    const items = this.details();
+    if (items.length === 0) return (warn('Ingrese al menos un artículo en el Detalle'), false);
+    if (items.length > 200) return (warn('El límite máximo de ítems es 200'), false);
+
+    return true;
+  }
+
+  async save(): Promise<void> {
+    if (!this.isValidForm()) return;
+
+    let serieComprobante: string | null = null;
+    let titleSwal = '';
+    let htmlSwal = '';
+    let confirmButtonText = '';
+
+    try {
+      if (this.isAdd()) {
+        // Obtener número secuencial
+        serieComprobante = await firstValueFrom(
+          this.generateSerieUseCase.execute({
+            puntoEmisionId: this.dataForm.puntoEmisionId,
+          }),
+        );
+
+        if (!serieComprobante) {
+          this.notiSvc.error({ message: 'No se generó número secuencial correctamente.' });
+          return;
+        }
+
+        titleSwal = '<small>Guardar Transferencia de Bodega</small>';
+        confirmButtonText = 'Guardar';
+        htmlSwal = `<small>¿Está seguro de guardar este Documento N°. <b>${serieComprobante}</b>?</small>`;
+      } else {
+        titleSwal = '<small>Actualizar Transferencia de Bodega</small>';
+        confirmButtonText = 'Actualizar';
+        htmlSwal = `<small>¿Está seguro de actualizar este Documento?</small>`;
+      }
+
+      // Configuración de Swal personalizada
+      const swalConfig = Swal.mixin({
+        customClass: {
+          confirmButton: 'btn btn-success',
+          cancelButton: 'btn btn-danger m-l-2',
+        },
+        buttonsStyling: false,
+      });
+
+      const { isConfirmed } = await swalConfig.fire({
+        title: titleSwal,
+        html: htmlSwal,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText,
+        cancelButtonText: 'No',
+        reverseButtons: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+
+      if (!isConfirmed) return;
+
+      // Aquí podrías continuar con el guardado real
+      // await this.saveTransfer({ serieComprobante });
+    } catch (error) {
+      console.error('Error al guardar la transferencia:', error);
+      this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
+    }
+  }
+
+  close() {
     this.dialogRef.close();
   }
 }

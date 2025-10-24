@@ -14,7 +14,7 @@ import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/frac
 import { Product } from '@inventory/product/presentation/product/product';
 import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
 import { InventoryHomeComponent } from './ui/inventory-home.component';
-import { WarehouseTransferComponent } from '@inventory/ui/warehouse-transfer/warehouse-transfer.component';
+import { WarehouseTransfer } from '@inventory/ui/warehouse-transfer/warehouse-transfer';
 
 export const routes: Route[] = [
   {
@@ -129,7 +129,7 @@ export const routes: Route[] = [
   },
   {
     path: 'warehouse-transfer',
-    component: WarehouseTransferComponent,
+    component: WarehouseTransfer,
     data: {
       breadcrumb: 'Transferencia de Mercaderia',
 

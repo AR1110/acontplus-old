@@ -39,11 +39,11 @@ import {
     FormsModule,
     MatInput
   ],
-  templateUrl: './warehouse-transfer.component.html',
-  styleUrl: './warehouse-transfer.component.scss',
+  templateUrl: './warehouse-transfer.html',
+  styleUrl: './warehouse-transfer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WarehouseTransferComponent implements OnInit {
+export class WarehouseTransfer implements OnInit {
   private _useCase = inject(WarehouseTransferUseCase);
   private noti = inject(ToastrNotificationService)
   private dgSvc = inject(DialogService)

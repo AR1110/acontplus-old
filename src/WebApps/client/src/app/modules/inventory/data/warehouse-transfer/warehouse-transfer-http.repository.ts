@@ -10,6 +10,9 @@ import { TransferenciaBodegaMapper } from './warehouse-transfer.mapper';
 import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
 import {WarehouseTransferDataFormMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-data-form.mapper";
 import {GetMassTransferProductsMapper} from "@inventory/data/warehouse-transfer/get-mass-transfer-products.mapper";
+import {
+  WarehouseTransferGenerateSerieMapper
+} from "@inventory/data/warehouse-transfer/warehouse-transfer-generate-serie.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -72,5 +75,13 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
     return this._http
       .get(`${this._url}?json=${json}`)
       .pipe(map(response => GetMassTransferProductsMapper.fromJson(response)));
+  }
+
+   generateSerie(obj: { puntoEmisionId: number }): Observable<any> {
+      const json = WarehouseTransferGenerateSerieMapper.toJson(obj);
+      return this._http
+        .get(`${this._url}?json=${json}`)
+        .pipe(map(response => WarehouseTransferGenerateSerieMapper.fromJson(response)));
+
   }
 }

@@ -11,4 +11,5 @@ export abstract class WarehouseTransferRepository {
   abstract put<T>(id: number, obj: T): Observable<ApiResponse>;
   abstract updateStatus(id: number): Observable<ApiResponse>;
   abstract getMassTransferProducts(obj:any): Observable<any>
+  abstract generateSerie(obj: { puntoEmisionId: number }): Observable<any>
 }

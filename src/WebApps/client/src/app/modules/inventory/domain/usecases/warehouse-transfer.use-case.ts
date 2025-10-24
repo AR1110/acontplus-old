@@ -51,3 +51,13 @@ export class GetMassTransferProductsUseCase implements BaseUseCase<any, any>{
     return this.repo.getMassTransferProducts(obj);
   }
 }
+
+@Injectable({
+  providedIn: 'root',
+})
+export class WarehouseTransferGenerateSerieUseCase implements BaseUseCase<any, { puntoEmisionId: number }>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(obj:any) {
+    return this.repo.generateSerie(obj);
+  }
+}
