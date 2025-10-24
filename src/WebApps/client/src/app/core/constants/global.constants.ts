@@ -43,6 +43,7 @@ export const enum DOC_TYPE {
   CDV = 'CDV', //Consolidao diario venta
   AC = 'AC', //Ajuste Consolidacion
   CI = 'CI',
+  TB='TB' //Transferencia Bodega
 }
 
 export const enum DOC_TYPE_SRI {

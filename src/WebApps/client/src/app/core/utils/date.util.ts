@@ -127,13 +127,12 @@ export function formatDateToString(date: Date) {
   if (!isDateValid(date)) throw new Error('La fecha es inválida');
 
   const dateZone = tzDate(date, zonaHorariaEcuador);
+
+  // 🔸 Formato con hora 12h + AM/PM
   return format({
     date: dateZone,
-    format: 'YYYY-MM-DD h:mm:ss',
-    tz: zonaHorariaEcuador,
-  });
+    format: 'YYYY-MM-DD hh:mm:ss A', tz: zonaHorariaEcuador });
 }
-
 /**
  * Verifica si una fecha es válida.
  */

@@ -13,6 +13,7 @@ import {GetMassTransferProductsMapper} from "@inventory/data/warehouse-transfer/
 import {
   WarehouseTransferGenerateSerieMapper
 } from "@inventory/data/warehouse-transfer/warehouse-transfer-generate-serie.mapper";
+import {WarehouseTransferSaveMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-save.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -47,14 +48,9 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
       .pipe(map(response => WarehouseTransferDataFormMapper.fromJson(response)));
   }
 
-  post<T>(data: T) {
-    return this._http.post<ApiResponse>(
-      `${this._url}`,
-      { data },
-      {
-        context: getNoLoader(),
-      },
-    );
+  post<T>(obj: T) {
+    const data = WarehouseTransferSaveMapper.toJson(obj);
+    return this._http.post<ApiResponse>(`${this._url}`, { data });
   }
   put<T>(id: number, data: T) {
     return this._http.put<ApiResponse>(

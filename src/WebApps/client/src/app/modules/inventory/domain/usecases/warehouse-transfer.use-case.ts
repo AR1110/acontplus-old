@@ -61,3 +61,13 @@ export class WarehouseTransferGenerateSerieUseCase implements BaseUseCase<any, {
     return this.repo.generateSerie(obj);
   }
 }
+
+@Injectable({
+  providedIn: 'root',
+})
+export class WarehouseTransferSaveUseCase implements BaseUseCase<any, any>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(obj:any) {
+    return this.repo.post(obj);
+  }
+}

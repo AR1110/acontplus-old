@@ -1,4 +1,3 @@
-import { InventoryAdjustmentRepositoryImpl } from '@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl';
 
 export const enum INVENTORY_PATHS {
   PRODUCT_OLD = 'Articulo/',

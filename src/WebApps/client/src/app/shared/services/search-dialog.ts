@@ -7,6 +7,7 @@ export class SearchDialogService {
   private dgSvc = inject(DialogService);
   private defaultComponent?: Type<any>;
   private resultSubject = new Subject<any>();
+  private isCtrlKOpen = false; // 👈 bandera de origen
 
   constructor() {
     document.addEventListener('keydown', (event: KeyboardEvent) => {
@@ -14,6 +15,7 @@ export class SearchDialogService {
       const isMod = event.ctrlKey || event.metaKey;
       if (isMod && isK) {
         event.preventDefault();
+        this.isCtrlKOpen = true; // marcamos que viene de Ctrl+K
         this.open();
       }
     });
@@ -40,11 +42,16 @@ export class SearchDialogService {
       size: 'xl',
       disableClose: false,
       data: data ?? {},
-    })
+    });
 
     ref.subscribe((result) => {
       if (result !== undefined) {
-        this.resultSubject.next(result);
+        // 🔹 Solo emitimos a resultSubject si fue abierto por Ctrl+K
+        if (this.isCtrlKOpen) {
+          this.resultSubject.next(result);
+          this.isCtrlKOpen = false;
+          return
+        }
       }
     });
 

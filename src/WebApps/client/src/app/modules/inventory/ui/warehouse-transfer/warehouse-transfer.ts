@@ -179,6 +179,7 @@ export class WarehouseTransfer implements OnInit {
 
   ngOnInit() {
     //this.getFilterData();
+    console.log(formatDateToString(new Date()))
   }
 
   onChangeEstab() {

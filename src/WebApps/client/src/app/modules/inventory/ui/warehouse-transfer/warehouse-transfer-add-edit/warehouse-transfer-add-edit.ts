@@ -23,7 +23,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
 import {
   WarehouseTransferDataFormUseCase,
-  WarehouseTransferGenerateSerieUseCase,
+  WarehouseTransferGenerateSerieUseCase, WarehouseTransferSaveUseCase,
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import {
   GroupedEstab,
@@ -49,6 +49,7 @@ import { mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
 import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
+import {finalize} from "rxjs/operators";
 
 interface CommonType {
   id: number;
@@ -86,10 +87,12 @@ export class WarehouseTransferAddEdit implements OnInit {
   private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
   private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
+  private saveUseCase = inject(WarehouseTransferSaveUseCase)
 
   private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
   private params = inject<{ id: number }>(MAT_DIALOG_DATA);
 
+  isSaving = signal(false);
   title = signal('Nueva Transferencia');
   btnText = signal('Guardar');
   btnIcon = signal('save');
@@ -485,6 +488,7 @@ export class WarehouseTransferAddEdit implements OnInit {
 
           const tempDetails = structuredClone(this.details());
           const existingIndex = tempDetails.findIndex((v: any) => v.productId === data.id);
+          console.log(existingIndex);
 
           const measure =
             existingIndex !== -1
@@ -514,7 +518,7 @@ export class WarehouseTransferAddEdit implements OnInit {
             hasInventory: data.hasInventory,
             measures,
             measureId: measure.idMedida,
-            convertion: measure.conversion,
+            conversion: measure.conversion,
             costPrice: measure.precioCosto,
             unitPrice: measure.precioUnitario,
             fractionalCostPrice: measure.precioCostoFraccionado,
@@ -610,9 +614,10 @@ export class WarehouseTransferAddEdit implements OnInit {
         }
 
         Object.assign(data, {
-          unitPrice: selectedMeasure.precioUnitario || 0,
-          costPrice: selectedMeasure.precioCosto || 0,
-          fractionalCostPrice: selectedMeasure.precioCostoFraccionado || 0,
+          unitPrice: selectedMeasure.precioUnitario ?? 0,
+          costPrice: selectedMeasure.precioCosto ?? 0,
+          fractionalCostPrice: selectedMeasure.precioCostoFraccionado ?? 0,
+          conversion: selectedMeasure.conversion ?? 0,
         });
 
         const updatedDetails = this.updateDetailInList(data.uuid, data);
@@ -725,6 +730,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   async save(): Promise<void> {
+    if(this.isSaving()) return ;
     if (!this.isValidForm()) return;
 
     let serieComprobante: string | null = null;
@@ -778,14 +784,38 @@ export class WarehouseTransferAddEdit implements OnInit {
 
       if (!isConfirmed) return;
 
+      this.isSaving.set(true)
+      this.saveUseCase.execute({
+        data: {
+          ...this.dataForm,
+          total: this.total(),
+        },
+        details: this.details(),
+        transactionTypes: this.transactionTypes(),
+        documentTypes: this.documentTypes(),
+        detailsDeleted : this.detailsDeleted(),
+      })
+        .pipe(
+          finalize(()=>this.isSaving.set(false))
+        )
+        .subscribe(this.commonResponse)
       // Aquí podrías continuar con el guardado real
       // await this.saveTransfer({ serieComprobante });
     } catch (error) {
       console.error('Error al guardar la transferencia:', error);
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
+      this.isSaving.set(false);
     }
   }
 
+  private commonResponse = (response: any)=> {
+    if (response.code === '1') {
+      this.notiSvc.success({ message: 'La transferencia se guardó correctamente.' });
+      this.close();
+    } else {
+      this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
+    }
+  }
   close() {
     this.dialogRef.close();
   }
