@@ -3,7 +3,6 @@ import {
   ViewEncapsulation,
   ChangeDetectionStrategy,
   computed,
-  effect,
   signal,
   inject,
   DestroyRef,
@@ -18,9 +17,9 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
-import { Menu, MenuService } from '@core/bootstrap';
+import {  MenuService } from '@core/bootstrap';
 import { TopmenuPanel } from './topmenu-panel';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 export interface TopmenuState {
@@ -64,7 +63,7 @@ export class Topmenu {
   readonly currentUrl = signal(this.router.url);
 
   getMenusignal = () => {
-    const resultMenus = this.processApiMenuItems(this.tokenUseCase.getSession()?.menus || []);
+    const resultMenus = this.processApiMenuItems(this.tokenUseCase.getSession()?.menuItems || []);
     return [
       {
         route: 'dashboard',

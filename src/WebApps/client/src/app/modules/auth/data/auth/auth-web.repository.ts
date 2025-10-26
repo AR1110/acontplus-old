@@ -6,7 +6,7 @@ import { User } from '../../domain/models/user.model';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { AuthMapper } from '@modules/auth/data/auth/auth.mapper';
+import { AuthLoginMapper } from '@modules/auth/data/auth/auth-login.mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +35,7 @@ export class AuthWebRepository implements AuthRepository {
           return result;
         }
 
-        const { userRoles, dto } = AuthMapper.fromApi(response);
+        const { userRoles, dto } = AuthLoginMapper.fromJson(response);
 
         result.success = true;
         result.message = response.message;
@@ -56,11 +56,11 @@ export class AuthWebRepository implements AuthRepository {
   }
 
   createToken(params: any) {
-    return this.http.post<any>(`${this._url}createtoken`, params).pipe(
+    return this.http.post<ApiResponse>(`${this._url}createtoken`, params).pipe(
       map(response => {
         const result = {
           success: false,
-          message: '',
+          message: '' as string ,
           userRoles: [] as any[],
           userRolesOriginal: [] as any[],
         };
@@ -70,7 +70,7 @@ export class AuthWebRepository implements AuthRepository {
           return result;
         }
 
-        const { userRoles, dto } = AuthMapper.fromApi(response);
+        const { userRoles, dto } = AuthLoginMapper.fromJson(response);
 
         result.success = true;
         result.message = response.message;

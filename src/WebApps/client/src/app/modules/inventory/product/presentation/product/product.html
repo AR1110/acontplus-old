@@ -28,7 +28,12 @@
       </div>
       <div class="col">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button appAddEditProduct (onResult)="refresh()" [disabled]="isLoading()">
+          <button
+            *hasPermission="action_aliases().CREATE; context: inventory_modules_code().PRODUCT"
+            mat-icon-button
+                  appAddEditProduct
+                  (onResult)="refresh()"
+                  [disabled]="isLoading()">
             <mat-icon>add</mat-icon>
           </button>
           <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
@@ -216,10 +221,20 @@
         </button>
       </mat-menu>
 
-      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="row.idArticulo">
+      <button
+        *hasPermission="action_aliases().EDIT; context: inventory_modules_code().PRODUCT"
+        mat-icon-button
+        matTooltip="Editar"
+        appAddEditProduct
+        [id]="row.idArticulo">
         <mat-icon>edit</mat-icon>
       </button>
-      <button mat-icon-button appProductKardexModal [params]="row" matTooltip="Kardex">
+      <button
+        *hasPermission="action_aliases().KARDEX; context: inventory_modules_code().PRODUCT"
+        mat-icon-button
+        appProductKardexModal
+        [params]="row"
+        matTooltip="Kardex">
         <mat-icon>timeline</mat-icon>
       </button>
     </div>

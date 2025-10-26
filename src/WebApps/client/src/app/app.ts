@@ -2,6 +2,7 @@ import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
 import { PreloaderService, SettingsService } from '@core/bootstrap';
+import {PermissionsService} from "@core/services/permissions";
 
 @Component({
   selector: 'app-root',
@@ -104,6 +105,7 @@ export class App implements OnInit, AfterViewInit {
   //new line code
   private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
+  private readonly permissionsService = inject(PermissionsService);
 
   ngOnInit() {
     this.settings.setDirection();

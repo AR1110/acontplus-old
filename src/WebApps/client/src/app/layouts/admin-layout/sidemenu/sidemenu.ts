@@ -50,7 +50,7 @@ export class Sidemenu {
   private tokenUseCase = inject(TokenUseCase);
 
   menus = computed(() => {
-    const resultMenus = this.processApiMenuItems(this.tokenUseCase.getSession()?.menus || []);
+    const resultMenus = this.processApiMenuItems(this.tokenUseCase.getSession()?.menuItems ?? []);
     return [
       {
         route: 'dashboard',

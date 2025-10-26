@@ -3,7 +3,7 @@ import { UserData } from '@modules/auth/domain/models/user-data.model';
 import { TokenModel } from '../../domain/models/token.model';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { Session } from '@modules/auth/domain/models/session';
+import { SessionCache } from '@modules/auth/domain/models/session';
 
 @Injectable({
   providedIn: 'root',
@@ -11,21 +11,25 @@ import { Session } from '@modules/auth/domain/models/session';
 export class TokenLocalStorageRepository implements TokenRepository {
   private TOKEN_KEY = 'token';
   private SESSION_KEY = 'session';
+  private readonly CACHE_VERSION = '1.0.0';
+  private readonly CACHE_DURATION = 3600000; // 1 hora
 
-  saveSession(session: Session): void {
+  saveSession(session: SessionCache): void {
     localStorage.setItem(this.TOKEN_KEY, session.token);
     localStorage.setItem(
       this.SESSION_KEY,
       JSON.stringify({
         userData: session.userData,
-        menus: session.menus,
+        menuItems: session.menuItems,
         permissions: session.permissions,
-        company:session.company
+        company:session.company,
+        timestamp: Date.now(),
+        version: this.CACHE_VERSION
       }),
     );
   }
 
-  getSession(): Session | null {
+  getSession(): SessionCache | null {
     const data = localStorage.getItem(this.SESSION_KEY);
     if (data) {
       const parsed = JSON.parse(data);
@@ -97,6 +101,7 @@ export class TokenLocalStorageRepository implements TokenRepository {
           token['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
           token.userId,
         username: token.unique_name || '',
+        codeRole: token.codeRole || '',
       };
     }
     return null;

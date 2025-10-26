@@ -40,6 +40,10 @@ import {MtxPopoverModule} from "@ng-matero/extensions/popover";
 import {ProductStock} from "@inventory/product/presentation/components/product-stock/product-stock";
 import {DataGrid} from "@shared/components/data-grid/data-grid";
 import {DataGridColumn} from "@shared/components/data-grid/types";
+import {HasPermissionDirective} from "@core/directives/permission";
+import {INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
+import {usePermissions} from "@core/composables/use-permissions";
+import {ACTION_ALIASES} from "@core/constants/permission-actions";
 
 @Component({
   selector: 'app-inventory-product',
@@ -64,7 +68,8 @@ import {DataGridColumn} from "@shared/components/data-grid/types";
     ProductKardexModalDirective,
     MtxPopoverModule,
     ProductStock,
-    DataGrid
+    DataGrid,
+    HasPermissionDirective
   ],
   templateUrl: './product.html',
   styles: `
@@ -76,6 +81,10 @@ import {DataGridColumn} from "@shared/components/data-grid/types";
 })
 export class Product implements OnInit  {
   @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
+
+  inventory_modules_code = signal(INVENTORY_MODULES_CODE);
+  action_aliases = signal(ACTION_ALIASES);
+  //usePermissions = usePermissions(this.PRODUCT_CODE);
   dataSearch = {
     filterMode: 4,
     textSearch: null as string | null,

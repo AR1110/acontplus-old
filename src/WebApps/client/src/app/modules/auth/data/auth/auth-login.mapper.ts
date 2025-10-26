@@ -1,31 +1,30 @@
 import { UserData } from '../../domain/models/user-data.model';
+import {isValidJSON} from "@core/utils/utils";
 
-export class AuthMapper {
-  static toUserData(response: any): UserData {
-    return {
-      userId: response.userId,
-      email: response.email,
-      name: response.name,
-      username: response.username,
-    };
-  }
+export class AuthLoginMapper {
 
-  static fromApi(response: any) {
+  static fromJson(response: any) {
     const parsed = JSON.parse(response.payload as string);
 
     const dto = Array.isArray(parsed) ? parsed : [parsed];
-    // --- Map modules to tree ---
+
     const mapModules = (items: any[]): any[] => {
       const nodeMap = new Map<number, any>();
       const roots: any[] = [];
 
       items.forEach((item) => {
         if (!nodeMap.has(item.id)) {
-          nodeMap.set(item.id, { ...item, children: [] });
+          const  actions = isValidJSON(item.actions) ? JSON.parse(item.actions) : [];
+
+          nodeMap.set(item.id, {
+            ...item,
+            actions,
+            children: [] });
         }
       });
 
       nodeMap.forEach((node) => {
+        console.log(node.actions);
         if (node.parentId !== undefined && nodeMap.has(node.parentId)) {
           nodeMap.get(node.parentId).children.push(node);
         } else if (node.parentId === undefined) {
@@ -136,8 +135,8 @@ export class AuthMapper {
       return {
         userData,
         company,
-        menus: menusWithChildren,
-        permissions: mappedPermissions,
+        menuItems: menusWithChildren,
+        customPermissions: mappedPermissions,
         token,
         uuid,
         needAuthorization,

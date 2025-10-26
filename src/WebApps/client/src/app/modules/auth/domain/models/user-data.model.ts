@@ -3,4 +3,5 @@ export interface UserData {
   email: string;
   name: string;
   username: string;
+  codeRole: string;
 }

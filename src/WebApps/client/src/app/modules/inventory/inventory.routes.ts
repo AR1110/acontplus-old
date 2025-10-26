@@ -15,6 +15,9 @@ import { Product } from '@inventory/product/presentation/product/product';
 import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
 import { InventoryHomeComponent } from './ui/inventory-home.component';
 import { WarehouseTransfer } from '@inventory/ui/warehouse-transfer/warehouse-transfer';
+import {permissionGuard} from "@core/guards/permission.guard";
+import {INVENTORY_MODULES_CODE, INVENTORY_ROUTES} from "@inventory/domain/enums/inventory.enum";
+import {ACTION_ALIASES} from "@core/constants/permission-actions";
 
 export const routes: Route[] = [
   {
@@ -40,11 +43,14 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'products',
+    path: INVENTORY_ROUTES.products,
     title: 'Productos',
     component: Product,
+    canActivate: [permissionGuard],
     data: {
       breadcrumb: 'Productos',
+      context: INVENTORY_MODULES_CODE.PRODUCT,
+      requiredActions: [ACTION_ALIASES.READ] // Se requiere al menos 'leer' para ver el módulo
     },
   },
   {

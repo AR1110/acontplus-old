@@ -46,3 +46,11 @@ export enum InventoryTransactionType {
   OUTBOUND = 'S',
   ADJUSTMENT = 'A',
 }
+
+
+export const enum INVENTORY_ROUTES {
+  products = 'products',
+}
+export const INVENTORY_MODULES_CODE = {
+  PRODUCT: 'ART',
+} as const
