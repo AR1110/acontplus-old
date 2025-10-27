@@ -36,6 +36,7 @@ public record TransferenciaBodegaDetalleDto
     public string Descripcion { get; set; } = string.Empty;
     public decimal PrecioCosto { get; set; }
     public decimal Total { get; set; }
+    public bool Estado { get; set; }
 }
 
 public record TransaccionTransferenciaBodegaDto

@@ -22,7 +22,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
 import {
-  WarehouseTransferDataFormUseCase,
+  WarehouseTransferDataFormUseCase, WarehouseTransferEditUseCase,
   WarehouseTransferGenerateSerieUseCase, WarehouseTransferSaveUseCase,
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import {
@@ -50,6 +50,7 @@ import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import {finalize} from "rxjs/operators";
+import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
 
 interface CommonType {
   id: number;
@@ -87,15 +88,14 @@ export class WarehouseTransferAddEdit implements OnInit {
   private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
   private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
-  private saveUseCase = inject(WarehouseTransferSaveUseCase)
+  private saveUseCase = inject(WarehouseTransferSaveUseCase);
+  private editUseCase = inject(WarehouseTransferEditUseCase)
 
   private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
   private params = inject<{ id: number, operation: 'add' | 'edit' | 'duplicate', data: any }>(MAT_DIALOG_DATA);
 
   isSaving = signal(false);
-  title = signal('Nueva Transferencia');
-  btnText = signal('Guardar');
-  btnIcon = signal('save');
+
 
   sourceEstablishments = signal<GroupedEstab[]>([]);
   destinationEstablishments = signal<GroupedEstab[]>([]);
@@ -108,6 +108,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   categories = signal<CommonType[]>([]);
 
   dataForm = {
+    id: 0,
     sourceEstablishmentId: 0,
     destinationEstablishmentId: 0,
 
@@ -304,6 +305,29 @@ export class WarehouseTransferAddEdit implements OnInit {
     return roundNumber(totalValue);
   });
 
+  title = computed(()=>{
+
+    if(this.isEdit()){
+      return 'Editar Transferencia';
+    }
+    if(this.isDuplicate()){
+      return 'Duplicar Transferencia';
+    }
+      return 'Nueva Transferencia';
+
+  });
+  btnText = computed(()=>{
+    if(this.isEdit()){
+      return 'Editar'
+    }
+    return 'Guardar'
+  });
+  btnIcon = computed(()=>{
+    if(this.isEdit()){
+      return 'edit'
+    }
+    return 'save'
+  })
   isAdd() {
     return this.params.operation === 'add';
   }
@@ -314,6 +338,8 @@ export class WarehouseTransferAddEdit implements OnInit {
   isDuplicate() {
     return this.params.operation === 'duplicate'
   }
+
+
 
   openFilterAdvanced() {
     this.dgSvc
@@ -331,72 +357,115 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   loadDataForm() {
-    this.dataFormUseCase.execute().subscribe(response => {
-      this.sourceEstablishments.set(response.establishments);
-      this.destinationEstablishments.set(response.establishments);
-      this.transactionTypes.set(response.transactionTypes);
-      this.documentTypes.set(response.documentTypes);
-      this.categories.set(response.categories);
+    this.dataFormUseCase.execute().subscribe({
+      next: (response) => {
+        this.initializeBaseData(response);
 
-      if (this.sourceEstablishments().length === 0) {
-        this.notiSvc.warning({
-          message: 'No tienes asignado ningún Establecimiento',
-        });
-        throw new Error('No tienes asignado ningún Establecimiento');
-      }
+        if (this.sourceEstablishments().length === 0) {
+          this.warnAndThrow('No tienes asignado ningún Establecimiento');
+        }
 
-      if (this.isAdd()) {
-        this.setDataAdd();
-      }
-
-      if (this.isEdit()) {
-      }
-
-      if(this.isDuplicate()){
-        const {details, header} = this.params.data;
-
-        this.details.set(details.map((item:any)=>({
-          ...item,
-          id: 0,
-        })));
+        if (this.isAdd()) {
+          this.setDataAdd();
+        } else if (this.isEdit() || this.isDuplicate()) {
+          this.setDataEditOrDuplicate();
+        }
+      },
+      error: (err) => {
+        this.notiSvc.error({ message: 'Error al cargar datos del formulario' });
+        console.error(err);
       }
     });
   }
 
-  setDataAdd() {
-    this.title.set('Nueva Transferencia');
-    this.btnText.set('Guardar');
-    this.btnIcon.set('save');
+  private initializeBaseData(response: WarehouseTransferDataFormResult) {
+    this.sourceEstablishments.set(response.establishments);
+    this.destinationEstablishments.set(response.establishments);
+    this.transactionTypes.set(response.transactionTypes);
+    this.documentTypes.set(response.documentTypes);
+    this.categories.set(response.categories);
+  }
 
-    const dataEstab = this.sourceEstablishments().find(estab => estab.defaultEstab);
-    if (!dataEstab) {
-      this.notiSvc.warning({
-        message: 'No se encontró Estblecimiento por defecto',
-      });
-      throw new Error('No se encontró Estblecimiento por defecto');
+  private setDataEditOrDuplicate() {
+    const { details, header } = this.params.data;
+
+    const dataEstabSource = this.findEstablishmentByEmissionPoint(header.puntoEmisionId);
+    const dataEstabDestination = this.findEstablishmentByWarehouse(header.destinationWarehouseId);
+
+    // Actualizar listas dependientes
+    this.emissionPoints.set(dataEstabSource?.puntosEmision ?? []);
+    this.sourceWarehouses.set(dataEstabSource?.bodegas ?? []);
+    this.destinationWarehouses.set(dataEstabDestination?.bodegas ?? []);
+
+    const isDuplicate = this.isDuplicate();
+
+    // Configurar formulario
+    this.dataForm = {
+      ...header,
+      id: isDuplicate ? 0 : header.id,
+      sourceEstablishmentId: dataEstabSource?.id ?? 0,
+      destinationEstablishmentId: dataEstabDestination?.id ?? 0,
+    };
+
+    // Detalles
+    this.details.set(
+      isDuplicate
+        ? details.map((d: any) => ({ ...d, id: 0 }))
+        : details
+    );
+
+    if (isDuplicate) {
+      console.log('Duplicando registro:', structuredClone(header));
     }
+  }
+
+  private findEstablishmentByEmissionPoint(puntoEmisionId: number): GroupedEstab | undefined {
+    return this.sourceEstablishments().find(es =>
+      es.puntosEmision.some(pp => pp.idPuntoEmision === puntoEmisionId)
+    );
+  }
+
+  private findEstablishmentByWarehouse(warehouseId: number): GroupedEstab | undefined {
+    return this.destinationEstablishments().find(es =>
+      es.bodegas.some(bb => bb.idBodega === warehouseId)
+    );
+  }
+
+  setDataAdd() {
+    const dataEstab = this.sourceEstablishments().find(estab => estab.defaultEstab);
+
+    if (!dataEstab) {
+      this.warnAndThrow('No se encontró Establecimiento por defecto');
+    }
+
     this.emissionPoints.set(dataEstab.puntosEmision);
     this.sourceWarehouses.set(dataEstab.bodegas);
-    //Codigo Establecimiento
-    this.dataForm.sourceEstablishmentId = dataEstab.id ?? 0;
-    this.cloneSourceEstablishmentId.set(dataEstab.id ?? 0);
 
+    // Código Establecimiento
+    const idEstab = dataEstab.id ?? 0;
+    this.dataForm.sourceEstablishmentId = idEstab;
+    this.cloneSourceEstablishmentId.set(idEstab);
+
+    // Punto de Emisión
     if (this.emissionPoints().length > 0) {
       this.dataForm.puntoEmisionId =
-        this.emissionPoints().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision ?? 0;
+        this.emissionPoints().find(pto => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
-      this.notiSvc.warning({
-        message: 'No tienes asignado ningún Punto de Emisión',
-      });
+      this.notiSvc.warning({ message: 'No tienes asignado ningún Punto de Emisión' });
     }
+
+    // Bodega Origen
     if (this.sourceWarehouses().length > 0) {
       this.dataForm.sourceWarehouseId =
-        this.sourceWarehouses().find(bodega => bodega.defaultBodega)?.idBodega ?? 0;
+        this.sourceWarehouses().find(bod => bod.defaultBodega)?.idBodega ?? 0;
     } else {
-      this.notiSvc.warning({
-        message: 'No tienes asignado ninguna Bodega',
-      });
+      this.notiSvc.warning({ message: 'No tienes asignada ninguna Bodega' });
     }
+  }
+
+  private warnAndThrow(message: string): never {
+    this.notiSvc.warning({ message });
+    throw new Error(message);
   }
 
   constructor() {
@@ -797,8 +866,12 @@ export class WarehouseTransferAddEdit implements OnInit {
 
       if (!isConfirmed) return;
 
-      this.isSaving.set(true)
-      this.saveUseCase.execute({
+      this.isSaving.set(true);
+
+      const save = this.isAdd() ? this.saveUseCase : this.editUseCase;
+
+      save.execute({
+        id: this.dataForm.id,
         data: {
           ...this.dataForm,
           total: this.total(),
@@ -812,8 +885,6 @@ export class WarehouseTransferAddEdit implements OnInit {
           finalize(()=>this.isSaving.set(false))
         )
         .subscribe(this.commonResponse)
-      // Aquí podrías continuar con el guardado real
-      // await this.saveTransfer({ serieComprobante });
     } catch (error) {
       console.error('Error al guardar la transferencia:', error);
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });

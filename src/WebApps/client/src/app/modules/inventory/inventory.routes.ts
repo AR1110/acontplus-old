@@ -50,7 +50,7 @@ export const routes: Route[] = [
     data: {
       breadcrumb: 'Productos',
       context: INVENTORY_MODULES_CODE.PRODUCT,
-      requiredActions: [ACTION_ALIASES.READ] // Se requiere al menos 'leer' para ver el módulo
+      requiredActions: [ACTION_ALIASES.READ]
     },
   },
   {
@@ -136,9 +136,11 @@ export const routes: Route[] = [
   {
     path: 'warehouse-transfer',
     component: WarehouseTransfer,
+    canActivate: [permissionGuard],
     data: {
       breadcrumb: 'Transferencia de Mercaderia',
-
+      context: INVENTORY_MODULES_CODE.WAREHOUSE_TRANSFER,
+      requiredActions: [ACTION_ALIASES.READ]
     },
   },
 ];

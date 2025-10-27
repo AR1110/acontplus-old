@@ -24,7 +24,14 @@ import {
   WarehouseTransferAddEdit
 } from "@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit";
 import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
+import {DataGridColumn, DataGridRowClassFormatter} from "@shared/components/data-grid/types";
+import {INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
+import {ACTION_ALIASES} from "@core/constants/permission-actions";
+import {HasPermissionDirective} from "@core/directives/permission";
+import {usePermissions} from "@core/composables/use-permissions";
+import {
+  WarehouseTransferDetail
+} from "@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail";
 
 @Component({
   selector: 'app-warehouse-transfer',
@@ -38,19 +45,26 @@ import {DataGridColumn} from "@shared/components/data-grid/types";
     MatSelectModule,
     FormsModule,
     MatInput,
-    DataGrid
+    DataGrid,
+    HasPermissionDirective
   ],
   templateUrl: './warehouse-transfer.html',
   styleUrl: './warehouse-transfer.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WarehouseTransfer implements OnInit {
+  inventory_modules_code = signal(INVENTORY_MODULES_CODE);
+  action_aliases = signal(ACTION_ALIASES);
+  public perms = usePermissions(this.inventory_modules_code().WAREHOUSE_TRANSFER);
   private _useCase = inject(WarehouseTransferUseCase);
   private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase)
   private noti = inject(ToastrNotificationService)
   private dgSvc = inject(DialogService)
   list = signal<any[]>([]);
 
+  rowClassFormatter: DataGridRowClassFormatter = {
+    danger: (data) => data.estadoCodigo === "A",
+  };
   columns: DataGridColumn[] = [
     { header: 'Nro.', field: 'index' },
 
@@ -66,13 +80,29 @@ export class WarehouseTransfer implements OnInit {
           type: 'icon',
           icon: 'file_copy',
           tooltip: 'Duplicar',
-          click: (rowData) => this.handleDuplicated(rowData),
+          click: (rowData) => {
+            if(!this.perms.canCreate()){
+              this.noti.warning({
+                message: "No tiene permisos para duplicar",
+              })
+              return
+            }
+            this.handleDuplicated(rowData)
+          },
         },
         {
           type: 'icon',
           icon: 'edit',
           tooltip: 'Editar',
-          click: () => alert('edit'),
+          click: (rowData:any) => {
+            if(!this.perms.canEdit()){
+              this.noti.warning({
+                message: "No tiene permisos para editar",
+              })
+              return
+            }
+            this.handleEdit(rowData)
+          },
         },
         {
           type: 'icon',
@@ -80,7 +110,14 @@ export class WarehouseTransfer implements OnInit {
           tooltip: 'Anular',
           color: 'warn',
           pop: 'Confirm delete?',
-          click: () => alert('delete'),
+          click: () => {
+            if(!this.perms.canCancel()){
+              this.noti.warning({
+                message: "No tiene permisos para anular",
+              })
+              return
+            }
+          },
         },
         {
           type: 'icon',
@@ -90,11 +127,19 @@ export class WarehouseTransfer implements OnInit {
             {
               icon: 'description',
               text: 'Detalle',
+              click: (rowData:any) =>  this.handleViewDetail(rowData)
             },
             {
               icon: 'download',
               text: 'Reporte',
-              click: () => alert('Disable alerts'),
+              click: () => {
+                if(!this.perms.canCancel()){
+                  this.noti.warning({
+                    message: "No tiene permisos para descargar",
+                  })
+                  return
+                }
+              },
             },
           ],
         },
@@ -256,6 +301,21 @@ export class WarehouseTransfer implements OnInit {
   handleDuplicated(rowData:any) {
     this._getByIdUseCase.execute(rowData.id).subscribe(response => {
       this.openAddEditDialog('duplicate', rowData.id, response);
+    })
+  }
+
+  handleEdit(rowData:any) {
+    this._getByIdUseCase.execute(rowData.id).subscribe(response => {
+      this.openAddEditDialog('edit', rowData.id, response);
+    })
+  }
+
+  handleViewDetail(rowData:any) {
+    this.dgSvc.open(WarehouseTransferDetail , {
+      data: {
+        id: rowData.id,
+      },
+      size: 'xl'
     })
   }
 

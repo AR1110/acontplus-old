@@ -82,3 +82,25 @@ export class WarehouseTransferGetByIdUseCase implements BaseUseCase<any, number>
     return this.repo.getById(id);
   }
 }
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class WarehouseTransferEditUseCase implements BaseUseCase<any, any>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(obj:any) {
+    return this.repo.put(obj.id, obj);
+  }
+}
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class WarehouseTransferViewDetailUseCase implements BaseUseCase<any, number>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(id: number) {
+    return this.repo.viewDetail(id);
+  }
+}

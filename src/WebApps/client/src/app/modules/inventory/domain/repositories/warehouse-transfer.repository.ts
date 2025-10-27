@@ -13,4 +13,5 @@ export abstract class WarehouseTransferRepository {
   abstract getMassTransferProducts(obj:any): Observable<any>
   abstract generateSerie(obj: { puntoEmisionId: number }): Observable<any>
   abstract getById(id: number): Observable<any>
+  abstract viewDetail(id: number): Observable<any>
 }

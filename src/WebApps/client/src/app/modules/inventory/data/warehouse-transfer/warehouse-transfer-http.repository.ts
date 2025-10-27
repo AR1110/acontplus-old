@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
 import { TransferenciaBodegaMapper } from './warehouse-transfer.mapper';
 import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
@@ -15,6 +14,12 @@ import {
 } from "@inventory/data/warehouse-transfer/warehouse-transfer-generate-serie.mapper";
 import {WarehouseTransferSaveMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-save.mapper";
 import {WarehouseTransferGetByIdMapper} from "@inventory/data/warehouse-transfer/warehouse-transfer-get-by-id.mapper";
+import {
+  WarehouseTransferDetail
+} from "@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail";
+import {
+  WarehouseTransferViewDetailMapper
+} from "@inventory/data/warehouse-transfer/warehouse-transfer-view-detail.mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -54,12 +59,11 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
     return this._http.post<ApiResponse>(`${this._url}`, dto);
   }
   put<T>(id: number, data: T) {
+    const dto = WarehouseTransferSaveMapper.toJson(data);
+
     return this._http.put<ApiResponse>(
-      `${this._url}${id}`,
-      { data },
-      {
-        context: getNoLoader(),
-      },
+      `${this._url}/${id}`,
+      dto
     );
   }
 
@@ -86,5 +90,13 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
     return this._http.get(`${this._url}/GetId/${id}`).pipe(
       map(response => WarehouseTransferGetByIdMapper.fromJson(response))
     )
+  }
+
+  viewDetail(id: number): Observable<any> {
+    const json = WarehouseTransferViewDetailMapper.toJson(id);
+    return this._http
+      .get(`${this._url}?json=${json}`)
+      .pipe(map(response => WarehouseTransferViewDetailMapper.fromJson(response)));
+
   }
 }

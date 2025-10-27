@@ -73,13 +73,13 @@ BEGIN
         --> Data Json 
         SELECT @comprobante        = comprobante
               ,@detalles           = detalles
-              ,@transaccionDetalle = transaccionDetalle
+              ,@transaccionDetalle = transaccionDetalles
               
         FROM OPENJSON(@json) WITH 
         (
              comprobante        NVARCHAR(MAX) as json
             ,detalles           NVARCHAR(MAX) as json 
-            ,transaccionDetalle NVARCHAR(MAX) as json
+            ,transaccionDetalles NVARCHAR(MAX) as json
             
         )
 

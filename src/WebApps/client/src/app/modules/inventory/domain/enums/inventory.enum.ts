@@ -52,5 +52,6 @@ export const enum INVENTORY_ROUTES {
   products = 'products',
 }
 export const INVENTORY_MODULES_CODE = {
-  PRODUCT: 'ART',
+  PRODUCT: 'ART', //artpiculos
+  WAREHOUSE_TRANSFER: 'TI' //Transferencia de Bodega
 } as const

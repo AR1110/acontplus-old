@@ -45,6 +45,7 @@ export class WarehouseTransferSaveMapper {
 
     // --- Resultado final ---
     return {
+      id: data.id,
       comprobante,
       detalles: detallesCompletos,
       transaccion: [

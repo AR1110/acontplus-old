@@ -38,7 +38,9 @@
       </div>
       <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-6 col-sm-12">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button mat-icon-button [disabled]="isLoadingResults()" (click)="openAddEditDialog()">
+          <button
+            *hasPermission="action_aliases().CREATE; context: inventory_modules_code().WAREHOUSE_TRANSFER"
+            mat-icon-button [disabled]="isLoadingResults()" (click)="openAddEditDialog()">
             <mat-icon>add</mat-icon>
           </button>
           <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
@@ -83,6 +85,7 @@
       [pageSize]="pagination().pageSize"
       [pageSizeOptions]="pagination().pageSizeOptions"
       (page)="handlePageEvent($event)"
+      [rowClassFormatter]="rowClassFormatter"
 
     ></app-data-grid>
 
