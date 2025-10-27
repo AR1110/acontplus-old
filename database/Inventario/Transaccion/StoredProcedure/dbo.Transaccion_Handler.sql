@@ -63,14 +63,14 @@ BEGIN
                                 SELECT DISTINCT idArticulo, idBodega
                                 FROM Inventario.TransaccionDetalle WITH (READCOMMITTED)
                                 WHERE idTransaccion = @idTransaccion
-                                  AND estado <> 0
+                                  AND estado = 1
                             ),
                             UltimosAjustes AS
                             (
                                 SELECT td.idArticulo
                                       ,td.idBodega
                                       ,td.idTransaccionDetalle
-                                      ,ROW_NUMBER() OVER (PARTITION BY td.idArticulo, td.idBodega ORDER BY tr.fechaEmision DESC) as rn
+                                      ,ROW_NUMBER() OVER (PARTITION BY td.idArticulo, td.idBodega ORDER BY tr.fechaEmision DESC,td.idTransaccionDetalle DESC) as rn
                                 FROM TransaccionActual                   ta
                                 INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idArticulo = ta.idArticulo 
                                                                                                 AND td.idBodega = ta.idBodega
@@ -92,7 +92,7 @@ BEGIN
                                        ,ta.cantidadTransaccion + 
                                         SUM(td.cantidadTransaccion) OVER (
                                             PARTITION BY td.idArticulo, td.idBodega 
-                                            ORDER BY tr.fechaEmision ASC 
+                                            ORDER BY tr.fechaRegistro,td.idTransaccionDetalle ASC 
                                             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
                                         ) as nuevoSaldo
                                     FROM Inventario.TransaccionDetalle       td WITH (READCOMMITTED)
@@ -102,10 +102,9 @@ BEGIN
                                         ON  ta.idTransaccion = @idTransaccion
                                         AND ta.idArticulo    = td.idArticulo
                                         AND ta.idBodega      = td.idBodega
-                                    WHERE td.estado = 1
+                                    WHERE td.estado <> 0
                                       AND tt.codigo != 'A'
                                       AND tr.fechaRegistro >= @fechaTransaccion
-                                      AND td.AjusteId IS NULL
                             )
                             --> Actualizar todas las transacciones afectadas en UNA sola operación
                             UPDATE td SET saldo    = af.nuevoSaldo
@@ -121,51 +120,23 @@ BEGIN
                                 SELECT DISTINCT idArticulo, idBodega
                                 FROM Inventario.TransaccionDetalle WITH (READCOMMITTED)
                                 WHERE idTransaccion = @idTransaccion
-                                  AND estado <> 0
+                                  AND estado = 1
                            ),
                            StockBase AS
                            (
                                 -- Obtener la transacción base (último ajuste) de cada Stock
-                                SELECT st.idArticulo
-                                      ,st.idBodega
-                                      ,td.cantidadTransaccion as cantidadBase
-                                      ,tr.fechaRegistro       as fechaBase
+                                SELECT st.idStock
+                                      ,Inventario.f_Stock(ta.idArticulo,ta.idBodega) as cantidadFinal
                                 FROM TransaccionActualStock              ta
-                                INNER JOIN Inventario.Stock              st WITH (READCOMMITTED) ON st.idArticulo = ta.idArticulo 
-                                                                                                AND st.idBodega = ta.idBodega
-                                                                                                AND st.estado = 1
+                                INNER JOIN Inventario.Stock              st WITH (READCOMMITTED) ON st.idArticulo           = ta.idArticulo 
+                                                                                                AND st.idBodega             = ta.idBodega
+                                                                                                AND st.estado               = 1
                                 INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idTransaccionDetalle = st.idTransaccionDetalle
                                 INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion        = td.idTransaccion
-                            ),
-                            MovimientosPosteriores AS
-                            (
-                                -- Obtener la suma de movimientos E/S después del ajuste base
-                                SELECT sb.idArticulo
-                                      ,sb.idBodega
-                                      ,ISNULL(SUM(td.cantidadTransaccion), 0) as sumaMovimientos
-                                FROM StockBase                           sb
-                                INNER JOIN Inventario.TransaccionDetalle td WITH (READCOMMITTED) ON td.idArticulo = sb.idArticulo
-                                                                                                AND td.idBodega = sb.idBodega
-                                                                                                AND td.estado = 1
-
-                                INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion = td.idTransaccion
-                                                                                                AND tr.fechaRegistro >= sb.fechaBase  -- Solo movimientos posteriores
-
-                                INNER JOIN Inventario.TipoTransaccion tt WITH (READCOMMITTED)    ON tt.idTipoTransaccion = tr.idTipoTransaccion
-                                                                                                AND tt.codigo IN ('E','S')  -- Solo Entradas y Salidas
-                                GROUP BY sb.idArticulo, sb.idBodega
-                            ),
-                            StockFinal AS (
-                                -- Calcular el stock final: base + movimientos posteriores
-                                SELECT sb.idArticulo
-                                      ,sb.idBodega
-                                      ,sb.cantidadBase + ISNULL(mp.sumaMovimientos, 0) as cantidadFinal
-                                FROM StockBase                   sb
-                                LEFT JOIN MovimientosPosteriores mp ON mp.idArticulo = sb.idArticulo AND mp.idBodega = sb.idBodega
                             )
-                            UPDATE st SET cantidad = sf.cantidadFinal
+                            UPDATE st SET cantidad = sb.cantidadFinal
                             FROM Inventario.Stock st 
-                            INNER JOIN StockFinal sf ON sf.idArticulo = st.idArticulo AND sf.idBodega = st.idBodega;
+                            INNER JOIN StockBase  sb ON sb.idStock = st.idStock
                             
                         END
                     --> Regular transactions
@@ -181,7 +152,7 @@ BEGIN
                                       ,SUM(cantidadTransaccion) as cantidadTotal
                                 FROM Inventario.TransaccionDetalle
                                 WHERE idTransaccion = @idTransaccion
-                                  AND estado <> 0
+                                  AND estado = 1
                                 GROUP BY idArticulo, idBodega
 
                             ) ag ON ag.idArticulo = st.idArticulo AND ag.idBodega = st.idBodega;
@@ -215,7 +186,7 @@ BEGIN
                             SELECT 1 FROM Inventario.TransaccionDetalle td 
                             WHERE td.idTransaccion = @idTransaccion 
                               AND td.idArticulo = st.idArticulo
-                              AND td.estado <> 0
+                              AND td.estado = 1
                         )
                         GROUP BY st.idArticulo
                     )

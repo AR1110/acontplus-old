@@ -7,7 +7,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER   PROCEDURE [Inventario].[Transaccion_Get] 
+CREATE OR ALTER PROCEDURE [Inventario].[Transaccion_Get] 
      @userRoleId INT
     ,@json VARCHAR(MAX)
     ,@tableNames VARCHAR(MAX) OUTPUT

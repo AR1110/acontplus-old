@@ -30,7 +30,7 @@ BEGIN
     --> Transaccion 
     DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@serieComprobante VARCHAR(30) ,@codDoc VARCHAR(50) ,@codTran VARCHAR(50) ,@valor INT = 1
 
-    DECLARE @fechaRegistro DATETIME2 = GETDATE()
+    DECLARE @fechaRegistro DATETIME2 = GETDATE() ,@fechaMaxima DATETIME2
 	
     DECLARE @tbComprobante AS TABLE(
          idPuntoEmision INT NOT NULL
@@ -62,6 +62,7 @@ BEGIN
 
 	BEGIN TRY
 	    
+
         --> Global 
         SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -119,6 +120,7 @@ BEGIN
                     ,@idTipoTransaccion = idTipoTransaccion
         FROM @tbComprobante
 
+        
         SELECT TOP 1 @codDoc = codigo FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento
 
         SELECT TOP 1 @codTran = codigo FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion
@@ -134,14 +136,45 @@ BEGIN
         INNER JOIN Sri.Establecimiento es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
         WHERE pe.idPuntoEmision = @idPuntoEmision
 
+        SELECT @fechaMaxima = MAX(fechaEmision) FROM dbo.ConsolidacionInventario WHERE idEntidad = @idEntidad
+
         IF @codTran = 'S'
             BEGIN
                 SET @valor = -1
             END
 
-        IF @codDoc = 'A'
+        IF @codTran = 'A'
             BEGIN
                 SET @fechaRegistro = @fechaEmision
+
+                DECLARE @articulosConflictivos TABLE (
+                    descripcion VARCHAR(300) NOT NULL
+                );
+
+                INSERT INTO @articulosConflictivos
+                      (descripcion)
+                SELECT descripcion
+                FROM @tblDetails                         td
+                INNER JOIN Inventario.Stock              st WITH (READCOMMITTED) ON st.idArticulo           = td.idArticulo
+                                                                                AND st.idBodega             = td.idBodega
+                                                                                AND st.idTransaccionDetalle IS NOT NULL
+                INNER JOIN Inventario.TransaccionDetalle dt WITH (READCOMMITTED) ON dt.idTransaccionDetalle = st.idTransaccionDetalle
+                INNER JOIN Inventario.Transaccion        tr WITH (READCOMMITTED) ON tr.idTransaccion        = dt.idTransaccion
+                WHERE dt.estado = 1
+                  AND CAST(tr.fechaRegistro AS DATE) > CAST(@fechaEmision AS DATE)
+                
+
+                IF EXISTS (SELECT 1 FROM @articulosConflictivos)
+                    BEGIN
+                        DECLARE @listaArticulos NVARCHAR(MAX);
+
+                        SELECT @listaArticulos = STRING_AGG(descripcion, ', ') FROM @articulosConflictivos;
+
+                        -- Retornar un solo resultado con el mensaje completo
+                        SELECT '0' AS code, 'No se puede consolidar el/los artículo(s): ' + @listaArticulos + ' porque tienen una fecha posterior a su última consolidación.' AS [message];
+                        RETURN
+                    END 
+
             END
 
         --> Validacion de informacion
