@@ -352,7 +352,14 @@ export class WarehouseTransferAddEdit implements OnInit {
         },
       })
       .subscribe(result => {
-        console.log(result);
+        if(result && typeof result === 'object'){ 
+          const merge = [...this.details(), ...result.rowSelected].reduce((acc, item) => {
+            acc[item.productId] = item;
+            return acc;
+          }, {});
+          const listaUnida = Object.values(merge);
+          this.details.set(listaUnida)
+        }
       });
   }
 
@@ -821,7 +828,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     let confirmButtonText = '';
 
     try {
-      if (this.isAdd()) {
+      if (this.isAdd() || this.isDuplicate()) {
         // Obtener número secuencial
         serieComprobante = await firstValueFrom(
           this.generateSerieUseCase.execute({
@@ -868,7 +875,7 @@ export class WarehouseTransferAddEdit implements OnInit {
 
       this.isSaving.set(true);
 
-      const save = this.isAdd() ? this.saveUseCase : this.editUseCase;
+      const save = this.isAdd() || this.isDuplicate() ? this.saveUseCase : this.editUseCase;
 
       save.execute({
         id: this.dataForm.id,
@@ -899,12 +906,12 @@ export class WarehouseTransferAddEdit implements OnInit {
     }
     if (response.code === '1') {
       this.notiSvc.success({ message: 'La transferencia se guardó correctamente.' });
-      this.dialogRef.close(response);
+
     } else {
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
     }
   }
-  close() {
+  closeDg() {
     this.dialogRef.close();
   }
 }

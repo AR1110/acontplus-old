@@ -104,3 +104,13 @@ export class WarehouseTransferViewDetailUseCase implements BaseUseCase<any, numb
     return this.repo.viewDetail(id);
   }
 }
+
+@Injectable({
+  providedIn: 'root',
+})
+export class WarehouseTransferUpdateStatusUseCase implements BaseUseCase<any, number>{
+  private repo = inject(WarehouseTransferRepository);
+  execute(id: number) {
+    return this.repo.updateStatus(id);
+  }
+}

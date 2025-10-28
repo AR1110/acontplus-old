@@ -70,6 +70,12 @@ export class ReportParamsBuilder {
       format: REPORT_FORMAT.EXCEL,
       hasService: false,
     },
+    [INVENTORY_CODE_REPORT.RTB]: {
+      hasParams: true,
+      reportCode: INVENTORY_CODE_REPORT.RTB,
+      format: REPORT_FORMAT.EXCEL,
+      hasService: true,
+    }
   };
 
   /**
