@@ -6,7 +6,8 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Transaccion WITH SCHEMABINDING AS (
           ,ts.idDocumento
 		  ,ts.idTipoTransaccion
           ,ts.idUsuario
-		  ,ts.fechaEmision as fechaRegistro
+		  ,ts.fechaEmision
+          ,ts.fechaRegistro
           ,dt.estado
 		  ,dt.idArticulo
 		  ,dt.idBodega

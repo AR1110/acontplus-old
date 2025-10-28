@@ -353,7 +353,7 @@ BEGIN
                             WHERE llevaInventario = 1
                             ORDER BY orderIndex ASC
 
-                            EXEC dbo.Transaccion_Handler_Init 'S', 'NC', @idNotaCredito, DEFAULT
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 					    END
 				END
 

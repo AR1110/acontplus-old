@@ -21,32 +21,10 @@ BEGIN
 
 	DECLARE @cantidadActual AS NUMERIC(18,5)
 	DECLARE @stock AS NUMERIC(15,5)
-	DECLARE @fechaEmision AS DATETIME
-	
-	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
 
-	IF @fechaEmision IS NOT NULL
-		BEGIN
-			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(stockEntrada - stockSalida),0)
-			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idBodega 
-			  AND idArticulo = @idArticulo
-			  AND estado = 1 
-			  AND codTransaccion in ('E','S')
-			  AND fechaRegistro >= @fechaEmision
-		END 
+    SET @cantidadActual = Inventario.f_Stock(@idArticulo,@idBodega)
 
-	ELSE   
-		BEGIN	
-			SELECT @cantidadActual = ISNULL(sum(stockEntrada - stockSalida),0)
-			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idBodega 
-			  AND idArticulo = @idArticulo 
-			  AND estado = 1 
-			  AND codTransaccion in ('E','S')
-		END
-
-	UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = ISNULL(@cantidadActual,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
+    UPDATE Inventario.Stock WITH (ROWLOCK) SET cantidad = ISNULL(@cantidadActual,0) WHERE idBodega = @idBodega AND idArticulo = @idArticulo
 
 	SELECT @stock = SUM(cantidad) 
     FROM Inventario.Stock s WITH (NOLOCK)

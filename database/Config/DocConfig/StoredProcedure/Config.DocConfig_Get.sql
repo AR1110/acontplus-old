@@ -50,11 +50,6 @@ BEGIN
                   ,CAST(0 as bit) as estado
                   ,infoAdicional
             FROM TipoDocumento td
-            INNER JOIN AcontplusAdmin.Config.Aplicacion a ON td.aplicacionId = a.Id
-            INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
-            INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId
-            INNER JOIN AcontplusAdmin.Sales.Suscripcion s ON sd.SuscripcionId = s.Id
-            INNER JOIN AcontplusAdmin.Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
             WHERE secuencial = 1
               AND idTipoDocumento NOT IN (SELECT idTipoDocumento FROM ConfiguracionDocumento WHERE idPuntoEmision = @idPuntoEmision)
         

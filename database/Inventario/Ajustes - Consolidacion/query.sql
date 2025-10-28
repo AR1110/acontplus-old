@@ -15,6 +15,11 @@ SELECT * FROM Inventario.TipoTransaccion
 --select 'EI','Entrada de Inventario',2,11
 
 
+--insert into Inventario.TipoDocumento 
+--(codigo,descripcion,estado,orden)
+--select 'OP','Orden de Producción',1,11
+
+
 select * from ConsolidacionInventario
 
 --ALTER TABLE ConsolidacionInventario DROP CONSTRAINT FK__Consolida__idTip__33CA93F7
@@ -30,3 +35,8 @@ select * from ConsolidacionInventario
 select * from Inventario.TipoTransaccion
 
 --select * from Inventario.TipoDocumento
+
+
+alter table ConsolidacionInventarioDetalle ADD uniqueId VARCHAR(100)
+
+

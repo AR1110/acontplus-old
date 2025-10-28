@@ -131,7 +131,7 @@ BEGIN
 			IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
 					DECLARE @codDocInv VARCHAR(2) ,@multiplier INT
-                           ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idTransaccion INT
+                           ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idTransaccion INT ,@idTransaccionOriginal INT
 					
                     DECLARE @tblDetails AS TABLE (
 							idArticulo  INT NOT NULL
@@ -164,22 +164,49 @@ BEGIN
 
 					SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1 WHEN @codDoc = '04' THEN -1 END)
 
-                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocInv
+                    SELECT TOP 1 @idTransaccionOriginal = idTransaccion
+                    FROM Inventario.Transaccion           tr
+                    INNER JOIN Inventario.TipoDocumento   td ON td.idTipoDocumento = tr.idTipoDocumento
+                    INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+                    WHERE td.codigo = @codDocInv
+                      AND tt.codigo = 'E'
+                      AND tr.idDocumento = @idDocumento
 
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+                    IF @idTransaccionOriginal > 0
+                        BEGIN
+                            DECLARE @idPuntoEmision INT
 
-                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @idDocumento)
-                        BEGIN 
-                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumento AND idDocumento = @idDocumento
-                        END 
-                    ELSE 
-                        BEGIN 
-                            INSERT INTO Inventario.Transaccion
-                                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                            SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumento,@idDocumento,@CustomerId,@idUsuario,@idEntidad,@serieComprobante 
+                            SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'AJ'
 
-                            SET @idTransaccion = SCOPE_IDENTITY()
+                            SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+
+                            SELECT TOP 1 @idPuntoEmision = pa.idPuntoEmision
+                            FROM Config.PtoEmi_Asig      pa 
+                            INNER JOIN Config.Estab_Asig ae ON ae.idEstab_Asig = pa.idEstab_Asig
+                            WHERE pa.predeterminado = 1
+                              AND ae.idUsuarioRol = @idUsuarioRol
+
+                            SELECT TOP 1 @serieComprobante  = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
+                            FROM ConfiguracionDocumento    cd
+                            INNER JOIN dbo.TipoDocumento   td ON td.idTipoDocumento   = cd.idTipoDocumento
+                            INNER JOIN dbo.PuntoEmision    pe ON pe.idPuntoEmision    = cd.idPuntoEmision
+                            INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+                            WHERE cd.idPuntoEmision = @idPuntoEmision
+                              AND td.codigo = 'AJ'
+
                         END
+                    ELSE
+                        BEGIN
+                            SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @codDocInv
+
+                            SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+                        END 
+
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante,idTransaccionOriginal)
+                    SELECT @idTipoTransaccion,@fechaEmision,@idTipoDocumento,@idDocumento,@CustomerId,@idUsuario,@idEntidad,@serieComprobante,@idTransaccionOriginal
+
+                    SET @idTransaccion = SCOPE_IDENTITY()
 
                     --> Transaccion
 					INSERT INTO Inventario.TransaccionDetalle
@@ -207,7 +234,16 @@ BEGIN
                            ,precioTotalSimImpuestos
                     FROM @tblDetails td
 
-                    EXEC dbo.Transaccion_Handler_Init 'E', @codDocInv, @idDocumento, DEFAULT
+                    IF @idTransaccionOriginal > 0
+                        BEGIN
+                             UPDATE cd SET cd.ultimaSecuencia = cd.ultimaSecuencia + 1
+                             FROM ConfiguracionDocumento cd
+                             INNER JOIN TipoDocumento    td ON td.idTipoDocumento = cd.idTipoDocumento 
+                             WHERE td.codigo = 'AJ'
+                              AND cd.idPuntoEmision = @idPuntoEmision
+                        END 
+
+                    EXEC dbo.Transaccion_Handler_Init @idTransaccion
 
                     IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
                                 BEGIN

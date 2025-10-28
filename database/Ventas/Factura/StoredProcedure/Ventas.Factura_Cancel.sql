@@ -22,7 +22,7 @@ BEGIN
 	DECLARE @idEntidad INT, @idUsuario INT ,@idTipoDocumento INT
     
     --> DataJson
-    DECLARE @infoAdicional VARCHAR(MAX)
+    DECLARE @infoAdicional VARCHAR(MAX) , @detalles VARCHAR(MAX)
 
     --> Contabilidad
     DECLARE @idEstadoPago INT
@@ -31,7 +31,10 @@ BEGIN
     DECLARE @idEstadoDocumento INT
 
     --> Fact. Electronica 
-    DECLARE @idEstadoServicio INT ,@idDocumentoElectronico INT
+    DECLARE @idEstadoServicio INT ,@idDocumentoElectronico INT ,@idPuntoEmision INT
+
+    --> Data Principal
+    DECLARE @idTransaccionOriginal INT ,@idTransaccion INT ,@serieComprobante VARCHAR(25)
 
     --> Tb Variables
     DECLARE @tblInfoAdicional AS TABLE (
@@ -44,7 +47,7 @@ BEGIN
         --> Recuperando Datos
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
-        --> Json
+        --> Data Json 
         SELECT @infoAdicional = infoAdicional FROM OPENJSON(@json) WITH (infoAdicional NVARCHAR(MAX) as json)
 
         --> InfoAdicional
@@ -56,15 +59,34 @@ BEGIN
            ,valor  VARCHAR(300)
         )
 
-        -->variables
+        --> variables
+        SELECT TOP 1 @idTransaccionOriginal = idTransaccion
+        FROM Inventario.Transaccion           tr
+        INNER JOIN Inventario.TipoDocumento   td ON td.idTipoDocumento   = tr.idTipoDocumento
+        INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+        WHERE tr.idDocumento = @id
+          AND td.codigo = 'FE'
+          AND tt.codigo = 'S'
+
 		SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
 
         SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 6
 
         SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.TipoDocumento WITH (NOLOCK) WHERE codigoSri = '01'
 
-        SELECT TOP 1 @idDocumentoElectronico = idDocumentoElectronico FROM dbo.Factura WITH (NOLOCK) WHERE idFactura = @id
+        SELECT TOP 1 @idDocumentoElectronico = de.idDocumentoElectronico
+                    ,@idPuntoEmision         = de.idPuntoEmision
+        FROM dbo.Factura fe
+        INNER JOIN dbo.DocumentoElectronico de ON de.idDocumentoElectronico = fe.idDocumentoElectronico
+        WHERE fe.idFactura = @id
 
+        SELECT TOP 1 @serieComprobante  = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
+        FROM ConfiguracionDocumento    cd
+        INNER JOIN dbo.TipoDocumento   td ON td.idTipoDocumento   = cd.idTipoDocumento
+        INNER JOIN dbo.PuntoEmision    pe ON pe.idPuntoEmision    = cd.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+        WHERE cd.idPuntoEmision = @idPuntoEmision
+          AND td.codigo = 'AD'
 
         --> Validacion de Informacion
         IF NOT EXISTS(SELECT 1 FROM @tblInfoAdicional)
@@ -142,38 +164,37 @@ BEGIN
 
                     UPDATE Ventas.NotaEntregaDocumento WITH (ROWLOCK) SET Estado = 0, Eliminado = 1 WHERE DocumentoId = @id AND TipoDocumentoId = @idTipoDocumento
 
-                    IF EXISTS (SELECT 1 FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK ) WHERE codTransaccion = 'S' AND codDoc = 'NE' AND idDocumento = @idNotaEntrega AND estado = 2)
-                        BEGIN
-                            UPDATE t1 
-                               SET t1.estado = 1
-                            FROM Inventario.TransaccionDetalle    t1 WITH (ROWLOCK)
-                            INNER JOIN Inventario.Transaccion     t2 WITH (ROWLOCK) ON t2.idTransaccion     = t1.idTransaccion
-                            INNER JOIN Inventario.TipoDocumento   t3 WITH (ROWLOCK) ON t3.idTipoDocumento   = t2.idTipoDocumento
-                            INNER JOIN Inventario.TipoTransaccion t4 WITH (ROWLOCK) ON t4.idTipoTransaccion = t2.idTipoTransaccion
-                            WHERE t1.estado = 2
-                              AND t2.idDocumento = @idNotaEntrega 
-                              AND t3.codigo = 'NE'
-                              AND t4.codigo = 'S'
-                        END
                 END 
 
             --> Inventario
 			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 				BEGIN
-                    DECLARE @idTipoDocumentoIv INT ,@idTipoTransaccion INT ,@idTransaccion INT
+                    DECLARE @idTipoDocumentoIv INT
 
-                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'FE'
+                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = 'AD'
 
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
+                    INSERT INTO Inventario.Transaccion
+                          (idTipoTransaccion,fechaEmision,idTipoDocumento,idUsuario,idEntidad,serieComprobante,idTransaccionOriginal)
+                    SELECT idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idUsuario,@idEntidad,@serieComprobante,@idTransaccionOriginal
+                    FROM Inventario.Transaccion
+                    WHERE idTransaccion = @idTransaccionOriginal
 
-                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
+                    INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
+                           (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion     ,precioUnitario,precioCosto,precioCostoFraccionado,total)
+			        SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion * -1,precioUnitario,precioCosto,precioCostoFraccionado,total
+                    FROM Inventario.TransaccionDetalle
+                    WHERE idTransaccion = @idTransaccionOriginal
+
+                    UPDATE cd SET cd.ultimaSecuencia = cd.ultimaSecuencia + 1
+                    FROM ConfiguracionDocumento cd
+                    INNER JOIN TipoDocumento    td ON td.idTipoDocumento = cd.idTipoDocumento 
+                    WHERE td.codigo = 'AD'
+                      AND cd.idPuntoEmision = @idPuntoEmision
 
                     --> Transaccion
-                    UPDATE Inventario.Transaccion WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
-
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
-                    
-                    EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @id ,3
+                    EXEC dbo.Transaccion_Handler_Init @idTransaccion
                     
                     IF EXISTS (SELECT 1 FROM Contabilidad.Servicio WITH (NOLOCK) WHERE DocumentoId = @id AND TipoDocumentoId = @idTipoDocumento)    
                         BEGIN
@@ -199,7 +220,7 @@ BEGIN
 
         INSERT INTO dbo.ErroresSistema WITH (ROWLOCK) 
             (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),'/Factura/Delete',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
+		SELECT NEWID(),'/Factura/Cancel',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@idUsuario
 			
 		SELECT '0'code,'Info: Error en el procedimiento: ' as  'message'
 	END CATCH 

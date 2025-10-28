@@ -32,7 +32,7 @@ BEGIN
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@secuencial INT
-           ,@idEstadoServicio INT
+           ,@idEstadoServicio INT ,@estado INT
 
     --> Contabilidad 
 	DECLARE @idEstadoPago INT ,@idCuentaPorCobrar INT 
@@ -86,7 +86,6 @@ BEGIN
         ,conversion NUMERIC(18,5) NOT NULL
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
-        ,estado INT NOT NULL DEFAULT 2
 	)
 	
     DECLARE @tbTaxes AS TABLE (
@@ -292,6 +291,15 @@ BEGIN
         INNER JOIN dbo.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = ad.idTipoDocOrigen
         WHERE idAprob_Document = @idAprob_Document
 
+        IF @docOrigen = 'PR'
+           BEGIN
+                SET @estado = 1
+           END
+        ELSE
+            BEGIN
+                SET @estado = 2 
+            END 
+
         --> Validando Informacion 
         IF NOT EXISTS(SELECT 1 FROM @tbComprobante)
             BEGIN
@@ -433,26 +441,26 @@ BEGIN
 
                     SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = @docDestino
 
+                    --> Transaccion
+                    INSERT INTO Inventario.Transaccion
+                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idDocumento,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                    FROM @tbComprobante 
+
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
                     --> Bienes
 					IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 						BEGIN 
-                            --> Transaccion
-                            INSERT INTO Inventario.Transaccion
-                                   (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                            SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idDocumento,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                            FROM @tbComprobante 
-
-                            SET @idTransaccion = SCOPE_IDENTITY()
-
-                            -->Detalles
                             INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
                                    (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total,estado)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto,estado
+			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,IIF(@estado = 2,0,cantidadTransaccion),precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto,@estado
                             FROM @tblDetails 
                             WHERE llevaInventario = 1
                             ORDER BY orderIndex ASC
 
-                            --EXEC dbo.Transaccion_Handler_Init 'S', @docDestino, @idDocumento, DEFAULT
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
+                                
 						END
                 END
             
@@ -478,36 +486,6 @@ BEGIN
 			SELECT @idAprob_Document,@idFactura ,@idNotaEntrega ,@idUsuario,dbo.ufnGetDateEcuador()
             FROM @tbComprobante
 
-            --IF @docOrigen = 'NE'
-            --    BEGIN
-            --        UPDATE it SET   
-            --               it.estado = 2
-            --        FROM Inventario.Transaccion           it WITH (ROWLOCK)
-            --        INNER JOIN Inventario.TipoDocumento   td WITH (ROWLOCK) ON td.idTipoDocumento   = it.idTipoDocumento
-            --        INNER JOIN Inventario.TipoTransaccion tt WITH (ROWLOCK) ON tt.idTipoTransaccion = it.idTipoTransaccion 
-            --        WHERE td.codigo = 'NE'
-            --          AND tt.codigo = 'S'
-            --          AND it.idDocumento IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document)
-
-            --        UPDATE dt SET   
-            --               dt.estado              = 2
-            --              ,dt.cantidadTransaccion = 0
-            --        FROM Inventario.TransaccionDetalle    dt WITH (ROWLOCK)
-            --        INNER JOIN Inventario.Transaccion     it WITH (ROWLOCK) ON it.idTransaccion     = dt.idTransaccion
-            --        INNER JOIN Inventario.TipoDocumento   td WITH (ROWLOCK) ON td.idTipoDocumento   = it.idTipoDocumento
-            --        INNER JOIN Inventario.TipoTransaccion tt WITH (ROWLOCK) ON tt.idTipoTransaccion = it.idTipoTransaccion 
-            --        WHERE td.codigo = 'NE'
-            --          AND tt.codigo = 'S'
-            --          AND it.idDocumento IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document)
-
-            --        UPDATE cs SET
-            --            cs.Estado = 2
-            --        FROM Contabilidad.Servicio cs 
-            --        INNER JOIN Inventario.TipoDocumento td WITH (NOLOCK) ON td.idTipoDocumento = cs.TipoDocumentoId
-            --        WHERE td.codigo = 'NE'
-            --          AND cs.DocumentoId IN (SELECT dt.idNotaEntrega FROM Ventas.Aprob_Document_Hist dt WITH (NOLOCK) WHERE dt.idAprob_Document = @idAprob_Document) 
-            --    END 
-            
 
 		COMMIT TRAN
 		SELECT '1'code,'Registrado Exitosamente' as 'message'
