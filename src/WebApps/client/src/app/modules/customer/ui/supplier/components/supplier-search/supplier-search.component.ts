@@ -17,7 +17,8 @@ import {
   of,
   startWith,
   switchMap,
-  tap, debounceTime,
+  tap,
+  debounceTime,
 } from 'rxjs';
 import { SupplierUseCase } from '@customer/application/usecases/supplier.use-case';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -81,8 +82,8 @@ export class SupplierSearchComponent implements OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
 
-      switchMap((term) => {
-        if(term && typeof term!=='string') return of([]);
+      switchMap(term => {
+        if (term && typeof term !== 'string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
           this.isLoading = false;
@@ -93,13 +94,12 @@ export class SupplierSearchComponent implements OnChanges {
         this.searchFailed = false;
         // Call supplier search use case
         return this.supplierUseCase.search({ textSearch: term }).pipe(
-
           tap({
             next: () => (this.searchFailed = false),
             error: () => (this.searchFailed = true),
           }),
           finalize(() => (this.isLoading = false)),
-          catchError((error) => {
+          catchError(error => {
             console.error('Supplier search error:', error);
             return of([]);
           }),
@@ -110,7 +110,7 @@ export class SupplierSearchComponent implements OnChanges {
 
   // Update control value when textSearch input changes
   ngOnChanges() {
-    console.log(this.textSearch())
+    console.log(this.textSearch());
     if (this.textSearch()) {
       this.searchControl.setValue(this.textSearch());
     }
@@ -118,8 +118,8 @@ export class SupplierSearchComponent implements OnChanges {
 
   // Format supplier for display in autocomplete
   formatter(supplier: SupplierSearch | string): string {
-    if(typeof supplier === 'string') {
-      return  supplier;
+    if (typeof supplier === 'string') {
+      return supplier;
     }
     return supplier?.name || '';
   }
@@ -245,7 +245,7 @@ export class SupplierSearchComponent implements OnChanges {
     if (isNaN(Number(trimmed))) return false;
 
     // Check if RUC ends with "001"
-    if (trimmed.length === 13 && trimmed.slice(-3) !== '001') return false;
+    if (trimmed.length === 13 && !trimmed.endsWith('001')) return false;
 
     return true;
   }

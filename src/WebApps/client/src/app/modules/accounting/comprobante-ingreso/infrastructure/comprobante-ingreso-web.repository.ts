@@ -52,13 +52,14 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
             establecimientos: [] as GroupedEstab[],
             tiposDoc :[],
             subEntidadesFinanciera:[],
-            bancos :[]
+            bancos :[],
+            users: []
           }
           if(response.code==="0") {
             return result;
           }
 
-          const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco } = JSON.parse(response.payload as string);
+          const { ptoEmision, tipoDocumento, subEntidadFinanciera, banco, users } = JSON.parse(response.payload as string);
 
           result.establecimientos = groupEstabUtil({
             estabs: ptoEmision,
@@ -69,6 +70,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
           result.tiposDoc = tipoDocumento;
           result.subEntidadesFinanciera = subEntidadFinanciera;
           result.bancos = banco;
+          result.users = users;
           return result;
         })
       )

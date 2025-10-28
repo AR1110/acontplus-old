@@ -1,5 +1,3 @@
-
-
 export const groupSubCategoryUtil = (subCategorias: any) => {
   const results = subCategorias.reduce(function (acc: any, obj: any) {
     const key = obj.familia;
@@ -10,15 +8,17 @@ export const groupSubCategoryUtil = (subCategorias: any) => {
     if (existingGroup) {
       existingGroup.subFamilias.push({
         idSubFamilia: obj.idSubFamilia,
-        subFamilia: obj.subFamilia || obj.descripcion
+        subFamilia: obj.subFamilia || obj.descripcion,
       });
     } else {
       acc.push({
         familia: key,
-        subFamilias: [{
-          idSubFamilia: obj.idSubFamilia,
-          subFamilia: obj.subFamilia || obj.descripcion
-        }]
+        subFamilias: [
+          {
+            idSubFamilia: obj.idSubFamilia,
+            subFamilia: obj.subFamilia || obj.descripcion,
+          },
+        ],
       });
     }
 
@@ -26,4 +26,4 @@ export const groupSubCategoryUtil = (subCategorias: any) => {
   }, []);
 
   return results;
-}
+};

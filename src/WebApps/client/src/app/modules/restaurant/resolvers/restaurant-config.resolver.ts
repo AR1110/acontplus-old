@@ -1,13 +1,10 @@
-
-import {inject} from "@angular/core"
-import {ResolveFn} from "@angular/router"
-import { RestaurantConfigService } from "@restaurant/data/services/restaurant-config.service"
-import { RestaurantStoreService } from "@restaurant/application/store/restaurant-store.service"
-
+import { inject } from '@angular/core';
+import { ResolveFn } from '@angular/router';
+import { RestaurantConfigService } from '@restaurant/data/services/restaurant-config.service';
+import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 
 export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
-
-  const posStoreSvc = inject(RestaurantStoreService)
+  const posStoreSvc = inject(RestaurantStoreService);
 
   const mainData = inject(RestaurantConfigService).getMainData();
 
@@ -17,8 +14,8 @@ export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
     if (dataEstab) {
       const puntosEmision = dataEstab.puntosEmision;
       const bodegas = dataEstab.bodegas;
-      const dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi)
-      const dataBodega = bodegas.find(p => p.defaultBodega)
+      const dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi);
+      const dataBodega = bodegas.find(p => p.defaultBodega);
       posStoreSvc.state.update(e => {
         return {
           ...e,
@@ -26,16 +23,16 @@ export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
           establecimientos: response.estabs,
           puntosEmision: dataEstab.puntosEmision,
           bodegas: dataEstab.bodegas,
-          codEstab:dataEstab.codEstab,
+          codEstab: dataEstab.codEstab,
           establecimientoId: dataEstab.idEstablecimiento,
           puntoEmisionId: dataPuntoEmision?.idPuntoEmision ?? 0,
-          bodegaId: dataBodega?.idBodega ?? 0
-        }
-      })
+          bodegaId: dataBodega?.idBodega ?? 0,
+        };
+      });
     } else {
-      throw new Error('No se pudo recuperar el establecimiento')
+      throw new Error('No se pudo recuperar el establecimiento');
     }
-  })
+  });
 
   return mainData;
-}
+};

@@ -1,9 +1,11 @@
-﻿using System.Runtime.InteropServices;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
 using Serilog;
+using System.Runtime.InteropServices;
 
 Log.Logger = new LoggerConfiguration()
-           .WriteTo.Console()
-           .CreateBootstrapLogger();
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
@@ -20,30 +22,24 @@ try
     });
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddApplicationServices(builder.Configuration);
-
-    builder.Services.AddIdentityService(builder.Configuration);
-
-    builder.Services.AddOpenApi();
+    builder.Services.AddVetServices(builder.Configuration);
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseMiddleware<ExceptionMiddleware>();
-
-    if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) app.Urls.Add("http://*:5014"); // Linux Port
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
 
-    app.UseHttpsRedirection();
+    app.UseRateLimiter();
 
-    app.UseStatusCodePages();
+    app.UseApplicationMiddleware(builder.Environment);
+
+    app.UseHttpsRedirection();
 
     app.UseRouting();
 

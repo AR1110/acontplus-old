@@ -1,4 +1,7 @@
-﻿namespace Inventario.API.Controllers;
+using Acontplus.Core.Extensions;
+using Inventario.API.Dtos;
+
+namespace Inventario.API.Controllers;
 
 public class ArticuloController(
     S3ObjectCustom s3ObjectCustom,
@@ -30,18 +33,18 @@ public class ArticuloController(
     [HttpPost]
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonExtensions.DeserializeOptimized<CreateArticuloDto>(json);
 
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>("idCardCompany")}{BucketDirectory}", file);
 
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
-            { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data!)) },
+        { "s3ObjectKey", s3ObjectCustom.S3ObjectKey ?? "" },
+        { "s3ObjectUrl", s3ObjectCustom.S3ObjectUrl ?? "" }
+    };
         var response = await articuloService.AddAsync(parameters);
 
         switch (response.Code)
@@ -64,15 +67,15 @@ public class ArticuloController(
     [HttpPost("PostByApp")]
     public async Task<IActionResult> PostByApp(string json)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonExtensions.DeserializeOptimized<CreateArticuloDto>(json);
 
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "s3ObjectKey", "" },
-            { "s3ObjectUrl", "" }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloDto>(data!)) },
+        { "s3ObjectKey", "" },
+        { "s3ObjectUrl", "" }
+    };
 
         return Ok(await articuloService.AddAsync(parameters));
     }
@@ -80,13 +83,14 @@ public class ArticuloController(
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, string json)
     {
-        var data = JsonConvert.DeserializeObject<ApiRequest>(json);
+        var data = JsonExtensions.DeserializeOptimized<UpdateArticuloDto>(json);
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateArticuloDto>(data!)) }
+    };
+
         return Ok(await articuloService.UpdateAsync(parameters));
     }
 
@@ -104,9 +108,10 @@ public class ArticuloController(
         if (!DataValidation.IsValidJson(json)) return BadRequest("Caracteres de busqueda invalidos");
 
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(json) }
+    };
 
         return Ok(await articuloService.SearchAsync(parameters));
     }

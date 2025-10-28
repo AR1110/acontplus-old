@@ -5,24 +5,23 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SubcategoryPhotoService {
-  private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.SUBCATEGORY_PHOTO}`
-  private http = inject(HttpClient)
+  private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.SUBCATEGORY_PHOTO}`;
+  private http = inject(HttpClient);
 
   post(subcategoryId: number, file: Blob) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}${subcategoryId}`, formData)
+    return this.http.post<ApiResponse>(`${this.url}${subcategoryId}`, formData);
   }
 
   put<T>(obj: T, id: number, file: Blob) {
-
-    const json = JSON.stringify(obj)
+    const json = JSON.stringify(obj);
 
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}Put/${id}?json=${json}`, formData)
+    return this.http.post<ApiResponse>(`${this.url}Put/${id}?json=${json}`, formData);
   }
 }

@@ -13,6 +13,11 @@
     (keydown)="handleKeyDown($event)"
     placeholder="Buscar producto"
   />
+  <ng-container matPrefix>
+    <button mat-icon-button appAddEditProduct (onResult)="resultRegistered.emit($event)">
+      <mat-icon>add</mat-icon>
+    </button>
+  </ng-container>
 
   <!-- [cdkConnectedOverlayHasBackdrop]="true" -->
   <ng-template

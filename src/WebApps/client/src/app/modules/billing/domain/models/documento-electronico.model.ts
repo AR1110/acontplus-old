@@ -71,9 +71,7 @@ export function getDefaultDocElectFilterOptions(): FilterOptions {
  * @param overrides A Partial<FilterOptions> object containing only the options to be overridden.
  * @returns A new FilterOptions object with merged values.
  */
-export function getMergedDocElectFilterOptions(
-  overrides?: Partial<FilterOptions>,
-): FilterOptions {
+export function getMergedDocElectFilterOptions(overrides?: Partial<FilterOptions>): FilterOptions {
   const defaultOptions = getDefaultDocElectFilterOptions();
   // Using spread syntax to merge: properties in 'overrides' will overwrite
   // corresponding properties in 'defaultOptions'.

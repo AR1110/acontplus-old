@@ -1,6 +1,6 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
-public class BehaviorTestController(IBehaviorTestService behaviorTestService) : BaseApiController
+public class BehaviorTestController(IBehaviorTestRepository behaviorTestService) : BaseApiController
 {
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(int id, [FromBody] BehaviorTest behaviorTest)

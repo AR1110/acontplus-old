@@ -1,42 +1,40 @@
-import { Injectable, inject } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { map } from "rxjs";
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
 
-import { SALE_PATHS } from "@sale/domain/enums/sale.enum";
-import { PATHS_API } from "@core/constants/global.constants";
-import { isApiResponse } from "@core/models/api-response";
-import {getNoLoader} from "@core/interceptors/loader.interceptor";
-
+import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
+import { PATHS_API } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response';
+import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class EmployeeService {
-  private url = `${PATHS_API.SALES}${SALE_PATHS.EMPLOYEE}`
-  private http = inject(HttpClient)
+  private url = `${PATHS_API.SALES}${SALE_PATHS.EMPLOYEE}`;
+  private http = inject(HttpClient);
 
   search<T extends { textSearch: string }>(obj: T) {
-    const params = JSON.stringify({ ...obj, tipo: 1 })
+    const params = JSON.stringify({ ...obj, tipo: 1 });
 
-    return this.http.get(`${this.url}Search?json=${params}`, {
-      context: getNoLoader()
-    })
+    return this.http
+      .get(`${this.url}Search?json=${params}`, {
+        context: getNoLoader(),
+      })
       .pipe(
         map(response => {
           if (isApiResponse(response)) {
-            const employees = response.payload && JSON.parse(response.payload as string) || [];
+            const employees = (response.payload && JSON.parse(response.payload as string)) || [];
             return employees.map((employee: any) => {
               return {
                 idEmpleado: employee.idEmpleado,
                 nroIdentificacion: employee.nroIdentificacion,
-                nombreCompleto: employee.nombreCompleto
-              }
-            })
+                nombreCompleto: employee.nombreCompleto,
+              };
+            });
           }
-          return []
-        })
-      )
-
+          return [];
+        }),
+      );
   }
 }

@@ -1,8 +1,3 @@
-﻿using System.Data;
-using BarberShop.Domain.Repositories;
-using Common.Core.Abstractions;
-using Common.Infrastructure.Repository.Implementations;
-
 namespace BarberShop.Infrastructure.Persistence.Repositories;
 
 public class TicketRepository(BarberShopContext context, IAdoRepository adoRepository)

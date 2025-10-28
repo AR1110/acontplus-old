@@ -56,7 +56,7 @@ export class SetupDashboardComponent implements OnInit, OnDestroy {
     this.optionalSteps = groupedSteps.optional;
 
     // Subscribe to current step changes
-    this.configService.currentStep.pipe(takeUntil(this.destroy$)).subscribe((stepId) => {
+    this.configService.currentStep.pipe(takeUntil(this.destroy$)).subscribe(stepId => {
       this.currentStepId = stepId;
       this.updateStepStates();
     });
@@ -64,12 +64,12 @@ export class SetupDashboardComponent implements OnInit, OnDestroy {
 
   private updateStepStates(): void {
     // Update current step indicator
-    this.mandatorySteps = this.mandatorySteps.map((step) => ({
+    this.mandatorySteps = this.mandatorySteps.map(step => ({
       ...step,
       isCurrent: step.id === this.currentStepId,
     }));
 
-    this.optionalSteps = this.optionalSteps.map((step) => ({
+    this.optionalSteps = this.optionalSteps.map(step => ({
       ...step,
       isCurrent: step.id === this.currentStepId,
     }));

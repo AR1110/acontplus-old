@@ -1,6 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
-public class CategoryController(ICategoryService categoryService) : BaseApiController
+public class CategoryController(ICategoryRepository categoryService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string json)

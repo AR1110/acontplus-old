@@ -9,17 +9,17 @@ public class SolicitudAutorizacionService(IAdoRepository _repo) : ISolicitudAuto
     {
         var ds = await _repo.GetDataSetAsync($"{nameSchema}Get", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
-            : new ApiResponse { Code = "0", Message = "No data found" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No data found" };
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repo.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
+        return await _repo.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repo.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
+        return await _repo.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Update", parameters);
     }
 }

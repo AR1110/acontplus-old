@@ -22,10 +22,10 @@ export class UserRoleStateManager {
     this.userRoleService
       .getAction()
       .pipe(takeUntilDestroyed(this.destroyRef)) // Evita fugas de memoria
-      .subscribe((action) => {
+      .subscribe(action => {
         this.canCancel.set(action?.anular); // Convierte a booleano
         this.canGenerateReport.set(action?.reporte);
-        this.canCreate.set(action?.crear)
+        this.canCreate.set(action?.crear);
       });
   }
 }

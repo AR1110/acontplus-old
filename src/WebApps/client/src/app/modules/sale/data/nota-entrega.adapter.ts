@@ -1,6 +1,6 @@
-import { DECIMALS } from "@core/constants/global.constants";
-import { fechaString, formatDate } from "@core/utils/date.util";
-import { roundNumber } from "@core/utils/round-number.utils";
+import { DECIMALS } from '@core/constants/global.constants';
+import { fechaString, formatDate } from '@core/utils/date.util';
+import { roundNumber } from '@core/utils/round-number.utils';
 
 //DeliveryNoteAdapter sugerencia en ingles
 export class NotaEntregaAdapter {
@@ -24,40 +24,43 @@ export class NotaEntregaAdapter {
         total: header.total,
         tiempoCreditoNombre: header.tiempoCredito,
         empleadoNombre: header.empleado,
-        observacion: header.observacion
+        observacion: header.observacion,
       },
       clienteData: {
         razonSocialComprador: cliente.razonSocialComprador,
         identificacionComprador: cliente.identificacionComprador,
         direccionComprador: cliente.direccionComprador,
-        correo: cliente.correo
+        correo: cliente.correo,
       },
-      detalles: tempDetalles.map((item:any) => {
-        const precioConIva =   item.precioUnitario + item.valorImpuesto;
-         const total = roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +  roundNumber(item.valorImpuesto, DECIMALS.GENERAL)
+      detalles: tempDetalles.map((item: any) => {
+        const precioConIva = item.precioUnitario + item.valorImpuesto;
+        const total =
+          roundNumber(item.precioTotalSinImpuesto, DECIMALS.GENERAL) +
+          roundNumber(item.valorImpuesto, DECIMALS.GENERAL);
         return {
-        idNotaEntregaDetalle: item.idNotaEntregaDetalle,
-        codigo: item.codigo,
-        descripcion: item.descripcion,
-        cantidad: item.cantidad,
-        precioUnitario: item.precioUnitario,
-        porcentajeDescuento: item.porcentajeDescuento,
-        valorDescuento: item.valorDescuento,
-        ice: item.ice,
-        precioTotalSinImpuesto: item.precioTotalSinImpuesto,
-        codigoPorcentaje: item.codigoPorcentaje,
-        tarifaImpuesto: item.tarifa,
-        valorImpuesto: item.valorImpuesto,
-        nota: item.nota,
-        bodegaNombre: item.bodega,
-        medidaNombre: item.medida,
-        tipoIvaNombre: item.tipoIva,
-        pvpNombre: item.pvp,
-        precioConIva: roundNumber(precioConIva, DECIMALS.DOS),
-          total:  roundNumber(total, DECIMALS.DOS)
-      }}),
+          idNotaEntregaDetalle: item.idNotaEntregaDetalle,
+          codigo: item.codigo,
+          descripcion: item.descripcion,
+          cantidad: item.cantidad,
+          precioUnitario: item.precioUnitario,
+          porcentajeDescuento: item.porcentajeDescuento,
+          valorDescuento: item.valorDescuento,
+          ice: item.ice,
+          precioTotalSinImpuesto: item.precioTotalSinImpuesto,
+          codigoPorcentaje: item.codigoPorcentaje,
+          tarifaImpuesto: item.tarifa,
+          valorImpuesto: item.valorImpuesto,
+          nota: item.nota,
+          bodegaNombre: item.bodega,
+          medidaNombre: item.medida,
+          tipoIvaNombre: item.tipoIva,
+          pvpNombre: item.pvp,
+          precioConIva: roundNumber(precioConIva, DECIMALS.DOS),
+          total: roundNumber(total, DECIMALS.DOS),
+        };
+      }),
       datosAdicionalesDoc,
-      tiposIva
+      tiposIva,
     };
 
     return result;
@@ -83,7 +86,7 @@ export class NotaEntregaAdapter {
         codEstado: item.codEstado,
         convertToDoc: item.convertToDoc,
         totalRecords: item.totalRecords,
-      }
-    })
+      };
+    });
   }
 }

@@ -1,0 +1,10 @@
+namespace Inventario.Application.Interfaces;
+
+public interface ITransferenciaBodegaService
+{
+    Task<object> GetAsync(Dictionary<string, object> parameters);
+    Task<object> GetIdAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+}

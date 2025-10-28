@@ -53,7 +53,7 @@ export class FacturaFisicaAddEditModalComponent implements OnInit {
     key: K,
     value: ReturnType<typeof this.dataForm>[K],
   ) {
-    this.dataForm.update((ds) => {
+    this.dataForm.update(ds => {
       return {
         ...ds,
         [key]: value,
@@ -66,18 +66,15 @@ export class FacturaFisicaAddEditModalComponent implements OnInit {
     this.facturaFisicaSvc
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.sustentosTributario.set(response.sustentosTributario);
         this.estabs.set(response.estabs);
 
-        const dataEstab = this.estabs().find((item) => item.defaultEstab);
+        const dataEstab = this.estabs().find(item => item.defaultEstab);
 
         this.bodegas.set(dataEstab?.bodegas || []);
 
-        this.setDataForm(
-          'idEstablecimiento',
-          dataEstab?.idEstablecimiento || 0,
-        );
+        this.setDataForm('idEstablecimiento', dataEstab?.idEstablecimiento || 0);
       });
   }
 

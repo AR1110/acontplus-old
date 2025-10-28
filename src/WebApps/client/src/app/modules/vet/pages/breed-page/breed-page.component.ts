@@ -36,7 +36,7 @@ export class BreedPageComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   loadBreeds() {
-    this.breedService.get({}).subscribe((response) => {
+    this.breedService.get({}).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
         this.breeds.set(response.payload as Breed[]);
       }
@@ -58,9 +58,9 @@ export class BreedPageComponent implements OnInit {
         cancelButtonText: 'No',
         allowOutsideClick: false,
       })
-      .then((response) => {
+      .then(response => {
         if (response.isConfirmed) {
-          this.breedService.delete(item.id).subscribe((response) => {
+          this.breedService.delete(item.id).subscribe(response => {
             if (isApiResponse(response)) {
               this.tS.show({
                 type: response.code == '1' ? 'success' : 'warning',
@@ -84,7 +84,7 @@ export class BreedPageComponent implements OnInit {
     const modalRef = this.modalService.open(BreedModalComponent, {
       data: this.data.id > 0 ? structuredClone(this.data) : {},
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.loadBreeds();
       }

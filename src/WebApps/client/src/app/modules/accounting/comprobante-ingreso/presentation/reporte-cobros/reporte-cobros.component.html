@@ -2,34 +2,35 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-radio-group [(ngModel)]="dataSearch.documentoChecked" aria-label="Select an option">
           <mat-radio-button [value]="true">Documento</mat-radio-button>
           <mat-radio-button [value]="false">Cuotas</mat-radio-button>
         </mat-radio-group>
-
       </div>
       <div class="col">
-        <mat-checkbox  [(ngModel)]="dataSearch.dateChecked">Rango de Fechas</mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.dateChecked">Rango de Fechas</mat-checkbox>
       </div>
       <div class="col">
         <mat-checkbox [(ngModel)]="dataSearch.supplierChecked">Cliente</mat-checkbox>
-
+      </div>
+      <div class="col">
+        <mat-checkbox [(ngModel)]="dataSearch.userChecked">Usuario</mat-checkbox>
       </div>
     </div>
 
-    <mat-divider/>
+    <mat-divider />
 
     <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento: </mat-label>
-          <mat-select  [(ngModel)]="dataSearch.codDoc">
+          <mat-select [(ngModel)]="dataSearch.codDoc">
             <mat-option [value]="''">--Todos--</mat-option>
 
             @for (item of tiposDoc(); track $index) {
-              <mat-option [value]="item.codDoc">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -37,14 +38,11 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select
-            (selectionChange)="onChangeEstab()"
-            [(ngModel)]="dataSearch.codEstab"
-          >
+          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
             <mat-option [value]="''">Todos</mat-option>
 
             @for (item of establecimientos(); track $index) {
-              <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
+              <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -52,13 +50,11 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Punto Emisión</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.idPuntoEmision"
-          >
+          <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
             <mat-option [value]="0">Todos</mat-option>
 
             @for (item of puntosEmision(); track $index) {
-              <mat-option [value]="item.idPuntoEmision">{{item.ptoEmi}}</mat-option>
+              <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -66,13 +62,11 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Forma de cobro:</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.idSubEntidadFinanciera"
-          >
+          <mat-select [(ngModel)]="dataSearch.idSubEntidadFinanciera">
             <mat-option [value]="0">Todos</mat-option>
 
             @for (item of subEntidadFinanciera(); track $index) {
-              <mat-option [value]="item.idSubEntidadFinanciera">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -83,82 +77,79 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Banco:</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.idBanco"
-          >
+          <mat-select [(ngModel)]="dataSearch.idBanco">
             <mat-option [value]="0">Todos</mat-option>
 
             @for (item of bancos(); track $index) {
-              <mat-option [value]="item.idBanco">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.idBanco">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       @if (dataSearch.dateChecked) {
-      <div class="col">
-        <app-date-range-selection
-          [showInputMaterial]="true"
-          (onChangeDateRange)="onDateRangeSelection($event)"
-        />
-      </div>
-
+        <div class="col">
+          <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        </div>
       }
       @if (dataSearch.supplierChecked) {
-      <div class="col">
-        <app-company-customer-search
-          [isSimpleMode]="isCustomerSearchSimple"
-          (customerSelected)="onCustomerSelected($event)"
-          (clearSearch)="resultCustomerEmptyInput($event)"
-        />
-      </div>
+        <div class="col">
+          <app-company-customer-search
+            [isSimpleMode]="isCustomerSearchSimple"
+            (customerSelected)="onCustomerSelected($event)"
+            (clearSearch)="resultCustomerEmptyInput($event)"
+          />
+        </div>
       }
     </div>
 
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Nro Documento:</mat-label>
-          <input matInput [(ngModel)]="dataSearch.nroDocument">
+          <input matInput [(ngModel)]="dataSearch.nroDocument" />
           <ng-container matSuffix>
-            <mat-checkbox  [(ngModel)]="dataSearch.nroDocChecked"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.nroDocChecked"></mat-checkbox>
           </ng-container>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Referencia:</mat-label>
-          <input matInput [(ngModel)]="dataSearch.reference"  placeholder="...">
+          <input matInput [(ngModel)]="dataSearch.reference" placeholder="..." />
           <ng-container matSuffix>
-            <mat-checkbox  [(ngModel)]="dataSearch.referenceChecked"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.referenceChecked"></mat-checkbox>
           </ng-container>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Lote:</mat-label>
-          <input matInput [(ngModel)]="dataSearch.lote"  placeholder="...">
+          <input matInput [(ngModel)]="dataSearch.lote" placeholder="..." />
           <ng-container matSuffix>
-            <mat-checkbox   [(ngModel)]="dataSearch.loteChecked"></mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.loteChecked"></mat-checkbox>
           </ng-container>
+        </mat-form-field>
+      </div>
+
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Usuario:</mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.userId"
+          >
+            <mat-option [value]="0">Todos</mat-option>
+
+            @for (item of users(); track $index) {
+              <mat-option [value]="item.idUsuario">{{item.nombreUsuario}}</mat-option>
+            }
+          </mat-select>
         </mat-form-field>
       </div>
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="PDF"
-        (click)="getReport('pdf')"
-      />
-      <app-theme-button
-        variant="success"
-        icon="download"
-        text="EXCEL"
-        (handleClick)="getReport('excel')"
-      />
+      <app-theme-button variant="danger" icon="picture_as_pdf" text="PDF" (click)="getReport('pdf')" />
+      <app-theme-button variant="success" icon="download" text="EXCEL" (handleClick)="getReport('excel')" />
     </div>
-
   </div>
 </app-mat-dynamic-card>
-

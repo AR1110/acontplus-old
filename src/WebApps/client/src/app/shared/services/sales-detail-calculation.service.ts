@@ -76,14 +76,12 @@ export class SalesDetailCalculationService {
         if (data.quantity === oldValue) return;
 
         data.quantity = roundNumber(quantity, decimal.nroCantidad);
-        calculoColumnas['percentageDiscount']();
+        calculoColumnas.percentageDiscount();
       },
       medidaId: function () {
         if (data.medidaId === oldValue) return;
 
-        const dataMedida = data.medidas.find(
-          (val) => val.idMedida === data.medidaId
-        );
+        const dataMedida = data.medidas.find(val => val.idMedida === data.medidaId);
         let tarifas: TarifaProducto[] = [];
         if (dataMedida) {
           if (dataMedida && typeof dataMedida.tarifas === 'string') {
@@ -98,10 +96,7 @@ export class SalesDetailCalculationService {
           data.tarifas = tarifas;
           data.feeId = feeId;
           data.price = roundNumber(dataTarifa.precioVenta, decimal.nroPrecio);
-          data.precioConIva = roundNumber(
-            dataTarifa.precioConIva,
-            decimal.nroPrecio
-          );
+          data.precioConIva = roundNumber(dataTarifa.precioConIva, decimal.nroPrecio);
           data.percentageDiscount = 0;
           data.discount = 0;
           data.conversion = dataMedida?.conversion ?? 0;
@@ -115,7 +110,7 @@ export class SalesDetailCalculationService {
         try {
           if (data.taxPercentId === oldValue) return;
           data.taxId = dataTarifaImpuesto.idImpuesto;
-          calculoColumnas['price']();
+          calculoColumnas.price();
         } catch (error) {
           self.tS.show({
             type: 'error',
@@ -127,9 +122,7 @@ export class SalesDetailCalculationService {
       feeId: function () {
         try {
           if (feeId === oldValue) return;
-          const dataTarifa = data.tarifas.find(
-            (item) => item.idTarifa === feeId
-          );
+          const dataTarifa = data.tarifas.find(item => item.idTarifa === feeId);
 
           if (!dataTarifa) {
             data.feeId = Number(oldValue);
@@ -138,26 +131,19 @@ export class SalesDetailCalculationService {
 
           const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
             dataTarifa.precioVenta,
-            dataTarifaImpuesto.porcentaje
+            dataTarifaImpuesto.porcentaje,
           );
-          const precioConIvaConDesuento =
-            pricingCalculateUtil.getDiscountedVATPrice(
-              precioConIva,
-              data.percentageDiscount
-            );
+          const precioConIvaConDesuento = pricingCalculateUtil.getDiscountedVATPrice(
+            precioConIva,
+            data.percentageDiscount,
+          );
           const valorDescuento = pricingCalculateUtil.getValueDiscount(
             dataTarifa.precioVenta,
-            data.percentageDiscount
+            data.percentageDiscount,
           );
           data.price = roundNumber(dataTarifa.precioVenta, decimal.nroPrecio);
-          data.precioConIva = roundNumber(
-            precioConIvaConDesuento,
-            decimal.nroPrecio
-          );
-          data.discount = roundNumber(
-            valorDescuento,
-            decimal.nroDescuentoDetalle
-          );
+          data.precioConIva = roundNumber(precioConIvaConDesuento, decimal.nroPrecio);
+          data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
         } catch (error) {
           self.tS.show({
             type: 'error',
@@ -172,19 +158,16 @@ export class SalesDetailCalculationService {
 
           const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
             price,
-            dataTarifaImpuesto.porcentaje
+            dataTarifaImpuesto.porcentaje,
           );
           const valorDescuento = pricingCalculateUtil.getValueDiscount(
             price,
-            data.percentageDiscount
+            data.percentageDiscount,
           );
 
           data.price = roundNumber(price, decimal.nroPrecio);
           data.precioConIva = roundNumber(precioConIva, decimal.nroPrecio);
-          data.discount = roundNumber(
-            valorDescuento,
-            decimal.nroDescuentoDetalle
-          );
+          data.discount = roundNumber(valorDescuento, decimal.nroDescuentoDetalle);
         } catch (error) {
           self.tS.show({
             type: 'error',
@@ -199,7 +182,7 @@ export class SalesDetailCalculationService {
 
           const precioUnitario = pricingCalculateUtil.calculatePriceSale(
             precioConIva,
-            dataTarifaImpuesto.porcentaje
+            dataTarifaImpuesto.porcentaje,
           );
 
           data.precioConIva = roundNumber(precioConIva, decimal.nroPrecio);
@@ -219,16 +202,13 @@ export class SalesDetailCalculationService {
           if (data.percentageDiscount <= 100) {
             const valorDescuento = pricingCalculateUtil.getValueDiscount(
               data.price,
-              percentageDiscount
+              percentageDiscount,
             );
 
-            data.percentageDiscount = roundNumber(
-              percentageDiscount,
-              decimal.nroPorcentaje
-            );
+            data.percentageDiscount = roundNumber(percentageDiscount, decimal.nroPorcentaje);
             data.discount = roundNumber(
               data.quantity * valorDescuento,
-              decimal.nroDescuentoDetalle
+              decimal.nroDescuentoDetalle,
             );
           } else {
             data.percentageDiscount = Number(oldValue);
@@ -239,10 +219,7 @@ export class SalesDetailCalculationService {
             });
           }
 
-          data.percentageDiscount = roundNumber(
-            percentageDiscount,
-            decimal.nroPorcentaje
-          );
+          data.percentageDiscount = roundNumber(percentageDiscount, decimal.nroPorcentaje);
         } catch (error) {
           self.tS.show({
             type: 'error',
@@ -259,17 +236,13 @@ export class SalesDetailCalculationService {
           const subTotal = data.price * data.quantity;
 
           if (discount <= subTotal) {
-            const porcentajeDescuento =
-              pricingCalculateUtil.getValueDiscountPercentage(
-                subTotal,
-                discount
-              );
+            const porcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(
+              subTotal,
+              discount,
+            );
 
             data.discount = roundNumber(discount, decimal.nroDescuentoDetalle);
-            data.percentageDiscount = roundNumber(
-              porcentajeDescuento,
-              decimal.nroPorcentaje
-            );
+            data.percentageDiscount = roundNumber(porcentajeDescuento, decimal.nroPorcentaje);
           } else {
             data.discount = Number(oldValue);
             self.tS.show({
@@ -279,10 +252,7 @@ export class SalesDetailCalculationService {
             });
           }
 
-          data.discount = roundNumber(
-            data.discount,
-            decimal.nroDescuentoDetalle
-          );
+          data.discount = roundNumber(data.discount, decimal.nroDescuentoDetalle);
         } catch (error) {
           self.tS.show({
             type: 'warning',
@@ -294,20 +264,16 @@ export class SalesDetailCalculationService {
 
       calculateTotal: function () {
         try {
-          const precioTotalSinImpuesto =
-            data.price * data.quantity - data.discount;
+          const precioTotalSinImpuesto = data.price * data.quantity - data.discount;
           const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
             precioTotalSinImpuesto,
-            dataTarifaImpuesto.porcentaje
+            dataTarifaImpuesto.porcentaje,
           );
           console.log(precioTotalSinImpuesto);
           const total = precioTotalSinImpuesto + valorImpuesto;
           // let totalIce = infrastructure.cantidad * rowEntity.ice;
 
-          data.precioTotalSinImpuesto = roundNumber(
-            precioTotalSinImpuesto,
-            decimal.nroPrecio
-          );
+          data.precioTotalSinImpuesto = roundNumber(precioTotalSinImpuesto, decimal.nroPrecio);
           data.taxValue = roundNumber(valorImpuesto, decimal.nroPrecio);
           data.total = roundNumber(total, decimal.nroTotalDetalle);
         } catch (error) {
@@ -320,9 +286,9 @@ export class SalesDetailCalculationService {
       },
     };
 
-    calculoColumnas[column] && calculoColumnas[column]();
+    calculoColumnas[column]?.();
 
-    calculoColumnas['calculateTotal']();
+    calculoColumnas.calculateTotal();
 
     return data;
   }
@@ -337,21 +303,19 @@ export class SalesDetailCalculationService {
     }
     try {
       for (const row of obj.items) {
-        const tarifa = row.tarifas.find(
-          (item) => item.idTarifa === obj.generalFeeId
-        );
+        const tarifa = row.tarifas.find(item => item.idTarifa === obj.generalFeeId);
         const dataTarifaImpuesto = obj.tarifasImpuesto.find(
-          (ti) => ti.idTarifaImpuesto === row.taxPercentId
+          ti => ti.idTarifaImpuesto === row.taxPercentId,
         );
         if (!tarifa || !dataTarifaImpuesto) continue;
 
         const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           tarifa.precioVenta,
-          dataTarifaImpuesto.porcentaje
+          dataTarifaImpuesto.porcentaje,
         );
         const valorDescuento = pricingCalculateUtil.getValueDiscount(
           tarifa.precioVenta,
-          row.percentageDiscount
+          row.percentageDiscount,
         );
 
         row.feeId = obj.generalFeeId;
@@ -397,51 +361,45 @@ export class SalesDetailCalculationService {
       totalPorcentajeDescuento = 0;
 
     // Calcular totales generales
-    const {
-      totalPrecioTotalSinImpuesto,
-      totalIce,
-      totalDescuento,
-      totalSinImpuesto,
-    } = items.reduce(
-      (acc, prev) => {
-        // Calcular el total neto con descuentos y el total de ICE
-        const totalSinImpuesto = prev.quantity * prev.price;
-        const precioTotalSinImpuesto =
-          prev.quantity * prev.price - prev.discount;
+    const { totalPrecioTotalSinImpuesto, totalIce, totalDescuento, totalSinImpuesto } =
+      items.reduce(
+        (acc, prev) => {
+          // Calcular el total neto con descuentos y el total de ICE
+          const totalSinImpuesto = prev.quantity * prev.price;
+          const precioTotalSinImpuesto = prev.quantity * prev.price - prev.discount;
 
-        const totalIce = prev.quantity * 0;
+          const totalIce = prev.quantity * 0;
 
-        // Acumular totales generales
-        acc.totalIce += totalIce;
-        acc.totalPrecioTotalSinImpuesto += precioTotalSinImpuesto;
-        acc.totalDescuento += prev.discount;
-        acc.totalSinImpuesto += totalSinImpuesto;
-        return acc;
-      },
-      {
-        totalPrecioTotalSinImpuesto: 0,
-        totalIce: 0,
-        totalDescuento: 0,
-        totalSinImpuesto: 0,
-      }
-    );
+          // Acumular totales generales
+          acc.totalIce += totalIce;
+          acc.totalPrecioTotalSinImpuesto += precioTotalSinImpuesto;
+          acc.totalDescuento += prev.discount;
+          acc.totalSinImpuesto += totalSinImpuesto;
+          return acc;
+        },
+        {
+          totalPrecioTotalSinImpuesto: 0,
+          totalIce: 0,
+          totalDescuento: 0,
+          totalSinImpuesto: 0,
+        },
+      );
 
     // Calcular totales específicos por tarifa de impuesto
     for (const dataTarifaImpuesto of tarifasImpuesto) {
       const filteredItems = items.filter(
-        (item) => item.taxPercentId === dataTarifaImpuesto.idTarifaImpuesto
+        item => item.taxPercentId === dataTarifaImpuesto.idTarifaImpuesto,
       );
 
       const { totalNetoIva } = filteredItems.reduce(
         (acc, prev) => {
-          const precioTotalSinImpuesto =
-            prev.price * prev.quantity - prev.discount;
+          const precioTotalSinImpuesto = prev.price * prev.quantity - prev.discount;
           acc.totalNetoIva += precioTotalSinImpuesto;
           return acc;
         },
         {
           totalNetoIva: 0,
-        }
+        },
       );
 
       // Construir el HTML para la tabla de impuestos
@@ -454,7 +412,7 @@ export class SalesDetailCalculationService {
                                     </td>
                                     <td class="right">$${roundNumber(
                                       totalNetoIva,
-                                      decimal.nroTotalSubTotal
+                                      decimal.nroTotalSubTotal,
                                     )}</td>
                                 </tr>`;
       }
@@ -462,19 +420,18 @@ export class SalesDetailCalculationService {
       if (dataTarifaImpuesto.porcentaje > 0) {
         const { totalIva } = filteredItems.reduce(
           (acc, prev) => {
-            const precioTotalSinImpuesto =
-              prev.price * prev.quantity - prev.discount;
+            const precioTotalSinImpuesto = prev.price * prev.quantity - prev.discount;
             if (dataTarifaImpuesto.idTarifaImpuesto == prev.taxPercentId) {
               acc.totalIva += pricingCalculateUtil.calculateTaxValue(
                 precioTotalSinImpuesto,
-                dataTarifaImpuesto.porcentaje
+                dataTarifaImpuesto.porcentaje,
               );
             }
             return acc;
           },
           {
             totalIva: 0,
-          }
+          },
         );
 
         sumTotalIva += totalIva;
@@ -488,7 +445,7 @@ export class SalesDetailCalculationService {
                                         </td>
                                         <td class="right">$${roundNumber(
                                           totalIva,
-                                          decimal.nroIva
+                                          decimal.nroIva,
                                         )}</td>
                                     </tr>`;
         }
@@ -498,15 +455,11 @@ export class SalesDetailCalculationService {
     const importeTotal = totalPrecioTotalSinImpuesto + sumTotalIva;
     if (totalSinImpuesto > 0) {
       totalPorcentajeDescuento =
-        ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) /
-        totalSinImpuesto;
+        ((totalSinImpuesto - totalPrecioTotalSinImpuesto) * 100) / totalSinImpuesto;
     }
     // Retornar los totales calculados
     return {
-      subTotalSinImpuesto: roundNumber(
-        totalPrecioTotalSinImpuesto,
-        decimal.nroTotalSubTotal
-      ),
+      subTotalSinImpuesto: roundNumber(totalPrecioTotalSinImpuesto, decimal.nroTotalSubTotal),
       totalIce,
       irbpnr: 0,
       propina: 0,

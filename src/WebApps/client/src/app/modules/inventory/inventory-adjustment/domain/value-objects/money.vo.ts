@@ -1,5 +1,5 @@
-import {ValidationException, ValueObject} from "@core/domain";
-import DecimalUtils from "@core/utils/decimal.util";
+import { ValidationException, ValueObject } from '@core/domain';
+import DecimalUtils from '@core/utils/decimal.util';
 
 export class Money extends ValueObject<number> {
   private static readonly MAX_DECIMAL_PLACES = 5;
@@ -59,7 +59,7 @@ export class Money extends ValueObject<number> {
 
   private static getDecimalPlaces(num: number): number {
     const str = num.toString();
-    if (str.indexOf('.') !== -1) {
+    if (str.includes('.')) {
       return str.split('.')[1].length;
     }
     return 0;
@@ -67,7 +67,6 @@ export class Money extends ValueObject<number> {
 
   // Mathematical operations
   add(other: Money): Money {
-
     return Money.from(DecimalUtils.addAsNumber(this.value, other.value));
   }
 
@@ -129,12 +128,10 @@ export class Money extends ValueObject<number> {
   }
 
   toCurrency(locale = 'en-US', currency = 'USD'): string {
-
     return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(this.value);
-
   }
 
   toCents(): number {

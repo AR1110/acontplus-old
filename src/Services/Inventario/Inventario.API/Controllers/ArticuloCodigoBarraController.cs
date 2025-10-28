@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloCodigoBarraService) : BaseApiController
 {
@@ -17,27 +17,26 @@ public class ArticuloCodigoBarraController(IArticuloCodigoBarraService articuloC
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateArticuloCodigoBarraDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateArticuloCodigoBarraDto>(dto)) }
+    };
         var response = await articuloCodigoBarraService.AddAsync(parameters);
         return Ok(response);
     }
 
-
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateArticuloCodigoBarraDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateArticuloCodigoBarraDto>(dto)) }
+    };
         var response = await articuloCodigoBarraService.UpdateAsync(parameters);
         return Ok(response);
     }

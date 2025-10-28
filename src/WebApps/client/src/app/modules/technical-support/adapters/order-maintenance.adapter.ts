@@ -1,32 +1,27 @@
 import { formatDateToString } from '@core/utils/date.util';
 import { OrderMaintenance } from './../models/order-maintenance.model';
 
-type OrderMaintenanceTo = OrderMaintenance & { envioSri: boolean, isGroup: boolean }
+type OrderMaintenanceTo = OrderMaintenance & { envioSri: boolean; isGroup: boolean };
 interface ToProps {
-  order: any
-  detalles: OrderMaintenanceTo[],
-  customDetails: OrderMaintenanceTo[]
+  order: any;
+  detalles: OrderMaintenanceTo[];
+  customDetails: OrderMaintenanceTo[];
 }
 class OrderMaintenanceAdapter {
-
   to(obj: ToProps) {
     const { order, detalles, customDetails } = obj;
-
 
     const resultOrder = this.orderTo(order);
     const resultDetalles = this.detailTo(detalles);
     const resultCustomDetails = this.detailTo(customDetails);
     const mergeDetails = [...resultDetalles, ...resultCustomDetails];
 
-
     return {
       order: resultOrder,
       detalles: mergeDetails.map((_, index) => ({ ..._, orderIndex: index + 1 })),
       //  customDetails: resultCustomDetails
-    }
+    };
   }
-
-
 
   private orderTo(data: any) {
     const obj = {
@@ -42,8 +37,8 @@ class OrderMaintenanceAdapter {
       tip: data.tip,
       total: data.total,
       puntoEmisionId: data.puntoEmisionId,
-      discount: data.discount
-    }
+      discount: data.discount,
+    };
     return obj;
   }
 
@@ -76,14 +71,11 @@ class OrderMaintenanceAdapter {
         conversion: item.conversion,
         cantidadTransaccion: item.quantity * item.conversion,
         envioSri: item.envioSri,
-        isGroup: item.isGroup //en caso de que el detalle sea personalizado
-      }
-    })
+        isGroup: item.isGroup, //en caso de que el detalle sea personalizado
+      };
+    });
     return results;
   }
-
-
 }
 
-
-export const orderMaintenanceAdapter = new OrderMaintenanceAdapter()
+export const orderMaintenanceAdapter = new OrderMaintenanceAdapter();

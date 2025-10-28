@@ -1,11 +1,19 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import { TokenRepository } from '../repositories/token.repository';
+import { SessionCache} from '@modules/auth/domain/models/session';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenUseCase {
-  constructor(private tokenRepository: TokenRepository) {}
+  private tokenRepository = inject(TokenRepository)
+  saveSession(session: SessionCache) {
+    this.tokenRepository.saveSession(session);
+  }
+
+  getSession() {
+    return this.tokenRepository.getSession();
+  }
 
   getToken() {
     return this.tokenRepository.getToken();
@@ -31,8 +39,11 @@ export class TokenUseCase {
     return this.tokenRepository.parseJwt();
   }
 
-  getUserData(){
+  getUserData() {
     return this.tokenRepository.getUserData();
   }
 
+  clear() {
+    this.tokenRepository.clear();
+  }
 }

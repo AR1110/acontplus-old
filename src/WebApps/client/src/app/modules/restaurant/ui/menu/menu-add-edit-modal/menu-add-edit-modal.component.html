@@ -7,69 +7,53 @@
 
 <ng-template #body>
   <form (ngSubmit)="onSave()" id="menuForm" [formGroup]="menuForm">
-
-      <div class="row">
-        <div class="col-6 col-md-6 col-sm-12">
-          <div class="form-group">
-            <label for="title">Nombre</label>
-            <input
-              class="form-control input-group-lg"
-              formControlName="title"
-              id="title"
-              type="text"
-            />
-          </div>
+    <div class="row">
+      <div class="col-6 col-md-6 col-sm-12">
+        <div class="form-group">
+          <label for="title">Nombre</label>
+          <input class="form-control input-group-lg" formControlName="title" id="title" type="text" />
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-          <div class="form-group">
-            <label for="summary"
-            >Descripción -
-              <span>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label for="summary">
+            Descripción -
+            <span>
               <app-theme-button
                 icon="add"
                 text="Generar la descripción para el combo"
                 (handleClick)="generateDescription()"
-              >
-              </app-theme-button>
+              ></app-theme-button>
             </span>
-            </label>
-            <textarea
-              class="form-control"
-              formControlName="summary"
-              id="summary"
-            ></textarea>
-          </div>
+          </label>
+          <textarea class="form-control" formControlName="summary" id="summary"></textarea>
         </div>
       </div>
-      <div class="row">
-        <div class="col-6 col-md-6 col-sm-6">
-          <div class="form-group">
-            <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
-              Usar en promoción
-            </mat-slide-toggle>
-          </div>
+    </div>
+    <div class="row">
+      <div class="col-6 col-md-6 col-sm-6">
+        <div class="form-group">
+          <mat-slide-toggle formControlName="forPromotion" id="forPromotion"> Usar en promoción </mat-slide-toggle>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12">
-            <app-item-search
-              (selectedEvent)="onItemSelected($event)"
-              [(textSearch)]="itemSearch"
-            />
-        </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <app-item-search (selectedEvent)="onItemSelected($event)" [(textSearch)]="itemSearch" />
       </div>
-      <div class="row">
-        <div class="col">
-          <app-tabulator
-            [columnNames]="productColumns"
-            [options]="{ reactiveData: true }"
-            [tableData]="productsAdded"
-            [theme]="'semantic-ui'"
-          ></app-tabulator>
-        </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <app-tabulator
+          [columnNames]="productColumns"
+          [options]="{ reactiveData: true }"
+          [tableData]="productsAdded()"
+          [theme]="'semantic-ui'"
+        ></app-tabulator>
       </div>
+    </div>
   </form>
 </ng-template>
 <ng-template #footer>
@@ -77,10 +61,8 @@
     type="submit"
     icon="save"
     variant="success"
-    text="Añadir producto"
+    text="Guardar"
     form="menuForm"
     [disabled]="menuForm.invalid"
   />
 </ng-template>
-
-

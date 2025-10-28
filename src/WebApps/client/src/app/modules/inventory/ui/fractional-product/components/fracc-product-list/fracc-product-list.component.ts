@@ -13,10 +13,8 @@ import { FractionalProductGetAllUseCase } from '@inventory/product/application/u
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import {DialogService} from "@core/services/dialog.service";
-import {
-  AddEditFractionalProductComponent
-} from "@inventory/ui/fractional-product/components/add-edit-fractional-product/add-edit-fractional-product.component";
+import { DialogService } from '@core/services/dialog.service';
+import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-product/components/add-edit-fractional-product/add-edit-fractional-product.component';
 
 @Component({
   selector: 'app-fracc-product-list',
@@ -34,10 +32,8 @@ import {
   styles: ``,
 })
 export class FraccProductListComponent implements OnInit {
-  private $fractionalProductGetAllUseCase = inject(
-    FractionalProductGetAllUseCase
-  );
-  private dialogSvc = inject(DialogService)
+  private $fractionalProductGetAllUseCase = inject(FractionalProductGetAllUseCase);
+  private dialogSvc = inject(DialogService);
 
   productId = input(0);
   isCalledFromProductModal = input(false);
@@ -56,7 +52,7 @@ export class FraccProductListComponent implements OnInit {
     { key: 'nomMedida', label: 'Médida', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
   isLoadingResults = signal(false);
@@ -73,19 +69,18 @@ export class FraccProductListComponent implements OnInit {
       textSearch: isValidField(this.dataSearch.textSearch),
       idArticulo: this.productId(),
     };
-    if(this.isLoadingResults()) return
+    if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
     this.$fractionalProductGetAllUseCase
       .execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
-        console.log(response);
-        this.dataSource.set(response.payload?.data || []);
-        this.pagination.update((item) => {
+      .subscribe(response => {
+        this.dataSource.set(response.payload?.data ?? []);
+        this.pagination.update(item => {
           return {
             ...item,
-            totalRecords: response.payload?.totalRecords || 0,
+            totalRecords: response.payload?.totalRecords ?? 0,
           };
         });
       });
@@ -101,29 +96,28 @@ export class FraccProductListComponent implements OnInit {
     this.loadData();
   }
 
-  openAddEdit(item?:any){
+  openAddEdit(item?: any) {
     const data = {} as any;
-    if(item){
-      data.id =item.idArticuloFraccionado;
-    }else{
+    if (item) {
+      data.id = item.idArticuloFraccionado;
+    } else {
       data.productId = this.productId();
-        data.isCalledFromProductModal = this.isCalledFromProductModal()
+      data.isCalledFromProductModal = this.isCalledFromProductModal();
     }
     const ref = this.dialogSvc.open(AddEditFractionalProductComponent, {
       data,
-      size: 'xl'
-    })
+      size: 'xl',
+    });
 
-    ref.subscribe(result=>{
-      if(result && typeof result==='object'){
-        this.refresh()
+    ref.subscribe(result => {
+      if (result && typeof result === 'object') {
+        this.refresh();
       }
-    })
-
+    });
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

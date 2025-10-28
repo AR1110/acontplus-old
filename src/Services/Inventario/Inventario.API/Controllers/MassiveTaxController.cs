@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseApiController
 {
@@ -6,9 +6,10 @@ public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseAp
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
+    {
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(json) }
+    };
         var response = await massiveTaxService.GetAsync(parameters);
         if (response == null) return NoContent();
 
@@ -16,13 +17,13 @@ public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseAp
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put([FromBody] ApiRequest data)
+    public async Task<IActionResult> Put([FromBody] MassiveTaxDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<MassiveTaxDto>(dto)) }
+    };
         var response = await massiveTaxService.UpdateAsync(parameters);
         return Ok(response);
     }

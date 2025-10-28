@@ -16,11 +16,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { isValidField } from '@core/utils/utils';
 import { Pagination } from '@shared/models/pagination.model';
-import { map, Subject } from 'rxjs';
+import {debounceTime, distinctUntilChanged, finalize, map, of, Subject, switchMap} from 'rxjs';
 
 import { ProductSearchListComponent } from '@inventory/product/presentation/components/product-search-list/product-search-list.component';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatInputModule } from '@angular/material/input';
+import {catchError, takeUntil} from "rxjs/operators"; ;
+import {MatIconButton} from "@angular/material/button";
+import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
+import {MatIcon} from "@angular/material/icon";
 
 @Component({
   selector: 'app-product-search-overlay',
@@ -30,6 +34,9 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule,
     MatInputModule,
     ProductSearchListComponent,
+    MatIcon,
+    MatIconButton,
+    AddEditProductDirective,
   ],
   templateUrl: './product-search-overlay.component.html',
   styleUrl: './product-search-overlay.component.scss',
@@ -39,10 +46,14 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
 
   readonly overlayHasFocus = input(true);
   optionSelected = output();
+  resultRegistered = output<any>();
 
   dataSource = signal<any>([]);
 
   _unsubscribeAll: Subject<boolean> = new Subject<boolean>();
+
+  private searchTerms = new Subject<any>();
+  private destroy$ = new Subject<void>();
 
   highlightRowIndex = -1;
   isOverlayOpen = false;
@@ -65,6 +76,12 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   rows = signal<any>([]);
 
   currentOption: any;
+
+  showPrefix = input(false);
+
+  constructor() {
+    this.setupSearchListener();
+  }
 
   ngOnInit() {
     this.pagination.pageIndex = 0;
@@ -89,51 +106,45 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
     this.search();
   }
 
+  setupSearchListener() {
+    this.searchTerms
+      .pipe(
+        debounceTime(400), // ⏳ Espera antes de llamar al API
+        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+        switchMap(params => {
+          this.isLoadingResults.set(true);
+          this.highlightRowIndex = -1;
+          this.productTarifas.set([]);
+
+          return this._productUseCase.search(params).pipe(
+            map((response: any) => {
+              this.isRateLimitReached.set(response.length === 0);
+              return this.isRateLimitReached() ? [] : response;
+            }),
+            catchError(err => {
+              console.error(err);
+              this.isRateLimitReached.set(true);
+              return of([]);
+            }),
+            finalize(() => this.isLoadingResults.set(false))
+          );
+        }),
+        takeUntil(this.destroy$) // 👈 Cancela al destruir componente
+      )
+      .subscribe(response => {
+        this.openOverlay();
+        const results = structuredClone(response);
+        this.dataSource.set(results);
+      });
+  }
+
   search() {
     const params = {
       textSearch: this.dataSearch.textSearch,
       pageIndex: this.pagination.pageIndex + 1,
       pageSize: this.pagination.pageSize,
     };
-
-    this.highlightRowIndex = -1;
-    this.productTarifas.set([]);
-    this.isLoadingResults.set(true);
-
-    this._productUseCase
-      .search(params)
-      .pipe(
-        map((response: any) => {
-          this.isLoadingResults.set(false);
-          this.isRateLimitReached.set(response.length === 0);
-
-          if (this.isRateLimitReached()) {
-            return [];
-          }
-          return response;
-        })
-      )
-
-      .subscribe({
-        next: (response) => {
-          this.openOverlay();
-          const results = structuredClone(response);
-          this.dataSource.set(results);
-
-          // this.pagination.totalRecords = 0;
-
-          // if (results.length > 0) {
-          //   let dataResult = results[0];
-          //   this.productTarifas = dataResult.tarifas;
-          //   this.pagination.totalRecords = dataResult.totalRecords;
-          // }
-          // this.makeDynamicTarifa(results)
-        },
-        error: (err) => {
-          this.isLoadingResults.set(false);
-          console.log(err);
-        },
-      });
+    this.searchTerms.next(params);
   }
 
   makeDynamicTarifa(results: any) {
@@ -228,10 +239,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   onArrowDown(event: KeyboardEvent): void {
     event.preventDefault();
 
-    if (
-      this.overlayHasFocus() &&
-      this.highlightRowIndex < this.dataSource().length - 1
-    ) {
+    if (this.overlayHasFocus() && this.highlightRowIndex < this.dataSource().length - 1) {
       this.highlightRowIndex += 1;
 
       this.onHighlightedRowChange(event);
@@ -310,8 +318,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
 
   getDataProductSale(id: number) {
     this.dataSearch.textSearch = '';
-      this._productUseCase.getForSale(id).subscribe( (response) =>   this.optionSelected.emit(response));
-
+    this._productUseCase.getForSale(id).subscribe(response => this.optionSelected.emit(response));
   }
 
   onClickPaginator() {
@@ -341,5 +348,7 @@ export class ProductSearchOverlayComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(true);
     this._unsubscribeAll.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

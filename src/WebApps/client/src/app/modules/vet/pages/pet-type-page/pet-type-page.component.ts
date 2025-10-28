@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './pet-type-page.component.html',
   styleUrls: ['./pet-type-page.component.scss'],
 })
-export class PetTypePageComponent {
-
-}
+export class PetTypePageComponent {}

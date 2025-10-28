@@ -1,9 +1,11 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBase
+public class FacturaCompraController(IFacturaCompraRepository _svc) : ControllerBase
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -22,13 +24,6 @@ public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBas
         {
             return BadRequest("Error on get: " + ex.Message);
         }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
-    {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.AddAsync(request));
     }
 
     [HttpGet("GetId/{id}")]
@@ -52,11 +47,31 @@ public class FacturaCompraController(IFacturaCompraService _svc) : ControllerBas
         }
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    [HttpPost]
+    public async Task<IActionResult> Insert(FacturaCompraDto facturaCompraDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.UpdateAsync(id, request));
+
+        var parameters = new Dictionary<string, object>
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(facturaCompraDto)) }
+    };
+        return Ok(await _svc.AddAsync(parameters));
+    }
+
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, FacturaCompraDto facturaCompraDto)
+    {
+
+        var parameters = new Dictionary<string, object>
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(facturaCompraDto)) }
+    };
+
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 
 

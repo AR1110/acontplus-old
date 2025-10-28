@@ -1,13 +1,8 @@
-
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import {
-  REPORT_CODE,
-  DOC_TYPE_SRI,
-  REPORT_FORMAT,
-} from '@core/constants/global.constants';
+import { REPORT_CODE, DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { isValidField } from '@core/utils/utils';
 import { SharedService } from '@core/services/shared.service';
@@ -18,16 +13,16 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { ThemeButtonComponent } from "@shared/components/theme-button/theme-button.component";
-import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import { MatCheckbox } from "@angular/material/checkbox";
-import { MatDivider } from "@angular/material/divider";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
-import {SupplierSearch} from "@customer/domain/models/supplier.interface";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 
-type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>
-type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
+type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>;
+type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>;
 @Component({
   selector: 'app-reception-reports',
   imports: [
@@ -41,15 +36,14 @@ type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>
     MatCheckbox,
     MatDivider,
     MatFormFieldModule,
-    MatSelectModule
-
+    MatSelectModule,
   ],
   templateUrl: './reception-reports.component.html',
   styles: ``,
 })
 export class ReceptionReportsComponent implements OnInit {
-  establecimientos = signal<EstabSelect[]>([])
-  documentTypes = signal<TipoDocSelect[]>([])
+  establecimientos = signal<EstabSelect[]>([]);
+  documentTypes = signal<TipoDocSelect[]>([]);
   subcategories = signal<Subcategory[]>([]);
   isSearchSupplierSimple = true;
   dataSearch = {
@@ -85,7 +79,7 @@ export class ReceptionReportsComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   ngOnInit() {
-    this.docReceivedSvc.getDataFilter().subscribe((response) => {
+    this.docReceivedSvc.getDataFilter().subscribe(response => {
       const { establecimientos, documentTypes, subcategories } = response;
       this.establecimientos.set(establecimientos);
       this.documentTypes.set(documentTypes);
@@ -95,9 +89,8 @@ export class ReceptionReportsComponent implements OnInit {
       }
       if (this.documentTypes().length > 0) {
         this.dataSearch.codDoc =
-          this.documentTypes().find(
-            (tipoDoc) => tipoDoc.codigoSri === DOC_TYPE_SRI.F,
-          )?.codigoSri || '';
+          this.documentTypes().find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE_SRI.F)?.codigoSri ||
+          '';
       }
     });
   }
@@ -161,10 +154,7 @@ export class ReceptionReportsComponent implements OnInit {
   }
 
   getReport(format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL) {
-    if (
-      this.dataSearch.supplierChecked &&
-      !isValidField(this.dataSearch.numeroIdentificacion)
-    ) {
+    if (this.dataSearch.supplierChecked && !isValidField(this.dataSearch.numeroIdentificacion)) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione el proveedor!',
@@ -186,8 +176,7 @@ export class ReceptionReportsComponent implements OnInit {
       codEstab: this.dataSearch.codEstab,
       codDoc: this.dataSearch.codDoc,
       identificacion:
-        (this.dataSearch.supplierChecked &&
-          isValidField(this.dataSearch.numeroIdentificacion)) ||
+        (this.dataSearch.supplierChecked && isValidField(this.dataSearch.numeroIdentificacion)) ||
         null,
       //  codEstado: isValidField(this.dataSearch.codEstado),
       idUsuario: isValidField(this.dataSearch.userId),

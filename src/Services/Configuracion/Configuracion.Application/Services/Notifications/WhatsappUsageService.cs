@@ -1,16 +1,13 @@
-﻿namespace Configuracion.Application.Services.Notifications;
+using Configuracion.Application.Interfaces.Notifications;
 
-public interface IWhatsappUsageService
-{
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-}
+namespace Configuracion.Application.Services.Notifications;
 
 public class WhatsappUsageService(IAdoRepository adoRepository) : IWhatsappUsageService
 {
     private const string ModuleName = "Config.WhatsappUsage_";
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Get", parameters, false);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Get", parameters);
     }
 }

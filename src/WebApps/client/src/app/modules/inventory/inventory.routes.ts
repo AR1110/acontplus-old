@@ -11,13 +11,13 @@ import { InvModelPageComponent } from '@inventory/ui/inv-model-page/inv-model-pa
 import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.component';
 import { TagsComponent } from '@inventory/ui/tags/tags.component';
 import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
-import { ProductComponent } from '@inventory/product/presentation/product/product.component';
-import {TransferenciaBodegaComponent} from "@inventory/ui/transferencia-bodega/transferencia-bodega.component";
-import {WarehouseComponent} from "@inventory/ui/warehouse/warehouse.component";
-import {
-  InventoryAdjustmentComponent
-} from "@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component";
+import { Product } from '@inventory/product/presentation/product/product';
+import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
 import { InventoryHomeComponent } from './ui/inventory-home.component';
+import { WarehouseTransfer } from '@inventory/ui/warehouse-transfer/warehouse-transfer';
+import {permissionGuard} from "@core/guards/permission.guard";
+import {INVENTORY_MODULES_CODE, INVENTORY_ROUTES} from "@inventory/domain/enums/inventory.enum";
+import {ACTION_ALIASES} from "@core/constants/permission-actions";
 
 export const routes: Route[] = [
   {
@@ -43,11 +43,14 @@ export const routes: Route[] = [
   },
 
   {
-    path: 'product',
+    path: INVENTORY_ROUTES.products,
     title: 'Productos',
-    component: ProductComponent,
+    component: Product,
+    canActivate: [permissionGuard],
     data: {
       breadcrumb: 'Productos',
+      context: INVENTORY_MODULES_CODE.PRODUCT,
+      requiredActions: [ACTION_ALIASES.READ]
     },
   },
   {
@@ -124,24 +127,20 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'transferencia-bodega',
-    component: TransferenciaBodegaComponent,
-    data: {
-      breadcrumb: 'Transferencia de Mercaderia',
-    },
-  },
-  {
-    path: 'warehouse',
-    component: WarehouseComponent,
-    data: {
-      breadcrumb: 'Bodega',
-    },
-  },
-  {
-    path: 'inventory-adjustment',
+    path: 'inventory-adjustments',
     component: InventoryAdjustmentComponent,
     data: {
       breadcrumb: 'Ajuste Inventario',
-    }
-  }
+    },
+  },
+  {
+    path: 'warehouse-transfer',
+    component: WarehouseTransfer,
+    canActivate: [permissionGuard],
+    data: {
+      breadcrumb: 'Transferencia de Mercaderia',
+      context: INVENTORY_MODULES_CODE.WAREHOUSE_TRANSFER,
+      requiredActions: [ACTION_ALIASES.READ]
+    },
+  },
 ];

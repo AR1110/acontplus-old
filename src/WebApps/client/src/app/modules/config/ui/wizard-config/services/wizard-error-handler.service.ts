@@ -9,7 +9,7 @@ export interface ErrorContext {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WizardErrorHandlerService {
   private readonly _toasterService = inject(ToastrNotificationService);
@@ -37,9 +37,8 @@ export class WizardErrorHandlerService {
   handleValidationError(errors: string[], context: ErrorContext): void {
     console.warn(`Validation errors in ${context.component}:`, errors);
 
-    const message = errors.length === 1
-      ? errors[0]
-      : `Se encontraron ${errors.length} errores de validación.`;
+    const message =
+      errors.length === 1 ? errors[0] : `Se encontraron ${errors.length} errores de validación.`;
 
     this._toasterService.show({
       type: 'warning',
@@ -65,9 +64,6 @@ export class WizardErrorHandlerService {
   }
 
   private isApiResponse(obj: unknown): obj is ApiResponse {
-    return obj !== null &&
-           typeof obj === 'object' &&
-           'code' in obj &&
-           'message' in obj;
+    return obj !== null && typeof obj === 'object' && 'code' in obj && 'message' in obj;
   }
 }

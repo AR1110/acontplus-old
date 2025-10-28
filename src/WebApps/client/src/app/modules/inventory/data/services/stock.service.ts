@@ -6,15 +6,13 @@ import { ApiResponse } from '@core/models/api-response';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StockService {
-
   private url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.STOCK}`;
-  private http = inject(HttpClient)
+  private http = inject(HttpClient);
 
-  put(productId: number){
-    return this.http.put<ApiResponse>(`${this.url}${productId}`, null)
+  put(productId: number) {
+    return this.http.put<ApiResponse>(`${this.url}${productId}`, null);
   }
-
 }

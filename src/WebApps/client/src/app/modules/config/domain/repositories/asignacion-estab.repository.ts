@@ -1,15 +1,13 @@
 import { Observable } from 'rxjs';
-import {
-  UserCustomerDataForm,
-} from "@modules/config/domain/models/user-customer/user-customer.model";
-import {ApiResponse} from "@core/models/api-response";
+import { UserCustomerDataForm } from '@modules/config/domain/models/user-customer/user-customer.model';
+import { ApiResponse } from '@core/models/api-response';
 import {
   AsignacionEstabList,
-  AsignacionEstabResponse
-} from "@modules/config/domain/models/user-customer/asignacion-estab.model";
+  AsignacionEstabResponse,
+} from '@modules/config/domain/models/user-customer/asignacion-estab.model';
 
 export abstract class AsignacionEstabRepository {
   abstract list<T>(parameters: T): Observable<AsignacionEstabResponse>;
-    abstract create<T>(parameters: T): Observable<ApiResponse>;
-   abstract update (parameters: Partial<AsignacionEstabList>): Observable<ApiResponse>;
+  abstract create<T>(parameters: T): Observable<ApiResponse>;
+  abstract update(parameters: Partial<AsignacionEstabList>): Observable<ApiResponse>;
 }

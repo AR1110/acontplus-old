@@ -1,36 +1,33 @@
-import { Injectable } from "@angular/core";
-import {MovimientoCajaRepository} from "@accounting/movimiento-caja/domain/movimiento-caja.repository";
-
+import { Injectable } from '@angular/core';
+import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class MovimientoCajaUseCase {
-  constructor(private repo: MovimientoCajaRepository) { }
+  constructor(private repo: MovimientoCajaRepository) {}
 
-  getAll<T>(obj:T) {
-    return this.repo.getAll(obj)
+  getAll<T>(obj: T) {
+    return this.repo.getAll(obj);
   }
 
-  getDataFilter(){
-    return this.repo.getDataFilter()
+  getDataFilter() {
+    return this.repo.getDataFilter();
   }
 
-  getDataForm(){
-    return this.repo.getDataForm()
+  getDataForm() {
+    return this.repo.getDataForm();
   }
 
   create<T>(data: T) {
-    return this.repo.create(data)
+    return this.repo.create(data);
   }
 
   update<T>(id: number, data: T) {
-    return this.repo.update(id, data)
+    return this.repo.update(id, data);
   }
 
   delete(id: number) {
-    return this.repo.delete(id)
+    return this.repo.delete(id);
   }
-
 }

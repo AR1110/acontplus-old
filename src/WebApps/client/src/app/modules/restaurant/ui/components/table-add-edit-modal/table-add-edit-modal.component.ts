@@ -10,31 +10,30 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ApiResponse } from '@core/models/api-response';
 import { Room } from '@restaurant/domain/models/room.model';
 import { TableService } from '@restaurant/data/services/table.service';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatButtonModule} from "@angular/material/button";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatSelectModule} from "@angular/material/select";
-import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
-    selector: 'app-table-add-edit-modal',
-    imports: [
-      FormsModule,
-      ReactiveFormsModule,
-      MatButtonModule,
-      MatSelectModule,
-      MatInputModule,
-      MatFormFieldModule,
-      MatSlideToggleModule,
-      MatCustomDialogComponent
-    ],
-    templateUrl: './table-add-edit-modal.component.html',
-    styles: ``
+  selector: 'app-table-add-edit-modal',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSlideToggleModule,
+    MatCustomDialogComponent,
+  ],
+  templateUrl: './table-add-edit-modal.component.html',
+  styles: ``,
 })
 export class TableAddEditModalComponent implements OnInit {
-
   readonly dialogRef = inject(MatDialogRef<TableAddEditModalComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
@@ -52,21 +51,20 @@ export class TableAddEditModalComponent implements OnInit {
     enabled: new FormControl(true),
   });
 
-  modalTitle  = 'Registrar Mesa';
+  modalTitle = 'Registrar Mesa';
   btnText = 'Guardar';
   #tableService = inject(TableService);
   #tS = inject(ToastrNotificationService);
-
 
   ngOnInit() {
     this.tableForm.patchValue({
       roomId: this.params.roomId,
     });
-    if(this.params.id>0){
-      const {roomName, ...rest} = this.params;
+    if (this.params.id > 0) {
+      const { roomName, ...rest } = this.params;
       this.modalTitle = 'Editar Mesa';
-      this.btnText ='Actualizar'
-      this.tableForm.setValue(rest)
+      this.btnText = 'Actualizar';
+      this.tableForm.setValue(rest);
     }
   }
 
@@ -83,11 +81,11 @@ export class TableAddEditModalComponent implements OnInit {
     };
 
     if (this.params.id > 0) {
-      this.#tableService.put(this.params.id, dataToSave).subscribe((response) => {
+      this.#tableService.put(this.params.id, dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     } else {
-      this.#tableService.post(dataToSave).subscribe((response) => {
+      this.#tableService.post(dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     }
@@ -106,6 +104,4 @@ export class TableAddEditModalComponent implements OnInit {
       this.dialogRef.close(response);
     }
   }
-
-
 }

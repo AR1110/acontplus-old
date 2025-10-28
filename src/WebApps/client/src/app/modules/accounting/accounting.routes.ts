@@ -10,14 +10,12 @@ import { CategoryComponent } from '@accounting/category/presentation/category/ca
 import { SubcategoryComponent } from '@accounting/sub-category/presentation/subcategory/subcategory.component';
 import { MovimientoCajaReportComponent } from '@accounting/movimiento-caja/presentation/movimiento-caja-report/movimiento-caja-report.component';
 
- import { CuentaPorPagarComponent } from '@accounting/cuenta-por-pagar/presentation/cuenta-por-pagar/cuenta-por-pagar.component';
-import {
-  ResumenContableComponent
-} from "@accounting/resumen-contable/presentation/resumen-contable/resumen-contable.component";
-import {CarteraClienteComponent} from "@accounting/cuenta-por-cobrar/presentation/cartera-cliente/cartera-cliente.component";
-import {ComprobanteIngresoComponent} from "@accounting/comprobante-ingreso/presentation/comprobante-ingreso/comprobante-ingreso.component";
-import {ComprobanteEgresoComponent} from "@accounting/comprobante-egreso/presentation/comprobante-egreso/comprobante-egreso.component";
-import {PaymentsReportComponent} from "@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component";
+import { CuentaPorPagarComponent } from '@accounting/cuenta-por-pagar/presentation/cuenta-por-pagar/cuenta-por-pagar.component';
+import { ResumenContableComponent } from '@accounting/resumen-contable/presentation/resumen-contable/resumen-contable.component';
+import { CarteraClienteComponent } from '@accounting/cuenta-por-cobrar/presentation/cartera-cliente/cartera-cliente.component';
+import { ComprobanteIngresoComponent } from '@accounting/comprobante-ingreso/presentation/comprobante-ingreso/comprobante-ingreso.component';
+import { ComprobanteEgresoComponent } from '@accounting/comprobante-egreso/presentation/comprobante-egreso/comprobante-egreso.component';
+import { PaymentsReportComponent } from '@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component';
 import { AccountingHomeComponent } from './home/accounting-home.component';
 
 export const routes: Routes = [
@@ -27,7 +25,7 @@ export const routes: Routes = [
     data: { breadcrumb: 'Contabilidad' },
   },
   {
-    path: 'cashbox-page',
+    path: 'cashboxes',
     title: 'Caja',
     component: CajaComponent,
     data: {
@@ -158,9 +156,9 @@ export const routes: Routes = [
         title: 'Reporte de Pagos',
         component: PaymentsReportComponent,
         data: {
-          breadcrumb: 'Reporte de Pagos'
-        }
-      }
-    ]
-  }
+          breadcrumb: 'Reporte de Pagos',
+        },
+      },
+    ],
+  },
 ];

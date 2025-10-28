@@ -7,9 +7,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
   providedIn: 'root',
 })
 export class DocumentoElectronicoUseCase {
-  private readonly _documentoElectronicoRepository = inject(
-    DocumentoElectronicoRepository,
-  );
+  private readonly _documentoElectronicoRepository = inject(DocumentoElectronicoRepository);
 
   authorize(id: number) {
     return this._documentoElectronicoRepository.authorize(id);

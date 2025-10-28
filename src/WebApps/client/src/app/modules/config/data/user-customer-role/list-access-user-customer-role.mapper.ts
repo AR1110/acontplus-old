@@ -4,9 +4,7 @@ import {
 } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 import { isValidJSON } from '@core/utils/utils';
 
-
-function groupByParent(items:any[]) {
-
+function groupByParent(items: any[]) {
   // Separar padres e hijos
   const parents = items.filter(item => !item.parentId);
   const children = items.filter(item => item.parentId);
@@ -23,10 +21,9 @@ function groupByParent(items:any[]) {
   // Construir árbol
   return parents.map(parent => ({
     ...parent,
-    children: childrenByParent[parent.menuId] || []
+    children: childrenByParent[parent.menuId] || [],
   }));
 }
-
 
 export class ListAccessUserCustomerRoleMapper {
   static toJson(parameters: Partial<UserCustomerRole>) {
@@ -36,16 +33,17 @@ export class ListAccessUserCustomerRoleMapper {
     });
   }
 
-  static fromJson(response:any): UserCustomerRoleAccessResponse {
-
+  static fromJson(response: any): UserCustomerRoleAccessResponse {
     const processMenuActions = (actionsString: string) => {
       if (!actionsString || !isValidJSON(actionsString)) return [];
 
       const actions = JSON.parse(actionsString);
-      return actions.filter((item:any) => item.name).map((item:any) => ({
-        ...item,
-        level: 3
-      }))
+      return actions
+        .filter((item: any) => item.name)
+        .map((item: any) => ({
+          ...item,
+          level: 3,
+        }));
       // return actions.reduce((obj: any, action: any) => {
       //
       //   if(action.name){
@@ -55,21 +53,22 @@ export class ListAccessUserCustomerRoleMapper {
       // }, {});
     };
 
-    const menusWithActions = groupByParent(response.menus||[]).map(menu => ({
+    const menusWithActions = groupByParent(response.menus || []).map(menu => ({
       ...menu,
       level: 1,
       actions: processMenuActions(menu.actions),
-      children: menu.children?.map((child: any) => ({
-        ...child,
-        level: 2,
-        children: processMenuActions(child.actions)
-      })) || []
+      children:
+        menu.children?.map((child: any) => ({
+          ...child,
+          level: 2,
+          children: processMenuActions(child.actions),
+        })) || [],
     }));
 
-    return  {
+    return {
       menus: menusWithActions,
-      actions:response.actions || [],
-    }
+      actions: response.actions || [],
+    };
   }
 
   // static fromJson(response: any): UserCustomerRoleAccessResponse {

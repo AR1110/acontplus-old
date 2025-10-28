@@ -1,11 +1,11 @@
-import {Id} from "@shared/value-objects/id.vo";
+import { Id } from '@shared/value-objects/id.vo';
 export class Transportista {
   constructor(
     private readonly id: Id<number>,
     private readonly ruc: string,
     private readonly razonSocial: string,
     private readonly licenciaConducir?: string,
-    private readonly placa?: string
+    private readonly placa?: string,
   ) {
     this.validarTransportista();
   }
@@ -19,11 +19,21 @@ export class Transportista {
     }
   }
 
-  getId(): Id<string> { return this.id; }
-  getRuc(): string { return this.ruc; }
-  getRazonSocial(): string { return this.razonSocial; }
-  getLicenciaConducir(): string | undefined { return this.licenciaConducir; }
-  getPlaca(): string | undefined { return this.placa; }
+  getId(): Id<string> {
+    return this.id;
+  }
+  getRuc(): string {
+    return this.ruc;
+  }
+  getRazonSocial(): string {
+    return this.razonSocial;
+  }
+  getLicenciaConducir(): string | undefined {
+    return this.licenciaConducir;
+  }
+  getPlaca(): string | undefined {
+    return this.placa;
+  }
 
   // Método para serializar a un objeto plano
   toPlainObject(): any {
@@ -32,7 +42,7 @@ export class Transportista {
       ruc: this.ruc,
       razonSocial: this.razonSocial,
       licenciaConducir: this.licenciaConducir,
-      placa: this.placa
+      placa: this.placa,
     };
   }
 
@@ -43,7 +53,7 @@ export class Transportista {
       object.ruc,
       object.razonSocial,
       object.licenciaConducir,
-      object.placa
+      object.placa,
     );
   }
 }

@@ -1,108 +1,95 @@
 <app-mat-custom-dialog
-[containerTemplate]="body"
-[actionsTemplate]="footer"
-title="Anticipo"
-(close)="onModalClose()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  title="Anticipo"
+  (close)="onModalClose()"
 />
 
 <ng-template #body>
-  <form autocomplete="off"  id="dataForm" [formGroup]="dataForm" (ngSubmit)="save()">
+  <form autocomplete="off" id="dataForm" [formGroup]="dataForm" (ngSubmit)="save()">
+    <div class="form-group">
+      <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+      <select
+        name="establecimiento"
+        id="establecimiento"
+        class="form-select form-control-border"
+        formControlName="codEstab"
+      >
+        @for (item of establecimientos(); track $index) {
+          <option [ngValue]="item.codEstab">
+            {{ item.nombreComercial }}
+          </option>
+        }
+      </select>
+    </div>
 
-      <div class="form-group">
-        <label for="establecimiento"
-        >Establecimiento: <span class="text-danger">*</span></label
-        >
-        <select
-          name="establecimiento"
-          id="establecimiento"
-          class="form-select form-control-border"
-          formControlName="codEstab"
-        >
-          @for (item of establecimientos(); track $index) {
-            <option [ngValue]="item.codEstab">
-              {{ item.nombreComercial }}
-            </option>
-          }
-        </select>
-      </div>
+    <div class="form-group">
+      <app-company-customer-search
+        [isSimpleMode]="isSimpleModeCompanyCustomer"
+        (customerSelected)="onCustomerSelected($event)"
+      />
+    </div>
 
-      <div class="form-group">
-        <app-company-customer-search
-          [isSimpleMode]="isSimpleModeCompanyCustomer"
-          (customerSelected)="onCustomerSelected($event)"
-        />
-      </div>
+    <div class="form-group">
+      <label for="entidadFinanciera">Entidad Financiera: <span class="text-danger">*</span></label>
+      <select
+        name="idEntidadFinanciera"
+        id="entidadFinanciera"
+        class="form-select form-control-border"
+        (change)="onChangeEntidadFinanciera()"
+        formControlName="idEntidadFinanciera"
+        required
+      >
+        @for (item of entidadesFinanciera(); track $index) {
+          <option [ngValue]="item.idEntidadFinanciera">
+            {{ item.descripcion }}
+          </option>
+        }
+      </select>
+    </div>
 
-      <div class="form-group">
-        <label for="entidadFinanciera"
-        >Entidad Financiera: <span class="text-danger">*</span></label
-        >
-        <select
-          name="idEntidadFinanciera"
-          id="entidadFinanciera"
-          class="form-select form-control-border"
-          (change)="onChangeEntidadFinanciera()"
-          formControlName="idEntidadFinanciera"
-          required
-        >
-          @for (item of entidadesFinanciera(); track $index) {
-            <option [ngValue]="item.idEntidadFinanciera">
-              {{ item.descripcion }}
-            </option>
-          }
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="idSubEntidadFinanciera">Sub Entidad Financiera</label>
+      <select
+        class="form-select form-control-border"
+        formControlName="idSubEntidadFinanciera"
+        name="idSubEntidadFinanciera"
+        id="idSubEntidadFinanciera"
+        required
+      >
+        @for (item of subEntidadesFinanciera(); track $index) {
+          <option [ngValue]="item.idSubEntidadFinanciera">
+            {{ item.descripcion }}
+          </option>
+        }
+      </select>
+    </div>
 
-      <div class="form-group">
-        <label for="idSubEntidadFinanciera">Sub Entidad Financiera</label>
-        <select
-          class="form-select form-control-border"
-          formControlName="idSubEntidadFinanciera"
-          name="idSubEntidadFinanciera"
-          id="idSubEntidadFinanciera"
-          required
-        >
-          @for (item of subEntidadesFinanciera(); track $index) {
-            <option [ngValue]="item.idSubEntidadFinanciera">
-              {{ item.descripcion }}
-            </option>
-          }
-        </select>
-      </div>
+    <div class="form-group">
+      <label for="valor">Valor <span class="text-danger">*</span></label>
+      <input
+        type="number"
+        id="valor"
+        class="form-control form-control-border"
+        placeholder="0.00"
+        formControlName="valor"
+        name="valor"
+        required
+      />
+    </div>
 
-      <div class="form-group">
-        <label for="valor">Valor <span class="text-danger">*</span></label>
-        <input
-          type="number"
-          id="valor"
-          class="form-control form-control-border"
-          placeholder="0.00"
-          formControlName="valor"
-          name="valor"
-          required
-        />
-      </div>
-
-      <div class="form-group">
-        <label for="observaciones">Observación </label>
-        <textarea
-          name="observaciones"
-          id="observaciones"
-          class="form-control form-control-border"
-          formControlName="observaciones"
-          appToUpperCase
-        ></textarea>
-      </div>
+    <div class="form-group">
+      <label for="observaciones">Observación </label>
+      <textarea
+        name="observaciones"
+        id="observaciones"
+        class="form-control form-control-border"
+        formControlName="observaciones"
+        appToUpperCase
+      ></textarea>
+    </div>
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
-    variant="success"
-    [icon]="iconBtn"
-    [text]="textBtn"
-    type="submit"
-    form="dataForm"
-  />
+  <app-theme-button variant="success" [icon]="iconBtn" [text]="textBtn" type="submit" form="dataForm" />
 </ng-template>
-
-

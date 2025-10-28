@@ -1,29 +1,28 @@
-
-import {DocConfigListResponse} from "@modules/config/domain/models/doc-config.model";
+import { DocConfigListResponse } from '@modules/config/domain/models/doc-config.model';
 
 export class DocConfigListMapper {
-  static toJson(puntoEmisionId:number ){
+  static toJson(puntoEmisionId: number) {
     return JSON.stringify({
       tipo: 1,
-      idPuntoEmision: puntoEmisionId
-    })
+      idPuntoEmision: puntoEmisionId,
+    });
   }
 
-  static fromJson(response: any):DocConfigListResponse{
-    const {docs=[]}=response;
-    const data = docs.map((item:any, index: number)=>{
+  static fromJson(response: any): DocConfigListResponse {
+    const { docs = [] } = response;
+    const data = docs.map((item: any, index: number) => {
       return {
-        index: index+1,
-        "idConfiguracionDocumento": item.idConfiguracionDocumento,
-        "idTipoDocumento": item.idTipoDocumento,
-        "ultimaSecuencia": item.ultimaSecuencia,
+        index: index + 1,
+        idConfiguracionDocumento: item.idConfiguracionDocumento,
+        idTipoDocumento: item.idTipoDocumento,
+        ultimaSecuencia: item.ultimaSecuencia,
         nomDoc: item.descripcion,
-        "estado": item.estado,
-        hasInfoAdicional:  item.infoAdicional,
-      }
-    })
+        estado: item.estado,
+        hasInfoAdicional: item.infoAdicional,
+      };
+    });
     return {
-      data
-    }
+      data,
+    };
   }
 }

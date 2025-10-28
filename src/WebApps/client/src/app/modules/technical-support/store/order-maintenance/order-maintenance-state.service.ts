@@ -7,15 +7,14 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { GenericStoreSignalService } from '@shared/services/generic-store-signal.service';
 import { DecimalSale } from '@sale/domain/models/decimal-sale.model';
 
-
 export interface OrderMaintenanceState {
-  orderDetails: any[]
-  orderMaintenances: OrderMaintenance[]
-  bodegas: GroupedEstabBodega[]
-  feeds: Tarifa[],
-  taxes: Impuesto[],
-  taxPercents: TarifaImpuesto[]
-  decimal: DecimalSale
+  orderDetails: any[];
+  orderMaintenances: OrderMaintenance[];
+  bodegas: GroupedEstabBodega[];
+  feeds: Tarifa[];
+  taxes: Impuesto[];
+  taxPercents: TarifaImpuesto[];
+  decimal: DecimalSale;
 }
 @Injectable()
 export class OrderMaintenanceStateService extends GenericStoreSignalService<OrderMaintenanceState> {

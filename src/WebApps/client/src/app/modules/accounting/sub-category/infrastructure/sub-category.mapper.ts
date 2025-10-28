@@ -1,11 +1,8 @@
 export class SubCategoryMapper {
+  static fromApiGetAll(response: any) {
+    const subcategories = response.subcategories || [];
 
-  static fromApiGetAll(response:any){
-    const  subcategories =response.subcategories || []
-
-
-    return subcategories.map((item:any, index: number)=>{
-
+    return subcategories.map((item: any, index: number) => {
       return {
         index: index + 1,
         id: item.id,
@@ -16,9 +13,8 @@ export class SubCategoryMapper {
         enabled: item.enabled,
         userId: item.userId,
         categoryName: item.categoryName,
-        nomEstado: item.enabled?'Activo': '',
-      }
-    })
+        nomEstado: item.enabled ? 'Activo' : '',
+      };
+    });
   }
-
 }

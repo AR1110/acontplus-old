@@ -63,23 +63,16 @@ export class SendMailDialogComponent implements OnInit {
         return;
       }
 
-      if (!this.emails().every((item) => this.isValidEmail(item))) {
+      if (!this.emails().every(item => this.isValidEmail(item))) {
         this._tS.show({
           type: 'warning',
-          message:
-            'Verifique que los correos del destinatario esten ingresado correctamente',
+          message: 'Verifique que los correos del destinatario esten ingresado correctamente',
         });
         return;
       }
       console.log(this.data);
-      const {
-        codDoc,
-        serieComprobante,
-        subject,
-        codEstado,
-        idDocumento,
-        idDocumentoElectronico,
-      } = this.data.data;
+      const { codDoc, serieComprobante, subject, codEstado, idDocumento, idDocumentoElectronico } =
+        this.data.data;
       const receptor = this.emails().join(SEPARATOR_KEY_CODE.SLASH);
       if (this.data.notificationAcontPlus) {
         let params = {

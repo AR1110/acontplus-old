@@ -1,9 +1,7 @@
 <app-breadcrumb></app-breadcrumb>
 <mat-card>
   <mat-card-content>
-    <div
-      class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
-    >
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
       <div class="col">
         <div class="form-group">
           <label for="estab">Establecimiento:</label>
@@ -23,10 +21,7 @@
       </div>
       <div class="col">
         <div class="form-group">
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-            [inputGroupDateChecked]="true"
-          />
+          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="true" />
         </div>
       </div>
       <div class="col">
@@ -78,12 +73,7 @@
         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
           <div class="form-group">
             <label for="claveAcceso">Clave Acceso:</label>
-            <input
-              class="form-control"
-              id="claveAcceso"
-              name="claveAcceso"
-              type="text"
-            />
+            <input class="form-control" id="claveAcceso" name="claveAcceso" type="text" />
           </div>
         </div>
         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
@@ -121,29 +111,15 @@
     }
     <div class="row">
       <div class="col">
-        <button
-          (click)="openModalAutomaticUpload()"
-          mat-raised-button
-          type="button"
-        >
+        <button (click)="openModalAutomaticUpload()" mat-raised-button type="button">
           <mat-icon>download</mat-icon>
           Importación Automatica
         </button>
-        <button
-          (click)="openModalManualUpload()"
-          mat-raised-button
-          class="m-2"
-          type="button"
-        >
+        <button (click)="openModalManualUpload()" mat-raised-button class="m-2" type="button">
           <mat-icon>mouse</mat-icon>
           Importación Manual
         </button>
-        <button
-          (click)="openModalChangeEstab()"
-          mat-raised-button
-          class="m-2"
-          type="button"
-        >
+        <button (click)="openModalChangeEstab()" mat-raised-button class="m-2" type="button">
           <<mat-icon>upload_file</mat-icon>
           Migrar Comprobantes
         </button>
@@ -211,7 +187,7 @@
             Eliminar
           </button>
         }
-        @if (item.codDoc === "01") {
+        @if (item.codDoc === '01') {
           <button mat-menu-item (click)="getRide(item)">
             <mat-icon>picture_as_pdf</mat-icon>
             Ride
@@ -219,11 +195,7 @@
         }
       </mat-menu>
 
-      <button
-        [matMenuTriggerFor]="menu"
-        aria-label="Open Options"
-        mat-icon-button
-      >
+      <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
         <mat-icon>menu</mat-icon>
       </button>
     </ng-template>

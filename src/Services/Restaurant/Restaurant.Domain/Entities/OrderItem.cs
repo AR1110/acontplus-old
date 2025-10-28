@@ -4,13 +4,13 @@
 public class OrderItem : BaseEntity
 {
     public Guid Uuid { get; set; }
-    public Order Order { get; set; }
+    public required Order Order { get; set; }
     public int OrderId { get; set; }
-    public ItemType ItemType { get; set; }
+    public required ItemType ItemType { get; set; }
     public int ItemTypeId { get; set; }
-    public Item Item { get; set; }
+    public Item? Item { get; set; }
     public int? ItemId { get; set; }
-    public Menu Menu { get; set; }
+    public Menu? Menu { get; set; }
     public int? MenuId { get; set; }
     public int? TaxId { get; set; }
     public int? TaxPercentId { get; set; }
@@ -33,7 +33,7 @@ public class OrderItem : BaseEntity
     [Column(TypeName = "numeric(18,5), not null")]
     public decimal Total { get; set; }
 
-    [MaxLength(500)] public string Obs { get; set; }
+    [MaxLength(500)] public string? Obs { get; set; }
 
     public int FeeId { get; set; }
     public int? BodegaId { get; set; }

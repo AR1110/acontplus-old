@@ -1,9 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class MeasureController(IMeasureService measureService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse>> Get(string json)
+    public async Task<ActionResult<SpResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -17,25 +17,25 @@ public class MeasureController(IMeasureService measureService) : BaseApiControll
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] MeasureDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<MeasureDto>(dto)) }
         };
         var response = await measureService.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateMeasureDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateMeasureDto>(dto)) }
         };
         var response = await measureService.UpdateAsync(parameters);
         return Ok(response);

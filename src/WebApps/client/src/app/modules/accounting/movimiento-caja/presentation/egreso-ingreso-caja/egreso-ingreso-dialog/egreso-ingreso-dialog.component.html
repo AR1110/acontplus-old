@@ -8,109 +8,91 @@
 
 <ng-template #containerTemplate>
   <form autocomplete="off" id="ingresoEgresoForm" [formGroup]="dataForm" (ngSubmit)="save()">
-  <div class="d-grid gap-2">
-    <div
-      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
-    >
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Establecimiento:</mat-label>
-          <mat-select    formControlName="codEstab">
-            @for (item of establecimientos; track $index) {
-              <mat-option [value]="item.codEstab">
-                {{ item.nombreComercial }}
-              </mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Caja:</mat-label>
-          <mat-select   formControlName="idCaja">
-            @for (item of cajas; track $index) {
-              <mat-option [value]="item.idCaja">{{ item.descripcion }}</mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Tipo Documento:</mat-label>
-          <mat-select
-
-            formControlName="idTipoDocumento"
-            (selectionChange)="onChangeTipoDoc()"
-          >
-            @for (item of tiposDocumento; track $index) {
-              <mat-option [value]="item.idTipoDocumento">{{ item.descripcion }}</mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-
-
-    <div
-      class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
-    >
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Entidad Financiera:</mat-label>
-          <mat-select
-            (selectionChange)="onChangeEntidadFinanciera()"
-            formControlName="idEntidadFinanciera"
-          >
-            @for (item of entidadesFinanciera; track $index) {
-            <mat-option [value]="item.idEntidadFinanciera">{{ item.descripcion }}</mat-option>
-
+    <div class="d-grid gap-2">
+      <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento:</mat-label>
+            <mat-select formControlName="codEstab">
+              @for (item of establecimientos; track $index) {
+                <mat-option [value]="item.codEstab">
+                  {{ item.nombreComercial }}
+                </mat-option>
               }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Sub Entidad Financiera</mat-label>
-          <mat-select formControlName="idSubEntidadFinanciera">
-            @for (item of subEntidadesFinanciera; track $index) {
-            <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Caja:</mat-label>
+            <mat-select formControlName="idCaja">
+              @for (item of cajas; track $index) {
+                <mat-option [value]="item.idCaja">{{ item.descripcion }}</mat-option>
               }
-          </mat-select>
-        </mat-form-field>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Documento:</mat-label>
+            <mat-select formControlName="idTipoDocumento" (selectionChange)="onChangeTipoDoc()">
+              @for (item of tiposDocumento; track $index) {
+                <mat-option [value]="item.idTipoDocumento">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-    </div>
 
-    <div
-      class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
-    >
-      <div class="col">
-        <mat-form-field class="w-100">
-          <mat-label>Valor::</mat-label>
-          <input type="number" matInput    formControlName="valor">
-        </mat-form-field>
+      <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Entidad Financiera:</mat-label>
+            <mat-select (selectionChange)="onChangeEntidadFinanciera()" formControlName="idEntidadFinanciera">
+              @for (item of entidadesFinanciera; track $index) {
+                <mat-option [value]="item.idEntidadFinanciera">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Sub Entidad Financiera</mat-label>
+            <mat-select formControlName="idSubEntidadFinanciera">
+              @for (item of subEntidadesFinanciera; track $index) {
+                <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="col">
-        <app-company-customer-search
-        (customerSelected)="onSelectCustomer($event)"
-        (clearSearch)="onEmptyCustomer()"
-        [isSimpleMode]="true"
-        />
-      </div>
-    </div>
 
-    <mat-form-field class="w-100">
-      <mat-label>Observación::</mat-label>
-      <textarea matInput   formControlName="observaciones" appToUpperCase placeholder="..."></textarea>
-    </mat-form-field>
-  </div>
+      <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Valor::</mat-label>
+            <input type="number" matInput formControlName="valor" />
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <app-company-customer-search
+            (customerSelected)="onSelectCustomer($event)"
+            (clearSearch)="onEmptyCustomer()"
+            [isSimpleMode]="true"
+          />
+        </div>
+      </div>
+
+      <mat-form-field class="w-100">
+        <mat-label>Observación::</mat-label>
+        <textarea matInput formControlName="observaciones" appToUpperCase placeholder="..."></textarea>
+      </mat-form-field>
+    </div>
   </form>
 </ng-template>
 
 <ng-template #actionsTemplate>
-  <button type="submit" form="ingresoEgresoForm" mat-flat-button  >
+  <button type="submit" form="ingresoEgresoForm" mat-flat-button>
     <mat-icon>save</mat-icon>
     Guardar
   </button>

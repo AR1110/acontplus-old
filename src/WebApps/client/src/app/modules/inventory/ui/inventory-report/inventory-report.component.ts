@@ -1,42 +1,39 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import {FormControl, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { Brand } from '@inventory/domain/models/brand.model';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
 import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {
-  REPORT_FORMAT,
-  SEPARADORES_REGEX,
-} from '@core/constants/global.constants';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
-import { SharedService } from '@core/services/shared.service';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { formatDateToString } from '@core/utils/date.util';
-import { MatCardModule } from '@angular/material/card';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
+import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { REPORT_FORMAT, SEPARADORES_REGEX } from '@core/constants/global.constants';
+import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { UserRoleStateService } from '@shared/store/user-role-state.service';
+import { NotificacionService } from '@shared/services/notificacion.service';
+import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SharedService } from '@core/services/shared.service';
+import { Brand } from '@inventory/domain/models/brand.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { formatDateToString } from '@core/utils/date.util';
 import { MatInputModule } from '@angular/material/input';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import Swal from 'sweetalert2';
-import { NotificacionService } from '@shared/services/notificacion.service';
-import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
-import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
-import { UserRoleStateService } from '@shared/store/user-role-state.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
 import { NgTemplateOutlet } from '@angular/common';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import Swal from 'sweetalert2';
 
 const imports = [
   FormsModule,
@@ -106,6 +103,7 @@ export class InventoryReportComponent implements OnInit {
     checkboxSubFamiliaFiltro: false,
     checkboxStockFiltro: false,
     byStock: 0,
+    timePicker: false,
     chkUbicacion: false,
     textUbicacion: null as string | null,
     fromDate: formatDateToString(new Date()),
@@ -144,33 +142,32 @@ export class InventoryReportComponent implements OnInit {
 
   private format: REPORT_FORMAT.PDF | REPORT_FORMAT.EXCEL | null = null;
 
-  tiposDoc = signal<any[]>([])
+  tiposDoc = signal<any[]>([]);
   tiposDocSelected = new FormControl([]);
 
   getDatFormReport() {
-    this._productUseCase.getDataReport().subscribe((response) => {
+    this._productUseCase.getDataReport().subscribe(response => {
       const { estabs, subCategorias, marcas } = response;
       this.estabs = estabs;
       this.subCategories = subCategorias;
       this.marcas = marcas;
       this.tarifas = response.tarifas;
       this.taxes.set(response.taxes);
-      this.tiposDoc.set(response.tiposDoc)
-      const dataEstab = this.estabs.find((e) => e.defaultEstab);
+      this.tiposDoc.set(response.tiposDoc);
+      const dataEstab = this.estabs.find(e => e.defaultEstab);
 
       if (dataEstab) {
         this.correoReceptor = dataEstab.correo;
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
         this.bodegas = dataEstab.bodegas;
-        this.dataSearch.idBodega =
-          this.bodegas.find((item) => item.defaultBodega)?.idBodega ?? 0;
+        this.dataSearch.idBodega = this.bodegas.find(item => item.defaultBodega)?.idBodega ?? 0;
       }
     });
   }
 
   ngOnInit() {
     this.getDatFormReport();
-    this.pS.getAction().subscribe((res) => {
+    this.pS.getAction().subscribe(res => {
       this.isReporting = res?.reporte;
       this.isSendingEmail = res?.enviarCorreo;
     });
@@ -199,12 +196,11 @@ export class InventoryReportComponent implements OnInit {
       return;
     }
     const dataEstab = this.estabs.find(
-      (item) => item.idEstablecimiento === this.dataSearch.idEstablecimiento
+      item => item.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     this.bodegas = dataEstab?.bodegas ?? [];
     if (this.bodegas.length > 0) {
-      this.dataSearch.idBodega =
-        this.bodegas.find((item) => item.defaultBodega)?.idBodega ?? 0;
+      this.dataSearch.idBodega = this.bodegas.find(item => item.defaultBodega)?.idBodega ?? 0;
     } else {
       this.dataSearch.idBodega = 0;
     }
@@ -270,11 +266,7 @@ export class InventoryReportComponent implements OnInit {
   private getFilterDate() {
     const fechaHoy = new Date();
     const fecha =
-      fechaHoy.getDate() +
-      '-' +
-      (fechaHoy.getMonth() + 1) +
-      '-' +
-      fechaHoy.getFullYear();
+      fechaHoy.getDate() + '-' + (fechaHoy.getMonth() + 1) + '-' + fechaHoy.getFullYear();
     const hora = fechaHoy.getHours() + ':' + fechaHoy.getMinutes();
     return fecha + ' ' + hora;
   }
@@ -314,10 +306,7 @@ export class InventoryReportComponent implements OnInit {
       }
     }
 
-    if (
-      !this.dataSearch.chkProveedor &&
-      this.dataSearch.checkboxSubFamiliaFiltro
-    ) {
+    if (!this.dataSearch.chkProveedor && this.dataSearch.checkboxSubFamiliaFiltro) {
       if (!this.dataSearch.idSubFamilia) {
         this.tS.show({
           type: 'warning',
@@ -407,7 +396,7 @@ export class InventoryReportComponent implements OnInit {
 
   private getCodEstab() {
     const dataEstab = this.estabs.find(
-      (e) => e.idEstablecimiento === this.dataSearch.idEstablecimiento
+      e => e.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
       return dataEstab.codEstab;
@@ -429,16 +418,21 @@ export class InventoryReportComponent implements OnInit {
       numeroIdentificacion = isValidField(this.dataSearch.numeroIdentificacion);
     }
 
-    const idUsuario = this.dataSearch.checkboxUsuarioFiltro ? isValidField(this.dataSearch.idUsuario) : null;
-    const idArticulo = this.dataSearch.checkboxArticuloFiltro ? isValidField(this.dataSearch.idArticulo) : null;
-    const tiposDocSelected = Array.isArray(this.tiposDocSelected.value) && this.tiposDocSelected.value.join(',');
+    const idUsuario = this.dataSearch.checkboxUsuarioFiltro
+      ? isValidField(this.dataSearch.idUsuario)
+      : null;
+    const idArticulo = this.dataSearch.checkboxArticuloFiltro
+      ? isValidField(this.dataSearch.idArticulo)
+      : null;
+    const tiposDocSelected =
+      Array.isArray(this.tiposDocSelected.value) && this.tiposDocSelected.value.join(',');
 
     return {
       tipo: 4,
       checkBoxFecha: true,
       checkboxPrecioCostoFiltro: this.dataSearch.checkboxPrecioCostoFiltro,
       idUsuario,
-      idArticulo ,
+      idArticulo,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       codEstab: this.getCodEstab(),
@@ -447,6 +441,7 @@ export class InventoryReportComponent implements OnInit {
       numeroIdentificacion,
       userRoleId: this._tokenUseCase.getUserRoleId(),
       tiposDocSelected: tiposDocSelected || null,
+      timePicker: this.dataSearch.timePicker,
     };
   }
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS
@@ -692,16 +687,12 @@ export class InventoryReportComponent implements OnInit {
     }
 
     // Validar formato de cada correo
-    const correosInvalidos = correos.filter(
-      (correo) => !isValidEmail(correo.trim())
-    );
+    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
 
     if (correosInvalidos.length > 0) {
       Swal.fire({
         icon: 'warning',
-        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(
-          ', '
-        )}`,
+        text: `Formato incorrecto en los siguientes correos:\n${correosInvalidos.join(', ')}`,
       });
       return;
     }
@@ -740,7 +731,7 @@ export class InventoryReportComponent implements OnInit {
       receptor: this.correoReceptor,
     };
 
-    this.appNotifiSvc.post(params).subscribe((response) => {
+    this.appNotifiSvc.post(params).subscribe(response => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',

@@ -2,10 +2,10 @@
 
 public interface IRetencionAtsService
 {
-    Task<ApiResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> CancelAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> GetByIdAsync(Dictionary<string, object> parameters);
-    Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> CancelAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters);
+    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

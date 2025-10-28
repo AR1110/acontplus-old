@@ -211,7 +211,7 @@ BEGIN
             ,tarifa                 NUMERIC(15,5)
             ,valorImpuesto          NUMERIC(15,5)
 		    ,precioTotalSinImpuesto NUMERIC(15,5)
-		    ,nota                   VARCHAR(100)
+		    ,nota                   VARCHAR(300)
 		    ,descripcion            VARCHAR(300) 
 		    ,idTipoIva              INT 
             ,llevaInventario        BIT
@@ -479,18 +479,17 @@ BEGIN
 
                         SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
+                        --> Transaccion
+                        INSERT INTO Inventario.Transaccion
+                               (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                        SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idFactura,@customerId,@idUsuario,@idEntidad,@serieComprobante 
+                        FROM @tbComprobante 
+
+                        SET @idTransaccion = SCOPE_IDENTITY()
+
                         --> Bienes
 						IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
 							BEGIN 
-                                --> Transaccion
-                                INSERT INTO Inventario.Transaccion
-                                       (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                                SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idFactura,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                                FROM @tbComprobante 
-
-                                SET @idTransaccion = SCOPE_IDENTITY()
-
-                                -->Detalles
                                 INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
                                        (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
 			                    SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 

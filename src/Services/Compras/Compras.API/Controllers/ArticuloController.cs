@@ -1,13 +1,13 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class ArticuloController(IArticuloService articuloService) : BaseApiController
+public class ArticuloController(IArticuloRepository articuloService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "jsonData", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "jsonData", SqlStringParam.Sanitize(json) }
         };
         return Ok(await articuloService.GetAsync(parameters));
     }

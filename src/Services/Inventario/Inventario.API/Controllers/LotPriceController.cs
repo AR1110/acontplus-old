@@ -1,9 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class LotPriceController(ILotPriceService lotPriceService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<ApiResponse>> Get(string json)
+    public async Task<ActionResult<SpResponse>> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
@@ -16,12 +16,12 @@ public class LotPriceController(ILotPriceService lotPriceService) : BaseApiContr
     }
 
     [HttpPut]
-    public async Task<ActionResult> Put(ApiRequest request)
+    public async Task<ActionResult> Put([FromBody] LotPriceDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<LotPriceDto>(dto)) }
         };
         var response = await lotPriceService.UpdateAsync(parameters);
         if (response == null) return NoContent();

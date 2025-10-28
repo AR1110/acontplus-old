@@ -1,37 +1,31 @@
-﻿using System.IO.Compression;
+using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
-using Newtonsoft.Json;
 using Scrutor;
+using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace Contabilidad.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddAccountingServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
+
+        services.AddJwtAuthentication(configuration);
+
+        services.AddOpenApi();
 
         services.AddHttpContextAccessor();
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddControllers();
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<ContabilidadContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
@@ -39,9 +33,9 @@ public static class ApplicationServicesExtensions
 
         string[] scopedNameSpaces =
         [
-            "Contabilidad.API.Endpoints.Implementations",
-            "Contabilidad.API.Repositories",
-            "Contabilidad.API.Services"
+            "Contabilidad.Infrastructure.Persistence.Repositories",
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions"
         ];
 
         services.Scan(scan => scan
@@ -51,21 +45,6 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithScopedLifetime()
         );
-
-        string[] transientNameSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(transientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
-
         return services;
     }
 }

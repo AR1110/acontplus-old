@@ -4,17 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { formatDate, setDateWithCurrentTime } from '@core/utils/date.util';
 
 @Component({
-    selector: 'app-input-date',
-    imports: [
-        CommonModule,
-        FormsModule
-    ],
-    templateUrl: './input-date.component.html',
-    styles: ``,
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  selector: 'app-input-date',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './input-date.component.html',
+  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InputDateComponent {
-  @Input() value = new Date()
+  @Input() value = new Date();
   @Input() disabled = false;
 
   @Output() valueChange = new EventEmitter<Date>(); // Evento para emitir el nuevo valor al componente padre
@@ -25,9 +22,7 @@ export class InputDateComponent {
 
     const dateObject = setDateWithCurrentTime(formatDate(timeString));
 
-
-
-    console.log(dateObject)
+    console.log(dateObject);
     this.valueChange.emit(dateObject); // Emitir el nuevo valor al componente padre
   }
 }

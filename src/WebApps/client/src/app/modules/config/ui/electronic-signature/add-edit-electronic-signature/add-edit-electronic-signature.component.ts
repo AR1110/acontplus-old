@@ -62,7 +62,6 @@ export class AddEditElectronicSignatureComponent implements OnInit {
     }
   }
 
-
   onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0];
     this.fileSign = file;

@@ -1,2 +1,1 @@
-import { ModelAdapter } from "@shared/models/model-adapter";
-
+import { ModelAdapter } from '@shared/models/model-adapter';

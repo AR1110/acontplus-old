@@ -1,4 +1,4 @@
-﻿namespace Vet.API.Controllers;
+namespace Vet.API.Controllers;
 
 public class StatsController(IStatsService statsService) : BaseApiController
 {

@@ -1,7 +1,5 @@
 export interface VehicleType {
-  vehicleTypeId: number
-  description: string
+  vehicleTypeId: number;
+  description: string;
 }
-export interface VehicleTypeSelectHtmlOnly extends VehicleType {
-
-}
+export interface VehicleTypeSelectHtmlOnly extends VehicleType {}

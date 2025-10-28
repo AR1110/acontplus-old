@@ -1,28 +1,26 @@
-
-
-import { impuestoDetailAdapter } from "@shared/adapters/impuesto-detail.adapter";
-import { NotaEntregaComprobanteApi, NotaEntregaDetailApi } from "./nota-entrega-api.model";
-import { NotaEntregaDetail } from "@sale/domain/models/nota-entrega.model";
-import { formatDateToString } from "@core/utils/date.util";
+import { impuestoDetailAdapter } from '@shared/adapters/impuesto-detail.adapter';
+import { NotaEntregaComprobanteApi, NotaEntregaDetailApi } from './nota-entrega-api.model';
+import { NotaEntregaDetail } from '@sale/domain/models/nota-entrega.model';
+import { formatDateToString } from '@core/utils/date.util';
 interface MainAdapt {
-  comprobante: any
-  details: NotaEntregaDetail[],
-  cuotas: any[],
-  infoAdicionalDoc:any[]
+  comprobante: any;
+  details: NotaEntregaDetail[];
+  cuotas: any[];
+  infoAdicionalDoc: any[];
 }
 
 class NotaEntregaAdapter {
   mainAdapt(input: MainAdapt) {
-    const comprobante = this.comprobanteAdapt(input.comprobante)
+    const comprobante = this.comprobanteAdapt(input.comprobante);
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    const infoAdicionalDoc = input.infoAdicionalDoc.map(item=>{
-      return{
-        nombre : item.name,
-        valor : item.value
-      }
-    })
+    const infoAdicionalDoc = input.infoAdicionalDoc.map(item => {
+      return {
+        nombre: item.name,
+        valor: item.value,
+      };
+    });
 
     return {
       notaEntrega: comprobante,
@@ -30,9 +28,8 @@ class NotaEntregaAdapter {
       impuestos: impuestos,
       infoAdicional: infoAdicionalDoc,
       infoAdicionalArticulo: [],
-      cuotas: input.cuotas
-    }
-
+      cuotas: input.cuotas,
+    };
   }
 
   comprobanteAdapt(obj: any) {
@@ -60,14 +57,14 @@ class NotaEntregaAdapter {
       direccionComprador: obj.direccionComprador,
       email: obj.email,
       telefono: obj.telefono,
-      supportId: obj.supportId
-    }
+      supportId: obj.supportId,
+    };
     return result;
   }
 
   detailAdapt(input: NotaEntregaDetail[]): NotaEntregaDetailApi[] {
     const results = input.map((item, index) => {
-      const cantidadTransaccion = item.quantity * (item.conversion || 1)
+      const cantidadTransaccion = item.quantity * (item.conversion || 1);
       const obj = {
         orderIndex: index + 1,
         idArticulo: item.productId,
@@ -90,13 +87,12 @@ class NotaEntregaAdapter {
         llevaInventario: item.llevaInventario,
         cantidadTransaccion,
         conversion: item.conversion,
-        precioCostoFraccionado: item.costoFraccionado
-      }
+        precioCostoFraccionado: item.costoFraccionado,
+      };
       return obj;
-    })
+    });
     return results;
   }
 }
 
-export const notaEntregaAdapter = new NotaEntregaAdapter()
-
+export const notaEntregaAdapter = new NotaEntregaAdapter();

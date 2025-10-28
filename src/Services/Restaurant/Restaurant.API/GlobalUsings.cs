@@ -1,0 +1,15 @@
+global using Acontplus.Logging;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Context;
+global using Acontplus.Utilities.Data;
+global using Microsoft.AspNetCore.ResponseCompression;
+global using Microsoft.EntityFrameworkCore;
+global using Restaurant.API.Extensions;
+global using Restaurant.Application.DTOs;
+global using Restaurant.Application.Interfaces;
+global using Restaurant.Application.Services;
+global using Restaurant.Domain.Entities;
+global using Restaurant.Domain.Repositories;
+global using Restaurant.Infrastructure.Persistence;

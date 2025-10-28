@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SubEntidadFinancieraUseCase } from '@accounting/sub-entidad-financiera/application/sub-entidad-financiera.use-case';
 import { DialogService } from '@core/services/dialog.service';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'app-sub-entidad-financiera-page',
@@ -48,15 +48,13 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
     { key: 'codigo', label: 'Código', type: 'string' },
     { key: 'descripcion', label: 'Descripción', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   getData() {
-    this._sfUseCase.getAll().subscribe((data) => {
+    this._sfUseCase.getAll().subscribe(data => {
       this.entidadesFinanciera = structuredClone(data.entidadesFinancieras);
 
-      this.cloneSubEntidadesFinanciera = structuredClone(
-        data.subEntidadesFinancieras,
-      );
+      this.cloneSubEntidadesFinanciera = structuredClone(data.subEntidadesFinancieras);
 
       if (this.dataEntidadFinanciera.idEntidadFinanciera > 0) {
         this.showAccordion(this.dataEntidadFinanciera);
@@ -70,13 +68,10 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
     this.subEntidadesFinanciera.data = [];
 
     const subEntidadFiltered = this.cloneSubEntidadesFinanciera.filter(
-      (e) =>
-        e.idEntidadFinanciera === dataEntidadFinanciera.idEntidadFinanciera,
+      e => e.idEntidadFinanciera === dataEntidadFinanciera.idEntidadFinanciera,
     );
 
-    this.subEntidadesFinanciera = new MatTableDataSource(
-      structuredClone(subEntidadFiltered),
-    );
+    this.subEntidadesFinanciera = new MatTableDataSource(structuredClone(subEntidadFiltered));
     this._cdr.detectChanges();
   }
 
@@ -92,15 +87,12 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
 
     params = data ? { ...params, ...data } : params;
 
-    const dialogRef = this._dialogSvc.open(
-      SubEntidadFinancieraDialogComponent,
-      {
-        size: 'md',
-        data: params,
-      },
-    );
+    const dialogRef = this._dialogSvc.open(SubEntidadFinancieraDialogComponent, {
+      size: 'md',
+      data: params,
+    });
 
-    dialogRef.subscribe((result) => {
+    dialogRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.getData();
       }
@@ -116,19 +108,17 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
         confirmButtonText: `Si, eliminar`,
         denyButtonText: `No, cancelar`,
         allowOutsideClick: false,
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this._sfUseCase
-            .delete(data.idSubEntidadFinanciera)
-            .subscribe((value) => {
-              this._tS.show({
-                type: value.code === '1' ? 'success' : 'warning',
-                message: value.message,
-              });
-              if (value.code === '1') {
-                this.getData();
-              }
+          this._sfUseCase.delete(data.idSubEntidadFinanciera).subscribe(value => {
+            this._tS.show({
+              type: value.code === '1' ? 'success' : 'warning',
+              message: value.message,
             });
+            if (value.code === '1') {
+              this.getData();
+            }
+          });
         }
       });
     } catch (error) {

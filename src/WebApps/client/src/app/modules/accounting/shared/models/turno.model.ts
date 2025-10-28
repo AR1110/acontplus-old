@@ -1,4 +1,4 @@
 export interface Turno {
-  idTurno: number
-  descripcion: string
+  idTurno: number;
+  descripcion: string;
 }

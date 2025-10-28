@@ -8,7 +8,5 @@ export class ColumnDefinition extends FieldDefinition {
 
   // optionsAttribut is used in stock-receipt maintenance: StockReceiptItem.Unit has options for StockReceiptItem.Birimi
   optionsAttribut?: string; // name of the attribut that has the options list for dropdown
-  templateOutlet?: any
+  templateOutlet?: any;
 }
-
-

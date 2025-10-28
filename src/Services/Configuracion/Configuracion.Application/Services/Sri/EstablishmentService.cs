@@ -18,29 +18,29 @@ public class EstablishmentService : IEstablishmentService
         return DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Update", parameters);
     }
 
-    public async Task<ApiResponse> PutSriAuth(Dictionary<string, object> parameters)
+    public async Task<SpResponse> PutSriAuth(Dictionary<string, object> parameters)
     {
-        return new ApiResponse { Code = "0", Message = "No disponible" };
+        return new SpResponse { Code = "0", Message = "No disponible" };
 
         //var query = @"UPDATE Sri.Establecimiento SET autoSriAuth = @autoSriAuth WHERE idEstablecimiento = @id";
         //var affectedRows = await _repository.ExecuteNonQueryAsync(query, parameters, false);
-        //if (affectedRows > 0) return new ApiResponse { Code = "1", Message = "Actualizado Exitosamente!" };
+        //if (affectedRows > 0) return new SpResponse { Code = "1", Message = "Actualizado Exitosamente!" };
 
-        //return new ApiResponse { Code = "0", Message = "No se pudo actualizar!" };
+        //return new SpResponse { Code = "0", Message = "No se pudo actualizar!" };
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.SpExecuteAsync<ApiResponse>(nameSchema + "Delete", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Delete", parameters);
     }
 }

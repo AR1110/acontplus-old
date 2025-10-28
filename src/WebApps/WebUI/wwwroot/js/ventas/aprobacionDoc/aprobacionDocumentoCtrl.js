@@ -2552,7 +2552,7 @@
 
                 let { isConfirmed } = await Swal.fire({
                     // title: 'Are you sure?',
-                    html: `<small>Esta Ud. seguro de <b>guardar</b> este Aprobación Documento de: ${docOrigenDesc} -> ${docDestinoDesc} con <b>N° ${$scope.data.serieComprobante}</b></small>?`,
+                    html: `<small>Esta Ud. seguro de <b>guardar</b> este Aprobación Documento de: ${docOrigenDesc} -> ${docDestinoDesc} con <b>N° ${serieComprobante}</b></small>?`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',

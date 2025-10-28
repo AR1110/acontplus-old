@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class UserProfileController(IUserProfileService userProfileService) : BaseApiController
 {
@@ -13,11 +13,11 @@ public class UserProfileController(IUserProfileService userProfileService) : Bas
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UserProfileDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "id", id }, { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "id", id }, { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UserProfileDto>(dto)) }
         };
         var response = await userProfileService.UpdateAsync(parameters);
         if (response == null) return NoContent();

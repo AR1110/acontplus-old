@@ -17,11 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import {
-  MatRow,
-  MatTableDataSource,
-  MatTableModule,
-} from '@angular/material/table';
+import { MatRow, MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Pagination } from '@shared/models/pagination.model';
 
 @Component({
@@ -37,9 +33,7 @@ import { Pagination } from '@shared/models/pagination.model';
   templateUrl: './menu-search-list.component.html',
   styleUrl: './menu-search-list.component.scss',
 })
-export class MenuSearchListComponent
-  implements OnInit , AfterViewInit, OnChanges
-{
+export class MenuSearchListComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() tableData: any[] = [];
 
   @Input() highlightRowIndex!: number;
@@ -47,10 +41,10 @@ export class MenuSearchListComponent
   @Input() isRateLimitReached = false;
   @Input() pagination!: Pagination;
 
-  @Output() handlePageEvent: EventEmitter<PageEvent> =
-    new EventEmitter<PageEvent>();
-  @Output() rowsEmitter: EventEmitter<QueryList<ViewContainerRef>> =
-    new EventEmitter<QueryList<ViewContainerRef>>();
+  @Output() handlePageEvent: EventEmitter<PageEvent> = new EventEmitter<PageEvent>();
+  @Output() rowsEmitter: EventEmitter<QueryList<ViewContainerRef>> = new EventEmitter<
+    QueryList<ViewContainerRef>
+  >();
   @ViewChildren(MatRow, { read: ViewContainerRef })
   rows!: QueryList<ViewContainerRef>;
   @ViewChild(MatSort) sort!: MatSort;
@@ -76,7 +70,7 @@ export class MenuSearchListComponent
   productTarifas: any = [];
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.visibleColumns = this.columns.map((x) => x.columnDef);
+    this.visibleColumns = this.columns.map(x => x.columnDef);
   }
 
   ngAfterViewInit() {
@@ -85,8 +79,8 @@ export class MenuSearchListComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tableData'] && changes['tableData'].currentValue) {
-      this.visibleColumns = this.columns.map((x) => x.columnDef);
+    if (changes['tableData']?.currentValue) {
+      this.visibleColumns = this.columns.map(x => x.columnDef);
       this.pagination.totalRecords = 0;
 
       if (this.tableData.length > 0) {
@@ -108,9 +102,7 @@ export class MenuSearchListComponent
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput
-        .split(',')
-        .map((str) => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
     }
   }
 

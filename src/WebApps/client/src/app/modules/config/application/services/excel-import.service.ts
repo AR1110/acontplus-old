@@ -2,10 +2,9 @@ import * as XLSX from 'xlsx';
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ExcelImportService {
-
   async parseExcelFile(file: File): Promise<any[]> {
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data, { type: 'array', cellDates: true });
@@ -25,7 +24,7 @@ export class ExcelImportService {
       const cleanedRow: any = {};
       columns.forEach(col => {
         let value = row[col];
-        if (["", null, undefined].includes(value)) value = "";
+        if (['', null, undefined].includes(value)) value = '';
         cleanedRow[col] = typeof value === 'string' ? value.trim() : value;
       });
       return cleanedRow;
@@ -39,7 +38,7 @@ export class ExcelImportService {
       }
 
       if (['codigo', 'codigoAuxiliar', 'codigoBarra'].includes(col) && !row[col]) {
-        row[col] = this.generateIdUnique(row['descripcion']);
+        row[col] = this.generateIdUnique(row.descripcion);
       }
     }
 
@@ -62,7 +61,7 @@ export class ExcelImportService {
   }
 
   removeAccents(text = ''): string {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 
   generateIdUnique(text = ''): string {

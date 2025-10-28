@@ -1,0 +1,10 @@
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Persistence.SqlServer.Configurations;
+global using Acontplus.Persistence.SqlServer.Context;
+global using Acontplus.Utilities.Data;
+global using Contabilidad.Domain.Entities;
+global using Contabilidad.Domain.Repositories;
+global using Microsoft.EntityFrameworkCore;
+global using System.Data;

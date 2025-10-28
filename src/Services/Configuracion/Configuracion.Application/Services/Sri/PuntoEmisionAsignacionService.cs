@@ -9,18 +9,18 @@ public class PuntoEmisionAsignacionService(IAdoRepository adoRepository) : IPunt
     }
 
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Config.PtoEmi_Asig_Insert", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Config.PtoEmi_Asig_Insert", parameters);
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Config.PtoEmi_Asig_Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Config.PtoEmi_Asig_Update", parameters);
     }
 
-    public async Task<ApiResponse> DeleteAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>("Contabilidad.Caja_Delete", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Contabilidad.Caja_Delete", parameters);
     }
 }

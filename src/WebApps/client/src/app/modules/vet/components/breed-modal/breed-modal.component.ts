@@ -1,24 +1,18 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-breed-modal',
-  imports: [ReactiveFormsModule,   ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })
@@ -30,11 +24,7 @@ export class BreedModalComponent implements OnInit {
   breedForm = new FormGroup({
     id: new FormControl(0),
     petTypeId: new FormControl(0, [Validators.required]),
-    code: new FormControl('', [
-      Validators.required,
-      Validators.min(1),
-      Validators.maxLength(5),
-    ]),
+    code: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
     name: new FormControl('', [Validators.required, Validators.min(3)]),
     description: new FormControl(''),
     enabled: new FormControl(true),
@@ -45,9 +35,9 @@ export class BreedModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   loadPetTypes() {
-    this.petTypeService.get({}).subscribe((response) => {
+    this.petTypeService.get({}).subscribe(response => {
       if (isApiResponse(response) && response.code == '1') {
-        this.petTypes.set(response.payload as PetType[])
+        this.petTypes.set(response.payload as PetType[]);
       }
     });
   }
@@ -71,7 +61,7 @@ export class BreedModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.breedService.put(this.data.id, dataToSave).subscribe((response) => {
+      this.breedService.put(this.data.id, dataToSave).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -83,7 +73,7 @@ export class BreedModalComponent implements OnInit {
         }
       });
     } else {
-      this.breedService.post(dataToSave).subscribe((response) => {
+      this.breedService.post(dataToSave).subscribe(response => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',

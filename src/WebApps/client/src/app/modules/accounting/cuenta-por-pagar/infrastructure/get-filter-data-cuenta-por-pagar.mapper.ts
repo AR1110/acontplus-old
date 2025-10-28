@@ -1,17 +1,17 @@
-import {ApiResponse} from "@core/models/api-response";
-import {groupEstabUtil} from "@core/utils/group-estab.util";
-import {FilterDataCuentaPorPagarResponse} from "@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model";
+import { ApiResponse } from '@core/models/api-response';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { FilterDataCuentaPorPagarResponse } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
 
 export class GetFilterDataCuentaPorPagarMapper {
-  static toJson(){
+  static toJson() {
     return JSON.stringify({
       tipo: 6,
     });
   }
-  static fromJson(response:ApiResponse){
-    const resultData = new FilterDataCuentaPorPagarResponse()
+  static fromJson(response: ApiResponse) {
+    const resultData = new FilterDataCuentaPorPagarResponse();
 
-    if(response.code==="1"){
+    if (response.code === '1') {
       const [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
         response.payload as string,
       );
@@ -24,9 +24,8 @@ export class GetFilterDataCuentaPorPagarMapper {
       resultData.estadosDoc = tempEstadosDoc;
       resultData.tiposDoc = tempTiposDoc;
       resultData.categorias = tempCategorias;
-
     }
 
-    return resultData
+    return resultData;
   }
 }

@@ -156,6 +156,31 @@
                 });
         };
 
+        service.downloadMultipleXmlsAsZip = function (ids) {
+            const zip = new JSZip();
+            let promises = [];
+
+            ids.forEach(id => {
+                // obtenemos cada archivo
+                const p = mS.getFile("get", `${url}GetXmlSri/${id}`, null, true)
+                    .then((response) => {
+                        let fileName = response.headers()["content-disposition"]
+                            .split(";")[1].split("=")[1].replace(/"/g, "");
+
+                        // añadir archivo al ZIP
+                        zip.file(fileName, response.data, { binary: true });
+                    });
+
+                promises.push(p);
+            });
+
+            // Cuando todas las descargas terminan
+            Promise.all(promises).then(() => {
+                zip.generateAsync({ type: "blob" }).then(function (content) {
+                    FileSaver.saveAs(content, "ArchivosXML.zip");
+                });
+            });
+        };
 
         service.validateNormativeSri = function (params) {
             const {
@@ -199,22 +224,22 @@
                     }
 
 
-                        const [parsedList] = JSON.parse(response.payload);
-                        const parsed = parsedList[0] || null;
+                    const [parsedList] = JSON.parse(response.payload);
+                    const parsed = parsedList[0] || null;
 
-                        // ⚠️ Si no hay datos devueltos, asumimos que todo está OK
-                        if (!parsed) return { code: "1" };
+                    // ⚠️ Si no hay datos devueltos, asumimos que todo está OK
+                    if (!parsed) return { code: "1" };
 
-                        // 🚫 Si el backend devuelve restricción, se muestra alerta
-                        if (parsed.code === "0") {
-                            Swal.fire({
-                                icon: 'warning',
-                                html: parsed.message
-                            });
-                            throw new Error("Operación restringida por normativa SRI.");
-                        }
+                    // 🚫 Si el backend devuelve restricción, se muestra alerta
+                    if (parsed.code === "0") {
+                        Swal.fire({
+                            icon: 'warning',
+                            html: parsed.message
+                        });
+                        throw new Error("Operación restringida por normativa SRI.");
+                    }
 
-                        return parsed; // ✅ Devuelve el objeto si todo fue exitoso
+                    return parsed; // ✅ Devuelve el objeto si todo fue exitoso
 
                 })
         };
@@ -1336,7 +1361,7 @@
                             serieComprobante: item.nroDocumento,
                             codEstado: item.codDoc,
                             codDoc: "04",
-                             identificacionComprador: item.identificacionComprador,
+                            identificacionComprador: item.identificacionComprador,
                         }));
                         return notasCredito;
                     }

@@ -1,4 +1,4 @@
-﻿namespace FactElect.Application.DTOs.RetencionAts;
+namespace FactElect.Application.DTOs.RetencionAts;
 
 public class RetencionAtsRetDto
 {

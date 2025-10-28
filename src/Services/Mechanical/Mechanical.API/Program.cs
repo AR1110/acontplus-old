@@ -1,5 +1,3 @@
-﻿using Common.Services.Middleware;
-using Mechanical.API.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -21,26 +19,23 @@ try
     });
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Add services to the container.
-    builder.Services.AddApplicationServices(builder.Configuration);
-
-    builder.Services.AddIdentityService(builder.Configuration);
-
-    builder.Services.AddOpenApi();
+    builder.Services.AddMechanicalServices(builder.Configuration);
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
+    app.UseSerilogRequestLogging();
 
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseRateLimiter();
+
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseRouting();
 

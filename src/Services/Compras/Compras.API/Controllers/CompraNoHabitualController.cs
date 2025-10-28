@@ -1,6 +1,6 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApiController
+public class CompraNoHabitualController(ICompraNoHabitualRepository _svc) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
@@ -23,17 +23,26 @@ public class CompraNoHabitualController(ICompraNoHabitualService _svc) : BaseApi
     }
 
     [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
+    public async Task<IActionResult> Insert(CompraNoHabitualDto compraNoHabitualDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.AddAsync(request));
+        var parameters = new Dictionary<string, object>
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
+      };
+        return Ok(await _svc.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, CompraNoHabitualDto compraNoHabitualDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _svc.UpdateAsync(id, request));
+        var parameters = new Dictionary<string, object>
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
+      };
+        return Ok(await _svc.UpdateAsync(parameters));
     }
 
 

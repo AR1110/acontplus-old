@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class DocConfigController(IDocConfigService docConfigService) : BaseApiController
 {
@@ -16,14 +16,14 @@ public class DocConfigController(IDocConfigService docConfigService) : BaseApiCo
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreateDocConfigDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateDocConfigDto>(data)) },
+        { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
         return Ok(await docConfigService.AddAsync(parameters));
     }
 }

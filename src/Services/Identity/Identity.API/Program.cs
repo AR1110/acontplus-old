@@ -1,4 +1,7 @@
-﻿using Serilog;
+using Acontplus.Services.Extensions;
+using Acontplus.Services.Extensions.Middleware;
+using Identity.API.Endpoints;
+using Serilog;
 
 Log.Logger = new LoggerConfiguration()
            .WriteTo.Console()
@@ -18,22 +21,13 @@ try
         loggerConfiguration.ReadFrom.Services(services);
     });
 
-
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
-    // Add services to the container.
-    builder.Services.AddApplicationServices(builder.Configuration);
 
-    builder.Services.AddIdentityService(builder.Configuration);
-
-    builder.Services.AddApiVersioningAndDocumentation();
-
-    builder.Services.AddOpenApi();
+    builder.Services.AddIdentityServices(builder.Configuration);
 
     var app = builder.Build();
-
-    app.UseSerilogRequestLogging();
 
     if (app.Environment.IsDevelopment())
     {
@@ -41,11 +35,13 @@ try
         app.MapOpenApi();
     }
 
+    app.UseSerilogRequestLogging();
+
     app.UseResponseCompression();
 
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseRateLimiter();
 
-    app.UseMiddleware<MobileRequestMiddleware>();
+    app.UseApplicationMiddleware(builder.Environment);
 
     app.UseRouting();
 
@@ -55,7 +51,8 @@ try
 
     app.UseAuthorization();
 
-    app.MapControllers();
+    // Map minimal API endpoints
+    app.MapAllIdentityEndpoints();
 
     await app.RunAsync();
 }

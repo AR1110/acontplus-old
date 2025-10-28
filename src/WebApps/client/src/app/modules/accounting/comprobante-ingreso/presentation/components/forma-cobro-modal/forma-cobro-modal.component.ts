@@ -8,10 +8,7 @@ import { BancoSelectComponent } from '@accounting/comprobante-ingreso/presentati
 import { roundNumber } from '@core/utils/round-number.utils';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
-import {
-  PaymentSubType,
-  PaymentType,
-} from '@accounting/shared/models/payment-type.model';
+import { PaymentSubType, PaymentType } from '@accounting/shared/models/payment-type.model';
 import { PaymentData } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
@@ -27,9 +24,7 @@ export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
   const filterValue = value.toLowerCase();
 
-  return opt.filter((item) =>
-    item.descripcion.toLowerCase().includes(filterValue)
-  );
+  return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
 };
 
 @Component({
@@ -116,8 +111,7 @@ export class FormaCobroModalComponent implements OnInit {
 
   loadInitialData() {
     try {
-      const { documentos, entidadesFinanciera, bancos, ciudades } =
-        this.params.dataFormaCobro;
+      const { documentos, entidadesFinanciera, bancos, ciudades } = this.params.dataFormaCobro;
       this.comprobante = this.params.comprobante;
       this.entidadesFinanciera = entidadesFinanciera;
 
@@ -135,12 +129,10 @@ export class FormaCobroModalComponent implements OnInit {
     this.VALOR_ABONO_ORIGINAL = roundNumber(saldo, 3);
     this.loadInitialData();
 
-    this.ciudadesGroupOptions = this.ciudadForm
-      .get('ciudadGroup')!
-      .valueChanges.pipe(
-        startWith(''),
-        map((value) => this._filterGroup(value || ''))
-      );
+    this.ciudadesGroupOptions = this.ciudadForm.get('ciudadGroup')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterGroup(value || '')),
+    );
   }
 
   onSelectionChangeCiudad(id: number) {
@@ -174,8 +166,7 @@ export class FormaCobroModalComponent implements OnInit {
       this.data.valorAbono = this.VALOR_ABONO_ORIGINAL;
       this.data.idBanco = 0;
       this.data.idCiudad = 0;
-      this.data.referencia =
-        codigo === 'CHE' ? this.comprobante.razonSocialComprador : null;
+      this.data.referencia = codigo === 'CHE' ? this.comprobante.razonSocialComprador : null;
       this.data.nro = null;
       this.data.lote = null;
       this.data.aprobacion = null;
@@ -193,8 +184,7 @@ export class FormaCobroModalComponent implements OnInit {
           message: `${descripcion}: No tiene SubEntidad Financiera creada`,
         });
       } else {
-        this.data.idSubEntidadFinanciera =
-          this.subEntidadesFinanciera[0].idSubEntidadFinanciera;
+        this.data.idSubEntidadFinanciera = this.subEntidadesFinanciera[0].idSubEntidadFinanciera;
       }
     } catch (error) {
       console.log(error);
@@ -203,7 +193,7 @@ export class FormaCobroModalComponent implements OnInit {
 
   isValidData() {
     const paymentTypeCode = this.entidadesFinanciera.find(
-      (e) => e.idEntidadFinanciera === this.data.idEntidadFinanciera
+      e => e.idEntidadFinanciera === this.data.idEntidadFinanciera,
     )?.codigo;
     const { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
@@ -335,20 +325,14 @@ export class FormaCobroModalComponent implements OnInit {
   getDataPago(item: any = {}) {
     try {
       const entidadFinanciera = this.entidadesFinanciera.find(
-        (item) => item.idEntidadFinanciera === this.data.idEntidadFinanciera
+        item => item.idEntidadFinanciera === this.data.idEntidadFinanciera,
       );
-      const subEntidadFinanciera =
-        entidadFinanciera?.subEntidadesFinanciera.find(
-          (item: any) =>
-            item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera
-        );
+      const subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find(
+        (item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera,
+      );
 
-      const ciudad = this.ciudades.find(
-        (item) => item.idCiudad === this.data.idCiudad
-      );
-      const banco = this.bancos.find(
-        (item) => item.idBanco === this.data.idBanco
-      );
+      const ciudad = this.ciudades.find(item => item.idCiudad === this.data.idCiudad);
+      const banco = this.bancos.find(item => item.idBanco === this.data.idBanco);
 
       //  let formattedDateTime = formatDateMoment(this.infrastructure.fechaEmision);
 
@@ -367,13 +351,12 @@ export class FormaCobroModalComponent implements OnInit {
         paymentTypeName: entidadFinanciera?.descripcion,
         paymentSubTypeName: subEntidadFinanciera?.descripcion,
 
-        ciudad: ciudad && ciudad.descripcion,
-        banco: banco && banco.descripcion,
+        ciudad: ciudad?.descripcion,
+        banco: banco?.descripcion,
 
         //Data
         idEntidadFinanciera: entidadFinanciera?.idEntidadFinanciera ?? 0,
-        idSubEntidadFinanciera:
-          subEntidadFinanciera?.idSubEntidadFinanciera ?? 0,
+        idSubEntidadFinanciera: subEntidadFinanciera?.idSubEntidadFinanciera ?? 0,
         paymentTypeCode: entidadFinanciera?.codigo ?? '',
         idBanco: this.data.idBanco,
         idCiudad: this.data.idCiudad,
@@ -392,9 +375,7 @@ export class FormaCobroModalComponent implements OnInit {
         controlCaja: subEntidadFinanciera?.controlCaja ?? false,
 
         infoCobro:
-          entidadFinanciera?.codigo === PaymentTypeCode.EFE
-            ? undefined
-            : JSON.stringify(infoCobro),
+          entidadFinanciera?.codigo === PaymentTypeCode.EFE ? undefined : JSON.stringify(infoCobro),
         abonoCuota: 0,
         secuencial: 0,
       };
@@ -417,8 +398,7 @@ export class FormaCobroModalComponent implements OnInit {
     if (
       this.params.multiplesPaymentType.some(
         (d: any) =>
-          d.idTipoDocumento === item.idTipoDocumento &&
-          d.idComprobante === item.idDocumento
+          d.idTipoDocumento === item.idTipoDocumento && d.idComprobante === item.idDocumento,
       )
     ) {
       this.tS.show({
@@ -438,7 +418,7 @@ export class FormaCobroModalComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, abonar',
       cancelButtonText: 'No, cancelar',
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         this.modal.close(this.getDataPago(item));
       }
@@ -448,11 +428,11 @@ export class FormaCobroModalComponent implements OnInit {
   private _filterGroup(value: string): any[] {
     if (value) {
       return this.ciudades
-        .map((group) => ({
+        .map(group => ({
           provincia: group.provincia,
           ciudades: _filter(group.ciudades, value),
         }))
-        .filter((group) => group.ciudades.length > 0);
+        .filter(group => group.ciudades.length > 0);
     }
 
     return this.ciudades;

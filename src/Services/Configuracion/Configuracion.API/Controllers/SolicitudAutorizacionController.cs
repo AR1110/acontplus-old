@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc) : BaseApiController
 {
@@ -13,25 +13,26 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
         return Ok(await _svc.GetAsync(parameters));
     }
 
+
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreateSolicitudAutorizacionDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateSolicitudAutorizacionDto>(dto)) }
         };
         var response = await _svc.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest data)
+    public async Task<IActionResult> Put(UpdateSolicitudAutorizacionDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateSolicitudAutorizacionDto>(dto)) }
         };
         var response = await _svc.UpdateAsync(parameters);
         return Ok(response);
@@ -43,7 +44,7 @@ public class SolicitudAutorizacionController(ISolicitudAutorizacionService _svc)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await _svc.GetAsync(parameters));
     }

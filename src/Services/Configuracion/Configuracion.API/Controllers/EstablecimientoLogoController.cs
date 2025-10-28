@@ -1,8 +1,4 @@
-﻿using Common.Utilities.Format;
-using Common.Utilities.Services;
-using Configuracion.Domain.Repositories;
-
-namespace Configuracion.API.Controllers;
+﻿namespace Configuracion.API.Controllers;
 
 public class EstablecimientoLogoController : BaseApiController
 {
@@ -29,7 +25,7 @@ public class EstablecimientoLogoController : BaseApiController
         var fileModel = await FileModelBuilder.CreateCompressedAsync(file, CompressionUtils.CompressGZip);
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
         estabLogo.EstablecimientoId = establecimientoId;
-        estabLogo.UserId = User.GetUserId();
+        estabLogo.CreatedByUserId = User.GetUserId();
         estabLogo.CreatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.AddAsync(estabLogo);
         if (response == null) return BadRequest($"No response: {establecimientoId}");

@@ -12,10 +12,7 @@ import { isValidField } from '@core/utils/utils';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
-import {
-  LotPrice,
-  LotPriceTarifa,
-} from '@inventory/domain/models/lot-price.model';
+import { LotPrice, LotPriceTarifa } from '@inventory/domain/models/lot-price.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
 import { LotPriceService } from '@inventory/data/services/lot-price.service';
@@ -60,9 +57,10 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     MatDivider,
   ],
   templateUrl: './lot-price-page.component.html',
-  styles: `.mat-mdc-radio-button ~ .mat-mdc-radio-button {
-    margin-left: 16px;
-  }
+  styles: `
+    .mat-mdc-radio-button ~ .mat-mdc-radio-button {
+      margin-left: 16px;
+    }
   `,
 })
 export class LotPricePageComponent implements OnInit {
@@ -114,15 +112,12 @@ export class LotPricePageComponent implements OnInit {
   isProductModified = (data: any, dataProductModified: any): boolean => {
     const isSamePvPProduct =
       data.idArticuloPvP === dataProductModified.idArticuloPvP ||
-      data.idArticuloFraccionadoPvP ===
-        dataProductModified.idArticuloFraccionadoPvP;
+      data.idArticuloFraccionadoPvP === dataProductModified.idArticuloFraccionadoPvP;
 
     const isSameProduct =
-      (data.idArticulo > 0 &&
-        data.idArticulo === dataProductModified.idArticulo) ||
+      (data.idArticulo > 0 && data.idArticulo === dataProductModified.idArticulo) ||
       (data.idArticuloFraccionado > 0 &&
-        dataProductModified.idArticuloFraccionado ===
-          data.idArticuloFraccionado);
+        dataProductModified.idArticuloFraccionado === data.idArticuloFraccionado);
 
     const isSamePvP = data.idTarifa === dataProductModified.idTarifa;
 
@@ -134,9 +129,7 @@ export class LotPricePageComponent implements OnInit {
       if (cell.getValue() != null) {
         const dataRow = cell.getData();
         const dataAdded = this.productsModified.find(
-          (d) =>
-            dataRow.idTarifa === d.idTarifa &&
-            d.idArticuloPvP === dataRow.idArticuloPvP
+          d => dataRow.idTarifa === d.idTarifa && d.idArticuloPvP === dataRow.idArticuloPvP,
         );
 
         if (dataAdded) {
@@ -150,7 +143,7 @@ export class LotPricePageComponent implements OnInit {
 
   editCheck = (cell: any) => {
     const data = cell.getRow().getData();
-    return this.productsModified.some((d) => {
+    return this.productsModified.some(d => {
       return this.isProductModified(data, d);
     });
   };
@@ -162,10 +155,7 @@ export class LotPricePageComponent implements OnInit {
       headerSort: false, // Disable sorting on this column
       headerClick: (e: any) => {
         const targetElement = e.target;
-        if (
-          targetElement.tagName === 'INPUT' &&
-          targetElement.type === 'checkbox'
-        ) {
+        if (targetElement.tagName === 'INPUT' && targetElement.type === 'checkbox') {
           if (!targetElement.checked) {
             this.tabulatorComponent.refTabulator.deselectRow();
             return;
@@ -179,11 +169,7 @@ export class LotPricePageComponent implements OnInit {
                 const data = childRows[j].getData();
 
                 if (!childRows[j].isSelected()) {
-                  if (
-                    this.productsModified.some((d) =>
-                      this.isProductModified(data, d)
-                    )
-                  ) {
+                  if (this.productsModified.some(d => this.isProductModified(data, d))) {
                     childRows[j].toggleSelect();
                   }
                 }
@@ -310,13 +296,13 @@ export class LotPricePageComponent implements OnInit {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    this.lotPriceSvc.getDataFilter().subscribe((response) => {
+    this.lotPriceSvc.getDataFilter().subscribe(response => {
       this.tarifas = response.tarifas;
       this.taxRates = response.tarifasImpuesto;
       this.decimal = response.decimal;
       this.subCategorias = response.subFamilias;
 
-      const dataTarifa = this.tarifas.find((i) => i.predeterminada);
+      const dataTarifa = this.tarifas.find(i => i.predeterminada);
       if (dataTarifa) {
         this.addTarifaDefault(dataTarifa.idTarifa);
       }
@@ -326,25 +312,14 @@ export class LotPricePageComponent implements OnInit {
   getProducts() {
     try {
       const subCategoriasChecked =
-        Array.isArray(this.checkedSubCategorias.value) &&
-        this.checkedSubCategorias.value.join(',');
+        Array.isArray(this.checkedSubCategorias.value) && this.checkedSubCategorias.value.join(',');
       const dataSearch = {
         tipo: this.mainForm.tipo,
         opcion: this.mainForm.opcion,
-        idArticulo:
-          this.mainForm.opcion === 1
-            ? isValidField(this.mainForm.idArticulo)
-            : null,
-        rucProveedor:
-          this.mainForm.opcion === 4
-            ? isValidField(this.mainForm.rucProveedor)
-            : null,
-        nroDocumento:
-          this.mainForm.opcion === 5
-            ? isValidField(this.mainForm.nroDocumento)
-            : null,
-        subFamiliasChecked:
-          (this.mainForm.opcion === 3 && subCategoriasChecked) || null,
+        idArticulo: this.mainForm.opcion === 1 ? isValidField(this.mainForm.idArticulo) : null,
+        rucProveedor: this.mainForm.opcion === 4 ? isValidField(this.mainForm.rucProveedor) : null,
+        nroDocumento: this.mainForm.opcion === 5 ? isValidField(this.mainForm.nroDocumento) : null,
+        subFamiliasChecked: (this.mainForm.opcion === 3 && subCategoriasChecked) || null,
         //  checkedSubFamilias: this.
         // idSubFamilia: $scope.mainForm.idSubFamilia
       };
@@ -352,7 +327,7 @@ export class LotPricePageComponent implements OnInit {
       this.nestedProducts.set([]);
       this.productsModified = [];
 
-      this.lotPriceSvc.getAll(dataSearch).subscribe((response) => {
+      this.lotPriceSvc.getAll(dataSearch).subscribe(response => {
         const results = structuredClone(response);
         this.nestedProducts.set(results);
         this.cloneNestedProducts = structuredClone(results);
@@ -388,7 +363,7 @@ export class LotPricePageComponent implements OnInit {
     let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
 
     const dataTarifaImpuesto = this.taxRates.find(
-      (tr) => tr.idTarifaImpuesto === parentData.idTipoIva
+      tr => tr.idTarifaImpuesto === parentData.idTipoIva,
     );
     const porcentajeImpuesto = dataTarifaImpuesto?.porcentaje || 0;
 
@@ -404,32 +379,24 @@ export class LotPricePageComponent implements OnInit {
 
     if (column === 'precioVenta') {
       if (value >= precioCosto) {
-        precioConIva = pricingCalculateUtil.calculatePriceWithVat(
-          value,
-          porcentajeImpuesto
+        precioConIva = pricingCalculateUtil.calculatePriceWithVat(value, porcentajeImpuesto);
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+          precioVenta,
+          precioCosto,
         );
-        porcentajeUtilidad =
-          pricingCalculateUtil.calculateProfitMarginPercentage(
-            precioVenta,
-            precioCosto
-          );
       } else {
         precioVenta = oldValue;
       }
     }
 
     if (column === 'precioConIva') {
-      const precioVentaValidar = pricingCalculateUtil.calculatePriceSale(
-        value,
-        porcentajeImpuesto
-      );
+      const precioVentaValidar = pricingCalculateUtil.calculatePriceSale(value, porcentajeImpuesto);
       if (precioVentaValidar >= precioCosto) {
         precioVenta = precioVentaValidar;
-        porcentajeUtilidad =
-          pricingCalculateUtil.calculateProfitMarginPercentage(
-            precioVenta,
-            precioCosto
-          );
+        porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+          precioVenta,
+          precioCosto,
+        );
       } else {
         precioConIva = oldValue;
       }
@@ -437,16 +404,15 @@ export class LotPricePageComponent implements OnInit {
 
     if (column === 'porcentajeUtilidad') {
       if (value <= 100) {
-        const precioVentaValidar =
-          pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
-            precioCosto,
-            value
-          );
+        const precioVentaValidar = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
+          precioCosto,
+          value,
+        );
         if (precioVentaValidar >= precioCosto) {
           precioVenta = precioVentaValidar;
           precioConIva = pricingCalculateUtil.calculatePriceWithVat(
             precioVenta,
-            porcentajeImpuesto
+            porcentajeImpuesto,
           );
         } else {
           porcentajeUtilidad = oldValue;
@@ -456,10 +422,7 @@ export class LotPricePageComponent implements OnInit {
       }
     }
 
-    let utilidad = pricingCalculateUtil.getValueUtility(
-      precioVenta,
-      precioCosto
-    );
+    let utilidad = pricingCalculateUtil.getValueUtility(precioVenta, precioCosto);
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
     precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
@@ -476,9 +439,7 @@ export class LotPricePageComponent implements OnInit {
       ...row,
       ...obj,
     });
-    let dataProductModified = this.productsModified.find((pm) =>
-      this.isProductModified(data, pm)
-    );
+    let dataProductModified = this.productsModified.find(pm => this.isProductModified(data, pm));
     if (dataProductModified) {
       dataProductModified = {
         ...dataProductModified,
@@ -489,7 +450,7 @@ export class LotPricePageComponent implements OnInit {
 
   cellClick(cell: any) {
     const data = cell.getData();
-    const isRowAdded = this.productsModified.some((d) => {
+    const isRowAdded = this.productsModified.some(d => {
       return this.isProductModified(data, d);
     });
     if (isRowAdded) {
@@ -558,10 +519,7 @@ export class LotPricePageComponent implements OnInit {
       return;
     }
 
-    if (
-      this.mainForm.opcion === 4 &&
-      !isValidField(this.mainForm.rucProveedor)
-    ) {
+    if (this.mainForm.opcion === 4 && !isValidField(this.mainForm.rucProveedor)) {
       Swal.fire({
         icon: 'warning',
         text: 'Seleccione el proveedor',
@@ -569,10 +527,7 @@ export class LotPricePageComponent implements OnInit {
       return;
     }
 
-    if (
-      this.mainForm.opcion === 5 &&
-      !isValidField(this.mainForm.nroDocumento)
-    ) {
+    if (this.mainForm.opcion === 5 && !isValidField(this.mainForm.nroDocumento)) {
       Swal.fire({
         icon: 'warning',
         text: 'Ingrese el número de documento',
@@ -618,11 +573,7 @@ export class LotPricePageComponent implements OnInit {
         return;
       }
 
-      if (
-        tarifasSelected &&
-        Array.isArray(tarifasSelected) &&
-        tarifasSelected.length === 0
-      ) {
+      if (tarifasSelected && Array.isArray(tarifasSelected) && tarifasSelected.length === 0) {
         Swal.fire({
           icon: 'warning',
           text: 'Seleccione al menos una tarifa',
@@ -688,11 +639,7 @@ export class LotPricePageComponent implements OnInit {
       return;
     }
 
-    if (
-      tarifasSelected &&
-      Array.isArray(tarifasSelected) &&
-      tarifasSelected.length === 0
-    ) {
+    if (tarifasSelected && Array.isArray(tarifasSelected) && tarifasSelected.length === 0) {
       Swal.fire({
         icon: 'warning',
         text: 'Seleccione al menos una tarifa',
@@ -710,9 +657,7 @@ export class LotPricePageComponent implements OnInit {
     const nestedProducts = structuredClone(this.cloneNestedProducts);
 
     for (const item of nestedProducts) {
-      const dataTarifaImpuesto = this.taxRates.find(
-        (tr) => tr.idTarifaImpuesto === item.idTipoIva
-      );
+      const dataTarifaImpuesto = this.taxRates.find(tr => tr.idTarifaImpuesto === item.idTipoIva);
 
       //si no se encontró el impuesto o si la tarifa es vacia continuar con el siguiente items;
       if (!dataTarifaImpuesto || item._children.length === 0) continue;
@@ -735,39 +680,34 @@ export class LotPricePageComponent implements OnInit {
             // Sart Sumar un valor a la tarifa ya sea PRECIO VENTA O PRECIO CON IVA
             if (this.mainForm.optionToCalculate === OptionsCalculateEnum.A) {
               if (this.optionPvp === 'precioVenta') {
-                const precioVentaSumado =
-                  precioVenta + this.mainForm.valueToCalculate;
+                const precioVentaSumado = precioVenta + this.mainForm.valueToCalculate;
                 if (precioVentaSumado >= item.precioCosto) {
                   precioVenta = precioVentaSumado;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto
+                    porcentajeImpuesto,
                   );
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
 
               if (this.optionPvp === 'precioConIva') {
-                const precioConIvaSumado =
-                  precioConIva + this.mainForm.valueToCalculate;
-                const precioVentaCalculado =
-                  pricingCalculateUtil.calculatePriceSale(
-                    precioConIvaSumado,
-                    porcentajeImpuesto
-                  );
+                const precioConIvaSumado = precioConIva + this.mainForm.valueToCalculate;
+                const precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(
+                  precioConIvaSumado,
+                  porcentajeImpuesto,
+                );
                 if (precioVentaCalculado >= item.precioCosto) {
                   precioConIva = precioConIvaSumado;
                   precioVenta = precioVentaCalculado;
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
@@ -779,42 +719,38 @@ export class LotPricePageComponent implements OnInit {
               if (this.optionPvp === 'precioVenta') {
                 const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   t.precioVenta,
-                  this.mainForm.valueToCalculate
+                  this.mainForm.valueToCalculate,
                 );
                 const precioVentaConImpuestos = t.precioVenta + valorImpuesto;
                 if (precioVentaConImpuestos >= item.precioCosto) {
                   precioVenta = precioVentaConImpuestos;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto
+                    porcentajeImpuesto,
                   );
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
               if (this.optionPvp === 'precioConIva') {
-                const valorPrecioConIva =
-                  pricingCalculateUtil.calculatePriceWithVat(
-                    t.precioConIva,
-                    this.mainForm.valueToCalculate
-                  );
-                const precioVentaCalculado =
-                  pricingCalculateUtil.calculatePriceSale(
-                    valorPrecioConIva,
-                    porcentajeImpuesto
-                  );
+                const valorPrecioConIva = pricingCalculateUtil.calculatePriceWithVat(
+                  t.precioConIva,
+                  this.mainForm.valueToCalculate,
+                );
+                const precioVentaCalculado = pricingCalculateUtil.calculatePriceSale(
+                  valorPrecioConIva,
+                  porcentajeImpuesto,
+                );
                 if (precioVentaCalculado >= item.precioCosto) {
                   precioConIva = valorPrecioConIva;
                   precioVenta = precioVentaCalculado;
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
@@ -830,13 +766,12 @@ export class LotPricePageComponent implements OnInit {
                 precioVenta = this.mainForm.valueToCalculate;
                 precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                   precioVenta,
-                  porcentajeImpuesto
+                  porcentajeImpuesto,
                 );
-                porcentajeUtilidad =
-                  pricingCalculateUtil.calculateProfitMarginPercentage(
-                    precioVenta,
-                    item.precioCosto
-                  );
+                porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                  precioVenta,
+                  item.precioCosto,
+                );
                 setDataToProductsModified = true;
               }
 
@@ -844,14 +779,13 @@ export class LotPricePageComponent implements OnInit {
                 precioConIva = this.mainForm.valueToCalculate;
                 precioVenta = pricingCalculateUtil.calculatePriceSale(
                   precioConIva,
-                  porcentajeImpuesto
+                  porcentajeImpuesto,
                 );
                 if (precioVenta >= item.precioCosto) {
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 } else {
                   precioConIva = t.precioConIva;
@@ -866,7 +800,7 @@ export class LotPricePageComponent implements OnInit {
               if (this.optionPvp === 'precioCosto') {
                 const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   item.precioCosto,
-                  this.mainForm.valueToCalculate
+                  this.mainForm.valueToCalculate,
                 );
                 const precioVentaValidar = item.precioCosto + valorImpuesto;
                 // let precioVentaValidar = pricingCalculateUtil.calculatePriceSale(precioConImpuestos, porcentajeImpuesto);
@@ -875,36 +809,33 @@ export class LotPricePageComponent implements OnInit {
                   precioVenta = precioVentaValidar;
                   precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                     precioVenta,
-                    porcentajeImpuesto
+                    porcentajeImpuesto,
                   );
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
               if (this.optionPvp === 'precioVenta') {
                 const valorImpuesto = pricingCalculateUtil.calculateTaxValue(
                   precioVenta,
-                  this.mainForm.valueToCalculate
+                  this.mainForm.valueToCalculate,
                 );
                 const precioConImpuestos = precioVenta + valorImpuesto;
-                const precioVentaValidar =
-                  pricingCalculateUtil.calculatePriceSale(
-                    precioConImpuestos,
-                    porcentajeImpuesto
-                  );
+                const precioVentaValidar = pricingCalculateUtil.calculatePriceSale(
+                  precioConImpuestos,
+                  porcentajeImpuesto,
+                );
 
                 if (precioVentaValidar >= item.precioCosto) {
                   precioVenta = precioVentaValidar;
                   precioConIva = precioConImpuestos;
-                  porcentajeUtilidad =
-                    pricingCalculateUtil.calculateProfitMarginPercentage(
-                      precioVenta,
-                      item.precioCosto
-                    );
+                  porcentajeUtilidad = pricingCalculateUtil.calculateProfitMarginPercentage(
+                    precioVenta,
+                    item.precioCosto,
+                  );
                   setDataToProductsModified = true;
                 }
               }
@@ -912,10 +843,7 @@ export class LotPricePageComponent implements OnInit {
           }
         }
 
-        utilidad = pricingCalculateUtil.getValueUtility(
-          precioVenta,
-          item.precioCosto
-        );
+        utilidad = pricingCalculateUtil.getValueUtility(precioVenta, item.precioCosto);
 
         t.precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
         t.precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);
@@ -943,9 +871,7 @@ export class LotPricePageComponent implements OnInit {
     }
   }
 
-  setProductsModified<T extends LotPriceTarifa & { idTipoIva: number }>(
-    data: T
-  ) {
+  setProductsModified<T extends LotPriceTarifa & { idTipoIva: number }>(data: T) {
     this.productsModified.push(data);
   }
 
@@ -956,8 +882,8 @@ export class LotPricePageComponent implements OnInit {
 
   getSelectedData() {
     const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
-    return this.productsModified.filter((data) => {
-      return selectedData.some((rowSelect) => {
+    return this.productsModified.filter(data => {
+      return selectedData.some(rowSelect => {
         return this.isProductModified(data, rowSelect);
       });
     });
@@ -990,9 +916,9 @@ export class LotPricePageComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí!',
       cancelButtonText: 'No!',
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
-        const results = selectedData.map((item) => {
+        const results = selectedData.map(item => {
           return {
             idTipoIva: item.idTipoIva,
             idArticuloPvP: item.idArticuloPvP,
@@ -1011,7 +937,7 @@ export class LotPricePageComponent implements OnInit {
           articles: results,
         };
 
-        this.lotPriceSvc.put(data).subscribe((response) => {
+        this.lotPriceSvc.put(data).subscribe(response => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

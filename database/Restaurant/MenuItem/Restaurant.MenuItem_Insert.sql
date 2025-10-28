@@ -1,6 +1,6 @@
-USE Acontplus
+USE [Acontplus]
 GO
--- ================================================
+/****** Object:  StoredProcedure [Restaurant].[MenuItem_Insert]    Script Date: 6/10/2025 17:04:07 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -10,7 +10,7 @@ GO
 -- Create date: 2023-13-10
 -- Description: sp for update restaurant menus
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.MenuItem_Insert
+CREATE OR ALTER   PROCEDURE [Restaurant].[MenuItem_Insert]
 @userRoleId INT
 ,@id        INT
 ,@menuItem  NVARCHAR(MAX)
@@ -75,7 +75,12 @@ BEGIN
             , NULL
             ,@userId
     FROM #MenuItem mi
-    WHERE mi.itemId NOT IN (SELECT ISNULL(rmi.ItemId, 0) FROM Restaurant.MenuItem rmi WHERE rmi.MenuId = @id)
+    WHERE mi.ItemId NOT IN (
+       SELECT ISNULL(rmi.ItemId,0)
+       FROM Restaurant.MenuItem rmi
+       WHERE rmi.MenuId=@id AND ISNULL(rmi.Deleted,0)=0
+    )
+
 
     --- VERIFY EXISTS ---
     SELECT rmi.* INTO #MenuItemExits
@@ -114,36 +119,34 @@ BEGIN
         END
 
         ---- UPDATE -----
-        SELECT @productId       = ProductId
-               ,@totalPrecio    = SUM(mi.Subtotal) 
-        FROM Restaurant.MenuItem mi
-        INNER JOIN Restaurant.Menu m on m.Id = mi.MenuId       
-        WHERE m.Id = @id
-        AND ISNULL(mi.Deleted, 0) != 1
-        GROUP BY m.ProductId
+        --SELECT @productId       = ProductId
+        --       ,@totalPrecio    = SUM(mi.Subtotal) 
+        --FROM Restaurant.MenuItem mi
+        --INNER JOIN Restaurant.Menu m on m.Id = mi.MenuId       
+        --WHERE m.Id = @id
+        --AND ISNULL(mi.Deleted, 0) != 1
+        --GROUP BY m.ProductId
           
-        SELECT @porcentaje      = ISNULL(ti.porcentaje, 0)
-                , @precioCosto  = ISNULL(precioCosto, 0)               
-        FROM Inventario.v_Articulo ti 
-        WHERE idArticulo = @productId
+        --SELECT @porcentaje      = ISNULL(ti.porcentaje, 0)
+        --        , @precioCosto  = ISNULL(precioCosto, 0)               
+        --FROM Inventario.v_Articulo ti 
+        --WHERE idArticulo = @productId
 
-        DECLARE @totalIva NUMERIC(18,5)
-                ,@precioVenta NUMERIC(18,5)
-                ,@precioConIva NUMERIC(18,5)
-                ,@porcentajeUtilidad NUMERIC(18,5)
+        --DECLARE @totalIva NUMERIC(18,5)
+        --        ,@precioVenta NUMERIC(18,5)
+        --        ,@precioConIva NUMERIC(18,5)
+        --        ,@porcentajeUtilidad NUMERIC(18,5)
 
-        SET @totalIva = (@porcentaje / 100) + 1;
-        SET @precioVenta = @totalPrecio / @totalIva;
-        SET @precioConIva = @totalPrecio;
-        SET @porcentajeUtilidad = ((@precioVenta / @precioCosto) * 100) - 1;
+        --SET @totalIva = (@porcentaje / 100) + 1;
+        --SET @precioVenta = @totalPrecio / @totalIva;
+        --SET @precioConIva = @totalPrecio;
+        --SET @porcentajeUtilidad = ((@precioVenta / @precioCosto) * 100) - 1;
                
-        UPDATE ap 
-        SET ap.PrecioVenta          = @precioVenta
-            ,ap.precioConIva        = @precioConIva
-            ,ap.porcentajeUtilidad  = @porcentajeUtilidad
-        FROM ArticuloPvP ap 
-        WHERE ap.idArticulo = @productId 
-        AND ap.precioPredeterminado = 1
+        --UPDATE ap 
+        --SET ap.PrecioVenta          = @precioVenta
+        --    ,ap.precioConIva        = @precioConIva
+        --    ,ap.porcentajeUtilidad  = @porcentajeUtilidad
+        --FROM ArticuloPvP ap 
+        --WHERE ap.idArticulo = @productId 
+        --AND ap.precioPredeterminado = 1
 END
-GO
-

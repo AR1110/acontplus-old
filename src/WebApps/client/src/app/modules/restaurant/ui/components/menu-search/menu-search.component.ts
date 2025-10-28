@@ -1,5 +1,3 @@
-import { OverlayModule } from '@angular/cdk/overlay';
-import { CommonModule } from '@angular/common';
 import {
   Component,
   HostListener,
@@ -10,23 +8,21 @@ import {
   ViewContainerRef,
   OnInit,
   OnDestroy,
+  signal,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { PageEvent } from '@angular/material/paginator';
-import { isValidField } from '@core/utils/utils';
+import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.component';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { Pagination } from '@shared/models/pagination.model';
-import { map, Subject } from 'rxjs';
-import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.component';
+import { PageEvent } from '@angular/material/paginator';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { ReactiveFormsModule } from '@angular/forms';
+import { isValidField } from '@core/utils/utils';
+import { CommonModule } from '@angular/common';
+import { finalize, map, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-menu-search',
-  imports: [
-    CommonModule,
-    OverlayModule,
-    ReactiveFormsModule,
-    MenuSearchListComponent,
-  ],
+  imports: [CommonModule, OverlayModule, ReactiveFormsModule, MenuSearchListComponent],
   templateUrl: './menu-search.component.html',
   styleUrl: './menu-search.component.scss',
 })
@@ -47,7 +43,7 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
 
   pagination = new Pagination();
 
-  isLoadingResults = false;
+  isLoadingResults = signal(false);
   isRateLimitReached = false;
 
   menuSvc = inject(MenuService);
@@ -90,31 +86,32 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
 
     this.highlightRowIndex = -1;
     this.productTarifas = [];
-    this.isLoadingResults = true;
+    this.isLoadingResults.set(true);
 
     this.menuSvc
       .search(params)
       .pipe(
-        map((response) => {
-          this.isLoadingResults = false;
+        finalize(() => {
+          this.isLoadingResults.set(false);
+        }),
+        map(response => {
           this.isRateLimitReached = response.menus.length === 0;
 
           if (this.isRateLimitReached) {
             return [];
           }
           return response.menus;
-        })
+        }),
       )
 
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.openOverlay();
           const results = structuredClone(response);
           this.dataSource = results;
           console.log(this.dataSource);
         },
-        error: (err) => {
-          this.isLoadingResults = false;
+        error: err => {
           console.log(err);
         },
       });
@@ -198,10 +195,7 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
   onArrowDown(event: KeyboardEvent): void {
     event.preventDefault();
 
-    if (
-      this.overlayHasFocus &&
-      this.highlightRowIndex < this.dataSource.length - 1
-    ) {
+    if (this.overlayHasFocus && this.highlightRowIndex < this.dataSource.length - 1) {
       this.highlightRowIndex += 1;
 
       this.onHighlightedRowChange(event);

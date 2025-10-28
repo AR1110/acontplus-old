@@ -9,7 +9,7 @@ export const enum ACCOUNTING_PATHS {
   CUENTA_POR_COBRAR = 'CuentaPorCobrar/',
   CATEGORY = 'Category/',
   SUBCATEGORY = 'Subcategory/',
-  ACCOUNTING_MOVEMENT='AccountingMovement/',
+  ACCOUNTING_MOVEMENT = 'AccountingMovement/',
   COMPROBANTE_EGRESO = 'ComprobanteEgreso/',
 }
 
@@ -20,8 +20,6 @@ export const enum PaymentTypeCode {
   CHE = 'CHE',
   DOC = 'DOC',
 }
-
-
 
 /**
  * Accounting Report Codes used to identify different types of accounting reports in the system.
@@ -49,5 +47,5 @@ export const enum ACCOUNTING_CODE_REPORT {
   ACELC = 'ACELC',
 
   /** Detalles de formas de pago **/
-  ACEDFP='ACEDFP',
+  ACEDFP = 'ACEDFP',
 }

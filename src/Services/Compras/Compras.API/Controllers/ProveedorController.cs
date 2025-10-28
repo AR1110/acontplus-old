@@ -1,7 +1,9 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class ProveedorController(IProveedorService _proveedorService) : BaseApiController
+public class ProveedorController(IProveedorRepository _proveedorService) : BaseApiController
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
@@ -14,24 +16,36 @@ public class ProveedorController(IProveedorService _proveedorService) : BaseApiC
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    public async Task<IActionResult> Post(ProveedorDto proveedorDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _proveedorService.AddAsync(request));
+        var parameters = new Dictionary<string, object>
+      {
+        { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
+      };
+        return Ok(await _proveedorService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, ProveedorDto proveedorDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        return Ok(await _proveedorService.UpdateAsync(id, request));
+        var parameters = new Dictionary<string, object>
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
+    };
+        return Ok(await _proveedorService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id }
+    };
         return Ok(await _proveedorService.DeleteAsync(parameters));
     }
 }

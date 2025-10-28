@@ -1,40 +1,45 @@
-﻿using System.IO.Compression;
-using Common.FactElect.Services.External;
+using Acontplus.FactElect.Interfaces.Services;
+using Acontplus.FactElect.Services.Conversion;
+using Acontplus.FactElect.Services.Documents;
+using Acontplus.FactElect.Services.External;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Utilities.Time;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace Compras.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddComprasServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddJwtAuthentication(configuration);
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddOpenApi();
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddHttpContextAccessor();
+
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
+
         services.AddDbContextPool<ComprasContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         string[] scopedNameSpaces =
         [
-            "Compras.API.Services"
+            "Compras.Application.Services",
+            "Compras.Infrastructure.Persistence.Repositories",
+            "Acontplus.Persistence.SqlServer.Repositories"
         ];
 
         services.Scan(scan => scan
@@ -43,19 +48,6 @@ public static class ApplicationServicesExtensions
             .UsingRegistrationStrategy(RegistrationStrategy.Skip)
             .AsImplementedInterfaces()
             .WithScopedLifetime()
-        );
-
-        string[] trascientNameSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(trascientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
         );
 
         services.AddTransient<IWebServiceSri, WebServiceSri>();

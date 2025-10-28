@@ -1,38 +1,58 @@
-﻿using System.IO.Compression;
-using Microsoft.AspNetCore.ResponseCompression;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Acontplus.Services.Extensions;
 
 namespace Identity.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddIdentityServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
+
+        services.AddJwtAuthentication(configuration);
+
+        services.AddOpenApi();
+
+        services.AddHttpContextAccessor();
+
+        services.AddApiVersioningAndDocumentation();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddDbContextPool<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddResponseCompression(options =>
+        // Add ASP.NET Core Identity
+        services.AddIdentity<AppUser, AppRole>(options =>
         {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+            // Password settings
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequiredUniqueChars = 4;
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+            // Lockout settings
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+            // User settings
+            options.User.RequireUniqueEmail = true;
+            options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+            // SignIn settings
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
 
         services.AddHostedService<TokenCleanupAndArchivalService>();
         services.AddScoped<IAccountService, AccountService>();
@@ -41,6 +61,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ILoginHistoryService, LoginHistoryService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         return services;
     }

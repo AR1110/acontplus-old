@@ -1,4 +1,4 @@
-import {ValidationException, ValueObject} from "@core/domain";
+import { ValidationException, ValueObject } from '@core/domain';
 
 export class Quantity extends ValueObject<number> {
   private static readonly MAX_DECIMAL_PLACES = 5;
@@ -74,7 +74,7 @@ export class Quantity extends ValueObject<number> {
 
   private static getDecimalPlaces(num: number): number {
     const str = num.toString();
-    if (str.indexOf('.') !== -1) {
+    if (str.includes('.')) {
       return str.split('.')[1].length;
     }
     return 0;
@@ -187,7 +187,11 @@ export class Quantity extends ValueObject<number> {
 
   ratioTo(other: Quantity): number {
     if (other.isZero()) {
-      throw new ValidationException('quantity', other.value, 'Cannot calculate ratio with zero quantity');
+      throw new ValidationException(
+        'quantity',
+        other.value,
+        'Cannot calculate ratio with zero quantity',
+      );
     }
     return this.value / other.value;
   }

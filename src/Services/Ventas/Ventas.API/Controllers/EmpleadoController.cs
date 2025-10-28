@@ -7,7 +7,7 @@ public class EmpleadoController(IEmpleadoService empleadoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await empleadoService.GetAsync(parameters));
     }
@@ -18,7 +18,7 @@ public class EmpleadoController(IEmpleadoService empleadoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await empleadoService.SearchAsync(parameters));
     }
@@ -29,7 +29,7 @@ public class EmpleadoController(IEmpleadoService empleadoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await empleadoService.AddAsync(parameters));
     }
@@ -39,7 +39,7 @@ public class EmpleadoController(IEmpleadoService empleadoService) : BaseApiContr
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await empleadoService.UpdateAsync(parameters));
@@ -49,7 +49,7 @@ public class EmpleadoController(IEmpleadoService empleadoService) : BaseApiContr
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await empleadoService.DeleteAsync(parameters));
     }
 }

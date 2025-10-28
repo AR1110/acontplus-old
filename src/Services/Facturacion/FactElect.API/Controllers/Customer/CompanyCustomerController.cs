@@ -7,18 +7,18 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     {
         var response = await companyCustomer.GetAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    public async Task<IActionResult> Post(CompanyCustomerDtos.CreateCompanyCustomerDto data)
     {
         var response = await companyCustomer.AddAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompanyCustomerDtos.CreateCompanyCustomerDto>(data)) }
         });
         if (response == null) return BadRequest("Cant Save");
 
@@ -26,13 +26,13 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, CompanyCustomerDtos.UpdateCompanyCustomerDto data)
     {
         var response = await companyCustomer.UpdateAsync(new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompanyCustomerDtos.UpdateCompanyCustomerDto>(data)) }
         });
         if (response == null) return BadRequest("Cant Save");
 
@@ -45,7 +45,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
     {
         var response = await companyCustomer.SearchAsync(new Dictionary<string, object>
         {
-            { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
         return Ok(response);
     }

@@ -1,16 +1,11 @@
-using FactElect.Application.DTOs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
+
+namespace FactElect.Application.Services.Sri;
 
 public class SriAuthenticationService : ISriAuthenticationService
 {
@@ -173,13 +168,13 @@ public class SriAuthenticationService : ISriAuthenticationService
             var correctedRedirectUri = _options.RedirectUri.Replace("/sri-en-linea/contribuyente", "/sri-en-linea/contribuyente");
 
             var authUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
-                         $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
-                         $"&redirect_uri={Uri.EscapeDataString(correctedRedirectUri)}" +
-                         $"&state={Guid.NewGuid()}" +
-                         $"&nonce={Guid.NewGuid()}" +
-                         $"&response_mode=fragment" +
-                         $"&response_type=code" +
-                         $"&scope=openid";
+                          $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
+                          $"&redirect_uri={Uri.EscapeDataString(correctedRedirectUri)}" +
+                          $"&state={Guid.NewGuid()}" +
+                          $"&nonce={Guid.NewGuid()}" +
+                          $"&response_mode=fragment" +
+                          $"&response_type=code" +
+                          $"&scope=openid";
 
             _logger.LogDebug("Initiating authorization with URL: {AuthUrl}", authUrl);
 
@@ -234,20 +229,20 @@ public class SriAuthenticationService : ISriAuthenticationService
 
 
     private async Task<SriAuthenticationResult> SubmitLoginForm(
-    string username,
-    string password,
-    string? additionalCi,
-    string sessionCode,
-    string executionCode,
-    string? tabId,
-    Dictionary<string, string> cookies)
+        string username,
+        string password,
+        string? additionalCi,
+        string sessionCode,
+        string executionCode,
+        string? tabId,
+        Dictionary<string, string> cookies)
     {
         try
         {
             var loginUrl = $"/auth/realms/{_options.Realm}/login-actions/authenticate" +
-                         $"?session_code={Uri.EscapeDataString(sessionCode)}" +
-                         $"&execution={Uri.EscapeDataString(executionCode)}" +
-                         $"&client_id={Uri.EscapeDataString(_options.ClientId)}";
+                           $"?session_code={Uri.EscapeDataString(sessionCode)}" +
+                           $"&execution={Uri.EscapeDataString(executionCode)}" +
+                           $"&client_id={Uri.EscapeDataString(_options.ClientId)}";
 
             if (!string.IsNullOrEmpty(tabId))
                 loginUrl += $"&tab_id={Uri.EscapeDataString(tabId)}";
@@ -544,12 +539,12 @@ public class SriAuthenticationService : ISriAuthenticationService
         {
             // Try to access the OAuth authorization endpoint to complete the flow
             var authUrl = $"/auth/realms/{_options.Realm}/protocol/openid-connect/auth" +
-                         $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
-                         $"&redirect_uri={Uri.EscapeDataString(_options.RedirectUri)}" +
-                         $"&response_type=code" +
-                         $"&scope=openid" +
-                         $"&state={Guid.NewGuid():N}" +
-                         $"&nonce={Guid.NewGuid():N}";
+                          $"?client_id={Uri.EscapeDataString(_options.ClientId)}" +
+                          $"&redirect_uri={Uri.EscapeDataString(_options.RedirectUri)}" +
+                          $"&response_type=code" +
+                          $"&scope=openid" +
+                          $"&state={Guid.NewGuid():N}" +
+                          $"&nonce={Guid.NewGuid():N}";
 
             var request = new HttpRequestMessage(HttpMethod.Get, authUrl);
             AddCookiesToRequest(request, cookies);

@@ -1,4 +1,4 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
 public class ChequeController(IChequeRepository chequeRepository) : BaseApiController
 {

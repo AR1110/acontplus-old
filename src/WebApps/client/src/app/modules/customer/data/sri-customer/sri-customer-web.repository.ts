@@ -2,12 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PATHS_API, SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 import { map } from 'rxjs';
-import {SriCustomerRepository} from "@customer/domain/repositories/sri-customer.repository";
+import { SriCustomerRepository } from '@customer/domain/repositories/sri-customer.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SriCustomerWebRepository implements SriCustomerRepository{
+export class SriCustomerWebRepository implements SriCustomerRepository {
   //FROM REGISTRO CIVIL DATA
   url = `${PATHS_API.FACT_ELECT}Consultas/`;
 
@@ -20,19 +20,14 @@ export class SriCustomerWebRepository implements SriCustomerRepository{
     } else {
       path = 'GetCedulaSri/';
     }
-    return this.http
-      .get(`${this.url}${path}?Ruc=${id}`)
+    return this.http.get(`${this.url}${path}?Ruc=${id}`);
   }
 
-  searchByRuc(id: string){
-    return this.http
-      .get(`${this.url}GetRucSRI/?Ruc=${id}`)
+  searchByRuc(id: string) {
+    return this.http.get(`${this.url}GetRucSRI/?Ruc=${id}`);
   }
 
-  searchByCedula(id: string){
-    return this.http
-      .get(`${this.url}GetCedulaSri/?Ruc=${id}`)
-
+  searchByCedula(id: string) {
+    return this.http.get(`${this.url}GetCedulaSri/?Ruc=${id}`);
   }
-
 }

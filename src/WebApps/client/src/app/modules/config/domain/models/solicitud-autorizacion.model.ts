@@ -1,27 +1,25 @@
-import {GroupedEstab} from "@core/models/estab.model";
-import {UserCustomerRole} from "@modules/config/domain/models/user-customer/user-customer-role.model";
+import { GroupedEstab } from '@core/models/estab.model';
+import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 
-export interface SolicitudAutorizacion {
+export interface SolicitudAutorizacion {}
 
-}
-
-export interface SolicitudAutorizacionList extends SolicitudAutorizacion{
-  rowguid: string
-  idSolicitudAutorizacion: number
-  usuarioAprobante: string
-  usuarioSolicitante: string
-  nomAdminRoles: string
-  codigoAccion:string
-  codigoEstado: "A" | "P" | "F" | "R"
-  nombreAccion: string
-  nombreEstado: string
-  obs: string
-  fechaRegistro: string
-  fechaRespuesta: string | null
-  codigoModulo: string
-  nombreModulo: string
-  serieComprobante: string
-  totalRecords: string
+export interface SolicitudAutorizacionList extends SolicitudAutorizacion {
+  rowguid: string;
+  idSolicitudAutorizacion: number;
+  usuarioAprobante: string;
+  usuarioSolicitante: string;
+  nomAdminRoles: string;
+  codigoAccion: string;
+  codigoEstado: 'A' | 'P' | 'F' | 'R';
+  nombreAccion: string;
+  nombreEstado: string;
+  obs: string;
+  fechaRegistro: string;
+  fechaRespuesta: string | null;
+  codigoModulo: string;
+  nombreModulo: string;
+  serieComprobante: string;
+  totalRecords: string;
 }
 
 export interface SolicitudAutorizacionResponse {
@@ -29,8 +27,8 @@ export interface SolicitudAutorizacionResponse {
   totalRecords: number;
 }
 export interface SolicitudAutorizacionFilterResponse {
-  estabs: GroupedEstab[]
-  usersRole: UserCustomerRole[]
+  estabs: GroupedEstab[];
+  usersRole: UserCustomerRole[];
 }
 
 export interface SolicitudAutorizacionDetalle {
@@ -38,10 +36,10 @@ export interface SolicitudAutorizacionDetalle {
   nombre: string;
   valor: string;
   nuevoValor: string;
-  obs: string
+  obs: string;
 }
 
-
-export interface SolicitudAutorizacionUpdateParams extends Pick<SolicitudAutorizacionList,"idSolicitudAutorizacion" |    "rowguid">{
-  tipo: number
+export interface SolicitudAutorizacionUpdateParams
+  extends Pick<SolicitudAutorizacionList, 'idSolicitudAutorizacion' | 'rowguid'> {
+  tipo: number;
 }

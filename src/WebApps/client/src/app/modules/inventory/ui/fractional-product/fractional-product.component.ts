@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-fractional-product',
   imports: [],
   templateUrl: './fractional-product.component.html',
-  styles: ``
+  styles: ``,
 })
-export class FractionalProductComponent {
-
-}
+export class FractionalProductComponent {}

@@ -1,4 +1,4 @@
-<app-breadcrumb/>
+<app-breadcrumb />
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
@@ -6,24 +6,22 @@
       <span>Tipo de reporte: </span>
       <mat-radio-group aria-label="Report Types" [(ngModel)]="filterParams.reportTypeCode">
         @for (item of reportTypes; track $index) {
-        <mat-radio-button [value]="item.code">{{ item.name }}</mat-radio-button>
-
+          <mat-radio-button [value]="item.code">{{ item.name }}</mat-radio-button>
         }
       </mat-radio-group>
-
     </div>
 
-    <mat-divider/>
+    <mat-divider />
 
     <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento</mat-label>
 
-          <mat-select [(ngModel)]="filterParams.documentCode" >
+          <mat-select [(ngModel)]="filterParams.documentCode">
             <mat-option value="all">--Todos--</mat-option>
             @for (item of tiposDoc(); track $index) {
-            <mat-option [value]="item.customCode">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.customCode">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -32,8 +30,8 @@
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
           <mat-select [(ngModel)]="filterParams.establecimientoId">
-            @for (item of estabs(); track $index){
-            <mat-option [value]="item.idEstablecimiento">{{item.nombreEstab}}</mat-option>
+            @for (item of estabs(); track $index) {
+              <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -54,8 +52,8 @@
           <mat-label>Método de pago</mat-label>
           <mat-select [(ngModel)]="filterParams.paymentMethodId">
             <mat-option [value]="0">--Todos--</mat-option>
-            @for (item of subEntidadesFinanciera(); track $index){
-            <mat-option [value]="item.idSubEntidadFinanciera">{{item.descripcion}}</mat-option>
+            @for (item of subEntidadesFinanciera(); track $index) {
+              <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -65,8 +63,8 @@
           <mat-label>Banco</mat-label>
           <mat-select [(ngModel)]="filterParams.bankId">
             <mat-option [value]="0">--Todos--</mat-option>
-            @for (item of bancos(); track $index){
-            <mat-option [value]="item.idBanco">{{item.descripcion}}</mat-option>
+            @for (item of bancos(); track $index) {
+              <mat-option [value]="item.idBanco">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -74,35 +72,27 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Referencia:</mat-label>
-          <input matInput>
+          <input matInput />
           <ng-container matSuffix>
-            <mat-checkbox/>
+            <mat-checkbox />
           </ng-container>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Lote:</mat-label>
-          <input matInput>
+          <input matInput />
           <ng-container matSuffix>
-            <mat-checkbox/>
+            <mat-checkbox />
           </ng-container>
         </mat-form-field>
       </div>
     </div>
 
     <div class="hstack gap-2">
-      <app-theme-button
-        variant="danger"
-        text="Pdf"
-        (handleClick)="exportPdf()"
-      />
+      <app-theme-button variant="danger" text="Pdf" (handleClick)="exportPdf()" />
 
-      <app-theme-button
-        variant="success"
-        text="Excel"
-      (handleClick)="exportExcel()"
-      />
+      <app-theme-button variant="success" text="Excel" (handleClick)="exportExcel()" />
       <!--        <app-svg-icon ngProjectAs="svgIcon" id="icon-pdf2"  />-->
     </div>
   </div>

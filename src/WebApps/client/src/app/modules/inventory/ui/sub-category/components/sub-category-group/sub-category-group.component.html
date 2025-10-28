@@ -1,54 +1,48 @@
-@if(isInputMat()){
-<form [formGroup]="stateForm">
-  <mat-form-field class="w-100">
-    <mat-label>Subfamilia: </mat-label>
+@if (isInputMat()) {
+  <form [formGroup]="stateForm">
+    <mat-form-field class="w-100">
+      <mat-label>Subfamilia: </mat-label>
+      <input
+        type="text"
+        placeholder="..."
+        aria-label="Number"
+        matInput
+        formControlName="subCategoryGroup"
+        [matAutocomplete]="autoGroup"
+      />
+      <mat-autocomplete #autoGroup="matAutocomplete">
+        @for (group of stateGroupOptions | async; track $index) {
+          <mat-optgroup [label]="group.familia">
+            @for (g of group.subFamilias; track $index) {
+              <mat-option [value]="g.subFamilia" (onSelectionChange)="onSelectionChange(g)">{{
+                g.subFamilia
+              }}</mat-option>
+            }
+          </mat-optgroup>
+        }
+      </mat-autocomplete>
+    </mat-form-field>
+  </form>
+} @else {
+  <form [formGroup]="stateForm">
     <input
       type="text"
-      placeholder="..."
-      aria-label="Number"
       matInput
       formControlName="subCategoryGroup"
       [matAutocomplete]="autoGroup"
+      class="form-control"
+      placeholder="Buscar SubFamilia..."
     />
     <mat-autocomplete #autoGroup="matAutocomplete">
       @for (group of stateGroupOptions | async; track $index) {
-      <mat-optgroup [label]="group.familia">
-        @for (g of group.subFamilias; track $index) {
-        <mat-option
-          [value]="g.subFamilia"
-          (onSelectionChange)="onSelectionChange(g)"
-          >{{ g.subFamilia }}</mat-option
-        >
-        }
-      </mat-optgroup>
+        <mat-optgroup [label]="group.familia">
+          @for (g of group.subFamilias; track $index) {
+            <mat-option [value]="g.subFamilia" (onSelectionChange)="onSelectionChange(g)">{{
+              g.subFamilia
+            }}</mat-option>
+          }
+        </mat-optgroup>
       }
     </mat-autocomplete>
-  </mat-form-field>
-</form>
-}@else{
-
-<form [formGroup]="stateForm">
-  <input
-    type="text"
-    matInput
-    formControlName="subCategoryGroup"
-    [matAutocomplete]="autoGroup"
-    class="form-control"
-    placeholder="Buscar SubFamilia..."
-  />
-  <mat-autocomplete #autoGroup="matAutocomplete">
-    @for (group of stateGroupOptions | async; track $index) {
-    <mat-optgroup [label]="group.familia">
-      @for (g of group.subFamilias; track $index) {
-      <mat-option
-        [value]="g.subFamilia"
-        (onSelectionChange)="onSelectionChange(g)"
-        >{{ g.subFamilia }}</mat-option
-      >
-      }
-    </mat-optgroup>
-    }
-  </mat-autocomplete>
-</form>
-
+  </form>
 }

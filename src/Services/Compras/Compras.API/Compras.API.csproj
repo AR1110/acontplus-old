@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
     <UserSecretsId>9cd0f68c-b8e7-4ca9-b89a-9e148199c8e2</UserSecretsId>
@@ -10,12 +10,11 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Data" />
-    <PackageReference Include="Acontplus.Common.FactElect" />
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.Common.Logging" />
-    <PackageReference Include="Acontplus.Common.Services" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+
+    <PackageReference Include="Acontplus.FactElect" />
+    <PackageReference Include="Acontplus.Logging" />
+    <PackageReference Include="Acontplus.Services" />
+
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Scrutor" />
@@ -23,5 +22,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Compras.Application\Compras.Application.csproj" />
+    <ProjectReference Include="..\Compras.Infrastructure\Compras.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

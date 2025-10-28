@@ -3,5 +3,5 @@ export enum EstadoGuia {
   EMITIDA = 'EMITIDA',
   EN_TRANSITO = 'EN_TRANSITO',
   ENTREGADA = 'ENTREGADA',
-  ANULADA = 'ANULADA'
+  ANULADA = 'ANULADA',
 }

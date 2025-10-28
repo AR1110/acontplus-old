@@ -1,5 +1,3 @@
-
-
 <app-mat-dynamic-table
   [tableData]="dataSource()"
   [columnDefinitions]="columnsDefs"
@@ -10,11 +8,5 @@
   (pageEvent)="handlePageEvent($event)"
 />
 <ng-template #templateOp let-item="item">
-  <app-theme-button
-    (handleClick)="onEdit(item)"
-    icon="edit"
-    matStyle="icon"
-    title="Editar"
-  />
+  <app-theme-button (handleClick)="onEdit(item)" icon="edit" matStyle="icon" title="Editar" />
 </ng-template>
-

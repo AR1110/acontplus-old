@@ -8,24 +8,24 @@ import { imgDefault, isValidField } from '@core/utils/utils';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
-import {MatButtonModule} from '@angular/material/button';
-import { MatIconModule} from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {DialogService} from "@core/services/dialog.service";
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-item-list',
-    imports: [
-        FormsModule,
-        MatDynamicTableComponent,
-      MatFormFieldModule,
-      MatInputModule,
-      MatIconModule,
-      MatButtonModule,
-        ThemeButtonComponent,
-    ],
+  imports: [
+    FormsModule,
+    MatDynamicTableComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatButtonModule,
+    ThemeButtonComponent,
+  ],
   templateUrl: './item-list.component.html',
   styles: ``,
 })
@@ -42,9 +42,9 @@ export class ItemListComponent implements OnInit {
     { key: 'descripcion', label: 'Descripción', type: 'string' },
     { key: 'summary', label: 'Resumen', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
-  dataSource = signal<any>([])
+  dataSource = signal<any>([]);
 
   isLoadingResults = signal(false);
 
@@ -55,7 +55,7 @@ export class ItemListComponent implements OnInit {
       tipo: 1,
       textSearch: isValidField(this.dataSearch.textSearch),
     };
-    this.#itemService.get(obj).subscribe((response) => {
+    this.#itemService.get(obj).subscribe(response => {
       const items = response.items.map((item: any, index: number) => {
         return {
           index: index + 1,
@@ -64,7 +64,7 @@ export class ItemListComponent implements OnInit {
         };
       });
       this.dataSource.set(items);
-      this.pagination().totalRecords =  this.dataSource()[0]?.totalRecords ?? 0;
+      this.pagination().totalRecords = this.dataSource()[0]?.totalRecords ?? 0;
     });
   }
 
@@ -81,7 +81,7 @@ export class ItemListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -92,14 +92,11 @@ export class ItemListComponent implements OnInit {
     this.refresh();
   }
   onEdit(item: Item) {
-    const modalRef = this.#modalService.open(
-      ItemAddEditModalComponent,
-      {
-        size: 'xl',
-        data: structuredClone(item),
-      },
-    );
-    modalRef.subscribe((response) => {
+    const modalRef = this.#modalService.open(ItemAddEditModalComponent, {
+      size: 'xl',
+      data: structuredClone(item),
+    });
+    modalRef.subscribe(response => {
       if (typeof response === 'object' && response.code === '1') {
         this.loadData();
       }

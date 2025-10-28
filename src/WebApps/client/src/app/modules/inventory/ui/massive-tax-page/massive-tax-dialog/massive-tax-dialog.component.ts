@@ -62,7 +62,7 @@ export class MassiveTaxDialogComponent implements OnInit {
     this._massiveTaxUseCase
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.taxRatesFrom = response.taxRates;
         this.subCategories = response.subCategories;
       });
@@ -78,12 +78,11 @@ export class MassiveTaxDialogComponent implements OnInit {
         return;
       }
       this.taxRatesTo = this.taxRatesFrom.filter(
-        (t) => t.idTarifaImpuesto !== this.dataForm.taxIdFrom
+        t => t.idTarifaImpuesto !== this.dataForm.taxIdFrom,
       );
       this.taxFromDesc =
-        this.taxRatesFrom.find(
-          (t) => t.idTarifaImpuesto === this.dataForm.taxIdFrom
-        )?.descripcion || '';
+        this.taxRatesFrom.find(t => t.idTarifaImpuesto === this.dataForm.taxIdFrom)?.descripcion ||
+        '';
 
       this.loading.set(true);
       this._massiveTaxUseCase
@@ -92,7 +91,7 @@ export class MassiveTaxDialogComponent implements OnInit {
           subCategoryId: this.dataForm.subCategoryId,
         })
         .pipe(finalize(() => this.loading.set(false)))
-        .subscribe((response) => {
+        .subscribe(response => {
           this.dataForm.quantityProducts = response;
           this.dataForm.title = `${this.dataForm.quantityProducts} Productos encontrados.`;
           this.setTaxDesc();
@@ -111,8 +110,7 @@ export class MassiveTaxDialogComponent implements OnInit {
 
   onChangeTaxTo() {
     this.taxToDesc =
-      this.taxRatesTo.find((t) => t.idTarifaImpuesto === this.dataForm.taxIdTo)
-        ?.descripcion || '';
+      this.taxRatesTo.find(t => t.idTarifaImpuesto === this.dataForm.taxIdTo)?.descripcion || '';
     this.setTaxDesc();
   }
   private setTaxDesc() {
@@ -191,7 +189,7 @@ export class MassiveTaxDialogComponent implements OnInit {
       this._massiveTaxUseCase
         .put(params)
         //  .pipe(finalize(() => this.loading.set(false)))
-        .subscribe((response) => {
+        .subscribe(response => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

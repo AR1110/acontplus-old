@@ -1,10 +1,10 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
 public class ComprobanteEgresoController : BaseApiController
 {
-    private readonly IComprobanteEgresoService _svc;
+    private readonly IComprobanteEgresoRepository _svc;
 
-    public ComprobanteEgresoController(IComprobanteEgresoService service)
+    public ComprobanteEgresoController(IComprobanteEgresoRepository service)
     {
         _svc = service;
     }
@@ -20,12 +20,13 @@ public class ComprobanteEgresoController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateComprobanteEgresoDto dto)
     {
+        var jsonData = JsonSerializer.Serialize(dto);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(jsonData) }
         };
         return Ok(await _svc.AddAsync(parameters));
     }
@@ -42,13 +43,14 @@ public class ComprobanteEgresoController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateComprobanteEgresoDto dto)
     {
+        var jsonData = JsonSerializer.Serialize(dto);
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
+            { "json", SqlStringParam.Sanitize(jsonData) }
         };
 
         var response = await _svc.UpdateAsync(parameters);

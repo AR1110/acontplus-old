@@ -1,23 +1,21 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { Recipe } from '@restaurant/domain/models/recipe.model';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { Recipe } from '@restaurant/domain/models/recipe.model';
 
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
-import { Ingredient } from '@restaurant/domain/models/ingredient.model';
-import { ItemService } from '@restaurant/data/services/item.service';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { ItemService } from '@restaurant/data/services/item.service';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { MatInputModule } from '@angular/material/input';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-item-add-edit-modal',
@@ -27,6 +25,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     IngredientSearchComponent,
     ThemeButtonComponent,
     MatCustomDialogComponent,
+    MatInputModule,
   ],
   templateUrl: './item-add-edit-modal.component.html',
   styles: ``,
@@ -55,7 +54,7 @@ export class ItemAddEditModalComponent implements OnInit {
     let medidas = [];
     const rows = cell.getRow().getData();
 
-    if (rows.extents !== undefined) {
+    if (rows.extents) {
       medidas = JSON.parse(rows.extents);
     }
 
@@ -72,17 +71,15 @@ export class ItemAddEditModalComponent implements OnInit {
       if (selectList.selectedOptions[0].value != rows) {
         success(selectList.selectedOptions[0].value);
 
-        cell.getElement().dataset.descripcion =
-          selectList.selectedOptions[0].text;
-        cell.getElement().dataset.extentId =
-          selectList.selectedOptions[0].value;
+        cell.getElement().dataset.descripcion = selectList.selectedOptions[0].text;
+        cell.getElement().dataset.extentId = selectList.selectedOptions[0].value;
       } else {
         cancel();
       }
     };
 
     selectList.addEventListener('blur', onChange);
-    selectList.addEventListener('keydown', (e) => {
+    selectList.addEventListener('keydown', e => {
       if (e.keyCode == 13) {
         onChange();
       }
@@ -112,12 +109,12 @@ export class ItemAddEditModalComponent implements OnInit {
     const row = cell.getRow().getData();
     const value = cell.getValue();
 
-    if (row.extents !== undefined) {
+    if (row.extents) {
       medidas = JSON.parse(row.extents);
     }
 
     if (medidas.length === 0) return '';
-    return medidas.find((x: any) => x.idMedida == value).descripcion;
+    return medidas.find((x: any) => x.idMedida == value)?.descripcion;
   };
 
   formatterCostPrice = (cell: any) => {
@@ -190,14 +187,15 @@ export class ItemAddEditModalComponent implements OnInit {
       width: 100,
       widthGrow: 1,
       validator: ['numeric'],
+      value: '0',
     },
-    {
-      title: 'Instrucciones',
-      field: 'instructions',
-      widthGrow: 3,
-      width: 200,
-      editor: true,
-    },
+    // {
+    //   title: 'Instrucciones',
+    //   field: 'instructions',
+    //   widthGrow: 3,
+    //   width: 200,
+    //   editor: true,
+    // },
     {
       title: 'Cant.',
       field: 'quantity',
@@ -213,8 +211,7 @@ export class ItemAddEditModalComponent implements OnInit {
     {
       title: 'Precio costo',
       field: 'precioCosto',
-      width: 75,
-      widthGrow: 1,
+      width: 120,
       editor: false,
     },
     {
@@ -248,8 +245,16 @@ export class ItemAddEditModalComponent implements OnInit {
     const newArray = this.recipes().filter((x: Recipe) => x.id !== id);
   }
 
+  rowDeleted(row: any) {
+    const closeRecipes = JSON.parse(JSON.stringify(this.recipes()));
+    const data = row.getData();
+    console.log(data);
+
+    this.recipes.set(closeRecipes.filter((x: any) => x.uuid !== data.uuid));
+  }
+
   getRecipes() {
-    this.#recipeService.getByItem(this.data.id).subscribe((response) => {
+    this.#recipeService.getByItem(this.data.id).subscribe(response => {
       this.recipes.set(response.recipes);
     });
   }
@@ -278,48 +283,66 @@ export class ItemAddEditModalComponent implements OnInit {
       itemJson: this.itemForm.value,
       recipeJson: this.recipes(),
     };
-    this.#itemService
-      .put(this.data.id, { data: dataToSave })
-      .subscribe((response) => {
-        this.#tS.show({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-        if (response.code === '1') {
-          this.#modalRef.close(response);
-        }
+    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe(response => {
+      Swal.fire({
+        icon: response.code === '1' ? 'success' : 'warning',
+        html: response.message,
       });
+      if (response.code === '1') {
+        this.#modalRef.close(response);
+      }
+    });
   }
 
   onIngredientSelected($event: Ingredient) {
-    this.recipes().push({
-      costPrice: 0,
-      extentId: 0,
-      id: 0,
-      itemId: this.data.id,
-      summary: $event.summary,
-      instructions: '',
-      netWeight: 0,
-      quantity: 0,
-      ingredientId: $event.id,
-      productId: $event.productId,
-      precioCosto: 0,
+    const productId = Number($event.productId);
+
+    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
+      const extents = response.extents;
+
+      const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
+
+      cloneRecipes.push({
+        costPrice: 0,
+        extentId: 0,
+        id: 0,
+        itemId: this.data.id,
+        summary: $event.summary,
+        instructions: '',
+        netWeight: 0,
+        quantity: 0,
+        ingredientId: $event.id,
+        productId,
+        precioCosto: 0,
+        weight: 0,
+        uuid: generateUuidv4(),
+      });
+
+      const results = cloneRecipes.map((e: Recipe) => {
+        if (e.productId === productId) {
+          e.extentId = extents[0].idMedida;
+          e.precioCosto = extents[0].precioCosto;
+          e.extents = JSON.stringify(extents);
+        }
+        return e;
+      });
+      this.recipes.set(results);
     });
-    this.getExtent($event.productId);
   }
 
   getExtent(productId: number) {
-    this.#ingredientService
-      .get({ productId, tipo: 3 })
-      .subscribe((response) => {
-        const extents = response.extents;
-        this.recipes().forEach((e: Recipe, index: number) => {
-          if (e.productId === productId) {
-            e.extentId = extents[0].idMedida;
-            e.precioCosto = extents[0].precioCosto;
-            e.extents = JSON.stringify(extents);
-          }
-        });
+    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
+      const extents = response.extents;
+
+      const results = this.recipes().map((e: Recipe) => {
+        if (e.productId === productId) {
+          e.extentId = extents[0].idMedida;
+          e.precioCosto = extents[0].precioCosto;
+          e.extents = JSON.stringify(extents);
+        }
+        return e;
       });
+      this.recipes.set(results);
+    });
   }
 }

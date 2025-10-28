@@ -14,9 +14,7 @@
             <h5>{{ infoTributaria.razonSocial }}</h5>
             <h5>{{ infoTributaria.nombreComercial }}</h5>
             <h5>Dirección Matriz: {{ infoTributaria.dirMatriz }}</h5>
-            <h5>
-              Dirección Sucursal: {{ infoCompRetencion.dirEstablecimiento }}
-            </h5>
+            <h5>Dirección Sucursal: {{ infoCompRetencion.dirEstablecimiento }}</h5>
             @if (infoCompRetencion.contribuyenteEspecial?.length) {
               <h5>
                 Contribuyente Especial Nro.:
@@ -37,11 +35,7 @@
           <mat-card-content>
             <h5>RUC: {{ infoTributaria.ruc }}</h5>
             <h4>COMPROBANTE DE RETENCIÓN</h4>
-            <h5>
-              No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{
-                infoTributaria.secuencial
-              }}
-            </h5>
+            <h5>No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{ infoTributaria.secuencial }}</h5>
             <label>NÚMERO DE AUTORIZACIÓN:</label>
             <small>{{ infoTributaria.claveAcceso }}</small>
             <label>FECHA Y HORA DE AUTORIZACIÓN:</label>
@@ -50,9 +44,7 @@
               AMBIENTE:
               <span [innerHTML]="infoTributaria.ambiente | ambienteSri"></span>
             </h5>
-            <h5>
-              EMISIÓN: <span [innerHTML]="infoTributaria.tipoEmision"></span>
-            </h5>
+            <h5>EMISIÓN: <span [innerHTML]="infoTributaria.tipoEmision"></span></h5>
             <label>CLAVE DE ACCESSO:</label><br />
             <!--            <img alt="" id="barcodeImg" src="">-->
             <small>{{ infoTributaria.claveAcceso }}</small>
@@ -82,7 +74,7 @@
               <td>{{ item.codDocSustento }}</td>
               <td>{{ item.numDocSustento }}</td>
               <td>{{ item.fechaEmisionDocSustento }}</td>
-              <td>{{ item.fechaEmisionDocSustento | date: "dd/yyyy" }}</td>
+              <td>{{ item.fechaEmisionDocSustento | date: 'dd/yyyy' }}</td>
               <td>{{ item.baseImponible }}</td>
               <td>{{ item.codigo }}</td>
               <td>{{ item.porcentajeRetener }}</td>
@@ -124,12 +116,7 @@
       <div class="col-xl-12">
         <div class="form-group">
           <label for="obs">Observación:</label>
-          <textarea
-            [(ngModel)]="retencion.obs"
-            class="form-control"
-            id="obs"
-            name="obs"
-          ></textarea>
+          <textarea [(ngModel)]="retencion.obs" class="form-control" id="obs" name="obs"></textarea>
         </div>
       </div>
     </div>
@@ -137,18 +124,8 @@
 
   <!-- Modal Footer -->
   <div class="modal-footer">
-    <app-theme-button
-      variant="success"
-      icon="download"
-      text="Descargar Ride"
-      (handleClick)="download()"
-    >
+    <app-theme-button variant="success" icon="download" text="Descargar Ride" (handleClick)="download()">
     </app-theme-button>
-    <app-theme-button
-      variant="dark"
-      icon="close"
-      text="Cancelar"
-      (click)="onModalClose()"
-    ></app-theme-button>
+    <app-theme-button variant="dark" icon="close" text="Cancelar" (click)="onModalClose()"></app-theme-button>
   </div>
 </form>

@@ -11,7 +11,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NotaEntregaService {
   #url = `${PATHS_API.SALES}${SALE_PATHS.NOTA_ENTREGA}`;
@@ -19,89 +19,90 @@ export class NotaEntregaService {
 
   getDataFilter() {
     const json = JSON.stringify({
-      tipo: 3
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(map(response => {
+      tipo: 3,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+        context: getNoLoader(),
+      })
+      .pipe(
+        map(response => {
+          const resultData = {
+            estabs: [] as GroupedEstab[],
+            estadosDoc: [] as any[],
+          };
 
-      const resultData = {
-        estabs: [] as GroupedEstab[],
-        estadosDoc: [] as any[]
-      }
+          if (response.code === '1') {
+            const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
 
-      if (response.code === "1") {
-        const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
+            const dataToGroup = {
+              estabs: tempEstabs,
+              isGroupPuntoEmision: true,
+            };
+            resultData.estabs = groupEstabUtil(dataToGroup);
+            resultData.estadosDoc = estadosDoc;
+          }
 
-
-        const dataToGroup = {
-          estabs: tempEstabs,
-          isGroupPuntoEmision: true
-        }
-        resultData.estabs = groupEstabUtil(dataToGroup);
-        resultData.estadosDoc = estadosDoc;
-      }
-
-      return resultData;
-
-    }))
+          return resultData;
+        }),
+      );
   }
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({
       tipo: 1,
-      ...obj
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(
-      map(response => {
-        const result = {
-          data: [] as any[],
-          totalRecords: 0
-        }
-        if (response && response.code === "1") {
-          let [notasEntrega] = JSON.parse(response.payload as string)
-
-          notasEntrega = notasEntrega || [];
-
-          result.data = NotaEntregaAdapter.fromApiAll(notasEntrega)
-          result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
-        }
-        return result;
+      ...obj,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+        context: getNoLoader(),
       })
-    )
-  }
+      .pipe(
+        map(response => {
+          const result = {
+            data: [] as any[],
+            totalRecords: 0,
+          };
+          if (response && response.code === '1') {
+            let [notasEntrega] = JSON.parse(response.payload as string);
 
+            notasEntrega = notasEntrega || [];
+
+            result.data = NotaEntregaAdapter.fromApiAll(notasEntrega);
+            result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
+          }
+          return result;
+        }),
+      );
+  }
 
   getDetalleCompleto(id: number) {
     const json = JSON.stringify({
       tipo: 5,
-      id
-    })
-    return this.#http.get<ApiResponse>(`${this.#url}Get?json=${json}`, {
-      context: getNoLoader()
-    }).pipe(
-      map(response => {
-        let result = {} as any;
-        if (response.code === "1") {
-          const mainData = JSON.parse(response.payload as string)
-          result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData)
-        }
-
-        return result
+      id,
+    });
+    return this.#http
+      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+        context: getNoLoader(),
       })
-    )
+      .pipe(
+        map(response => {
+          let result = {} as any;
+          if (response.code === '1') {
+            const mainData = JSON.parse(response.payload as string);
+            result = NotaEntregaAdapter.fromApiDetalleCompleto(mainData);
+          }
+
+          return result;
+        }),
+      );
   }
 
-
   post<T>(data: T) {
-
-    return this.#http.post<ApiResponse>(`${this.#url}Insert`, { data })
+    return this.#http.post<ApiResponse>(`${this.#url}Insert`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data })
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
   }
-
 }

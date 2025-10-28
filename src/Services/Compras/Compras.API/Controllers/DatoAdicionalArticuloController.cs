@@ -1,27 +1,30 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoAdicionalArticuloService)
-    : BaseApiController
+public class DatoAdicionalArticuloController(IDatoAdicionalArticuloRepository datoAdicionalArticuloService) : BaseApiController
 {
+
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "json", SqlStringParam.Sanitize(json) }
+    };
         return Ok(await datoAdicionalArticuloService.GetAsync(parameters));
     }
 
     [HttpPost("Insert/{id}")]
-    public async Task<IActionResult> Insert(int id, ApiRequest request)
+    public async Task<IActionResult> Insert(int id, InfoAdicionalDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-            { "idDocumento", id },
-            { "json", DataConverters.SerializeDictionary(request.Data) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "idDocumento", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<InfoAdicionalDto>(data)) }
+    };
         return Ok(await datoAdicionalArticuloService.AddAsync(parameters));
     }
 
@@ -29,9 +32,10 @@ public class DatoAdicionalArticuloController(IDatoAdicionalArticuloService datoA
     public async Task<IActionResult> Delete(int idInfoAdicional)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "idInfoAdicional", idInfoAdicional }
-        };
+      {
+          { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+          { "idInfoAdicional", idInfoAdicional }
+      };
         return Ok(await datoAdicionalArticuloService.DeleteAsync(parameters));
     }
 }

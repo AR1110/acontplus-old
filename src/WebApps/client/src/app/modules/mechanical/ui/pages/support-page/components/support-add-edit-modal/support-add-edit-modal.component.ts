@@ -130,7 +130,7 @@ export class SupportAddEditModalComponent implements OnInit {
     this.supportUseCase
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
+      .subscribe(response => {
         this.establishments.set(response.establishments);
         this.cloneEmissionPoints.set(response.emissionPoints);
         this.users.set(response.users);
@@ -143,38 +143,33 @@ export class SupportAddEditModalComponent implements OnInit {
           this.supportUseCase
             .getId(this.params.id)
             .pipe(finalize(() => this.loading.set(false)))
-            .subscribe((value) => {
-              this.data = value.data as any;
+            .subscribe(value => {
+              this.data = value.data;
 
-              this.vehicle = value.vehicle as any;
+              this.vehicle = value.vehicle;
               const emissionPoints = this.cloneEmissionPoints().filter(
-                (e) => e.establecimientoId === this.data.establecimientoId
+                e => e.establecimientoId === this.data.establecimientoId,
               );
               this.emissionPoints.set(emissionPoints);
 
-              this.filteredCustomerVehicleFormControl.setValue(
-                value.customer.tradeName
-              );
+              this.filteredCustomerVehicleFormControl.setValue(value.customer.tradeName);
             });
           return;
         }
         this.data.establecimientoId =
-          this.establishments().length > 0
-            ? this.establishments()[0].establecimientoId
-            : 0;
+          this.establishments().length > 0 ? this.establishments()[0].establecimientoId : 0;
         this.onChangeEstab();
       });
 
-    this.filteredCustomerVehicles =
-      this.filteredCustomerVehicleFormControl.valueChanges.pipe(
-        distinctUntilChanged(),
-        switchMap((val) => {
-          if (val && val.length > 2) {
-            return this._filterCustomerVehicle(val);
-          }
-          return [];
-        })
-      );
+    this.filteredCustomerVehicles = this.filteredCustomerVehicleFormControl.valueChanges.pipe(
+      distinctUntilChanged(),
+      switchMap(val => {
+        if (val && val.length > 2) {
+          return this._filterCustomerVehicle(val);
+        }
+        return [];
+      }),
+    );
   }
 
   private _filterCustomerVehicle(value: string) {
@@ -182,13 +177,13 @@ export class SupportAddEditModalComponent implements OnInit {
     return this.supportUseCase.search({ textSearch: value }).pipe(
       finalize(() => {
         this.filteredCustomerVehicleLoading.set(false);
-      })
+      }),
     );
   }
 
   onChangeEstab() {
     const emissionPoints = this.cloneEmissionPoints().filter(
-      (e) => e.establecimientoId === this.data.establecimientoId
+      e => e.establecimientoId === this.data.establecimientoId,
     );
     this.emissionPoints.set(emissionPoints);
 
@@ -199,11 +194,10 @@ export class SupportAddEditModalComponent implements OnInit {
   }
   generateSequence() {
     const dataPuntoEmision = this.emissionPoints().find(
-      (p) => p.puntoEmisionId === this.data.puntoEmisionId
+      p => p.puntoEmisionId === this.data.puntoEmisionId,
     );
     if (dataPuntoEmision) {
-      this.data.sequence =
-        dataPuntoEmision.ptoEmi + '-' + dataPuntoEmision.sequence;
+      this.data.sequence = dataPuntoEmision.ptoEmi + '-' + dataPuntoEmision.sequence;
     }
   }
 
@@ -212,7 +206,7 @@ export class SupportAddEditModalComponent implements OnInit {
   }
 
   getDataVehicleById(id: number) {
-    this.vehicleSvc.getId(id).subscribe((response) => {
+    this.vehicleSvc.getId(id).subscribe(response => {
       const { customer, vehicle } = response;
       this.data.vehicleCompanyId = id;
       this.data.customerId = customer.id;
@@ -253,8 +247,7 @@ export class SupportAddEditModalComponent implements OnInit {
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
       });
       return;
     }
@@ -298,8 +291,7 @@ export class SupportAddEditModalComponent implements OnInit {
     if (!isValidField(this.data.obs)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'Ingrese una breve descripción del soporte que se va a realizar.',
+        message: 'Ingrese una breve descripción del soporte que se va a realizar.',
       });
       return;
     }
@@ -312,9 +304,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
     const textAction = this.params.id > 0 ? 'actualizar' : 'guardar';
 
-    const txtSecuencial = secuencial
-      ? ` Nro. Documento: ${secuencial}`
-      : this.data.sequence;
+    const txtSecuencial = secuencial ? ` Nro. Documento: ${secuencial}` : this.data.sequence;
 
     Swal.fire({
       // title: "Are you sure?",
@@ -325,7 +315,7 @@ export class SupportAddEditModalComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí!',
       cancelButtonText: 'No!',
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         try {
           const data = {
@@ -343,9 +333,7 @@ export class SupportAddEditModalComponent implements OnInit {
           }
 
           if (this.params.id > 0) {
-            this.supportUseCase
-              .put(this.params.id, data)
-              .subscribe(this.successResponse);
+            this.supportUseCase.put(this.params.id, data).subscribe(this.successResponse);
           }
         } catch (error) {
           console.log(error);
@@ -356,11 +344,9 @@ export class SupportAddEditModalComponent implements OnInit {
 
   async save() {
     if (!(this.params.id > 0)) {
-      this.supportUseCase
-        .generateSequential(this.data.puntoEmisionId)
-        .subscribe((res) => {
-          this.executeSave(res);
-        });
+      this.supportUseCase.generateSequential(this.data.puntoEmisionId).subscribe(res => {
+        this.executeSave(res);
+      });
     } else {
       this.executeSave();
     }

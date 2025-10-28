@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacionService) : BaseApiController
 {
@@ -16,14 +16,14 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateBodegaAsignacionDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateBodegaAsignacionDto>(data)) },
+        { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
         var response = await bodegaAsignacionService.AddAsync(parameters);
         if (response == null) return NoContent();
 
@@ -35,7 +35,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
     public async Task<IActionResult> Put(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+        { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await bodegaAsignacionService.UpdateAsync(parameters);
         if (response == null) return NoContent();
 

@@ -3,7 +3,7 @@
 [Table("OrderKitchen", Schema = "Restaurant")]
 public class OrderKitchen : BaseEntity
 {
-    public Order Order { get; set; }
+    public required Order Order { get; set; }
     public int OrderId { get; set; }
     public int? ChefId { get; set; }
 

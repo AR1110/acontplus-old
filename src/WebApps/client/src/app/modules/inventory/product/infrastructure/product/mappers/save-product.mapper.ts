@@ -1,29 +1,28 @@
-import {formatDateToString} from "@core/utils/date.util";
-import {getValidId, isValidField} from "@core/utils/utils";
-import {ApiResponse} from "@core/models/api-response";
+import { formatDateToString } from '@core/utils/date.util';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { ApiResponse } from '@core/models/api-response';
 
 export class SaveProductMapper {
-  static toJson(obj:any): any {
-
-    const {data, dataUbicacion, dataPvp} = obj;
+  static toJson(obj: any): any {
+    const { data, dataUbicacion, dataPvp } = obj;
     let lote;
     let fechaCreacion;
     let fechaCaducidadLote;
     let fechaCaducidad;
-    if(data.datosLote){
+    if (data.datosLote) {
       lote = data.lote;
-      fechaCreacion = formatDateToString(data.fechaCreacion)
+      fechaCreacion = formatDateToString(data.fechaCreacion);
       fechaCaducidadLote = formatDateToString(data.fechaCaducidadLote);
     }
 
-    if(data.caducidad){
-      fechaCaducidad = formatDateToString(data.fechaCaducidad)
+    if (data.caducidad) {
+      fechaCaducidad = formatDateToString(data.fechaCaducidad);
     }
     const jsonArticulo = {
       idSubFamilia: data.idSubFamilia,
-      idMarca: getValidId (data.idMarca) as number,
-      idModelo: getValidId(data.idModelo) as number,
-      idTipoIce: getValidId(data.idTipoIce) as number,
+      idMarca: getValidId(data.idMarca)!,
+      idModelo: getValidId(data.idModelo)!,
+      idTipoIce: getValidId(data.idTipoIce)!,
       idTipoArticulo: data.idTipoArticulo,
       idTipoIva: data.idTipoIva,
       idMedida: data.idMedida,
@@ -48,11 +47,9 @@ export class SaveProductMapper {
       codigoBarra: isValidField(data.codigoBarra),
       idEtiqueta: getValidId(data.idEtiqueta) as any,
       cantMinimaVentaPorMayor: isValidField(data.cantMinimaVentaPorMayor),
-    }
+    };
 
-
-    const jsonPvp = dataPvp.map((item:any, index: number)=>{
-
+    const jsonPvp = dataPvp.map((item: any, index: number) => {
       return {
         index: index + 1,
         idArticuloPvP: item.idArticuloPvP,
@@ -60,33 +57,25 @@ export class SaveProductMapper {
         porcentajeUtilidad: item.porcentajeUtilidad,
         precioConIva: item.precioConIva,
         precioPredeterminado: item.precioPredeterminado,
-        precioVenta: item.precioVenta
-
-      }
-
-    })
-
+        precioVenta: item.precioVenta,
+      };
+    });
 
     return {
       idBodega: dataUbicacion.idBodega,
       ubicacion: isValidField(data.ubicacion),
       jsonArticulo: JSON.stringify(jsonArticulo),
       jsonPvp: JSON.stringify(jsonPvp),
-    }
+    };
   }
 
-
-  static fromJson(response:ApiResponse){
-
+  static fromJson(response: ApiResponse) {
     const data = JSON.parse(response.payload as string);
-    const resultResponse = new ApiResponse()
+    const resultResponse = new ApiResponse();
 
-    resultResponse.code=response.code;
-    resultResponse.message=response.message;
-    resultResponse.payload =data[0];
+    resultResponse.code = response.code;
+    resultResponse.message = response.message;
+    resultResponse.payload = data[0];
     return resultResponse;
-
-
   }
-
 }

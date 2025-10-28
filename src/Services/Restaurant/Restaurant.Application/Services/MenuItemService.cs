@@ -1,22 +1,20 @@
-﻿using Common.Core.Abstractions;
-
-namespace Restaurant.Application.Services;
+﻿namespace Restaurant.Application.Services;
 
 public class MenuItemService(IAdoRepository repository) : IMenuItemService
 {
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Restaurant.MenuItem_Get", parameters);
         return DataValidation.DataSetIsNull(ds, true)
-            ? new ApiResponse { Code = "0", Message = "Can't get data" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+            ? new SpResponse { Code = "0", Message = "Can't get data" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<ApiResponse> GetIdAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Restaurant.MenuItem_Get_Id", parameters);
         return DataValidation.DataSetIsNull(ds, true)
-            ? new ApiResponse { Code = "0", Message = "Can't get data" }
-            : new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+            ? new SpResponse { Code = "0", Message = "Can't get data" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

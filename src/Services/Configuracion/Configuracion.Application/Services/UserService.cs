@@ -10,9 +10,9 @@ public class UserService(IAdoRepository adoRepository) : IUserService
         return ds.Tables.Count == 0 ? null : DataConverters.DataSetToJson(ds);
     }
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters) =>
-        await adoRepository.SpExecuteAsync<ApiResponse>(NameSchema + "_Insert", parameters);
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.QuerySingleOrDefaultAsync<SpResponse>(NameSchema + "_Insert", parameters);
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters) =>
-        await adoRepository.SpExecuteAsync<ApiResponse>(NameSchema + "_Update", parameters);
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters) =>
+        await adoRepository.QuerySingleOrDefaultAsync<SpResponse>(NameSchema + "_Update", parameters);
 }

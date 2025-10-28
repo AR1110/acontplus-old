@@ -4,29 +4,24 @@
   <div class="d-grid gap-2">
     <div class="row">
       <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-12 col-12">
-        <div
-          class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
-        >
+        <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Establecimiento</mat-label>
               <mat-select [(ngModel)]="dataSearch.codEstab">
-                @for(item of estabs(); track $index){
-                <mat-option [value]="item.codEstab">{{
-                  item.nombreEstab
-                }}</mat-option>
-
+                @for (item of estabs(); track $index) {
+                  <mat-option [value]="item.codEstab">{{ item.nombreEstab }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
           </div>
           <div class="col">
-            <app-date-range-selection [showInputMaterial]="true"
-                                      [showMatPrefix]="true"
-                                      [(checkbox)]="dataSearch.filterByDate"
-                                      (onCheckboxChange)="refresh()"
-
-                                      (onChangeDateRange)="changeDateRange($event)"
+            <app-date-range-selection
+              [showInputMaterial]="true"
+              [showMatPrefix]="true"
+              [(checkbox)]="dataSearch.filterByDate"
+              (onCheckboxChange)="refresh()"
+              (onChangeDateRange)="changeDateRange($event)"
             />
           </div>
         </div>
@@ -38,21 +33,13 @@
           </div>
           <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
             <div class="d-flex flex-row gap-1 justify-content-end">
-              <button
-                mat-icon-button
-                [disabled]="loading"
-                (click)="openAddEditModal()"
-              >
+              <button mat-icon-button [disabled]="loading" (click)="openAddEditModal()">
                 <mat-icon>add</mat-icon>
               </button>
               <button mat-icon-button (click)="refresh()" [disabled]="loading">
                 <mat-icon>refresh</mat-icon>
               </button>
-              <button
-                mat-icon-button
-                (click)="isFilterAdvanced.set(!isFilterAdvanced())"
-                [disabled]="loading"
-              >
+              <button mat-icon-button (click)="isFilterAdvanced.set(!isFilterAdvanced())" [disabled]="loading">
                 <mat-icon>filter_list</mat-icon>
               </button>
             </div>
@@ -61,102 +48,85 @@
       </div>
     </div>
 
-    @if(isFilterAdvanced()){
+    @if (isFilterAdvanced()) {
+      <div class="row">
+        <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
+          <mat-form-field class="w-100">
+            <mat-label>Punto Emisión</mat-label>
+            <mat-select [(ngModel)]="dataSearch.puntoEmisionId" (selectionChange)="refresh()">
+              @for (item of puntosEmision(); track $index) {
+                <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+          <mat-form-field class="w-100">
+            <mat-label>Usuario</mat-label>
+            <mat-select [(ngModel)]="dataSearch.usuarioId" (selectionChange)="refresh()">
+              <mat-option [value]="0">--Todos--</mat-option>
+              @for (item of users(); track $index) {
+                <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
 
-    <div class="row "  >
-      <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Punto Emisión</mat-label>
-          <mat-select [(ngModel)]="dataSearch.puntoEmisionId" (selectionChange)="refresh()">
-            @for(item of puntosEmision(); track $index){
-              <mat-option [value]="item.idPuntoEmision">{{
-                  item.ptoEmi
-                }}</mat-option>
+        <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+          <mat-form-field class="w-100">
+            <mat-label>Buscar por Nro. Doc.:</mat-label>
+            <input matInput [(ngModel)]="dataSearch.nroSecuencial" placeholder="Ej: 123 o 1-30" />
+            <button type="button" matSuffix mat-icon-button (click)="refresh()">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
 
-            }
-          </mat-select>
-        </mat-form-field>
+        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+          <mat-form-field class="w-100">
+            <mat-label>Estado</mat-label>
+            <mat-select [(ngModel)]="dataSearch.codEstado" (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of estadosDoc; track $index) {
+                <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Usuario</mat-label>
-          <mat-select [(ngModel)]="dataSearch.usuarioId" (selectionChange)="refresh()">
-            <mat-option [value]="0">--Todos--</mat-option>
-            @for(item of users(); track $index){
-              <mat-option [value]="item.idUsuario">{{
-                  item.nombreUsuario
-                }}</mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-
-      </div>
-
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Buscar por Nro. Doc.:</mat-label>
-          <input matInput [(ngModel)]="dataSearch.nroSecuencial" placeholder="Ej: 123 o 1-30">
-          <button type="button" matSuffix mat-icon-button (click)="refresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-        </mat-form-field>
-      </div>
-
-      <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Estado</mat-label>
-          <mat-select [(ngModel)]="dataSearch.codEstado" (selectionChange)="refresh()">
-            <mat-option  [value]="0">Todos</mat-option>
-            @for(item of estadosDoc; track $index){
-              <mat-option [value]="item.codigo">{{
-                  item.descripcion
-                }}</mat-option>
-
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-
     }
-
-
   </div>
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [templateOp]="templateOp"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
-    >
-    </app-mat-dynamic-table>
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [templateOp]="templateOp"
+    [paginationConfig]="pagination()"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  >
+  </app-mat-dynamic-table>
 
-    <ng-template #templateOp let-item="item">
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-        <mat-icon>more_vert</mat-icon>
+  <ng-template #templateOp let-item="item">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item appCompraHabitualHistorial [params]="item">
+        <mat-icon>history</mat-icon>
+        <span>Hist. compras</span>
       </button>
+    </mat-menu>
 
-      <mat-menu #menu="matMenu">
-
-
-
-        <button mat-menu-item appCompraHabitualHistorial [params]="item">
-          <mat-icon>history</mat-icon>
-          <span>Hist. compras</span>
-        </button>
-      </mat-menu>
-
-      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
-        <mat-icon>timeline</mat-icon>
-      </button>
-    </ng-template>
+    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
+      <mat-icon>timeline</mat-icon>
+    </button>
+  </ng-template>
 </app-mat-dynamic-card>

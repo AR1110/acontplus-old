@@ -4,27 +4,20 @@
   <div class="d-grid gap-2">
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-2">
       <div class="col">
-        <mat-checkbox
-          [(ngModel)]="dataSearch.checkboxCompanyCustomerEmployee"
-        >Cliente</mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomerEmployee">Cliente</mat-checkbox>
       </div>
       <div class="col">
-        <mat-checkbox
-          [(ngModel)]="dataSearch.checkboxUser"
-        >Usuario</mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.checkboxUser">Usuario</mat-checkbox>
       </div>
     </div>
-    <mat-divider/>
+    <mat-divider />
     <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.codDoc"
-            (selectionChange)="onChangeTipoDoc()"
-          >
+          <mat-select [(ngModel)]="dataSearch.codDoc" (selectionChange)="onChangeTipoDoc()">
             @for (item of tiposDoc; track $index) {
-              <mat-option [value]="item.codDoc">{{item.descripcion}}</mat-option>
+              <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -32,22 +25,16 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.codEstab"
-          >
+          <mat-select [(ngModel)]="dataSearch.codEstab">
             @for (item of establecimientos; track $index) {
-              <mat-option [value]="item.codEstab">{{item.nombreComercial}}</mat-option>
+              <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection
-          [showInputMaterial]="true"
-          (onChangeDateRange)="onDateRangeSelection($event)"
-        />
+        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
       </div>
-
     </div>
 
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-1">
@@ -75,13 +62,11 @@
         (handleClick)="getReportPdf()"
       ></app-theme-button
       ><app-theme-button
-      variant="success"
-      icon="download"
-      text="EXCEL"
-      (handleClick)="getReportExcel()"
-    ></app-theme-button>
+        variant="success"
+        icon="download"
+        text="EXCEL"
+        (handleClick)="getReportExcel()"
+      ></app-theme-button>
     </div>
-
-
   </div>
 </app-mat-dynamic-card>

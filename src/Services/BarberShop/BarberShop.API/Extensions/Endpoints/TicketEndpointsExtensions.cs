@@ -1,10 +1,6 @@
-﻿using BarberShop.Api.Endpoints.Interfaces;
-using BarberShop.Application.Tickets.DTOs;
-using BarberShop.Application.WorkSessions.DTOs;
-using Common.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BarberShop.Api.Extensions.Endpoints;
+namespace BarberShop.API.Extensions.Endpoints;
 
 public static class TicketEndpointsExtensions
 {

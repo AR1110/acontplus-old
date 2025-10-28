@@ -52,8 +52,7 @@ export class ProductHistPurchaseModalComponent implements OnInit {
 
   askToDeleteCH(item: any) {
     Swal.fire({
-      title:
-        '¿Está seguro/a de desvincular este articulo de compras habituales?',
+      title: '¿Está seguro/a de desvincular este articulo de compras habituales?',
       text: '¡No podrás revertir esto!',
       icon: 'warning',
       showCancelButton: true,
@@ -62,7 +61,7 @@ export class ProductHistPurchaseModalComponent implements OnInit {
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         this.deleteCH(item);
       }

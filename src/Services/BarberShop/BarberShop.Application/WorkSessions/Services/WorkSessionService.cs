@@ -1,6 +1,4 @@
-﻿using BarberShop.Domain.Repositories;
-
-namespace BarberShop.Application.WorkSessions.Services;
+﻿namespace BarberShop.Application.WorkSessions.Services;
 
 public class WorkSessionService(IWorkSessionRepository workSessionRepository) : IWorkSessionService
 {
@@ -9,26 +7,26 @@ public class WorkSessionService(IWorkSessionRepository workSessionRepository) : 
         throw new NotImplementedException();
     }
 
-    public async Task<ApiResponse> GetWorkSessionByIdAsync(int id)
+    public async Task<SpResponse> GetWorkSessionByIdAsync(int id)
     {
         var seat = await workSessionRepository.GetWorkSessionByIdAsync(id);
         if (seat == null)
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "Gestión no encontrada!"
             };
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Payload = seat
         };
     }
 
-    public async Task<ApiResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto)
+    public async Task<SpResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto)
     {
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Gestión creada exitosamente",
@@ -38,11 +36,11 @@ public class WorkSessionService(IWorkSessionRepository workSessionRepository) : 
         };
     }
 
-    public async Task<ApiResponse> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto)
+    public async Task<SpResponse> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto)
     {
         var existingSession = await workSessionRepository.GetWorkSessionByIdAsync(id);
         if (existingSession == null)
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "Gestión no encontrada!"
@@ -51,7 +49,7 @@ public class WorkSessionService(IWorkSessionRepository workSessionRepository) : 
         var updatedSession = ObjectMapper.Map(workSessionDto, existingSession);
         await workSessionRepository.UpdateWorkSessionAsync(updatedSession);
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Gestión actualizada exitosamente",
@@ -59,10 +57,10 @@ public class WorkSessionService(IWorkSessionRepository workSessionRepository) : 
         };
     }
 
-    public async Task<ApiResponse> DeleteWorkSessionAsync(int id)
+    public async Task<SpResponse> DeleteWorkSessionAsync(int id)
     {
         await workSessionRepository.DeleteWorkSessionAsync(id);
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Gestión eliminada exitosamente"

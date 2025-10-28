@@ -1,0 +1,33 @@
+namespace Inventario.Application.Services;
+
+public class TarifaService : ITarifaService
+{
+    private readonly IAdoRepository _repository;
+    private readonly string nameSchema = "Inventario.Tarifa";
+
+    public TarifaService(IAdoRepository repository)
+    {
+        _repository = repository;
+    }
+
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
+        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+            return new SpResponse { Code = "0", Message = "Sin registros", Payload = null };
+
+
+        return new SpResponse
+        {
+            Code = "1",
+            Message = "Listado exitosamente",
+            Payload = DataConverters.DataSetToJson(ds)
+        };
+    }
+
+
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Update", parameters);
+    }
+}

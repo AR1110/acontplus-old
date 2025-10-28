@@ -1,9 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="titleModal"
-  (close)="close()"
-/>
+<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="titleModal" (close)="close()" />
 
 <ng-template #body>
   <div class="d-grid gap-3 mb-3">
@@ -11,31 +6,31 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Serie Documento</mat-label>
-          <input matInput  [value]="support.sequence" disabled>
+          <input matInput [value]="support.sequence" disabled />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Vehículo</mat-label>
-          <input matInput  [value]="support.vehicleType" disabled>
+          <input matInput [value]="support.vehicleType" disabled />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Marca</mat-label>
-          <input matInput  [value]="support.brand" disabled>
+          <input matInput [value]="support.brand" disabled />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Modelo</mat-label>
-          <input matInput  [value]="support.model" disabled>
+          <input matInput [value]="support.model" disabled />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Color</mat-label>
-          <input matInput  [value]="support.color" disabled>
+          <input matInput [value]="support.color" disabled />
         </mat-form-field>
       </div>
     </div>
@@ -44,99 +39,85 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Motor</mat-label>
-          <input matInput  [value]="support.engine" disabled>
+          <input matInput [value]="support.engine" disabled />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Fecha Emisión</mat-label>
-          <input matInput [matDatepicker]="picker" [value]="data.fechaEmision"
-                 (dateChange)="addEventDate($event)"
-                 (dateInput)="addEventDate($event)"
-          >
+          <input
+            matInput
+            [matDatepicker]="picker"
+            [value]="data.fechaEmision"
+            (dateChange)="addEventDate($event)"
+            (dateInput)="addEventDate($event)"
+          />
           <mat-hint>MM/DD/YYYY</mat-hint>
           <mat-datepicker-toggle matIconSuffix [for]="picker">
             <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
           </mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
-
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Kilometraje</mat-label>
-          <input matInput  [(ngModel)]="data.mileage" >
+          <input matInput [(ngModel)]="data.mileage" />
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Nivel de combustible:</mat-label>
-          <input matInput  [(ngModel)]="data.fuelLevel">
+          <input matInput [(ngModel)]="data.fuelLevel" />
         </mat-form-field>
       </div>
-
     </div>
 
-
-
     <mat-accordion>
-      @for (item of vehiclePartTypeNodes(); track $index){
-
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title> {{ item.description }} </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="table-responsive">
-          <table class="table table-hover table-sm">
-            <thead class="thead-dark">
-            <tr>
-              <th>Descripción</th>
-              <th class="text-center">Estado</th>
-              <!-- <th class="text-center">Bueno</th>
+      @for (item of vehiclePartTypeNodes(); track $index) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ item.description }} </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="table-responsive">
+            <table class="table table-hover table-sm">
+              <thead class="thead-dark">
+                <tr>
+                  <th>Descripción</th>
+                  <th class="text-center">Estado</th>
+                  <!-- <th class="text-center">Bueno</th>
               <th class="text-center">Regular</th>
               <th class="text-center">Malo</th> -->
-              <th class="text-center">Observación</th>
-            </tr>
-            </thead>
-            <tbody>
-              @for (node of item.nodes; track node.id; let i = $index) {
-                <tr>
-                  <td width="35%">{{ node.description }}</td>
-                  <td width="25%" class="text-center">
-                    <div class="d-flex flex-row">
-                      <mat-chip-listbox
-                        aria-label="Option selection"
-                        [(ngModel)]="node.status"
-                      >
-                        <mat-chip-option [value]="1" color="primary">
-                          Bueno</mat-chip-option
-                        >
-                        <mat-chip-option [value]="2" color="primary"
-                        >Regular</mat-chip-option
-                        >
-                        <mat-chip-option [value]="3" color="primary"
-                        >Malo</mat-chip-option
-                        >
-                      </mat-chip-listbox>
-                    </div>
-                  </td>
-
-                  <td width="50%" class="text-center">
-                    <mat-form-field class="w-100">
-                      <textarea matInput [(ngModel)]="node.obs"></textarea>
-                    </mat-form-field>
-
-                  </td>
+                  <th class="text-center">Observación</th>
                 </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      </mat-expansion-panel>
+              </thead>
+              <tbody>
+                @for (node of item.nodes; track node.id; let i = $index) {
+                  <tr>
+                    <td width="35%">{{ node.description }}</td>
+                    <td width="25%" class="text-center">
+                      <div class="d-flex flex-row">
+                        <mat-chip-listbox aria-label="Option selection" [(ngModel)]="node.status">
+                          <mat-chip-option [value]="1" color="primary"> Bueno</mat-chip-option>
+                          <mat-chip-option [value]="2" color="primary">Regular</mat-chip-option>
+                          <mat-chip-option [value]="3" color="primary">Malo</mat-chip-option>
+                        </mat-chip-listbox>
+                      </div>
+                    </td>
+
+                    <td width="50%" class="text-center">
+                      <mat-form-field class="w-100">
+                        <textarea matInput [(ngModel)]="node.obs"></textarea>
+                      </mat-form-field>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-expansion-panel>
       }
-
     </mat-accordion>
-
 
     <mat-form-field class="w-100">
       <mat-label>Observación</mat-label>
@@ -145,14 +126,5 @@
   </div>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
-    variant="success"
-    [icon]="icon"
-    [text]="btnText"
-    (handleClick)="save()"
- />
+  <app-theme-button variant="success" [icon]="icon" [text]="btnText" (handleClick)="save()" />
 </ng-template>
-
-
-
-

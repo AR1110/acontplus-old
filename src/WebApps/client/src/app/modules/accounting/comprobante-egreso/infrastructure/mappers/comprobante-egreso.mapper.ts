@@ -1,33 +1,32 @@
-import { EntidadFinanciera } from "@accounting/shared/models/entidad-financiera.interface";
-import { SubEntidadFinancieraSelectHtmlOnly } from "@accounting/sub-entidad-financiera/domain/subentidad-financiera.interface";
-import { BancoSelectOnly } from "@accounting/shared/models/banco.interface";
-import { EstadoPago } from "@accounting/comprobante-egreso/domain/estado-pago.interface";
-import { groupCitiesByProvinceUtil } from "@shared/utils/group-cities-by-province.util";
-import { CuotaPorPagarLista } from "@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface";
-import {CuentaPorPagarLista} from "@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model";
+import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.interface';
+import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
+import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { groupCitiesByProvinceUtil } from '@shared/utils/group-cities-by-province.util';
+import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
 import {
-  CuentaPorPagarEstado, CuentaPorPagarHistorial,
+  CuentaPorPagarEstado,
+  CuentaPorPagarHistorial,
   CuotaPorPagarEstado,
-  FormaPago
-} from "@accounting/comprobante-egreso/domain/comprobante-egreso.entity";
-import {PagoDetalle} from "@accounting/comprobante-egreso/domain/pago-detalle.model";
-import {getValidId, isValidField} from "@core/utils/utils";
-import {formatDateToString} from "@core/utils/date.util";
+  FormaPago,
+} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { formatDateToString } from '@core/utils/date.util';
 
 interface ParamsGuardar {
-  dataCuentaPorPagar: CuentaPorPagarLista,
-  total: number,
-  formasPago: FormaPago[],
-  pagosDetalle: PagoDetalle[],
-  cuentasPorPagarEstado: CuentaPorPagarEstado[],
-  cuotasPorPagarEstado: CuotaPorPagarEstado[],
-  cuentasPorPagarHistorial: CuentaPorPagarHistorial[]
-  observacion?: string
-
+  dataCuentaPorPagar: CuentaPorPagarLista;
+  total: number;
+  formasPago: FormaPago[];
+  pagosDetalle: PagoDetalle[];
+  cuentasPorPagarEstado: CuentaPorPagarEstado[];
+  cuotasPorPagarEstado: CuotaPorPagarEstado[];
+  cuentasPorPagarHistorial: CuentaPorPagarHistorial[];
+  observacion?: string;
 }
 
 export class ComprobanteEgresoMapper {
-
   static fromApiCuotasByICuentaPorPagar(response: any): CuotaPorPagarLista[] {
     const { cuotas } = response;
     return cuotas.map((item: any) => {
@@ -41,18 +40,19 @@ export class ComprobanteEgresoMapper {
         saldo: item.saldo,
         nombreEstado: item.descripcion,
         codigoEstado: item.codigo,
-        saldoInicial: item.saldo
-      }
-    })
-
-
+        saldoInicial: item.saldo,
+      };
+    });
   }
 
-
-
   static fromApiDataForm(response: any) {
-    const { entidadFinanciera, subEntidadFinanciera, banco, estadoPago, ciudad, documentos = []
-
+    const {
+      entidadFinanciera,
+      subEntidadFinanciera,
+      banco,
+      estadoPago,
+      ciudad,
+      documentos = [],
     } = response;
 
     const entidadesFinanciera = entidadFinanciera.map((item: any) => {
@@ -60,12 +60,11 @@ export class ComprobanteEgresoMapper {
         idEntidadFinanciera: item.idEntidadFinanciera,
         descripcion: item.descripcion,
         codigo: item.codigo,
-      }
+      };
       return obj;
-    })
+    });
 
     const subEntidadesFinanciera = subEntidadFinanciera.map((item: any) => {
-
       const obj: SubEntidadFinancieraSelectHtmlOnly = {
         idSubEntidadFinanciera: item.idSubEntidadFinanciera,
         idEntidadFinanciera: item.idEntidadFinanciera,
@@ -73,27 +72,27 @@ export class ComprobanteEgresoMapper {
         codigo: item.codigo,
 
         controlCaja: item.controlCaja,
-      }
+      };
       return obj;
-    })
+    });
 
     const bancos = banco.map((item: any) => {
       const obj: BancoSelectOnly = {
         idBanco: item.idBanco,
         descripcion: item.descripcion,
         codigo: item.codigo,
-      }
+      };
       return obj;
-    })
+    });
 
     const estadosPago = estadoPago.map((item: any) => {
       const obj: EstadoPago = {
         idEstadoPago: item.idEstadoPago,
         descripcion: item.descripcion,
-        codigo: item.codigo
-      }
+        codigo: item.codigo,
+      };
       return obj;
-    })
+    });
 
     const provinciaCiudades = groupCitiesByProvinceUtil(ciudad);
 
@@ -105,9 +104,9 @@ export class ComprobanteEgresoMapper {
         nombreDoc: item.tipoDocumento,
         total: item.saldo,
         numAutDocSustento: item.numAutDocSustento,
-        fechaEmision: item.fechaEmision
-      }
-    })
+        fechaEmision: item.fechaEmision,
+      };
+    });
 
     return {
       entidadesFinanciera,
@@ -115,25 +114,31 @@ export class ComprobanteEgresoMapper {
       bancos,
       estadosPago,
       provinciaCiudades,
-      documentos: documentosTemp
-    }
-
+      documentos: documentosTemp,
+    };
   }
 
-
   static toApiPost(params: ParamsGuardar) {
-    const {dataCuentaPorPagar, formasPago, pagosDetalle, cuentasPorPagarHistorial, total, observacion, cuentasPorPagarEstado, cuotasPorPagarEstado } = params;
+    const {
+      dataCuentaPorPagar,
+      formasPago,
+      pagosDetalle,
+      cuentasPorPagarHistorial,
+      total,
+      observacion,
+      cuentasPorPagarEstado,
+      cuotasPorPagarEstado,
+    } = params;
 
-    console.log(params)
+    console.log(params);
     const comprobante = {
       idProveedor: dataCuentaPorPagar.idProveedor,
-      total ,
+      total,
       codEstab: dataCuentaPorPagar.codEstab,
-      observacion: isValidField(observacion)
-    }
+      observacion: isValidField(observacion),
+    };
 
-    const pagos = formasPago.map((item) => {
-
+    const pagos = formasPago.map(item => {
       return {
         idSubEntidadFinanciera: item.idSubEntidadFinanciera,
         idEntidadFinanciera: item.idEntidadFinanciera,
@@ -143,58 +148,49 @@ export class ComprobanteEgresoMapper {
         nro: isValidField(item.nro),
         valor: item.valorAbonoInput,
         posfechado: item.posfechado,
-        cobro:  !item.posfechado,
+        cobro: !item.posfechado,
         secuencial: item.secuencial,
         lote: isValidField(item.lote),
         aprobacion: isValidField(item.aprobacion),
         referencia: isValidField(item.referencia),
         abono: item.abono,
-        controlCaja: item.controlCaja
-      }
-
-    })
+        controlCaja: item.controlCaja,
+      };
+    });
 
     const pagosDetalleMapper = pagosDetalle.map((item: any) => {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         saldo: item.saldo,
         abono: item.abono,
-        secuencial: item.secuencial
-      }
-    })
+        secuencial: item.secuencial,
+      };
+    });
 
-
-    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item) => {
+    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map(item => {
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         saldo: item.saldo,
         abono: item.abono,
-        secuencial: item.secuencial
-      }
-    })
+        secuencial: item.secuencial,
+      };
+    });
 
     const cuentasPorPagarDeterminarEstado = cuentasPorPagarEstado.map(item => {
-
-
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         idEstadoPago: item.idEstadoPago,
         abono: item.abono,
-      }
-
-    })
+      };
+    });
 
     const cuotasPorPagarDeterminarEstado = cuotasPorPagarEstado.map(item => {
-
-
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idEstadoPago: item.idEstadoPago,
         abono: item.abono,
-      }
-
-    })
-
+      };
+    });
 
     return {
       comprobante,
@@ -202,10 +198,7 @@ export class ComprobanteEgresoMapper {
       pagoDetalle: pagosDetalleMapper,
       historial: cuentasPorPagarHistorialMapper,
       cuenta: cuentasPorPagarDeterminarEstado,
-      cuota: cuotasPorPagarDeterminarEstado
-    }
-
-
+      cuota: cuotasPorPagarDeterminarEstado,
+    };
   }
-
 }

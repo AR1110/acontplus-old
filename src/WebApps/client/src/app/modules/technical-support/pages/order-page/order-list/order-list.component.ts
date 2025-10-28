@@ -87,7 +87,7 @@ export class OrderListComponent implements OnInit {
     { key: 'orderStatusName', label: 'Estado Orden', type: 'string' },
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -103,7 +103,7 @@ export class OrderListComponent implements OnInit {
     });
     if (result.isConfirmed) {
       this.orderService.delete(item.id).subscribe({
-        next: (response) => {
+        next: response => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
@@ -130,20 +130,18 @@ export class OrderListComponent implements OnInit {
       startDate: this.startDate,
     };
     const clonedParams = Object.assign(params, this.dataSearch);
-    this.orderService.getAll(clonedParams).subscribe((response) => {
-      const orders = (response.orders || []).map(
-        (order: any, index: number) => {
-          return {
-            ...order,
-            index: index + 1,
-            nombreEstado: order.enabled ? 'Activo' : 'Inactivo',
-          };
-        }
-      );
+    this.orderService.getAll(clonedParams).subscribe(response => {
+      const orders = (response.orders || []).map((order: any, index: number) => {
+        return {
+          ...order,
+          index: index + 1,
+          nombreEstado: order.enabled ? 'Activo' : 'Inactivo',
+        };
+      });
       this.orders.set(orders);
       this.users = response.users;
       if (this.orders().length > 0) {
-        this.pagination.update((prev) => {
+        this.pagination.update(prev => {
           return {
             ...prev,
             totalRecords: response.orders[0].totalRecords,
@@ -183,7 +181,7 @@ export class OrderListComponent implements OnInit {
       size: 'xl',
       data: item || {},
     });
-    modalRef.subscribe((response) => {
+    modalRef.subscribe(response => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -195,7 +193,7 @@ export class OrderListComponent implements OnInit {
       size: 'xl',
       data: {},
     });
-    modalResp.subscribe((response) => {
+    modalResp.subscribe(response => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }
@@ -214,7 +212,7 @@ export class OrderListComponent implements OnInit {
       data: structuredClone(item) || {},
     });
 
-    modalRef.subscribe((response) => {
+    modalRef.subscribe(response => {
       if (response.code === '1') {
         this.get();
       }
@@ -225,8 +223,7 @@ export class OrderListComponent implements OnInit {
     if (!(item.assignedUserId > 0)) {
       return this.tS.show({
         type: 'warning',
-        message:
-          'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',
+        message: 'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',
       });
     }
     const modalRef = this.modalService.open(OrderMaintenanceModalComponent, {
@@ -236,7 +233,7 @@ export class OrderListComponent implements OnInit {
       },
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.get();
       }
@@ -244,7 +241,7 @@ export class OrderListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

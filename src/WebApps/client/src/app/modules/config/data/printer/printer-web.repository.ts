@@ -20,7 +20,7 @@ export class PrinterWebRepository implements PrinterRepository {
       tipo: 1,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return { printers: [] };
         }
@@ -43,13 +43,11 @@ export class PrinterWebRepository implements PrinterRepository {
       tipo: 2,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map((response) => {
+      map(response => {
         if (response.code !== '1') {
           return { estabs: [], documents: [], printerTypes: [] };
         }
-        const { estabs, documents, printerTypes } = JSON.parse(
-          response.payload as string,
-        );
+        const { estabs, documents, printerTypes } = JSON.parse(response.payload as string);
         return {
           estabs,
           documents,
@@ -66,7 +64,7 @@ export class PrinterWebRepository implements PrinterRepository {
       context: customUrl(),
     };
     return this._http.get<ApiResponse>(this._urlPrinter, requestOptions).pipe(
-      map((response) => {
+      map(response => {
         const mainData = response.payload;
         return {
           localPrinters: mainData,
@@ -81,7 +79,7 @@ export class PrinterWebRepository implements PrinterRepository {
       id,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map((response) => {
+      map(response => {
         const { documents, printer } = JSON.parse(response.payload as string);
         return {
           printer: printer[0],
@@ -92,26 +90,18 @@ export class PrinterWebRepository implements PrinterRepository {
   }
 
   updateStatus<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
 
   removePrinter(id: number): Observable<ApiResponse> {
-    return this._http
-      .delete<ApiResponse>(`${this._url}${id}`)
-      .pipe(map((response) => response));
+    return this._http.delete<ApiResponse>(`${this._url}${id}`).pipe(map(response => response));
   }
 
   create<T>(data: T) {
-    return this._http
-      .post<ApiResponse>(`${this._url}`, data)
-      .pipe(map((response) => response));
+    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map(response => response));
   }
 
   update<T>(id: number, data: T) {
-    return this._http
-      .put<ApiResponse>(`${this._url}${id}`, data)
-      .pipe(map((response) => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map(response => response));
   }
 }

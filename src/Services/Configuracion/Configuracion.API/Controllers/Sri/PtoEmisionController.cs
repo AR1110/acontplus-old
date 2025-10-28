@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers.Sri;
+namespace Configuracion.API.Controllers.Sri;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -26,26 +26,26 @@ public class PtoEmisionController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreatePtoEmisionDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreatePtoEmisionDto>(data)) }
+    };
         var response = await _service.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, UpdatePtoEmisionDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdatePtoEmisionDto>(data)) }
+    };
         var response = await _service.UpdateAsync(parameters);
         return Ok(response);
     }

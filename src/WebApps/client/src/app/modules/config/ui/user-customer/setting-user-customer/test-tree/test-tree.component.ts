@@ -1,17 +1,14 @@
-
 // table-tree.component.ts
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import {MatChipsModule} from "@angular/material/chips";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIconModule} from "@angular/material/icon";
-import {MatMenuModule} from "@angular/material/menu";
-import {
-  ListUserCustomerPermissionUseCase
-} from "@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case";
-import {UserCustomerStore} from "@modules/config/application/store/user-customer.store";
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { ListUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case';
+import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
 
 // Estructura de nodo jerárquico
 interface TreeNode {
@@ -32,21 +29,18 @@ interface TreeNode {
     MatMenuModule,
   ],
   templateUrl: './test-tree.component.html',
-  styleUrl: './test-tree.component.scss'
+  styleUrl: './test-tree.component.scss',
 })
 export class TestTreeComponent implements OnInit {
   displayedColumns: string[] = ['select', 'name'];
   dataSource = new MatTableDataSource<TreeNode>([]);
-  private $listUseCase = inject(ListUserCustomerPermissionUseCase)
-  private $userCustomerStore =inject(UserCustomerStore)
+  private $listUseCase = inject(ListUserCustomerPermissionUseCase);
+  private $userCustomerStore = inject(UserCustomerStore);
   // Datos jerárquicos con children
   treeData: TreeNode[] = [
     {
       name: 'Categoría 1',
-      children: [
-        { name: 'Elemento 1.1' },
-        { name: 'Elemento 1.2' }
-      ]
+      children: [{ name: 'Elemento 1.1' }, { name: 'Elemento 1.2' }],
     },
     {
       name: 'Categoría 2',
@@ -54,13 +48,10 @@ export class TestTreeComponent implements OnInit {
         { name: 'Elemento 2.1' },
         {
           name: 'Elemento 2.2',
-          children: [
-            { name: 'Elemento 2.2.1' },
-            { name: 'Elemento 2.2.2' }
-          ]
-        }
-      ]
-    }
+          children: [{ name: 'Elemento 2.2.1' }, { name: 'Elemento 2.2.2' }],
+        },
+      ],
+    },
   ];
 
   // Datos aplanados para la tabla
@@ -71,16 +62,18 @@ export class TestTreeComponent implements OnInit {
     // this.initializeTreeData();
     // this.flattenTreeData();
     // this.updateTable();
-    this.$listUseCase.execute({
-      userRoleId: this.$userCustomerStore.userRoleId()
-    }).subscribe(response=>{
-      console.log(response.userCustomPermissions)
-      this.treeData = response.userCustomPermissions
+    this.$listUseCase
+      .execute({
+        userRoleId: this.$userCustomerStore.userRoleId(),
+      })
+      .subscribe(response => {
+        console.log(response.userCustomPermissions);
+        this.treeData = response.userCustomPermissions;
 
-      this.initializeTreeData(response.userCustomPermissions);
-      this.flattenTreeData();
-       this.updateTable();
-    })
+        this.initializeTreeData(response.userCustomPermissions);
+        this.flattenTreeData();
+        this.updateTable();
+      });
   }
 
   // Inicializa los estados y asigna nivel inicial

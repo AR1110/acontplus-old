@@ -1,6 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
-public class TipoController(ITipoService tipoService) : BaseApiController
+public class TipoController(ITipoRepository tipoService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string json)

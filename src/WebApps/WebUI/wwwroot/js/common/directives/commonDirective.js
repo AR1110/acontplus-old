@@ -1470,7 +1470,7 @@
                     if (textSearch.length > 1) {
                         let json = {
                             busqueda: textSearch,
-                            idRol: decodeToken.userRoleId
+                            userRoleId: decodeToken.userRoleId
                         }
                         return commonService.usuarioSearch(json).then(response => {
                             let usuarios = response;

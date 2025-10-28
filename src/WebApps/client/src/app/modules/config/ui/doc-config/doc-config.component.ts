@@ -2,35 +2,35 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  inject, model,
-  OnInit, signal, TemplateRef, ViewChild, AfterViewInit,
+  inject,
+  model,
+  OnInit,
+  signal,
+  TemplateRef,
+  ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { isValidField } from '@core/utils/utils';
-import {DocConfigList} from '@modules/config/domain/models/doc-config.model';
+import { DocConfigList } from '@modules/config/domain/models/doc-config.model';
 import { DocConfigInfoAdicionalComponent } from '@modules/config/ui/doc-config/doc-config-info-adicional/doc-config-info-adicional.component';
 
-import { MatInputModule} from '@angular/material/input';
-import { MatCheckboxModule} from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { MatSelectModule} from '@angular/material/select';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {ListDocConfigUseCase} from "@modules/config/application/use-cases/doc-config/list-doc-config.use-case";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {DialogService} from "@core/services/dialog.service";
-import {CreateDocConfigUseCase} from "@modules/config/application/use-cases/doc-config/create-doc-config.use-case";
-import {
-  GetDocConfigFormDataUseCase
-} from "@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case";
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ListDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/list-doc-config.use-case';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { DialogService } from '@core/services/dialog.service';
+import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
+import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 
 @Component({
   selector: 'app-doc-config-page',
@@ -49,61 +49,58 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocConfigPageComponent implements OnInit, AfterViewInit {
-  private $listUseCase = inject(ListDocConfigUseCase)
-  private $createUseCase = inject(CreateDocConfigUseCase)
-  private $formDataDocConfig = inject(GetDocConfigFormDataUseCase)
+  private $listUseCase = inject(ListDocConfigUseCase);
+  private $createUseCase = inject(CreateDocConfigUseCase);
+  private $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _tS = inject(ToastrNotificationService);
   private readonly _modalService = inject(DialogService);
   private readonly _cdr = inject(ChangeDetectorRef);
 
-  establecimientos =signal<GroupedEstab[]>([]);
+  establecimientos = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfigList[]>([]);
 
   dataSearch = model({
     idPuntoEmision: 0,
     codEstab: '',
-  })
+  });
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: "#", type: 'string' },
+    { key: 'index', label: '#', type: 'string' },
     { key: 'nomDoc', label: 'Descripción', type: 'string' },
     { key: 'templateSelect', label: '', type: 'template' },
-    { key: 'templateSecuencia', label: 'Secuencia', type: "template" },
+    { key: 'templateSecuencia', label: 'Secuencia', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   @ViewChild('templateSecuencia') templateSecuencia!: TemplateRef<any>;
   @ViewChild('templateSelect') templateSelect!: TemplateRef<any>;
   getDocs() {
-    this.docs.set([])
-    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe(response=>{
-      this.docs.set(response.data)
-    })
+    this.docs.set([]);
+    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe(response => {
+      this.docs.set(response.data);
+    });
   }
 
   ngOnInit() {
-    this.$formDataDocConfig.execute().subscribe((response) => {
+    this.$formDataDocConfig.execute().subscribe(response => {
       this.establecimientos.set(response.establecimientos);
-      const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
+      const dataEstab = this.establecimientos().find(e => e.defaultEstab);
       if (dataEstab) {
         this.puntosEmision.set(dataEstab.puntosEmision);
-        const dataPuntoEmision = this.puntosEmision().find(
-          (p) => p.defaultPtoEmi,
-        );
+        const dataPuntoEmision = this.puntosEmision().find(p => p.defaultPtoEmi);
         if (dataPuntoEmision) {
-          this.dataSearch.update(ds=>({
+          this.dataSearch.update(ds => ({
             ...ds,
-            idPuntoEmision: dataPuntoEmision.idPuntoEmision
-          }))
+            idPuntoEmision: dataPuntoEmision.idPuntoEmision,
+          }));
           this.getDocs();
         }
-        this.dataSearch.update(ds=>({
+        this.dataSearch.update(ds => ({
           ...ds,
-          codEstab: dataEstab.codEstab
-        }))
+          codEstab: dataEstab.codEstab,
+        }));
       }
       this._cdr.detectChanges();
     });
@@ -111,7 +108,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
+    this.columnsDefs.forEach(col => {
       if (col.type === 'template' && col.key === 'templateSecuencia') {
         col.templateOutlet = this.templateSecuencia;
       }
@@ -122,23 +119,21 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   }
 
   onChangeEstab() {
-    const dataEstab = this.establecimientos().find(
-      (e) => e.codEstab === this.dataSearch().codEstab,
-    );
+    const dataEstab = this.establecimientos().find(e => e.codEstab === this.dataSearch().codEstab);
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
-      const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find(e => e.defaultPtoEmi);
       if (dataPuntoEmision) {
-        this.dataSearch.update(ds=>({
+        this.dataSearch.update(ds => ({
           ...ds,
-          idPuntoEmision: dataPuntoEmision.idPuntoEmision
-        }))
+          idPuntoEmision: dataPuntoEmision.idPuntoEmision,
+        }));
         this.getDocs();
       } else {
-        this.dataSearch.update(ds=>({
+        this.dataSearch.update(ds => ({
           ...ds,
-          idPuntoEmision: 0
-        }))
+          idPuntoEmision: 0,
+        }));
       }
     }
   }
@@ -167,14 +162,14 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
       ultimaSecuencia: item.ultimaSecuencia,
     };
 
-    this.$createUseCase.execute(data).subscribe((response) => {
-        this._tS.show({
-          type: response.code === '1' ? 'success' : 'warning',
-          message: response.message,
-        });
-        if (response.code === '1') {
-          this.getDocs();
-        }
+    this.$createUseCase.execute(data).subscribe(response => {
+      this._tS.show({
+        type: response.code === '1' ? 'success' : 'warning',
+        message: response.message,
+      });
+      if (response.code === '1') {
+        this.getDocs();
+      }
     });
   }
 
@@ -184,11 +179,10 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
       data: {
         ...structuredClone(data),
         idPuntoEmision: this.dataSearch().idPuntoEmision,
-      }
+      },
     });
 
-
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getDocs();
       }

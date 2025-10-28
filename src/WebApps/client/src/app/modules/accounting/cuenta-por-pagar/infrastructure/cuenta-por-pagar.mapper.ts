@@ -57,7 +57,7 @@ export class CuentaPorPagarMapper {
   }
 
   static fromApiCuotaConfig(response: any[]): CuentaPorPagarCuotaConfig[] {
-    return response.map((item) => {
+    return response.map(item => {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idCuentaPorPagar: item.idCuentaPorPagar,
@@ -73,12 +73,8 @@ export class CuentaPorPagarMapper {
   }
 
   static fromApiHistMovimiento(response: any[]) {
-    const [
-      tempCuentaPorPagar,
-      tempComprobanteEgreso,
-      tempHistorialPagos,
-      tempPagosDetalle,
-    ] = response;
+    const [tempCuentaPorPagar, tempComprobanteEgreso, tempHistorialPagos, tempPagosDetalle] =
+      response;
 
     const {
       serieComprobante,
@@ -101,20 +97,18 @@ export class CuentaPorPagarMapper {
         saldo,
       } as Partial<CuentaPorPagarLista>,
 
-      comprobantesEgreso: tempComprobanteEgreso.map(
-        (item: any, index: number) => {
-          return {
-            index: index + 1,
-            idComprobanteEgreso: item.idComprobanteEgreso,
-            fechaEmision: item.fechaEmision,
-            serieComprobante: item.serieComprobante,
-            total: item.total,
-            nombreEstado: item.nombreEstado,
-            estado: item.estado,
-            codEstab: item.codEstab,
-          };
-        },
-      ) as ComprobanteEgresoLista[],
+      comprobantesEgreso: tempComprobanteEgreso.map((item: any, index: number) => {
+        return {
+          index: index + 1,
+          idComprobanteEgreso: item.idComprobanteEgreso,
+          fechaEmision: item.fechaEmision,
+          serieComprobante: item.serieComprobante,
+          total: item.total,
+          nombreEstado: item.nombreEstado,
+          estado: item.estado,
+          codEstab: item.codEstab,
+        };
+      }) as ComprobanteEgresoLista[],
 
       historialPagos: tempHistorialPagos.map((item: any) => {
         return {

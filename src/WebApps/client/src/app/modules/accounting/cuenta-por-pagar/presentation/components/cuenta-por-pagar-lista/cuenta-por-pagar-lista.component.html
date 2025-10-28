@@ -1,20 +1,13 @@
 <div class="d-flex flex-column gap-2">
   <div class="row">
     <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
-      <div
-        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
-      >
+      <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento</mat-label>
-            <mat-select
-              [(ngModel)]="dataSearch().codEstab"
-              (selectionChange)="refresh()"
-            >
+            <mat-select [(ngModel)]="dataSearch().codEstab" (selectionChange)="refresh()">
               @for (item of estabs; track $index) {
-                <mat-option [value]="item.codEstab">{{
-                  item.nombreComercial
-                }}</mat-option>
+                <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -31,15 +24,10 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Tipo Documento</mat-label>
-            <mat-select
-              [(ngModel)]="dataSearch().codDoc"
-              (selectionChange)="refresh()"
-            >
+            <mat-select [(ngModel)]="dataSearch().codDoc" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of tiposDoc; track $index) {
-                <mat-option [value]="item.codDoc">{{
-                  item.descripcion
-                }}</mat-option>
+                <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -48,21 +36,14 @@
     </div>
     <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
       <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
-        <button
-          mat-flat-button
-          [disabled]="isLoadingResults()"
-          (click)="openPaymentModal()"
-        >
+        <button mat-flat-button [disabled]="isLoadingResults()" (click)="openPaymentModal()">
           <mat-icon>payments</mat-icon>
           Pagar
         </button>
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
         </button>
-        <button
-          mat-icon-button
-          (click)="isSearchAdvanced.set(!isSearchAdvanced())"
-        >
+        <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
           <mat-icon>filter_list</mat-icon>
         </button>
       </div>
@@ -72,28 +53,17 @@
   @if (isSearchAdvanced()) {
     <div class="border-top">
       <div class="d-flex justify-content-center gap-3 pb-2">
-        <mat-checkbox [(ngModel)]="dataSearch().esBuscarProveedor"
-          >Proveedor
-        </mat-checkbox>
-        <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro"
-          >Buscar por Nro. Doc</mat-checkbox
-        >
+        <mat-checkbox [(ngModel)]="dataSearch().esBuscarProveedor">Proveedor </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
       </div>
-      <div
-        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-      >
+      <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Estado</mat-label>
-            <mat-select
-              [(ngModel)]="dataSearch().codigoEstado"
-              (selectionChange)="refresh()"
-            >
+            <mat-select [(ngModel)]="dataSearch().codigoEstado" (selectionChange)="refresh()">
               <mat-option [value]="0">Todos</mat-option>
               @for (item of estadosDoc; track $index) {
-                <mat-option [value]="item.codigo">{{
-                  item.descripcion
-                }}</mat-option>
+                <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -107,17 +77,13 @@
           />
         </div>
         <div class="col">
-          <div
-            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-          >
+          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Opciones</mat-label>
                 <mat-select [(ngModel)]="dataSearch().typeSearchNro">
                   @for (item of typesSearchNro(); track $index) {
-                    <mat-option [value]="item.code">{{
-                      item.description
-                    }}</mat-option>
+                    <mat-option [value]="item.code">{{ item.description }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -126,18 +92,8 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Secuencial</mat-label>
-                <input
-                  matInput
-                  [(ngModel)]="dataSearch().secuencial"
-                  mask="0*"
-                  placeholder="..."
-                />
-                <button
-                  matSuffix
-                  mat-icon-button
-                  aria-label="Refresh"
-                  (click)="onClickSecuencial($event)"
-                >
+                <input matInput [(ngModel)]="dataSearch().secuencial" mask="0*" placeholder="..." />
+                <button matSuffix mat-icon-button aria-label="Refresh" (click)="onClickSecuencial($event)">
                   <mat-icon>refresh</mat-icon>
                 </button>
               </mat-form-field>
@@ -160,7 +116,7 @@
     @for (col of columnsDefs; track $index) {
       <ng-container [matColumnDef]="col.key">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          @if (col.key === "select") {
+          @if (col.key === 'select') {
             <mat-checkbox
               (change)="$event ? toggleAllRows() : null"
               [checked]="selection.hasValue() && isAllSelected()"
@@ -175,7 +131,7 @@
 
         <!-- Celdas de datos -->
         <td mat-cell *matCellDef="let element; let i = index">
-          @if (col.key === "select") {
+          @if (col.key === 'select') {
             <mat-checkbox
               (click)="$event.stopPropagation()"
               (change)="$event ? selection.toggle(element) : null"
@@ -186,34 +142,32 @@
           }
 
           <!-- Operaciones -->
-          @if (col.key === "op") {
+          @if (col.key === 'op') {
             <div class="d-flex flex-row gap-1">
-              <ng-container
-                *ngTemplateOutlet="templateOp; context: { item: element }"
-              ></ng-container>
+              <ng-container *ngTemplateOutlet="templateOp; context: { item: element }"></ng-container>
             </div>
           }
 
           <!-- Números -->
-          @if (col.type === "number") {
-            <div>{{ element[col.key] | number: "1.2" }}</div>
+          @if (col.type === 'number') {
+            <div>{{ element[col.key] | number: '1.2' }}</div>
           }
 
           <!-- Texto u otros -->
-          @if (col.type === "string") {
-            @if (col.key === "nombreEstado") {
+          @if (col.type === 'string') {
+            @if (col.key === 'nombreEstado') {
               @switch (element.codigoEstado) {
-                @case ("PA") {
+                @case ('PA') {
                   <span class="badge text-bg-success">
                     {{ element[col.key] }}
                   </span>
                 }
-                @case ("PE") {
+                @case ('PE') {
                   <span class="badge text-bg-warning">
                     {{ element[col.key] }}
                   </span>
                 }
-                @case ("A") {
+                @case ('A') {
                   <span class="badge text-bg-danger">
                     {{ element[col.key] }}
                   </span>
@@ -251,9 +205,7 @@
 
     <!-- Fila sin datos -->
     <tr class="mat-row" *matNoDataRow>
-      <td class="mat-cell text-center" [attr.colspan]="columnsDefs.length">
-        Sin Registro
-      </td>
+      <td class="mat-cell text-center" [attr.colspan]="columnsDefs.length">Sin Registro</td>
     </tr>
 
     <tr mat-footer-row *matFooterRowDef="columns"></tr>

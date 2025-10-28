@@ -1,16 +1,23 @@
-import { Component, inject, signal, TemplateRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  TemplateRef,
+  ViewChild,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-
-import {VehicleList} from '@mechanical/domain/models/vehicle.model';
+import { VehicleList } from '@mechanical/domain/models/vehicle.model';
 import { ConfigInspectionAddEditDirective } from '@mechanical/ui/directives/config-inspection-add-edit.directive';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
-import { MatDynamicCardComponent } from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
@@ -18,12 +25,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { finalize } from 'rxjs';
-import {ListVehicleUseCase} from "@mechanical/application/use-cases/vehicle/list-vehicle.use-case";
+import { ListVehicleUseCase } from '@mechanical/application/use-cases/vehicle/list-vehicle.use-case';
 
 @Component({
-   selector: 'app-config-inspection-page',
-   templateUrl: './config-inspection-page.component.html',
-   imports: [
+  selector: 'app-config-inspection-page',
+  templateUrl: './config-inspection-page.component.html',
+  imports: [
     FormsModule,
     MatTableModule,
 
@@ -34,38 +41,36 @@ import {ListVehicleUseCase} from "@mechanical/application/use-cases/vehicle/list
     ConfigInspectionAddEditDirective,
 
     MatDynamicCardComponent,
-    MatDynamicTableComponent
-    ],
-    styles: ``
+    MatDynamicTableComponent,
+  ],
+  styles: ``,
 })
 export class ConfigInspectionComponent implements OnInit, AfterViewInit {
-  private vehicleUseCase = inject(VehicleUseCase)
-  private $listUseCase = inject(ListVehicleUseCase)
+  private vehicleUseCase = inject(VehicleUseCase);
+  private $listUseCase = inject(ListVehicleUseCase);
   tS = inject(ToastrNotificationService);
 
-  dataSource = signal<VehicleList[]>([])
+  dataSource = signal<VehicleList[]>([]);
 
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'description', label: 'Descripcion', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
-  isLoading = signal(false)
+  isLoading = signal(false);
 
   resultModal(result?: any) {
-    this.refresh()
+    this.refresh();
   }
 
-
   refresh() {
-    this.getVehicles()
+    this.getVehicles();
   }
 
   private getVehicles() {
@@ -73,30 +78,27 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
       const params = {
         pageIndex: this.pagination().pageIndex,
         pageSize: this.pagination().pageSize,
-      }
-      if(this.isLoading()) return;
+      };
+      if (this.isLoading()) return;
 
       // showLoader();
       this.isLoading.set(true);
-      this.$listUseCase.execute(params)
-      .pipe(
-        finalize(()=>this.isLoading.set(false))
-      )
-      .subscribe( (response) => {
+      this.$listUseCase
+        .execute(params)
+        .pipe(finalize(() => this.isLoading.set(false)))
+        .subscribe(response => {
           this.dataSource.set(response.data);
-          this.pagination.update(p=>{
+          this.pagination.update(p => {
             return {
               ...p,
-              totalRecords: response.totalRecords
-            }
-          })
-
-        })
+              totalRecords: response.totalRecords,
+            };
+          });
+        });
     } catch (error) {
       // hideLoader();
     }
   }
-
 
   ngOnInit() {
     this.getVehicles();
@@ -104,12 +106,11 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
+    this.columnsDefs.forEach(col => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
     });
-
   }
 
   pageChanged(): void {
@@ -131,56 +132,48 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí',
-      cancelButtonText: 'No'
-    }).then((result) => {
+      cancelButtonText: 'No',
+    }).then(result => {
       if (result.isConfirmed) {
-
-        this.vehicleUseCase.remove(id).subscribe((response) => {
-              if (response.code === "0") {
-                this.tS.show({
-                  type: 'warning',
-                  message: response.message
-                })
-              }
-              if (response.code === "1") {
-                this.tS.show({
-                  type: 'success',
-                  message: response.message
-                })
-                this.getVehicles();
-              }
+        this.vehicleUseCase.remove(id).subscribe(response => {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
           }
-        )
+          if (response.code === '1') {
+            this.tS.show({
+              type: 'success',
+              message: response.message,
+            });
+            this.getVehicles();
+          }
+        });
       }
     });
-  };
-
+  }
 
   //Status Vehicle
   putState(id: number, state: boolean) {
-
-    this.vehicleUseCase.putState(id, state).subscribe(  (response) => {
-
-        if (response) {
-          this.tS.show({
-            type: 'success',
-            message: 'Actualizado correctamente'
-          })
-
-        }
-        else {
-          this.tS.show({
-            type: 'warning',
-            message: 'Error en actualizar el estado'
-          })
-        }
-        this.getVehicles()
-    })
-  };
-
+    this.vehicleUseCase.putState(id, state).subscribe(response => {
+      if (response) {
+        this.tS.show({
+          type: 'success',
+          message: 'Actualizado correctamente',
+        });
+      } else {
+        this.tS.show({
+          type: 'warning',
+          message: 'Error en actualizar el estado',
+        });
+      }
+      this.getVehicles();
+    });
+  }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -188,7 +181,6 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
         pageIndex: e.pageIndex,
       };
     });
-     this.refresh();
+    this.refresh();
   }
-
 }

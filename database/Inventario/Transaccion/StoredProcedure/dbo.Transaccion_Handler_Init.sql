@@ -37,4 +37,3 @@ DECLARE @RequestMsg xml;
 
 	COMMIT TRANSACTION;
 GO 
-    

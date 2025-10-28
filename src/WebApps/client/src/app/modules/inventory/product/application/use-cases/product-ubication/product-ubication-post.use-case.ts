@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { Observable } from 'rxjs';
-import {ProductUbicationRepository} from "@inventory/product/domain/repositories/product-ubication.repository";
-
+import { ProductUbicationRepository } from '@inventory/product/domain/repositories/product-ubication.repository';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +10,7 @@ import {ProductUbicationRepository} from "@inventory/product/domain/repositories
 export class ProductUbicationPostUseCase<T> implements BaseUseCase<ApiResponse, T> {
   constructor(private repo: ProductUbicationRepository) {}
 
-  execute (params: T): Observable<ApiResponse> {
+  execute(params: T): Observable<ApiResponse> {
     return this.repo.post(params);
   }
 }

@@ -1,10 +1,6 @@
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  MatTreeFlatDataSource,
-  MatTreeFlattener,
-  MatTreeModule,
-} from '@angular/material/tree';
+import { MatTreeFlatDataSource, MatTreeFlattener, MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -82,15 +78,15 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   };
 
   treeControl = new FlatTreeControl<MenuFlatNode>(
-    (node) => node.level,
-    (node) => node.expandable,
+    node => node.level,
+    node => node.expandable,
   );
 
   treeFlattener = new MatTreeFlattener<MenuNode, MenuFlatNode>(
     this.transformer,
-    (node) => node.level,
-    (node) => node.expandable,
-    (node) => node.children,
+    node => node.level,
+    node => node.expandable,
+    node => node.children,
   );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -101,7 +97,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe((response) => {
+      .subscribe(response => {
         this.accesoMenus.set(response.menus);
 
         this.actions = structuredClone(response.actions);
@@ -110,18 +106,16 @@ export class UserCustomerRoleAccessComponent implements OnInit {
         const makeMenusNode = [
           {
             name: 'Todos',
-            children: this.accesoMenus().map((m) => {
+            children: this.accesoMenus().map(m => {
               const { menus, ...rest } = m;
 
               const nodeSubMenus = menus.map((item: any) => {
                 const { isActive, ...restSm } = item;
 
-                const childrenActions = this.actions.map((a) => {
+                const childrenActions = this.actions.map(a => {
                   const isActive =
                     (item.isActive &&
-                      item.actions.some(
-                        (aRaw: any) => aRaw.code === a.codeAction,
-                      )) ||
+                      item.actions.some((aRaw: any) => aRaw.code === a.codeAction)) ||
                     false;
 
                   return {
@@ -145,13 +139,8 @@ export class UserCustomerRoleAccessComponent implements OnInit {
           },
         ];
 
-        this.dataSource = new MatTreeFlatDataSource(
-          this.treeControl,
-          this.treeFlattener,
-        );
-        this.checklistSelection = new SelectionModel<MenuFlatNode>(
-          true /* multiple */,
-        );
+        this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+        this.checklistSelection = new SelectionModel<MenuFlatNode>(true /* multiple */);
         this.dataSource.data = makeMenusNode;
         this.expandFirstLevelNodes();
 
@@ -180,7 +169,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   toggleDescendantsSelection(node: MenuFlatNode): void {
     const descendants = this.treeControl?.getDescendants(node);
-    descendants.forEach((child) => {
+    descendants.forEach(child => {
       this.checklistSelection.isSelected(node)
         ? this.checklistSelection.select(child)
         : this.checklistSelection.deselect(child);
@@ -199,9 +188,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   checkRootNodeSelection(node: MenuFlatNode): void {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every((child) =>
-      this.checklistSelection.isSelected(child),
-    );
+    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
     if (nodeSelected && !descAllSelected) {
       this.checklistSelection.deselect(node);
     } else if (!nodeSelected && descAllSelected) {
@@ -232,18 +219,16 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   isNodeIndeterminate(node: MenuFlatNode): boolean {
     const descendants = this.treeControl?.getDescendants(node);
-    const descAllSelected = descendants.every((child) =>
-      this.checklistSelection.isSelected(child),
-    );
+    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
     const descAllDeselected = descendants.every(
-      (child) => !this.checklistSelection.isSelected(child),
+      child => !this.checklistSelection.isSelected(child),
     );
 
     return !descAllSelected && !descAllDeselected;
   }
 
   expandFirstLevelNodes(): void {
-    this.treeControl.dataNodes.forEach((node) => {
+    this.treeControl.dataNodes.forEach(node => {
       if (node.level === 0) {
         this.treeControl.expand(node);
       }
@@ -304,40 +289,29 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   onSave() {
     const checklistSelection = this.checklistSelection.selected;
 
-    const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(
-      (ck) => ck.level === 2,
-    ); //Nivel submenus
-    const filteredCheckedsLevel3 = checklistSelection.filter(
-      (ck) => ck.level === 3,
-    ); //Nivel acciones
+    const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(ck => ck.level === 2); //Nivel submenus
+    const filteredCheckedsLevel3 = checklistSelection.filter(ck => ck.level === 3); //Nivel acciones
 
-    const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce(
-      (acc: any, curr: any) => {
-        const menuId = filteredCheckedsLevel2.find(
-          (l2) => l2.unique === curr.unique,
-        )?.menuId;
+    const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce((acc: any, curr: any) => {
+      const menuId = filteredCheckedsLevel2.find(l2 => l2.unique === curr.unique)?.menuId;
 
-        const existingNode = acc.find((m: any) => m.menuId === menuId);
-        const action = this.actions.find(
-          (a) => a.codeAction === curr.codeAction,
-        );
-        const { codeAction, ...restAction } = action;
+      const existingNode = acc.find((m: any) => m.menuId === menuId);
+      const action = this.actions.find(a => a.codeAction === curr.codeAction);
+      const { codeAction, ...restAction } = action;
 
-        if (!existingNode) {
-          acc.push({
-            menuId,
-            actions: [{ ...restAction, code: codeAction }],
-          });
-        } else {
-          if (action) {
-            existingNode.actions.push({ ...restAction, code: codeAction });
-          }
+      if (!existingNode) {
+        acc.push({
+          menuId,
+          actions: [{ ...restAction, code: codeAction }],
+        });
+      } else {
+        if (action) {
+          existingNode.actions.push({ ...restAction, code: codeAction });
         }
+      }
 
-        return acc;
-      },
-      [],
-    );
+      return acc;
+    }, []);
 
     const mappedLevel3 = mergeDuplicateLevel3.map((acc: any) => ({
       menuId: acc.menuId,
@@ -355,8 +329,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
     if (mappedLevel3.some((s: any) => s.actions?.length === 0)) {
       this.tS.show({
         type: 'warning',
-        message:
-          '¡Agregue al menos una acción de todos los submenús seleccionados!',
+        message: '¡Agregue al menos una acción de todos los submenús seleccionados!',
       });
       return;
     }
@@ -368,7 +341,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
       showConfirmButton: true,
       cancelButtonText: 'No',
       confirmButtonText: 'Si',
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         const data = {
           accesses: JSON.stringify(mappedLevel3),
@@ -379,9 +352,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
           userRoleId: this.$userCustomerStore.userRoleId(),
         };
 
-        this.$updateAccessUseCase
-          .execute(params)
-          .subscribe(this.successResponse);
+        this.$updateAccessUseCase.execute(params).subscribe(this.successResponse);
       }
     });
   }

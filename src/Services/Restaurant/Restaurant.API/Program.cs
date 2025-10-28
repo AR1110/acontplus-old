@@ -1,0 +1,105 @@
+
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Middleware;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+           .WriteTo.Console()
+           .CreateBootstrapLogger();
+
+try
+{
+    var builder = WebApplication.CreateBuilder(args);
+
+    var environment = builder.Environment.EnvironmentName;
+
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
+
+    const string corsPolicy = "RestaurantCorsPolicy";
+
+    var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
+
+    // Use AppConfiguration for loading settings
+    var configuration = ApplicationConfigurationBuilder.Load();
+    builder.Configuration.AddConfiguration(configuration);
+
+    builder.Services.AddRestaurantServices(builder.Configuration);
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy(corsPolicy, policy =>
+        {
+            policy.WithOrigins(safeOrigins)
+                .SetIsOriginAllowed(_ => true)
+                .SetIsOriginAllowedToAllowWildcardSubdomains()
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .WithExposedHeaders("Content-Disposition")
+                .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+        });
+    });
+
+    var app = builder.Build();
+
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+
+    app.UseSerilogRequestLogging();
+
+    app.UseResponseCompression();
+
+    app.UseRateLimiter();
+
+    app.UseApplicationMiddleware(builder.Environment);
+
+    app.UseHttpsRedirection();
+
+    app.UseCors(corsPolicy);
+
+    app.UseRouting();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.UseRateLimiter();
+
+    app.MapControllers().RequireAuthorization();
+
+    app.UseStaticFiles();
+
+    app.UseDefaultFiles();
+
+    app.MapFallbackToFile("/index.html");
+
+    // using var scope = app.Services.CreateScope();
+    // var services = scope.ServiceProvider;
+    // var context = services.GetRequiredService<RestaurantContext>();
+    // try
+    // {
+    //     await context.Database.MigrateAsync();
+    //     await RestaurantContextSeed.SeedAsync(context);
+    // }
+    // catch (Exception ex)
+    // {
+    //     Console.WriteLine($"An error occured during migration: {ex.Message}");
+    // }
+
+    await app.RunAsync();
+}
+catch (Exception ex)
+{
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
+}
+finally
+{
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
+}

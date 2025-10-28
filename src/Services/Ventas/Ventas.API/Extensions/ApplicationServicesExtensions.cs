@@ -1,39 +1,35 @@
-﻿using System.IO.Compression;
+using Acontplus.Services.Extensions.Authentication;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
 
 namespace Ventas.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddVentasServices(this IServiceCollection services,
         IConfiguration configuration)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
+        services.AddJwtAuthentication(configuration);
 
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddOpenApi();
 
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
+        services.AddHttpContextAccessor();
 
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         string[] nameSpaces =
         [
-            "Common.Infrastructure.Repository.Implementations",
-            "Ventas.API.Services"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Ventas.Application.Services"
         ];
 
         services.Scan(scan => scan
@@ -43,7 +39,6 @@ public static class ApplicationServicesExtensions
             .AsImplementedInterfaces()
             .WithTransientLifetime()
         );
-
 
         return services;
     }

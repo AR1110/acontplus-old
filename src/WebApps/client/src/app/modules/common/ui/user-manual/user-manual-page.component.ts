@@ -1,37 +1,30 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Menu } from '@core/models/menu.model';
-import {
-  MatSelectChange, MatSelectModule,
-} from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatPagination } from '@shared/models/pagination.model';
-import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { QuillViewComponent } from 'ngx-quill';
 import { FormsModule } from '@angular/forms';
 import { UserManualUseCase } from '@modules/common/core/use-cases/user-manual.use-case';
 import { UserManual } from '@modules/common/core/domain/user-manual.model';
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatButtonModule} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatTreeModule} from "@angular/material/tree";
-import {MatCardModule} from "@angular/material/card";
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTreeModule } from '@angular/material/tree';
+import { MatCardModule } from '@angular/material/card';
 interface MenuNode {
-  title:string
+  title: string;
   name: string;
   videoId?: string;
   children?: MenuNode[];
   expanded?: boolean;
   safeEmbedCode?: SafeResourceUrl;
-  selectedNode?:string
+  selectedNode?: string;
 }
 @Component({
   selector: 'app-user-manual',
@@ -48,11 +41,10 @@ interface MenuNode {
     MatPaginatorModule,
     MatIcon,
     MatCardModule,
-    MatTreeModule
+    MatTreeModule,
   ],
   templateUrl: './user-manual-page.component.html',
   styles: `
-
     .content-wrapper {
       display: flex;
       gap: 20px;
@@ -104,7 +96,7 @@ interface MenuNode {
     }
 
     .video-card {
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       border-radius: 12px;
       overflow: hidden;
     }
@@ -126,7 +118,6 @@ interface MenuNode {
       height: 100%;
       border-radius: 8px;
     }
-
 
     /* Responsive design */
     @media (max-width: 768px) {
@@ -158,7 +149,7 @@ export class UserManualPageComponent implements OnInit {
     pageSize: 0,
   };
   modules = signal<Menu[]>([]);
-  manuals = signal<any[] >([]);
+  manuals = signal<any[]>([]);
 
   selectedNode: MenuNode | null = null;
   expandedNodes = new Set<MenuNode>();
@@ -175,10 +166,8 @@ export class UserManualPageComponent implements OnInit {
     this.data.pageIndex = this.pagination().pageIndex + 1;
     this.data.pageSize = this.pagination().pageSize;
 
-
-
-    this._userManualUseCase.get(this.data).subscribe((response) => {
-      this.modules.set(response.modules)
+    this._userManualUseCase.get(this.data).subscribe(response => {
+      this.modules.set(response.modules);
       const manuals = response.userManuals.map((manual: UserManual) => ({
         ...manual,
         safeEmbedCode: this._sanitizer.bypassSecurityTrustHtml(
@@ -193,14 +182,14 @@ export class UserManualPageComponent implements OnInit {
       }));
       this.manuals.set(manuals);
 
-      const manualsTree = (manuals as any).reduce((acc:any, manual:any) => {
-        if(acc.find((x:any) => x.name === manual.module)) {
-          acc.find((x:any) => x.name === manual.module)?.children?.push(manual);
+      const manualsTree = (manuals as any).reduce((acc: any, manual: any) => {
+        if (acc.find((x: any) => x.name === manual.module)) {
+          acc.find((x: any) => x.name === manual.module)?.children?.push(manual);
         } else {
           acc.push({
             name: manual.module,
-            children: [manual]
-          })
+            children: [manual],
+          });
         }
         return acc;
       }, []);
@@ -211,7 +200,7 @@ export class UserManualPageComponent implements OnInit {
         }
       });
 
-      this.pagination.update((e) => {
+      this.pagination.update(e => {
         return {
           ...e,
           totalRecords: this.manuals()[0]?.totalRecords || 0,
@@ -224,10 +213,8 @@ export class UserManualPageComponent implements OnInit {
     this.loadData();
   }
 
-
   // Children accessor function for the new MatTree API
   childrenAccessor = (node: MenuNode) => node.children || [];
-
 
   hasChild = (_: number, node: MenuNode) => !!node.children && node.children.length > 0;
 
@@ -252,7 +239,6 @@ export class UserManualPageComponent implements OnInit {
     return this.expandedNodes.has(node);
   }
 
-
   onMenuChange($event: MatSelectChange) {
     this.data.menuId = $event.value;
     this.loadData();
@@ -273,7 +259,7 @@ export class UserManualPageComponent implements OnInit {
 
   onPageChanged($event: PageEvent) {
     this.pageEvent = $event;
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: $event.length,
@@ -287,6 +273,4 @@ export class UserManualPageComponent implements OnInit {
   refresh() {
     this.loadData();
   }
-
-
 }

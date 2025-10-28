@@ -1,26 +1,26 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
 public class CompraHabitualController(
-    ICompraHabitualService compraHabitualService) : BaseApiController
+    ICompraHabitualRepository compraHabitualService) : BaseApiController
 {
     [HttpGet("Get")]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.GetAsync(parameters));
     }
 
     [HttpPost("Post")]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CompraHabitualDto compraHabitualDto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraHabitualDto>(compraHabitualDto)) }
+    };
         return Ok(await compraHabitualService.AddAsync(parameters));
     }
 
@@ -29,7 +29,7 @@ public class CompraHabitualController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await compraHabitualService.UpdateAsync(parameters));

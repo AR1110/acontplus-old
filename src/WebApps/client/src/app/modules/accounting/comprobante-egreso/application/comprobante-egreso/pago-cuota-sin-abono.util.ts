@@ -1,15 +1,15 @@
-import { minus } from "@core/utils/decimal.util";
-import { DECIMALS } from "@core/constants/global.constants";
-import { roundNumber } from "@core/utils/round-number.utils";
-import { CuotaPorPagarLista } from "@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface";
+import { minus } from '@core/utils/decimal.util';
+import { DECIMALS } from '@core/constants/global.constants';
+import { roundNumber } from '@core/utils/round-number.utils';
+import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
 
 interface Props {
-  dataCuota: CuotaPorPagarLista
-  valorAbono: number
-  esAbonoPosfechado: boolean
+  dataCuota: CuotaPorPagarLista;
+  valorAbono: number;
+  esAbonoPosfechado: boolean;
 
-  agregarPagoDetalle(dataCuota: CuotaPorPagarLista, abono: number, saldo: number): void
-  setValorAbono(value: number): void
+  agregarPagoDetalle(dataCuota: CuotaPorPagarLista, abono: number, saldo: number): void;
+  setValorAbono(value: number): void;
 }
 
 /**
@@ -18,10 +18,21 @@ interface Props {
  *
  * @param {CuotaPorPagarLista} item - La cuota a procesar.
  */
-export const pagoCuotaSinAbonoUtil = function ({ dataCuota, valorAbono, esAbonoPosfechado, agregarPagoDetalle, setValorAbono }: Props): void {
+export const pagoCuotaSinAbonoUtil = function ({
+  dataCuota,
+  valorAbono,
+  esAbonoPosfechado,
+  agregarPagoDetalle,
+  setValorAbono,
+}: Props): void {
   // Validación inicial para evitar errores
-  if (!dataCuota || valorAbono == null || typeof agregarPagoDetalle !== 'function' || typeof setValorAbono !== 'function') {
-    console.error("Datos incompletos o inválidos.");
+  if (
+    !dataCuota ||
+    valorAbono == null ||
+    typeof agregarPagoDetalle !== 'function' ||
+    typeof setValorAbono !== 'function'
+  ) {
+    console.error('Datos incompletos o inválidos.');
     return;
   }
 
@@ -64,4 +75,4 @@ export const pagoCuotaSinAbonoUtil = function ({ dataCuota, valorAbono, esAbonoP
     // Establecer el saldo de la cuota a 0
     dataCuota.saldo = 0;
   }
-}
+};

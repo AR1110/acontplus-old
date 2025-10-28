@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class EmailConfigController(IEmailConfigService emailConfigService) : BaseApiController
 {
@@ -7,23 +7,20 @@ public class EmailConfigController(IEmailConfigService emailConfigService) : Bas
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await emailConfigService.GetAsync(parameters));
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateEmailConfigDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") },
-            { "idEmailConfig", id },
-            {
-                "json",
-                SqlStringParam.Sanitize(SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)))
-            }
-        };
+      {
+          { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+          { "idEmailConfig", id },
+          { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateEmailConfigDto>(dto)) }
+      };
         return Ok(await emailConfigService.UpdateAsync(parameters));
     }
 }

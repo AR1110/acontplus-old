@@ -13,7 +13,7 @@ export class GetTotalPipe implements PipeTransform {
    */
   getTotal(colName: string, dataSource: any[]): number {
     const total = dataSource
-      .map((row) => row[colName])
+      .map(row => row[colName])
       .reduce((acc, value) => (value ? acc + Number(value) : acc), 0);
     return total?.toFixed(2);
   }

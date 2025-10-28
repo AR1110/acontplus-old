@@ -12,8 +12,6 @@ export class DeviceCustomerService {
   private http = inject(HttpClient);
 
   get(params: any) {
-    return this.http
-      .get(`${this.url}?json=${params}`)
-      .pipe(map((response) => response));
+    return this.http.get(`${this.url}?json=${params}`).pipe(map(response => response));
   }
 }

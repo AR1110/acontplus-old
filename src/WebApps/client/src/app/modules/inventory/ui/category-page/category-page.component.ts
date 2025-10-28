@@ -8,13 +8,7 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 
 @Component({
   selector: 'app-category',
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    PrimaryStatusPipe,
-    MatCardContent,
-    MatCard,
-  ],
+  imports: [FormsModule, BreadcrumbComponent, PrimaryStatusPipe, MatCardContent, MatCard],
   templateUrl: './category-page.component.html',
   styles: ``,
 })
@@ -35,7 +29,7 @@ export class CategoryPageComponent implements OnInit {
       pageSize: this.dataSearch.pageSize,
     };
 
-    this.categorySvc.getAll(params).subscribe((categories) => {
+    this.categorySvc.getAll(params).subscribe(categories => {
       this.categories = categories;
       this.dataSearch.totalRecords =
         this.categories.length > 0 ? this.categories[0].totalRecords : 0;

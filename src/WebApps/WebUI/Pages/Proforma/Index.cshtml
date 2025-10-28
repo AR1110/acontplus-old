@@ -128,9 +128,11 @@
                 </div>
                 <div class="col-xl-3">
                     <div class="form-group">
-                        <span>Buscar</span>
-                        <input type="text" class="form-control border-select" ng-change="searchFilterLocal()"
-                            ng-model="dataSearch.bySearch" placeholder="...">
+                        <span for="">Estado</span>
+                        <select class="form-control" ng-model="dataSearch.statusId" ng-change="refresh()">
+                            <option ng-value="0">Todos</option>
+                            <option ng-value="item.id" ng-repeat="item in status">{{item.name}}</option>
+                        </select>
                     </div>
                 </div>
             </div>

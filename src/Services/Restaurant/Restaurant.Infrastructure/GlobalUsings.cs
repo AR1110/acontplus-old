@@ -1,4 +1,9 @@
-﻿global using Common.Infrastructure.Context;
-global using Common.Infrastructure.Entity;
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Persistence.SqlServer.Configurations;
+global using Acontplus.Persistence.SqlServer.Context;
+global using Acontplus.Utilities.Data;
 global using Microsoft.EntityFrameworkCore;
 global using Restaurant.Domain.Entities;
+global using Restaurant.Domain.Repositories;

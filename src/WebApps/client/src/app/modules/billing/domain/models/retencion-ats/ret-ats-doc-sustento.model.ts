@@ -31,10 +31,7 @@ export interface RetAtsDocSustento {
 }
 
 export interface RetencionAtsDocPayment
-  extends Pick<
-    RetAtsDocSustento,
-    'idRetAtsDocSustento' | 'idRetencionAts' | 'uniqueIdDoc'
-  > {
+  extends Pick<RetAtsDocSustento, 'idRetAtsDocSustento' | 'idRetencionAts' | 'uniqueIdDoc'> {
   idFormaPago: number;
   formaPago: string;
   descripcion: string;

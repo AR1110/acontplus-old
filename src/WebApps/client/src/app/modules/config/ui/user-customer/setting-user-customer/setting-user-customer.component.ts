@@ -14,9 +14,7 @@ import { UserCustomerPermissionComponent } from '@modules/config/ui/user-custome
 import { UserCustomerRoleAccessComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-role-access/user-customer-role-access.component';
 import { UserCustomerRolePermissionComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component';
 import { TestTreeComponent } from '@modules/config/ui/user-customer/setting-user-customer/test-tree/test-tree.component';
-import {
-  UserCustomerAccessComponent
-} from "@modules/config/ui/user-customer/setting-user-customer/user-customer-access/user-customer-access.component";
+import { UserCustomerAccessComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-access/user-customer-access.component';
 
 @Component({
   selector: 'app-setting-user-customer',
@@ -56,12 +54,10 @@ export class SettingUserCustomerComponent implements OnInit {
       .execute({
         idUsuario: this.params.idUsuario,
       })
-      .subscribe((response) => {
+      .subscribe(response => {
         if (response.data.length > 0) {
           this.userCustomerRoleData.set(response.data[0]);
-          this.$userCustomerStore.setUserRoleId(
-            this.userCustomerRoleData().idUsuarioRol,
-          );
+          this.$userCustomerStore.setUserRoleId(this.userCustomerRoleData().idUsuarioRol);
         }
       });
   }

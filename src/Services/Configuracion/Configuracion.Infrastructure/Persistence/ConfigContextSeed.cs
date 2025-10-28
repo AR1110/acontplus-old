@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Text.Json;
-
-namespace Configuracion.Infrastructure.Persistence;
+﻿namespace Configuracion.Infrastructure.Persistence;
 
 public class ConfigContextSeed
 {

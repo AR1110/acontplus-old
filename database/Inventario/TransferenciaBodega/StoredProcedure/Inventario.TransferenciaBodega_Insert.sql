@@ -79,13 +79,13 @@ BEGIN
         SELECT @comprobante        = comprobante
               ,@detalles           = detalles
               ,@transaccion        = transaccion
-              ,@transaccionDetalle = transaccionDetalle
+              ,@transaccionDetalle = transaccionDetalles
         FROM OPENJSON(@json) WITH 
         (
              comprobante        NVARCHAR(MAX) as json
             ,detalles           NVARCHAR(MAX) as json 
             ,transaccion        NVARCHAR(MAX) as json
-            ,transaccionDetalle NVARCHAR(MAX) as json
+            ,transaccionDetalles NVARCHAR(MAX) as json
             
         )
 
@@ -226,7 +226,7 @@ BEGIN
 
             INSERT INTO Inventario.TransaccionDetalle 
                   (idTransaccion
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
+                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total, MovementTypeId)
 			SELECT (
                         SELECT TOP 1 tr.idTransaccion 
                         FROM Inventario.Transaccion tr 
@@ -235,7 +235,7 @@ BEGIN
                           AND tr.idDocumento       = @idTransferenciaBodega
                             
                     )
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
+                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total, 1
             FROM @tbTransaccionDetalle td
 
             UPDATE td SET td.cantidadTransaccion = td.cantidadTransaccion * -1

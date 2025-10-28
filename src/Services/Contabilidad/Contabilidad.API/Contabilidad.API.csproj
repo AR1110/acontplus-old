@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
     <UserSecretsId>c26bfe81-a88e-4c8e-96c9-a872a5994058</UserSecretsId>
@@ -14,11 +14,9 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile1.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Common.Data" />
-    <PackageReference Include="Acontplus.Common.Infrastructure" />
-    <PackageReference Include="Acontplus.Common.Logging" />
-    <PackageReference Include="Acontplus.Common.Services" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
+    <PackageReference Include="Acontplus.Logging" />
+    <PackageReference Include="Acontplus.Services" />
+
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
@@ -32,5 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Contabilidad.Application\Contabilidad.Application.csproj" />
+    <ProjectReference Include="..\Contabilidad.Infrastructure\Contabilidad.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

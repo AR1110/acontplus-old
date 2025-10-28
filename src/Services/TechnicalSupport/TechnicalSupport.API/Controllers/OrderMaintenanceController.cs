@@ -1,10 +1,10 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class OrderMaintenanceController : BaseApiController
 {
-    private readonly IOrderMaintenanceService _service;
+    private readonly IOrderMaintenanceRepository _service;
 
-    public OrderMaintenanceController(IOrderMaintenanceService service)
+    public OrderMaintenanceController(IOrderMaintenanceRepository service)
     {
         _service = service;
     }
@@ -24,12 +24,12 @@ public class OrderMaintenanceController : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest request)
+    public async Task<IActionResult> Post(CreateOrderMaintenanceDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateOrderMaintenanceDto>(request)) }
         };
         var response = await _service.AddAsync(parameters);
 
@@ -39,18 +39,16 @@ public class OrderMaintenanceController : BaseApiController
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, UpdateOrderMaintenanceDto request)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(request.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateOrderMaintenanceDto>(request)) }
         };
 
         var response = await _service.UpdateAsync(parameters);
-
-        if (response == null) return BadRequest("No response");
 
         return Ok(response);
     }

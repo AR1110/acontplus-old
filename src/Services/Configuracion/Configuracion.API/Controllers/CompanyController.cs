@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class CompanyController(ICompanyService companyService) : BaseApiController
 {
@@ -14,14 +14,14 @@ public class CompanyController(ICompanyService companyService) : BaseApiControll
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    public async Task<IActionResult> Put(int id, UpdateCompanyDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(request.Data)) }
-        };
+    {
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateCompanyDto>(data)) }
+    };
         var response = await companyService.UpdateAsync(parameters);
         return Ok(response);
     }

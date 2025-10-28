@@ -4,30 +4,19 @@
   <mat-card-content>
     <div class="d-flex flex-column gap-2 justify-content-center">
       <div class="d-flex gap-3 flex-row">
-        <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer"
-          >Cliente</mat-checkbox
-        >
-        <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser"
-          >Usuario</mat-checkbox
-        >
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer">Cliente</mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser">Usuario</mat-checkbox>
         @if (isSelectedNotaEntrega) {
-          <mat-checkbox [(ngModel)]="dataSearch.convertToDoc"
-            >Docs. Transferidas</mat-checkbox
-          >
+          <mat-checkbox [(ngModel)]="dataSearch.convertToDoc">Docs. Transferidas</mat-checkbox>
         }
       </div>
 
       <mat-divider></mat-divider>
-      <div
-        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
-      >
+      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Tipo Documento</mat-label>
-            <mat-select
-              (selectionChange)="onChangeTipoDoc()"
-              [(ngModel)]="dataSearch.codDoc"
-            >
+            <mat-select (selectionChange)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc">
               @for (item of tiposDoc(); track $index) {
                 <mat-option [value]="item.codigo">
                   {{ item.descripcion }}
@@ -39,10 +28,7 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento: </mat-label>
-            <mat-select
-              (selectionChange)="onChangeEstab()"
-              [(ngModel)]="dataSearch.idEstablecimiento"
-            >
+            <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.idEstablecimiento">
               @for (item of establecimientos(); track $index) {
                 <mat-option [value]="item.idEstablecimiento">
                   {{ item.nombreComercial }}
@@ -71,9 +57,7 @@
               @for (group of provinciasAgrupadas(); track $index) {
                 <mat-optgroup [label]="group.nombre">
                   @for (sg of group.ciudades; track sg.idCiudad) {
-                    <mat-option [value]="sg.idCiudad">{{
-                      sg.ciudad
-                    }}</mat-option>
+                    <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>
                   }
                 </mat-optgroup>
               }
@@ -82,14 +66,9 @@
         </div>
       </div>
 
-      <div
-        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
-      >
+      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
         <div class="col">
-          <app-date-range-selection
-            [showInputMaterial]="true"
-            (onChangeDateRange)="onDateRangeSelection($event)"
-          />
+          <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
         </div>
         <div class="col">
           <app-company-customer-search
@@ -113,10 +92,7 @@
         </div>
 
         <div class="col">
-          <app-user-search
-            (selectedChange)="onUserSelected($event)"
-            (clearSearch)="emptyInputUser()"
-          />
+          <app-user-search (selectedChange)="onUserSelected($event)" (clearSearch)="emptyInputUser()" />
         </div>
       </div>
     </div>

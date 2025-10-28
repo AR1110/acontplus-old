@@ -1,73 +1,69 @@
-/* You can add global styles to this file, and also import other style files */
-@use '@angular/material' as mat;
-@use 'sass:map';
-@use 'ngx-toastr/toastr';
-@use 'styles/components/forms' as forms;
-@use 'styles/theme/theme-colors' as acontplus-theme;
-@use 'app/modules/config/styles/shepherd-tour';
-@use '@ng-select/ng-select/themes/material.theme';
-/* Tabulator Styles */
-@import 'tabulator-tables/dist/css/tabulator.min.css';
-@import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
-/* Brand-Inspired Color Palette */
+@use "styles/reboot";
+@use "styles/themes";
+@use "styles/colors";
+@use "styles/grid";
+@use "styles/helpers";
+@use "styles/plugins";
+@use "styles/custom";
+@use "styles/_custom-button";
+//@use "styles/_layout-system.scss";
+// @use '@angular/material' as mat;
+// @use 'sass:map';
+@use "ngx-toastr/toastr";
+ //@use 'styles/components/forms' as forms;
+ //@use 'styles/theme/theme-colors' as acontplus-theme;
+@use "app/modules/config/styles/shepherd-tour";
+@use "@ng-select/ng-select/themes/material.theme";
+// /* Tabulator Styles */
+@import "tabulator-tables/dist/css/tabulator.min.css";
+@import "tabulator-tables/dist/css/tabulator_semanticui.min.css";
+// /* Brand-Inspired Color Palette */
+ :root {
+   --primary-color: #d61672;
+   --secondary-color: #f94c8e; /* Slightly lighter pink */
+   --success-color: #18d6a6; /* Fresh teal */
+   --danger-color: #ff4b5c; /* Vivid coral red */
+   --warning-color: #ffc107; /* Vibrant yellow-orange */
+   --info-color: #17a2b8; /* Calming teal blue */
+   --light-color: #f8f9fa; /* Soft light gray */
+   --dark-color: #343a40; /* Classic dark gray */
+   --on-primary-color: #ffffff;
+   --on-secondary-color: #ffffff;
+   --on-success-color: #ffffff;
+   --on-danger-color: #ffffff;
+   --on-warning-color: #212529;
+   --on-info-color: #ffffff;
+   --on-light-color: #212529;
+   --on-dark-color: #ffffff;
+   --app-content: #e9ddffbf;
+ }
 
-:root {
-  --primary-color: #d61672;
-  --secondary-color: #f94c8e; /* Slightly lighter pink */
-  --success-color: #18d6a6; /* Fresh teal */
-  --danger-color: #ff4b5c; /* Vivid coral red */
-  --warning-color: #ffc107; /* Vibrant yellow-orange */
-  --info-color: #17a2b8; /* Calming teal blue */
-  --light-color: #f8f9fa; /* Soft light gray */
-  --dark-color: #343a40; /* Classic dark gray */
-  --on-primary-color: #ffffff;
-  --on-secondary-color: #ffffff;
-  --on-success-color: #ffffff;
-  --on-danger-color: #ffffff;
-  --on-warning-color: #212529;
-  --on-info-color: #ffffff;
-  --on-light-color: #212529;
-  --on-dark-color: #ffffff;
-}
+// html,
+// body {
+//   height: 100%;
+//   @include mat.theme(
+//     (
+//       color: (
+//         primary: acontplus-theme.$primary-palette,
+//         tertiary: acontplus-theme.$tertiary-palette,
+//         theme-type: light,
+//       ),
+//       typography: Roboto,
+//       density: 0,
+//     )
+//   );
+// }
 
-$compact-theme: mat.define-theme(
-  (
-    density: (
-      scale: -4,
-    ),
-  )
-);
-
-:root {
-  @include mat.form-field-density($compact-theme);
-}
-
-html,
-body {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: acontplus-theme.$primary-palette,
-        tertiary: acontplus-theme.$tertiary-palette,
-        theme-type: light,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
-}
-
-button,
-html,
-input,
-select,
-textarea {
-  font-family:
-    Roboto,
-    Helvetica Neue,
-    sans-serif !important;
-}
+// button,
+// html,
+// input,
+// select,
+// textarea {
+//   font-family:
+//     Roboto,
+//     Helvetica Neue,
+//     sans-serif !important;
+// }
 
 table {
   width: 100%;
@@ -105,3 +101,19 @@ table {
 .mat-mdc-radio-button ~ .mat-mdc-radio-button {
   margin-left: 16px;
 }
+
+
+.search-dialog-panel {
+  background: transparent !important;
+  box-shadow: none !important;
+  display: flex;
+  justify-content: center;
+}
+
+.search-dialog-backdrop {
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.45);
+}
+
+
+

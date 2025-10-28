@@ -1,5 +1,3 @@
-using FactElect.Application.DTOs;
-
 namespace FactElect.Application.Interfaces.Sri;
 
 public interface ISriAuthenticationService

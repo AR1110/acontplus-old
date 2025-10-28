@@ -1,8 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import {
-  FormControl,
-  FormGroup, ReactiveFormsModule,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -14,16 +11,14 @@ import { CashboxSelectHtmlOnly } from '@accounting/caja/domain/caja.entity';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
 import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {MatButtonModule} from "@angular/material/button";
-import {
-  CompanyCustomerSearchComponent
-} from "@company-customer/presentation/components/company-customer-search/company-customer-search.component";
-import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {getValidId, isValidField} from "@core/utils/utils";
-import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-customer.entity";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({
   selector: 'app-egreso-ingreso-dialog',
@@ -36,7 +31,7 @@ import {CompanyCustomerEntity} from "@company-customer/domain/entities/company-c
     MatButtonModule,
     MatCustomDialogComponent,
     CompanyCustomerSearchComponent,
-    ToUpperCaseDirective
+    ToUpperCaseDirective,
   ],
   templateUrl: './egreso-ingreso-dialog.component.html',
   styles: ``,
@@ -63,13 +58,13 @@ export class EgresoIngresoDialogComponent implements OnInit {
     codEstab: new FormControl<string | null>(null),
     idCaja: new FormControl(0),
     idTipoDocumento: new FormControl(0),
-    idEntidadFinanciera: new FormControl(0 ),
-    idSubEntidadFinanciera: new FormControl(0 ),
+    idEntidadFinanciera: new FormControl(0),
+    idSubEntidadFinanciera: new FormControl(0),
     // idEmpleado: new FormControl(0, [Validators.required, this.greaterThanZeroValidator]),
-    customerId: new FormControl(0 ),
+    customerId: new FormControl(0),
 
     valor: new FormControl(0),
-    observaciones: new FormControl('' ),
+    observaciones: new FormControl(''),
     customerName: new FormControl(''),
   });
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
@@ -87,7 +82,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
   // }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataForm().subscribe((response) => {
+    this._movimientoCajaUseCase.getDataForm().subscribe(response => {
       const {
         establecimientos,
         cajas,
@@ -97,9 +92,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
       } = response;
 
       this.establecimientos = establecimientos;
-      const dataEstab = this.establecimientos.find(
-        (estab) => estab.predeterminado
-      );
+      const dataEstab = this.establecimientos.find(estab => estab.predeterminado);
       if (dataEstab) {
         this.dataForm.get('codEstab')?.setValue(dataEstab.codEstab);
       }
@@ -108,27 +101,25 @@ export class EgresoIngresoDialogComponent implements OnInit {
       this.tempSubEntidadesFinanciera = subEntidadesFinanciera;
       this.tiposDocumento = tiposDocumento;
 
-
-      if(this.cajas.length>0){
+      if (this.cajas.length > 0) {
         const dataCaja = this.cajas[0];
-        this.dataForm.get("idCaja")?.setValue(dataCaja.idCaja)
+        this.dataForm.get('idCaja')?.setValue(dataCaja.idCaja);
       }
 
-      if(this.entidadesFinanciera.length>0){
-        const dataEntidad = this.entidadesFinanciera.find(e=>e.codigo==='EFE');
-        if(dataEntidad){
-          this.dataForm.get("idEntidadFinanciera")?.setValue(dataEntidad.idEntidadFinanciera)
-          this.onChangeEntidadFinanciera()
+      if (this.entidadesFinanciera.length > 0) {
+        const dataEntidad = this.entidadesFinanciera.find(e => e.codigo === 'EFE');
+        if (dataEntidad) {
+          this.dataForm.get('idEntidadFinanciera')?.setValue(dataEntidad.idEntidadFinanciera);
+          this.onChangeEntidadFinanciera();
         }
       }
-
     });
   }
 
   onChangeTipoDoc() {
     const dataForm = this.dataForm.value;
     const dataTipoDoc = this.tiposDocumento.find(
-      (t) => t.idTipoDocumento === dataForm.idTipoDocumento
+      t => t.idTipoDocumento === dataForm.idTipoDocumento,
     );
     if (!dataTipoDoc) return;
 
@@ -140,19 +131,20 @@ export class EgresoIngresoDialogComponent implements OnInit {
     const idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
     if (idEntidadFinanciera) {
       this.subEntidadesFinanciera = this.tempSubEntidadesFinanciera.filter(
-        (ef) => ef.idEntidadFinanciera === idEntidadFinanciera
+        ef => ef.idEntidadFinanciera === idEntidadFinanciera,
       );
 
-      if(this.subEntidadesFinanciera.length>0){
+      if (this.subEntidadesFinanciera.length > 0) {
         const dataSubEntidad = this.subEntidadesFinanciera[0];
-        this.dataForm.get('idSubEntidadFinanciera')?.setValue(dataSubEntidad.idSubEntidadFinanciera);
+        this.dataForm
+          .get('idSubEntidadFinanciera')
+          ?.setValue(dataSubEntidad.idSubEntidadFinanciera);
       }
-
     }
   }
 
   onSelectCustomer(params: CompanyCustomerEntity) {
-      this.dataForm.get('customerId')?.setValue(params.customerId);
+    this.dataForm.get('customerId')?.setValue(params.customerId);
   }
 
   onEmptyCustomer() {
@@ -189,7 +181,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
     try {
       const params = this.dataForm.value;
 
-      if(!isValidField(params.codEstab)){
+      if (!isValidField(params.codEstab)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione el establecimiento',
@@ -197,7 +189,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!getValidId(params.idCaja as any)){
+      if (!getValidId(params.idCaja as any)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione la caja',
@@ -205,7 +197,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!getValidId(params.idTipoDocumento as any)){
+      if (!getValidId(params.idTipoDocumento as any)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione el tipo documento',
@@ -213,7 +205,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!getValidId(params.idEntidadFinanciera as any)){
+      if (!getValidId(params.idEntidadFinanciera as any)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione la entidad financiera',
@@ -221,7 +213,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!getValidId(params.idSubEntidadFinanciera as any)){
+      if (!getValidId(params.idSubEntidadFinanciera as any)) {
         this.tS.show({
           type: 'warning',
           message: 'Seleccione la subentidad financiera',
@@ -229,7 +221,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!isValidField(params.valor as any)){
+      if (!isValidField(params.valor as any)) {
         this.tS.show({
           type: 'warning',
           message: 'Ingrese el valor',
@@ -237,14 +229,13 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      if(!isValidField(params.observaciones)){
+      if (!isValidField(params.observaciones)) {
         this.tS.show({
           type: 'warning',
           message: 'Ingrese la observacion',
         });
         return;
       }
-
 
       if (this.dataForm.invalid) {
         this.tS.show({
@@ -254,7 +245,6 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-
       if (Number(params.valor) === 0) {
         this.tS.show({
           type: 'warning',
@@ -263,7 +253,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      this._movimientoCajaUseCase.create(params).subscribe((response) => {
+      this._movimientoCajaUseCase.create(params).subscribe(response => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

@@ -1,4 +1,4 @@
-import {Component, inject, input, model, output, OnInit} from '@angular/core';
+import { Component, inject, input, model, output, OnInit } from '@angular/core';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,20 +10,16 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {ToUpperCaseDirective} from "@shared/directives/ui/to-upper-case.directive";
-import {
-  ProductUbicationPostUseCase
-} from "@inventory/product/application/use-cases/product-ubication/product-ubication-post.use-case";
-import {ProductUbicationPutUseCase} from "@inventory/product/application/use-cases/product-ubication/product-ubication-put.use-case";
-import {getValidId, isValidField} from "@core/utils/utils";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {ApiResponse} from "@core/models/api-response";
-import {finalize} from "rxjs/operators";
-import Swal from "sweetalert2";
-import {
-  ProductUbicationRemoveUseCase
-} from "@inventory/product/application/use-cases/product-ubication/product-ubication-remove.use-case";
-import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
+import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { ProductUbicationPostUseCase } from '@inventory/product/application/use-cases/product-ubication/product-ubication-post.use-case';
+import { ProductUbicationPutUseCase } from '@inventory/product/application/use-cases/product-ubication/product-ubication-put.use-case';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { ApiResponse } from '@core/models/api-response';
+import { finalize } from 'rxjs/operators';
+import Swal from 'sweetalert2';
+import { ProductUbicationRemoveUseCase } from '@inventory/product/application/use-cases/product-ubication/product-ubication-remove.use-case';
+import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
   selector: 'app-product-ubication',
@@ -42,11 +38,11 @@ import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/prod
   styles: ``,
 })
 export class ProductUbicationComponent implements OnInit {
-  private _tS = inject(ToastrNotificationService)
+  private _tS = inject(ToastrNotificationService);
   private $productGetIdUseCase = inject(ProductGetIdUseCase);
-  private $productUbicationPosUseCase = inject(ProductUbicationPostUseCase)
-  private $productUbicationPutUseCase = inject(ProductUbicationPutUseCase)
-  private $productUbicationRemoveUseCase = inject(ProductUbicationRemoveUseCase)
+  private $productUbicationPosUseCase = inject(ProductUbicationPostUseCase);
+  private $productUbicationPutUseCase = inject(ProductUbicationPutUseCase);
+  private $productUbicationRemoveUseCase = inject(ProductUbicationRemoveUseCase);
 
   productId = input.required<number>();
   idEstablecimiento = input(0);
@@ -63,147 +59,143 @@ export class ProductUbicationComponent implements OnInit {
     { key: 'nomBodega', label: 'Bodega', type: 'string' },
     { key: 'ubicacion', label: 'Ubicación', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
-   productUbicationId = 0;
+  productUbicationId = 0;
 
-   data = model({
+  data = model({
     idEstablecimiento: 0,
     idBodega: 0,
     ubicacion: null,
-  })
+  });
 
-  onChangeEstab = output()
+  onChangeEstab = output();
 
   ngOnInit() {
-    this.loadData()
+    this.loadData();
   }
 
-  loadData(){
+  loadData() {
     this.loading = true;
-    this.$productGetIdUseCase.execute(this.productId())
-      .pipe(
-        finalize(()=>this.loading=false)
-      )
-      .subscribe(response=>{
-      this.dataSource = new MatTableDataSource(response?.productLocations || [])
-    })
+    this.$productGetIdUseCase
+      .execute(this.productId())
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe(response => {
+        this.dataSource = new MatTableDataSource(response?.productLocations || []);
+      });
   }
 
-  clear(){
-     this.productUbicationId = 0;
-     this.data.update(item=>{
-       return {
-         ...item,
-         ubicacion:   null
-       }
-     })
-    console.log(this.data())
+  clear() {
+    this.productUbicationId = 0;
+    this.data.update(item => {
+      return {
+        ...item,
+        ubicacion: null,
+      };
+    });
+    console.log(this.data());
   }
 
-  edit(item:any){
+  edit(item: any) {
     const dataBodega = this.bodegas().find(bodega => bodega.idBodega === item.idBodega);
 
     if (dataBodega) {
-      const dataEstab = this.estabs().find(estab => estab.idEstablecimiento === dataBodega.idEstablecimiento);
+      const dataEstab = this.estabs().find(
+        estab => estab.idEstablecimiento === dataBodega.idEstablecimiento,
+      );
 
       this.productUbicationId = item.idArticuloUbicacion;
       this.data.set({
-        idEstablecimiento:  dataEstab?.idEstablecimiento || 0,
+        idEstablecimiento: dataEstab?.idEstablecimiento || 0,
         idBodega: dataBodega.idBodega,
         ubicacion: item.ubicacion,
-      })
+      });
     }
-
   }
-  save(){
-
-    if(!getValidId(this.productId())){
+  save() {
+    if (!getValidId(this.productId())) {
       this._tS.show({
         type: 'warning',
-        message: 'No se ha proporcionado el identificador del producto'
-      })
-      return
+        message: 'No se ha proporcionado el identificador del producto',
+      });
+      return;
     }
-    if(!getValidId(this.data().idEstablecimiento)){
+    if (!getValidId(this.data().idEstablecimiento)) {
       this._tS.show({
         type: 'warning',
-        message: 'Seleccione el Establecimiento'
-      })
-      return
-    }
-
-    if(!getValidId(this.data().idBodega)){
-      this._tS.show({
-        type: 'warning',
-        message: 'Seleccione la Bodega'
-      })
-      return
+        message: 'Seleccione el Establecimiento',
+      });
+      return;
     }
 
-    if(!isValidField(this.data().ubicacion)){
+    if (!getValidId(this.data().idBodega)) {
       this._tS.show({
         type: 'warning',
-        message: 'Ingrese la ubicación'
-      })
-      return
+        message: 'Seleccione la Bodega',
+      });
+      return;
+    }
+
+    if (!isValidField(this.data().ubicacion)) {
+      this._tS.show({
+        type: 'warning',
+        message: 'Ingrese la ubicación',
+      });
+      return;
     }
 
     const data = {
       ...this.data(),
-      idArticulo: this.productId()
+      idArticulo: this.productId(),
+    };
+
+    if (this.productUbicationId > 0) {
+      this.$productUbicationPutUseCase
+        .execute({
+          id: this.productUbicationId,
+          data,
+        })
+        .subscribe(this.successResponse);
+    } else {
+      this.$productUbicationPosUseCase.execute(data).subscribe(this.successResponse);
     }
 
-    if(this.productUbicationId>0){
-      this.$productUbicationPutUseCase.execute({
-        id: this.productUbicationId,
-        data
-      }).subscribe(this.successResponse)
-    }else{
-      this.$productUbicationPosUseCase.execute(data).subscribe(this.successResponse)
-    }
-
-
-
-
-
-    console.log(this.data())
-
-
+    console.log(this.data());
   }
 
- async  askToDelete (item:any) {
+  async askToDelete(item: any) {
     const { isConfirmed } = await Swal.fire({
-      icon: "warning",
+      icon: 'warning',
       html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,
       showConfirmButton: true,
-      confirmButtonText: "Si, eliminar",
+      confirmButtonText: 'Si, eliminar',
       showCancelButton: true,
-      cancelButtonText: "No, cancelar",
+      cancelButtonText: 'No, cancelar',
       allowOutsideClick: false,
     });
 
     if (isConfirmed) {
-      this.$productUbicationRemoveUseCase.execute(item.idArticuloUbicacion).subscribe(this.successResponse)
+      this.$productUbicationRemoveUseCase
+        .execute(item.idArticuloUbicacion)
+        .subscribe(this.successResponse);
     }
   }
-  private successResponse = (response:ApiResponse)=>{
-    if(response.code==="0"){
+  private successResponse = (response: ApiResponse) => {
+    if (response.code === '0') {
       this._tS.show({
         type: 'warning',
-        message: response.message
-      })
-      return
+        message: response.message,
+      });
+      return;
     }
-    if(response.code==="1"){
+    if (response.code === '1') {
       this._tS.show({
         type: 'success',
-        message: response.message
-      })
+        message: response.message,
+      });
 
       this.productUbicationId = 0;
-      this.loadData()
+      this.loadData();
     }
-  }
-
+  };
 }

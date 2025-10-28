@@ -1,16 +1,10 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  title="Reparaciones"
-  (close)="onModalClose()"
-/>
+<app-mat-custom-dialog [containerTemplate]="body" title="Reparaciones" (close)="onModalClose()" />
 
 <ng-template #body>
   <div class="row">
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
-        <label for="establishment"
-        >Establecimiento <span class="text-danger">*</span></label
-        >
+        <label for="establishment">Establecimiento <span class="text-danger">*</span></label>
         <select
           name="establishment"
           id="establishment"
@@ -28,15 +22,8 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
-        <label for="puntoEmision"
-        >Punto Emisión <span class="text-danger">*</span></label
-        >
-        <select
-          name="puntoEmision"
-          id="puntoEmision"
-          class="form-select"
-          [(ngModel)]="order.puntoEmisionId"
-        >
+        <label for="puntoEmision">Punto Emisión <span class="text-danger">*</span></label>
+        <select name="puntoEmision" id="puntoEmision" class="form-select" [(ngModel)]="order.puntoEmisionId">
           @for (item of puntosEmision(); track $index) {
             <option [ngValue]="item.idPuntoEmision">{{ item.ptoEmi }}</option>
           }
@@ -45,9 +32,7 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
       <div class="form-group">
-        <label for="fechaEmision"
-        >Fecha Emisión: <span class="text-danger">*</span></label
-        >
+        <label for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
         <app-input-date [(value)]="order.fechaEmision" />
       </div>
     </div>
@@ -57,12 +42,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="warehouse">Bodega: </label>
-        <select
-          name="warehouse"
-          id="warehouse"
-          class="form-select"
-          (change)="onChangeBodega()"
-        >
+        <select name="warehouse" id="warehouse" class="form-select" (change)="onChangeBodega()">
           @for (item of bodegas(); track $index) {
             <option [ngValue]="item.idBodega">{{ item.descripcion }}</option>
           }
@@ -72,13 +52,7 @@
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
       <div class="form-group">
         <label for="feed">Tarifa: </label>
-        <select
-          name="feed"
-          id="feed"
-          class="form-select"
-          (change)="onChangeFee()"
-          [(ngModel)]="order.feeId"
-        >
+        <select name="feed" id="feed" class="form-select" (change)="onChangeFee()" [(ngModel)]="order.feeId">
           @for (item of feeds(); track $index) {
             <option [ngValue]="item.idTarifa">{{ item.descripcion }}</option>
           }
@@ -91,9 +65,7 @@
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
         <div class="form-group">
-          <label for="orderDetails"
-          >Detalle (Equipo): <span class="text-danger">*</span></label
-          >
+          <label for="orderDetails">Detalle (Equipo): <span class="text-danger">*</span></label>
           <select
             name="orderDetails"
             id="orderDetails"
@@ -124,9 +96,7 @@
       </div>
       <div class="col-xl-4 col-lg-4 col-md-8 col-sm-8 col-12">
         <div class="form-group">
-          <label for="obs-detalle-reparacion"
-          >Solicitud de Reparación: <span class="text-danger">*</span></label
-          >
+          <label for="obs-detalle-reparacion">Solicitud de Reparación: <span class="text-danger">*</span></label>
           <input
             type="text"
             id="obs-detalle-reparacion"
@@ -145,17 +115,12 @@
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
           <div class="form-group">
             <label for="productSearch">Buscar producto o servicio: </label>
-            <app-product-search-overlay
-              (optionSelected)="onProductSelected($event)"
-              [searchSale]="true"
-            />
+            <app-product-search-overlay (optionSelected)="onProductSelected($event)" [searchSale]="true" />
           </div>
         </div>
       </div>
     </div>
-    <div
-      class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex align-items-center justify-content-center"
-    >
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex align-items-center justify-content-center">
       <div class="icheck-success">
         <input
           type="checkbox"
@@ -168,12 +133,7 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
       <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-        <app-theme-button
-          variant="dark"
-          icon="receipt_long"
-          text="Cancelar"
-          (handleClick)="saveOptions(factura)"
-        >
+        <app-theme-button variant="dark" icon="receipt_long" text="Cancelar" (handleClick)="saveOptions(factura)">
         </app-theme-button>
         @if (!detailCustom) {
           <app-theme-button
@@ -183,9 +143,7 @@
             (handleClick)="saveOptions(notaEntrega)"
           >
           </app-theme-button>
-          <button type="button" mat-raised-button (click)="saveOptions()">
-            <mat-icon>save</mat-icon> Guardar
-          </button>
+          <button type="button" mat-raised-button (click)="saveOptions()"><mat-icon>save</mat-icon> Guardar</button>
         }
       </div>
     </div>
@@ -215,4 +173,3 @@
     </div>
   </div>
 </ng-template>
-

@@ -1,6 +1,6 @@
 ﻿namespace BarberShop.Application.Tickets.DTOs;
 
-public class TicketDto : BaseDto
+public class TicketDto
 {
     public int Id { get; init; }
     public int PuntoEmisionId { get; init; }
@@ -18,5 +18,7 @@ public class TicketDto : BaseDto
     public int? CustomerId { get; init; }
     public int? WorkSessionId { get; init; }
     public DateTime CreatedAt { get; init; }
+    public int CreatedByUserId { get; set; }
+    public int UpdatedByUserId { get; set; }
     public List<TicketDetailDto> Details { get; init; } = [];
 }

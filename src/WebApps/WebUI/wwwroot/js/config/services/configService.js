@@ -1,18 +1,6 @@
 (function () {
     'use strict';
 
-    app.factory('bodegaService', ['$injector', function ($injector) {
-        let url = '/Config/Bodega/'
-
-
-
-
-
-
-
-
-    }])
-
     app.factory('bodegaAsignacionService', ['$injector', function ($injector) {
         let url = 'Config/BodegaAsignacion/'
         let mS = $injector.get('mainService');
@@ -59,18 +47,6 @@
 
 (function () {
     'use strict';
-
-    app.factory('puntoEmisionService', ['$injector', function ($injector) {
-        let url = '/Config/PuntoEmision/'
-
-
-
-
-
-
-
-
-    }])
 
     app.factory('puntoEmisionAsignacionService', ['$injector', function ($injector) {
         let url = 'Config/PtoEmiAsig/'

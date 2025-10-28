@@ -1,4 +1,5 @@
-﻿namespace Configuracion.API.Controllers;
+
+namespace Configuracion.API.Controllers;
 
 public class GeneralConfigController(IGeneralConfigService generalConfigService) : BaseApiController
 {
@@ -13,12 +14,12 @@ public class GeneralConfigController(IGeneralConfigService generalConfigService)
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest data)
+    public async Task<IActionResult> Put(GeneralConfigDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<GeneralConfigDto>(data)) }
         };
 
         return Ok(await generalConfigService.UpdateAsync(parameters));

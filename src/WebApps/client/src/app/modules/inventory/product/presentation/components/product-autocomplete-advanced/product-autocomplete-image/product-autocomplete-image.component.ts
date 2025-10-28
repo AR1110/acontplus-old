@@ -1,6 +1,16 @@
-import {Component, EventEmitter, input, Input, output, Output, signal, OnInit, OnDestroy} from '@angular/core';
-import {MatIcon} from "@angular/material/icon";
-import {MatTooltip} from "@angular/material/tooltip";
+import {
+  Component,
+  EventEmitter,
+  input,
+  Input,
+  output,
+  Output,
+  signal,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 export interface ProductImage {
   id?: string | number;
   url: string;
@@ -11,7 +21,7 @@ export interface ProductImage {
   order?: number;
 }
 
-export interface ProductWithImprovedImages  {
+export interface ProductWithImprovedImages {
   images: ProductImage[];
   imageUrl?: string; // Backward compatibility
 
@@ -28,27 +38,24 @@ export interface ProductBadge {
 
 @Component({
   selector: 'app-product-autocomplete-image',
-  imports: [
-    MatIcon,
-    MatTooltip
-  ],
+  imports: [MatIcon, MatTooltip],
   templateUrl: './product-autocomplete-image.component.html',
-  styleUrl: './product-autocomplete-image.component.scss'
+  styleUrl: './product-autocomplete-image.component.scss',
 })
 export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
   @Input() product!: any;
-  size = input<'small'|'medium'|'large'>('medium');
-  enableZoom =input(true);
-  enableQuickView =input(true);
-  showStockBadge =input(true);
-  showNavigation =input(true);
-   autoRotate = input(false);
-   rotateInterval = input(3000);
+  size = input<'small' | 'medium' | 'large'>('medium');
+  enableZoom = input(true);
+  enableQuickView = input(true);
+  showStockBadge = input(true);
+  showNavigation = input(true);
+  autoRotate = input(false);
+  rotateInterval = input(3000);
 
-  imageClick =output<ProductImage>();
-  quickView =output<ProductWithImprovedImages>();
-  imageLoad =output<void>();
-  imageError =output<void>();
+  imageClick = output<ProductImage>();
+  quickView = output<ProductWithImprovedImages>();
+  imageLoad = output<void>();
+  imageError = output<void>();
 
   isLoading = signal(false);
   hasError = false;
@@ -73,7 +80,7 @@ export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
     if (images.length === 0) {
       return this.getPlaceholderImage();
     }
-    console.log(images)
+    console.log(images);
 
     const currentImage = images[this.currentImageIndex];
     console.log(currentImage);
@@ -91,23 +98,24 @@ export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
   }
 
   getDisplayImages(): ProductImage[] {
-
     if (!this.product?.images?.length) {
       // Fallback a imageUrl si no hay images array
       if (this.product?.imageUrl) {
-        return [{
-          url: this.product.imageUrl,
-          type: 'main',
-          isPrimary: true,
-          alt: this.product.name
-        }];
+        return [
+          {
+            url: this.product.imageUrl,
+            type: 'main',
+            isPrimary: true,
+            alt: this.product.name,
+          },
+        ];
       }
       return [];
     }
 
     return this.product.images
-      .filter((img:any) => img.url)
-      .sort((a:any, b:any) => {
+      .filter((img: any) => img.url)
+      .sort((a: any, b: any) => {
         if (a.isPrimary && !b.isPrimary) return -1;
         if (!a.isPrimary && b.isPrimary) return 1;
         return (a.order || 0) - (b.order || 0);
@@ -206,12 +214,12 @@ export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
     if (badge.text) return badge.text;
 
     const defaultTexts: Record<string, string> = {
-      'new': 'NUEVO',
-      'sale': 'OFERTA',
-      'bestseller': 'TOP',
-      'limited': 'LIMITED',
-      'exclusive': 'VIP',
-      'discount': '%'
+      new: 'NUEVO',
+      sale: 'OFERTA',
+      bestseller: 'TOP',
+      limited: 'LIMITED',
+      exclusive: 'VIP',
+      discount: '%',
     };
 
     return defaultTexts[badge.type] || badge.type.toUpperCase();
@@ -230,10 +238,12 @@ export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
     const status = this.getStockStatus();
 
     switch (status) {
-      case 'out': return 'SIN';
-      case 'low': return 'BAJO';
-      default: return stock.toString();
+      case 'out':
+        return 'SIN';
+      case 'low':
+        return 'BAJO';
+      default:
+        return stock.toString();
     }
   }
-
 }

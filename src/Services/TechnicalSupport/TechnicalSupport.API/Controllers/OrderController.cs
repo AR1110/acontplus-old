@@ -1,10 +1,13 @@
-﻿namespace TechnicalSupport.API.Controllers;
+using Acontplus.Core.Extensions;
+using OrderDto = TechnicalSupport.Domain.DTOs.OrderDto;
+
+namespace TechnicalSupport.API.Controllers;
 
 public class OrderController : BaseApiController
 {
-    private readonly IOrderService _orderService;
+    private readonly IOrderRepository _orderService;
 
-    public OrderController(IOrderService orderService)
+    public OrderController(IOrderRepository orderService)
     {
         _orderService = orderService;
     }
@@ -29,13 +32,7 @@ public class OrderController : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             {
-                "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(orderDto,
-                    new JsonSerializerSettings
-                    {
-                        ContractResolver =
-                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                        Formatting = Formatting.Indented
-                    })
+                "json", SqlStringParam.Sanitize(JsonExtensions.SerializeOptimized(orderDto)
                 )
             }
         });
@@ -52,13 +49,7 @@ public class OrderController : BaseApiController
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
             {
-                "json", SqlStringParam.Sanitize(JsonConvert.SerializeObject(order,
-                    new JsonSerializerSettings
-                    {
-                        ContractResolver =
-                            new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() },
-                        Formatting = Formatting.Indented
-                    })
+                "json", SqlStringParam.Sanitize(JsonExtensions.SerializeOptimized(order)
                 )
             }
         });

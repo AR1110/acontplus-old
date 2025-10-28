@@ -1,33 +1,29 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {SharedService} from "@core/services/shared.service";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { SharedService } from '@core/services/shared.service';
 
 @Component({
   selector: 'app-detalle-arqueo-caja-modal-modal',
-  imports: [
-    ThemeButtonComponent,
-    MatCustomDialogComponent,
-    MatDynamicTableComponent
-  ],
+  imports: [ThemeButtonComponent, MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './detalle-arqueo-control-caja.component.html',
 })
 export class DetalleArqueoControlCajaComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaComponent>)
-   params = inject(MAT_DIALOG_DATA)
+  private dialogRef = inject(MatDialogRef<DetalleArqueoControlCajaComponent>);
+  params = inject(MAT_DIALOG_DATA);
 
   dataSearch = {
     sortByDefault: 0,
     sortOrder: 'ASC',
   };
   private _controlCajaUseCase = inject(ControlCajaUseCase);
-  private _sharedSvc = inject(SharedService)
+  private _sharedSvc = inject(SharedService);
 
-  arqueoCajaDetalle = signal<any>([])
+  arqueoCajaDetalle = signal<any>([]);
   total = 0;
 
   columnsDefs: ColumnDefinition[] = [
@@ -36,29 +32,26 @@ export class DetalleArqueoControlCajaComponent implements OnInit {
     { key: 'valor', label: 'Valor', type: 'string' },
     { key: 'total', label: 'Total', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   getList() {
-    this._controlCajaUseCase
-      .getArqueoCaja(this.params.id)
-      .subscribe((response) => {
-        this.arqueoCajaDetalle.set(response.data||[]);
-        this.total = this.arqueoCajaDetalle().reduce(
-          (acc:number, current:any) => acc + current.total,
-          0,
-        );
-      });
+    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe(response => {
+      this.arqueoCajaDetalle.set(response.data || []);
+      this.total = this.arqueoCajaDetalle().reduce(
+        (acc: number, current: any) => acc + current.total,
+        0,
+      );
+    });
   }
 
   ngOnInit() {
     this.getList();
   }
 
-
   exportData() {
-    this._sharedSvc.exportToExcel(this.arqueoCajaDetalle(), 'ArqueoCajaDetalle')
+    this._sharedSvc.exportToExcel(this.arqueoCajaDetalle(), 'ArqueoCajaDetalle');
   }
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

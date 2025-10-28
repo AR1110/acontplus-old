@@ -8,7 +8,6 @@ export interface TiempoCredito {
   tipo?: boolean;
 }
 
-
 export interface CreditTimeList {
   index: number;
   idTiempoCredito: number;
@@ -26,6 +25,6 @@ export interface CreditTimeList {
 }
 
 export class ListCreditTimeResponse {
-  data: CreditTimeList[]=[]
-  totalRecords=0;
+  data: CreditTimeList[] = [];
+  totalRecords = 0;
 }

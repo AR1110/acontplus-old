@@ -9,9 +9,7 @@
           <mat-select [(ngModel)]="dataFilter.tipoDocId">
             <mat-option [value]="0">--Todos--</mat-option>
             @for (item of tiposDoc(); track $index) {
-            <mat-option [value]="item.idTipoDocumento">{{
-              item.descripcion
-            }}</mat-option>
+              <mat-option [value]="item.idTipoDocumento">{{ item.descripcion }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -21,9 +19,7 @@
           <mat-label>Establecimiento</mat-label>
           <mat-select [(ngModel)]="dataFilter.estabId">
             @for (item of estabs(); track $index) {
-            <mat-option [value]="item.idEstablecimiento">{{
-              item.nombreEstab
-            }}</mat-option>
+              <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -38,25 +34,14 @@
       </div>
       <div class="col">
         <div class="hstack gap-1">
-          <app-theme-button
-            variant="light"
-            icon="add"
-            matStyle="icon"
-            (handleClick)="addEdit()"
-          />
-          <app-theme-button
-            variant="light"
-            icon="refresh"
-            matStyle="icon"
-            (handleClick)="refresh()"
-          />
+          <app-theme-button variant="light" icon="add" matStyle="icon" (handleClick)="addEdit()" />
+          <app-theme-button variant="light" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
           <app-theme-button
             variant="light"
             icon="filter_list"
             matStyle="icon"
             (handleClick)="isMoreFilter.set(!isMoreFilter())"
           />
-
         </div>
       </div>
     </div>
@@ -66,13 +51,13 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Número Documento</mat-label>
-            <input matInput [(ngModel)]="dataFilter.serie">
+            <input matInput [(ngModel)]="dataFilter.serie" />
           </mat-form-field>
         </div>
-        <div class="col" >
+        <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Observación</mat-label>
-            <input matInput [(ngModel)]="dataFilter.text">
+            <input matInput [(ngModel)]="dataFilter.text" />
           </mat-form-field>
         </div>
         <div class="col"></div>
@@ -91,11 +76,7 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <button
-      matIconButton
-      [matMenuTriggerFor]="menu"
-      aria-label="Example icon-button with a menu"
-    >
+    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #menu="matMenu">

@@ -5,12 +5,10 @@
   [formGroup]="docSustentoGroup()"
 >
   <mat-expansion-panel-header class="mb-5 mb-md-0">
-    <mat-panel-title class="pt-5 pt-md-0"
-      >{{ docSustentoGroup().get("numDocSustento")?.value }}
-    </mat-panel-title>
+    <mat-panel-title class="pt-5 pt-md-0">{{ docSustentoGroup().get('numDocSustento')?.value }} </mat-panel-title>
     <mat-panel-description class="pt-5 pt-md-0">
       <h5 class="p-r-5">
-        {{ docSustentoGroup().get("fechaEmisionDocSustento")?.value }}
+        {{ docSustentoGroup().get('fechaEmisionDocSustento')?.value }}
       </h5>
     </mat-panel-description>
   </mat-expansion-panel-header>
@@ -19,9 +17,7 @@
       <mat-form-field class="w-100">
         <mat-label>Documento Sustento:</mat-label>
         <mat-select
-          id="tipoComprobanteId-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="tipoComprobanteId-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="tipoComprobanteId"
           (selectionChange)="selectSustento(indexDoc())"
         >
@@ -39,9 +35,7 @@
       <mat-form-field class="w-100">
         <mat-label>Sustento Tributario:</mat-label>
         <mat-select
-          id="documentoSustentoTributarioId-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="documentoSustentoTributarioId-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="documentoSustentoTributarioId"
           [disabled]="sustentosFiltered().length === 0"
         >
@@ -77,9 +71,7 @@
         <input
           matInput
           type="date"
-          id="fechaEmisionDocSustento-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="fechaEmisionDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="fechaEmisionDocSustento"
           readonly
         />
@@ -88,17 +80,9 @@
     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-4 col-12">
       <mat-form-field class="w-100">
         <mat-label>Fecha Registro Contable:</mat-label>
-        <input
-          matInput
-          id="fechaRegistroContable"
-          [matDatepicker]="picker"
-          formControlName="fechaRegistroContable"
-        />
+        <input matInput id="fechaRegistroContable" [matDatepicker]="picker" formControlName="fechaRegistroContable" />
         <mat-hint>DD/MM/YYYY</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="picker"
-        ></mat-datepicker-toggle>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
     </div>
@@ -112,9 +96,7 @@
           #numAutDocSustento
           type="text"
           name="numAutDocSustento"
-          id="numAutDocSustento-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="numAutDocSustento-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           (click)="numAutDocSustento.select()"
           formControlName="numAutDocSustento"
           maxlength="49"
@@ -144,9 +126,7 @@
       <mat-form-field class="w-100">
         <mat-label>Regimen Fiscal:</mat-label>
         <mat-select
-          id="tipoRegimenFiscalExteriorId-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="tipoRegimenFiscalExteriorId-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="tipoRegimenFiscalExteriorId"
           (selectionChange)="getCountries()"
           [disabled]="isPagoResidente"
@@ -185,9 +165,7 @@
       <mat-form-field class="w-100">
         <mat-label>Convenio Doble Tributación:</mat-label>
         <mat-select
-          id="aplicConvDobTrib-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="aplicConvDobTrib-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="aplicConvDobTrib"
           [disabled]="isPagoResidente"
         >
@@ -205,9 +183,7 @@
         <mat-label>Pago al Exterior Sujeto a Retención:</mat-label>
         <!--                  disabled =  isPagoResidente || docSustento.aplicConvDobTrib === 'SI'-->
         <mat-select
-          id="pagExtSujRetNorLeg-{{
-            docSustentoGroup().get('uniqueIdDoc')?.value
-          }}"
+          id="pagExtSujRetNorLeg-{{ docSustentoGroup().get('uniqueIdDoc')?.value }}"
           formControlName="pagExtSujRetNorLeg"
         >
           <mat-option>::seleccione::</mat-option>
@@ -279,11 +255,7 @@
   }
 
   <div class="row g-3 align-items-center mb-3" formArrayName="retenciones">
-    @for (
-      retencion of getRetencionesArray(indexDoc()).controls;
-      let i = $index;
-      track i
-    ) {
+    @for (retencion of getRetencionesArray(indexDoc()).controls; let i = $index; track i) {
       <app-doc-sustento-retencion
         [docSustentoArray]="docSustentoArray()"
         [retencionGroup]="retencion"
@@ -298,21 +270,13 @@
   @if (docSustentoArray().length > 0) {
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button
-          text="Añadir Pagos"
-          icon="add"
-          (handleClick)="addPayment(indexDoc())"
-        ></app-theme-button>
+        <app-theme-button text="Añadir Pagos" icon="add" (handleClick)="addPayment(indexDoc())"></app-theme-button>
       </div>
     </div>
   }
 
   <div class="row g-3 align-items-center mb-3" formArrayName="payments">
-    @for (
-      payment of getPaymentsArray(indexDoc()).controls;
-      let i = $index;
-      track i
-    ) {
+    @for (payment of getPaymentsArray(indexDoc()).controls; let i = $index; track i) {
       <app-doc-sustento-payment
         [docSustentoArray]="docSustentoArray()"
         [paymentGroup]="payment"

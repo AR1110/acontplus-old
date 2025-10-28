@@ -38,7 +38,7 @@
 
         $scope.getReport = () => {
             try {
-                showLoader() 
+                showLoader()
                 let format = 2
                 let dataParams = {
                     tipo: 7,
@@ -54,7 +54,7 @@
                 }
                 let parameters = {
                     reportParams: JSON.stringify({
-                        idUsuarioRol: decodedJwt.userRoleId,
+                        userRoleId: decodedJwt.userRoleId,
                         codigo: 'RCETPV',
                         format: format == 1 ? 'pdf' : 'excel',
                         hasParams: false

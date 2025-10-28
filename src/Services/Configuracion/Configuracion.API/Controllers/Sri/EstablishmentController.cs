@@ -1,14 +1,19 @@
-﻿namespace Configuracion.API.Controllers.Sri;
+
+namespace Configuracion.API.Controllers.Sri;
 
 public class EstablishmentController(IEstablishmentService service) : BaseApiController
 {
+
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
+    {
+        { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+        { "json", SqlStringParam.Sanitize(json) }
+    };
         var response = await service.GetAsync(parameters);
         if (response == null) return NoContent();
 
@@ -16,29 +21,27 @@ public class EstablishmentController(IEstablishmentService service) : BaseApiCon
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(EstablishmentDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
-        var response = await service.AddAsync(parameters);
-        return Ok(response);
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(data)) },
+      { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
+        return Ok(await service.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest data)
+    public async Task<IActionResult> Put(int id, EstablishmentDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        var response = await service.UpdateAsync(parameters);
-        return Ok(response);
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(dto)) }
+    };
+        return Ok(await service.UpdateAsync(parameters));
     }
 
     [HttpPut("PutSriAuth/{id}/{autoSriAuth}")]

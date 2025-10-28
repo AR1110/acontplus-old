@@ -1,65 +1,43 @@
-using System.IO.Compression;
-using System.Text.Json.Serialization;
-using Common.FactElect.Services.Authentication;
-using Common.FactElect.Services.Conversion;
-using Common.FactElect.Services.External;
-using Common.FactElect.Services.Validation;
-using FactElect.Application;
-using FactElect.Application.Services;
+using Acontplus.FactElect.Services.Authentication;
+using Acontplus.FactElect.Services.Conversion;
+using Acontplus.FactElect.Services.External;
+using Acontplus.FactElect.Services.Validation;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Utilities.Time;
 using FactElect.Application.Services.Sri;
-using FactElect.Infrastructure.Persistence;
 using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
+using System.IO.Compression;
+using System.Text.Json.Serialization;
 
 namespace FactElect.API.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services,
+    public static IServiceCollection AddBillingServices(this IServiceCollection services,
         IConfiguration configuration, IWebHostEnvironment environment)
     {
+        services.AddAcontplusServices(configuration);
+
         services.AddAdvancedLoggingOptions(configuration);
 
+        services.AddJwtAuthentication(configuration);
+        
+        services.AddOpenApi();
+
         services.AddHttpContextAccessor();
+
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
         services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
         services.AddMemoryCache();
 
         services.AddHttpClient();
-        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
-        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
-
-        services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-            options.Providers.Add<BrotliCompressionProvider>();
-            options.Providers.Add<GzipCompressionProvider>();
-        });
-
-        services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
-        services.AddControllers()
-            .AddNewtonsoftJson(x =>
-            {
-                x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                x.SerializerSettings.ContractResolver =
-                    new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() };
-            });
-        services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.Converters.Add(new NullableDateTimeConverter());
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-        });
-        services.Configure<JsonOptions>(options =>
-        {
-            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            options.JsonSerializerOptions.Converters.Add(new NullableDateTimeConverter());
-        });
 
         services.AddDbContextPool<FactElectContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
@@ -72,7 +50,10 @@ public static class ApplicationServicesExtensions
             "FactElect.Application.Services.Logistica",
             "FactElect.Application.Services.RetencionAts",
             "FactElect.Application.Services.Sri",
-            "FactElect.API.Endpoints.Implementations"
+            "FactElect.API.Endpoints.Implementations",
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions",
+            "FactElect.Infrastructure.Persistence.Repositories"
         ];
 
         services.Scan(scan => scan
@@ -83,25 +64,15 @@ public static class ApplicationServicesExtensions
             .WithScopedLifetime()
         );
 
-        string[] transientNameSpaces =
-        [
-            "Common.Infrastructure.Repository.Implementations",
-            "Common.Services.Extensions",
-            "FactElect.Infrastructure.Persistence.Repositories"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(transientNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithTransientLifetime()
-        );
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
         services.AddScoped<ICookieService, CookieService>();
         services.AddScoped<ICaptchaService, CaptchaService>();
         services.AddScoped<IRucService, RucService>();
         services.AddScoped<ICedulaService, CedulaService>();
+
+        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
+
         return services;
     }
 }

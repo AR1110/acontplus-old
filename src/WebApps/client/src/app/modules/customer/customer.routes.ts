@@ -1,5 +1,5 @@
-import { Route, Routes } from "@angular/router";
-import { CompanyCustomerComponent } from "@company-customer/presentation/company-customer/company-customer.component";
+import { Route, Routes } from '@angular/router';
+import { CompanyCustomerComponent } from '@company-customer/presentation/company-customer/company-customer.component';
 import { CustomerHomeComponent } from './ui/customer-home.component';
 
 export const routes: Routes = [
@@ -15,6 +15,5 @@ export const routes: Routes = [
     data: {
       breadcrumb: 'Cliente',
     },
-
-  }
-]
+  },
+];

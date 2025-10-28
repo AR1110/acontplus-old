@@ -68,7 +68,7 @@ After running tests, open `coverage/index.html` in your browser for a detailed c
 
 - All path aliases from `tsconfig.json` are supported in tests.
 - Standalone components must be added to the `imports` array in tests.
-- Mock providers for any required dependencies in your test setup (see `app.component.spec.ts` for an example).
+- Mock providers for any required dependencies in your test setup (see `app.spec.ts` for an example).
 
 ---
 

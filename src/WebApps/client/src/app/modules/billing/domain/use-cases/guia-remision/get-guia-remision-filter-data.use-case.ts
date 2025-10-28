@@ -6,9 +6,7 @@ import { GuiaRemisionFilterData } from '@billing/domain/models/guia-remision/gui
 @Injectable({
   providedIn: 'root',
 })
-export class GetGuiaRemisionFilterDataUseCase
-  implements BaseUseCase<GuiaRemisionFilterData, void>
-{
+export class GetGuiaRemisionFilterDataUseCase implements BaseUseCase<GuiaRemisionFilterData, void> {
   constructor(private repo: GuiaRemisionRepository) {}
 
   execute() {

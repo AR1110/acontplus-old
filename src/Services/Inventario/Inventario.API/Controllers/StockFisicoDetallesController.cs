@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class StockFisicoDetallesController(InventarioContext context) : BaseApiController
 {

@@ -1,21 +1,25 @@
-import { Component, inject,  signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-tarifa-edit-modal',
-  imports: [FormsModule, ToUpperCaseDirective,  ThemeButtonComponent, MatCustomDialogComponent,
-  MatFormFieldModule,
+  imports: [
+    FormsModule,
+    ToUpperCaseDirective,
+    ThemeButtonComponent,
+    MatCustomDialogComponent,
+    MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
   ],
@@ -23,12 +27,12 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
   styles: ``,
 })
 export class TarifaEditModalComponent implements OnInit {
-   params =inject< {
-    idTarifa: 0,
-    codigo: null,
-    descripcion: null,
-    estado: true,
-    ventaPorMayor: false,
+  params = inject<{
+    idTarifa: 0;
+    codigo: null;
+    descripcion: null;
+    estado: true;
+    ventaPorMayor: false;
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<TarifaEditModalComponent>);
   tS = inject(ToastrNotificationService);
@@ -45,21 +49,20 @@ export class TarifaEditModalComponent implements OnInit {
     ventaPorMayor: false,
   };
 
-
-  successReponse =  (response: ApiResponse) => {
-      if (response.code === '0') {
-        this.tS.show({
-          type: 'warning',
-          message: response.message,
-        });
-      }
-      if (response.code === '1') {
-        this.tS.show({
-          type: 'success',
-          message: response.message,
-        });
-        this.modal.close(response);
-      }
+  successReponse = (response: ApiResponse) => {
+    if (response.code === '0') {
+      this.tS.show({
+        type: 'warning',
+        message: response.message,
+      });
+    }
+    if (response.code === '1') {
+      this.tS.show({
+        type: 'success',
+        message: response.message,
+      });
+      this.modal.close(response);
+    }
   };
 
   ngOnInit() {
@@ -86,9 +89,7 @@ export class TarifaEditModalComponent implements OnInit {
         return;
       }
 
-      this.tarifaSvc
-        .put(this.data.idTarifa, this.data)
-        .subscribe(this.successReponse);
+      this.tarifaSvc.put(this.data.idTarifa, this.data).subscribe(this.successReponse);
     } catch (error) {
       console.log(error);
     }

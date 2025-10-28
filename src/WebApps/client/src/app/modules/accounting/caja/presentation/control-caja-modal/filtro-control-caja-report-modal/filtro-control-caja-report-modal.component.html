@@ -1,52 +1,32 @@
-<app-mat-custom-dialog
-
-  [containerTemplate]="body"
-  (close)="close()"
-  [title]="'Filtro Control Caja'"
-/>
+<app-mat-custom-dialog [containerTemplate]="body" (close)="close()" [title]="'Filtro Control Caja'" />
 
 <ng-template #body>
   <div class="d-grid gap-2">
     <mat-form-field>
       <mat-label>Ordenar por defecto:</mat-label>
-      <mat-select
-        [(ngModel)]="dataSearch.sortByDefault"
-      >
+      <mat-select [(ngModel)]="dataSearch.sortByDefault">
         <mat-option></mat-option>
         <option [value]="''">--Todos--</option>
         @for (item of sortByDefaults; track $index) {
-          <mat-option [value]="item.id">{{item.description}}</mat-option>
+          <mat-option [value]="item.id">{{ item.description }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Criterio de clasificación:</mat-label>
-      <mat-select
-        [(ngModel)]="dataSearch.sortOrder"
-      >
+      <mat-select [(ngModel)]="dataSearch.sortOrder">
         <mat-option></mat-option>
         <option [value]="''">--Todos--</option>
         @for (item of sortOrders; track $index) {
-          <mat-option [value]="item.codigo">{{item.description}}</mat-option>
+          <mat-option [value]="item.codigo">{{ item.description }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-
     <div class="hstack gap-1">
-      <app-theme-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="Pdf"
-        (handleClick)="askToReport('pdf')"
-      />
-      <app-theme-button
-        variant="success"
-        icon="download"
-        text="Excel"
-        (handleClick)="askToReport('excel')"
-      />
+      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="askToReport('pdf')" />
+      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="askToReport('excel')" />
     </div>
   </div>
 </ng-template>

@@ -1,6 +1,3 @@
-﻿using System.Data;
-using BarberShop.Domain.Entities;
-
 namespace BarberShop.Domain.Repositories;
 
 public interface ITicketRepository

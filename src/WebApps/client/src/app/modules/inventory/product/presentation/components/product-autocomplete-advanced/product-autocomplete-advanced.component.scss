@@ -85,7 +85,8 @@
   margin-bottom: 4px;
 }
 
-.product-code, .product-barcode {
+.product-code,
+.product-barcode {
   font-size: 10px;
   color: #666;
   background: #f5f5f5;
@@ -111,7 +112,11 @@
   flex-wrap: wrap;
 }
 
- .category, .subcategory, .unit, .weight, .tracking {
+.category,
+.subcategory,
+.unit,
+.weight,
+.tracking {
   font-size: 9px;
   background: #e3f2fd;
   color: #1976d2;
@@ -119,7 +124,10 @@
   border-radius: 8px;
 }
 
-.tracking { background: #e8f5e8; color: #2e7d32; }
+.tracking {
+  background: #e8f5e8;
+  color: #2e7d32;
+}
 
 /* Sección de precios */
 .product-prices-section {
@@ -229,7 +237,8 @@
   margin-top: 2px;
 }
 
-.min-quantity, .valid-until {
+.min-quantity,
+.valid-until {
   font-size: 8px;
   color: #666;
 }

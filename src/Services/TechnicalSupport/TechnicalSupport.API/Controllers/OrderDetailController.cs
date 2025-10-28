@@ -1,27 +1,36 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.API.Controllers;
 
 public class OrderDetailController : BaseApiController
 {
-    private readonly IOrderDetailService _orderDetailService;
+    private readonly IOrderDetailRepository _orderDetailService;
 
-    public OrderDetailController(IOrderDetailService orderDetailService)
+    public OrderDetailController(IOrderDetailRepository orderDetailService)
     {
         _orderDetailService = orderDetailService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateOrderDetailDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await _orderDetailService.AddAsync(data);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateOrderDetailDto>(data)) }
+        };
+        var response = await _orderDetailService.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateOrderDetailDto data)
     {
-        data.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await _orderDetailService.UpdateAsync(id, data);
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+            { "id", id },
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateOrderDetailDto>(data)) }
+        };
+        var response = await _orderDetailService.UpdateAsync(id, parameters);
         return Ok(response);
     }
 

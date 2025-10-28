@@ -1,10 +1,16 @@
-﻿namespace Configuracion.Domain.Repositories;
+using Configuracion.Domain.Models;
+
+namespace Configuracion.Domain.Repositories;
 
 public interface ITurnoRepository
 {
-    Task<string> GetAsync(Dictionary<string, object> parameters);
-    Task<LegacyApiResponse> CreateTurnoAsync(int userRoleId, Turno turno);
-    Task<LegacyApiResponse> UpdateTurnoAsync(int userRoleId, Turno turno);
-    Task<LegacyApiResponse> ReadTurnoAsync(int userRoleId, int pageIndex, int pageSize);
-    Task<LegacyApiResponse> DeleteTurnoAsync(int userRoleId, int idTurno);
+  Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
+
+  Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
+
+  Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
+
+  //Task<SpResponse> ReadTurnoAsync(int userRoleId, int pageIndex, int pageSize);
+
+  Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
 }

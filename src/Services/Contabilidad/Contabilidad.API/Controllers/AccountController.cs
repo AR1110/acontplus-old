@@ -1,6 +1,6 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
-public class AccountController(IAccountService accountService) : BaseApiController
+public class AccountController(IAccountRepository accountService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] string json)

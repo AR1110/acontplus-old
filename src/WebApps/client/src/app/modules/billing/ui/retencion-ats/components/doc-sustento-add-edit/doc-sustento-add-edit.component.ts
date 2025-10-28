@@ -1,11 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  inject,
-  input,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { AfterViewInit, Component, inject, input, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -119,9 +112,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this.docSustentoArray().controls[index].get('tipoComprobanteId')?.value;
 
     this.sustentosFiltered.set(
-      this.sustentosTributarios().filter(
-        (x) => x.tipoComprobanteId === tipoComprobanteId,
-      ),
+      this.sustentosTributarios().filter(x => x.tipoComprobanteId === tipoComprobanteId),
     );
   }
 
@@ -162,26 +153,23 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
       parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
         if (doc.taxes) {
-          doc.taxes.forEach((tax) => {
+          doc.taxes.forEach(tax => {
             this.createTaxWithValue(this.indexDoc(), tax);
           });
         }
         if (doc.retenciones) {
-          doc.retenciones.forEach((retencion) => {
+          doc.retenciones.forEach(retencion => {
             this.createRetencion(this.indexDoc(), retencion);
           });
         }
         if (doc.payments) {
-          doc.payments.forEach((payment) => {
+          doc.payments.forEach(payment => {
             this.createPaymentWithValue(this.indexDoc(), payment);
           });
         }
       });
     } else {
-      this.docSustentoArray()
-        .at(this.indexDoc())
-        .get('pagoLocExt')
-        ?.setValue('01');
+      this.docSustentoArray().at(this.indexDoc()).get('pagoLocExt')?.setValue('01');
     }
   }
 
@@ -229,9 +217,8 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   createTaxWithValue(indexDoc: number, tax: any): void {
     const taxesArray = this.getTaxesArray(indexDoc);
     const taxGroup = this.createTaxGroup();
-    tax.idRetAtsDocSustento = this.docSustentoArray().controls[
-      this.indexDoc()
-    ].get('idRetAtsDocSustento')?.value;
+    tax.idRetAtsDocSustento =
+      this.docSustentoArray().controls[this.indexDoc()].get('idRetAtsDocSustento')?.value;
     taxGroup.patchValue(tax);
     taxesArray.push(taxGroup);
   }
@@ -239,9 +226,8 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     const taxesArray = this.getTaxesArray(indexDoc);
     const taxGroup = this.createTaxGroup();
     taxGroup.patchValue({
-      idRetAtsDocSustento: this.docSustentoArray().controls[
-        this.indexDoc()
-      ].get('idRetAtsDocSustento')?.value,
+      idRetAtsDocSustento:
+        this.docSustentoArray().controls[this.indexDoc()].get('idRetAtsDocSustento')?.value,
     });
     taxesArray.push(taxGroup);
   }
@@ -254,10 +240,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     }
     retencionesArray.push(retencionGroup);
   }
-  createPaymentWithValue(
-    indexDoc: number,
-    payment: RetencionAtsDocPayment,
-  ): void {
+  createPaymentWithValue(indexDoc: number, payment: RetencionAtsDocPayment): void {
     const paymentsArray = this.getPaymentsArray(indexDoc);
     const paymentGroup = this.createPaymentGroup();
 
@@ -273,31 +256,25 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   }
 
   addTaxes(indexDoc: number) {
-    const documentId =
-      this.docSustentoArray().controls[indexDoc].get('idDocumento')?.value;
-    const isAutomatic =
-      this.docSustentoArray().controls[indexDoc].get('isAutomatic')?.value;
+    const documentId = this.docSustentoArray().controls[indexDoc].get('idDocumento')?.value;
+    const isAutomatic = this.docSustentoArray().controls[indexDoc].get('isAutomatic')?.value;
 
-    this._docSustentoUseCase
-      .getTaxes({ documentId, isAutomatic })
-      .subscribe((response) => {
-        let totalSinImpuestos = 0;
-        response.taxes.forEach((tax: any) => {
-          this.createTaxWithValue(indexDoc, tax);
-          totalSinImpuestos += tax.baseImponible;
-        });
-
-        const docSustento = this.docSustentoArray().controls[indexDoc].value;
-        docSustento.totalSinImpuestos = totalSinImpuestos;
-        this.docSustentoArray().controls[this.indexDoc()].setValue(docSustento);
-        const payments = this.docSustentoArray()
-          .at(this.indexDoc())
-          .get('payments') as FormArray;
-        if (docSustento.idRetAtsDocSustento > 0 && payments.length > 0) return;
-        response.payments.forEach((payment: RetencionAtsDocPayment) => {
-          this.createPaymentWithValue(indexDoc, payment);
-        });
+    this._docSustentoUseCase.getTaxes({ documentId, isAutomatic }).subscribe(response => {
+      let totalSinImpuestos = 0;
+      response.taxes.forEach((tax: any) => {
+        this.createTaxWithValue(indexDoc, tax);
+        totalSinImpuestos += tax.baseImponible;
       });
+
+      const docSustento = this.docSustentoArray().controls[indexDoc].value;
+      docSustento.totalSinImpuestos = totalSinImpuestos;
+      this.docSustentoArray().controls[this.indexDoc()].setValue(docSustento);
+      const payments = this.docSustentoArray().at(this.indexDoc()).get('payments') as FormArray;
+      if (docSustento.idRetAtsDocSustento > 0 && payments.length > 0) return;
+      response.payments.forEach((payment: RetencionAtsDocPayment) => {
+        this.createPaymentWithValue(indexDoc, payment);
+      });
+    });
   }
   addTaxesManual(indexDoc: number) {
     this.createTax(indexDoc);
@@ -305,25 +282,21 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
   addRetencion(indexDoc: number) {
     this.createRetencion(indexDoc, {
-      idRetAtsDocSustento: this.docSustentoArray().controls[
-        this.indexDoc()
-      ].get('idRetAtsDocSustento')?.value,
+      idRetAtsDocSustento:
+        this.docSustentoArray().controls[this.indexDoc()].get('idRetAtsDocSustento')?.value,
     });
   }
 
   docPreview(index: number): void {
-    const doc = this.docSustentoArray().controls[index]
-      .value as RetAtsDocSustento;
+    const doc = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
     if (doc.isAutomatic) {
       if (!doc.idDocumento) return;
-      this._documentoReceivedUseCase
-        .previewXml(doc.idDocumento)
-        .subscribe((response) => {
-          this._dialogService.open(DocElectViewerComponent, {
-            size: 'xxl',
-            data: response.payload,
-          });
+      this._documentoReceivedUseCase.previewXml(doc.idDocumento).subscribe(response => {
+        this._dialogService.open(DocElectViewerComponent, {
+          size: 'xxl',
+          data: response.payload,
         });
+      });
     } else {
       this._tS.show({
         type: 'info',
@@ -334,8 +307,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
   // Remove a docSustento at a specific index
   async removeDocSustento(index: number) {
-    const doc = this.docSustentoArray().controls[index]
-      .value as RetAtsDocSustento;
+    const doc = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
 
     if (doc.idRetAtsDocSustento > 0) {
       const { isConfirmed } = await Swal.fire({
@@ -349,17 +321,15 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         cancelButtonText: 'No',
       });
       if (isConfirmed) {
-        this._docSustentoUseCase
-          .delete(doc.idRetAtsDocSustento)
-          .subscribe((response) => {
-            this._tS.show({
-              type: response.code === '1' ? 'success' : 'warning',
-              message: response.message,
-            });
-            if (response.code === '1') {
-              this.removeByIndex(index);
-            }
+        this._docSustentoUseCase.delete(doc.idRetAtsDocSustento).subscribe(response => {
+          this._tS.show({
+            type: response.code === '1' ? 'success' : 'warning',
+            message: response.message,
           });
+          if (response.code === '1') {
+            this.removeByIndex(index);
+          }
+        });
       }
     } else {
       await this.removeByIndex(index);
@@ -372,26 +342,18 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
   addPayment(indexDoc: number) {
     const payment = {
-      idRetAtsDocSustento: this.docSustentoArray()
-        .at(indexDoc)
-        .get('idRetAtsDocSustento')?.value,
-      total: this.docSustentoArray().at(this.indexDoc()).get('importeTotal')
-        ?.value,
+      idRetAtsDocSustento: this.docSustentoArray().at(indexDoc).get('idRetAtsDocSustento')?.value,
+      total: this.docSustentoArray().at(this.indexDoc()).get('importeTotal')?.value,
     };
     this.createPaymentWithValue(indexDoc, payment as RetencionAtsDocPayment);
   }
 
   onSave(index: number) {
-    const docSustento = this.docSustentoArray().controls[index]
-      .value as RetAtsDocSustento;
+    const docSustento = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
 
-    const taxes = this.getTaxesArray(index).controls.map((tax) => tax.value);
-    const retenciones = this.getRetencionesArray(index).controls.map(
-      (retencion) => retencion.value,
-    );
-    const payments = this.getPaymentsArray(index).controls.map(
-      (payment) => payment.value,
-    );
+    const taxes = this.getTaxesArray(index).controls.map(tax => tax.value);
+    const retenciones = this.getRetencionesArray(index).controls.map(retencion => retencion.value);
+    const payments = this.getPaymentsArray(index).controls.map(payment => payment.value);
 
     docSustento.taxes = taxes;
     docSustento.retenciones = retenciones;
@@ -402,22 +364,20 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     if (docSustento.idRetAtsDocSustento > 0) {
       this._docSustentoUseCase
         .update(docSustento.idRetAtsDocSustento, docSustento)
-        .subscribe((response) => {
+        .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoUseCase.create(docSustento).subscribe((response) => {
+      this._docSustentoUseCase.create(docSustento).subscribe(response => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
         });
         if (response.code === '1') {
-          const { idRetAtsDocSustento } = JSON.parse(
-            response.payload as string,
-          );
+          const { idRetAtsDocSustento } = JSON.parse(response.payload as string);
           this.docSustentoArray()
             .controls[index].get('idRetAtsDocSustento')
             ?.setValue(idRetAtsDocSustento);

@@ -1,10 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponse } from '@core/models/api-response';
@@ -14,13 +9,13 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
   selector: 'app-production-area-add-edit-modal',
-  imports: [ReactiveFormsModule, MatSlideToggle,   MatCustomDialogComponent, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, MatSlideToggle, MatCustomDialogComponent, ThemeButtonComponent],
   templateUrl: './production-area-add-edit-modal.component.html',
   styles: ``,
 })
@@ -51,7 +46,7 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
   #tS = inject(ToastrNotificationService);
 
   getEstabAsign() {
-    this.#sharedService.getEstabAsign().subscribe((response) => {
+    this.#sharedService.getEstabAsign().subscribe(response => {
       if (response) {
         this.establecimientos = response;
       }
@@ -83,13 +78,11 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.#productionAreaService
-        .put(this.data.id, dataToSave)
-        .subscribe((response) => {
-          this.successResponse(response);
-        });
+      this.#productionAreaService.put(this.data.id, dataToSave).subscribe(response => {
+        this.successResponse(response);
+      });
     } else {
-      this.#productionAreaService.post(dataToSave).subscribe((response) => {
+      this.#productionAreaService.post(dataToSave).subscribe(response => {
         this.successResponse(response);
       });
     }

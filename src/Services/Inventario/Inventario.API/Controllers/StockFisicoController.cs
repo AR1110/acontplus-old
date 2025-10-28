@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class StockFisicoController(InventarioContext context, IStockFisicoService stockFisico) : BaseApiController
 {
@@ -67,18 +67,15 @@ public class StockFisicoController(InventarioContext context, IStockFisicoServic
     // POST: api/StockFisico
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<IActionResult> PostStockFisico(ApiRequest request)
+    public async Task<IActionResult> PostStockFisico(StockFisicoDto stockFisicoDto)
     {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        try
-        {
-            var response = await stockFisico.AddAsync(request);
-            return Ok(response);
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var parameters = new Dictionary<string, object>
+      {
+          { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+          { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<StockFisicoDto>(stockFisicoDto)) }
+      };
+
+        return Ok(await stockFisico.AddAsync(parameters));
     }
 
     // DELETE: api/StockFisico/5

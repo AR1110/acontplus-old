@@ -1,17 +1,10 @@
-<app-theme-button
-  [variant]="'success'"
-  [icon]="'save'"
-  [text]="'Guardar permiso'"
-  (handleClick)="onSave()"
-/>
+<app-theme-button [variant]="'success'" [icon]="'save'" [text]="'Guardar permiso'" (handleClick)="onSave()" />
 <hr />
 <div class="row">
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <mat-card appearance="outlined">
       <div class="card-header bg-primary">
-        <span class="m-b-0 text-white"
-          ><i class="mdi mdi-shopping"></i> Ventas</span
-        >
+        <span class="m-b-0 text-white"><i class="mdi mdi-shopping"></i> Ventas</span>
       </div>
 
       <mat-card-content>
@@ -31,9 +24,7 @@
               @for (permission of permissionSaleComprobanteKey; track $index) {
                 <li>
                   <mat-checkbox
-                    [(ngModel)]="
-                      mainPermissionSale.comprobante[permission].enabled
-                    "
+                    [(ngModel)]="mainPermissionSale.comprobante[permission].enabled"
                     (ngModelChange)="updateAllCompleteSaleComprobante()"
                   >
                     {{ mainPermissionSale.comprobante[permission].label }}
@@ -88,9 +79,7 @@
               @for (permission of permissionSaleAdditionalKey; track $index) {
                 <li>
                   <mat-checkbox
-                    [(ngModel)]="
-                      mainPermissionSale.additional[permission].enabled
-                    "
+                    [(ngModel)]="mainPermissionSale.additional[permission].enabled"
                     (ngModelChange)="updateAllCompleteSaleAdditional()"
                   >
                     {{ mainPermissionSale.additional[permission].label }}
@@ -101,23 +90,16 @@
                   ) {
                     <div class="form-group">
                       <mat-label>Administradores:</mat-label>
-                      <mat-select
-                        [formControl]="userCustomerAdminSelected"
-                        multiple
-                        class="form-select"
-                      >
+                      <mat-select [formControl]="userCustomerAdminSelected" multiple class="form-select">
                         @for (item of usersCustomerAdmin; track $index) {
-                          <mat-option [value]="item.idUsuarioRol">{{
-                            item.nombreCompleto
-                          }}</mat-option>
+                          <mat-option [value]="item.idUsuarioRol">{{ item.nombreCompleto }}</mat-option>
                         }
                       </mat-select>
 
                       <span class="text-info">
                         <mat-icon>info</mat-icon>
-                        Cuando la opción "Solicitar Autorización" está activada,
-                        es obligatorio seleccionar usuarios administradores, a
-                        quienes se les enviará la solicitud correspondiente.
+                        Cuando la opción "Solicitar Autorización" está activada, es obligatorio seleccionar usuarios
+                        administradores, a quienes se les enviará la solicitud correspondiente.
                       </span>
                     </div>
                   }
@@ -132,9 +114,7 @@
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <mat-card appearance="outlined">
       <div class="card-header bg-success">
-        <span class="m-b-0 text-white"
-          ><i class="mdi mdi-store"></i> Artículo</span
-        >
+        <span class="m-b-0 text-white"><i class="mdi mdi-store"></i> Artículo</span>
       </div>
       <mat-card-content>
         <!--Articulo-->
@@ -155,18 +135,10 @@
                 @for (permission of permissionProductKey; track $index) {
                   <li>
                     <mat-checkbox
-                      [(ngModel)]="
-                        this.mainPermission.permissionsProduct.permission[
-                          permission
-                        ].enabled
-                      "
+                      [(ngModel)]="this.mainPermission.permissionsProduct.permission[permission].enabled"
                       (ngModelChange)="updateAllCompleteProduct()"
                     >
-                      {{
-                        this.mainPermission.permissionsProduct.permission[
-                          permission
-                        ].label
-                      }}
+                      {{ this.mainPermission.permissionsProduct.permission[permission].label }}
                     </mat-checkbox>
                   </li>
                 }
@@ -181,9 +153,7 @@
   <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
     <mat-card appearance="outlined">
       <mat-card-header>
-        <span class="m-b-0 text-white"
-          ><i class="mdi mdi-bulletin-board"></i> Caja</span
-        >
+        <span class="m-b-0 text-white"><i class="mdi mdi-bulletin-board"></i> Caja</span>
       </mat-card-header>
       <mat-card-content>
         <section>
@@ -203,18 +173,10 @@
                 @for (permission of permissionCashBoxKey; track $index) {
                   <li>
                     <mat-checkbox
-                      [(ngModel)]="
-                        this.mainPermission.permissionsCashBox.permission[
-                          permission
-                        ].enabled
-                      "
+                      [(ngModel)]="this.mainPermission.permissionsCashBox.permission[permission].enabled"
                       (ngModelChange)="updateAllCompleteCashBox()"
                     >
-                      {{
-                        this.mainPermission.permissionsCashBox.permission[
-                          permission
-                        ].label
-                      }}
+                      {{ this.mainPermission.permissionsCashBox.permission[permission].label }}
                     </mat-checkbox>
                   </li>
                 }

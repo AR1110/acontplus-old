@@ -2,6 +2,7 @@ import { BodegaEstablecimiento } from './bodega.model';
 import { PuntoEmisionEstablecimiento } from './punto-emision.model';
 
 export interface Establecimiento {
+  id?: number
   idEstab_Asig: number;
   codEstab_Asig: string;
   idUsuarioRol: number;
@@ -26,36 +27,26 @@ export interface Establecimiento {
 }
 
 export interface GroupedEstabPuntoEmision
-  extends Pick<
-    PuntoEmisionEstablecimiento,
-    'idPuntoEmision' | 'ptoEmi' | 'defaultPtoEmi'
-  > {}
+  extends Pick<PuntoEmisionEstablecimiento, 'idPuntoEmision' | 'ptoEmi' | 'defaultPtoEmi'> {}
 
 export interface GroupedEstabBodega
-  extends Pick<
-    BodegaEstablecimiento,
-    'idBodega' | 'defaultBodega' | 'idEstablecimiento'
-  > {
+  extends Pick<BodegaEstablecimiento, 'idBodega' | 'defaultBodega' | 'idEstablecimiento'> {
   descripcion: string;
 }
 
 export interface GroupedEstab
   extends Pick<
     Establecimiento,
-    'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
+    'id' | 'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'defaultEstab'
   > {
   nombreEstab: string;
   puntosEmision: GroupedEstabPuntoEmision[];
   bodegas: GroupedEstabBodega[];
-  correo?: string
+  correo?: string;
 }
 
 export interface EstablecimientoSelectHtmlOnly
   extends Pick<
     Establecimiento,
-    | 'idEstablecimiento'
-    | 'codEstab'
-    | 'nombreComercial'
-    | 'predeterminado'
-    | 'estab'
+    'idEstablecimiento' | 'codEstab' | 'nombreComercial' | 'predeterminado' | 'estab'
   > {}

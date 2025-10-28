@@ -1,9 +1,4 @@
-﻿using BarberShop.Api.Endpoints.Interfaces;
-using BarberShop.Application.Tickets.DTOs;
-using BarberShop.Application.Tickets.Interfaces;
-using Common.Core.Models;
-
-namespace BarberShop.Api.Endpoints.Implementations;
+namespace BarberShop.API.Endpoints.Implementations;
 
 public class TicketEndpoints(IUserContext userContext, ITicketService ticketService) : ITicketEndpoints
 {

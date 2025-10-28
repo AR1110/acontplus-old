@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class UserCustomerPermissionController(IUserCustomerPermissionService _svc)
     : BaseApiController
@@ -17,24 +17,24 @@ public class UserCustomerPermissionController(IUserCustomerPermissionService _sv
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest data)
+    public async Task<IActionResult> Put(UpdateUserCustomerPermissionDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateUserCustomerPermissionDto>(data)) }
+      };
         var response = await _svc.UpdateAsync(parameters);
         return Ok(response);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreateUserCustomerPermissionDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateUserCustomerPermissionDto>(data)) }
         };
         var response = await _svc.AddAsync(parameters);
         return Ok(response);

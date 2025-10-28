@@ -1,9 +1,8 @@
-import {ApiResponse} from "@core/models/api-response";
-import {ListCompanyCustomerResponse} from "@company-customer/domain/entities/company-customer.entity";
+import { ApiResponse } from '@core/models/api-response';
+import { ListCompanyCustomerResponse } from '@company-customer/domain/entities/company-customer.entity';
 
 export class ListCompanyCustomerMapper {
-
-  static toJson(params:any){
+  static toJson(params: any) {
     return JSON.stringify({
       ...params,
       tipo: 1,
@@ -12,13 +11,12 @@ export class ListCompanyCustomerMapper {
     });
   }
 
-  static fromJson(response:ApiResponse):ListCompanyCustomerResponse{
-
+  static fromJson(response: ApiResponse): ListCompanyCustomerResponse {
     const result = new ListCompanyCustomerResponse();
     const [data] = JSON.parse(response.payload as string);
-    result.data = data.map((item: any, index:number) => {
+    result.data = data.map((item: any, index: number) => {
       return {
-        index: index+1,
+        index: index + 1,
         idCliente: item.idCliente,
         idTipoIdentificacion: item.idTipoIdentificacion,
         identificacionComprador: item.numeroIdentificacion,
@@ -28,17 +26,15 @@ export class ListCompanyCustomerMapper {
         telefono: item.telefono,
         correo: item.correo,
         consumidorFinal: item.consumidorFinal,
-        nomValidationSri: item.validationSri?'SI': 'N0',
+        nomValidationSri: item.validationSri ? 'SI' : 'N0',
         tipoIdentificacion: item.tipoIdentificacion,
         estado: item.estado,
-        nomEstado: item.estado?'Activo': 'Inactivo',
+        nomEstado: item.estado ? 'Activo' : 'Inactivo',
         esConsumidorFinal: item.codTipoIdentificacion === 'CF',
         totalRecords: item.totalRecords,
       };
     });
-    result.totalRecords = result.data.length>0? result.data[0].totalRecords: 0;
+    result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
     return result;
-
   }
-
 }

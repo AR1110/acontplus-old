@@ -1,11 +1,10 @@
-﻿using System.IO.Compression;
-using Common.Logging;
-using Common.Services.Configuration;
-using Common.Services.Extensions;
-using Common.Services.Middleware;
+using Acontplus.Logging;
+using Acontplus.Services.Configuration;
+using Acontplus.Services.Extensions.Authentication;
+using Acontplus.Services.Extensions.Infrastructure;
+using Acontplus.Services.Extensions.Middleware;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -48,7 +47,7 @@ try
     const string corsPolicy = "OcelotCorsPolicy";
 
     // Use AppConfiguration for loading settings
-    var configuration = AppConfiguration.Load();
+    var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
     // Secure Environment Variable Retrieval (consider secret management for sensitive data)
@@ -59,8 +58,10 @@ try
 
     builder.Services.AddOcelot();
 
+    builder.Services.AddResponseCompressionServices();
+
     // Identity Services (adapt to your specific authentication mechanism)
-    builder.Services.AddIdentityService(builder.Configuration);
+    builder.Services.AddJwtAuthentication(builder.Configuration);
 
     // CORS Configuration
     builder.Services.AddCors(options =>
@@ -81,25 +82,13 @@ try
         .AddHealthChecks()
         .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
-    builder.Services.AddResponseCompression(options =>
-    {
-        options.EnableForHttps = true;
-        options.Providers.Add<BrotliCompressionProvider>();
-        options.Providers.Add<GzipCompressionProvider>();
-    });
-
-    builder.Services.Configure<BrotliCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-    builder.Services.Configure<GzipCompressionProviderOptions>(options => { options.Level = CompressionLevel.Optimal; });
-
     var app = builder.Build();
 
     app.UseSerilogRequestLogging(); // Use Serilog for request logging
 
     app.UseResponseCompression();
 
-    //app.UseMiddleware<RequestCountingMiddleware>();
-
-    app.UseMiddleware<ExceptionMiddleware>();
+    app.UseAcontplusExceptionHandling();
 
     app.UseRouting();
 
@@ -110,6 +99,7 @@ try
 
     // Authentication and Authorization (adapt to your specific needs)
     app.UseAuthentication();
+
     app.UseAuthorization();
 
     // Default Route Redirect (consider a more elegant solution)

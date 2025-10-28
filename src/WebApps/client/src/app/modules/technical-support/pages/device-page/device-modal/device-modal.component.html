@@ -5,272 +5,219 @@
   (close)="onModalClose()"
 />
 <ng-template #body>
-  <form
-    [formGroup]="deviceForm"
-    id="deviceForm"
-    (ngSubmit)="isUpdate ? onUpdate() : onSave()"
-    autocomplete="off"
-  >
-      <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-          <div class="form-group">
-            <label for="categoryId"
+  <form [formGroup]="deviceForm" id="deviceForm" (ngSubmit)="isUpdate ? onUpdate() : onSave()" autocomplete="off">
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="categoryId"
             >Categoria:
-              <span class="text-danger">*</span>
-            </label>
-            <div class="input-group">
-              <select
-                formControlName="categoryId"
-                id="categoryId"
-                class="form-select"
-                (change)="onCategoryChange($event)"
-              >
-                <option [value]="0">Seleccione una categoría</option>
-                @for (item of categories(); track $index) {
-                  <option [value]="item.id">{{ item.name }}</option>
-                }
-              </select>
-              <button
-                mat-raised-button
-                type="button"
-                title="Añadir Categoría"
-                (click)="addCategory()"
-              >
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+            <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <select
+              formControlName="categoryId"
+              id="categoryId"
+              class="form-select"
+              (change)="onCategoryChange($event)"
+            >
+              <option [value]="0">Seleccione una categoría</option>
+              @for (item of categories(); track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button mat-raised-button type="button" title="Añadir Categoría" (click)="addCategory()">
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-          <div class="form-group">
-            <label for="brandId"
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="brandId"
             >Marca:
-              <span class="text-danger">*</span>
-            </label>
-            <div class="input-group">
-              <select
-                formControlName="brandId"
-                id="brandId"
-                class="form-select"
-                (change)="onBrandChange($event)"
-              >
-                <option [value]="0">Seleccione una marca</option>
-                @for (item of brands(); track $index) {
-                  <option [value]="item.id">{{ item.name }}</option>
-                }
-              </select>
-              <button
-                mat-raised-button
-                type="button"
-                title="Añadir Marca"
-                [disabled]="unselectedCategory"
-                (click)="addBrand()"
-              >
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+            <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <select formControlName="brandId" id="brandId" class="form-select" (change)="onBrandChange($event)">
+              <option [value]="0">Seleccione una marca</option>
+              @for (item of brands(); track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              mat-raised-button
+              type="button"
+              title="Añadir Marca"
+              [disabled]="unselectedCategory"
+              (click)="addBrand()"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-          <div class="form-group">
-            <label for="modeloId"
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="modeloId"
             >Modelo:
-              <span class="text-danger">*</span>
-            </label>
-            <div class="input-group">
-              <select
-                formControlName="modeloId"
-                id="modeloId"
-                class="form-select"
-                (change)="onModeloChange($event)"
-              >
-                @for (item of modelos(); track $index) {
-                  <option [value]="item.id">{{ item.name }}</option>
-                }
-              </select>
-              <button
-                mat-raised-button
-                type="button"
-                title="Añadir Modelo"
-                [disabled]="unseletedBrand"
-                (click)="addModelo()"
-              >
-                <mat-icon>add</mat-icon>
-              </button>
-            </div>
+            <span class="text-danger">*</span>
+          </label>
+          <div class="input-group">
+            <select formControlName="modeloId" id="modeloId" class="form-select" (change)="onModeloChange($event)">
+              @for (item of modelos(); track $index) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            <button
+              mat-raised-button
+              type="button"
+              title="Añadir Modelo"
+              [disabled]="unseletedBrand"
+              (click)="addModelo()"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
-          <div class="form-group">
-            <label for="productName"
+    </div>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="productName"
             >Nombre Producto:
-              <span class="text-danger">*</span>
-            </label>
-            <input
-              type="text"
-              id="productName"
-              formControlName="name"
-              class="form-control border-select"
-            />
-          </div>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
-          <div class="form-group">
-            <label for="color">Color: </label>
-            <input
-              type="text"
-              formControlName="color"
-              id="color"
-              class="form-control border-select"
-            />
-          </div>
+            <span class="text-danger">*</span>
+          </label>
+          <input type="text" id="productName" formControlName="name" class="form-control border-select" />
         </div>
       </div>
-      <div class="row">
-        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-          <form [formGroup]="specForm" autocomplete="off">
-            <mat-card appearance="outlined">
-              <div class="card-header">
-                <h5 class="card-title">Especificaciones</h5>
-              </div>
-              <mat-card-content>
-                <div class="row">
-                  <div class="col">
-                    <form [formGroup]="specTypeForm" autocomplete="off">
-                      <div class="form-group">
-                        <label for="specName"
-                        >Categoría: <small>(Tres digítos minimo)</small></label
-                        >
-                        <div class="input-group">
-                          <input
-                            type="text"
-                            formControlName="specName"
-                            id="specName"
-                            class="form-control"
-                            (keydown.enter)="addSpecTypeDevice()"
-                          />
-                          <button
-                            type="button"
-                            mat-raised-button
-                            (click)="addSpecTypeDevice()"
-                          >
-                            <mat-icon>add</mat-icon>
-                          </button>
-                        </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
+        <div class="form-group">
+          <label for="color">Color: </label>
+          <input type="text" formControlName="color" id="color" class="form-control border-select" />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <form [formGroup]="specForm" autocomplete="off">
+          <mat-card appearance="outlined">
+            <div class="card-header">
+              <h5 class="card-title">Especificaciones</h5>
+            </div>
+            <mat-card-content>
+              <div class="row">
+                <div class="col">
+                  <form [formGroup]="specTypeForm" autocomplete="off">
+                    <div class="form-group">
+                      <label for="specName">Categoría: <small>(Tres digítos minimo)</small></label>
+                      <div class="input-group">
+                        <input
+                          type="text"
+                          formControlName="specName"
+                          id="specName"
+                          class="form-control"
+                          (keydown.enter)="addSpecTypeDevice()"
+                        />
+                        <button type="button" mat-raised-button (click)="addSpecTypeDevice()">
+                          <mat-icon>add</mat-icon>
+                        </button>
                       </div>
-                    </form>
-                  </div>
+                    </div>
+                  </form>
                 </div>
+              </div>
 
-                @if (deviceSpec().length > 0) {
-
-                  <mat-tab-group [selectedIndex]="selected()"
-                                 (selectedIndexChange)="selectedIndexChange($event)">
-                    @for (item of deviceSpec(); track  $index) {
-                      <mat-tab [label]="item.name">
-                        <ng-template matTabContent>
-                            <div class="row mb-2">
-                              <div class="col-12">
-                                <app-theme-button
-                                  variant="danger"
-                                  icon="delete"
-                                  text="Eliminar Categoría"
-                                  (handleClick)="removeSpecCategory(item.uuid)"
+              @if (deviceSpec().length > 0) {
+                <mat-tab-group [selectedIndex]="selected()" (selectedIndexChange)="selectedIndexChange($event)">
+                  @for (item of deviceSpec(); track $index) {
+                    <mat-tab [label]="item.name">
+                      <ng-template matTabContent>
+                        <div class="row mb-2">
+                          <div class="col-12">
+                            <app-theme-button
+                              variant="danger"
+                              icon="delete"
+                              text="Eliminar Categoría"
+                              (handleClick)="removeSpecCategory(item.uuid)"
+                            >
+                            </app-theme-button>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="name">Nombre:</label>
+                              <input #inputNameSpec type="text" id="name" formControlName="name" class="form-control" />
+                            </div>
+                          </div>
+                          <div class="col-md-6 col-12">
+                            <div class="form-group">
+                              <label for="value">Valor:</label>
+                              <div class="input-group">
+                                <input
+                                  type="tex"
+                                  formControlName="value"
+                                  id="value"
+                                  class="form-control"
+                                  (keydown.enter)="addSpecsDevice(item.uuid)"
+                                />
+                                <button
+                                  type="button"
+                                  mat-raised-button
+                                  (click)="addSpecsDevice(item.uuid)"
+                                  [disabled]="!specForm.valid"
                                 >
-                                </app-theme-button>
+                                  <mat-icon>add</mat-icon>
+                                </button>
                               </div>
                             </div>
-                            <div class="row">
-                              <div class="col-md-6 col-12">
-                                <div class="form-group">
-                                  <label for="name">Nombre:</label>
-                                  <input
-                                    #inputNameSpec
-                                    type="text"
-                                    id="name"
-                                    formControlName="name"
-                                    class="form-control"
-                                  />
-                                </div>
-                              </div>
-                              <div class="col-md-6 col-12">
-                                <div class="form-group">
-                                  <label for="value">Valor:</label>
-                                  <div class="input-group">
-                                    <input
-                                      type="tex"
-                                      formControlName="value"
-                                      id="value"
-                                      class="form-control"
-                                      (keydown.enter)="
-                                        addSpecsDevice(item.uuid)
-                                      "
-                                    />
-                                    <button
-                                      type="button"
-                                      mat-raised-button
-                                      (click)="addSpecsDevice(item.uuid)"
-                                      [disabled]="!specForm.valid"
-                                    >
-                                      <mat-icon>add</mat-icon>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            @if (item.specs.length > 0) {
-                              <div class="row">
-                                <div class="col">
-                                  <div class="table-responsive">
-                                    <table class="table">
-                                      <thead>
+                          </div>
+                        </div>
+                        @if (item.specs.length > 0) {
+                          <div class="row">
+                            <div class="col">
+                              <div class="table-responsive">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th>Nombre</th>
+                                      <th>Valor</th>
+                                      <th></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @for (spec of item.specs; track $index) {
                                       <tr>
-                                        <th>Nombre</th>
-                                        <th>Valor</th>
-                                        <th></th>
+                                        <td>{{ spec.name }}</td>
+                                        <td>{{ spec.value }}</td>
+                                        <th>
+                                          <app-theme-button
+                                            variant="danger"
+                                            icon="delete"
+                                            matStyle="icon"
+                                            (handleClick)="removeSpec($index, item.uuid)"
+                                          >
+                                          </app-theme-button>
+                                        </th>
                                       </tr>
-                                      </thead>
-                                      <tbody>
-                                        @for (
-                                          spec of item.specs;
-                                          track $index
-                                          ) {
-                                          <tr>
-                                            <td>{{ spec.name }}</td>
-                                            <td>{{ spec.value }}</td>
-                                            <th>
-                                              <app-theme-button
-                                                variant="danger"
-                                                icon="delete"
-                                                matStyle="icon"
-                                                (handleClick)="
-                                                  removeSpec($index, item.uuid)
-                                                "
-                                              >
-                                              </app-theme-button>
-                                            </th>
-                                          </tr>
-                                        }
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </div>
+                                    }
+                                  </tbody>
+                                </table>
                               </div>
-                            }
-                        </ng-template>
-
-                      </mat-tab>
-                    }
-                  </mat-tab-group>
-                }
-              </mat-card-content>
-            </mat-card>
-          </form>
-        </div>
+                            </div>
+                          </div>
+                        }
+                      </ng-template>
+                    </mat-tab>
+                  }
+                </mat-tab-group>
+              }
+            </mat-card-content>
+          </mat-card>
+        </form>
       </div>
-
+    </div>
   </form>
 </ng-template>
 <ng-template #footer>
@@ -283,5 +230,3 @@
     form="deviceForm"
   />
 </ng-template>
-
-

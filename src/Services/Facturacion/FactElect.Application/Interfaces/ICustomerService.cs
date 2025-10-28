@@ -2,9 +2,9 @@
 
 public interface ICustomerService
 {
-    //Task<ApiResponse> AddAsync(AppCustomer customer);
-    //Task<ApiResponse> DeleteAsync(int userId, int id);
-    //Task<ApiResponse> GetAsync(Dictionary<string, object> parameters);
+    //Task<SpResponse> AddAsync(AppCustomer customer);
+    //Task<SpResponse> DeleteAsync(int userId, int id);
+    //Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
     Task<DataTable> GetByIdCardAsync(Dictionary<string, object> parameters);
-    //Task<ApiResponse> UpdateAsync(int id, AppCustomer customer);
+    //Task<SpResponse> UpdateAsync(int id, AppCustomer customer);
 }

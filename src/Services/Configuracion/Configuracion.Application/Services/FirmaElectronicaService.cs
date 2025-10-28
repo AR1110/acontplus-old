@@ -4,9 +4,9 @@ public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElect
 {
     private const string ModuleName = "Config.FirmaElectronica_";
 
-    public async Task<ApiResponse> AddAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Insert", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
     }
 
     public async Task<FileModel> DownloadAsync(Dictionary<string, object> parameters)
@@ -31,21 +31,21 @@ public class FirmaElectronicaService(IAdoRepository adoRepository) : IFirmaElect
         return null;
     }
 
-    public async Task<ApiResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters, false);
+        var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
         return !DataValidation.DataSetIsNull(ds)
-            ? new ApiResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds, true) }
-            : new ApiResponse { Code = "0", Message = "No data found" };
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No data found" };
     }
 
-    public async Task<ApiResponse> UpdateAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
     }
 
-    public async Task<ApiResponse> UpdateFileAsync(Dictionary<string, object> parameters)
+    public async Task<SpResponse> UpdateFileAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.SpExecuteAsync<ApiResponse>($"{ModuleName}Update_Signature", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update_Signature", parameters);
     }
 }

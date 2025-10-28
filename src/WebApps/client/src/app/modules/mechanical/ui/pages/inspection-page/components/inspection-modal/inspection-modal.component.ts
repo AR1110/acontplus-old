@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {ChangeDetectionStrategy, Component, inject, signal, OnInit} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
@@ -15,16 +15,16 @@ import {
 import { isValidField } from '@core/utils/utils';
 import { MatChipsModule } from '@angular/material/chips';
 import { InspectionUseCase } from '@mechanical/application/use-cases/inspection.use-case';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {MatDatepickerInputEvent, MatDatepickerModule} from "@angular/material/datepicker";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatIcon} from "@angular/material/icon";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {firstValueFrom} from "rxjs";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatIcon } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { firstValueFrom } from 'rxjs';
 
 type VehiclePartNode = VehiclePart & {
   status: number;
@@ -43,22 +43,22 @@ type VehiclePartTypeNode = VehiclePartType & {
     MatChipsModule,
     ThemeButtonComponent,
     MatCustomDialogComponent,
-   MatFormFieldModule,
+    MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
     MatIcon,
-    MatExpansionModule
+    MatExpansionModule,
   ],
   templateUrl: './inspection-modal.component.html',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InspectionModalComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<InspectionModalComponent>)
+  private dialogRef = inject(MatDialogRef<InspectionModalComponent>);
   params = inject<{
-    supportId: 0,
-    inspectionId: 0
-  }>(MAT_DIALOG_DATA)
+    supportId: 0;
+    inspectionId: 0;
+  }>(MAT_DIALOG_DATA);
 
   _inspectionUseCase = inject(InspectionUseCase);
   tS = inject(ToastrNotificationService);
@@ -108,16 +108,15 @@ export class InspectionModalComponent implements OnInit {
   };
 
   addEventDate(event: MatDatepickerInputEvent<Date>) {
-
-    if(event.value){
+    if (event.value) {
       this.data.fechaEmision = new Date(event.value);
-
     }
   }
 
-
   ngOnInit(): void {
-    this.loadInspectionData().catch(error => console.error('Error al cargar datos de inspección:', error));
+    this.loadInspectionData().catch(error =>
+      console.error('Error al cargar datos de inspección:', error),
+    );
   }
 
   private async loadInspectionData(): Promise<void> {
@@ -135,9 +134,11 @@ export class InspectionModalComponent implements OnInit {
       const inspectionResponse = await firstValueFrom(this._inspectionUseCase.getId(inspectionId));
       this.data = inspectionResponse.data;
 
-      const vehiclePartTypeNodes = this.buildVehiclePartTypeNodes(inspectionResponse.vehicleParts, true);
+      const vehiclePartTypeNodes = this.buildVehiclePartTypeNodes(
+        inspectionResponse.vehicleParts,
+        true,
+      );
       this.vehiclePartTypeNodes.set(vehiclePartTypeNodes);
-
     } else {
       const vehiclePartTypeNodes = this.buildVehiclePartTypeNodes(this.vehicleParts);
       this.vehiclePartTypeNodes.set(vehiclePartTypeNodes);
@@ -145,26 +146,22 @@ export class InspectionModalComponent implements OnInit {
   }
 
   private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus = false): any[] {
-    return this.vehiclePartTypes.map((item) => {
+    return this.vehiclePartTypes.map(item => {
       const nodes = vehicleParts.filter(
-        (vp) => vp.vehiclePartTypeId === item.id
+        vp => vp.vehiclePartTypeId === item.id,
       ) as VehiclePartNode[];
 
-      const isCollapsed = checkStatus
-        ? !nodes.some((n) => [1, 2, 3].includes(n.status))
-        : true;
+      const isCollapsed = checkStatus ? !nodes.some(n => [1, 2, 3].includes(n.status)) : true;
 
       return {
         ...item,
         nodes,
-        isCollapsed
+        isCollapsed,
       };
     });
   }
 
-
   isValidForm() {
-
     if (!isDateValid(this.data.fechaEmision)) {
       this.tS.show({
         type: 'warning',
@@ -176,8 +173,7 @@ export class InspectionModalComponent implements OnInit {
     if (dateIsAfterCurrentDate(this.data.fechaEmision)) {
       this.tS.show({
         type: 'warning',
-        message:
-          'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
+        message: 'La fecha de emisión del documento no puede ser posterior a la fecha actual.',
       });
       return;
     }
@@ -208,8 +204,8 @@ export class InspectionModalComponent implements OnInit {
       return;
     }
 
-    const isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
-      vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
+    const isSelectedStatus = this.vehiclePartTypeNodes().some(vtn =>
+      vtn.nodes.some(n => n.status == 1 || n.status == 2 || n.status == 3),
     );
     if (!isSelectedStatus) {
       this.tS.show({
@@ -237,42 +233,42 @@ export class InspectionModalComponent implements OnInit {
 
       //motor
       const engine = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.MT)
         ?.nodes.map(this.mapVehiclePart);
 
       //cabina
       const cabin = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.CB)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Transmisión
       const transmission = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.ST)
         ?.nodes.map(this.mapVehiclePart);
 
       // Rodamiento
       const bearing = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.RD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Frenos
       const brake = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SF)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Dirección
       const steering = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Suspensión
       const suspension = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SS)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de luces
       const lighting = this.vehiclePartTypeNodes()
-        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)
+        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SL)
         ?.nodes.map(this.mapVehiclePart);
       const data = {
         engine: JSON.stringify(engine),
@@ -290,9 +286,7 @@ export class InspectionModalComponent implements OnInit {
         obs: isValidField(this.data.obs),
       };
       if (this.params.inspectionId > 0) {
-        this._inspectionUseCase
-          .put(this.params.inspectionId, data)
-          .subscribe(this.successResponse);
+        this._inspectionUseCase.put(this.params.inspectionId, data).subscribe(this.successResponse);
       }
       if (!(this.params.inspectionId > 0)) {
         this._inspectionUseCase.post(data).subscribe(this.successResponse);
@@ -302,7 +296,7 @@ export class InspectionModalComponent implements OnInit {
     }
   }
 
-  close(){
-    this.dialogRef.close()
+  close() {
+    this.dialogRef.close();
   }
 }

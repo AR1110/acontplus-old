@@ -1,4 +1,4 @@
-﻿namespace Contabilidad.API.Controllers;
+namespace Contabilidad.API.Controllers;
 
 public class CajaController(ICajaRepository cajaRepository) : BaseApiController
 {
@@ -16,12 +16,12 @@ public class CajaController(ICajaRepository cajaRepository) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateCajaDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateCajaDto>(data)) }
         };
         var response = await cajaRepository.AddAsync(parameters);
         return Ok(response);
@@ -29,13 +29,13 @@ public class CajaController(ICajaRepository cajaRepository) : BaseApiController
 
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateCajaWithAsignacionDto data)
     {
         var parameters = new Dictionary<string, object>
         {
             { UserRoleIdClaim, User.GetClaimValue<int>(UserRoleIdClaim) },
             { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
+            { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateCajaWithAsignacionDto>(data)) }
         };
         var response = await cajaRepository.UpdateAsync(parameters);
         return Ok(response);

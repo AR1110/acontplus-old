@@ -1,7 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+using Acontplus.Core.Extensions;
+
+namespace Inventario.API.Controllers;
 
 public class SubcategoryPhotoController(
-    ISubcategoryPhotoService subcategoryPhoto,
+    ISubcategoryPhotoRepository subcategoryPhoto,
     IS3StorageService storageService,
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController
@@ -26,8 +28,11 @@ public class SubcategoryPhotoController(
     {
         try
         {
-            var data = new SubcategoryPhoto();
-            data.CreatedByUserId = User.GetUserId();
+            var data = new SubcategoryPhoto
+            {
+                CreatedByUserId = User.GetUserId(),
+                Id = 0
+            };
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -57,8 +62,11 @@ public class SubcategoryPhotoController(
     {
         try
         {
-            var data = new SubcategoryPhoto();
-            data = JsonConvert.DeserializeObject<SubcategoryPhoto>(json);
+            var data = new SubcategoryPhoto
+            {
+                Id = 0
+            };
+            data = JsonExtensions.DeserializeOptimized<SubcategoryPhoto>(json);
             data.UpdatedByUserId = User.GetUserId();
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file,

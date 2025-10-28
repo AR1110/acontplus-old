@@ -44,12 +44,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": [
-              "sweetalert2",
-              "file-saver",
-              "quill-delta",
-              "moment"
-            ],
+            "allowedCommonJsDependencies": ["sweetalert2", "file-saver", "quill-delta", "moment"],
             "outputPath": {
               "base": "dist",
               "browser": ""
@@ -64,6 +59,10 @@
                 "glob": "**/*",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/",
                 "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "public"
               }
             ],
             "styles": [
@@ -72,7 +71,6 @@
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "src/assets/template/css/style.css",
               "src/styles.scss",
               "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],

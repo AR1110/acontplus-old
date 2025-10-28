@@ -1,11 +1,4 @@
-import {
-  Component,
-  inject,
-  model,
-  output,
-  OnInit,
-  signal,
-} from '@angular/core';
+import { Component, inject, model, output, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { finalize, Observable, switchMap } from 'rxjs';
 import { PetService } from '@modules/vet/services/pet.service';
@@ -43,14 +36,14 @@ export class PetSearchComponent implements OnInit {
   isLoading = signal(false);
   ngOnInit() {
     this.filteredItems = this.control.valueChanges.pipe(
-      switchMap((val) => {
+      switchMap(val => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]
         }
         this.clearSearch.emit();
         return [];
-      })
+      }),
     );
   }
 

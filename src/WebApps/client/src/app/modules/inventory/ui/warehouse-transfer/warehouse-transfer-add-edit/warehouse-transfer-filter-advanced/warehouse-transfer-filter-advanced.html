@@ -1,0 +1,83 @@
+<app-mat-custom-dialog
+title="Filtro Avanzado"
+(close)="close()"
+>
+  <section ngProjectAs="content">
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Bodega Origen</mat-label>
+          <input type="text" matInput [value]="sourceWarehouseText()" disabled>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Seleccione Subfamilia(s)</mat-label>
+          <mat-select
+            [formControl]="checkedCategories"
+            multiple
+            (selectionChange)="onSelectionChange($event)"
+            panelClass="subfamilias-panel"
+          >
+            <mat-select-trigger>
+              {{ getDisplayValue() }}
+            </mat-select-trigger>
+
+            <!-- Seleccionar todo -->
+            <mat-option
+              [value]="allValue"
+              (onSelectionChange)="toggleSelectAll($event)">
+              Seleccionar todo
+            </mat-option>
+
+            <!-- Grupos por familia -->
+            @for (item of categories(); track $index) {
+              <!-- Checkbox para el grupo completo -->
+              <mat-option
+                [value]="'GROUP_' + item.name"
+                (onSelectionChange)="toggleGroup($event, item)"
+                class="group-option">
+                <strong>{{ item.name }}</strong>
+              </mat-option>
+
+              <!-- Subfamilias indentadas -->
+              @for (sf of item.subCategories; track sf.id) {
+                <mat-option [value]="sf.id" class="subfamilia-option">
+                  {{ sf.name }}
+                </mat-option>
+              }
+            }
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+      <div class="col  text-end">
+        <app-theme-button
+          variant="success"
+          icon="search"
+          text="Buscar"
+          matStyle="basic"
+          (handleClick)="search()"
+        />
+      </div>
+    </div>
+
+    <app-data-grid
+      [data]="list()"
+      [columns]="columns"
+      [multiSelectable]="true"
+      [rowSelectable]="true"
+      [rowSelected]="rowSelected()"
+      (rowSelectedChange)="log($event)"
+      (cellSelectedChange)="log($event)"
+      [pageOnFront]="false"
+      [length]="totalRecords()"
+      [pageIndex]="query.page"
+      [pageSize]="query.per_page"
+      [pageSizeOptions]="[100, 150, 200]"
+      (page)="getNextPage($event)"
+    ></app-data-grid>
+
+  </section>
+</app-mat-custom-dialog>

@@ -1,34 +1,24 @@
+<div class="my-2">
+  <mat-form-field>
+    <mat-label>Buscar</mat-label>
+    <input matInput type="text" [(ngModel)]="dataSearch.textSearch" />
 
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="refresh()">
+      <mat-icon>refresh</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
 
-    <div class="my-2">
-      <mat-form-field >
-        <mat-label>Buscar</mat-label>
-        <input matInput type="text"   [(ngModel)]="dataSearch.textSearch">
+<app-mat-dynamic-table
+  [tableData]="dataSource()"
+  [columnDefinitions]="columnsDefs"
+  [visibleColumns]="columns"
+  [templateOp]="templateOp"
+  [paginationConfig]="pagination()"
+  [enablePagination]="true"
+  (pageEvent)="handlePageEvent($event)"
+/>
 
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="refresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-
-      </mat-form-field>
-
-    </div>
-
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [templateOp]="templateOp"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
-    />
-
-    <ng-template #templateOp let-item="item">
-      <app-theme-button
-        icon="edit"
-        matStyle="icon"
-        title="Editar"
-        (handleClick)="onEdit(item)"
-      >
-      </app-theme-button>
-    </ng-template>
+<ng-template #templateOp let-item="item">
+  <app-theme-button icon="edit" matStyle="icon" title="Editar" (handleClick)="onEdit(item)"> </app-theme-button>
+</ng-template>

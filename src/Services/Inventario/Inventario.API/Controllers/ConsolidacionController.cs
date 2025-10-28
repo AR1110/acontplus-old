@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class ConsolidacionController(IConsolidacionService consolidacionService) : BaseApiController
 {
@@ -30,30 +30,26 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
 
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreateConsolidacionDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-
-
-        var response = await consolidacionService.AddAsync(parameters);
-        return Ok(response);
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateConsolidacionDto>(dto)) }
+    };
+        return Ok(await consolidacionService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateConsolidacionDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
-        var response = await consolidacionService.UpdateAsync(parameters);
-        return Ok(response);
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateConsolidacionDto>(dto)) }
+    };
+        return Ok(await consolidacionService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
@@ -67,12 +63,12 @@ public class ConsolidacionController(IConsolidacionService consolidacionService)
 
 
     [HttpPost("Importacion")]
-    public async Task<IActionResult> Importacion(ApiRequest data)
+    public async Task<IActionResult> Importacion(CreateConsolidacionDto dto)
     {
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", DataConverters.SerializeDictionary(data.Data) }
+            { "json", System.Text.Json.JsonSerializer.Serialize(dto) }
         };
 
         var response = await consolidacionService.GetAsync(parameters);

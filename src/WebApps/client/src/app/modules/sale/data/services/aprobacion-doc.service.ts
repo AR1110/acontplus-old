@@ -4,15 +4,13 @@ import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AprobacionDocService {
-  #url = `${PATHS_API.SALES}${SALE_PATHS.APROBACION_DOC}`
+  #url = `${PATHS_API.SALES}${SALE_PATHS.APROBACION_DOC}`;
   #http = inject(HttpClient);
 
-
   post<T>(obj: T) {
-    return this.#http.post(`${this.#url}`, { data: obj })
+    return this.#http.post(`${this.#url}`, { data: obj });
   }
-
 }

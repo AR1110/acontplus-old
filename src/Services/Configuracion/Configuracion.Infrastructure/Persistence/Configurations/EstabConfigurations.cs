@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace Configuracion.Infrastructure.Persistence.Configurations;
+﻿namespace Configuracion.Infrastructure.Persistence.Configurations;
 
 public class EstablecimientoLogoConfiguration : BaseEntityTypeConfiguration<EstablecimientoLogo>
 {

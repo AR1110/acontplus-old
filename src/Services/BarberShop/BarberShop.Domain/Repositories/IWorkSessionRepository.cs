@@ -1,7 +1,4 @@
-﻿using BarberShop.Domain.Entities;
-using Common.Core.Models;
-
-namespace BarberShop.Domain.Repositories;
+﻿namespace BarberShop.Domain.Repositories;
 
 public interface IWorkSessionRepository
 {

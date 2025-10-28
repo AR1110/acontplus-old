@@ -1,0 +1,63 @@
+<app-mat-custom-dialog (close)="dialogRef.close()">
+  <section ngProjectAs="content">
+    @if (!success) {
+      <mat-card class="card-auth2f">
+        <div class="header-icon">
+          <mat-icon color="primary">lock</mat-icon>
+        </div>
+
+        <h2 class="title">Autenticación en Dos Pasos</h2>
+        <p class="subtitle">
+          Ingresa el código de verificación enviado a tu email.
+        </p>
+
+        <div
+          class="otp-container"
+          (paste)="onPaste($event)"
+        >
+          @for (code of codes; track $index) {
+            <input
+              type="text"
+              maxlength="1"
+              id="otp{{ $index }}"
+              [(ngModel)]="codes[$index]"
+              (input)="onInput($event, $index)"
+              (keydown)="onBackspace($event, $index)"
+              class="otp-input"
+            />
+          }
+        </div>
+
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="verifyCode()"
+          >
+            Verificar código
+          </button>
+        </div>
+
+        <div class="resend">
+          ¿No lo has recibido?
+          <a
+            href="#"
+            (click)="resendCode()"
+          >
+            Reenviar nuevo código
+          </a>
+        </div>
+      </mat-card>
+    } @else {
+      <mat-card class="success-card">
+        <mat-icon color="primary">check_circle</mat-icon>
+        <h2>¡Inicio de Sesión Exitoso!</h2>
+        <p>Ahora has iniciado sesión de forma segura.</p>
+        <h3 class="access">Acceso Concedido</h3>
+        <p class="text-muted">
+          Tus comprobaciones de seguridad han pasado con éxito.
+        </p>
+      </mat-card>
+    }
+  </section>
+</app-mat-custom-dialog>

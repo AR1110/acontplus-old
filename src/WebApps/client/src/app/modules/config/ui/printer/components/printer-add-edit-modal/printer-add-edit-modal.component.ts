@@ -18,12 +18,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-  imports: [
-    FormsModule,
-    MatSlideToggleModule,
-    ThemeButtonComponent,
-    MatCustomDialogComponent,
-  ],
+  imports: [FormsModule, MatSlideToggleModule, ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })
@@ -79,7 +74,7 @@ export class PrinterAddEditModalComponent implements OnInit {
   };
 
   getDataForm(isRegister: boolean) {
-    this._printerUseCase.getDataForm().subscribe((response) => {
+    this._printerUseCase.getDataForm().subscribe(response => {
       this.estabs.set(response.estabs);
       this.printerTypes.set(response.printerTypes);
 
@@ -91,7 +86,7 @@ export class PrinterAddEditModalComponent implements OnInit {
         this.documents.set(documents);
         if (this.estabs().length > 0) {
           this.data.establecimientoId =
-            this.estabs().find((e) => e.predeterminado)?.idEstablecimiento ?? 0;
+            this.estabs().find(e => e.predeterminado)?.idEstablecimiento ?? 0;
         }
       }
       if (this.estabs.length === 0) {
@@ -105,11 +100,11 @@ export class PrinterAddEditModalComponent implements OnInit {
 
   getLocalPrinters() {
     this._printerUseCase.getLocalPrinters().subscribe({
-      next: (response) => {
+      next: response => {
         this.localPrinters.set(response.localPrinters);
         this.data.machine = this.localPrinters()[0]?.machine;
       },
-      error: (err) => {
+      error: err => {
         console.log(err);
         this._tS.show({
           type: 'warning',
@@ -121,7 +116,7 @@ export class PrinterAddEditModalComponent implements OnInit {
   }
 
   getDataEdit(isReload: boolean) {
-    this._printerUseCase.getById(this.params.data.id).subscribe((response) => {
+    this._printerUseCase.getById(this.params.data.id).subscribe(response => {
       if (isReload) {
         this.data = response.printer;
       }
@@ -137,7 +132,7 @@ export class PrinterAddEditModalComponent implements OnInit {
       this.getDataEdit(true);
       this.getLocalPrinters();
     } else {
-      if (this.params.printers.every((item) => !item.isDefault)) {
+      if (this.params.printers.every(item => !item.isDefault)) {
         this.data.isDefault = true;
       }
       if (this.params.printers.length > 0) {
@@ -159,9 +154,7 @@ export class PrinterAddEditModalComponent implements OnInit {
         data.isActive = !data.isActive;
         data.labelisActive = data.isActive ? 'Activa' : 'Inactiva';
 
-        this._printerDocService
-          .put(data.id, data)
-          .subscribe(this.successResponsePrinterDoc);
+        this._printerDocService.put(data.id, data).subscribe(this.successResponsePrinterDoc);
       }
 
       if (!(data.id > 0)) {
@@ -169,9 +162,7 @@ export class PrinterAddEditModalComponent implements OnInit {
           ...data,
           printerId: this.params.data.id,
         };
-        this._printerDocService
-          .post(params)
-          .subscribe(this.successResponsePrinterDoc);
+        this._printerDocService.post(params).subscribe(this.successResponsePrinterDoc);
       }
     }
   }
@@ -198,10 +189,7 @@ export class PrinterAddEditModalComponent implements OnInit {
       });
       return;
     }
-    if (
-      this.data.serverDevice &&
-      (!this.data.macAddress || this.data.macAddress.length == 0)
-    ) {
+    if (this.data.serverDevice && (!this.data.macAddress || this.data.macAddress.length == 0)) {
       this._tS.show({
         type: 'warning',
         message: 'Ingreso la dirección Mac del equipo',
@@ -215,7 +203,7 @@ export class PrinterAddEditModalComponent implements OnInit {
       });
       return;
     }
-    if (this.documents().every((item) => !item.isActive)) {
+    if (this.documents().every(item => !item.isActive)) {
       this._tS.show({
         type: 'warning',
         message: 'Seleccione al menos un documento',
@@ -224,34 +212,24 @@ export class PrinterAddEditModalComponent implements OnInit {
     }
 
     let codDoc = '';
-    if (
-      this.documents().some(
-        (item) => item.codDoc === DOC_TYPE.FV && item.isActive
-      )
-    ) {
+    if (this.documents().some(item => item.codDoc === DOC_TYPE.FV && item.isActive)) {
       codDoc = 'FV';
     }
-    if (
-      this.documents().some(
-        (item) => item.codDoc === DOC_TYPE.NE && item.isActive
-      )
-    ) {
+    if (this.documents().some(item => item.codDoc === DOC_TYPE.NE && item.isActive)) {
       codDoc = 'NE';
     }
-    if (this.documents().every((item) => item.isActive)) {
+    if (this.documents().every(item => item.isActive)) {
       codDoc = 'A';
     }
 
     const params = {
       ...this.data,
       codDoc,
-      documents: this.documents().filter((x) => x.isActive),
+      documents: this.documents().filter(x => x.isActive),
     };
 
     if (this.params.data.id > 0) {
-      this._printerUseCase
-        .update(this.params.data.id, params)
-        .subscribe(this.successResponse);
+      this._printerUseCase.update(this.params.data.id, params).subscribe(this.successResponse);
     }
 
     if (!(this.params.data.id > 0)) {

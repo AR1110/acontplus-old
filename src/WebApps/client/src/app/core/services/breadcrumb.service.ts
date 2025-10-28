@@ -25,25 +25,21 @@ export class BreadcrumbService {
   // Computed properties
   breadcrumbString = computed(() =>
     this.breadcrumbsSignal()
-      .map((b) => b.label)
+      .map(b => b.label)
       .join(' / '),
   );
 
-  breadcrumbLabels = computed(() =>
-    this.breadcrumbsSignal().map((b) => b.label),
-  );
+  breadcrumbLabels = computed(() => this.breadcrumbsSignal().map(b => b.label));
 
   constructor() {
     // Initialize breadcrumbs
     this.updateBreadcrumbs();
-    
+
     // Listen to navigation changes
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        const breadcrumbs = this.buildBreadcrumbs(this.activatedRoute.root);
-        this.breadcrumbsSignal.set(breadcrumbs);
-      });
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      const breadcrumbs = this.buildBreadcrumbs(this.activatedRoute.root);
+      this.breadcrumbsSignal.set(breadcrumbs);
+    });
   }
 
   // Public methods
@@ -54,7 +50,7 @@ export class BreadcrumbService {
 
   getBreadcrumbString(separator = ' / '): string {
     return this.breadcrumbsSignal()
-      .map((b) => b.label)
+      .map(b => b.label)
       .join(separator);
   }
 
@@ -75,21 +71,20 @@ export class BreadcrumbService {
     }
 
     for (const child of children) {
-      const routeURL: string = child.snapshot.url
-        .map((segment) => segment.path)
-        .join('/');
-      
+
+      if (!child.snapshot || !child.snapshot.url) {
+        continue;
+      }
+      const routeSegments = child.snapshot.url.map(seg => seg.path).filter(Boolean);
+      const routeURL = routeSegments.join('/');
       if (routeURL !== '') {
         url += `/${routeURL}`;
       }
 
       // Look for label in breadcrumb, title or use the URL
-      const label =
-        child.snapshot.data['breadcrumb'] ??
-        child.snapshot.data['title'] ??
-        routeURL;
+      const label = child.snapshot.data['breadcrumb'] ?? child.snapshot.data['title'] ?? routeURL;
 
-      if (label && !breadcrumbs.some((b) => b.url === url)) {
+      if (label && !breadcrumbs.some(b => b.url === url)) {
         breadcrumbs.push({
           label,
           url,

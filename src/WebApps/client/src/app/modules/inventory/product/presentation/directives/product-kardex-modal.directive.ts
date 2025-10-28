@@ -5,15 +5,14 @@ import { OpenModalProductService } from '@inventory/product/application/services
   selector: '[appProductKardexModal]',
 })
 export class ProductKardexModalDirective {
-  private openModalProductSvc = inject(OpenModalProductService)
+  private openModalProductSvc = inject(OpenModalProductService);
   onResult = output<any>();
   params = input({} as any);
 
   @HostListener('click') onClick() {
     const params = {
-      id: this.params().idArticulo
-    }
-    this.openModalProductSvc.openKardex(params)
+      id: this.params().idArticulo,
+    };
+    this.openModalProductSvc.openKardex(params);
   }
-
 }

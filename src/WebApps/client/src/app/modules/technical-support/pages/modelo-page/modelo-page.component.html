@@ -1,50 +1,40 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
-    <div class="row mb-3">
-      <div class="col-md-2 col-12">
-        <button (click)="onModalOpen()" mat-raised-button type="button">
-          <mat-icon>add</mat-icon>
-          Nuevo
-        </button>
-      </div>
+  <div class="row mb-3">
+    <div class="col-md-2 col-12">
+      <button (click)="onModalOpen()" mat-raised-button type="button">
+        <mat-icon>add</mat-icon>
+        Nuevo
+      </button>
     </div>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="text-center">#</th>
+          <th>Marca</th>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of modelos(); track $index) {
           <tr>
-            <th class="text-center">#</th>
-            <th>Marca</th>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Opciones</th>
+            <td class="text-center">{{ $index + 1 }}</td>
+            <td>{{ item.brandName }}</td>
+            <td>{{ item.code }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+              <app-theme-button variant="warning" icon="edit" matStyle="icon" (handleClick)="onEdit(item)">
+              </app-theme-button>
+              <app-theme-button variant="warning" icon="delete" matStyle="icon" (handleClick)="onDelete(item)">
+              </app-theme-button>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          @for (item of modelos(); track $index) {
-            <tr>
-              <td class="text-center">{{ $index + 1 }}</td>
-              <td>{{ item.brandName }}</td>
-              <td>{{ item.code }}</td>
-              <td>{{ item.name }}</td>
-              <td>
-                <app-theme-button
-                  variant="warning"
-                  icon="edit"
-                  matStyle="icon"
-                  (handleClick)="onEdit(item)"
-                >
-                </app-theme-button>
-                <app-theme-button
-                  variant="warning"
-                  icon="delete"
-                  matStyle="icon"
-                  (handleClick)="onDelete(item)"
-                >
-                </app-theme-button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+        }
+      </tbody>
+    </table>
+  </div>
 </app-mat-dynamic-card>

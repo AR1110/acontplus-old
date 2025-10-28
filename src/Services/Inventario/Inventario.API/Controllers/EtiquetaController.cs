@@ -1,4 +1,4 @@
-﻿namespace Inventario.API.Controllers;
+namespace Inventario.API.Controllers;
 
 public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiController
 {
@@ -16,33 +16,29 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest data)
+    public async Task<IActionResult> Post([FromBody] CreateEtiquetaDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
-
-        var response = await etiquetaService.AddAsync(parameters);
-
-        return Ok(response);
+    {
+      { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateEtiquetaDto>(dto)) },
+      { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
+        return Ok(await etiquetaService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] ApiRequest data)
+    public async Task<IActionResult> Put(int id, [FromBody] UpdateEtiquetaDto dto)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "id", id },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) },
-            { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "id", id },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateEtiquetaDto>(dto)) },
+        { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
+    };
 
-        var response = await etiquetaService.UpdateAsync(parameters);
-        return Ok(response);
+        return Ok(await etiquetaService.UpdateAsync(parameters));
     }
 
     [HttpDelete("{id}")]
@@ -54,7 +50,6 @@ public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiContr
             { "id", id }
         };
 
-        var response = await etiquetaService.DeleteAsync(parameters);
-        return Ok(response);
+        return Ok(await etiquetaService.DeleteAsync(parameters));
     }
 }

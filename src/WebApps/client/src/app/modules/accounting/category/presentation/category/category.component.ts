@@ -1,32 +1,32 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CategoryModalComponent } from '@accounting/category/presentation/category-modal/category-modal.component';
 import { SecondaryStatusPipe } from '@shared/pipes/secondary-status.pipe';
-import {CategoryUseCase} from "@accounting/category/application/category.use-case";
-import {Category} from "@accounting/category/domain/category";
-import {MatIconModule} from "@angular/material/icon";
-import {MatButtonModule} from "@angular/material/button";
-import {MatMenuModule} from "@angular/material/menu";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {DialogService} from "@core/services/dialog.service";
+import { CategoryUseCase } from '@accounting/category/application/category.use-case';
+import { Category } from '@accounting/category/domain/category';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DialogService } from '@core/services/dialog.service';
 
 @Component({
-    selector: 'app-category',
+  selector: 'app-category',
   imports: [
     BreadcrumbComponent,
     SecondaryStatusPipe,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatDynamicCardComponent
+    MatDynamicCardComponent,
   ],
-    templateUrl: './category.component.html',
-    styles: ``
+  templateUrl: './category.component.html',
+  styles: ``,
 })
 export class CategoryComponent implements OnInit {
-  categories = signal<Category[]>([])
+  categories = signal<Category[]>([]);
   data: Category = {} as Category;
-  private _categoryUseCase = inject(CategoryUseCase)
+  private _categoryUseCase = inject(CategoryUseCase);
   private readonly modalService = inject(DialogService);
 
   edit(item: Category) {
@@ -35,8 +35,8 @@ export class CategoryComponent implements OnInit {
   }
 
   get() {
-    this._categoryUseCase.get({ tipo: 1 }).subscribe((response) => {
-      if ( response.code == '1') {
+    this._categoryUseCase.get({ tipo: 1 }).subscribe(response => {
+      if (response.code == '1') {
         const { categories } = JSON.parse(response.payload as string);
         this.categories.set(categories);
       }
@@ -50,7 +50,7 @@ export class CategoryComponent implements OnInit {
   onModalOpen() {
     const modalRef = this.modalService.open(CategoryModalComponent, {
       size: 'sm',
-       data: this.data.id>0? structuredClone(this.data): {}
+      data: this.data.id > 0 ? structuredClone(this.data) : {},
     });
 
     modalRef.subscribe(response => {
@@ -60,6 +60,4 @@ export class CategoryComponent implements OnInit {
       this.data = {} as Category;
     });
   }
-
-
 }

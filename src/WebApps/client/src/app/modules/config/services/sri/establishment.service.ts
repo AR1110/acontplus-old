@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
 import { map } from 'rxjs';
-import {ApiResponse} from "@core/models/api-response";
+import { ApiResponse } from '@core/models/api-response';
 
 @Injectable({
   providedIn: 'root',
@@ -21,13 +21,8 @@ export class EstablishmentService {
     });
     return this.#http.get(`${this.#url}?json=${json}`).pipe(
       map((response: any) => {
-        const {
-          cantones,
-          actividadesEconomica,
-          agentesRetencion,
-          contribuyentes,
-          ambientes,
-        } = response;
+        const { cantones, actividadesEconomica, agentesRetencion, contribuyentes, ambientes } =
+          response;
         const result = {
           cantones,
           actividadesEconomica,

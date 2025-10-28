@@ -6,14 +6,13 @@
       <mat-card-title></mat-card-title>
 
       <div class="d-flex flex-row gap-2">
-        @if (!isLoadingResults()){
-        <button mat-icon-button appModelAddEdit (onResult)="refresh()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button mat-icon-button (click)="exportToExcel()">
-          <mat-icon>save_alt</mat-icon>
-        </button>
-
+        @if (!isLoadingResults()) {
+          <button mat-icon-button appModelAddEdit (onResult)="refresh()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button (click)="exportToExcel()">
+            <mat-icon>save_alt</mat-icon>
+          </button>
         }
         <button mat-icon-button (click)="refresh()">
           <mat-icon>refresh</mat-icon>
@@ -23,28 +22,24 @@
   </mat-card-header>
   <mat-card-content>
     <app-mat-dynamic-table
-
       [isLoadingData]="isLoadingResults()"
-
-      [tableData]="dataSource.data" [columnDefinitions]="columnsDefs" [visibleColumns]="columns"
-    [paginationConfig]="pagination()"
+      [tableData]="dataSource.data"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+      [paginationConfig]="pagination()"
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
       [templateOp]="templateOp"
     >
-
     </app-mat-dynamic-table>
 
     <ng-template #templateOp let-item="item">
-
       <button mat-icon-button appModelAddEdit [params]="item" (onResult)="refresh()">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button (click)="askToDelete(item)">
         <mat-icon>delete</mat-icon>
       </button>
-
     </ng-template>
-
   </mat-card-content>
 </mat-card>

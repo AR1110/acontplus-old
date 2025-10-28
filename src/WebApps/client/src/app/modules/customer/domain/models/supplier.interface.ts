@@ -11,10 +11,7 @@ export interface Supplier {
 }
 
 export interface SupplierSearch
-  extends Omit<
-    Supplier,
-    'numeroIdentificacion' | 'tipoIdentificacion' | 'razonSocial'
-  > {
+  extends Omit<Supplier, 'numeroIdentificacion' | 'tipoIdentificacion' | 'razonSocial'> {
   identificacionComprador: string;
   razonSocialComprador: string;
   name: string;

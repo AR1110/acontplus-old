@@ -1,19 +1,16 @@
-import {Injectable} from "@angular/core";
-import {BaseUseCase} from "@core/base-use-case";
-import {ApiResponse} from "@core/models/api-response";
-import { Observable } from "rxjs";
-import {ProductUbicationRepository} from "@inventory/product/domain/repositories/product-ubication.repository";
+import { Injectable } from '@angular/core';
+import { BaseUseCase } from '@core/base-use-case';
+import { ApiResponse } from '@core/models/api-response';
+import { Observable } from 'rxjs';
+import { ProductUbicationRepository } from '@inventory/product/domain/repositories/product-ubication.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProductUbicationRemoveUseCase <T> implements BaseUseCase<ApiResponse, number> {
-  constructor(private repo: ProductUbicationRepository) {
-  }
+export class ProductUbicationRemoveUseCase<T> implements BaseUseCase<ApiResponse, number> {
+  constructor(private repo: ProductUbicationRepository) {}
 
   execute(id: number): Observable<ApiResponse> {
-        return this.repo.remove(id)
-    }
-
-
+    return this.repo.remove(id);
+  }
 }

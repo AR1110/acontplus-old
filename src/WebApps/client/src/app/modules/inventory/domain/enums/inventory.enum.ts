@@ -1,6 +1,3 @@
-import {
-  InventoryAdjustmentRepositoryImpl
-} from "@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl";
 
 export const enum INVENTORY_PATHS {
   PRODUCT_OLD = 'Articulo/',
@@ -12,41 +9,49 @@ export const enum INVENTORY_PATHS {
   TRANSACTION = 'Transaccion/',
   MEASURE = 'Measure/',
   SUBCATEGORY_PHOTO = 'SubcategoryPhoto/',
-  BRAND ='Marca/',
-  MODEL='Modelo/',
+  BRAND = 'Marca/',
+  MODEL = 'Modelo/',
   TARIFA = 'Tarifa/',
   TAGS = 'Etiqueta/',
-  PRODUCT_PHOTO ='ProductPhoto/',
+  PRODUCT_PHOTO = 'ProductPhoto/',
   STOCK = 'Stock/',
-  TRANSFERENCIA_BODEGA = 'TransferenciaBodega/',
+  TRANSFERENCIA_BODEGA = 'TransferenciaBodega',
   PRODUCT_UBICATION = 'ArticuloUbicacion',
-  PRODUCT_BARCODE='ArticuloCodigoBarra',
+  PRODUCT_BARCODE = 'ArticuloCodigoBarra',
   FRACTIONAL_PRODUCT = 'ArticuloFraccionado',
-  WAREHOUSE='Bodega',
-  INVENTORY_ADJUSTMENT='Consolidacion'
+  WAREHOUSE = 'Bodega',
+  INVENTORY_ADJUSTMENT = 'Consolidacion',
 }
 
-
 export const enum INVENTORY_CODE_REPORT {
-  RK='RK',
-  CDAA='CDAA',
-  CDA='CDA',
+  RK = 'RK',
+  CDAA = 'CDAA',
+  CDA = 'CDA',
   STOCK_VALORACION = 'INVRV',
   ARTICULO_PVP = 'INVAT',
-  RAF='RAF', //REPORTE DE ARTICULOS FRACCIONADOS
-  RCAA='RCAA',//REPORTE DE CADUCIDAD DE ARTICULOS
+  RAF = 'RAF', //REPORTE DE ARTICULOS FRACCIONADOS
+  RCAA = 'RCAA', //REPORTE DE CADUCIDAD DE ARTICULOS
   RASR = 'RASR', //Reporte de Articulo Stock Valoración
-  RCD='RCD' //Reporte Consolidacion Detalle
+  RCD = 'RCD', //Reporte Consolidacion Detalle
 }
 
 export enum InventoryDocumentType {
-  CONSOLIDATION = "CI",
-  INVENTORY_WRITEOFF = "BI",
-  INVENTORY_RECEIPT = "EI"
+  CONSOLIDATION = 'CI',
+  INVENTORY_WRITEOFF = 'BI',
+  INVENTORY_RECEIPT = 'EI',
 }
 
 export enum InventoryTransactionType {
-  INBOUND = "E",
-  OUTBOUND = "S",
-  ADJUSTMENT = "A"
+  INBOUND = 'E',
+  OUTBOUND = 'S',
+  ADJUSTMENT = 'A',
 }
+
+
+export const enum INVENTORY_ROUTES {
+  products = 'products',
+}
+export const INVENTORY_MODULES_CODE = {
+  PRODUCT: 'ART', //artpiculos
+  WAREHOUSE_TRANSFER: 'TI' //Transferencia de Bodega
+} as const

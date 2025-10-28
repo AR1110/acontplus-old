@@ -2,5 +2,5 @@
 
 public interface IPrinterTypeRepository
 {
-    Task<ApiResponse> GetAsync();
+    Task<SpResponse> GetAsync();
 }

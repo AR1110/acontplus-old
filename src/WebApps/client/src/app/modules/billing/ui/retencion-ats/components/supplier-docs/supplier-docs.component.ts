@@ -9,12 +9,7 @@ import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-supplier-docs',
-  imports: [
-    MatCustomDialogComponent,
-    MatDynamicTableComponent,
-    MatButton,
-    MatIcon,
-  ],
+  imports: [MatCustomDialogComponent, MatDynamicTableComponent, MatButton, MatIcon],
   templateUrl: './supplier-docs.component.html',
   styles: ``,
 })
@@ -28,7 +23,7 @@ export class SupplierDocsComponent implements OnInit {
     { key: 'numDocSustento', label: 'Secuencial', type: 'string' },
     { key: 'importeTotal', label: 'Total', type: 'number' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
   dialogIcon = signal('list');
   dialogTitle = signal('Documentos del Proveedor');
 
@@ -37,7 +32,7 @@ export class SupplierDocsComponent implements OnInit {
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
 
   ngOnInit() {
-    this._retencionAtsUseCase.getDocs(this.data).subscribe((response) => {
+    this._retencionAtsUseCase.getDocs(this.data).subscribe(response => {
       this.documents.set(response.documents);
     });
   }
@@ -51,7 +46,7 @@ export class SupplierDocsComponent implements OnInit {
     if (selectedRows.length === 1) {
       const row = selectedRows[0];
       const current = this.documentsSelected();
-      const index = current.findIndex((doc) => this.isSameRow(doc, row));
+      const index = current.findIndex(doc => this.isSameRow(doc, row));
 
       if (index > -1) {
         // Remove if already selected

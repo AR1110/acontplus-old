@@ -1,45 +1,29 @@
 <app-mat-custom-dialog
-
   [containerTemplate]="containerTemplate"
-[actionsTemplate]="actionsTemplate"
-(close)="close()"
+  [actionsTemplate]="actionsTemplate"
+  (close)="close()"
   [title]="'Convertir a un documento:'"
-
 />
 
 <ng-template #containerTemplate>
   <div class="d-flex flex-column bd-highlight mb-3">
-    <div class="p-2 bd-highlight">
-      Ruc/Cédula: {{companyCustomer.identificacionComprador}}
-    </div>
-    <div class="p-2 bd-highlight">
-      Razon Social: {{companyCustomer.razonSocialComprador}}
-    </div>
+    <div class="p-2 bd-highlight">Ruc/Cédula: {{ companyCustomer.identificacionComprador }}</div>
+    <div class="p-2 bd-highlight">Razon Social: {{ companyCustomer.razonSocialComprador }}</div>
     <!-- <div class="p-2 bd-highlight">Flex item 3</div> -->
-    <hr>
+    <hr />
     <div class="d-flex justify-content-center">
-      <h4><b>Total</b> {{data.total}}</h4>
+      <h4><b>Total</b> {{ data.total }}</h4>
     </div>
   </div>
 
   <div class="row">
     <div class="col-12">
-      <app-tabulator
-        [columnNames]="columns"
-        [tableData]="infoAdicionalDoc()"
-        [options]="tabulatorOptions">
+      <app-tabulator [columnNames]="columns" [tableData]="infoAdicionalDoc()" [options]="tabulatorOptions">
       </app-tabulator>
     </div>
   </div>
-
 </ng-template>
 <ng-template #actionsTemplate>
-  <button type="button" mat-flat-button (click)="saveInvoice()">
-    Factura
-  </button>
-  <button type="button" mat-raised-button (click)="saveNotaEntrega()">
-    Nota Entrega
-  </button>
+  <button type="button" mat-flat-button (click)="saveInvoice()">Factura</button>
+  <button type="button" mat-raised-button (click)="saveNotaEntrega()">Nota Entrega</button>
 </ng-template>
-
-

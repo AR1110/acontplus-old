@@ -1,14 +1,10 @@
-﻿using BarberShop.Application.Seats.DTOs;
-using BarberShop.Application.Seats.Interfaces;
-using BarberShop.Domain.Repositories;
-
-namespace BarberShop.Application.Seats.Services;
+﻿namespace BarberShop.Application.Seats.Services;
 
 public class SeatService(ISeatRepository seatRepository) : ISeatService
 {
-    public async Task<ApiResponse> CreateSeatAsync(SeatDto seatDto)
+    public async Task<SpResponse> CreateSeatAsync(SeatDto seatDto)
     {
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Asiento creado exitosamente",
@@ -16,10 +12,10 @@ public class SeatService(ISeatRepository seatRepository) : ISeatService
         };
     }
 
-    public async Task<ApiResponse> DeleteSeatAsync(int id)
+    public async Task<SpResponse> DeleteSeatAsync(int id)
     {
         await seatRepository.DeleteSeatAsync(id);
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Asiento eliminado exitosamente"
@@ -41,17 +37,17 @@ public class SeatService(ISeatRepository seatRepository) : ISeatService
         };
     }
 
-    public async Task<ApiResponse> GetSeatByIdAsync(int id)
+    public async Task<SpResponse> GetSeatByIdAsync(int id)
     {
         var seat = await seatRepository.GetSeatByIdAsync(id);
         if (seat == null)
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
             };
 
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Asiento obtenido exitosamente",
@@ -59,18 +55,17 @@ public class SeatService(ISeatRepository seatRepository) : ISeatService
         };
     }
 
-    public async Task<ApiResponse> UpdateSeatAsync(int id, SeatDto seatDto)
+    public async Task<SpResponse> UpdateSeatAsync(int id, SeatDto seatDto)
     {
         var existingSeat = await seatRepository.GetSeatByIdAsync(id);
         if (existingSeat == null)
-            return new ApiResponse
+            return new SpResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
             };
         var updatedSeat = ObjectMapper.Map(seatDto, existingSeat);
-        updatedSeat.Id = id;
-        return new ApiResponse
+        return new SpResponse
         {
             Code = "1",
             Message = "Asiento actualizado exitosamente",

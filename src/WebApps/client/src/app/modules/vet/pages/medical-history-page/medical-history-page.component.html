@@ -13,14 +13,11 @@
       </div>
     </div>
 
-    <div
-      class="row row-cols-2  "
-    >
+    <div class="row row-cols-2">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento: </mat-label>
-          <mat-select  (selectionChange)="refresh()"
-                       [(ngModel)]="dataSearch.idEstablecimiento">
+          <mat-select (selectionChange)="refresh()" [(ngModel)]="dataSearch.idEstablecimiento">
             @for (estab of establecimientos(); track $index) {
               <mat-option [value]="estab.idEstablecimiento">
                 {{ estab.nombreComercial }}
@@ -32,7 +29,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Buscar mascota o cliente</mat-label>
-          <input matInput [(ngModel)]="dataSearch.textSearch">
+          <input matInput [(ngModel)]="dataSearch.textSearch" />
           <ng-container matSuffix>
             <button type="button" mat-icon-button (click)="refresh()">
               <mat-icon>refresh</mat-icon>
@@ -54,12 +51,7 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button
-      variant="primary"
-      [icon]="'edit'"
-      matStyle="icon"
-      (handleClick)="onEdit(item)"
-    ></app-theme-button>
+    <app-theme-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(item)"></app-theme-button>
     <app-theme-button
       variant="warning"
       icon="delete "

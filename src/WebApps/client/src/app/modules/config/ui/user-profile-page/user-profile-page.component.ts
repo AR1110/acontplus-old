@@ -5,117 +5,115 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 
 @Component({
-    selector: 'app-user-profile-page',
-    templateUrl: './user-profile-page.component.html',
-    styles: ``,
-    imports: [
-        MatTabsModule,
-        ReactiveFormsModule,
-        MatCheckboxModule,
-        BreadcrumbComponent,
-        MatCardContent,
-        MatCard,
-        ThemeButtonComponent
-    ]
+  selector: 'app-user-profile-page',
+  templateUrl: './user-profile-page.component.html',
+  styles: ``,
+  imports: [
+    MatTabsModule,
+    ReactiveFormsModule,
+    MatCheckboxModule,
+    BreadcrumbComponent,
+    MatCardContent,
+    MatCard,
+    ThemeButtonComponent,
+  ],
 })
 export class UserProfilePageComponent implements OnInit {
-    private readonly userProfileService = inject(UserProfileService);
-    private tS = inject(ToastrNotificationService);
+  private readonly userProfileService = inject(UserProfileService);
+  private tS = inject(ToastrNotificationService);
 
-    user: any = {};
-    roles: any = [];
-    isVerified = false;
-    isShowPassword = false;
+  user: any = {};
+  roles: any = [];
+  isVerified = false;
+  isShowPassword = false;
 
-    passwordForm = new FormGroup({
-        password: new FormControl('', Validators.required),
-        confirmPassword: new FormControl('', Validators.required),
+  passwordForm = new FormGroup({
+    password: new FormControl('', Validators.required),
+    confirmPassword: new FormControl('', Validators.required),
+  });
+
+  ngOnInit() {
+    this.getAll();
+  }
+
+  getAll() {
+    this.userProfileService.getAll({ tipo: 1 }).subscribe((response: any) => {
+      const { user, roles } = JSON.parse(response.payload);
+      this.user = user[0];
+      this.roles = roles;
     });
+  }
 
-    ngOnInit() {
-        this.getAll()
+  // functions for verifying password
+  verifyPassword() {
+    const { password, confirmPassword } = this.passwordForm.value;
+
+    if (!password || !confirmPassword) {
+      this.tS.show({ type: 'info', message: 'Por favor, llene todos los campos' });
+      return;
     }
 
-    getAll() {
-
-        this.userProfileService.getAll({ tipo: 1 }).subscribe( (response: any) => {
-
-                const { user, roles } = JSON.parse(response.payload);
-                this.user = user[0];
-                this.roles = roles;
-        })
+    // verify length is greater than 6
+    if (password.length < 6 || confirmPassword.length < 6) {
+      this.tS.show({ type: 'warning', message: 'La contraseña debe tener al menos 6 caracteres' });
+      return;
     }
 
-    // functions for verifying password
-    verifyPassword() {
-        const { password, confirmPassword } = this.passwordForm.value;
-
-        if (!password || !confirmPassword) {
-            this.tS.show({ type: 'info', message: 'Por favor, llene todos los campos' });
-            return;
-        }
-
-        // verify length is greater than 6
-        if (password.length < 6 || confirmPassword.length < 6) {
-            this.tS.show({ type: 'warning', message: 'La contraseña debe tener al menos 6 caracteres' });
-            return;
-        }
-
-        // Las contraseñas no coinciden
-        if (password !== confirmPassword) {
-            this.tS.show({ type: 'warning', message: 'Las contraseñas no coinciden' });
-            return;
-        }
-
-        this.isVerified = true;
+    // Las contraseñas no coinciden
+    if (password !== confirmPassword) {
+      this.tS.show({ type: 'warning', message: 'Las contraseñas no coinciden' });
+      return;
     }
 
-    showPassword() {
-        this.isShowPassword = !this.isShowPassword;
-    }
+    this.isVerified = true;
+  }
 
-    // Open swal modal
-    confirmUpdate() {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Actualizará la contraseña de tu cuenta y te desconectará de la sesión actual. ¿Deseas continuar?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: '¡Sí, actualizar!',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // clean spaces
+  showPassword() {
+    this.isShowPassword = !this.isShowPassword;
+  }
 
-                const password = {
-                    contrasenia: this.passwordForm.value.password?.trim(),
-                    confirmarContrasenia: this.passwordForm.value.confirmPassword?.trim(),
-                }
+  // Open swal modal
+  confirmUpdate() {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Actualizará la contraseña de tu cuenta y te desconectará de la sesión actual. ¿Deseas continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Sí, actualizar!',
+      cancelButtonText: 'Cancelar',
+    }).then(result => {
+      if (result.isConfirmed) {
+        // clean spaces
 
-                this.userProfileService.put(this.user.idUsuario, { perfil: password }).subscribe( (response: any) => {
+        const password = {
+          contrasenia: this.passwordForm.value.password?.trim(),
+          confirmarContrasenia: this.passwordForm.value.confirmPassword?.trim(),
+        };
 
-
-                        if (response.code === "0") {
-                            this.tS.show({ type: 'error', message: response.message });
-                            return;
-                        }
-
-                        this.tS.show({ type: 'success', message: response.message });
-                        this.resetPasswordForm();
-                })
+        this.userProfileService
+          .put(this.user.idUsuario, { perfil: password })
+          .subscribe((response: any) => {
+            if (response.code === '0') {
+              this.tS.show({ type: 'error', message: response.message });
+              return;
             }
-        })
-    }
 
-    resetPasswordForm() {
-        this.passwordForm.reset();
-        this.isVerified = false;
-    };
+            this.tS.show({ type: 'success', message: response.message });
+            this.resetPasswordForm();
+          });
+      }
+    });
+  }
+
+  resetPasswordForm() {
+    this.passwordForm.reset();
+    this.isVerified = false;
+  }
 }

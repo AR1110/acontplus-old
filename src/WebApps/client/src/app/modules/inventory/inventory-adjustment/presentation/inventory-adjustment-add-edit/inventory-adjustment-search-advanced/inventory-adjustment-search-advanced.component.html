@@ -3,45 +3,42 @@
   [containerTemplate]="body"
   [actionsTemplate]="footer"
   title="Búsqueda Avanzada"
-
 />
 
 <ng-template #body>
-  <div class="container-fluid vstack gap-2">
+  <div class="container-fluid vstack gap-5">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Opciones: <span class="text-danger">*</span></mat-label>
           <mat-select [(ngModel)]="searchAdvancedForm.opcion" (selectionChange)="optionChange()">
             @for (item of catalogs(); track $index) {
-            <mat-option [value]="item.code"> {{item.name}}</mat-option>
+              <mat-option [value]="item.code"> {{ item.name }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
       </div>
       <div class="col">
-
-        @if (searchAdvancedForm.opcion===1) {
-         <app-product-autocomplete-advanced (itemSelected)="productSelected($event)"/>
+        @if (searchAdvancedForm.opcion === 1) {
+          <app-product-autocomplete-advanced (itemSelected)="productSelected($event)" />
         }
 
-
-        @if (searchAdvancedForm.opcion===3) {
+        @if (searchAdvancedForm.opcion === 3) {
           <mat-form-field class="w-100">
             <mat-label>SubFamilias: <span class="text-danger">*</span></mat-label>
             <mat-select [(ngModel)]="searchAdvancedForm.subFamiliaId" (selectionChange)="refresh()">
               @for (item of mainFormData().subFamilias(); track $index) {
-                <mat-option [value]="item.id"> {{item.name}}</mat-option>
+                <mat-option [value]="item.id"> {{ item.name }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         }
 
-        @if (searchAdvancedForm.opcion===4) {
-          <app-supplier-search (supplierSelected)="supplierSelected($event)"/>
+        @if (searchAdvancedForm.opcion === 4) {
+          <app-supplier-search (supplierSelected)="supplierSelected($event)" />
         }
 
-        @if(searchAdvancedForm.opcion===5){
+        @if (searchAdvancedForm.opcion === 5) {
           <mat-form-field class="w-100">
             <mat-label>N° de Documento:</mat-label>
             <input
@@ -59,24 +56,22 @@
             </ng-container>
           </mat-form-field>
         }
-
       </div>
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Seleccionar archivo</mat-label>
-          <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" >
-          <input matInput class="cursor-pointer"  readonly (click)="fileInput.click()">
+          <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" />
+          <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
 
           <ng-container matSuffix>
             <button mat-icon-button (click)="fileInput.click()">
               <mat-icon>attach_file</mat-icon>
             </button>
-            @if (productsNotFounded().length>0) {
-              <button mat-icon-button (click)="showProductsNoVinculado()" >
+            @if (productsNotFounded().length > 0) {
+              <button mat-icon-button (click)="showProductsNoVinculado()">
                 <mat-icon>notification_important</mat-icon>
               </button>
             }
-
           </ng-container>
           <mat-hint>
             <span [innerHTML]="infoImportExcel()"></span>
@@ -85,22 +80,19 @@
       </div>
     </div>
 
-
     <app-mat-dynamic-table
       [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [enablePagination]="false"
       [showSelectBox]="true"
-      [returnMultiple]="false"
       (rowSelected)="rowSelected($event)"
       (rowAllSelected)="rowAllSelected($event)"
     />
-
   </div>
 </ng-template>
 <ng-template #footer>
-  @if (selectedRows().length>0) {
+  @if (selectedRows().length > 0) {
     <app-theme-button
       variant="success"
       matStyle="basic"

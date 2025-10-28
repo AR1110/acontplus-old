@@ -63,7 +63,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
         idArticulo: this.params.idArticulo,
       })
       .subscribe({
-        next: (response) => {
+        next: response => {
           this.isLoadingResults = false;
           this.comprasHabituales.set(response.comprasHabituales);
           if (this.comprasHabituales().length > 0) {
@@ -71,8 +71,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
           } else {
             this.tS.show({
               type: 'warning',
-              message:
-                'Este articulo aun no tiene registros de compra habitual',
+              message: 'Este articulo aun no tiene registros de compra habitual',
             });
           }
         },
@@ -84,8 +83,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
 
   askToDeleteCH(item: any) {
     Swal.fire({
-      title:
-        '¿Está seguro/a de desvincular este articulo de compras habituales?',
+      title: '¿Está seguro/a de desvincular este articulo de compras habituales?',
       text: '¡No podrás revertir esto!',
       icon: 'warning',
       showCancelButton: true,
@@ -94,7 +92,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then((result) => {
+    }).then(result => {
       if (result.isConfirmed) {
         this.deleteCH(item);
       }
@@ -108,7 +106,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       });
       const params = { idDocumento, id: idCompraHabitual };
 
-      this.compraHabitualSvc.delete(params).subscribe((response) => {
+      this.compraHabitualSvc.delete(params).subscribe(response => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

@@ -51,6 +51,6 @@ BEGIN
     SET @tableNames = 'menus,menuTypes'
 
     EXEC sp_executesql @sql, @params, @textSearch, @idEntidad
-    SELECT * FROM Restaurant.MenuType
+ 
 END
 GO

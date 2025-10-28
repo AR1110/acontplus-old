@@ -8,9 +8,11 @@ import { ElectronicSignatureRepository } from '@modules/config/domain/repositori
 @Injectable({
   providedIn: 'root',
 })
-export class SaveElectronicSignatureUseCase implements BaseUseCase<ApiResponse, ElectronicSignatureParam> {
+export class SaveElectronicSignatureUseCase
+  implements BaseUseCase<ApiResponse, ElectronicSignatureParam>
+{
   constructor(
-    @Inject(ElectronicSignatureRepository) private repo: ElectronicSignatureRepository // TODO: Provide concrete implementation in module providers
+    @Inject(ElectronicSignatureRepository) private repo: ElectronicSignatureRepository, // TODO: Provide concrete implementation in module providers
   ) {}
 
   execute(signature: ElectronicSignatureParam): Observable<ApiResponse> {

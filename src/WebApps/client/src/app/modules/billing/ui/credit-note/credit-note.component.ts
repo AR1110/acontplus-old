@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   templateUrl: './credit-note.component.html',
   styleUrls: ['./credit-note.component.scss'],
 })
-export class CreditNoteComponent {
-
-}
+export class CreditNoteComponent {}

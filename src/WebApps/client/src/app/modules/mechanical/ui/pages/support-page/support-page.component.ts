@@ -5,7 +5,9 @@ import {
   inject,
   signal,
   TemplateRef,
-  ViewChild, OnInit, AfterViewInit,
+  ViewChild,
+  OnInit,
+  AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -13,7 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import {getValidId, isValidField} from '@core/utils/utils';
+import { getValidId, isValidField } from '@core/utils/utils';
 
 import {
   MECHANICAL_CODE_REPORT,
@@ -41,7 +43,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ConvertDocDialogComponent } from '@mechanical/ui/pages/support-page/components/convert-doc-dialog/convert-doc-dialog.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
+import { MechanicalStore } from '@mechanical/application/store/mechanical.store';
 
 @Component({
   selector: 'app-support-page',
@@ -65,7 +67,7 @@ import {MechanicalStore} from "@mechanical/application/store/mechanical.store";
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent implements OnInit, AfterViewInit {
-  $store = inject(MechanicalStore)
+  $store = inject(MechanicalStore);
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
   dialogSvc = inject(DialogService);
@@ -103,7 +105,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       templateOutlet: null,
     },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -116,7 +118,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         id,
       },
     });
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result !== null && typeof result === 'object') {
         this.getSupports();
       }
@@ -161,11 +163,11 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         licensePlate: isValidField(this.dataSearch.licensePlate),
       };
       this.dataSource.set([]);
-      this.isLoadingResults.set(true)
+      this.isLoadingResults.set(true);
       this.supportUseCase
         .getAll(params)
-        .pipe(finalize(() => (this.isLoadingResults.set(false))))
-        .subscribe((response) => {
+        .pipe(finalize(() => this.isLoadingResults.set(false)))
+        .subscribe(response => {
           this.dataSource.set(response);
           if (this.dataSource().length > 0) {
             this.pagination().totalRecords = this.dataSource()[0].totalRecords;
@@ -177,7 +179,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    const dataStatus = this.$store.supportStatus().find(st=>st.code===this.$store.valueStatus());
+    const dataStatus = this.$store
+      .supportStatus()
+      .find(st => st.code === this.$store.valueStatus());
     this.dataSearch.supportStatusId = dataStatus?.id || 0;
 
     if (this.$store.isDashboard()) {
@@ -215,7 +219,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
+    this.columnsDefs.forEach(col => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
@@ -233,9 +237,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí!',
         cancelButtonText: 'No!',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this.supportUseCase.remove(id).subscribe((response) => {
+          this.supportUseCase.remove(id).subscribe(response => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -262,9 +266,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       size: 'xl',
       data: {
         id,
-      }
+      },
     });
-    modalRef.subscribe(result=> {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -276,10 +280,10 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       size: 'xl',
       data: {
         supportId: id,
-      }
+      },
     });
 
-    modalRef.subscribe((result) => {
+    modalRef.subscribe(result => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -287,17 +291,17 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   }
 
   askToConvertToDoc(id: number) {
-    this.supportUseCase.getConvertToAprobDoc(id).subscribe((response) => {
-        const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
-          size: 'lg',
-          data: response,
-        });
+    this.supportUseCase.getConvertToAprobDoc(id).subscribe(response => {
+      const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
+        size: 'lg',
+        data: response,
+      });
 
-        dialogRef.subscribe((result) => {
-          if (result && typeof result === 'object') {
-            this.getSupports();
-          }
-        });
+      dialogRef.subscribe(result => {
+        if (result && typeof result === 'object') {
+          this.getSupports();
+        }
+      });
     });
   }
 
@@ -323,9 +327,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   //Status Support
   putState(id: number) {
-    const supportStatusId = this.$store.supportStatus().find(
-      (st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR,
-    )?.id;
+    const supportStatusId = this.$store
+      .supportStatus()
+      .find(st => st.code === MECHANICAL_STATUS.POR_ENTREGAR)?.id;
     if (!(supportStatusId > 0)) {
       this.tS.show({
         type: 'warning',
@@ -342,25 +346,23 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí!',
         cancelButtonText: 'No!',
-      }).then((result) => {
+      }).then(result => {
         if (result.isConfirmed) {
-          this.supportUseCase
-            .putState(id, supportStatusId)
-            .subscribe((response) => {
-              if (response.code === '0') {
-                this.tS.show({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
-              if (response.code === '1') {
-                this.tS.show({
-                  type: 'success',
-                  message: response.message,
-                });
-                this.getSupports();
-              }
-            });
+          this.supportUseCase.putState(id, supportStatusId).subscribe(response => {
+            if (response.code === '0') {
+              this.tS.show({
+                type: 'warning',
+                message: response.message,
+              });
+            }
+            if (response.code === '1') {
+              this.tS.show({
+                type: 'success',
+                message: response.message,
+              });
+              this.getSupports();
+            }
+          });
         } else {
           this.getSupports();
         }
@@ -372,7 +374,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   getDocView(id: number) {
     try {
-      this.supportUseCase.getDocView(id).subscribe((response) => {
+      this.supportUseCase.getDocView(id).subscribe(response => {
         Swal.fire({
           icon: 'info',
           html: `<div class="d-flex flex-column bd-highlight mb-3">
@@ -391,7 +393,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

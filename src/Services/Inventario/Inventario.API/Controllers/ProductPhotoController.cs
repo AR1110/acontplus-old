@@ -1,7 +1,9 @@
-﻿namespace Inventario.API.Controllers;
+using Acontplus.Core.Extensions;
+
+namespace Inventario.API.Controllers;
 
 public class ProductPhotoController(
-    IProductPhotoService productPhoto,
+    IProductPhotoRepository productPhoto,
     IS3StorageService storageService,
     S3ObjectCustom s3ObjectCustom)
     : BaseApiController
@@ -21,8 +23,11 @@ public class ProductPhotoController(
     [HttpPost("{productId}")]
     public async Task<IActionResult> Post(int productId, IFormFile file)
     {
-        var data = new ProductPhoto();
-        data.CreatedByUserId = User.GetUserId();
+        var data = new ProductPhoto
+        {
+            CreatedByUserId = User.GetUserId(),
+            Id = 0
+        };
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
 
@@ -41,8 +46,11 @@ public class ProductPhotoController(
     [HttpPost("Put/{id}")]
     public async Task<IActionResult> Put(int id, string json, IFormFile file)
     {
-        var data = new ProductPhoto();
-        data = JsonConvert.DeserializeObject<ProductPhoto>(json);
+        var data = new ProductPhoto
+        {
+            Id = 0
+        };
+        data = JsonExtensions.DeserializeOptimized<ProductPhoto>(json);
         data.UpdatedByUserId = User.GetUserId();
         if (file != null)
             await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);

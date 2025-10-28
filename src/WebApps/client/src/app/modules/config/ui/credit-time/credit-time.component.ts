@@ -1,22 +1,20 @@
-import {Component, inject, signal, OnInit} from '@angular/core';
-import {ListCreditTimeUseCase} from "@modules/config/application/use-cases/credit-time/list-credit-time.use-case";
-import {CreditTimeList} from "@modules/config/domain/models/tiempo-credito.model";
-import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.component";
-import {MatDynamicCardComponent} from "@shared/components/mat-dynamic-card/mat-dynamic-card.component";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatDynamicTableComponent} from "@shared/components/mat-dynamic-table/mat-dynamic-table.component";
-import {SvgIconComponent} from "@shared/components/svg-icon/svg-icon.component";
-import {ColumnDefinition} from "@shared/models/mat-table-models/column-definition.model";
-import {DialogService} from "@core/services/dialog.service";
-import {
-  AddEditCreditTimeComponent
-} from "@modules/config/ui/credit-time/add-edit-credit-time/add-edit-credit-time.component";
-import {MatPagination} from "@shared/models/pagination.model";
-import {PageEvent} from "@angular/material/paginator";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import Swal from "sweetalert2";
-import {DeleteCreditTimeUseCase} from "@modules/config/application/use-cases/credit-time/delete-credit-time.use-case";
+import { AddEditCreditTimeComponent } from '@modules/config/ui/credit-time/add-edit-credit-time/add-edit-credit-time.component';
+import { DeleteCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/delete-credit-time.use-case';
+import { ListCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/list-credit-time.use-case';
+import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
+import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { Component, inject, signal, OnInit } from '@angular/core';
+import { MatPagination } from '@shared/models/pagination.model';
+import { DialogService } from '@core/services/dialog.service';
+import { PageEvent } from '@angular/material/paginator';
+import { MatIcon } from '@angular/material/icon';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-credit-time',
@@ -28,21 +26,19 @@ import {DeleteCreditTimeUseCase} from "@modules/config/application/use-cases/cre
     MatIconButton,
     MatDynamicTableComponent,
     SvgIconComponent,
-    ThemeButtonComponent
+    ThemeButtonComponent,
   ],
   templateUrl: './credit-time.component.html',
-  styles: ``
+  styles: ``,
 })
 export class CreditTimeComponent implements OnInit {
   private $listUseCase = inject(ListCreditTimeUseCase);
   private $deleteUseCase = inject(DeleteCreditTimeUseCase);
-  private _dialogSvc = inject(DialogService)
+  private _dialogSvc = inject(DialogService);
 
-  dataSource = signal<CreditTimeList[]>([])
-
+  dataSource = signal<CreditTimeList[]>([]);
 
   columnsDefs: ColumnDefinition[] = [
-
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'descripcion', label: 'Descripción', type: 'string' },
@@ -54,82 +50,77 @@ export class CreditTimeComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
   ];
 
-
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key)
-  pagination = signal(new MatPagination())
-  private getList(){
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  pagination = signal(new MatPagination());
+  private getList() {
     const params = {
-      pageIndex: this.pagination().pageIndex+1,
-      pageSize: this.pagination().pageSize
-    }
+      pageIndex: this.pagination().pageIndex + 1,
+      pageSize: this.pagination().pageSize,
+    };
     this.$listUseCase.execute(params).subscribe(response => {
-      this.dataSource.set(response.data)
-      this.pagination.update(p=>({
+      this.dataSource.set(response.data);
+      this.pagination.update(p => ({
         ...p,
-        totalRecords: response.totalRecords
-      }))
-    })
+        totalRecords: response.totalRecords,
+      }));
+    });
   }
 
-  refresh(){
-    this.getList()
+  refresh() {
+    this.getList();
   }
 
-  openModalAddUpdate(item?:CreditTimeList){
+  openModalAddUpdate(item?: CreditTimeList) {
     const ref = this._dialogSvc.open(AddEditCreditTimeComponent, {
-      data: structuredClone(item) || {}
-    })
-    ref.subscribe(result=>{
-      if(result && typeof result==='object'){
-        this.refresh()
+      data: structuredClone(item) || {},
+    });
+    ref.subscribe(result => {
+      if (result && typeof result === 'object') {
+        this.refresh();
       }
-    })
+    });
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.refresh();
   }
 
-
-  askToDelete(item: CreditTimeList){
+  askToDelete(item: CreditTimeList) {
     Swal.fire({
       html: `<small>Esta acción eliminará el registro. ¿Desea continuar?</small>`,
       icon: 'warning',
       confirmButtonText: 'Sí, eliminar',
       showCancelButton: true,
       cancelButtonText: 'No, cancelar',
-      allowOutsideClick: false
-    }).then((result) => {
+      allowOutsideClick: false,
+    }).then(result => {
       if (result.isConfirmed) {
-        this.$deleteUseCase.execute({idTiempoCredito: item.idTiempoCredito}).subscribe(response=>{
-          if(response.code==="0"){
-            Swal.fire({
-              icon: 'warning',
-              text: response.message
-            })
-          }
-          if(response.code==="1"){
-            Swal.fire({
-              icon: 'success',
-              text: response.message,
-              timer: 1000
-            })
-            setTimeout(()=>{
-              this.refresh()
-
-            }, 1000)
-          }
-        })
-
+        this.$deleteUseCase
+          .execute({ idTiempoCredito: item.idTiempoCredito })
+          .subscribe(response => {
+            if (response.code === '0') {
+              Swal.fire({
+                icon: 'warning',
+                text: response.message,
+              });
+            }
+            if (response.code === '1') {
+              Swal.fire({
+                icon: 'success',
+                text: response.message,
+                timer: 1000,
+              });
+              setTimeout(() => {
+                this.refresh();
+              }, 1000);
+            }
+          });
       }
-
-    })
-
-
+    });
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

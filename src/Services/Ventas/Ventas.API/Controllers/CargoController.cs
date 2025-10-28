@@ -7,7 +7,7 @@ public class CargoController(ICargoService cargoService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await cargoService.GetAsync(parameters));
     }
@@ -18,7 +18,7 @@ public class CargoController(ICargoService cargoService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await cargoService.AddAsync(parameters));
     }
@@ -28,7 +28,7 @@ public class CargoController(ICargoService cargoService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id },
+            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id },
             { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await cargoService.UpdateAsync(parameters));
@@ -39,7 +39,7 @@ public class CargoController(ICargoService cargoService) : BaseApiController
     public async Task<IActionResult> Delete(int id)
     {
         var parameters = new Dictionary<string, object>
-            { { "idUsuarioRol", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
+            { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         return Ok(await cargoService.DeleteAsync(parameters));
     }
 }

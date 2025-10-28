@@ -1,23 +1,18 @@
-﻿namespace Compras.API.Controllers;
+namespace Compras.API.Controllers;
 
-public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
+public class OrdenCompraController(IOrdenCompraRepository _svc) : BaseApiController
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var response = await _svc.GetAsync(new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        });
-        return Ok(response);
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Insert(ApiRequest request)
-    {
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-
-        var response = await _svc.AddAsync(request);
+      {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(json) }
+      }
+        );
         return Ok(response);
     }
 
@@ -31,13 +26,30 @@ public class OrdenCompraController(IOrdenCompraService _svc) : BaseApiController
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, ApiRequest request)
+    [HttpPost]
+    public async Task<IActionResult> Insert(OrdenCompraDto ordenCompraDto)
     {
-        var response = await _svc.UpdateAsync(id, request);
+        var parameters = new Dictionary<string, object>
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<OrdenCompraDto>(ordenCompraDto)) }
+    };
+        var response = await _svc.AddAsync(parameters);
         return Ok(response);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(int id, OrdenCompraDto ordenCompraDto)
+    {
+        var parameters = new Dictionary<string, object>
+    {
+      { UserRoleClaimType, User.GetClaimValue<int>(UserRoleClaimType) },
+      { "id", id },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<OrdenCompraDto>(ordenCompraDto)) }
+    };
+        var response = await _svc.UpdateAsync(parameters);
+        return Ok(response);
+    }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)

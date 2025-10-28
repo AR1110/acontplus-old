@@ -1,4 +1,13 @@
-import {Component, inject, model, signal, TemplateRef, ViewChild, OnInit, AfterViewInit} from '@angular/core';
+import {
+  Component,
+  inject,
+  model,
+  signal,
+  TemplateRef,
+  ViewChild,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -8,13 +17,10 @@ import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egre
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import {
-  GroupedEstab,
-  GroupedEstabPuntoEmision,
-} from '@core/models/estab.model';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import {  MatIconModule } from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import Swal from 'sweetalert2';
@@ -72,13 +78,13 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'custom', columnType: 'html' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
+  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
 
   pagination = signal(new MatPagination());
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
-  users = signal<any[]>([])
+  users = signal<any[]>([]);
 
   dataSearch = model({
     codEstab: '',
@@ -88,7 +94,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     toDate: formatDateToString(new Date()),
     userId: 0,
     nroSecuencial: null,
-    nameSupplier: "",
+    nameSupplier: '',
     byPersona: 0,
   });
 
@@ -117,11 +123,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     }
 
     if (isValidField(this.dataSearch().nroSecuencial)) {
-      if (
-        !ValidatorUtils.validAndFormatedRangeSequential(
-          this.dataSearch().nroSecuencial as any,
-        )
-      ) {
+      if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch().nroSecuencial as any)) {
         Swal.fire({
           icon: 'warning',
           text: 'Define correctamente el número de secuencial o el rango de número secuencial!',
@@ -147,10 +149,10 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
       ),
     };
 
-    this.$listUseCase.execute(params).subscribe((response) => {
+    this.$listUseCase.execute(params).subscribe(response => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update((i) => ({
+      this.pagination.update(i => ({
         ...i,
         totalRecords: response.totalRecords,
       }));
@@ -158,13 +160,13 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.$dataFilterUseCase.execute().subscribe((response) => {
+    this.$dataFilterUseCase.execute().subscribe(response => {
       console.log(response);
       this.estabs = response.estabs;
-      this.users.set(response.users)
-      const dataEstab = this.estabs.find((item) => item.defaultEstab);
+      this.users.set(response.users);
+      const dataEstab = this.estabs.find(item => item.defaultEstab);
       if (dataEstab) {
-        this.dataSearch.update((i) => ({
+        this.dataSearch.update(i => ({
           ...i,
           codEstab: dataEstab.codEstab,
         }));
@@ -173,10 +175,10 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.columnsDefs = this.columnsDefs.map(col => {
-      if (col.type==='custom' && col.key === 'nomUsuario') {
-        return { ...col, body: (ele:any)=>`<strong>${ele.nomUsuario}-Emilio</strong>` };
+      if (col.type === 'custom' && col.key === 'nomUsuario') {
+        return { ...col, body: (ele: any) => `<strong>${ele.nomUsuario}-Emilio</strong>` };
       }
       return col;
     });
@@ -184,7 +186,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   onChangeDateRange($event: any) {
-    this.dataSearch.update((item) => ({
+    this.dataSearch.update(item => ({
       ...item,
       fromDate: $event.from,
       toDate: $event.to,
@@ -193,7 +195,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   onSupplierSelected(data: any) {
-    this.dataSearch.update((item) => ({
+    this.dataSearch.update(item => ({
       ...item,
       byPersona: data.identificacionComprador,
       nameSupplier: data.name,
@@ -201,15 +203,14 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   supplierclearSearch($event: any) {
-    this.dataSearch.update((item) => ({
+    this.dataSearch.update(item => ({
       ...item,
       byPersona: 0,
-
     }));
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
+    this.pagination.update(pag => {
       return {
         ...pag,
         totalRecords: e.length,

@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Services;
+namespace Identity.API.Services;
 
 public class LoginFailedService(ApplicationDbContext context) : ILoginFailedService
 {

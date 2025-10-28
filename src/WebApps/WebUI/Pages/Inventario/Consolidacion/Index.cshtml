@@ -106,10 +106,11 @@
                                     <th md-column>Observación</th>
                                     <th md-column>Usuario</th>
                                     <th md-column>Total</th>
+                                    <th md-column>Estado</th>
                                 </tr>
                             </thead>
                             <tbody md-body>
-                                <tr md-row ng-repeat="item in consolidaciones" ng-class="item.style">
+                                <tr md-row ng-repeat="item in consolidaciones" ng-class="item.rowStyle">
                                     <td md-cell>
                                         <md-menu>
                                             <md-button aria-label="Open demo menu" class="md-icon-button"
@@ -124,13 +125,7 @@
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item>
-                                                    <md-button ng-click="openModalEditar(item)"
-                                                        ng-disabled="item.anulada">
-                                                        <span md-menu-align-target><i class="ti-pencil"></i>
-                                                            Editar</span>
-                                                    </md-button>
-                                                </md-menu-item>
+
 
                                                 <md-menu-item ng-if="accion.crear">
                                                     <md-button ng-click="openModalDuplicar(item)"
@@ -141,13 +136,13 @@
                                                 </md-menu-item>
 
 
-                                                <md-menu-item ng-if="accion.anular">
-                                                    <md-button ng-click="askToDelete(item)" ng-disabled="item.anulada">
+                                                <md-menu-item ng-if="accion.anular && canCancel(item)">
+                                                    <md-button ng-click="askToDelete(item)">
                                                         <span md-menu-align-target><i class="ti-na"></i> Anular</span>
                                                     </md-button>
                                                 </md-menu-item>
 
-                                                <md-menu-item ng-if="accion.reporte">
+                                                <md-menu-item>
                                                     <md-button ng-click="getReport(item)">
                                                         <span md-menu-align-target><i class=" ti-file"></i> PDF</span>
                                                     </md-button>
@@ -156,21 +151,23 @@
                                         </md-menu>
                                     </td>
                                     <td md-cell>{{$index+1}}</td>
-                                    <td md-cell>{{item.tipoDocumento}}</td>
+                                    <td md-cell>{{item.nombreTipoDoc}}</td>
                                     <td md-cell>{{item.nroDoc}}</td>
                                     <td md-cell>{{item.fechaEmision}}</td>
                                     <td md-cell>{{item.observacion}}</td>
-                                    <td md-cell>{{item.usuario}}</td>
+                                    <td md-cell>{{item.nombreUsuario}}</td>
                                     <td md-cell>${{item.total}}</td>
+                                    <td md-cell>{{item.nombreEstado}}</td>
                                 </tr>
                                 <tr class="text-center" ng-show="consolidaciones.length===0">
-                                    <td colspan="8">No hay registros en esta Tabla</td>
+                                    <td colspan="9">No hay registros en esta Tabla</td>
                                 </tr>
                             </tbody>
                             <tfoot md-foot>
                                 <tr md-row>
                                     <td md-cell colspan="7"><strong>Total:</strong></td>
                                     <td md-cell>{{total}}</td>
+                                    <td md-cell></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -184,7 +181,7 @@
                             </select>
                         </div>
                         <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
-                            ng-change="pagechanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                            ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
                             class="pagination" boundary-links="true" rotate="false"></ul>
                     </div>
                 </div>
@@ -195,5 +192,6 @@
 </div>
 @section Scripts {
     <script src="~/lib/xlsx/xlsx.full.min.js" asp-append-version="true"></script>
+    <script src="~/js/restaurant/item.service.min.js" asp-append-version="true"></script>
     <script src="~/js/inventario/controllers/consolidacionInvCtrl.min.js" asp-append-version="true"></script>
 }

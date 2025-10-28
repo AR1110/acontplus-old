@@ -1,36 +1,29 @@
-
-import { inject, Injectable } from "@angular/core";
-import { FacturaFisicaRepository } from "@purchase/domain/repositories/factura-fisica.repository";
+import { inject, Injectable } from '@angular/core';
+import { FacturaFisicaRepository } from '@purchase/domain/repositories/factura-fisica.repository';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FacturaFisicaService {
-  private facturaFisicaRepository = inject(FacturaFisicaRepository)
+  private facturaFisicaRepository = inject(FacturaFisicaRepository);
 
   getDataFilter() {
-    return this.facturaFisicaRepository.getDataFilter()
+    return this.facturaFisicaRepository.getDataFilter();
   }
-
 
   getAll<T>(obj: T) {
-    const params =  {
+    const params = {
       tipo: 1,
-      ...obj
-    }
-    return this.facturaFisicaRepository.getAll(params)
+      ...obj,
+    };
+    return this.facturaFisicaRepository.getAll(params);
   }
-
-
-
 
   getDetalleCompleto(id: number) {
-    return this.facturaFisicaRepository.getDetalleCompleto(id)
+    return this.facturaFisicaRepository.getDetalleCompleto(id);
   }
 
-
-  getDataForm(){
-    return this.facturaFisicaRepository.getDataForm()
+  getDataForm() {
+    return this.facturaFisicaRepository.getDataForm();
   }
-
 }

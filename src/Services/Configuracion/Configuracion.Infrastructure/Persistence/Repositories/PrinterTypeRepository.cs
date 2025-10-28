@@ -2,11 +2,11 @@
 
 public class PrinterTypeRepository(ConfigContext context) : IPrinterTypeRepository
 {
-    public async Task<ApiResponse> GetAsync()
+    public async Task<SpResponse> GetAsync()
     {
         var printerTypes = await context.PrinterTypes.ToListAsync();
         return printerTypes.Count == 0
-            ? new ApiResponse { Code = "0", Message = "No Printer Types Available" }
-            : new ApiResponse { Code = "1", Payload = printerTypes };
+            ? new SpResponse { Code = "0", Message = "No Printer Types Available" }
+            : new SpResponse { Code = "1", Payload = printerTypes };
     }
 }

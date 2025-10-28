@@ -15,11 +15,7 @@ import { UserService } from '@core/services/user.service';
 import { AsyncPipe } from '@angular/common';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput, MatInputModule } from '@angular/material/input';
-import {
-  MatAutocomplete,
-  MatAutocompleteTrigger,
-  MatOption,
-} from '@angular/material/autocomplete';
+import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from '@angular/material/autocomplete';
 import { MatProgressBar } from '@angular/material/progress-bar';
 
 @Component({
@@ -51,7 +47,7 @@ export class UserSearchComponent {
   userSelected = output<{ data: UserSearch }>();
 
   //usar esta funcion para devolver usuario seleccionado
-  selectedChange = output<UserSearch>()
+  selectedChange = output<UserSearch>();
 
   clearSearch = output();
   isSimpleMode = input(true);
@@ -75,7 +71,7 @@ export class UserSearchComponent {
         this.searching = true;
         this.searchFailed = false;
       }),
-      switchMap((term) => {
+      switchMap(term => {
         // If term too short, return empty array
         if (!term || term.length < 2) {
           this.searching = false;
@@ -94,7 +90,7 @@ export class UserSearchComponent {
               this.searchFailed = true;
             },
           }),
-          catchError((error) => {
+          catchError(error => {
             console.error(error);
             return of([]);
           }),
@@ -110,7 +106,7 @@ export class UserSearchComponent {
   onSelect(user: UserSearch) {
     if (user) {
       this.userSelected.emit({ data: user });
-      this.selectedChange.emit(user)
+      this.selectedChange.emit(user);
       // setTimeout(() => {
       //   this.textSearchControl.setValue(user.nombreCompleto);
       // });

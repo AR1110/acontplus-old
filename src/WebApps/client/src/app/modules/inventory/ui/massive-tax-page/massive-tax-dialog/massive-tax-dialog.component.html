@@ -8,8 +8,8 @@
 
 <ng-template #containerTamplate>
   <div class="d-grid gap-2">
-    @if(joinTaxDesc){
-    <h5 class="text-info">{{ joinTaxDesc }}</h5>
+    @if (joinTaxDesc) {
+      <h5 class="text-info">{{ joinTaxDesc }}</h5>
     }
     <div class="d-flex justify-content-between align-items-center">
       <h3 class="card-title">{{ dataForm.title }}</h3>
@@ -27,48 +27,28 @@
     </app-sub-category-group>
 
     <mat-form-field>
-      <mat-label
-        >Impuesto Inicial <span class="text-danger">*</span>
-      </mat-label>
-      <mat-select
-        [(ngModel)]="dataForm.taxIdFrom"
-        (selectionChange)="onChangeTaxFrom()"
-      >
+      <mat-label>Impuesto Inicial <span class="text-danger">*</span> </mat-label>
+      <mat-select [(ngModel)]="dataForm.taxIdFrom" (selectionChange)="onChangeTaxFrom()">
         @for (item of taxRatesFrom; track $index) {
-        <mat-option [value]="item.idTarifaImpuesto">{{
-          item.descripcion
-        }}</mat-option>
+          <mat-option [value]="item.idTarifaImpuesto">{{ item.descripcion }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
 
-    @if(dataForm.taxIdFrom>0){
-    <mat-form-field>
-      <mat-label
-        >Impuesto Destino: <span class="text-danger">*</span></mat-label
-      >
-      <mat-select
-        [(ngModel)]="dataForm.taxIdTo"
-        (selectionChange)="onChangeTaxTo()"
-      >
-        @for (item of taxRatesTo; track $index) {
-        <mat-option [value]="item.idTarifaImpuesto">{{
-          item.descripcion
-        }}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
+    @if (dataForm.taxIdFrom > 0) {
+      <mat-form-field>
+        <mat-label>Impuesto Destino: <span class="text-danger">*</span></mat-label>
+        <mat-select [(ngModel)]="dataForm.taxIdTo" (selectionChange)="onChangeTaxTo()">
+          @for (item of taxRatesTo; track $index) {
+            <mat-option [value]="item.idTarifaImpuesto">{{ item.descripcion }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     }
 
     <mat-form-field>
       <mat-label>Observación</mat-label>
-      <textarea
-        appToUpperCase
-        matInput
-        placeholder="..."
-        [(ngModel)]="dataForm.obs"
-      ></textarea>
+      <textarea appToUpperCase matInput placeholder="..." [(ngModel)]="dataForm.obs"></textarea>
     </mat-form-field>
   </div>
 </ng-template>

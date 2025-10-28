@@ -1,28 +1,27 @@
-import {ApiResponse} from "@core/models/api-response";
-import {ListWarehouseResponse} from "@inventory/domain/models/warehouse.model";
+import { ApiResponse } from '@core/models/api-response';
+import { ListWarehouseResponse } from '@inventory/domain/models/warehouse.model';
 
 export class ListWarehouseMapper {
-  static fromJson(response:ApiResponse): ListWarehouseResponse{
+  static fromJson(response: ApiResponse): ListWarehouseResponse {
     const result = new ListWarehouseResponse();
-    if(response.code==="1"){
+    if (response.code === '1') {
       const warehouses = JSON.parse(response.payload as any);
-      result.data = warehouses.map((item:any, index: number)=>{
+      result.data = warehouses.map((item: any, index: number) => {
         return {
-          index: index+1,
-          "idBodega": item.idBodega,
-          "codEstab": item.codEstab,
-          "descripcion": item.descripcion,
-          "telefono": item.telefono,
-          "direccion": item.direccion,
-          "estado": item.estado,
-          nomEstab:item.nombreComercial,
-          "totalRecords": item.totalRecords,
-          nomEstado: item.estado?'Activo': 'Inactivo'
+          index: index + 1,
+          idBodega: item.idBodega,
+          codEstab: item.codEstab,
+          descripcion: item.descripcion,
+          telefono: item.telefono,
+          direccion: item.direccion,
+          estado: item.estado,
+          nomEstab: item.nombreComercial,
+          totalRecords: item.totalRecords,
+          nomEstado: item.estado ? 'Activo' : 'Inactivo',
         };
-      })
+      });
     }
 
-    return result
-
+    return result;
   }
 }

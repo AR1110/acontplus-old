@@ -4,8 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-compra-no-habitual',
   imports: [],
   templateUrl: './compra-no-habitual.component.html',
-  styles: ``
+  styles: ``,
 })
-export class CompraNoHabitualComponent {
-
-}
+export class CompraNoHabitualComponent {}

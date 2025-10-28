@@ -1,5 +1,5 @@
+using Acontplus.Core.Extensions;
 using System.Security.Cryptography.X509Certificates;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Configuracion.API.Controllers;
 
@@ -13,7 +13,7 @@ public class FirmaElectronicaController(
     {
         var parameters = new Dictionary<string, object>
         {
-            { "idUsuarioRol", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
+            { "userRoleId", User.GetClaimValue<int>(UserRoleId) }, { "json", SqlStringParam.Sanitize(json) }
         };
         return Ok(await firmaElectronicaService.GetAsync(parameters));
     }
@@ -22,7 +22,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> Post(string json, IFormFile file)
     {
         if (file.ContentType != "application/x-pkcs12")
-            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+            return Ok(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
 
         var signFile = new FileModel
         {
@@ -30,7 +30,7 @@ public class FirmaElectronicaController(
             ContentType = file.ContentType,
             Content = FileData.GetFileByte(file)
         };
-        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+        var data = JsonExtensions.DeserializeOptimized<FirmaElectronica>(json);
 
         var cert = new X509Certificate2(signFile.Content, data.contrasenia,
                   X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
@@ -53,7 +53,7 @@ public class FirmaElectronicaController(
     [HttpPut("Put")]
     public async Task<IActionResult> Put(string json)
     {
-        var data = JsonConvert.DeserializeObject<FirmaElectronica>(json);
+        var data = JsonExtensions.DeserializeOptimized<FirmaElectronica>(json);
 
         var parameters = new Dictionary<string, object>
         {
@@ -69,7 +69,7 @@ public class FirmaElectronicaController(
     public async Task<IActionResult> UpdateSignature(int id, [FromForm] IFormFile file, [FromForm] string contrasenia)
     {
         if (file.ContentType != "application/x-pkcs12")
-            return Ok(new ApiResponse { Code = "0", Message = "Formato de archivo no soportado" });
+            return Ok(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
 
         var signFile = new FileModel
         {

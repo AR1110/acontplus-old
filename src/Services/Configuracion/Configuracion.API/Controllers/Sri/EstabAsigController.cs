@@ -1,13 +1,17 @@
-﻿namespace Configuracion.API.Controllers.Sri;
+namespace Configuracion.API.Controllers.Sri;
 
-public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService)
-    : BaseApiController
+public class EstabAsigController(IEstablecimientoAsignacionService establecimientoAsignacionService) : BaseApiController
 {
+    private const string UserRoleClaimType = "userRoleId";
+
     [HttpGet]
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
+    {
+        { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+        { "json", json }
+    };
         var response = await establecimientoAsignacionService.GetAsync(parameters);
         return Ok(response);
     }
@@ -16,18 +20,23 @@ public class EstabAsigController(IEstablecimientoAsignacionService establecimien
     public async Task<IActionResult> GetDataForm(string json)
     {
         var parameters = new Dictionary<string, object>
-            { { "idRol", User.GetClaimValue<int>("userRoleId") }, { "json", json } };
-        var response = await establecimientoAsignacionService.GetDataFormAsync(parameters);
-        return Ok(response);
+    {
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "json", json }
+    };
+        return Ok(await establecimientoAsignacionService.GetDataFormAsync(parameters));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ApiRequest request)
+    public async Task<IActionResult> Post([FromBody] EstablishmentDto data)
     {
-        request.FromMobile = HttpContext.Items["FromMobile"] as bool? ?? false;
-        request.UserRoleId = User.GetClaimValue<int>("userRoleId");
-        var response = await establecimientoAsignacionService.AddAsync(request);
-        return Ok(response);
+        var parameters = new Dictionary<string, object>
+    {
+      { "userRoleId", User.GetClaimValue<int>(UserRoleClaimType) },
+      { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false },
+      { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<EstablishmentDto>(data)) },
+    };
+        return Ok(await establecimientoAsignacionService.AddAsync(parameters));
     }
 
     [HttpPut("{id}")]

@@ -13,7 +13,7 @@
 
 .tabulator .tabulator-header {
   font-weight: bold !important;
-  color: rgba(0,0,0,.54) !important;
+  color: rgba(0, 0, 0, 0.54) !important;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   background-color: #f5f5f5;
 }
@@ -30,7 +30,7 @@
 
 .tabulator-row.tabulator-selectable:hover,
 .tabulator-row:hover {
-  background-color: #C9DDE1 !important;
+  background-color: #c9dde1 !important;
 }
 
 // Cell styles
@@ -43,8 +43,8 @@
   background-color: rgb(229 194 233 / 25%);
 }
 .table-salidas {
-  background-color: rgba(219,125,125,0.25);
+  background-color: rgba(219, 125, 125, 0.25);
 }
 .table-saldos {
-  background-color: rgba(46,155,92,.34);
+  background-color: rgba(46, 155, 92, 0.34);
 }

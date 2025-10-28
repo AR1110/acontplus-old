@@ -1,4 +1,4 @@
-﻿namespace Configuracion.API.Controllers;
+namespace Configuracion.API.Controllers;
 
 public class UserCustomerRequestController(IUserCustomerRequestService userCustomerRequestService) : BaseApiController
 {
@@ -6,9 +6,9 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
     public async Task<IActionResult> Get(string json)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
+    };
         var response = await userCustomerRequestService.GetAsync(parameters);
         if (response == null) return NoContent();
 
@@ -17,25 +17,25 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
 
 
     [HttpPost]
-    public async Task<IActionResult> Post(ApiRequest data)
+    public async Task<IActionResult> Post(CreateUserCustomerRequestDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateUserCustomerRequestDto>(data)) }
+    };
         var response = await userCustomerRequestService.AddAsync(parameters);
         return Ok(response);
     }
 
     [HttpPut]
-    public async Task<IActionResult> Put(ApiRequest data)
+    public async Task<IActionResult> Put(UpdateUserCustomerRequestDto data)
     {
         var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "json", SqlStringParam.Sanitize(DataConverters.SerializeDictionary(data.Data)) }
-        };
+    {
+        { "userRoleId", User.GetClaimValue<int>("userRoleId") },
+        { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateUserCustomerRequestDto>(data)) }
+    };
         var response = await userCustomerRequestService.UpdateAsync(parameters);
         if (response == null) return NoContent();
 

@@ -1,23 +1,19 @@
 ﻿namespace Configuracion.Application.Services;
 
-public class EstadoDocumentoService : IEstadoDocumentoService
+public class EstadoDocumentoService(IAdoRepository adoRepository) : IEstadoDocumentoService
 {
-    private readonly IAdoRepository _repository;
-
-    public EstadoDocumentoService(IAdoRepository repository)
+    public async Task<SpResponse> GetAsync(string json)
     {
-        _repository = repository;
-    }
-
-    public async Task<LegacyApiResponse> GetAsync(string json)
-    {
-        var data = new LegacyApiResponse();
-        var estados = await _repository.DynamicListAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
-            new Dictionary<string, object> { { "json", SqlStringParam.Sanitize(json) } });
+        var data = new SpResponse
+        {
+            Code = "0"
+        };
+        var estados = await adoRepository.QueryAsync<EstadoPago>("Gestion.EstadoDocumento_Get",
+            new Dictionary<string, object> { { "json", json } });
         if (estados.Count > 0)
         {
-            data.code = "1";
-            data.data = estados;
+            data.Code = "1";
+            data.Payload = estados;
         }
 
         return data;

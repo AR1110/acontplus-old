@@ -5,16 +5,13 @@ import {
   Input,
   OnChanges,
   OnDestroy,
+  output,
   Output,
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
+import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import {
-  PageModule,
-  ReactiveDataModule,
-  TabulatorFull as Tabulator,
-} from 'tabulator-tables';
 
 Tabulator.registerModule([PageModule, ReactiveDataModule]);
 
@@ -40,8 +37,10 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
    */
   @Input() theme: 'default' | 'semantic-ui' = 'default';
 
-  @Output() cellEdited = new EventEmitter<unknown>();
-  @Output() cellClick = new EventEmitter<unknown>();
+   cellEdited = output<unknown>();
+   cellClick = output<unknown>();
+
+  rowDeleted = output<any>();
 
   uniqueIdTabulator: string = generateUuidv4();
   public get refTabulator(): Tabulator {
@@ -65,7 +64,6 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.initializeTable();
       this.applyTheme();
-      this.registerEvents();
     });
   }
 
@@ -82,7 +80,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     if (container) {
       // Remove any existing theme classes
       container.classList.remove('tabulator-default', 'tabulator-sematicui');
-      
+
       // Add the appropriate theme class
       if (this.theme === 'semantic-ui') {
         container.classList.add('tabulator-sematicui');
@@ -92,7 +90,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
     }
   }
 
-  private initializeTable(attempt: number = 0): void {
+  private initializeTable(attempt = 0): void {
     // Safety check - don't try more than 5 times
     if (attempt > 5) {
       console.error('Failed to initialize Tabulator after multiple attempts');
@@ -101,25 +99,27 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
     const tableElement = document.getElementById(this.uniqueIdTabulator);
     if (!tableElement) {
-      console.warn(`Table element with id ${this.uniqueIdTabulator} not found, retrying... (attempt ${attempt + 1}/5)`);
+      console.warn(
+        `Table element with id ${this.uniqueIdTabulator} not found, retrying... (attempt ${attempt + 1}/5)`,
+      );
       setTimeout(() => this.initializeTable(attempt + 1), 200);
       return;
     }
-    
+
     try {
       // Clear any existing Tabulator instance
       if (this._refTabulator) {
         this._refTabulator.destroy();
       }
-      
+
       // Clear the container
       while (this.tabContainer.firstChild) {
         this.tabContainer.removeChild(this.tabContainer.firstChild);
       }
-      
+
       // Append the tab container to the target element
       tableElement.appendChild(this.tabContainer);
-      
+
       this._refTabulator = new Tabulator(this.tabContainer, {
         renderVerticalBuffer: 300,
         columns: this.columnNames,
@@ -127,7 +127,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
         dataTree: this.dataTree,
         dataTreeChildField: this.dataTreeChildField,
         renderVertical: 'virtual',
-        dataTreeSelectPropagate: true,
+        dataTreeSelectPropagate: this.dataTree,
         dataTreeStartExpanded: this.dataTreeStartExpanded,
         height: this.height,
         layout: 'fitData',
@@ -137,7 +137,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
         selectableRows: true,
         ...this.options,
       });
-      
+
       this.registerEvents();
       console.log('Tabulator initialized successfully');
     } catch (error) {
@@ -151,7 +151,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
         }
         this._refTabulator = null as any;
       }
-      
+
       // Retry after a delay
       if (attempt < 5) {
         console.log(`Retrying Tabulator initialization (attempt ${attempt + 1}/5)...`);
@@ -161,11 +161,15 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
   }
 
   private registerEvents(): void {
-    this._refTabulator.on('cellEdited', (cell) => {
+    this._refTabulator.on('cellEdited', cell => {
       this.cellEdited.emit(cell);
     });
     this._refTabulator.on('rowClick', (e, row) => {
       this.cellClick.emit(row);
+    });
+
+    this._refTabulator.on('rowDeleted', (row) => {
+      this.rowDeleted.emit(row);
     });
   }
 
