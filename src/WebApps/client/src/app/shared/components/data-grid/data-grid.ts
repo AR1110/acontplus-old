@@ -121,6 +121,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   // Expansion
   expandable = input<boolean>(false);
   expansionTemplate = input<TemplateRef<any> | null>(null);
+  closeOthersOnExpand = input(false)
 
   // Pagination
   pageOnFront = input<boolean>(true);
@@ -446,6 +447,10 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
 
   onExpansionChange(expansionRef: DataGridExpansionToggle, rowData: Record<string, any>, column: DataGridColumn, index: number) {
     const currentStates = structuredClone(this.expansionRowStates());
+
+    if(this.closeOthersOnExpand()){
+      currentStates.forEach(item => item.expanded = false)
+    }
     if (currentStates[index]) {
       currentStates[index].expanded = expansionRef.opened;
       this.expansionRowStates.set(currentStates);

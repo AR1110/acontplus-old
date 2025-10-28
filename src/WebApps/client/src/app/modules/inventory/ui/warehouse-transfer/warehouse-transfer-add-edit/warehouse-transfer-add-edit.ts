@@ -352,7 +352,7 @@ export class WarehouseTransferAddEdit implements OnInit {
         },
       })
       .subscribe(result => {
-        if(result && typeof result === 'object'){ 
+        if(result && typeof result === 'object'){
           const merge = [...this.details(), ...result.rowSelected].reduce((acc, item) => {
             acc[item.productId] = item;
             return acc;

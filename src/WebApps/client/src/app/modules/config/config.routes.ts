@@ -1,6 +1,6 @@
 import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
 import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-signature/electronic-signature.component';
-import { EstablishmentPageComponent } from '@modules/config/ui/establishment-page/establishment-page.component';
+import { EstablishmentPage } from '@modules/config/ui/establishment-page/establishment-page';
 import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
 import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
 import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
@@ -80,7 +80,7 @@ export const routes: Routes = [
   {
     path: 'establishment',
     title: 'Establecimiento',
-    component: EstablishmentPageComponent,
+    component: EstablishmentPage,
     data: {
       breadcrumb: 'Establecimiento',
     },
