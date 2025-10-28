@@ -11,9 +11,9 @@ CREATE OR ALTER VIEW Restaurant.v_Ingredient WITH SCHEMABINDING AS (
 		,i.[Content]
 		,i.[CreatedAt]
 		,i.[UpdatedAt]
-		,i.[Enabled]
-		,i.[Deleted]
-		,i.[UserId]
+		,i.IsActive
+		,i.IsDeleted
+		,i.CreatedByUserId
 		,it.[Name] IngredienType
 		,a.descripcion ProductName
         ,ISNULL(a.llevaInventario, 0) Inventario

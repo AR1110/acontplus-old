@@ -11,9 +11,9 @@ CREATE OR ALTER VIEW Restaurant.v_Item WITH SCHEMABINDING AS (
 		,i.Content
 		,i.CreatedAt
 		,i.UpdatedAt
-		,i.[Enabled]
-		,i.Deleted
-		,i.UserId
+		,i.IsActive
+		,i.IsDeleted
+		,i.CreatedByUserId
 		,a.idArticulo
         ,a.descripcion productName
 	FROM Restaurant.Item i WITH (NOLOCK)

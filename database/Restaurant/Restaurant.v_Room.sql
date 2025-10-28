@@ -11,10 +11,9 @@ AS
 		,description		= rr.Description
 		,capacity			= rr.Capacity
 		,createdAt			= rr.CreatedAt
-		,updatedAt			= rr.UpdatedAt
-			,enabled		= rr.IsActive
-		,deleted		= rr.IsDeleted
-		,userId				= rr.UserId
+	    ,rr.IsActive
+		,rr.IsDeleted
+	    ,rr.CreatedByUserId
 		,floorId			= rr.FloorId
 		,floorDescription	= rf.Description
         ,rf.codEstab

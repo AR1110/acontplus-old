@@ -10,11 +10,9 @@ SELECT  rt.Id
     ,rt.capacity
     ,rt.CreatedAt
     ,rt.UpdatedAt
-    ,rt.[Enabled]
     ,rt.IsActive
-    ,rt.[Deleted]
     ,rt.IsDeleted
-    ,rt.[UserId]
+    ,rt.CreatedByUserId
     ,rt.RoomId
     ,roomDescription = rr.[Description]
     ,rt.Assigned

@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Domain.Entities;
+namespace Restaurant.Domain.Entities;
 
 [Table("Order", Schema = "Restaurant")]
 public class Order : BaseEntity
@@ -6,7 +6,7 @@ public class Order : BaseEntity
     public Guid Uuid { get; set; }
     public int EstablecimientoId { get; set; }
     public int PuntoEmisionId { get; set; }
-    public required AppTable AppTable { get; set; }
+    public AppTable? AppTable { get; set; }
     public int? TableId { get; set; }
     public int Sequence { get; set; }
 

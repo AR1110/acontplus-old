@@ -12,9 +12,9 @@ CREATE OR ALTER VIEW Restaurant.v_Recipe WITH SCHEMABINDING AS (
 		,r.[NetWeight]
 		,r.[CreatedAt]
 		,r.[UpdatedAt]
-		,r.[Enabled]
-		,r.[Deleted]
-		,r.[UserId]
+		,r.IsActive
+		,r.IsDeleted
+		,r.CreatedByUserId
 		,a.idArticulo ProductId
 		,a.descripcion ProductName
 		,Ingredient = (
@@ -26,4 +26,3 @@ CREATE OR ALTER VIEW Restaurant.v_Recipe WITH SCHEMABINDING AS (
 		INNER JOIN dbo.Articulo a WITH (NOLOCK) ON i.ProductId = a.idArticulo 
 )
 
- 

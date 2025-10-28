@@ -17,12 +17,12 @@ namespace Restaurant.Api.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.5")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Restaurant.Api.Entities.AppTable", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.AppTable", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,20 +37,23 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -61,25 +64,14 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("NumberTable")
                         .HasColumnType("int");
@@ -90,10 +82,12 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -103,7 +97,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Table", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Floor", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Floor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,19 +122,26 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -151,18 +152,8 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -174,21 +165,44 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Floor_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_Floor_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Floor_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Floor_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_Floor_Status");
 
                     b.ToTable("Floor", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Ingredient", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -201,46 +215,38 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<int?>("IngredientTypeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -259,10 +265,12 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -272,7 +280,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Ingredient", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.IngredientType", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.IngredientType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -288,32 +296,29 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -325,6 +330,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -332,12 +342,15 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -346,10 +359,25 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UX_IngredientType_Code");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_IngredientType_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_IngredientType_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_IngredientType_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_IngredientType_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_IngredientType_Status");
+
                     b.ToTable("IngredientType", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Item", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -366,49 +394,47 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                    b.Property<bool?>("ForPromotion")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Instructions")
                         .IsUnicode(false)
                         .HasColumnType("varchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
                     b.Property<string>("Recipe")
@@ -420,13 +446,23 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("Title")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<int?>("Unit")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -434,7 +470,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Item", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.ItemType", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.ItemType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -450,32 +486,29 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -487,6 +520,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -494,12 +532,15 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -508,10 +549,25 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UX_ItemType_Code");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_ItemType_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_ItemType_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_ItemType_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_ItemType_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_ItemType_Status");
+
                     b.ToTable("ItemType", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Menu", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -525,35 +581,32 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<bool>("ForPromotion")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -561,6 +614,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -583,22 +641,40 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Menu_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_Menu_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Menu_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Menu_IsDeleted");
+
                     b.HasIndex("MenuTypeId");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_Menu_Status");
 
                     b.ToTable("Menu", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.MenuItem", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -607,52 +683,46 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<decimal?>("DiscountValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
@@ -661,18 +731,22 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Quantity")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<decimal?>("Subtotal")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -684,7 +758,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("MenuItem", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.MenuType", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -700,32 +774,29 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -737,6 +808,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -744,12 +820,15 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -758,10 +837,25 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnique()
                         .HasDatabaseName("UX_MenuType_Code");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_MenuType_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_MenuType_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_MenuType_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_MenuType_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_MenuType_Status");
+
                     b.ToTable("MenuType", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Order", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -774,8 +868,14 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
@@ -783,18 +883,20 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int>("CustomerCompanyId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Discount")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<bool>("Divided")
@@ -802,20 +904,10 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Finished")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("FromMobile")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -826,6 +918,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -851,24 +948,30 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Tax")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<int?>("TaxPercentId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Tip")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Uuid")
@@ -878,10 +981,25 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasIndex("AppTableId");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Order_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_Order_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Order_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Order_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_Order_Status");
+
                     b.ToTable("Order", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderDocument", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -890,20 +1008,23 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -911,25 +1032,14 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int?>("DocumentoId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -940,10 +1050,12 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -953,7 +1065,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("OrderDocument", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderItem", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -965,52 +1077,46 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Cost")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Discount")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
-
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("ItemId")
                         .HasColumnType("int");
@@ -1036,12 +1142,15 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<decimal?>("RemainingQuantity")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<int?>("TaxId")
@@ -1051,18 +1160,22 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TaxValue")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<decimal>("Total")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), not null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.Property<Guid>("Uuid")
@@ -1081,7 +1194,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("OrderItem", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderKitchen", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderKitchen", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1096,57 +1209,52 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Progress")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1156,7 +1264,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("OrderKitchen", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.ProductionArea", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.ProductionArea", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1171,20 +1279,23 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(5)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -1195,36 +1306,27 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1232,7 +1334,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("ProductionArea", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Promotion", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Promotion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1247,20 +1349,23 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -1271,31 +1376,20 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("EstablecimientoId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<string>("PromotionDays")
                         .IsUnicode(false)
@@ -1317,10 +1411,12 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1328,7 +1424,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Promotion", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.PromotionMenu", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.PromotionMenu", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1337,43 +1433,35 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MenuId")
                         .HasColumnType("int");
@@ -1384,10 +1472,12 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -1399,7 +1489,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("PromotionMenu", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Recipe", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Recipe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1408,39 +1498,33 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal?>("CostPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("ExtentId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<int>("IngredientId")
                         .HasColumnType("int");
@@ -1450,19 +1534,19 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(max)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
 
                     b.Property<int>("ItemId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("NetWeight")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.Property<double>("Quantity")
@@ -1474,13 +1558,16 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.Property<decimal?>("Weight")
+                        .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,5), null");
 
                     b.HasKey("Id");
@@ -1492,7 +1579,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Recipe", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Room", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Room", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1511,19 +1598,26 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Deleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
@@ -1534,18 +1628,8 @@ namespace Restaurant.Api.Data.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<bool>("Enabled")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
                     b.Property<int>("FloorId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("FromMobile")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -1557,25 +1641,48 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<int?>("UpdatedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Room_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_Room_CreatedByUserId");
+
                     b.HasIndex("FloorId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_Room_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Room_IsDeleted");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_Room_Status");
 
                     b.ToTable("Room", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.AppTable", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.AppTable", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Room", "Room")
+                    b.HasOne("Restaurant.Domain.Entities.Room", "Room")
                         .WithMany("Tables")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1584,33 +1691,33 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Ingredient", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Ingredient", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.IngredientType", "IngredientType")
+                    b.HasOne("Restaurant.Domain.Entities.IngredientType", "IngredientType")
                         .WithMany()
                         .HasForeignKey("IngredientTypeId");
 
                     b.Navigation("IngredientType");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Menu", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.MenuType", "MenuType")
+                    b.HasOne("Restaurant.Domain.Entities.MenuType", "MenuType")
                         .WithMany()
                         .HasForeignKey("MenuTypeId");
 
                     b.Navigation("MenuType");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.MenuItem", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.MenuItem", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Item", "Item")
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Api.Entities.Menu", "Menu")
+                    b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
                         .WithMany("MenuItems")
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1621,18 +1728,18 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Menu");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Order", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.AppTable", "AppTable")
+                    b.HasOne("Restaurant.Domain.Entities.AppTable", "AppTable")
                         .WithMany()
                         .HasForeignKey("AppTableId");
 
                     b.Navigation("AppTable");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderDocument", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Order", "Order")
+                    b.HasOne("Restaurant.Domain.Entities.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1641,23 +1748,23 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderItem", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Item", "Item")
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId");
 
-                    b.HasOne("Restaurant.Api.Entities.ItemType", "ItemType")
+                    b.HasOne("Restaurant.Domain.Entities.ItemType", "ItemType")
                         .WithMany()
                         .HasForeignKey("ItemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Api.Entities.Menu", "Menu")
+                    b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
                         .WithMany()
                         .HasForeignKey("MenuId");
 
-                    b.HasOne("Restaurant.Api.Entities.Order", "Order")
+                    b.HasOne("Restaurant.Domain.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1672,9 +1779,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.OrderKitchen", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderKitchen", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Order", "Order")
+                    b.HasOne("Restaurant.Domain.Entities.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1683,15 +1790,15 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.PromotionMenu", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.PromotionMenu", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Menu", "Menu")
+                    b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
                         .WithMany()
                         .HasForeignKey("MenuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Api.Entities.Promotion", "Promotion")
+                    b.HasOne("Restaurant.Domain.Entities.Promotion", "Promotion")
                         .WithMany()
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1702,15 +1809,15 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Promotion");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Recipe", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Recipe", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Ingredient", "Ingredient")
+                    b.HasOne("Restaurant.Domain.Entities.Ingredient", "Ingredient")
                         .WithMany()
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Api.Entities.Item", "Item")
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
                         .WithMany()
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1721,9 +1828,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Item");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Room", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Room", b =>
                 {
-                    b.HasOne("Restaurant.Api.Entities.Floor", "Floor")
+                    b.HasOne("Restaurant.Domain.Entities.Floor", "Floor")
                         .WithMany("Rooms")
                         .HasForeignKey("FloorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1732,22 +1839,22 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Floor");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Floor", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Floor", b =>
                 {
                     b.Navigation("Rooms");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Menu", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>
                 {
                     b.Navigation("MenuItems");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Order", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Restaurant.Api.Entities.Room", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Room", b =>
                 {
                     b.Navigation("Tables");
                 });

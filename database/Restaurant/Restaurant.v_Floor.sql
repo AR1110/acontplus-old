@@ -12,10 +12,10 @@ SELECT id				= rf.Id
 		,capacity		= rf.Capacity
 		,createdAt		= rf.CreatedAt
 		,updatedAt		= rf.UpdatedAt
-		,enabled		= rf.IsActive
-		,deleted		= rf.IsDeleted
+		,rf.IsActive
+		,rf.IsDeleted
 		,codEstab		= rf.CodEstab
-		,userId			= rf.UserId
+		,rf.CreatedByUserId
 FROM Restaurant.[Floor] rf
 
 
