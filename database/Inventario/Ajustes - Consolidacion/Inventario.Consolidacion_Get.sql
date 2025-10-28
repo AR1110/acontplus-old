@@ -46,8 +46,8 @@ BEGIN
     --> Get
 	IF @tipo = 1
 		BEGIN
-            
             SET @tableNames = 'consolidaciones'
+
             DECLARE @secuencial VARCHAR(40)
             DECLARE @tipoDocId INT 
             DECLARE @textSearch VARCHAR(50)
@@ -78,10 +78,11 @@ BEGIN
 				              ,ci.total
 				              ,dbo.AFTGenerarNroDocumento(es.estab+pe.ptoEmi,ci.nroDoc) as nroDoc
 				              ,ep.descripcion                                           as estadoDoc
-				              ,ep.codigo                                                as codDoc
+				              ,ep.codigo                                                as codEstado
 				              ,us.nombreUsuario                                         as usuario
 				              ,IIF(ep.codigo = ''A'',''table-danger'','''')             as style
                               ,td.descripcion                                           as tipoDocumento
+                              ,td.codigo                                                as codDoc
                               ,COUNT(*) OVER()                                          as totalRecords
 			            FROM dbo.ConsolidacionInventario    ci WITH (NOLOCK)
 			            INNER JOIN dbo.PuntoEmision         pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
@@ -96,9 +97,9 @@ BEGIN
                           ,@fechaFin    DATETIME2
                           ,@pageIndex   INT
                           ,@pageSize    INT
-                          ,@secuencial VARCHAR(40)
-                          ,@tipoDocId INT 
-                          ,@textSearch VARCHAR(50)'
+                          ,@secuencial  VARCHAR(40)
+                          ,@tipoDocId   INT 
+                          ,@textSearch  VARCHAR(50)'
 
             IF @tipoDocId >0
                 BEGIN
@@ -139,8 +140,7 @@ BEGIN
 	--> DataForm
     IF @tipo = 2
 		BEGIN
-            
-            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tiposTransaccion,tipoDocumento'
+            SET @tableNames = 'ptoEmision,bodegas,subFamilia,decimales,tipoMovimientos,tipoDocumento,tipoTransaccion'
 
 			SELECT * FROM v_PtoEmi_Asign WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
 			
@@ -150,9 +150,11 @@ BEGIN
 			
             SELECT * FROM Config.v_Sistema_Decimal WITH(NOLOCK) WHERE idEntidad = @idEntidad AND codTrasaccion = 'AL' 
 
-            SELECT idTipoTransaccion,codigo,descripcion FROM Inventario.TipoTransaccion WHERE codigo IN ('A','S','E') AND estado = 1
+            SELECT Id,Code,[Description] FROM Inventario.MovementType WHERE Code IN ('A','S','E') AND IsActive = 1
 
-            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OR')
+            SELECT idTipoDocumento,codigo,descripcion FROM Inventario.TipoDocumento WHERE codigo IN ('CI','BI','EI','OP') AND estado = 1
+
+            SELECT * FROM Inventario.TipoTransaccion WHERE estado = 1 AND codigo IN ('A','S','E')
 
             RETURN 
 		END
@@ -436,5 +438,163 @@ BEGIN
             SELECT * FROM @tbDetail WHERE codigo NOT IN (SELECT codigo FROM Articulo WHERE idEntidad = @idEntidad AND estado = 1 AND llevaInventario = 1)
 
             RETURN 
+        END
+
+    --> Detalle para duplicar los ordenes de produccion
+    IF @tipo = 7
+        BEGIN
+            SET @tableNames = 'comprobante,menus,components'
+
+            DECLARE @siglaSubFamilia VARCHAR(20)
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            IF EXISTS (SELECT cd.idConsolidacionInventarioDetalle
+	                FROM dbo.ConsolidacionInventarioDetalle cd 
+	                INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
+	                WHERE cd.idConsolidacionInventario = @id 
+                      AND cd.estado = 1
+                      AND ar.siglaFamilia = 'COM')
+                BEGIN
+                    SET @siglaSubFamilia = 'COM'
+                END
+            ELSE
+                BEGIN
+                    SET @siglaSubFamilia = 'RES'
+                END
+
+	        SELECT ci.idConsolidacionInventario
+		          ,ci.idTipoDocumento
+                  ,ci.fechaEmision 
+		          ,ci.observacion
+		          ,ci.total
+		          ,ci.idPuntoEmision
+		          ,es.codEstab
+	        FROM dbo.ConsolidacionInventario ci WITH (NOLOCK)
+	        INNER JOIN dbo.PuntoEmision      pe WITH (NOLOCK) ON pe.idPuntoEmision    = ci.idPuntoEmision
+	        INNER JOIN Sri.Establecimiento   es WITH (NOLOCK) ON es.idEstablecimiento = pe.idEstablecimiento
+	        WHERE ci.idConsolidacionInventario = @id
+
+	        SELECT cd.idConsolidacionInventarioDetalle
+		          ,cd.idBodega
+		          ,cd.idArticulo
+		          ,cd.idMedida
+		          ,cd.descripcion
+		          ,cd.cantidad
+		          ,cd.precioCosto
+		          ,cd.precioActual     as precioUnitario
+                  ,cd.uniqueId
+                  ,ar.codigo
+		          ,ar.stock
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida
+                              ,me.descripcion as medida
+                              ,ar.precioCosto
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                              ,af.conversion
+                        FROM ArticuloFraccionado af WITH (NOLOCK) 
+                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = cd.idArticulo 
+                        FOR JSON PATH
+
+                    ),'[]') as fraccionado 
+
+                   ,(
+                        SELECT me.idMedida 
+                              ,me.descripcion as medida
+                              ,a.precioCosto 
+                              ,a.precioCosto  as precioUnitario
+                              ,a.precioCosto  as precioCostoFraccionado
+                              ,1 as conversion
+                        FROM Articulo      a WITH (NOLOCK) 
+                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
+                        WHERE a.idArticulo = cd.idArticulo 
+                        FOR JSON PATH
+
+                    ) as principal
+                  ,cd.estado
+	        FROM dbo.ConsolidacionInventarioDetalle cd 
+	        INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
+	        WHERE cd.idConsolidacionInventario = @id 
+              AND cd.estado = 1
+              AND ar.siglaFamilia = @siglaSubFamilia
+            ORDER BY cd.idConsolidacionInventarioDetalle ASC
+
+            SELECT cd.idConsolidacionInventarioDetalle
+		          ,cd.idBodega
+		          ,cd.idArticulo
+		          ,cd.idMedida
+		          ,cd.descripcion
+		          ,cd.cantidad
+		          ,cd.precioCosto
+		          ,cd.precioActual as precioUnitario
+                  ,cd.uniqueId
+		          ,ar.codigo
+		          ,ar.stock
+                  ,ISNULL
+                   ((
+                        SELECT me.idMedida
+                              ,me.descripcion as medida
+                              ,ar.precioCosto
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                              ,af.conversion
+                        FROM ArticuloFraccionado af WITH (NOLOCK) 
+                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
+                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = cd.idArticulo 
+                        FOR JSON PATH
+
+                    ),'[]') as fraccionado 
+
+                   ,(
+                        SELECT me.idMedida 
+                              ,me.descripcion as medida
+                              ,a.precioCosto 
+                              ,a.precioCosto  as precioUnitario
+                              ,a.precioCosto  as precioCostoFraccionado
+                              ,1 as conversion
+                        FROM Articulo      a WITH (NOLOCK) 
+                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
+                        WHERE a.idArticulo = cd.idArticulo 
+                        FOR JSON PATH
+
+                    ) as principal
+                  ,cd.estado
+	        FROM dbo.ConsolidacionInventarioDetalle cd 
+	        INNER JOIN dbo.Articulo                 ar ON ar.idArticulo   = cd.idArticulo
+	        WHERE cd.idConsolidacionInventario = @id 
+              AND cd.estado = 1
+              AND cd.idConsolidacionInventarioDetalle NOT  IN
+              (
+                    SELECT cd.idConsolidacionInventarioDetalle
+	                FROM dbo.ConsolidacionInventarioDetalle cd 
+	                INNER JOIN Inventario.v_Articulo        ar ON ar.idArticulo = cd.idArticulo
+	                WHERE cd.idConsolidacionInventario = @id 
+                      AND cd.estado = 1
+                      AND ar.siglaFamilia = @siglaSubFamilia
+              )
+            ORDER BY cd.idConsolidacionInventarioDetalle ASC
+
+            RETURN
+        END
+
+    --> Detalle para anular documentos de movimientos de inventario
+    IF @tipo = 8
+        BEGIN
+            DECLARE @idTipoDocumento INT, @idTransaccion INT
+
+            SET @tableNames = 'detalles'
+
+            SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
+
+            SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM dbo.ConsolidacionInventario WITH (NOLOCK) WHERE idConsolidacionInventario =  @id
+
+            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idDocumento = @id AND idTipoDocumento = @idTipoDocumento
+
+            SELECT * FROM Inventario.TransaccionDetalle WHERE idTransaccion = @idTransaccion
         END 
 END

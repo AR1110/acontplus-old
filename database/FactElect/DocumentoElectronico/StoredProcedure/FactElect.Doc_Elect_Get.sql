@@ -256,24 +256,35 @@ BEGIN
             --> Validacion para procedo de anular documento
             IF @fechaEmision IS NOT NULL
                 BEGIN
-                    SET @fechaAnulacion =
-                    (
-                        SELECT DATEADD
-                           (
-                                DAY,
-                                CASE 
-                                    WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 6 THEN 2 -- Sábado → lunes
-                                    WHEN DATEPART(WEEKDAY, DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)) = 7 THEN 1 -- Domingo → lunes
-                                    ELSE 0
-                                END,
-                                DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)), MONTH(DATEADD(MONTH, 1, @fechaEmision)), 10)
-                           )
-                    )
-                    --> Normativa para solo permitir anular documento solo dentro de la fecha que corresponde en este caso los 10 del siguiente mes de la fecha de emision
-                    IF GETDATE() > @fechaAnulacion
+                    DECLARE @feriados TABLE (fecha DATE)
+
+                    SET @fechaAnulacion = DATEFROMPARTS(YEAR(DATEADD(MONTH, 1, @fechaEmision)),MONTH(DATEADD(MONTH, 1, @fechaEmision)),7)
+
+                    -- 🔹 Agrega aquí los feriados que quieras excluir
+                    INSERT INTO @feriados (fecha)
+                    VALUES ('2025-10-09'),('2025-10-10')
+
+                    -- 🔹 Ajustar si cae sábado o domingo
+                    IF DATEPART(WEEKDAY, @fechaAnulacion) IN (7, 1)
+                        BEGIN
+                            SET @fechaAnulacion = DATEADD(DAY, 1, @fechaAnulacion)
+                        END 
+                        
+                    -- 🔹 Ajustar por feriados
+                    IF EXISTS (SELECT 1 FROM @feriados WHERE fecha BETWEEN @fechaAnulacion AND DATEADD(DAY, 3, @fechaAnulacion))
                         BEGIN 
-                            SELECT @message = 'No puede anular este documento. El SRI solo permite anular hasta el día 10 del mes siguiente a la fecha de emisión.'
+                            SET @fechaAnulacion = DATEADD(DAY, 3, @fechaAnulacion)
                         END
+
+                    -- 🔹 Validación
+                    IF CAST(GETDATE() AS DATE) > @fechaAnulacion
+                    BEGIN 
+                        SELECT @message = CONCAT(
+                            'No puede anular este documento. ',
+                            'El SRI solo permite anular hasta el día 7 (hábil) del mes siguiente a la fecha de emisión. ',
+                            'Fecha límite real: ', CONVERT(VARCHAR(10), @fechaAnulacion, 103)
+                        )
+                    END
                 END 
 
             SELECT '0' as code, @message as 'message' WHERE @message IS NOT NULL

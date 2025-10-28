@@ -126,7 +126,7 @@ BEGIN
                 END
             ELSE
                 BEGIN
-            SET @sql = @sql + ' AND a.siglaFamilia NOT IN(''COM'') '
+            SET @sql = @sql + ' AND a.siglaSubFamilia NOT IN(''COM'') '
         END
 
         IF @textSearch IS NOT NULL

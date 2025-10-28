@@ -66,7 +66,9 @@ BEGIN
     )
 
 	BEGIN TRY
-	    
+	     SELECT '0'code,'Fuera de funcionamiento'[message]
+         RETURN
+
 		--> Global 
         SELECT TOP 1 @idEntidad = idEntidad,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -199,7 +201,6 @@ BEGIN
 
             UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) 
                SET estado = 0
-                 ,cantidadTransaccion = 0
             WHERE idTransaccion IN( SELECT idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento AND idDocumento = @id )
 
             INSERT INTO Inventario.TransaccionDetalle 
@@ -213,18 +214,10 @@ BEGIN
                           AND tr.idDocumento       = @id
                             
                     )
-                  ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
-            FROM @tbTransaccionDetalle td
+                 ,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion * IIF(tt.codigo = 'S',-1,1) ,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total 
+            FROM @tbTransaccionDetalle            td
+            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = td.idTipoTransaccion
             WHERE td.estado = 1
-
-            UPDATE td SET td.cantidadTransaccion = td.cantidadTransaccion * -1
-            FROM Inventario.TransaccionDetalle    td
-            INNER JOIN Inventario.Transaccion     tr ON tr.idTransaccion     = td.idTransaccion
-            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
-            INNER JOIN Inventario.TipoDocumento   dt ON dt.idTipoDocumento   = tr.idTipoDocumento
-            WHERE dt.codigo = 'TB'
-              AND tt.codigo = 'S'
-              AND tr.idDocumento = @id
 
             EXEC dbo.Transaccion_Handler_Init 'SN', 'TB', @id, DEFAULT
 

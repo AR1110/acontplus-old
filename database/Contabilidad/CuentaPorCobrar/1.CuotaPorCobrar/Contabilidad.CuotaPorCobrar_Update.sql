@@ -96,7 +96,7 @@ BEGIN
 
         SELECT TOP 1 @idEstadoPago = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
 
-		--> validaciÛn de datos
+		--> validaci√≥n de datos
         IF NOT EXISTS(SELECT 1 FROM @tbCuotas)  
 			BEGIN
 				SELECT '0'code,'Error en la informacion de las cuotas' as 'message'
@@ -128,6 +128,7 @@ BEGIN
 			   ,cx.mora              = 0
 	           ,cx.diasMora          = 0
                ,cx.estado            = tb.estado
+               ,cx.UpdatedAt         = NULL
 			FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK)
 			INNER JOIN @tbCuotas             tb ON tb.idCuotaPorCobrar = cx.idCuotaPorCobrar
 

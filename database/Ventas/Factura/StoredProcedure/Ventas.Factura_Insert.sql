@@ -221,7 +221,7 @@ BEGIN
             ,uuid                   VARCHAR(300)
 		)
 
-        --Pagos
+        --> Pagos
         INSERT INTO @payment
               (idFormaPagoSri,idTiempoCredito,total)
         SELECT idFormaPagoSri,idTiempoCredito,total
@@ -268,7 +268,7 @@ BEGIN
            ,idInfoAdicional INT
         )
 
-
+        -->
 		INSERT INTO @historyInfoAdicional 
               (idInfoAdicional,uuid)
         SELECT idInfoAdicional,uuid FROM OPENJSON(@infoAdicionalArticulo) WITH
@@ -496,9 +496,8 @@ BEGIN
                                 FROM @tblDetails 
                                 WHERE llevaInventario = 1
                                 ORDER BY orderIndex ASC
-                                
 
-                                EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @idFactura, DEFAULT
+                                EXEC dbo.Transaccion_Handler_Init @idTransaccion
 						    END
 
                         --> Servicios

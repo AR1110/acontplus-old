@@ -116,7 +116,6 @@ BEGIN
 	
 
 	BEGIN TRY 
-        
 
         --> Data Json 
         SELECT @notaEntrega           = notaEntrega
@@ -294,62 +293,52 @@ BEGIN
 		BEGIN TRAN 
             --> Comprobante
 			UPDATE ne WITH (ROWLOCK)
-               SET ne.idCliente            = jf.idCliente
-				  ,ne.fechaEmision         = jf.fechaEmision
-				  ,ne.subTotalSinImpuestos = jf.subTotalSinImpuestos
-				  ,ne.totalDescuento       = jf.totalDescuento
-				  ,ne.porcentajeDescuento  = jf.porcentajeDescuento
-				  ,ne.propina              = jf.propina
-				  ,ne.recargo              = jf.recargo
-				  ,ne.transporte           = jf.transporte
-				  ,ne.total                = jf.total
+               SET ne.fechaEmision         = jf.fechaEmision
 				  ,ne.observacion          = jf.observacion
 				  ,ne.lastChange           = dbo.ufnGetDateEcuador()
 			FROM NotaEntrega ne
 			INNER JOIN @tbComprobante jf ON ne.idNotaEntrega = jf.idNotaEntrega
 
-			--> Detalles
-			UPDATE nd WITH (ROWLOCK)
-               SET nd.idTarifa               = js.idTarifa
-				  ,nd.idBodega               = js.idBodega
-				  ,nd.idMedida               = js.idMedida
-				  ,nd.ice                    = js.ice
-				  ,nd.cantidad               = js.cantidad
-				  ,nd.precioUnitario         = js.precioUnitario
-				  ,nd.valorDescuento         = js.valorDescuento
-				  ,nd.porcentajeDescuento    = js.porcentajeDescuento
-				  ,nd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
-				  ,nd.nota                   = js.nota
-				  ,nd.descripcion            = js.descripcion
-				  ,nd.idTipoIva              = js.idTipoIva
-				  ,nd.valorImpuesto          = js.valorImpuesto
-                  ,nd.codigoPorcentaje       = js.codigoPorcentaje
-                  ,nd.tarifa                 = js.tarifa
-				  ,nd.estado                 = js.estado
-			FROM NotaEntregaDetalle nd 
-			INNER JOIN @tblDetails js ON js.idNotaEntregaDetalle = nd.idNotaEntregaDetalle
+			----> Detalles
+			--UPDATE nd WITH (ROWLOCK)
+   --            SET nd.idTarifa               = js.idTarifa
+			--	  ,nd.idBodega               = js.idBodega
+			--	  ,nd.idMedida               = js.idMedida
+			--	  ,nd.ice                    = js.ice
+			--	  ,nd.cantidad               = js.cantidad
+			--	  ,nd.precioUnitario         = js.precioUnitario
+			--	  ,nd.valorDescuento         = js.valorDescuento
+			--	  ,nd.porcentajeDescuento    = js.porcentajeDescuento
+			--	  ,nd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
+			--	  ,nd.nota                   = js.nota
+			--	  ,nd.descripcion            = js.descripcion
+			--	  ,nd.idTipoIva              = js.idTipoIva
+			--	  ,nd.valorImpuesto          = js.valorImpuesto
+   --               ,nd.codigoPorcentaje       = js.codigoPorcentaje
+   --               ,nd.tarifa                 = js.tarifa
+			--	  ,nd.estado                 = js.estado
+			--FROM NotaEntregaDetalle nd 
+			--INNER JOIN @tblDetails js ON js.idNotaEntregaDetalle = nd.idNotaEntregaDetalle
 
 
-			INSERT INTO NotaEntregaDetalle 
-				  (idNotaEntrega,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,valorImpuesto,codigoPorcentaje,tarifa,precioCosto,uuid)
-			SELECT @id          ,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,valorImpuesto,codigoPorcentaje,tarifa,precioCosto,uuid
-			FROM @tblDetails js
-			WHERE js.idNotaEntregaDetalle = 0
-            ORDER BY js.orderIndex ASC
+			--INSERT INTO NotaEntregaDetalle 
+			--	  (idNotaEntrega,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,valorImpuesto,codigoPorcentaje,tarifa,precioCosto,uuid)
+			--SELECT @id          ,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,nota,descripcion,valorImpuesto,codigoPorcentaje,tarifa,precioCosto,uuid
+			--FROM @tblDetails js
+			--WHERE js.idNotaEntregaDetalle = 0
+   --         ORDER BY js.orderIndex ASC
             
-             -->Impuestos
-            UPDATE Ventas.NotaEntregaImpuesto WITH (ROWLOCK) SET [Enabled] = 0 WHERE NotaEntregaId = @id
+   --          -->Impuestos
+   --         UPDATE Ventas.NotaEntregaImpuesto WITH (ROWLOCK) SET [Enabled] = 0 WHERE NotaEntregaId = @id
 
-            INSERT INTO Ventas.NotaEntregaImpuesto
-                  (NotaEntregaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
-            SELECT @id          ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
+   --         INSERT INTO Ventas.NotaEntregaImpuesto
+   --               (NotaEntregaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
+   --         SELECT @id          ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
 			--> Contabilidad 
             UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK)
-               SET idCliente        = @idCliente
-                  ,fechaEmision     = @fechaEmision
+               SET fechaEmision     = @fechaEmision
                   ,fechaVencimiento = @fechaVencimiento
-                  ,importeTotal     = @importeTotal
                   ,diasMora         = 0
                   ,mora             = 0
                   ,UpdatedAt        = NULL
@@ -358,7 +347,6 @@ BEGIN
 
             UPDATE cc 
                SET cc.fechaVencimiento = ct.fechaVencimiento
-		          ,cc.cuota            = ct.cuota
                   ,diasMora            = 0
                   ,mora                = 0
 	        FROM Contabilidad.CuotaPorCobrar cc WITH (ROWLOCK)
@@ -390,69 +378,6 @@ BEGIN
 			        FROM Compra.InfoAdicional        ia WITH (NOLOCK)
 			        INNER JOIN @historyInfoAdicional hi ON hi.idInfoAdicional = ia.idInfoAdicional
                 END
-
-            --> Inventario
-            IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
-				BEGIN
-                    
-                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
-
-                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NE'
-
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
-
-                    --> Transaccion
-                    IF EXISTS (SELECT 1 FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id)
-                        BEGIN
-                            SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
-
-                            UPDATE Inventario.Transaccion WITH (ROWLOCK)
-                                SET fechaEmision = @fechaEmision
-                                   ,CustomerId   = @customerId
-                            WHERE idTransaccion = @idTransaccion
-
-                            UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 ,cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
-                        END
-                    ELSE
-                        BEGIN
-                            IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1 AND estado = 1)
-							    BEGIN 
-                                    INSERT INTO Inventario.Transaccion
-                                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@id,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                                    FROM @tbComprobante 
-
-                                    SET @idTransaccion = SCOPE_IDENTITY()
-                                END
-                        END 
-
-                    --> Bienes
-                    IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
-					    BEGIN
-                            INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
-                                   (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
-                            FROM @tblDetails 
-                            WHERE llevaInventario = 1
-                              AND estado = 1
-
-                            EXEC dbo.Transaccion_Handler_Init 'S', 'NE', @id ,2
-                        END 
-
-                    --> Servicios
-                    IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 0)
-						BEGIN 
-                            DELETE FROM Contabilidad.Servicio WITH (ROWLOCK) WHERE TipoDocumentoId = @idTipoDocumentoIv AND DocumentoId = @id
-
-                            INSERT INTO [Contabilidad].[Servicio] WITH (ROWLOCK)
-                                     (TipoDocumentoId, PuntoEmisionId,ClienteId,UsuarioId,ArticuloId,TarifaId,MedidaId,TipoIvaId,BodegaId,DocumentoId,Secuencial,FechaEmision,Descripcion,Nota,Cantidad,PrecioUnitario,PrecioCosto,PrecioTotalSinImpuesto)
-					        SELECT @idTipoDocumentoIv,@idPuntoEmision,@idCliente,@idUsuario,idArticulo,idTarifa,idMedida,idTipoIva,idBodega,@id,@secuencial,@fechaEmision,descripcion,nota,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
-                            FROM @tblDetails WHERE llevaInventario = 0
-
-                        END 
-
-				END
-
 		COMMIT TRAN 
 		SELECT '1'code,'Actualizado Exitosamente' as 'message',''
 	END TRY 

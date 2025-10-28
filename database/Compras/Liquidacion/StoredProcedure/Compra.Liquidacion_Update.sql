@@ -43,6 +43,7 @@ BEGIN
 	    idLiquidacionCompra INT UNIQUE NOT NULL
        ,idProveedor INT NOT NULL
 	   ,fechaEmision DATETIME2 NOT NULL
+       ,fechaVencimiento DATETIME2 NOT NULL
 	   ,subTotalSinImpuestos NUMERIC(18,5) NOT NULL
 	   ,porcentajeDescuento NUMERIC(18,5) NOT NULL 
 	   ,totalDescuento NUMERIC(18,5) NOT NULL 
@@ -103,7 +104,6 @@ BEGIN
 	)
 
 	BEGIN TRY 
-
         --> Global
 		SELECT TOP 1 @idEntidad = idEntidad ,@idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
@@ -123,12 +123,13 @@ BEGIN
         )
 
         INSERT INTO @tbComprobante
-		      (idLiquidacionCompra,idProveedor,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion, subcategoryId)
-		SELECT @id                ,idProveedor,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion, subcategoryId
+		      (idLiquidacionCompra,idProveedor,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion, subcategoryId)
+		SELECT @id                ,idProveedor,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion, subcategoryId
 		FROM OPENJSON(@infoLiquidacion) WITH
         (
 			 idProveedor          INT
-			,fechaEmision         DATETIME2 
+			,fechaEmision         DATETIME2
+            ,fechaVencimiento     DATETIME2
 			,subTotalSinImpuestos NUMERIC(18,5)
 			,porcentajeDescuento  NUMERIC(18,5)
 			,totalDescuento       NUMERIC(18,5) 
@@ -225,6 +226,7 @@ BEGIN
 
 		SELECT @idProveedor  = idProveedor
 			  ,@fechaEmision = js.fechaEmision
+              ,@fechaVencimiento = js.fechaVencimiento
               ,@importeTotal = js.total
               ,@subcategoryId = subcategoryId
 		FROM @tbComprobante js
@@ -295,60 +297,50 @@ BEGIN
 			UPDATE dbo.DocumentoElectronico WITH (ROWLOCK)
                 SET claveAcceso      = @claveAcceso
 				   ,fechaEmision     = @fechaEmision
-				   ,customerId       = @CustomerId
+				   --,customerId       = @CustomerId
                    ,idEstadoServicio = @idEstadoServicio
 			WHERE idDocumentoElectronico = @idDocumentoElectronico
 
             --> InfoLiquidacion 
 			UPDATE lc 
-               SET lc.idProveedor          = jlc.idProveedor
-				  ,lc.subTotalSinImpuestos = jlc.subTotalSinImpuestos
-				  ,lc.totalDescuento       = jlc.totalDescuento
-				  ,lc.porcentajeDescuento  = jlc.porcentajeDescuento
-				  ,lc.propina              = jlc.propina
-				  ,lc.recargo              = jlc.recargo
-				  ,lc.transporte           = jlc.transporte
-				  ,lc.total                = jlc.total
-				  ,lc.observacion          = jlc.observacion
+               SET lc.observacion          = jlc.observacion
 				  ,lc.lastChange           = dbo.ufnGetDateEcuador()
 			FROM LiquidacionCompra     lc WITH (ROWLOCK)
 			INNER JOIN @tbComprobante jlc ON lc.idLiquidacionCompra = jlc.idLiquidacionCompra
 
             --> Forma pago
-            UPDATE FormaPagoLiquidacion SET abono = @importeTotal WHERE idLiquidacionCompra = @id
+            --UPDATE FormaPagoLiquidacion SET abono = @importeTotal WHERE idLiquidacionCompra = @id
 
             --> Detalles 
-			UPDATE lcd WITH (ROWLOCK)
-               SET lcd.idBodega               = js.idBodega
-				  ,lcd.idMedida               = js.idMedida
-				  ,lcd.idTipoIva              = js.idTipoIva
-				  ,lcd.descripcion            = js.descripcion
-				  ,lcd.cantidad               = js.cantidad
-				  ,lcd.precioUnitario         = js.precioUnitario
-				  ,lcd.porcentajeDescuento    = js.porcentajeDescuento
-				  ,lcd.valorDescuento         = js.valorDescuento
-				  ,lcd.nota                   = js.nota
-				  ,lcd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
-                  ,lcd.codigoPorcentaje       = js.codigoPorcentaje
-                  ,lcd.tarifa                 = js.tarifa
-                  ,lcd.valorImpuesto          = js.valorImpuesto
-				  ,lcd.estado                 = js.estado
-			FROM LiquidacionCompraDetalle lcd 
-			INNER JOIN @tblDetails         js ON lcd.idLiquidacionCompraDetalle = js.idLiquidacionCompraDetalle
+			--UPDATE lcd WITH (ROWLOCK)
+   --            SET lcd.idBodega               = js.idBodega
+			--	  ,lcd.idMedida               = js.idMedida
+			--	  ,lcd.idTipoIva              = js.idTipoIva
+			--	  ,lcd.descripcion            = js.descripcion
+			--	  ,lcd.cantidad               = js.cantidad
+			--	  ,lcd.precioUnitario         = js.precioUnitario
+			--	  ,lcd.porcentajeDescuento    = js.porcentajeDescuento
+			--	  ,lcd.valorDescuento         = js.valorDescuento
+			--	  ,lcd.nota                   = js.nota
+			--	  ,lcd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
+   --               ,lcd.codigoPorcentaje       = js.codigoPorcentaje
+   --               ,lcd.tarifa                 = js.tarifa
+   --               ,lcd.valorImpuesto          = js.valorImpuesto
+			--	  ,lcd.estado                 = js.estado
+			--FROM LiquidacionCompraDetalle lcd 
+			--INNER JOIN @tblDetails         js ON lcd.idLiquidacionCompraDetalle = js.idLiquidacionCompraDetalle
 
-            --> Detalles  
-			INSERT INTO LiquidacionCompraDetalle
-				   (idLiquidacionCompra,idBodega,idArticulo,idMedida,idTipoIva,descripcion,cantidad,precioUnitario,porcentajeDescuento,valorDescuento,nota,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,ice)
-			SELECT @id                 ,idBodega,idArticulo,idMedida,idTipoIva,descripcion,cantidad,precioUnitario,porcentajeDescuento,valorDescuento,nota,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,ice
-			FROM @tblDetails
-            WHERE idLiquidacionCompraDetalle = 0
-            ORDER BY orderIndex ASC
+   --         --> Detalles  
+			--INSERT INTO LiquidacionCompraDetalle
+			--	   (idLiquidacionCompra,idBodega,idArticulo,idMedida,idTipoIva,descripcion,cantidad,precioUnitario,porcentajeDescuento,valorDescuento,nota,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,ice)
+			--SELECT @id                 ,idBodega,idArticulo,idMedida,idTipoIva,descripcion,cantidad,precioUnitario,porcentajeDescuento,valorDescuento,nota,precioTotalSinImpuesto,codigoPorcentaje,tarifa,valorImpuesto,ice
+			--FROM @tblDetails
+   --         WHERE idLiquidacionCompraDetalle = 0
+   --         ORDER BY orderIndex ASC
 
             --> Contabilidad
             UPDATE Contabilidad.CuentaPorPagar WITH (ROWLOCK)
-                SET importeTotal     = @importeTotal
-                   ,idProveedor      = @idProveedor
-                   ,fechaEmision     = @fechaEmision
+                SET fechaEmision     = @fechaEmision
                    ,fechaVencimiento = @fechaVencimiento
                    ,subcategoryId    = @subcategoryId
             WHERE idDocumento = @id 
@@ -356,53 +348,52 @@ BEGIN
 
             UPDATE cp SET 
                    cp.fechaVencimiento = tc.fechaVencimiento
-                  ,cp.cuota            = tc.cuota
             FROM Contabilidad.CuotaPorPagar cp WITH (ROWLOCK)
             INNER JOIN @tbCuotas            tc ON tc.idCuotaPorPagar = cp.idCuotaPorPagar
 
             --> Impuestos
-            UPDATE Compra.LiquidacionImpuesto WITH (ROWLOCK) SET [Enabled] = 0 WHERE LiquidacionId = @id
+            --UPDATE Compra.LiquidacionImpuesto WITH (ROWLOCK) SET [Enabled] = 0 WHERE LiquidacionId = @id
 
-            INSERT INTO Compra.LiquidacionImpuesto
-                   (LiquidacionId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
-            SELECT @id,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
+            --INSERT INTO Compra.LiquidacionImpuesto
+            --       (LiquidacionId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
+            --SELECT @id,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 			
             --> informacion Adicional
 			UPDATE dbo.InfoAdicionalDoc WITH(ROWLOCK) SET estado = 0 WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento
 
 			INSERT INTO dbo.InfoAdicionalDoc (idComprobante,idTipoDocumento,nombre,valor) SELECT @id,@idTipoDocumento,nombre,valor FROM @tblInfoAdicional
 
-            --> Inventario
-			IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
-		        BEGIN
-                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
+   --         --> Inventario
+			--IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+		 --       BEGIN
+   --                 DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
 
-                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'LC'
+   --                 SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'LC'
 
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
+   --                 SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-                    SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
+   --                 SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
 
-                    --> Transaccion
-                    UPDATE Inventario.Transaccion WITH (ROWLOCK)
-                       SET fechaEmision = @fechaEmision
-                          ,CustomerId   = @customerId
-                    WHERE idTransaccion = @idTransaccion
+   --                 --> Transaccion
+   --                 UPDATE Inventario.Transaccion WITH (ROWLOCK)
+   --                    SET fechaEmision = @fechaEmision
+   --                       ,CustomerId   = @customerId
+   --                 WHERE idTransaccion = @idTransaccion
 
-                    UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0, cantidadTransaccion = 0 WHERE idTransaccion = @idTransaccion
+   --                 UPDATE Inventario.TransaccionDetalle WITH (ROWLOCK) SET estado = 0 WHERE idTransaccion = @idTransaccion
 
-                    IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
-				        BEGIN
-                            INSERT INTO Inventario.TransaccionDetalle
-                                   (idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,precioTotalSinImpuesto 
-                            FROM @tblDetails 
-                            WHERE llevaInventario = 1
-                              AND estado = 1
+   --                 IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
+			--	        BEGIN
+   --                         INSERT INTO Inventario.TransaccionDetalle
+   --                                (idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,total)
+			--                SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,cantidadTransaccion,precioUnitario,precioCosto,conversion,precioCostoFraccionado,precioTotalSinImpuesto 
+   --                         FROM @tblDetails 
+   --                         WHERE llevaInventario = 1
+   --                           AND estado = 1
 
-                            EXEC dbo.Transaccion_Handler_Init 'E', 'LC', @id ,2
-                        END 
-				END
+   --                         EXEC dbo.Transaccion_Handler_Init 'E', 'LC', @id ,2
+   --                     END 
+			--	END
 		COMMIT TRAN  
 		SELECT '1'code,'Actualizado Exitosamente'[message]
 	END TRY 

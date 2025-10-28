@@ -80,10 +80,11 @@ BEGIN
 		,nota VARCHAR(100) NULL
 		,descripcion VARCHAR(255) NOT NULL
         ,llevaInventario BIT NOT NULL
-        ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+        ,cantidadTransaccion NUMERIC(18,5) DEFAULT 0 NOT NULL
         ,conversion NUMERIC(18,5) NOT NULL
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
+        ,estado INT NOT NULL DEFAULT 2
 	)
 
     DECLARE @payment AS TABLE (
@@ -163,8 +164,8 @@ BEGIN
 		
         --> Detalles
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado)
-		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado 
+              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,conversion,precioCostoFraccionado)
+		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,conversion,precioCostoFraccionado 
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex             INT
@@ -394,21 +395,21 @@ BEGIN
 
                     SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
-                    IF EXISTS (SELECT 1 FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK ) WHERE codTransaccion = 'S' AND codDoc = 'NE' AND idDocumento = @idNotaEntrega AND estado = 1)
-                        BEGIN
-                            UPDATE t1 
-                               SET t1.estado = 2
-                                  ,t1.cantidadTransaccion = 0 
-                            FROM Inventario.TransaccionDetalle    t1 WITH (ROWLOCK)
-                            INNER JOIN Inventario.Transaccion     t2 WITH (ROWLOCK) ON t2.idTransaccion     = t1.idTransaccion
-                            INNER JOIN Inventario.TipoDocumento   t3 WITH (ROWLOCK) ON t3.idTipoDocumento   = t2.idTipoDocumento
-                            INNER JOIN Inventario.TipoTransaccion t4 WITH (ROWLOCK) ON t4.idTipoTransaccion = t2.idTipoTransaccion
-                            WHERE t1.estado = 1 
-                              AND t2.idDocumento = @idNotaEntrega 
-                              AND t3.codigo = 'NE'
-                              AND t4.codigo = 'S'
+                    --IF EXISTS (SELECT 1 FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK ) WHERE codTransaccion = 'S' AND codDoc = 'NE' AND idDocumento = @idNotaEntrega AND estado = 1)
+                    --    BEGIN
+                    --        UPDATE t1 
+                    --           SET t1.estado = 2
+                    --              ,t1.cantidadTransaccion = 0 
+                    --        FROM Inventario.TransaccionDetalle    t1 WITH (ROWLOCK)
+                    --        INNER JOIN Inventario.Transaccion     t2 WITH (ROWLOCK) ON t2.idTransaccion     = t1.idTransaccion
+                    --        INNER JOIN Inventario.TipoDocumento   t3 WITH (ROWLOCK) ON t3.idTipoDocumento   = t2.idTipoDocumento
+                    --        INNER JOIN Inventario.TipoTransaccion t4 WITH (ROWLOCK) ON t4.idTipoTransaccion = t2.idTipoTransaccion
+                    --        WHERE t1.estado = 1 
+                    --          AND t2.idDocumento = @idNotaEntrega 
+                    --          AND t3.codigo = 'NE'
+                    --          AND t4.codigo = 'S'
                               
-                        END 
+                    --    END 
 
                     --> Bienes
 					IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
@@ -423,13 +424,13 @@ BEGIN
 
                             -->Detalles
                             INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
-                                   (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
+                                   (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total,estado)
+			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto,estado
                             FROM @tblDetails 
                             WHERE llevaInventario = 1
                             ORDER BY orderIndex ASC
 
-                            EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @idDocumento, DEFAULT
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 						END
 
                     --> Servicios

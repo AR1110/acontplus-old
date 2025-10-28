@@ -89,7 +89,7 @@ BEGIN
 
 			IF @docOrigen = 'PR'
 				BEGIN
-                    SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+                    SELECT TOP 1 @idEstadoDocumento = idEstadoPago FROM dbo.EstadoPago WITH (NOLOCK) WHERE codigo = 'AC'
 
 					UPDATE dbo.Proforma SET idEstadoDocumento = @idEstadoDocumento
                     WHERE idProforma IN (

@@ -24,14 +24,59 @@ AS
 BEGIN
 	SET NOCOUNT ON; 
 	set language spanish;
+
 	DECLARE @idEntidad INT , @idUsuario INT
-	DECLARE @idDocumento INT ,@fechaEmision DATETIME
+
+	DECLARE @idDocumento INT ,@fechaEmision DATETIME ,@codDoc AS VARCHAR(2) ,@idArticulo INT
+
+    DECLARE @idTipoDocumentoIv INT
+
+    --> Data Principal
+    DECLARE @idTransaccionOriginal INT ,@idTransaccion INT ,@serieComprobante VARCHAR(25)
+
+    --> Compra
+    DECLARE @idPuntoEmision INT
 
 	BEGIN TRY
-		
-		SELECT TOP 1 @idDocumento = idDocumento FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+		--> variables 
+		SELECT TOP 1 @idDocumento = idDocumento, @idArticulo = idArticulo FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+
+        SELECT TOP 1 @codDoc = CASE WHEN codDoc = '01' THEN 'FE' WHEN codDoc = '04' THEN 'NC' END , @fechaEmision = cast(fechaEmision as date) FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
 
 		SELECT TOP 1 @idUsuario = idUsuario, @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+
+        SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WHERE codigo = 'AD'
+
+        SELECT TOP 1 @idPuntoEmision = pa.idPuntoEmision
+        FROM Config.PtoEmi_Asig      pa 
+        INNER JOIN Config.Estab_Asig ae ON ae.idEstab_Asig = pa.idEstab_Asig
+        WHERE pa.predeterminado = 1
+          AND ae.idUsuarioRol = @idUsuarioRol
+
+        SELECT TOP 1 @idTransaccion = idTransaccion
+        FROM Inventario.Transaccion           tr
+        INNER JOIN Inventario.TipoDocumento   td ON td.idTipoDocumento   = tr.idTipoDocumento
+        INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+        WHERE tr.idDocumento = @idDocumento
+            AND td.codigo = @codDoc
+            AND tt.codigo = 'E'
+
+        SELECT TOP 1 @serieComprobante  = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
+        FROM ConfiguracionDocumento    cd
+        INNER JOIN dbo.TipoDocumento   td ON td.idTipoDocumento   = cd.idTipoDocumento
+        INNER JOIN dbo.PuntoEmision    pe ON pe.idPuntoEmision    = cd.idPuntoEmision
+        INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+        WHERE cd.idPuntoEmision = @idPuntoEmision
+          AND td.codigo = 'AD'
+
+        IF EXISTS (SELECT 1 FROM Inventario.Transaccion WHERE idTransaccionOriginal = @idTransaccion)
+            BEGIN
+                SELECT TOP 1 @idTransaccionOriginal = MAX(idTransaccion) FROM Inventario.Transaccion WHERE idTransaccionOriginal = @idTransaccion
+            END
+        ELSE
+            BEGIN
+                SET @idTransaccionOriginal = @idTransaccion
+            END 
 
         IF NOT EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
 			BEGIN
@@ -45,52 +90,29 @@ BEGIN
 
             IF EXISTS (SELECT 1 FROM Recepcion.DocumentoDetalle t INNER JOIN Articulo a WITH(NOLOCK) ON t.idArticulo = a.idArticulo WHERE t.idDocumento = @idDocumento  AND a.llevaInventario = 1)
 				BEGIN
-			
-			        DECLARE @codDoc AS VARCHAR(2) ,@idTipoDocumento INT ,@idTipoTransaccion INT ,@idArticulo INT 
-                           ,@idBodega INT ,@fraccion NUMERIC(18,5) ,@idMedida INT 
-                           ,@fechaConsolidacion DATETIME ,@stock NUMERIC(18,5) ,@cantidadTransaccion NUMERIC(18,5)
+                    INSERT INTO Inventario.Transaccion
+                          (idTipoTransaccion,fechaEmision,idTipoDocumento,idUsuario,idEntidad,serieComprobante,idTransaccionOriginal)
+                    SELECT idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,@idUsuario,@idEntidad,@serieComprobante,@idTransaccionOriginal
+                    FROM Inventario.Transaccion
+                    WHERE idTransaccion = @idTransaccionOriginal
 
-                    -- variables 
+                    SET @idTransaccion = SCOPE_IDENTITY()
 
-			        SELECT TOP 1 @codDoc = CASE WHEN codDoc = '01' THEN 'FE' WHEN codDoc = '04' THEN 'NC' END , @fechaEmision = cast(fechaEmision as date) FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+                    INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
+                           (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion     ,precioUnitario,precioCosto,precioCostoFraccionado,total)
+			        SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion * -1,precioUnitario,precioCosto,precioCostoFraccionado,total
+                    FROM Inventario.TransaccionDetalle
+                    WHERE idTransaccion = @idTransaccionOriginal
+                      AND idArticulo = @idArticulo
 
-                    SELECT TOP 1 @idArticulo = idArticulo
-                                ,@idBodega   = idBodega 
-                                ,@idMedida   = idMedida
-                                ,@cantidadTransaccion   = cantidad * IIF(@codDoc = 'FE',-1,1)
-                    FROM Recepcion.DocumentoDetalle WITH (NOLOCK) WHERE idDocumentoDetalle = @id
+                    UPDATE cd SET cd.ultimaSecuencia = cd.ultimaSecuencia + 1
+                    FROM ConfiguracionDocumento cd
+                    INNER JOIN TipoDocumento    td ON td.idTipoDocumento = cd.idTipoDocumento 
+                    WHERE td.codigo = 'AD'
+                      AND cd.idPuntoEmision = @idPuntoEmision
 
-			        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo  = @codDoc
-
-			        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo  = 'E'
-                    
-                    -- Articulo Fraccionado
-                    IF EXISTS (SELECT 1 FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida)
-                        BEGIN
-                            SELECT TOP 1 @cantidadTransaccion = @cantidadTransaccion  * conversion FROM dbo.ArticuloFraccionado WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idMedida = @idMedida
-                        END
-					
-                    IF EXISTS (SELECT 1 FROM Inventario.Stock WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND fechaConsolidacion >= @fechaEmision)
-                        BEGIN
-                            SELECT @cantidadTransaccion = 0       
-                        END 
-
-                    -- TRAN 
-                    UPDATE dt SET   
-                           dt.estado = 0
-                          ,dt.cantidadTransaccion = 0
-                    FROM Inventario.TransaccionDetalle    dt WITH (ROWLOCK)
-                    INNER JOIN Inventario.Transaccion     it WITH (ROWLOCK) ON it.idTransaccion     = dt.idTransaccion
-                    WHERE it.idDocumento = @idDocumento 
-                      AND it.idTipoDocumento = @idTipoDocumento 
-                      AND it.idTipoTransaccion = @idTipoTransaccion 
-                      AND dt.idArticulo = @idArticulo
-
-                    UPDATE Inventario.Stock WITH(ROWLOCK) SET cantidad = cantidad + ISNULL(@cantidadTransaccion,0) WHERE idArticulo = @idArticulo AND idBodega = @idBodega
-
-	                SELECT @stock = SUM(cantidad) FROM Inventario.Stock s WITH (NOLOCK) WHERE idArticulo = @idArticulo AND s.estado = 1
-
-	                UPDATE dbo.Articulo WITH(ROWLOCK) SET stock = ISNULL(@stock,0) WHERE idArticulo = @idArticulo
+                    --> Transaccion
+                    EXEC dbo.Transaccion_Handler_Init @idTransaccion
 				END 
 					
                 DELETE FROM Recepcion.DocumentoDetalle WHERE idDocumentoDetalle = @id

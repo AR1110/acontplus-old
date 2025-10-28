@@ -130,7 +130,6 @@ BEGIN
 	)
 
 	BEGIN TRY
-		
         --> Data Json 
         SELECT @infoFactura           = infoFactura
               ,@detalles              = detalles
@@ -357,68 +356,56 @@ BEGIN
              --> Info Tributaria
 			UPDATE DocumentoElectronico WITH (ROWLOCK)
                SET claveAcceso      = @claveAcceso
-                  ,customerId       = @customerId
+                  --,customerId       = @customerId
                   ,fechaEmision     = @fechaEmision
                   ,idEstadoServicio = @idEstadoServicio
             WHERE idDocumentoElectronico = @idDocumentoElectronico
 
             --> Info Factura
 			UPDATE f SET 
-				   f.idCliente           = jf.idCliente
-				  ,f.subTotalSinImpuestos= jf.subTotalSinImpuestos
-				  ,f.totalDescuento      = jf.totalDescuento
-				  ,f.porcentajeDescuento = jf.porcentajeDescuento
-				  ,f.propina             = jf.propina
-				  ,f.recargo             = jf.recargo
-				  ,f.transporte          = jf.transporte
-				  ,f.total               = jf.total
-				  ,f.placa               = jf.placa
-				  ,f.observacion         = jf.observacion
+				   f.observacion         = jf.observacion
 				  ,f.lastChange          = dbo.ufnGetDateEcuador()
 			FROM Factura               f WITH (ROWLOCK)
 			INNER JOIN @tbComprobante jf ON f.idFactura = jf.idFactura
 
             --> Detalles
-			UPDATE fd SET 
-				   fd.idTarifa               = js.idTarifa
-				  ,fd.idBodega               = js.idBodega
-				  ,fd.idMedida               = js.idMedida
-				  ,fd.ice                    = js.ice
-				  ,fd.cantidad               = js.cantidad
-				  ,fd.precioUnitario         = js.precioUnitario
-				  ,fd.valorDescuento         = js.valorDescuento
-				  ,fd.porcentajeDescuento    = js.porcentajeDescuento
-				  ,fd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
-				  ,fd.nota                   = js.nota
-				  ,fd.descripcion            = js.descripcion
-				  ,fd.idTipoIva              = js.idTipoIva
-                  ,fd.codigoPorcentaje       = js.codigoPorcentaje
-                  ,fd.tarifa                 = js.tarifa
-                  ,fd.valorImpuesto          = js.valorImpuesto
-				  ,fd.estado                 = js.estado
-			FROM FacturaDetalle fd 
-			INNER JOIN @tblDetails js ON js.idFacturaDetalle = fd.idFacturaDetalle
+			--UPDATE fd SET 
+			--	   fd.idTarifa               = js.idTarifa
+			--	  ,fd.idBodega               = js.idBodega
+			--	  ,fd.idMedida               = js.idMedida
+			--	  ,fd.ice                    = js.ice
+			--	  ,fd.cantidad               = js.cantidad
+			--	  ,fd.precioUnitario         = js.precioUnitario
+			--	  ,fd.valorDescuento         = js.valorDescuento
+			--	  ,fd.porcentajeDescuento    = js.porcentajeDescuento
+			--	  ,fd.precioTotalSinImpuesto = js.precioTotalSinImpuesto
+			--	  ,fd.nota                   = js.nota
+			--	  ,fd.descripcion            = js.descripcion
+			--	  ,fd.idTipoIva              = js.idTipoIva
+   --               ,fd.codigoPorcentaje       = js.codigoPorcentaje
+   --               ,fd.tarifa                 = js.tarifa
+   --               ,fd.valorImpuesto          = js.valorImpuesto
+			--	  ,fd.estado                 = js.estado
+			--FROM FacturaDetalle fd 
+			--INNER JOIN @tblDetails js ON js.idFacturaDetalle = fd.idFacturaDetalle
 
-			INSERT INTO FacturaDetalle 
-                  (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,valorImpuesto,codigoPorcentaje,tarifa,nota,descripcion,precioCosto,uuid)
-			SELECT @id,      idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,valorImpuesto,codigoPorcentaje,tarifa,nota,descripcion,precioCosto,uuid
-			FROM @tblDetails  
-			WHERE idFacturaDetalle = 0 
-            ORDER BY orderIndex ASC
+			--INSERT INTO FacturaDetalle 
+   --               (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,valorImpuesto,codigoPorcentaje,tarifa,nota,descripcion,precioCosto,uuid)
+			--SELECT @id,      idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,valorImpuesto,codigoPorcentaje,tarifa,nota,descripcion,precioCosto,uuid
+			--FROM @tblDetails  
+			--WHERE idFacturaDetalle = 0 
+   --         ORDER BY orderIndex ASC
             
             -->Forma Pago
             UPDATE fp WITH (ROWLOCK) 
-               SET fp.abono          = py.total
-                  ,fp.idFormaPagoSri = py.idFormaPagoSri
+               SET fp.idFormaPagoSri = py.idFormaPagoSri
             FROM dbo.FormaPagoFactura fp
             INNER JOIN @payment       py ON py.idFormaPagoFactura = fp.idFormaPagoFactura
 
             --> Contabilidad 
             UPDATE Contabilidad.CuentaPorCobrar WITH (ROWLOCK)
-               SET idCliente        = @idCliente
-                  ,fechaEmision     = @fechaEmision
+               SET fechaEmision     = @fechaEmision
                   ,fechaVencimiento = @fechaVencimiento
-                  ,importeTotal     = @importeTotal 
                   ,diasMora         = 0
                   ,mora             = 0
                   ,UpdatedAt        = NULL
@@ -427,7 +414,6 @@ BEGIN
 
             UPDATE cc 
                SET cc.fechaVencimiento = ct.fechaVencimiento
-		          ,cc.cuota            = ct.cuota
                   ,diasMora            = 0
                   ,mora                = 0
 	        FROM Contabilidad.CuotaPorCobrar cc WITH (ROWLOCK)
@@ -435,54 +421,49 @@ BEGIN
 	       
 
             -->Impuestos
-            UPDATE Ventas.FacturaImpuesto SET [Enabled] = 0 WHERE FacturaId = @id
+            --UPDATE Ventas.FacturaImpuesto SET [Enabled] = 0 WHERE FacturaId = @id
 
-            INSERT INTO Ventas.FacturaImpuesto
-                  (FacturaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
-            SELECT @id      ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
+            --INSERT INTO Ventas.FacturaImpuesto
+            --      (FacturaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
+            --SELECT @id      ,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
 
 
 			--> Inventario
-            IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
-			    BEGIN
-                    DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
+    --        IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory = 'SI')
+			 --   BEGIN
+    --                DECLARE @idTipoTransaccion  INT ,@idTipoDocumentoIv INT ,@idTransaccion INT
 
-                    SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'FE'
+    --                SELECT TOP 1 @idTipoDocumentoIv = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'FE'
 
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
+    --                SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'S'
 
-                    --> Transaccion
-                    INSERT INTO Inventario.Transaccion
-                           (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
-                    SELECT @idTipoTransaccion,fechaEmision,@idTipoDocumentoIv,idFactura,@customerId,@idUsuario,@idEntidad,@serieComprobante 
-                    FROM @tbComprobante
+    --                SELECT TOP 1 @idTransaccion = idTransaccion FROM Inventario.Transaccion WITH (NOLOCK) WHERE idTipoTransaccion = @idTipoTransaccion AND idTipoDocumento = @idTipoDocumentoIv AND idDocumento = @id
+ 
+    --                IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1 AND cantidadTransaccion <> 0)
+				--	    BEGIN
+    --                        INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
+    --                               (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
+			 --               SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
+    --                        FROM @tblDetails
+    --                        WHERE llevaInventario = 1
+    --                          AND cantidadTransaccion <> 0
 
-                    --> Bienes
-                    IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 1)
-					    BEGIN
-                            INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
-                                   (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
-                            FROM @tblDetails 
-                            WHERE llevaInventario = 1
-                              AND cantidadTransaccion <> 0
+    --                        EXEC dbo.Transaccion_Handler_Init @idTransaccion
+    --                    END 
 
-                            EXEC dbo.Transaccion_Handler_Init 'S', 'FE', @id ,2
-                        END 
+    --                --> Servicios
+    --                IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 0)
+				--		BEGIN 
+    --                        UPDATE Contabilidad.Servicio WITH (ROWLOCK) SET Estado = 0 WHERE TipoDocumentoId = @idTipoDocumentoIv AND DocumentoId = @id
 
-                    --> Servicios
-                    IF EXISTS (SELECT 1 FROM @tblDetails WHERE llevaInventario = 0)
-						BEGIN 
-                            UPDATE Contabilidad.Servicio WITH (ROWLOCK) SET Estado = 0 WHERE TipoDocumentoId = @idTipoDocumentoIv AND DocumentoId = @id
-
-                            INSERT INTO [Contabilidad].[Servicio] WITH (ROWLOCK)
-                                     (TipoDocumentoId, PuntoEmisionId,ClienteId,UsuarioId,ArticuloId,TarifaId,MedidaId,TipoIvaId,BodegaId,DocumentoId,Secuencial,FechaEmision,Descripcion,Nota,Cantidad,PrecioUnitario,PrecioCosto,PrecioTotalSinImpuesto)
-					        SELECT @idTipoDocumentoIv,@idPuntoEmision,@idCliente,@idUsuario,idArticulo,idTarifa,idMedida,idTipoIva,idBodega,@id,@secuencial,@fechaEmision,descripcion,nota,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
-                            FROM @tblDetails 
-                            WHERE llevaInventario = 0
-                              AND estado = 1
-                        END 
-				END
+    --                        INSERT INTO [Contabilidad].[Servicio] WITH (ROWLOCK)
+    --                                 (TipoDocumentoId, PuntoEmisionId,ClienteId,UsuarioId,ArticuloId,TarifaId,MedidaId,TipoIvaId,BodegaId,DocumentoId,Secuencial,FechaEmision,Descripcion,Nota,Cantidad,PrecioUnitario,PrecioCosto,PrecioTotalSinImpuesto)
+				--	        SELECT @idTipoDocumentoIv,@idPuntoEmision,@idCliente,@idUsuario,idArticulo,idTarifa,idMedida,idTipoIva,idBodega,@id,@secuencial,@fechaEmision,descripcion,nota,cantidadTransaccion,precioUnitario,precioCosto,precioTotalSinImpuesto
+    --                        FROM @tblDetails 
+    --                        WHERE llevaInventario = 0
+    --                          AND estado = 1
+    --                    END 
+				--END
             
 			--> informacion Adicional
 			UPDATE dbo.InfoAdicionalDoc SET estado = 0 WHERE idComprobante = @id AND idTipoDocumento = @idTipoDocumento

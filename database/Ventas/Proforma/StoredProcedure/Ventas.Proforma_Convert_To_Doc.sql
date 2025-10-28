@@ -83,6 +83,7 @@ BEGIN
         ,conversion NUMERIC(18,5) NOT NULL
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
+        ,estado INT NOT NULL DEFAULT 2
 	)
 	
     DECLARE @tbTaxes AS TABLE (
@@ -430,12 +431,12 @@ BEGIN
                             -->Detalles
                             INSERT INTO Inventario.TransaccionDetalle WITH (ROWLOCK)
                                    (idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,total)
-			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto 
+			                SELECT @idTransaccion,idArticulo,idBodega,idMedida,idTarifa,cantidad,conversion,cantidadTransaccion,precioUnitario,precioCosto,precioCostoFraccionado,precioTotalSinImpuesto
                             FROM @tblDetails 
                             WHERE llevaInventario = 1
                             ORDER BY orderIndex ASC
 
-                            EXEC dbo.Transaccion_Handler_Init 'S', @docDestino, @idDocumento, DEFAULT
+                            EXEC dbo.Transaccion_Handler_Init @idTransaccion
 						END
                 END
             

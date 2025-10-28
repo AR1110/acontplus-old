@@ -2,14 +2,14 @@ USE AcontPlus
 GO
 CREATE OR ALTER VIEW v_InventarioTransaccion WITH SCHEMABINDING AS (
 SELECT tr.idTransaccion
+      ,tr.idTransaccionOriginal
 	  ,tr.idTipoTransaccion
 	  ,tr.idTipoDocumento
 	  ,tr.idDocumento
 	  ,tr.idUsuario
-      ,tr.serieComprobante                                                          as nroDocumento
-      ,tr.fechaEmision                                                              as fechaRegistro
+      ,tr.serieComprobante as nroDocumento
+      ,CASE WHEN tt.codigo = 'A' THEN tr.fechaEmision ELSE tr.fechaRegistro END AS fechaRegistro
       ,dt.idTransaccionDetalle
-      ,dt.AjusteId                                                                  as particion
       ,dt.estado
       ,dt.idArticulo
 	  ,dt.idBodega
@@ -20,6 +20,7 @@ SELECT tr.idTransaccion
 	  ,dt.precioUnitario
 	  ,dt.precioCosto
       ,dt.precioCostoFraccionado
+      ,dt.AjusteId                                                                  as particion
       ,dt.saldo
       ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
 	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
@@ -39,6 +40,7 @@ SELECT tr.idTransaccion
 	  ,ar.codigoBarra
 	  ,ar.descripcion                                                               as articulo
       ,sf.descripcion                                                               as subFamilia
+	
 	  ,us.nombreUsuario                                                             as usuario
 	  ,cu.BusinessName                                                              as clienteProveedor
       ,cu.IDCard                                                                    as rucClienteProveedor

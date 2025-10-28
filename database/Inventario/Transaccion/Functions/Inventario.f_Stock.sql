@@ -33,27 +33,37 @@ BEGIN
 	DECLARE @stock AS NUMERIC(15,5)
 	DECLARE @fechaEmision AS DATETIME
 	
-	SELECT TOP 1 @fechaEmision =  fechaConsolidacion, @cantidadActual =  consolidacion FROM Inventario.Stock WITH (NOLOCK) WHERE idArticulo = @idArticulo AND idBodega = @idBodega AND estado = 1
+	SELECT TOP 1 @fechaEmision = tr.fechaEmision, @cantidadActual = td.cantidadTransaccion
+    FROM Inventario.Stock                    st 
+    INNER JOIN Inventario.TransaccionDetalle td ON td.idTransaccionDetalle = st.idTransaccionDetalle
+    INNER JOIN Inventario.Transaccion        tr ON tr.idTransaccion        = td.idTransaccion
+    WHERE st.idArticulo = @idArticulo
+      AND st.idBodega = @idBodega
+      AND st.estado = 1
 
 	IF @fechaEmision IS NOT NULL
 		BEGIN
 			SELECT @cantidadActual = @cantidadActual + ISNULL(sum(cantidadTransaccion),0)
-			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idBodega 
-			  AND idArticulo = @idArticulo
-			  AND estado = 1 
-			  AND codTransaccion in ('E','S')
-			  AND fechaRegistro >= @fechaEmision
+			FROM Inventario.TransaccionDetalle    td 
+            INNER JOIN Inventario.Transaccion     tr ON tr.idTransaccion     = td.idTransaccion
+            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+			WHERE td.idBodega = @idBodega 
+			  AND td.idArticulo = @idArticulo
+			  AND td.estado = 1 
+			  AND tt.codigo in ('E','S')
+			  AND tr.fechaRegistro >= @fechaEmision
 		END 
 
 	ELSE   
 		BEGIN	
 			SELECT @cantidadActual = ISNULL(sum(cantidadTransaccion),0)
-			FROM Inventario.v_Articulo_Transaccion WITH (NOLOCK)
-			WHERE idBodega = @idBodega 
-			  AND idArticulo = @idArticulo 
-			  AND estado = 1 
-			  AND codTransaccion in ('E','S')
+			FROM Inventario.TransaccionDetalle    td 
+            INNER JOIN Inventario.Transaccion     tr ON tr.idTransaccion     = td.idTransaccion
+            INNER JOIN Inventario.TipoTransaccion tt ON tt.idTipoTransaccion = tr.idTipoTransaccion
+			WHERE td.idBodega = @idBodega 
+			  AND td.idArticulo = @idArticulo
+			  AND td.estado = 1 
+			  AND tt.codigo in ('E','S')
 		END
 
 	RETURN ISNULL(@cantidadActual,0)
