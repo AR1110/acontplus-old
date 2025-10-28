@@ -5,6 +5,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatIconButton } from '@angular/material/button';
 import {
   WarehouseTransferGetByIdUseCase,
+  WarehouseTransferUpdateStatusUseCase,
   WarehouseTransferUseCase
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -25,13 +26,16 @@ import {
 } from "@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit";
 import {DataGrid} from "@shared/components/data-grid/data-grid";
 import {DataGridColumn, DataGridRowClassFormatter} from "@shared/components/data-grid/types";
-import {INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
+import {INVENTORY_CODE_REPORT, INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
 import {ACTION_ALIASES} from "@core/constants/permission-actions";
 import {HasPermissionDirective} from "@core/directives/permission";
 import {usePermissions} from "@core/composables/use-permissions";
 import {
   WarehouseTransferDetail
 } from "@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail";
+import Swal from "sweetalert2";
+import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
+import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
 
 @Component({
   selector: 'app-warehouse-transfer',
@@ -58,6 +62,8 @@ export class WarehouseTransfer implements OnInit {
   public perms = usePermissions(this.inventory_modules_code().WAREHOUSE_TRANSFER);
   private _useCase = inject(WarehouseTransferUseCase);
   private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase)
+  private _updateStatusUseCase = inject(WarehouseTransferUpdateStatusUseCase);
+  private _reportUseCase = inject(GenerateReportUseCase);
   private noti = inject(ToastrNotificationService)
   private dgSvc = inject(DialogService)
   list = signal<any[]>([]);
@@ -108,15 +114,39 @@ export class WarehouseTransfer implements OnInit {
           type: 'icon',
           icon: 'cancel',
           tooltip: 'Anular',
-          color: 'warn',
-          pop: 'Confirm delete?',
-          click: () => {
+          click: async (item:any) => {
             if(!this.perms.canCancel()){
               this.noti.warning({
                 message: "No tiene permisos para anular",
               })
               return
             }
+
+            let { isConfirmed } = await Swal.fire({
+              title: '<small>Anular Transferencia?</small>',
+              html: `<small>Esta Ud. seguro de anular esta Transferencia <b>N° ${item.nroDoc}</b></small>?`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Si',
+              cancelButtonText: 'No'
+            })
+
+            if(!isConfirmed) return
+
+            this._updateStatusUseCase.execute(item.id).subscribe(response => {
+              if(response.success){
+                this.noti.success({
+                  message: response.message,
+                })
+                this.refresh();
+              }else{
+                this.noti.warning({
+                  message: response.message,
+                })
+              }
+            })
           },
         },
         {
@@ -132,13 +162,26 @@ export class WarehouseTransfer implements OnInit {
             {
               icon: 'download',
               text: 'Reporte',
-              click: () => {
+              click: (row) => {
                 if(!this.perms.canCancel()){
                   this.noti.warning({
                     message: "No tiene permisos para descargar",
                   })
                   return
                 }
+
+                const additionalParams = {
+                 id: row.id
+                };
+
+                const  reportParameters = ReportParamsBuilder.getReportParameters(
+                    INVENTORY_CODE_REPORT.RTB,
+                    additionalParams,
+                  );
+
+                this._reportUseCase.execute({
+                  data: reportParameters,
+                });
               },
             },
           ],
@@ -205,6 +248,7 @@ export class WarehouseTransfer implements OnInit {
         data
       }
     }).subscribe(result => {
+      console.log(result)
       if(result && typeof result === 'object') {
         this.refresh();
       }

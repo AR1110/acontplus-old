@@ -68,7 +68,14 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
   }
 
   updateStatus(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponse>(`${this._url}/${id}`).pipe(
+      map(response => {
+        return {
+          success: response.code==="1",
+          message: response.message,
+        }
+      })
+    )
   }
 
   getMassTransferProducts(obj:any){

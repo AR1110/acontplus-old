@@ -244,6 +244,12 @@ export class WarehouseTransferFilterAdvanced {
   }
 
 
+  addToDetail(){
+    this.dgRef.close({
+      rowSelected: this.rowSelected(),
+    })
+  }
+
   close() {
     console.log(this.checkedCategories);
     this.dgRef.close();

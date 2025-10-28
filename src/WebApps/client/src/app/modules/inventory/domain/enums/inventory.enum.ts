@@ -33,6 +33,7 @@ export const enum INVENTORY_CODE_REPORT {
   RCAA = 'RCAA', //REPORTE DE CADUCIDAD DE ARTICULOS
   RASR = 'RASR', //Reporte de Articulo Stock Valoración
   RCD = 'RCD', //Reporte Consolidacion Detalle
+  RTB='RTB' //Reporte Transferencia Bodega
 }
 
 export enum InventoryDocumentType {

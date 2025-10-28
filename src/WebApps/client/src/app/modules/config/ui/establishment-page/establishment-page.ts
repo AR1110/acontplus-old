@@ -22,6 +22,8 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { DialogService } from '@core/services/dialog.service';
 import { SendMaxEstablishmentsUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { firstValueFrom } from 'rxjs';
+import {DataGrid} from "@shared/components/data-grid/data-grid";
+import {DataGridColumn} from "@shared/components/data-grid/types";
 
 @Component({
   selector: 'app-establishment-page',
@@ -40,12 +42,13 @@ import { firstValueFrom } from 'rxjs';
     MatRadioButton,
     ThemeButtonComponent,
     MatDynamicCardComponent,
+    DataGrid,
   ],
-  templateUrl: './establishment-page.component.html',
-  styleUrl: './establishment-page.component.scss',
+  templateUrl: './establishment-page.html',
+  styleUrl: './establishment-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EstablishmentPageComponent implements OnInit {
+export class EstablishmentPage implements OnInit {
   establishments = signal<EstablishmentRead[]>([]);
   puntosEmision = signal<PuntoEmisionRead[]>([]);
   fileError: any = null;
@@ -67,16 +70,32 @@ export class EstablishmentPageComponent implements OnInit {
   private readonly _modalService = inject(DialogService);
   private readonly _tS = inject(ToastrNotificationService);
   private $sendMaxEstablishmentUseCase = inject(SendMaxEstablishmentsUseCase);
-  setPanelOpen(index: number) {
-    this.panelOpenState = index;
-    // Only load infrastructure when opening a panel (not when closing)
-    if (index >= 0 && index < this.establishments().length) {
-      const estab = this.establishments()[index];
-      this.onEstabShow(estab.idEstablecimiento);
-    } else {
-      // Handle panel closing if needed (index will be -1)
-      this.onEstabHide();
+
+
+  columns: DataGridColumn[] = [
+    { header: '', field: 'expand', showExpand: true },
+    { header: 'Op.', field: 'op' },
+    { header: 'Nro. Establecimiento', field: 'estab' },
+    { header: 'Establecimiento', field: 'nombreComercial' },
+    { header: 'Dir. Establecimiento', field: 'dirEstablecimiento' },
+    { header: 'Estado', field: 'status' },
+  ];
+
+  columnsPuntosEmision: DataGridColumn[] = [
+    { header: 'Op.', field: 'op' },
+    { header: 'Nro.', field: 'index' },
+    { header: 'Punto Emisión', field: 'ptoEmi' },
+    { header: 'Ambiente', field: 'descripcion' },
+    { header: 'Estado', field: 'status' },
+  ];
+
+  expanded(e: any) {
+    if(!e.expanded) {
+      this.puntosEmision.set([]);
+      this.data = {};
+      return
     }
+    this.onEstabShow(e.data.idEstablecimiento);
   }
 
   onFileSelected(event: Event): void {
@@ -171,7 +190,7 @@ export class EstablishmentPageComponent implements OnInit {
     const swal = Swal.mixin({
       customClass: {
         confirmButton: 'btn btn-success',
-        cancelButton: 'btn btn-danger m-l-5',
+        cancelButton: 'btn btn-danger ml-3',
       },
       buttonsStyling: false,
     });
@@ -229,12 +248,6 @@ export class EstablishmentPageComponent implements OnInit {
       }
     });
   }
-
-  onEstabHide() {
-    this.puntosEmision.set([]);
-    this.data = {};
-  }
-
   modalAddEditPuntoEmision(data: EstablishmentRead, dataPuntoEmision?: PuntoEmisionRead) {
     const modalRef = this._modalService.open(PuntoEmisionAddEditModalComponent, {
       size: 'sm',
