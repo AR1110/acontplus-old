@@ -49,7 +49,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
+        BaseEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
             typeof(AppTable),
             typeof(Ingredient),
             typeof(Item),
