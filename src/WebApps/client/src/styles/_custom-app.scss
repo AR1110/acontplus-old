@@ -63,3 +63,20 @@ button svg {
   font-weight: 500;
   font-size: 0.85rem;
 }
+
+//cell product data
+.product-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  .main {
+    font-weight: 500;
+  }
+  .code {
+    color: #666;
+  }
+  .auxiliary_code {
+    font-style: italic;
+    color: #999;
+  }
+}

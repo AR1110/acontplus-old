@@ -36,7 +36,24 @@ USE ACONTPLUS
 --UPDATE AcontplusAdmin.Config.Menu SET Url='tags' WHERE  Code='ETI'
 
 
---ALMACEN
+
+--Almacen
+DECLARE @AlmacenCode VARCHAR(10) = 'AL'
+DECLARE @AlmacenParentId INT
+
+SELECT @AlmacenParentId = Id FROM AcontplusAdmin.Config.Menu WHERE Code=@AlmacenCode 
+select * from  AcontplusAdmin.Config.Menu WHERE Code=@AlmacenCode 
+
+SELECT *
+FROM AcontplusAdmin.Config.Menu
+WHERE ParentId IN (
+    SELECT Id
+    FROM AcontplusAdmin.Config.Menu
+    WHERE Code = @AlmacenCode
+);
+UPDATE AcontplusAdmin.Config.Menu SET Url='subcategories' WHERE  Code='SUBF'
+
+--Inventario
 --select * from  AcontplusAdmin.Config.Menu WHERE Code='INV'
 --select * from  AcontplusAdmin.Config.Menu WHERE parentId = 13 
 --UPDATE AcontplusAdmin.Config.Menu SET Url='kardex' WHERE  Code='KAR'
@@ -88,19 +105,19 @@ SELECT @FactElectParentId = Id FROM AcontplusAdmin.Config.Menu WHERE Code=@FactE
 
 
 --Ventas
-DECLARE @SaleCode VARCHAR(10) = 'GV'
-select * from  AcontplusAdmin.Config.Menu WHERE Code=@SaleCode 
+--DECLARE @SaleCode VARCHAR(10) = 'GV'
+--select * from  AcontplusAdmin.Config.Menu WHERE Code=@SaleCode 
 
-SELECT *
-FROM AcontplusAdmin.Config.Menu
-WHERE ParentId IN (
-    SELECT Id
-    FROM AcontplusAdmin.Config.Menu
-    WHERE Code = @SaleCode
-);
+--SELECT *
+--FROM AcontplusAdmin.Config.Menu
+--WHERE ParentId IN (
+--    SELECT Id
+--    FROM AcontplusAdmin.Config.Menu
+--    WHERE Code = @SaleCode
+--);
 
 
 
 --UPDATE AcontplusAdmin.Config.Menu SET Url='sales' WHERE  Code=@SaleCode
-UPDATE AcontplusAdmin.Config.Menu SET Url='delivery-notes' WHERE  Code='NE'
-UPDATE AcontplusAdmin.Config.Menu SET Url='proforma-invoices' WHERE  Code='PF'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='delivery-notes' WHERE  Code='NE'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='proforma-invoices' WHERE  Code='PF'

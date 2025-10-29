@@ -30,16 +30,18 @@ export class TotalizadorUtil {
   private calcularTotalesGenerales(items: any[]) {
     return items.reduce(
       (acc, item) => {
+        const quantity = item.cantidad || item.quantity;
+        const unitPrice = item.precioUnitario || item.unitPrice;
         const totalSinImpuesto = pricingCalculateUtil.calcularTotalAntesDescuento(
-          item.precioUnitario,
-          item.cantidad,
+          unitPrice,
+          quantity,
         );
-        const totalIce = item.cantidad * item.ice;
+        const totalIce = quantity * (item.ice ?? 0);
 
         acc.totalIce += totalIce;
         acc.totalPrecioTotalSinImpuesto = plus(
           acc.totalPrecioTotalSinImpuesto,
-          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS),
+          roundNumber((item.precioTotalSinImpuesto ?? item.totalWithoutTax), DECIMALS.DOS),
           DECIMALS.GENERAL,
         );
         acc.totalDescuento = plus(acc.totalDescuento, item.valorDescuento, DECIMALS.GENERAL);
