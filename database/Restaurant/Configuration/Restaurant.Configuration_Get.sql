@@ -141,8 +141,8 @@ BEGIN
             WHERE se.idEntidad = @idEntidad 
                 AND se.codEstab = @codEstab 
                 AND CAST(ro.CreatedAt AS DATE) = CAST(GETDATE() AS DATE)
-                AND ro.Enabled = 1
-                AND ro.Deleted IS NULL 
+                AND ro.IsActive = 1
+                AND ro.IsDeleted IS NULL 
                 AND ro.Finished = 0
                 AND ro.Divided = 0
           
