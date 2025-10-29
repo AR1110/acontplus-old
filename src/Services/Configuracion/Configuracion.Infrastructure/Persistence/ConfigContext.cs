@@ -32,7 +32,7 @@ public class ConfigContext(DbContextOptions<ConfigContext> options) : BaseContex
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(ConfigContext),
+        BaseEntityRegistration.RegisterEntities(modelBuilder, typeof(ConfigContext),
             typeof(PrinterDocument));
     }
 }

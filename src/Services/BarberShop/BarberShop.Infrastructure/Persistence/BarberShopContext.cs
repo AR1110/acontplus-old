@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 
 namespace BarberShop.Infrastructure.Persistence;
 
@@ -22,7 +22,7 @@ public class BarberShopContext(DbContextOptions<BarberShopContext> options) : Ba
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        SimpleEntityRegistration.RegisterEntitiesWithSchemas(modelBuilder, typeof(BarberShopContext),
+        BaseEntityRegistration.RegisterEntitiesWithSchemas(modelBuilder, typeof(BarberShopContext),
             (typeof(TicketDocument), "BarberShop"),
             (typeof(BarberPayment), "BarberShop")
         );

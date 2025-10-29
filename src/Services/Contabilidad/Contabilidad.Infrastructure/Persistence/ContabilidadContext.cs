@@ -26,7 +26,7 @@ public class ContabilidadContext : BaseContext
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(ContabilidadContext),
+        BaseEntityRegistration.RegisterEntities(modelBuilder, typeof(ContabilidadContext),
             typeof(Subcategory));
     }
 }
