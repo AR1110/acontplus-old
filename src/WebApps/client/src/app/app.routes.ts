@@ -193,7 +193,7 @@ export const routes: Routes = [
         },
       },
       {
-        path: 'sale',
+        path: 'sales',
         title: 'App - Venta',
         loadChildren: () => import('@sale/sale.routes').then(r => r.routes),
         data: {

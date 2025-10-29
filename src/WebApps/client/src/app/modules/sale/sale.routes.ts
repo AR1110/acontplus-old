@@ -1,10 +1,12 @@
 import { Route } from '@angular/router';
 import { SaleReportPageComponent } from '@sale/ui/reports/sale-report-page/sale-report-page.component';
 
-import { NotaEntregaPageComponent } from '@sale/ui/nota-entrega-page/nota-entrega-page.component';
-import { ProformaPageComponent } from '@sale/ui/proforma-page/proforma-page.component';
+import { DeliveryNotes } from '@sale/ui/delivery-notes/delivery-notes';
+import { ProformaInvoices } from '@sale/ui/proforma-invoices/proforma-invoices';
 import { RentabilidadPageComponent } from '@sale/ui/reports/rentabilidad-page/rentabilidad-page.component';
 import { SaleHomeComponent } from './ui/sale-home.component';
+import {ACTION_ALIASES} from "@core/constants/permission-actions";
+import {SALE_MODULES_CODE} from "@sale/domain/enums/sale.enum";
 
 export const routes: Route[] = [
   {
@@ -13,15 +15,17 @@ export const routes: Route[] = [
     data: { breadcrumb: 'Ventas' },
   },
   {
-    path: 'proforma',
-    component: ProformaPageComponent,
+    path: 'proforma-invoices',
+    component: ProformaInvoices,
     data: {
       breadcrumb: 'Proformas',
+      context: SALE_MODULES_CODE.PROFORMA_INVOICE,
+      requiredActions: [ACTION_ALIASES.READ]
     },
   },
   {
-    path: 'nota-entrega',
-    component: NotaEntregaPageComponent,
+    path: 'delivery-notes',
+    component: DeliveryNotes,
     data: {
       breadcrumb: 'Notas de Entrega',
     },

@@ -26,7 +26,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-nota-entrega-page',
+  selector: 'app-delivery-notes',
   imports: [
     FormsModule,
     MatCardModule,
@@ -46,10 +46,10 @@ import { finalize, switchMap, throwError } from 'rxjs';
     //Directives
     NotaEntregaDetalleDialogDirective,
   ],
-  templateUrl: './nota-entrega-page.component.html',
+  templateUrl: './delivery-notes.html',
   styles: ``,
 })
-export class NotaEntregaPageComponent implements OnInit {
+export class DeliveryNotes implements OnInit {
   private notaEntregaSvc = inject(NotaEntregaService);
   private tS = inject(ToastrNotificationService);
 

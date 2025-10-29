@@ -44,28 +44,7 @@ import {DocElectList} from "@billing/domain/models/documento-electronico.model";
   ],
   templateUrl: './doc-elect.html',
   styles: `
-    .doc-cell, .client-cell, .dates-cell, .status-cell, .version-cell {
-      div {
-        margin: 2px 0;
-      }
-    }
 
-    .doc-cell .code-name, .client-cell .ruc, .status-cell div:first-child, .version-cell div:first-child {
-      font-weight: 600;
-    }
-
-    .doc-cell .series, .client-cell .name, .dates-cell div, .status-cell .user, .version-cell div:last-child {
-      font-size: 12px;
-      color: gray;
-    }
-    .auth-date {
-      background-color: #e8f5e9 !important;
-      color: #2e7d32 !important;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 500;
-      font-size: 0.85rem;
-    }
 
 
 

@@ -7,8 +7,9 @@ GO
 -- =============================================
 --- Ventas.NotaEntrega_Get 28, '{"tipo": 7}'
 CREATE OR ALTER PROCEDURE Ventas.NotaEntrega_Get
-    @idUsuarioRol INT ,
-    @json VARCHAR(MAX)
+    @userRoleId INT ,
+    @json VARCHAR(MAX),
+    @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
     -- SET NOCOUNT ON added to prevent extra result sets from
@@ -27,7 +28,7 @@ BEGIN
     --> Recuperacion de Informacion
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    SELECT TOP 1 @idEntidad = idEntidad , @idUsuario = idUsuario FROM app.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+    SELECT TOP 1 @idEntidad = idEntidad , @idUsuario = idUsuario FROM app.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     --> GET 
     IF @tipo = 1
@@ -106,12 +107,12 @@ BEGIN
 
         IF EXISTS (SELECT 1
         FROM Config.v_User_Permission_Sale
-        WHERE idUsuarioRol = @idUsuarioRol AND viewOthersDocs = 0) 
+        WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
 				BEGIN
             SELECT TOP 1
                 @idUsuario = idUsuario
             FROM App.UsuarioRol WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
         END
 
         IF @checkBoxFecha = 1 
@@ -213,7 +214,7 @@ BEGIN
         BEGIN
             DECLARE @existePoliticaVenta BIT=0, @codRol VARCHAR(50)
 
-            SELECT TOP 1 @codRol = codRol FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+            SELECT TOP 1 @codRol = codRol FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
             SELECT nroPrecio
                   ,nroCantidad
@@ -310,7 +311,7 @@ BEGIN
                   ,defaultEstab
                   ,defaultPtoEmi
             FROM v_PtoEmi_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
             SELECT idEstablecimiento
@@ -321,7 +322,7 @@ BEGIN
                   ,defaultEstab
                   ,defaultBodega
             FROM v_Bodega_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
             SELECT idFormaPagoSri, descripcion, codigo FROM dbo.FormaPagoSri WHERE estado = 1
@@ -351,7 +352,7 @@ BEGIN
                     , defaultEstab
                     , defaultPtoEmi
         FROM v_PtoEmi_Asign WITH(NOLOCK)
-        WHERE idUsuarioRol = @idUsuarioRol
+        WHERE idUsuarioRol = @userRoleId
         ORDER BY defaultEstab DESC
 
         SELECT idEstadoPago, descripcion, codigo
@@ -629,7 +630,7 @@ BEGIN
                   , defaultEstab
                   , defaultPtoEmi
         FROM v_PtoEmi_Asign WITH(NOLOCK)
-        WHERE idUsuarioRol = @idUsuarioRol
+        WHERE idUsuarioRol = @userRoleId
         ORDER BY defaultEstab DESC
 
         SELECT idEstablecimiento
@@ -640,7 +641,7 @@ BEGIN
                   , defaultEstab
                   , defaultBodega
         FROM v_Bodega_Asign WITH(NOLOCK)
-        WHERE idUsuarioRol = @idUsuarioRol
+        WHERE idUsuarioRol = @userRoleId
         ORDER BY defaultEstab DESC
 
         --   SELECT u.idUsuario
