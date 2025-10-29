@@ -1,5 +1,6 @@
-﻿namespace Restaurant.Domain.Entities.MealManagement;
+namespace Restaurant.Domain.Entities.MealManagement;
 
+[Table("MealPlanSchedule", Schema = "Restaurant")]
 public class MealPlanSchedule : BaseEntity
 {
 
@@ -11,5 +12,5 @@ public class MealPlanSchedule : BaseEntity
 
     // Navigation Properties
     public required MealPlan MealPlan { get; set; }
-    public required MealScheduleSettings MealSchedule { get; set; }
+    public required MealScheduleSetting MealScheduleSetting { get; set; }
 }

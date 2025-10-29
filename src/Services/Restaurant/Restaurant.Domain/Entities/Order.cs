@@ -32,4 +32,5 @@ public class Order : BaseEntity
     public bool Finished { get; set; }
     public int? TaxPercentId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+    public ICollection<MealManagement.MealConsumption> MealConsumptions { get; set; } = new List<MealManagement.MealConsumption>();
 }

@@ -1,5 +1,6 @@
-﻿namespace Restaurant.Domain.Entities.MealManagement;
+namespace Restaurant.Domain.Entities.MealManagement;
 
+[Table("CancelledMealConsumption", Schema = "Restaurant")]
 public class CancelledMealConsumption : BaseEntity
 {
     public int MealConsumptionId { get; set; }

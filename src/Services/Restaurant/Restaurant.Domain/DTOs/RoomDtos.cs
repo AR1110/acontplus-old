@@ -13,8 +13,8 @@ public record RoomResponseDto
 
     public int Id { get; set; }
     public int FloorId { get; set; }
-    public string? Code { get; set; }
-    public string? Description { get; set; }
+    public required string Code { get; set; }
+    public required string Description { get; set; }
     public int Capacity { get; set; }
     public bool IsActive { get; set; }
     public ICollection<TableResponseDto>? Tables { get; set; } = new List<TableResponseDto>();

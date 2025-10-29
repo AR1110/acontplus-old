@@ -1,14 +1,15 @@
-﻿using Restaurant.Domain.Enums;
+using Restaurant.Domain.Enums;
 
 namespace Restaurant.Domain.Entities.MealManagement;
 
+[Table("MealConsumption", Schema = "Restaurant")]
 public class MealConsumption: BaseEntity
 {
-    public int EmployeeId { get; set; }
-
     public int MealScheduleSettingId { get; set; }
 
-    public int? MonthlyAllowanceId { get; set; }
+    public int MonthlyAllowanceId { get; set; }
+
+    public int? OrderId { get; set; }
 
     public DateTime ConsumptionDate { get; set; }
 
@@ -16,10 +17,10 @@ public class MealConsumption: BaseEntity
     public decimal Amount { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal SubsidyAmount { get; set; }
+    public decimal? SubsidyAmount { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal EmployeePayment { get; set; }
+    public decimal? CompanyCustomerPayment { get; set; }
 
     public ConsumptionStatus Status { get; set; }
 
@@ -27,7 +28,8 @@ public class MealConsumption: BaseEntity
     public required string CancellationReason { get; set; }
 
     // Navigation Properties
-    public required MealScheduleSettings MealSchedule { get; set; }
-    public MonthlyMealAllowance? MonthlyAllowance { get; set; }
-    public ICollection<MealConsumptionAudit> AuditTrail { get; set; }
+    public required MealScheduleSetting MealScheduleSetting { get; set; }
+    public required MonthlyMealAllowance MonthlyMealAllowance { get; set; }
+    public Order? Order { get; set; }
+    public ICollection<MealConsumptionAudit> MealConsumptionAudits { get; set; } = new List<MealConsumptionAudit>();
 }

@@ -1,6 +1,7 @@
-﻿namespace Restaurant.Domain.Entities.MealManagement;
+namespace Restaurant.Domain.Entities.MealManagement;
 
-public class MealScheduleSettings : BaseEntity
+[Table("MealScheduleSetting", Schema = "Restaurant")]
+public class MealScheduleSetting : BaseEntity
 {
     public int EstablishmentId { get; set; }
 
@@ -15,7 +16,7 @@ public class MealScheduleSettings : BaseEntity
     public int DisplayOrder { get; set; }
 
     // Navigation Properties
-    public ICollection<MealConsumption> Consumptions { get; set; }
+    public ICollection<MealConsumption> MealConsumptions { get; set; } = new List<MealConsumption>();
     public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } =  new List<MealPlanSchedule>();
     public ICollection<DailyMenu> DailyMenus { get; set; } =  new List<DailyMenu>();
 }

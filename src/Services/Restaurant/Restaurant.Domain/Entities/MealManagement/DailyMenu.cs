@@ -1,5 +1,6 @@
-﻿namespace Restaurant.Domain.Entities.MealManagement;
+namespace Restaurant.Domain.Entities.MealManagement;
 
+[Table("DailyMenu", Schema = "Restaurant")]
 public class DailyMenu: BaseEntity
 {
     public int EstablishmentId { get; set; }
@@ -8,18 +9,17 @@ public class DailyMenu: BaseEntity
 
     public int MealScheduleSettingId { get; set; }
 
+    public int? MealPlanId { get; set; }
+
     [MaxLength(1000)]
-    public string Description { get; set; }
+    public required string Description { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
     public decimal StandardPrice { get; set; }
 
     public bool IsAvailable { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime? UpdatedAt { get; set; }
-
     // Navigation Properties
-    public MealScheduleSettings MealSchedule { get; set; }
+    public required MealScheduleSetting MealScheduleSetting { get; set; }
+    public MealPlan? MealPlan { get; set; }
 }
