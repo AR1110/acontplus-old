@@ -7,16 +7,16 @@ import { ApiResponse } from '@core/models/api-response';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
 import {
-  DocumentoElectronico,
   FilterData,
 } from '@billing/domain/models/documento-electronico.model';
 import { SharedService } from '@core/services/shared.service';
 import { catchError } from 'rxjs/operators';
+import {ElectronicDocListMapper} from "@billing/data/documento-electronico/doc-elect-list.mapper";
 
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentoElectronicoWebRepository implements DocumentoElectronicoRepository {
+export class DocElectHttpRepository implements DocumentoElectronicoRepository {
   private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
   private readonly _http = inject(HttpClient);
   private readonly _sharedService = inject(SharedService);
@@ -99,21 +99,9 @@ export class DocumentoElectronicoWebRepository implements DocumentoElectronicoRe
     return this.filterDataSubject.asObservable();
   }
   getAll<T>(obj: T) {
-    const json = JSON.stringify({
-      tipo: 1,
-      pageIndex: 1,
-      pageSize: 25,
-      ...obj,
-    });
+    const json = ElectronicDocListMapper.toJson(obj);
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
-        if (response.code !== '1') {
-          return { documentosElectronicos: [] };
-        }
-        const {data} = JSON.parse(response.payload as string);
-
-        return { documentosElectronicos: data as DocumentoElectronico[] };
-      }),
+      map(response =>ElectronicDocListMapper.fromJson(response)),
     );
   }
 

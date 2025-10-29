@@ -1,4 +1,4 @@
-import { Component, inject, model, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -9,7 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -17,14 +16,16 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
+import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatPagination } from '@shared/models/pagination.model';
-import { finalize, forkJoin, switchMap } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
+import {DataGrid} from "@shared/components/data-grid/data-grid";
+import {DataGridColumn} from "@shared/components/data-grid/types";
+import {DocElectList} from "@billing/domain/models/documento-electronico.model";
 
 @Component({
-  selector: 'app-documento-electronico',
+  selector: 'app-doc-elect',
   imports: [
     FormsModule,
     MatCardModule,
@@ -39,49 +40,52 @@ import { finalize, forkJoin, switchMap } from 'rxjs';
     CustomTableContainerComponent,
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
+    DataGrid,
   ],
-  templateUrl: './doc-elect.component.html',
-  styles: ``,
+  templateUrl: './doc-elect.html',
+  styles: `
+    .doc-cell, .client-cell, .dates-cell, .status-cell, .version-cell {
+      div {
+        margin: 2px 0;
+      }
+    }
+
+    .doc-cell .code-name, .client-cell .ruc, .status-cell div:first-child, .version-cell div:first-child {
+      font-weight: 600;
+    }
+
+    .doc-cell .series, .client-cell .name, .dates-cell div, .status-cell .user, .version-cell div:last-child {
+      font-size: 12px;
+      color: gray;
+    }
+    .auth-date {
+      background-color: #e8f5e9 !important;
+      color: #2e7d32 !important;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 0.85rem;
+    }
+
+
+
+  `,
 })
-export class DocElectComponent implements OnInit {
-  private docElectSvc = inject(DocumentoElectronicoWebRepository);
+export class DocElect implements OnInit {
+  private docElectSvc = inject(DocElectHttpRepository);
   private tS = inject(ToastrNotificationService);
 
-  estabs: GroupedEstab[] = [];
-  puntosEmision: GroupedEstabPuntoEmision[] = [];
-  tiposDoc: any[] = [];
-  estadosDoc: any[] = [];
+  estabs = signal<GroupedEstab[]>([]);
+  puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
+  tiposDoc = signal<any[]>([]);
+  estadosDoc = signal<any[]>([]);
 
   isLoadingResults = signal(false);
   isSearchAdvanced = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'estado', label: 'Estado', type: 'string' },
-    { key: 'comprobante', label: 'Comprobante', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'fechaAutorizacion', label: 'Fecha Autorización', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
-    { key: 'rucReceptor', label: 'Ruc Receptor', type: 'string' },
-    {
-      key: 'razonSocialReceptor',
-      label: 'Razón Social Receptor	',
-      type: 'string',
-    },
-    {
-      key: 'claveAcceso',
-      label: 'Clave de acceso/Nro. autorización',
-      type: 'string',
-    },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
-  ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
-
-  dataSource = new MatTableDataSource<any>();
-
   pagination = signal(new MatPagination());
 
-  dataSearch = model({
+  dataSearch =  {
     codEstab: null as string | null | undefined,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
@@ -91,35 +95,45 @@ export class DocElectComponent implements OnInit {
     idPuntoEmision: 0,
     identificacionReceptor: null,
     idUsuario: 0,
-  });
+  };
 
+  columns: DataGridColumn[] = [
+    { header: 'Nro.', field: 'index' },
+    { header: 'Op.', field: 'actions' },
+    { header: 'Documento', field: 'document' },
+    { header: 'Cliente', field: 'client' },
+    { header: 'Fecha de emisión y autorización', field: 'dates' },
+    { header: 'Versión', field: 'version' },
+    { header: 'Estado', field: 'statusName' },
+    { header: 'Usuario', field: 'user' }
+  ];
+  list = signal<DocElectList[]>([]);
   refresh() {
     this.getDocElects();
   }
 
   private getDataParams() {
-    const obj = {
-      codDoc: isValidField(this.dataSearch().codDoc),
-      codEstado: isValidField(this.dataSearch().codEstado),
-      checkBoxDate: this.dataSearch().checkBoxDate,
-      dateStart: this.dataSearch().fromDate,
-      dateEnd: this.dataSearch().toDate,
-      codEstab: this.dataSearch().codEstab,
-      idPuntoEmision: this.dataSearch().idPuntoEmision,
-      identificacionReceptor: isValidField(this.dataSearch().identificacionReceptor),
-      idUsuario: getValidId(this.dataSearch().idUsuario),
+    return  {
+      codDoc: isValidField(this.dataSearch.codDoc),
+      codEstado: isValidField(this.dataSearch.codEstado),
+      checkBoxDate: this.dataSearch.checkBoxDate,
+      dateStart: this.dataSearch.fromDate,
+      dateEnd: this.dataSearch.toDate,
+      codEstab: this.dataSearch.codEstab,
+      idPuntoEmision: this.dataSearch.idPuntoEmision,
+      identificacionReceptor: isValidField(this.dataSearch.identificacionReceptor),
+      idUsuario: getValidId(this.dataSearch.idUsuario),
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
       //  nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)
     };
-    return obj;
   }
 
   private successResponseList(response: any) {
-    this.dataSource = new MatTableDataSource(response.data);
+    this.list.set(response.data);
     this.pagination.update(p => ({
       ...p,
-      totalRecords: this.dataSource.data.length > 0 ? this.dataSource.data[0].totalRecords : 0,
+      totalRecords: response.totalRecords,
     }));
   }
 
@@ -145,21 +159,16 @@ export class DocElectComponent implements OnInit {
       .getFilters()
       .pipe(
         switchMap(initialData => {
-          this.estabs = initialData.estabs;
-          this.tiposDoc = initialData.tipoDocumentos;
-          this.estadosDoc = initialData.estadoDocumentos;
+          this.estabs.set(initialData.estabs);
+          this.tiposDoc.set(initialData.tipoDocumentos);
+          this.estadosDoc.set(initialData.estadoDocumentos);
 
-          if (this.estabs.length > 0) {
-            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
-            this.puntosEmision = dataEstab?.puntosEmision || [];
-            this.dataSearch.update(e => {
-              return {
-                ...e,
-                codEstab: dataEstab?.codEstab,
-                idPuntoEmision:
-                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
-              };
-            });
+          if (this.estabs().length > 0) {
+            const dataEstab = this.estabs().find(estab => estab.defaultEstab);
+            this.puntosEmision.set(dataEstab?.puntosEmision || [])
+            this.dataSearch.codEstab = dataEstab?.codEstab || '';
+            this.dataSearch.idPuntoEmision = this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0;
+
           }
           return this.docElectSvc.getAll(this.getDataParams());
         }),
@@ -174,26 +183,24 @@ export class DocElectComponent implements OnInit {
       });
   }
 
-  setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
+  setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
-    value: ReturnType<typeof this.dataSearch>[K],
+    value: typeof this.dataSearch[K],
   ) {
-    this.dataSearch.update(ds => {
-      return {
-        ...ds,
-        [key]: value,
-      };
-    });
+    this.dataSearch = {
+      ...this.dataSearch,
+      [key]: value,
+    };
   }
 
   onEstabChange() {
-    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
-    this.puntosEmision = dataEstab?.puntosEmision || [];
+    const dataEstab = this.estabs().find(estab => estab.codEstab === this.dataSearch.codEstab);
+    this.puntosEmision.set(dataEstab?.puntosEmision || []);
 
-    if (this.puntosEmision.length > 0) {
+    if (this.puntosEmision().length > 0) {
       this.setDataSearch(
         'idPuntoEmision',
-        this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+        this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
       );
       this.getDocElects();
     } else {
@@ -205,13 +212,8 @@ export class DocElectComponent implements OnInit {
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update(e => {
-      return {
-        ...e,
-        fromDate: range.from,
-        toDate: range.to,
-      };
-    });
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
     this.refresh();
   }
 
@@ -226,4 +228,6 @@ export class DocElectComponent implements OnInit {
     });
     this.refresh();
   }
+
+
 }

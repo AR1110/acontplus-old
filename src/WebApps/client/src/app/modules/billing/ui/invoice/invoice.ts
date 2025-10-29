@@ -1,4 +1,4 @@
-import { Component, inject, model, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -43,10 +43,10 @@ import { finalize, switchMap, throwError } from 'rxjs';
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
   ],
-  templateUrl: './invoice.component.html',
+  templateUrl: './invoice.html',
   styles: ``,
 })
-export class InvoiceComponent implements OnInit {
+export class Invoice implements OnInit {
   private invoiceSvc = inject(InvoiceService);
   private tS = inject(ToastrNotificationService);
 
@@ -74,7 +74,7 @@ export class InvoiceComponent implements OnInit {
 
   pagination = signal(new MatPagination());
 
-  dataSearch = model({
+  dataSearch = {
     codEstab: null as string | null | undefined,
     idPuntoEmision: 0,
     checkBoxDate: true,
@@ -88,24 +88,24 @@ export class InvoiceComponent implements OnInit {
     esBuscarPorNro: false,
     esBuscarUsuario: false,
     esBuscarCliente: false,
-  });
+  };
 
   private getDataParams() {
     const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
 
-      codEstab: this.dataSearch().codEstab,
-      idPuntoEmision: getValidId(this.dataSearch().idPuntoEmision),
-      byCliente: this.dataSearch().idCliente,
-      checkBoxFecha: this.dataSearch().checkBoxDate,
-      byUsuario: getValidId(this.dataSearch().idUsuario),
-      idEstadoPago: getValidId(this.dataSearch().idEstadoDoc),
-      fechaInicio: this.dataSearch().fromDate,
-      fechaFin: this.dataSearch().toDate,
+      codEstab: this.dataSearch.codEstab,
+      idPuntoEmision: getValidId(this.dataSearch.idPuntoEmision),
+      byCliente: this.dataSearch.idCliente,
+      checkBoxFecha: this.dataSearch.checkBoxDate,
+      byUsuario: getValidId(this.dataSearch.idUsuario),
+      idEstadoPago: getValidId(this.dataSearch.idEstadoDoc),
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
       //     nroSecuencial: fS.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
       //    infoAdicional: this.dataSearch.infoAdicional ? this.dataSearch.infoAdicional : null,
-      convertToDoc: this.dataSearch().isTransferredToDoc,
+      convertToDoc: this.dataSearch.isTransferredToDoc,
     };
     return params;
   }
@@ -151,14 +151,9 @@ export class InvoiceComponent implements OnInit {
             const dataEstab = this.estabs.find(estab => estab.defaultEstab);
             this.puntosEmision = dataEstab?.puntosEmision || [];
 
-            this.dataSearch.update(e => {
-              return {
-                ...e,
-                codEstab: dataEstab?.codEstab,
-                idPuntoEmision:
-                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
-              };
-            });
+            this.dataSearch.codEstab = dataEstab?.codEstab || '';
+            this.dataSearch.idPuntoEmision = this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0
+
           } else {
             this.tS.show({
               type: 'warning',
@@ -176,20 +171,18 @@ export class InvoiceComponent implements OnInit {
       });
   }
 
-  setDataSearch<K extends keyof ReturnType<typeof this.dataSearch>>(
+  setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
-    value: ReturnType<typeof this.dataSearch>[K],
+    value: typeof this.dataSearch[K],
   ) {
-    this.dataSearch.update(ds => {
-      return {
-        ...ds,
-        [key]: value,
-      };
-    });
+    this.dataSearch = {
+      ...this.dataSearch,
+      [key]: value,
+    };
   }
 
   onEstabChange() {
-    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch.codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
@@ -207,13 +200,8 @@ export class InvoiceComponent implements OnInit {
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update(e => {
-      return {
-        ...e,
-        fromDate: range.from,
-        toDate: range.to,
-      };
-    });
+    this.dataSearch.fromDate = range.from;
+    this.dataSearch.toDate = range.to;
     this.refresh();
   }
 
