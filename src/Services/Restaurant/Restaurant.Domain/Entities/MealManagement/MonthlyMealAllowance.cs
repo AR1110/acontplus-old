@@ -1,10 +1,9 @@
-﻿namespace Restaurant.Domain.Entities.MealManagement;
+namespace Restaurant.Domain.Entities.MealManagement;
 
-public class MonthlyMealAllowance
+[Table("MonthlyMealAllowance", Schema = "Restaurant")]
+public class MonthlyMealAllowance: BaseEntity
 {
-    public int Id { get; set; }
-
-    public int EmployeeId { get; set; }
+    public int CompanyCustomerMealPlanId { get; set; }
 
     public int Year { get; set; }
 
@@ -17,15 +16,12 @@ public class MonthlyMealAllowance
     public int RemainingMeals { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal TotalSubsidy { get; set; }
+    public decimal? TotalSubsidy { get; set; }
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal EmployeeContribution { get; set; }
-
-    public DateTime CreatedAt { get; set; }
-
-    public DateTime? LastUpdated { get; set; }
+    public decimal? CompanyCustomerContribution { get; set; }
 
     // Navigation Properties
-    public virtual ICollection<MealConsumption> Consumptions { get; set; }
+    public required CompanyCustomerMealPlan CompanyCustomerMealPlan { get; set; }
+    public ICollection<MealConsumption> MealConsumptions { get; set; } = new List<MealConsumption>();
 }

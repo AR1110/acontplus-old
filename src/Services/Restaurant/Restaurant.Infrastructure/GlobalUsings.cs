@@ -7,3 +7,4 @@ global using Acontplus.Utilities.Data;
 global using Microsoft.EntityFrameworkCore;
 global using Restaurant.Domain.Entities;
 global using Restaurant.Domain.Repositories;
+global using Restaurant.Domain.Entities.MealManagement;
