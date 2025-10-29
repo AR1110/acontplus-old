@@ -1,5 +1,8 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
+using Restaurant.Application.Extensions;
+using Restaurant.Infrastructure.Extensions;
 using Scrutor;
 
 namespace Restaurant.API.Extensions;
@@ -19,15 +22,16 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
+        // Register Application Mappings -> Mapster
+
+        services.RegisterMappings();
+
         JsonConfigurationService.ConfigureAspNetCore(services, false);
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddDbContextPool<RestaurantContext>(opt =>
-        {
-            opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                x => x.MigrationsAssembly("Restaurant.Infrastructure"));
-        });
+        
+        services.AddInfrastructure(configuration);
 
         string[] scopedNameSpaces =
         [

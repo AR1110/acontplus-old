@@ -5,3 +5,5 @@ global using Acontplus.Core.Validation;
 global using Acontplus.Utilities.Data;
 global using Restaurant.Application.Interfaces;
 global using System.Data;
+global using Restaurant.Domain.Entities;
+global using Restaurant.Application.DTOs;
