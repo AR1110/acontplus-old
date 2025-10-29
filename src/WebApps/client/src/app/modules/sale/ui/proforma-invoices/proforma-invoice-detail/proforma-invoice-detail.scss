@@ -1,0 +1,31 @@
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  .main {
+    font-weight: 500;
+  }
+  .code {
+    color: #666;
+  }
+  .note {
+    font-style: italic;
+    color: #999;
+  }
+}
+
+mat-header-cell, mat-cell {
+  padding: 6px 12px;
+  vertical-align: top;
+}
+
+mat-header-cell {
+  font-weight: 600;
+  color: #555;
+  background: #fafafa;
+}
+
+mat-row:nth-child(even) {
+  background: #fcfcfc;
+}

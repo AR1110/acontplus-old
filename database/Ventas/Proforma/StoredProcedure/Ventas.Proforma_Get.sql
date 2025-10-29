@@ -10,7 +10,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE OR ALTER PROCEDURE Ventas.Proforma_Get @idUsuarioRol INT, @json NVARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Ventas.Proforma_Get @userRoleId INT, @json NVARCHAR(MAX), @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
     -- SET NOCOUNT ON added to prevent extra result sets from
@@ -38,7 +38,7 @@ BEGIN
     --> Recupera informacion 
     SELECT @tipo = tipo FROM OPENJSON(@json) WITH (tipo INT)
 
-    SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+    SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
     -- Get
     IF @tipo = 1
@@ -112,9 +112,9 @@ BEGIN
                 ,codEstado      VARCHAR(10)
             )
 
-            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @idUsuarioRol AND viewOthersDocs = 0) 
+            IF EXISTS (SELECT 1 FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId AND viewOthersDocs = 0) 
                 BEGIN
-                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+                    SELECT TOP 1 @idUsuario = idUsuario FROM App.UsuarioRol WITH(NOLOCK) WHERE idUsuarioRol = @userRoleId
                 END
 
             IF @codEstab IS NOT NULL
@@ -154,6 +154,7 @@ BEGIN
 
             SET @sql = @sql + 'ORDER BY pr.idProforma DESC OFFSET @pageSize * (@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY '
 
+            SET @tableNames='proformaInvoices'
             EXEC sp_executesql 
                          @sql
                         ,@params 
@@ -176,7 +177,7 @@ BEGIN
             DECLARE @existePoliticaVenta BIT = 0
                    ,@codRol VARCHAR(50)
 
-            SELECT TOP 1 @codRol = codRol FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
+            SELECT TOP 1 @codRol = codRol FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
             SELECT nroPrecio
                   ,nroCantidad
@@ -263,7 +264,7 @@ BEGIN
                   ,defaultEstab
                   ,defaultPtoEmi
             FROM v_PtoEmi_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
             SELECT idEstablecimiento
@@ -274,7 +275,7 @@ BEGIN
                   ,defaultEstab
                   ,defaultBodega
             FROM v_Bodega_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
             SELECT cd.idPuntoEmision
@@ -293,6 +294,7 @@ BEGIN
     -- Filters
     IF @tipo = 3
         BEGIN
+            SET @tableNames='estabs'
             SELECT idEstablecimiento
                   ,nombreComercial
                   ,codEstab
@@ -301,7 +303,7 @@ BEGIN
                   ,defaultEstab
                   ,defaultPtoEmi
             FROM v_PtoEmi_Asign WITH(NOLOCK)
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @userRoleId
             ORDER BY defaultEstab DESC
 
             RETURN
@@ -310,6 +312,7 @@ BEGIN
     -- Get Id
     IF @tipo = 4 
         BEGIN
+            SET @tableNames='header,customer,details,additionalsInfo,taxes'
             SELECT @id = id FROM OPENJSON(@json) WITH (id INT)
 
             SELECT es.nombreComercial
@@ -363,6 +366,9 @@ BEGIN
             INNER JOIN dbo.Bodega    bo WITH (NOLOCK) ON bo.idBodega   = pd.idBodega
             WHERE pd.idProforma = @id
             ORDER BY idProformaDetalle ASC
+
+            SELECT  nombre as name, valor as value  FROM dbo.InfoAdicionalDoc idd
+            WHERE idComprobante = @id
 
             SELECT idTipoIva
                   ,idImpuesto

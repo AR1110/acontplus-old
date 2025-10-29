@@ -83,7 +83,7 @@ SELECT @FactElectParentId = Id FROM AcontplusAdmin.Config.Menu WHERE Code=@FactE
 --UPDATE AcontplusAdmin.Config.Menu SET Url='ats' WHERE  Code='ATS'
 --UPDATE AcontplusAdmin.Config.Menu SET Url='doc-elects' WHERE  Code='AUTH'
 --UPDATE AcontplusAdmin.Config.Menu SET Url='fact-elect-report' WHERE  Code='FE-R'
-UPDATE AcontplusAdmin.Config.Menu SET Url='invoices', ParentId=@FactElectParentId WHERE  Code='FV'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='invoices', ParentId=@FactElectParentId WHERE  Code='FV'
  
 
 
@@ -101,6 +101,6 @@ WHERE ParentId IN (
 
 
 
-UPDATE AcontplusAdmin.Config.Menu SET Url='sales' WHERE  Code=@SaleCode
---UPDATE AcontplusAdmin.Config.Menu SET Url='doc-elects' WHERE  Code='AUTH'
---UPDATE AcontplusAdmin.Config.Menu SET Url='fact-elect-report' WHERE  Code='FE-R'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='sales' WHERE  Code=@SaleCode
+UPDATE AcontplusAdmin.Config.Menu SET Url='delivery-notes' WHERE  Code='NE'
+UPDATE AcontplusAdmin.Config.Menu SET Url='proforma-invoices' WHERE  Code='PF'
