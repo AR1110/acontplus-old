@@ -1,8 +1,0 @@
-﻿namespace FactElect.Application.Interfaces.RetencionAts;
-
-public interface IDocSustentoRetencionService
-{
-    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-}
