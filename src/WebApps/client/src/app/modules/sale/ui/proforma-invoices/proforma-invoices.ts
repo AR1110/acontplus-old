@@ -26,6 +26,9 @@ import {HasPermissionDirective} from "@core/directives/permission";
 import {  MatMenuModule} from "@angular/material/menu";
 import {DialogService} from "@core/services/dialog.service";
 import {ProformaInvoiceDetail} from "@sale/ui/proforma-invoices/proforma-invoice-detail/proforma-invoice-detail";
+import {
+  ProformaInvoiceAddEdit
+} from "@sale/ui/proforma-invoices/proforma-invoice-add-edit/proforma-invoice-add-edit";
 
 @Component({
   selector: 'app-proforma-invoices',
@@ -88,16 +91,21 @@ export class ProformaInvoices {
   list = signal<ProformaInvoiceList[]>([]);
   isLoading = signal(false);
 
-  query = {
-    q: 'user:nzbin',
-    page: 0,
-    per_page: 5,
-  };
+  openAddEditDialog(operation: 'add' | 'edit' | 'duplicate'='add', id?: number, data?: any) {
+    this.dgSvc.open(ProformaInvoiceAddEdit, {
+      size: 'xxl',
+      data: {
+        id: 0,
+        operation,
+        data
+      }
+    }).subscribe(result => {
+      console.log(result)
+      if(result && typeof result === 'object') {
+        this.refresh();
+      }
+    });
 
-  get params() {
-    const p = Object.assign({}, this.query);
-    p.page += 1;
-    return p;
   }
 
   private initLoad() {
@@ -128,7 +136,7 @@ export class ProformaInvoices {
   }
 
   ngOnInit() {
-    this.initLoad()
+   // this.initLoad()
   }
 
   private getParams (){
@@ -189,8 +197,12 @@ export class ProformaInvoices {
 
   }
   getNextPage(e: PageEvent) {
-    this.query.page = e.pageIndex;
-    this.query.per_page = e.pageSize;
+    this.pagination.update(pag => ({
+      ...pag,
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+      totalRecords: e.length,
+    }))
     this.getList();
   }
 

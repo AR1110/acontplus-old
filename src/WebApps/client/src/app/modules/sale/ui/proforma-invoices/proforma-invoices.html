@@ -42,7 +42,9 @@
             *hasPermission="
             action_aliases().CREATE;
             context: sale_modules_code().PROFORMA_INVOICE"
-            mat-icon-button>
+            mat-icon-button
+            (click)="openAddEditDialog('add')"
+          >
             <mat-icon>add</mat-icon>
           </button>
           <button mat-icon-button (click)="refresh()">
@@ -145,6 +147,27 @@
         <mat-icon>list_alt</mat-icon>
         <span>Detalle</span>
       </button>
+
+      <button mat-menu-item (click)="openViewDetail(row)">
+        <mat-icon>edit_document</mat-icon>
+        <span>Editar</span>
+      </button>
+
+      <button mat-menu-item (click)="openViewDetail(row)">
+        <mat-icon>file_copy</mat-icon>
+        <span>Duplicar</span>
+      </button>
+
+      <button mat-menu-item (click)="openViewDetail(row)">
+        <mat-icon>cancel</mat-icon>
+        <span>Anular</span>
+      </button>
+
+      <button mat-menu-item (click)="openViewDetail(row)">
+        <mat-icon>article_shortcut</mat-icon>
+        <span>Convertir a FV O NE</span>
+      </button>
+
       <button mat-menu-item>
         <mat-icon>download</mat-icon>
         <span>Pdf</span>
@@ -158,7 +181,7 @@
     </button>
     <button mat-icon-button aria-label="Icon Email">
       <img
-        src="../../../../../assets/icons/icons8/svg/whatsapp.svg"
+        src="./assets/icons/icons8/svg/whatsapp.svg"
         alt="WhatsApp Icon"
         style="width: 24px; height: 24px"
       />
