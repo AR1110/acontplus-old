@@ -2,7 +2,7 @@ export const enum SALE_PATHS {
   EMPLOYEE = 'Empleado/',
   APROBACION_DOC = 'AprobacionDocumento/',
   NOTA_ENTREGA = 'NotaEntrega/',
-  PROFORMA = 'Proforma/',
+  PROFORMA_INVOICE = 'Proforma',
 }
 
 export const enum SALE_CODE_REPORT {
@@ -24,3 +24,11 @@ export const enum SALE_CODE_REPORT {
    */
   FG = 'FG',
 }
+
+
+export const enum SALE_ROUTES {
+  proforma_invoices = 'proforma_invoices',
+}
+export const SALE_MODULES_CODE = {
+  PROFORMA_INVOICE: 'PF', //PROFORMAS
+} as const

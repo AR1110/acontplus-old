@@ -93,6 +93,7 @@
                         <tr ng-show="item.showHeader">
                             <th>Codigo</th>
                             <th>Descripcion</th>
+                            <th>Stock Principal</th>
                             <th>Stock</th>
                             <th>Iva</th>
                             <th>SubFamilia</th>
@@ -118,6 +119,9 @@
                                 <span class="item-desc font-weight-bold">
                                     {{item.descripcion}}
                                 </span>
+                            </td>
+                            <td class="suggestion-column text-center">
+                                <h6><span>{{ item.warehouseStock}} </span></h6>
                             </td>
                             <td class="suggestion-column text-center">
                                 <h6><span estab-stock article="item" class="{{item.style}}">{{ item.stock}} </span></h6>

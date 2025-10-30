@@ -1,0 +1,82 @@
+/* Estilos compartidos */
+.small-button {
+  width: 23px;            /* tamaño pequeño */
+  height: 23px;
+  border-radius: 50%;      /* circular */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Botón Editar */
+.btn-edit {
+  background-color: #16a34a;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #15803d;
+}
+
+/* Botón Eliminar */
+.btn-remove {
+  background-color: #dc2626;
+  color: white;
+}
+
+.btn-remove:hover {
+  background-color: #b91c1c;
+}
+
+
+//celdas filas documentos
+.doc-cell, .client-cell, .dates-cell, .status-cell, .version-cell, .product-cell {
+  div {
+    margin: 2px 0;
+  }
+}
+
+.doc-cell .code-name, .product-cell .code, .client-cell .ruc, .status-cell div:first-child, .version-cell div:first-child {
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.doc-cell .series, .client-cell .name, .dates-cell div, .status-cell .user, .product-cell .name, .version-cell div:last-child {
+  font-size: 12px;
+  color: gray;
+}
+.auth-date {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+//cell product data
+.product-info {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  .main {
+    font-weight: 500;
+  }
+  .code {
+    color: #666;
+  }
+  .auxiliary_code {
+    font-style: italic;
+    color: #999;
+  }
+}

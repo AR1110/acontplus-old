@@ -6,7 +6,6 @@ import { purchaseProviders } from '@purchase/providers';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
-import { saleProvider } from '@sale/providers';
 import { billingProviders } from '@billing/providers';
 import { barberShopProviders } from '@barber-shop/providers';
 import { DATA_INVENTORY_IOC } from '@inventory/data/inventory.ioc';
@@ -19,6 +18,7 @@ import { DATA_CUSTOMER_IOC } from '@customer/data/data-customer.ioc';
 import { settingsInterceptor } from '@core/interceptors/settings-interceptor';
 import { noopInterceptor } from '@core/interceptors/noop-interceptor';
 import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
+import {DATA_SALE_IOC} from "@sale/data/sale.ioc";
 
 export const infrastructureProviders = [
   provideHttpClient(
@@ -45,7 +45,7 @@ export const featureProviders = [
   ...DATA_CONFIG_IOC,
   ...DATA_REPORT_IOC,
   ...DATA_CUSTOMER_IOC,
-  ...saleProvider,
+  ...DATA_SALE_IOC,
   ...billingProviders,
   ...barberShopProviders,
 ];
