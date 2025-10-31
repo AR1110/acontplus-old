@@ -1,0 +1,64 @@
+namespace Billing.Application.Services;
+
+public class DocumentoElectronicoService(IAdoRepository adoRepository) : IDocumentoElectronicoService
+{
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<SpResponse> GetByStatusAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_GetByStatus", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+
+    //Eliminar el método GetDataFormAsync y su implementación en la interfaz IDocumentoElectronicoService
+    public async Task<SpResponse> GetDataFormAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Data_Form", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<SpResponse> GetFiltersAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Filters", parameters);
+        return !DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) }
+            : new SpResponse { Code = "0", Message = "No se encontraron datos" };
+    }
+
+    public async Task<FileModel> GetXmlSriAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await adoRepository.GetDataSetAsync("FactElect.Doc_Elect_Get_Xml", parameters);
+        var dt = ds?.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+        switch (dt.Rows.Count)
+        {
+            case > 0 when dt.Columns.Contains("xmlSri"):
+                {
+                    var xmlSri = HttpUtility.HtmlDecode(dt.Rows[0].Field<string>("xmlSri"));
+                    var response = new FileModel
+                    {
+                        Content = Encoding.UTF8.GetBytes(xmlSri),
+                        FileName = dt.Rows[0].Field<string>("filename") + ".xml"
+                    };
+                    return response;
+                }
+            default:
+                return null;
+        }
+    }
+
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("FactElect.Doc_Elect_Update", parameters);
+    }
+}

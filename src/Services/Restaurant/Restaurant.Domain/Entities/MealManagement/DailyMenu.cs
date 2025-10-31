@@ -1,7 +1,7 @@
 namespace Restaurant.Domain.Entities.MealManagement;
 
 [Table("DailyMenu", Schema = "Restaurant")]
-public class DailyMenu: BaseEntity
+public class DailyMenu : BaseEntity
 {
     public int EstablishmentId { get; set; }
 

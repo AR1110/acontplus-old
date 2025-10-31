@@ -34,9 +34,6 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
     public DbSet<MealPlanSchedule> MealPlanSchedules { get; set; }
     public DbSet<DailyMenu> DailyMenus { get; set; }
     public DbSet<MealConsumption> MealConsumptions { get; set; }
-    public DbSet<MonthlyMealAllowance> MonthlyMealAllowances { get; set; }
-    public DbSet<MealConsumptionAudit> MealConsumptionAudits { get; set; }
-    public DbSet<CancelledMealConsumption> CancelledMealConsumptions { get; set; }
     public DbSet<CompanyCustomerMealPlan> CompanyCustomerMealPlans { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)

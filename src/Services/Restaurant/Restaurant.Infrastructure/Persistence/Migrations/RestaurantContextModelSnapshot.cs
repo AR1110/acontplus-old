@@ -645,83 +645,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("ItemType", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CancelledMealConsumption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CancelledAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CancelledByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMobileRequest")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MealConsumptionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealConsumptionId");
-
-                    b.ToTable("CancelledMealConsumption", "Restaurant");
-                });
-
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
                 {
                     b.Property<int>("Id")
@@ -780,6 +703,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int>("MealPlanId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("MonthlyAllocatedMealsOverride")
+                        .HasColumnType("int");
+
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .IsUnicode(false)
@@ -802,6 +728,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CompanyCustomerId")
+                        .HasDatabaseName("IX_CompanyCustomerMealPlan_Customer");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("CompanyCustomerId"), new[] { "MealPlanId", "StartDate", "EndDate", "MonthlyAllocatedMealsOverride" });
+
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("IX_CompanyCustomerMealPlan_CreatedAt");
 
@@ -816,16 +747,15 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasIndex("MealPlanId");
 
-                    b.HasIndex("CompanyCustomerId", "IsActive")
-                        .HasDatabaseName("IX_EmployeeMealPlan_Customer_Active");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("CompanyCustomerId", "IsActive"), new[] { "MealPlanId", "StartDate", "EndDate" });
+                    b.HasIndex("MonthlyAllocatedMealsOverride")
+                        .HasDatabaseName("IX_CompanyCustomerMealPlan_Override")
+                        .HasFilter("MonthlyAllocatedMealsOverride IS NOT NULL");
 
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_CompanyCustomerMealPlan_Status");
 
                     b.HasIndex("CompanyCustomerId", "MealPlanId", "StartDate")
-                        .HasDatabaseName("IX_EmployeeMealPlan_Customer_Plan_StartDate");
+                        .HasDatabaseName("IX_CompanyCustomerMealPlan_Customer_Plan_StartDate");
 
                     b.ToTable("CompanyCustomerMealPlan", "Restaurant");
                 });
@@ -930,7 +860,11 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_DailyMenu_IsDeleted");
 
-                    b.HasIndex("MealPlanId");
+                    b.HasIndex("MealPlanId")
+                        .HasDatabaseName("IX_DailyMenu_MealPlan")
+                        .HasFilter("MealPlanId IS NOT NULL");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("MealPlanId"), new[] { "MenuDate", "Description", "StandardPrice" });
 
                     b.HasIndex("MealScheduleSettingId");
 
@@ -956,11 +890,27 @@ namespace Restaurant.Api.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<string>("AuditLog")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("CancellationReason")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CancelledByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CancelledIpAddress")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<int>("CompanyCustomerMealPlanId")
+                        .HasColumnType("int");
 
                     b.Property<decimal?>("CompanyCustomerPayment")
                         .HasPrecision(18, 2)
@@ -1013,9 +963,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int>("MealScheduleSettingId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MonthlyAllowanceId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("OrderId")
                         .HasColumnType("int");
 
@@ -1054,6 +1001,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasIndex("MealScheduleSettingId");
 
+                    b.HasIndex("CompanyCustomerMealPlanId", "ConsumptionDate")
+                        .HasDatabaseName("IX_MealConsumption_Plan_Date");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("CompanyCustomerMealPlanId", "ConsumptionDate"), new[] { "Status", "Amount", "SubsidyAmount", "CompanyCustomerPayment" });
+
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_MealConsumption_Status");
 
@@ -1061,106 +1013,18 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDatabaseName("IX_MealConsumption_Order_Date")
                         .HasFilter("OrderId IS NOT NULL");
 
+                    b.HasIndex("Status", "CancelledAt")
+                        .HasDatabaseName("IX_MealConsumption_Status_Cancelled")
+                        .HasFilter("CancelledAt IS NOT NULL");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "CancelledAt"), new[] { "CancellationReason", "CancelledByUserId" });
+
                     b.HasIndex("Status", "ConsumptionDate")
                         .HasDatabaseName("IX_MealConsumption_Status_Date");
 
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "ConsumptionDate"), new[] { "MonthlyAllowanceId", "Amount", "SubsidyAmount" });
-
-                    b.HasIndex("ConsumptionDate", "MealScheduleSettingId", "Status")
-                        .HasDatabaseName("IX_MealConsumption_Date_Schedule_Status");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("ConsumptionDate", "MealScheduleSettingId", "Status"), new[] { "MonthlyAllowanceId" });
-
-                    b.HasIndex("MonthlyAllowanceId", "ConsumptionDate", "MealScheduleSettingId")
-                        .HasDatabaseName("IX_MealConsumption_Allowance_Date_Schedule");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("MonthlyAllowanceId", "ConsumptionDate", "MealScheduleSettingId"), new[] { "Status", "Amount", "SubsidyAmount", "CompanyCustomerPayment" });
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Status", "ConsumptionDate"), new[] { "CompanyCustomerMealPlanId", "Amount", "SubsidyAmount" });
 
                     b.ToTable("MealConsumption", "Restaurant");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealConsumptionAudit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<DateTime>("ActionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("AdditionalData")
-                        .HasMaxLength(4000)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(4000)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMobileRequest")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MealConsumptionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealConsumptionId");
-
-                    b.ToTable("MealConsumptionAudits", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealPlan", b =>
@@ -1463,126 +1327,6 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("EstablishmentId", "StartTime", "EndTime", "DisplayOrder"), new[] { "MealCode", "Description" });
 
                     b.ToTable("MealScheduleSetting", "Restaurant");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MonthlyMealAllowance", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AllocatedMeals")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("CompanyCustomerContribution")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("CompanyCustomerMealPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ConsumedMeals")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsMobileRequest")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RemainingMeals")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("TotalSubsidy")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_CreatedAt");
-
-                    b.HasIndex("CreatedByUserId")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_CreatedByUserId");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_IsActive");
-
-                    b.HasIndex("IsDeleted")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_IsDeleted");
-
-                    b.HasIndex("IsActive", "IsDeleted")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_Status");
-
-                    b.HasIndex("CompanyCustomerMealPlanId", "Year", "Month")
-                        .IsUnique()
-                        .HasDatabaseName("IX_MonthlyMealAllowance_Plan_YearMonth");
-
-                    b.HasIndex("RemainingMeals", "Year", "Month")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_Remaining")
-                        .HasFilter("RemainingMeals > 0");
-
-                    b.HasIndex("Year", "Month", "CompanyCustomerMealPlanId")
-                        .HasDatabaseName("IX_MonthlyMealAllowance_Current");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Year", "Month", "CompanyCustomerMealPlanId"), new[] { "AllocatedMeals", "ConsumedMeals", "RemainingMeals" });
-
-                    b.ToTable("MonthlyMealAllowance", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>
@@ -2926,17 +2670,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("IngredientType");
                 });
 
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CancelledMealConsumption", b =>
-                {
-                    b.HasOne("Restaurant.Domain.Entities.MealManagement.MealConsumption", "MealConsumption")
-                        .WithMany()
-                        .HasForeignKey("MealConsumptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MealConsumption");
-                });
-
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.MealManagement.MealPlan", "MealPlan")
@@ -2968,15 +2701,15 @@ namespace Restaurant.Api.Data.Migrations
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealConsumption", b =>
                 {
-                    b.HasOne("Restaurant.Domain.Entities.MealManagement.MealScheduleSetting", "MealScheduleSetting")
+                    b.HasOne("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", "CompanyCustomerMealPlan")
                         .WithMany("MealConsumptions")
-                        .HasForeignKey("MealScheduleSettingId")
+                        .HasForeignKey("CompanyCustomerMealPlanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Domain.Entities.MealManagement.MonthlyMealAllowance", "MonthlyMealAllowance")
+                    b.HasOne("Restaurant.Domain.Entities.MealManagement.MealScheduleSetting", "MealScheduleSetting")
                         .WithMany("MealConsumptions")
-                        .HasForeignKey("MonthlyAllowanceId")
+                        .HasForeignKey("MealScheduleSettingId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -2985,22 +2718,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.Navigation("CompanyCustomerMealPlan");
+
                     b.Navigation("MealScheduleSetting");
 
-                    b.Navigation("MonthlyMealAllowance");
-
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealConsumptionAudit", b =>
-                {
-                    b.HasOne("Restaurant.Domain.Entities.MealManagement.MealConsumption", "MealConsumption")
-                        .WithMany("MealConsumptionAudits")
-                        .HasForeignKey("MealConsumptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MealConsumption");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealPlanSchedule", b =>
@@ -3020,17 +2742,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("MealPlan");
 
                     b.Navigation("MealScheduleSetting");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MonthlyMealAllowance", b =>
-                {
-                    b.HasOne("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", "CompanyCustomerMealPlan")
-                        .WithMany("MonthlyMealAllowances")
-                        .HasForeignKey("CompanyCustomerMealPlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CompanyCustomerMealPlan");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>
@@ -3179,12 +2890,7 @@ namespace Restaurant.Api.Data.Migrations
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
                 {
-                    b.Navigation("MonthlyMealAllowances");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealConsumption", b =>
-                {
-                    b.Navigation("MealConsumptionAudits");
+                    b.Navigation("MealConsumptions");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MealPlan", b =>
@@ -3203,11 +2909,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("MealConsumptions");
 
                     b.Navigation("MealPlanSchedules");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.MonthlyMealAllowance", b =>
-                {
-                    b.Navigation("MealConsumptions");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Menu", b =>

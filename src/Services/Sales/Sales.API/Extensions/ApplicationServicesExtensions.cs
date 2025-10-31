@@ -1,0 +1,45 @@
+using Acontplus.Services.Extensions.Authentication;
+using Microsoft.AspNetCore.ResponseCompression;
+using Scrutor;
+using System.IO.Compression;
+
+namespace Sales.API.Extensions;
+
+public static class ApplicationServicesExtensions
+{
+    public static IServiceCollection AddVentasServices(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddAcontplusServices(configuration);
+
+        services.AddAdvancedLoggingOptions(configuration);
+
+        services.AddJwtAuthentication(configuration);
+
+        services.AddOpenApi();
+
+        services.AddHttpContextAccessor();
+
+        services.AddControllers();
+
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        JsonConfigurationService.RegisterJsonConfiguration(services);
+
+        string[] nameSpaces =
+        [
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Sales.Application.Services"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(nameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithTransientLifetime()
+        );
+
+        return services;
+    }
+}
