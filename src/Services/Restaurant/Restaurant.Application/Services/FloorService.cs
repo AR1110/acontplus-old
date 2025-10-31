@@ -1,7 +1,6 @@
 using Mapster;
 using MapsterMapper;
 using Restaurant.Domain.DTOs;
-using System.Linq;
 
 namespace Restaurant.Application.Services;
 

@@ -1,7 +1,5 @@
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
-using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Middleware;
 using Common.API.Endpoints;
 using Serilog;
 

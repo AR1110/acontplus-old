@@ -2,28 +2,28 @@ namespace Configuration.Infrastructure.Persistence.Repositories;
 
 public class TurnoRepository(IAdoRepository repository) : ITurnoRepository
 {
-  public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
-  {
-    var ds = await repository.GetDataSetAsync("Config.Turno_Get", parameters);
-    var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Config.Turno_Get", parameters);
+        var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
 
-    return DataValidation.DataTableIsNull(dt) ? new SpResponse { Code = "0", Message = "No data" } : new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
-  }
+        return DataValidation.DataTableIsNull(dt) ? new SpResponse { Code = "0", Message = "No data" } : new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) };
+    }
 
-  public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
-  {
-    return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoCreate", parameters);
-  }
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoCreate", parameters);
+    }
 
-  public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
-  {
-    return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoUpdate", parameters);
-  }
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoUpdate", parameters);
+    }
 
-  public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
-  {
-    return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoDelete", parameters);
-  }
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("ASPTurnoDelete", parameters);
+    }
 }
 
 // public class TurnoRepository : ITurnoRepository

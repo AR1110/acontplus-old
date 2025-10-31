@@ -1,9 +1,5 @@
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 
 namespace Inventory.API.Extensions;
 

@@ -2,9 +2,7 @@ using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
 using Common.Infrastructure.Persistence;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
 
 namespace Common.API.Extensions;
 

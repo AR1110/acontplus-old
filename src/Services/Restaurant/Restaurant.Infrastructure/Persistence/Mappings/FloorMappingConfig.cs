@@ -1,5 +1,4 @@
 using Mapster;
-using Restaurant.Domain.Entities;
 using Restaurant.Domain.DTOs;
 
 namespace Restaurant.Infrastructure.Persistence.Mappings;

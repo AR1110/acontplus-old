@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Restaurant.Domain.Entities.MealManagement;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
 

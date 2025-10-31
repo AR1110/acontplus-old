@@ -1,7 +1,5 @@
 using Acontplus.Services.Extensions.Authentication;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
 
 namespace Sales.API.Extensions;
 

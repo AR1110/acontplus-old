@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Infrastructure.Persistence;
 using Restaurant.Infrastructure.Persistence.Mappings;
-using Restaurant.Infrastructure.Persistence.Repositories;
 
 namespace Restaurant.Infrastructure.Extensions;
 

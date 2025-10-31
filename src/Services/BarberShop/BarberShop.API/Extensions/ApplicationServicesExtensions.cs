@@ -1,5 +1,4 @@
 using Scrutor;
-using System.IO.Compression;
 
 namespace BarberShop.API.Extensions;
 

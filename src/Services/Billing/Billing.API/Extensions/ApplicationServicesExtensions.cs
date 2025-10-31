@@ -3,12 +3,8 @@ using Acontplus.FactElect.Services.Conversion;
 using Acontplus.FactElect.Services.External;
 using Acontplus.FactElect.Services.Validation;
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Utilities.Time;
 using Billing.Application.Services.Sri;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 
 namespace Billing.API.Extensions;
 
@@ -22,7 +18,7 @@ public static class ApplicationServicesExtensions
         services.AddAdvancedLoggingOptions(configuration);
 
         services.AddJwtAuthentication(configuration);
-        
+
         services.AddOpenApi();
 
         services.AddHttpContextAccessor();

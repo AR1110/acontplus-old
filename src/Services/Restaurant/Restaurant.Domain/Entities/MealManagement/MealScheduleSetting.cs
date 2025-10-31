@@ -17,6 +17,6 @@ public class MealScheduleSetting : BaseEntity
 
     // Navigation Properties
     public ICollection<MealConsumption> MealConsumptions { get; set; } = new List<MealConsumption>();
-    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } =  new List<MealPlanSchedule>();
-    public ICollection<DailyMenu> DailyMenus { get; set; } =  new List<DailyMenu>();
+    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = new List<MealPlanSchedule>();
+    public ICollection<DailyMenu> DailyMenus { get; set; } = new List<DailyMenu>();
 }

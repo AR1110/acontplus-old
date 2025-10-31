@@ -1,5 +1,3 @@
-using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Middleware;
 using Purchases.API.Extensions;
 using Serilog;
 

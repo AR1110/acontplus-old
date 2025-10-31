@@ -1,8 +1,4 @@
-using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 
 namespace Mechanical.API.Extensions;
 

@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace Restaurant.Domain.Entities.MealManagement;
 
 [Table("CompanyCustomerMealPlan", Schema = "Restaurant")]

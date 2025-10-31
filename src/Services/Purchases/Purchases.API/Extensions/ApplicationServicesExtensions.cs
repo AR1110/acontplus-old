@@ -3,11 +3,7 @@ using Acontplus.FactElect.Services.Conversion;
 using Acontplus.FactElect.Services.Documents;
 using Acontplus.FactElect.Services.External;
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
 using Scrutor;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 
 namespace Purchases.API.Extensions;
 

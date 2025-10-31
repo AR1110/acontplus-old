@@ -1,8 +1,4 @@
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 
 namespace TechnicalSupport.API.Extensions;
 

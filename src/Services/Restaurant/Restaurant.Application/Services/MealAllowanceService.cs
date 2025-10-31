@@ -1,5 +1,3 @@
-using Restaurant.Application.DTOs;
-
 namespace Restaurant.Application.Services;
 
 public interface IMealAllowanceService

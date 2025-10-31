@@ -1,6 +1,5 @@
 // Minor tweak: Added index for MealPlanId if querying menus by plan.
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Restaurant.Domain.Entities.MealManagement;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
 

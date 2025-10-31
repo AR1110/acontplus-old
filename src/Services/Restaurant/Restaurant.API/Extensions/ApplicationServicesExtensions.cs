@@ -1,4 +1,3 @@
-using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
 using Restaurant.Application.Extensions;
@@ -30,7 +29,7 @@ public static class ApplicationServicesExtensions
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        
+
         services.AddInfrastructure(configuration);
 
         string[] scopedNameSpaces =

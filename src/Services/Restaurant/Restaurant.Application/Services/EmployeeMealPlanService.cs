@@ -1,6 +1,3 @@
-using Restaurant.Application.DTOs;
-using Restaurant.Domain.Entities.MealManagement;
-
 namespace Restaurant.Application.Services;
 
 public interface IEmployeeMealPlanService

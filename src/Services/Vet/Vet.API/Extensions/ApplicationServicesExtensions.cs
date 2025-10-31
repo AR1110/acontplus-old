@@ -1,9 +1,5 @@
 using Acontplus.Persistence.SqlServer.Repositories;
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Utilities.Time;
-using Microsoft.AspNetCore.ResponseCompression;
-using System.IO.Compression;
-using System.Text.Json.Serialization;
 using Vet.Infrastructure.Persistence;
 using Vet.Infrastructure.Persistence.Repositories;
 
