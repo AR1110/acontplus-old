@@ -10,6 +10,11 @@ public class MealPlanConfiguration : BaseEntityTypeConfiguration<MealPlan>
     {
         base.Configure(builder);
 
+        builder
+            .Property(x => x.IsDefault)
+            .HasDefaultValue(false)
+            .IsRequired();
+
         // ✅ OPTIMIZED INDEXES FOR HIGH WORKLOAD
 
         // Establishment-based plan lookups

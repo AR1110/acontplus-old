@@ -14,6 +14,8 @@ public class MealPlan : BaseEntity
 
     [Column(TypeName = "decimal(5,2)")] public decimal SubsidyPercentage { get; set; }
 
+    public bool IsDefault { get; set; }
+
     // Navigation Properties
     public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = new List<MealPlanSchedule>();
     public ICollection<CompanyCustomerMealPlan> CompanyCustomerMealPlans { get; set; } = new List<CompanyCustomerMealPlan>();
