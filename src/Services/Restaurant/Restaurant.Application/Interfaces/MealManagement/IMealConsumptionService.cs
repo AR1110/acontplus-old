@@ -1,0 +1,12 @@
+using Acontplus.Core.Domain.Common.Results;
+using Restaurant.Application.DTOs.MealManagement;
+
+namespace Restaurant.Application.Interfaces.MealManagement;
+public interface IMealConsumptionService
+{
+    Task<Result<MealConsumptionResponse, DomainError>> AddAsync(CreateMealConsumptionRequest request);
+    Task<Result<bool, DomainError>> DeleteAsync(int id);
+    Task<Result<IReadOnlyList<PagedResult<MealConsumptionResponse>>, DomainError>> GetAsync(PaginationDto paginationDto);
+    Task<Result<MealConsumptionResponse, DomainError>> UpdateAsync(int id, UpdateMealConsumptionRequest request);
+}
+

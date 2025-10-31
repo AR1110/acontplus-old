@@ -1,4 +1,4 @@
-namespace Restaurant.Application.DTOs;
+namespace Restaurant.Application.DTOs.MealManagement;
 
 // Employee Meal Plan DTOs
 public record CreateEmployeeMealPlanRequest(
@@ -28,18 +28,18 @@ public record EmployeeMealPlanResponse(
 );
 
 // Enhanced Meal Plan DTOs
-public record MealPlanResponse(
-    int Id,
-    int EstablishmentId,
-    string Name,
-    string? Description,
-    int DailyMealLimit,
-    int MonthlyMealLimit,
-    decimal SubsidyPercentage,
-    ICollection<MealPlanScheduleResponse> AllowedSchedules,
-    ICollection<EmployeeMealPlanResponse> EmployeeAssignments,
-    DateTime CreatedAt
-);
+//public record MealPlanResponse(
+//    int Id,
+//    int EstablishmentId,
+//    string Name,
+//    string? Description,
+//    int DailyMealLimit,
+//    int MonthlyMealLimit,
+//    decimal SubsidyPercentage,
+//    ICollection<MealPlanScheduleResponse> AllowedSchedules,
+//    ICollection<EmployeeMealPlanResponse> EmployeeAssignments,
+//    DateTime CreatedAt
+//);
 
 public record MealPlanScheduleResponse(
     int Id,
@@ -85,14 +85,14 @@ public record DailyMenuResponse(
 );
 
 // Enhanced Meal Consumption DTOs
-public record CreateMealConsumptionRequest(
-    int MonthlyAllowanceId,
-    int MealScheduleSettingId,
-    int? OrderId,
-    decimal Amount,
-    decimal SubsidyAmount,
-    decimal EmployeePayment
-);
+//public record CreateMealConsumptionRequest(
+//    int MonthlyAllowanceId,
+//    int MealScheduleSettingId,
+//    int? OrderId,
+//    decimal Amount,
+//    decimal SubsidyAmount,
+//    decimal EmployeePayment
+//);
 
 public record MealConsumptionResponse(
     int Id,

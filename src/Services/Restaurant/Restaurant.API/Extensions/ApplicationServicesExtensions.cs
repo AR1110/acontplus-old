@@ -35,6 +35,7 @@ public static class ApplicationServicesExtensions
         string[] scopedNameSpaces =
         [
             "Restaurant.Application.Services",
+            "Restaurant.Application.Services.MealManagement",
             "Restaurant.Infrastructure.Persistence.Repositories",
             "Acontplus.S3Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories"
