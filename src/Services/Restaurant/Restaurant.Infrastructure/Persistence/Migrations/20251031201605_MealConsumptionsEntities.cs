@@ -168,16 +168,16 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MealPlanId = table.Column<int>(type: "int", nullable: false),
                     MealScheduleSettingId = table.Column<int>(type: "int", nullable: false),
-                    IsIncluded = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsIncluded = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(7)", precision: 7, nullable: false, defaultValueSql: "SYSUTCDATETIME()"),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2(7)", precision: 7, nullable: true),
                     UpdatedByUserId = table.Column<int>(type: "int", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2(7)", precision: 7, nullable: true),
                     DeletedByUserId = table.Column<int>(type: "int", nullable: true),
-                    IsMobileRequest = table.Column<bool>(type: "bit", nullable: false),
+                    IsMobileRequest = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedBy = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     UpdatedBy = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
                     DeletedBy = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
@@ -477,6 +477,30 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                 columns: new[] { "IsActive", "IsDeleted" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_MealPlanSchedule_CreatedAt",
+                schema: "Restaurant",
+                table: "MealPlanSchedule",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealPlanSchedule_CreatedByUserId",
+                schema: "Restaurant",
+                table: "MealPlanSchedule",
+                column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealPlanSchedule_IsActive",
+                schema: "Restaurant",
+                table: "MealPlanSchedule",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealPlanSchedule_IsDeleted",
+                schema: "Restaurant",
+                table: "MealPlanSchedule",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_MealPlanSchedule_MealPlanId",
                 schema: "Restaurant",
                 table: "MealPlanSchedule",
@@ -487,6 +511,12 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                 schema: "Restaurant",
                 table: "MealPlanSchedule",
                 column: "MealScheduleSettingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealPlanSchedule_Status",
+                schema: "Restaurant",
+                table: "MealPlanSchedule",
+                columns: new[] { "IsActive", "IsDeleted" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_MealScheduleSetting_CreatedAt",
