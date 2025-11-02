@@ -27,7 +27,8 @@ public static class ApplicationServicesExtensions
         string[] nameSpaces =
         [
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Sales.Application.Services"
+            "Sales.Application.Services",
+            "Acontplus.Services.Extensions.Context"
         ];
 
         services.Scan(scan => scan

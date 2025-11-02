@@ -30,7 +30,8 @@ public static class ApplicationServicesExtensions
             "Inventory.Application.Services",
             "Inventory.Infrastructure.Repositories",
             "Acontplus.S3Application.Services",
-            "Acontplus.Persistence.SqlServer.Repositories"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions.Context"
         ];
 
         services.Scan(scan => scan

@@ -1,9 +1,3 @@
-using Acontplus.FactElect.Services.Authentication;
-using Acontplus.FactElect.Services.Conversion;
-using Acontplus.FactElect.Services.External;
-using Acontplus.FactElect.Services.Validation;
-using Acontplus.Services.Extensions.Authentication;
-using Billing.Application.Services.Sri;
 using Scrutor;
 
 namespace Billing.API.Extensions;
@@ -48,7 +42,7 @@ public static class ApplicationServicesExtensions
             "Billing.Application.Services.Sri",
             "Billing.API.Endpoints.Implementations",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions",
+            "Acontplus.Services.Extensions.Context",
             "Billing.Infrastructure.Persistence.Repositories"
         ];
 

@@ -38,7 +38,8 @@ public static class ApplicationServicesExtensions
             "Restaurant.Application.Services.MealManagement",
             "Restaurant.Infrastructure.Persistence.Repositories",
             "Acontplus.S3Application.Services",
-            "Acontplus.Persistence.SqlServer.Repositories"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions.Context"
         ];
 
         services.Scan(scan => scan

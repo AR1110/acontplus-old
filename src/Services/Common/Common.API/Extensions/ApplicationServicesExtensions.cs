@@ -32,7 +32,8 @@ public static class ApplicationServicesExtensions
         [
             "Common.Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions"
+            
+            "Acontplus.Services.Extensions.Context"
         ];
 
         services.Scan(scan => scan

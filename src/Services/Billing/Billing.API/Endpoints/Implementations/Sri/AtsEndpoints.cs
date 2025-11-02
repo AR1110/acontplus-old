@@ -1,4 +1,4 @@
-using Acontplus.FactElect.Services.Documents.Mapping;
+using Acontplus.Billing.Services.Documents.Mapping;
 using Billing.API.Endpoints.Interfaces.Sri;
 
 namespace Billing.API.Endpoints.Implementations.Sri;

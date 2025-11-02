@@ -1,7 +1,3 @@
-using Acontplus.Core.Extensions;
-using Acontplus.FactElect.Interfaces.Services;
-using Acontplus.FactElect.Models.Documents;
-using Acontplus.FactElect.Services.Documents;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Purchases.API.Controllers;

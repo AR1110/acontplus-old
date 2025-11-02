@@ -1,7 +1,3 @@
-using Acontplus.FactElect.Interfaces.Services;
-using Acontplus.FactElect.Services.Conversion;
-using Acontplus.FactElect.Services.Documents;
-using Acontplus.FactElect.Services.External;
 using Acontplus.Services.Extensions.Authentication;
 using Scrutor;
 
@@ -35,7 +31,8 @@ public static class ApplicationServicesExtensions
         [
             "Purchases.Application.Services",
             "Purchases.Infrastructure.Persistence.Repositories",
-            "Acontplus.Persistence.SqlServer.Repositories"
+            "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions.Context"
         ];
 
         services.Scan(scan => scan

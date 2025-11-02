@@ -39,7 +39,8 @@ public static class ApplicationServicesExtensions
             "Configuration.Application.Services.WizardConfig",
             "Configuration.Infrastructure.Persistence.Repositories",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions"
+            
+            "Acontplus.Services.Extensions.Context"
         ];
 
         // Register scoped services

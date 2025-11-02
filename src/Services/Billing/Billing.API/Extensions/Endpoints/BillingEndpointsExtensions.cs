@@ -2,9 +2,9 @@ using Billing.API.Endpoints.Interfaces;
 
 namespace Billing.API.Extensions.Endpoints;
 
-public static class FactElectEndpointsExtensions
+public static class BillingEndpointsExtensions
 {
-    public static IEndpointRouteBuilder MapFactElectEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
+    public static IEndpointRouteBuilder MapBillingEndpoints(this IEndpointRouteBuilder endpointRouteBuilder)
     {
         var notificacionTributariaGroup = endpointRouteBuilder.MapGroup("/api/notificaciontributaria")
             .RequireAuthorization()
