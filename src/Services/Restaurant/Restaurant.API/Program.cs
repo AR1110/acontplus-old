@@ -1,3 +1,4 @@
+using Restaurant.API.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -66,6 +67,8 @@ try
     app.UseAuthorization();
 
     app.UseRateLimiter();
+
+    app.MapAllEndpoints();
 
     app.MapControllers().RequireAuthorization();
 

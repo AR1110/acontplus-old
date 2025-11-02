@@ -6,7 +6,8 @@ public record CreateMealPlanRequest(int EstablishmentId,
     int DailyMealLimit,
     int MontlyMealLimit,
     decimal SubsidyPercentage,
-    bool IsDefault);
+    bool IsDefault,
+    int CreatedByUserId);
 
 public record UpdateMealPlanRequest(int Id,
     int EstablishmentId,

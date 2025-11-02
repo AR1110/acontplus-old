@@ -5,8 +5,8 @@ namespace Restaurant.Application.Interfaces.MealManagement;
 
 public interface IMealScheduleSettingService
 {
-    Task<Result<MealScheduleSettingResponse, DomainError>> AddAsync(CreateMealScheduleSettingRequest request);
-    Task<Result<bool, DomainError>> DeleteAsync(int id);
-    Task<Result<IReadOnlyList<MealScheduleSettingResponse>, DomainError>> GetAsync(int EstablishmentId);
-    Task<Result<MealScheduleSettingResponse, DomainError>> UpdateAsync(int id, UpdateMealScheduleSettingRequest request);
+    Task<Result<MealScheduleSettingResponse, DomainError>> AddAsync(CreateMealScheduleSettingRequest request, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<Result<IReadOnlyList<MealScheduleSettingResponse>, DomainError>> GetAsync(int EstablishmentId, CancellationToken cancellationToken = default);
+    Task<Result<MealScheduleSettingResponse, DomainError>> UpdateAsync(int id, UpdateMealScheduleSettingRequest request, CancellationToken cancellationToken = default);
 }
