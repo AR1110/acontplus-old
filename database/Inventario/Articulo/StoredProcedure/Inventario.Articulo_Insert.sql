@@ -252,13 +252,13 @@ BEGIN
 			BEGIN
                 IF @inventory = 'NO'
                     BEGIN 
-                        SELECT '0'code,'No se ha establecido una configuraci髇 de control de inventario en la secci髇 general de la configuraci髇 esto indica que no es posible establecer que este art韈ulo requiere llevar un registro de inventario.' as 'message'
+                        SELECT '0'code,'No se ha establecido una configuraci贸n de control de inventario en la secci贸n general de la configuraci贸n esto indica que no es posible establecer que este art铆culo requiere llevar un registro de inventario.' as 'message'
 				        RETURN
                     END 
 
                 IF NOT EXISTS (SELECT 1 FROM @tbInventario)
                     BEGIN 
-                        SELECT '0'code,'Un Articulo que lleve stock debe cargar la configuraci髇 de bodegas' as 'message'
+                        SELECT '0'code,'Un Articulo que lleve stock debe cargar la configuraci贸n de bodegas' as 'message'
 				        RETURN
                     END
 				
@@ -310,26 +310,11 @@ BEGIN
             FROM @tbInventario
 
             --> Restaurant
-			IF(@siglaFamilia IN ('RES', 'POR'))
+			IF @siglaFamilia IN ('RES' ,'POR', 'ING' ,'COM')
 				BEGIN
 					INSERT INTO Restaurant.Item
-					(ProductId, Summary, Cooking, Recipe, Instructions, Content, CreatedAt, UpdatedAt
-					,[Enabled], Deleted, UserId)
-					VALUES(@idArticulo, NULL, 1, NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
-				END
-
-			IF(@siglaFamilia = 'ING')
-				BEGIN
-					INSERT INTO Restaurant.Ingredient
-					(ProductId, Summary, Quantity, Unit, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId, IngredientTypeId)
-					VALUES(@idArticulo, (SELECT  descripcion FROM @tbArticle), NULL, NULL, NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario, NULL)
-				END
-
-            IF(@siglaFamilia = 'COM')
-				BEGIN
-					INSERT INTO Restaurant.Menu
-					(ProductId, Title,Summary, Content, CreatedAt, UpdatedAt, [Enabled], Deleted, UserId)
-					VALUES(@idArticulo,(SELECT descripcion FROM @tbArticle),(SELECT descripcion FROM @tbArticle), NULL, dbo.ufnGetDateEcuador(), NULL, 1, 0, @idUsuario)
+					       (ProductId ,Cooking ,Title ,Summary ,CreatedAt ,CreatedByUserId)
+                    SELECT @idArticulo,1 ,descripcion ,descripcion ,GETDATE() ,@idUsuario FROM @tbArticle
 				END
 
             UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial + 1 WHERE idSubFamilia = @idSubFamilia
