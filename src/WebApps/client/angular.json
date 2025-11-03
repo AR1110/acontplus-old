@@ -54,16 +54,10 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "input": "public",
                 "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "public"
               }
             ],
             "styles": [
@@ -73,12 +67,12 @@
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
+              "public/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
             "scripts": [
-              "src/assets/lib/vanilla-daterange/moment.min.js",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
-              "src/assets/lib/luxon/luxon.js"
+              "public/lib/vanilla-daterange/moment.min.js",
+              "public/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
+              "public/lib/luxon/luxon.js"
             ]
           },
           "configurations": {

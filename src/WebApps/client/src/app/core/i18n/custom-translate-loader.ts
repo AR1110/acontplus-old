@@ -11,7 +11,7 @@ export class CustomTranslateHttpLoader implements TranslateLoader {
 
   constructor(
     handler: HttpBackend,
-    private prefix = './i18n/',
+    private prefix = './assets/i18n/',
     private suffix = '.json',
   ) {
     this.http = new HttpClient(handler);
