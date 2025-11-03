@@ -90,15 +90,15 @@ export class TotalizadorUtil {
 
     // 4. Calcular importe total
     const importeTotal = DecimalUtil.addAsNumber(
-      totalesGenerales.totalPrecioTotalSinImpuesto,
-      totalesPorTarifa.sumTotalIva
+        totalesGenerales.totalPrecioTotalSinImpuesto,
+        totalesPorTarifa.sumTotalIva
     );
 
     // 5. Calcular porcentaje de descuento si aplica
     if (totalesGenerales.totalDescuento > 0) {
       totalesGenerales.totalPorcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(
-        totalesGenerales.totalSinImpuesto,
-        totalesGenerales.totalDescuento
+          totalesGenerales.totalSinImpuesto,
+          totalesGenerales.totalDescuento
       );
     }
 
@@ -145,13 +145,13 @@ export class TotalizadorUtil {
         ...acc,
         totalIce: DecimalUtil.addAsNumber(acc.totalIce, totalIce),
         totalPrecioTotalSinImpuesto: DecimalUtil.addAsNumber(
-          acc.totalPrecioTotalSinImpuesto,
-          roundNumber(item.precioTotalSinImpuesto ?? item.totalWithoutTax ?? 0, DECIMALS.DOS),
+            acc.totalPrecioTotalSinImpuesto,
+            roundNumber(item.precioTotalSinImpuesto ?? item.totalWithoutTax ?? 0, DECIMALS.DOS),
         ),
         totalDescuento: DecimalUtil.addAsNumber(acc.totalDescuento, item.valorDescuento),
         totalSinImpuesto: DecimalUtil.addAsNumber(
-          acc.totalSinImpuesto,
-          roundNumber(totalSinImpuesto, DECIMALS.DOS)
+            acc.totalSinImpuesto,
+            roundNumber(totalSinImpuesto, DECIMALS.DOS)
         ),
       };
     }, {
@@ -173,8 +173,8 @@ export class TotalizadorUtil {
   }
 
   private calcularTotalesPorTarifa(
-    itemsPorTarifa: Record<string, Item[]>,
-    tarifasImpuesto: TarifaImpuesto[]
+      itemsPorTarifa: Record<string, Item[]>,
+      tarifasImpuesto: TarifaImpuesto[]
   ): { totalesPorTarifa: TotalesPorTarifa[]; sumTotalIva: number } {
     const totalesPorTarifa: TotalesPorTarifa[] = [];
     let sumTotalIva = 0;
@@ -185,8 +185,8 @@ export class TotalizadorUtil {
       // Calcular total neto IVA
       const totalNetoIva = items.reduce((acc, item) => {
         return DecimalUtil.addAsNumber(
-          acc,
-          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS)
+            acc,
+            roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS)
         );
       }, 0);
 
@@ -195,8 +195,8 @@ export class TotalizadorUtil {
       if (tarifa.tarifa > 0) {
         totalIva = items.reduce((acc, item) => {
           const valorImpuesto =
-            item.valorImpuesto ??
-            pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa.tarifa);
+              item.valorImpuesto ??
+              pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa.tarifa);
           return DecimalUtil.addAsNumber(acc, roundNumber(valorImpuesto, DECIMALS.DOS), DECIMALS.DOS);
         }, 0);
         sumTotalIva = DecimalUtil.addAsNumber(sumTotalIva, totalIva, DECIMALS.DOS);
@@ -245,18 +245,15 @@ export class TotalizadorUtil {
       }
     });
 
-        acc.totalIce += totalIce;
-        acc.totalPrecioTotalSinImpuesto = plus(
-          acc.totalPrecioTotalSinImpuesto,
-          roundNumber((item.precioTotalSinImpuesto ?? item.totalWithoutTax), DECIMALS.DOS),
-          DECIMALS.GENERAL,
-        );
-        acc.totalDescuento = plus(acc.totalDescuento, item.valorDescuento, DECIMALS.GENERAL);
-        acc.totalSinImpuesto = plus(
-          acc.totalSinImpuesto,
-          roundNumber(totalSinImpuesto, DECIMALS.DOS),
-          DECIMALS.GENERAL,
-        );
+    // Descuento
+    if (totalesGenerales.totalDescuento > 0) {
+      rows.push({
+        key: 'total_descuento',
+        label: 'Total descuento',
+        value: totalesGenerales.totalDescuento,
+        formattedValue: `$${roundNumber(totalesGenerales.totalDescuento, DECIMALS.DOS)}`
+      });
+    }
 
     // ICE
     if (totalesGenerales.totalIce > 0) {
@@ -268,33 +265,36 @@ export class TotalizadorUtil {
       });
     }
 
-  private calcularTotalesPorTarifa(items: any[], codigoPorcentaje: string) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
-    return itemsFiltrados.reduce(
-      (acc, item) => {
-        acc.totalNetoIva = plus(
-          acc.totalNetoIva,
-          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS),
-          DECIMALS.GENERAL,
-        );
-        return acc;
-      },
-      { totalNetoIva: 0 },
-    );
-  }
+    // IRBPNR (siempre 0 en este caso)
+    rows.push({
+      key: 'valor_irbpnr',
+      label: 'Valor irbpnr',
+      value: 0,
+      formattedValue: '$0.00'
+    });
 
-  private calcularTotalIvaPorTarifa(items: any[], codigoPorcentaje: string, tarifa: number) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
-    return itemsFiltrados.reduce(
-      (acc, item) => {
-        const totalIva =
-          item.valorImpuesto ||
-          pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa);
-        acc.totalIva = plus(acc.totalIva, roundNumber(totalIva, DECIMALS.DOS), DECIMALS.DOS);
-        return acc;
-      },
-      { totalIva: 0 },
-    );
+    // IVA por tarifa
+    totalesPorTarifa.forEach(tarifa => {
+      if (tarifa.totalIva > 0) {
+        rows.push({
+          key: `iva_${tarifa.codigoPorcentaje}`,
+          label: `IVA ${tarifa.descripcion}`,
+          value: tarifa.totalIva,
+          formattedValue: `$${roundNumber(tarifa.totalIva, DECIMALS.DOS)}`
+        });
+      }
+    });
+
+    // Total final
+    rows.push({
+      key: 'valor_total',
+      label: 'Valor Total',
+      value: importeTotal,
+      formattedValue: `$${roundNumber(importeTotal, DECIMALS.DOS)}`,
+      isBold: true
+    });
+
+    return rows;
   }
 
   private generarComponentesHtml(data: {
@@ -319,11 +319,8 @@ export class TotalizadorUtil {
     let htmlImpuestoTotal = '';
     let htmlIvaTotal = '';
 
-    // Procesar cada tarifa de impuesto
-    tarifasImpuesto.forEach(tarifa => {
-      const dataTotalNetoIva = this.calcularTotalesPorTarifa(items, tarifa.codigoPorcentaje);
-
-      if (dataTotalNetoIva.totalNetoIva > 0) {
+    totalesPorTarifa.forEach(tarifa => {
+      if (tarifa.totalNetoIva > 0) {
         htmlImpuestoTotal += `
           <tr>
             <td class="left">
