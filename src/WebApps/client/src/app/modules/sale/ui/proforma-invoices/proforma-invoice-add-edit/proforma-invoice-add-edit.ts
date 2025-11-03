@@ -331,8 +331,12 @@ export class ProformaInvoiceAddEdit {
     },
   ]);
 
-  additionalInfo =signal<any>([])
+  additionalInfo =signal<any>([
+    {},
+    {},
+  ])
   columnsAdditionalInfo:DataGridColumn[]=[
+    {header: 'Op.', field: 'op'},
     {header: 'Nombre', field: 'name'},
     {header: 'Valor', field: 'value'},
   ]
