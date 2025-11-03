@@ -1,25 +1,20 @@
 // @ts-check
 const js = require('@eslint/js');
+const { defineConfig } = require('eslint/config');
 const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
-module.exports = tseslint.config(
+module.exports = defineConfig([
   // Global ignores
   {
-    ignores: [
-      '**/node_modules/**',
-      'dist/**',
-      'build/**',
-      '.angular/**',
-      'coverage/**',
-    ],
+    ignores: ['**/node_modules/**', 'dist/**', 'build/**', '.angular/**', 'coverage/**'],
   },
 
   // Base configs for TypeScript
+  js.configs.recommended,
   {
     files: ['**/*.ts'],
     extends: [
-      js.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
       ...tseslint.configs.stylisticTypeChecked,
       ...angular.configs.tsRecommended,
@@ -75,6 +70,7 @@ module.exports = tseslint.config(
       'no-debugger': 'error',
       'no-duplicate-imports': 'error',
       'no-unused-expressions': 'error',
+      'no-useless-assignment': 'error',
       'prefer-const': 'error',
       'no-var': 'error',
       'linebreak-style': ['error', 'unix'],
@@ -89,14 +85,32 @@ module.exports = tseslint.config(
   // HTML template files configuration
   {
     files: ['**/*.html'],
-    extends: [
-      ...angular.configs.templateRecommended,
-      ...angular.configs.templateAccessibility,
-    ],
+    languageOptions: {
+      parser: angular.templateParser,
+    },
+    plugins: {
+      // @ts-ignore - Type incompatibility between angular-eslint and eslint core
+      '@angular-eslint/template': angular.templatePlugin,
+    },
     rules: {
+      // Angular template recommended rules
+      '@angular-eslint/template/no-negated-async': 'error',
+      '@angular-eslint/template/no-call-expression': 'error',
+      '@angular-eslint/template/use-track-by-function': 'error',
+      '@angular-eslint/template/no-any': 'error',
+      '@angular-eslint/template/i18n': 'off',
+      '@angular-eslint/template/banana-in-box': 'error',
+      '@angular-eslint/template/prefer-self-closing-tags': 'error',
+      '@angular-eslint/template/prefer-control-flow': 'error',
+
+      // Angular template accessibility rules
       '@angular-eslint/template/click-events-have-key-events': 'warn',
       '@angular-eslint/template/interactive-supports-focus': 'warn',
+      '@angular-eslint/template/mouse-events-have-key-events': 'warn',
       '@angular-eslint/template/no-positive-tabindex': 'error',
+      '@angular-eslint/template/elements-content': 'error',
+      '@angular-eslint/template/label-has-associated-control': 'error',
+      '@angular-eslint/template/no-autofocus': 'error',
     },
   },
 
@@ -107,6 +121,7 @@ module.exports = tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
+      'no-useless-assignment': 'off',
     },
-  }
-);
+  },
+]);
