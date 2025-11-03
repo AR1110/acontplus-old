@@ -40,9 +40,7 @@ public class OrderController(IOrderRepository orderService) : BaseApiController
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        if (id == 0) return BadRequest("Id Incorrecto");
-
-        return Ok(await orderService.DeleteAsync(User.GetUserId(), id));
+        return id == 0 ? BadRequest("Id Incorrecto") : Ok(await orderService.DeleteAsync(User.GetUserId(), id));
     }
 
     [HttpGet("Print")]

@@ -253,7 +253,7 @@
                         totalRecords,
                         articulos: articulos.map(item => {
                             let tarifas = JSON.parse(item.tarifa)
-                            let stocks = fS.isValidJSON(item.stocks) ? JSON.parse(item.stocks): [];
+                            let stocks = fS.isValidJSON(item.stocks) ? JSON.parse(item.stocks) : [];
                             console.log(stocks)
                             return {
                                 idArticulo: item.idArticulo,
@@ -364,7 +364,6 @@
                     return articulos.map(item => {
                         let priceSales = JSON.parse(item.priceSale) || [];
                         let warehouses = JSON.parse(item.warehouses) || [];
-
                         return {
                             s3ObjectUrl: item.s3ObjectUrl,
                             codigo: item.codigo,
@@ -374,6 +373,8 @@
                             marca: item.marca,
                             medida: item.medida,
                             stock: item.stock,
+                            totalStock: item.stock,
+                            warehouseStock: item.warehouseStock,
                             stockMinimo: item.stockMinimo,
                             style: item.style,
                             subFamilia: item.subFamilia,
@@ -488,7 +489,7 @@
                         product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo
                     } = JSON.parse(response.payload)
 
-                    if(product.length===0 || measures.length===0){
+                    if (product.length === 0 || measures.length === 0) {
                         throw new Error("No se encontro los resultados")
                     }
 

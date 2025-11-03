@@ -10,7 +10,7 @@ GO
 -- Create date: 2021-06-21
 -- Description:	SP Para listar las subfamilias
 -- =============================================
-CREATE OR ALTER PROCEDURE Inventario.Subfamilia_Get @idUsuarioRol INT,@json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE Inventario.Subfamilia_Get @userRoleId INT,@json VARCHAR(MAX) ,@tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -43,7 +43,7 @@ BEGIN
 								   FROM Inventario.v_Subfamilia  sf WITH (NOLOCK) 
 								   WHERE sf.idEntidad = @idEntidad '
 	
-	SELECT TOP 1 @ByEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol 
+	SELECT TOP 1 @ByEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId 
 	
 	SET @byRecords = (SELECT COUNT(*) FROM dbo.SubFamilia WITH (NOLOCK) WHERE idEntidad = @ByEntidad )
 		   

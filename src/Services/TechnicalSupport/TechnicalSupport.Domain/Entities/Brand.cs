@@ -13,5 +13,5 @@ public class Brand : BaseEntity
 
     [Required][MaxLength(150)] public required string Name { get; set; }
 
-    public ICollection<Serie> Series { get; set; } = new List<Serie>();
+    public ICollection<Serie> Series { get; set; } = [];
 }

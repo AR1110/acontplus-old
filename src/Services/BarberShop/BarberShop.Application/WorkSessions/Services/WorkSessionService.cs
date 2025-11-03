@@ -10,18 +10,17 @@ public class WorkSessionService(IWorkSessionRepository workSessionRepository) : 
     public async Task<SpResponse> GetWorkSessionByIdAsync(int id)
     {
         var seat = await workSessionRepository.GetWorkSessionByIdAsync(id);
-        if (seat == null)
-            return new SpResponse
+        return seat == null
+            ? new SpResponse
             {
                 Code = "0",
                 Message = "Gestión no encontrada!"
+            }
+            : new SpResponse
+            {
+                Code = "1",
+                Payload = seat
             };
-
-        return new SpResponse
-        {
-            Code = "1",
-            Payload = seat
-        };
     }
 
     public async Task<SpResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto)

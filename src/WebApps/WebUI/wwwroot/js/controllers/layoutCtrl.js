@@ -159,7 +159,7 @@
         if (/\/Config\/UserProfile\/Index/.test(pathname)) return;
         if (/\/Common\/UserManual\/Index/.test(pathname)) return;
 
-        if (pathname === '/Index') return
+        if (['/', '/Index', 'Index', '/Config/WizardConfig/Index'].includes(pathname)) return;
 
         if (pathname) {
             if (pathname === "/") {
@@ -183,7 +183,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        //   location.href = "/Index";
+                        location.href = "/Index";
                     }
                 }
             }

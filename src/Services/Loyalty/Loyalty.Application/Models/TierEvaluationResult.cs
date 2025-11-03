@@ -6,5 +6,5 @@ public class TierEvaluationResult
     public bool TierChanged { get; set; }
     public string PreviousTier { get; set; }
     public string NewTier { get; set; }
-    public List<string> NewTierBenefits { get; set; } = new();
+    public List<string> NewTierBenefits { get; set; } = [];
 }

@@ -40,5 +40,5 @@ public class Order : BaseEntity
 
     [MaxLength(25)] public string? ReceiverGovernmentId { get; set; }
 
-    public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+    public ICollection<OrderDetail> OrderDetails { get; set; } = [];
 }

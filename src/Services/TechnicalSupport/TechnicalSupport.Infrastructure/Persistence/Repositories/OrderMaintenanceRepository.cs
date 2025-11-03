@@ -15,10 +15,9 @@ public class OrderMaintenanceRepository : IOrderMaintenanceRepository
     {
         var ds = await _adoRepository.GetDataSetAsync("TechnicalSupport.OrderMantenaince_Get", parameters);
 
-        if (DataValidation.DataSetIsNull(ds, true))
-            return new SpResponse { Code = "0", Message = "No se encontraron datos" };
-
-        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new SpResponse { Code = "0", Message = "No se encontraron datos" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)

@@ -1,5 +1,3 @@
-using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Middleware;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

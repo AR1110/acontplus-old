@@ -32,14 +32,15 @@ export class InvoiceService {
           };
 
           if (response.code === '1') {
-            const [tempEstabs, estadosDoc] = JSON.parse(response.payload as string);
+            const {estabs, status
+          } = JSON.parse(response.payload as string);
 
             const dataToGroup = {
-              estabs: tempEstabs,
+              estabs,
               isGroupPuntoEmision: true,
             };
             resultData.estabs = groupEstabUtil(dataToGroup);
-            resultData.estadosDoc = estadosDoc;
+            resultData.estadosDoc = status;
           }
 
           return resultData;
@@ -63,11 +64,8 @@ export class InvoiceService {
             totalRecords: 0,
           };
           if (response && response.code === '1') {
-            let [data] = JSON.parse(response.payload as string);
-
-            data = data || [];
-
-            result.data = InvoiceAdapter.fromApiAll(data);
+            let {invoices} = JSON.parse(response.payload as string);
+            result.data = InvoiceAdapter.fromApiAll(invoices ?? []);
             result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
           }
           return result;

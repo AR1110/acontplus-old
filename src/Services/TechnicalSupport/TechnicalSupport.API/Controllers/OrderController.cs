@@ -19,9 +19,7 @@ public class OrderController : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) return BadRequest("Cant get Data");
-
-        return Ok(response);
+        return response == null ? BadRequest("Cant get Data") : Ok(response);
     }
 
     [HttpPost]
@@ -36,9 +34,7 @@ public class OrderController : BaseApiController
                 )
             }
         });
-        if (response == null) return BadRequest("No response");
-
-        return Ok(response);
+        return response == null ? BadRequest("No response") : Ok(response);
     }
 
     [HttpPut("{id}")]
@@ -53,9 +49,7 @@ public class OrderController : BaseApiController
                 )
             }
         });
-        if (response == null) return BadRequest("No response");
-
-        return Ok(response);
+        return response == null ? BadRequest("No response") : Ok(response);
     }
 
     [HttpPut("Delivery/{id}")]

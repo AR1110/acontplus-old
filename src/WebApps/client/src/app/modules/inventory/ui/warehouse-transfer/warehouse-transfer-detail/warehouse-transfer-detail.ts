@@ -1,8 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
@@ -10,12 +8,80 @@ import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
 import {WarehouseTransferViewDetailUseCase} from "@inventory/domain/usecases/warehouse-transfer.use-case";
 import {DataGridColumn} from "@shared/components/data-grid/types";
 import {DataGrid} from "@shared/components/data-grid/data-grid";
-
+import {DatePipe, DecimalPipe} from "@angular/common";
+import {MatCard, MatCardContent} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon";
 @Component({
   selector: 'app-inventory-adjustment-detail',
-  imports: [MatCustomDialogComponent, MatDynamicCardComponent, ThemeButtonComponent, DataGrid],
+  imports: [MatCustomDialogComponent,  DataGrid,  DecimalPipe, DatePipe, MatCard, MatCardContent, MatIcon],
   templateUrl: './warehouse-transfer-detail.html',
-  styles: ``,
+  styles: `
+    .header-card {
+      background-color: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      border-radius: 1rem;
+      border: 1px solid var(--md-sys-color-outline-variant);
+      box-shadow: 0 2px 6px var(--md-sys-color-shadow);
+      padding: 1rem;
+
+      .label {
+        font-weight: 600;
+        color: var(--md-sys-color-outline);
+      }
+
+      .fw-semibold {
+        font-weight: 600;
+      }
+
+      .total {
+        color: var(--md-sys-color-primary);
+        font-size: 1.1rem;
+      }
+
+      .text-primary {
+        color: var(--md-sys-color-primary);
+      }
+
+      mat-icon {
+        display: block;
+        margin: 0 auto;
+      }
+
+      .header-content {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+
+        .header-column {
+          flex: 1 1 200px; // crece hasta 1, mínimo 200px
+        }
+
+        .header-icon {
+          flex: 0 0 auto; // no se estira
+        }
+      }
+
+      // Media queries para móvil
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+          gap: 0.75rem;
+
+          .header-column,
+          .header-icon {
+            text-align: left !important;
+            flex: 1 1 100%;
+          }
+        }
+      }
+    }
+
+
+
+
+
+  `,
 })
 export class WarehouseTransferDetail implements OnInit {
   private viewDetailUseCase = inject(WarehouseTransferViewDetailUseCase);
@@ -29,31 +95,41 @@ export class WarehouseTransferDetail implements OnInit {
   list = signal<any[]>([]);
 
   columns: DataGridColumn[] = [
-    { header: 'Name', field: 'name' },
+    { header: 'Nro.', field: 'index' },
+    { header: 'Código', field: 'code' },
+    { header: 'Descripción', field: 'description' },
+    { header: 'Medida', field: 'measure' },
     {
-      header: 'Weight',
-      field: 'weight',
+      header: 'Cantidad',
+      field: 'quantity',
       type: 'number',
       typeParameter: {
         digitsInfo: '1.2-2',
       },
     },
-    { header: 'Gender', field: 'gender' },
-    { header: 'Mobile', field: 'mobile' },
-    { header: 'City', field: 'city' },
     {
-      header: 'Date',
-      field: 'date',
-      type: 'date',
+      header: 'Precio Costo',
+      field: 'costPrice',
+      type: 'number',
       typeParameter: {
-        format: 'yyyy-MM-dd',
+        digitsInfo: '1.2-2',
       },
     },
+    {
+      header: 'Total',
+      field: 'total',
+      type: 'number',
+      typeParameter: {
+        digitsInfo: '1.2-2',
+      },
+    },
+
   ];
 
 
   ngOnInit() {
     this.viewDetailUseCase.execute(this.params.id).subscribe(response => {
+      console.log(response);
 
        this.header = response.header;
        this.list.set(response.details);

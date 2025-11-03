@@ -43,7 +43,7 @@ export class AdminLayoutService {
       })
     }).subscribe(response => {
       const {dashboard, documents} = response;
-      const {documentosElectronicos} = documents;
+      const {data} = documents;
       const {
         statistics,
         licenses,
@@ -64,7 +64,7 @@ export class AdminLayoutService {
       console.log(response);
 
 
-      const pendingDocs = documentosElectronicos.length;
+      const pendingDocs = data.length;
       const notifications = structuredClone(this.notifications())
 
       const documentNotification = {

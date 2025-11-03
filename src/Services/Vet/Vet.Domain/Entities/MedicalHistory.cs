@@ -7,8 +7,8 @@ public class MedicalHistory : BaseEntity
     public required Pet Pet { get; set; }
     public int PetId { get; set; }
     [MaxLength(300)] public string? Observations { get; set; }
-    public ICollection<HealthCheck> HealthChecks { get; set; } = new List<HealthCheck>();
-    public ICollection<BehaviorTest> BehaviorTests { get; set; } = new List<BehaviorTest>();
+    public ICollection<HealthCheck> HealthChecks { get; set; } = [];
+    public ICollection<BehaviorTest> BehaviorTests { get; set; } = [];
     public int? EstablecimientoId { get; set; }
 
     [Column(TypeName = "numeric(4,2), null")]

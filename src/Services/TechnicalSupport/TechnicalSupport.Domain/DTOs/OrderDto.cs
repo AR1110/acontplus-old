@@ -12,5 +12,5 @@ public class OrderDto
     public int OrderStatusId { get; set; }
     public int UserId { get; set; }
     public Guid Uuid { get; set; }
-    public List<OrderDetailDto> OrderDetails { get; set; } = new List<OrderDetailDto>();
+    public List<OrderDetailDto> OrderDetails { get; set; } = [];
 }

@@ -1,0 +1,49 @@
+namespace Accounting.Infrastructure.Persistence.Repositories;
+
+public class SubcategoryRepository(AccountingContext context, IAdoRepository repository) : ISubcategoryRepository
+{
+    public async Task<SpResponse> AddAsync(Subcategory subcategory)
+    {
+        if (await context.Subcategories.AnyAsync(x =>
+                x.CompanyId == subcategory.CompanyId & x.Code == subcategory.Code))
+            return new SpResponse { Code = "0", Message = "Código ya existe" };
+
+        context.Subcategories.Add(subcategory);
+        await context.SaveChangesAsync();
+        return new SpResponse { Code = "1", Message = "Registrada exitosamente" };
+    }
+
+    public async Task<SpResponse> DeleteAsync(int userId, int id)
+    {
+        var subcategory = await context.Subcategories.FirstOrDefaultAsync(x => x.Id == id);
+        if (subcategory == null) return new SpResponse { Code = "0", Message = "Subcategoría no encontrada" };
+
+        subcategory.MarkAsDeleted(userId);
+        context.Update(subcategory);
+        await context.SaveChangesAsync();
+        return new SpResponse { Code = "1", Message = "Eliminada exitosamente" };
+    }
+
+    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
+    {
+        var ds = await repository.GetDataSetAsync("Contabilidad.Subcategory_Get", parameters);
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new SpResponse { Code = "0", Message = "Data not found" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+    }
+
+    public async Task<SpResponse> UpdateAsync(int id, Subcategory subcategory)
+    {
+        var subcategoryFound = await context.Subcategories.FindAsync(id);
+        if (subcategoryFound == null) return new SpResponse { Code = "0", Message = "Subcategoría no encontrada" };
+
+        subcategoryFound.CategoryId = subcategory.CategoryId;
+        subcategoryFound.Code = subcategory.Code;
+        subcategoryFound.Name = subcategory.Name;
+        subcategoryFound.IsActive = subcategory.IsActive;
+        subcategoryFound.UpdatedByUserId = subcategory.UpdatedByUserId;
+        context.Update(subcategoryFound);
+        await context.SaveChangesAsync();
+        return new SpResponse { Code = "1", Message = "Actualizada exitosamente" };
+    }
+}

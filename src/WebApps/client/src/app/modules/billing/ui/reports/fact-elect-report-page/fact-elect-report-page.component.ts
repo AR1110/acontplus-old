@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { FormsModule } from '@angular/forms';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
-import { DocumentoElectronicoWebRepository } from '@billing/data/documento-electronico/documento-electronico-web.repository';
+import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
@@ -43,7 +43,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
   styles: ``,
 })
 export class FactElectReportPageComponent implements OnInit, OnDestroy {
-  private readonly _docElectSvc = inject(DocumentoElectronicoWebRepository);
+  private readonly _docElectSvc = inject(DocElectHttpRepository);
   private readonly _tS = inject(ToastrNotificationService);
   private readonly _sharedSvc = inject(SharedService);
   private destroy$ = new Subject<void>();

@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import {
-  DocumentoElectronico,
+  DocElectListResult,
   FilterData,
 } from '@billing/domain/models/documento-electronico.model';
 import { ApiResponse } from '@core/models/api-response';
@@ -10,9 +10,7 @@ export abstract class DocumentoElectronicoRepository {
   abstract getFilters(forceRefresh: boolean): Observable<FilterData>;
   abstract refreshFilters(): Observable<FilterData>;
   abstract get filterData$(): Observable<FilterData | null>;
-  abstract getAll<T>(parameters: T): Observable<{
-    documentosElectronicos: DocumentoElectronico[];
-  }>;
+  abstract getAll<T>(parameters: T): Observable<DocElectListResult>;
   abstract cancel(id: number): Observable<ApiResponse>;
   abstract downloadXml(id: number): Observable<Blob>;
 }

@@ -34,7 +34,7 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'subcategory',
+    path: 'subcategories',
     title: 'SubCategoria',
     component: SubCategoryComponent,
     data: {

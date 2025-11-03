@@ -32,6 +32,7 @@ export interface DataGridColumn<T = any> {
   description?: string;
   summary?: ((data: T[], colDef?: DataGridColumn) => any) | string;
   class?: string | ((rowData?: T, colDef?: DataGridColumn) => string);
+  headerCellTemplate?: TemplateRef<any>;
 }
 
 

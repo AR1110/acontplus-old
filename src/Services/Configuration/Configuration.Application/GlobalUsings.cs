@@ -1,0 +1,12 @@
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.DTOs.Common;
+global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Utilities.Data;
+global using Configuration.Application.Interfaces;
+global using Configuration.Application.Interfaces.Printing;
+global using Configuration.Application.Interfaces.Sri;
+global using Configuration.Application.Interfaces.WizardConfig;
+global using Configuration.Domain.Models;
+global using System.ComponentModel.DataAnnotations;
+global using System.Data;

@@ -1,5 +1,4 @@
 using Acontplus.Services.Extensions;
-using Acontplus.Services.Extensions.Middleware;
 using Identity.API.Endpoints;
 using Serilog;
 

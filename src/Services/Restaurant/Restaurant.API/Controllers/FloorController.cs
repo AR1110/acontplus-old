@@ -2,19 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Restaurant.API.Controllers;
 
-public class FloorController(IFloorRepository floorService) : BaseApiController
+public class FloorController(IFloorRepository floorRepository) : BaseApiController
 {
     [HttpGet]
     [Route("Get")]
     public async Task<IActionResult> Get()
     {
-        return Ok(await floorService.GetAllAsync());
+        return Ok(await floorRepository.GetAllAsync());
     }
 
     [HttpGet("GetByEstab/{establecimientoId}")]
     public async Task<IActionResult> GetByEstab(int establecimientoId)
     {
-        return Ok(await floorService.GetByEstabAsync(establecimientoId));
+        return Ok(await floorRepository.GetByEstabAsync(establecimientoId));
     }
 
     [HttpPost]
@@ -22,7 +22,7 @@ public class FloorController(IFloorRepository floorService) : BaseApiController
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         floor.CreatedByUserId = User.GetUserId();
-        return Ok(await floorService.AddAsync(floor));
+        return Ok(await floorRepository.AddAsync(floor));
     }
 
     [HttpPut("{id}")]
@@ -30,12 +30,12 @@ public class FloorController(IFloorRepository floorService) : BaseApiController
     {
         if (id != floor.Id) return BadRequest();
         floor.UpdatedByUserId = User.GetUserId();
-        return Ok(await floorService.UpdateAsync(id, floor));
+        return Ok(await floorRepository.UpdateAsync(id, floor));
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteFloor(int id)
     {
-        return Ok(await floorService.DeleteAsync(User.GetUserId(), id));
+        return Ok(await floorRepository.DeleteAsync(User.GetUserId(), id));
     }
 }

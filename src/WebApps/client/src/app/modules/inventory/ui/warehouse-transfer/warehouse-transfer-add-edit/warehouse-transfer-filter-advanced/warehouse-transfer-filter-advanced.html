@@ -54,7 +54,7 @@ title="Filtro Avanzado"
 
       <div class="col  text-end">
         <app-theme-button
-          variant="success"
+          variant="info"
           icon="search"
           text="Buscar"
           matStyle="basic"
@@ -80,4 +80,16 @@ title="Filtro Avanzado"
     ></app-data-grid>
 
   </section>
+  <div ngProjectAs="footer">
+    @if (rowSelected().length>0) {
+    <app-theme-button
+      variant="success"
+      icon="move_to_inbox"
+      text="Buscar"
+      matStyle="basic"
+      (handleClick)="addToDetail()"
+    />
+
+    }
+  </div>
 </app-mat-custom-dialog>

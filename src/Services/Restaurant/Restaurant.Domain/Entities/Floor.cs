@@ -12,5 +12,5 @@ public class Floor : BaseEntity
     [Required][MaxLength(50)] public required string Description { get; set; }
 
     public int Capacity { get; set; }
-    public ICollection<Room> Rooms { get; set; } = new List<Room>();
+    public ICollection<Room> Rooms { get; set; } = [];
 }

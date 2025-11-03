@@ -1,6 +1,3 @@
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection;
 
 namespace Restaurant.Infrastructure.Persistence;
@@ -26,6 +23,14 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
     public DbSet<Promotion> Promotions { get; set; }
     public DbSet<PromotionMenu> PromotionMenus { get; set; }
 
+    // Meal Management
+    public DbSet<MealPlan> MealPlans { get; set; }
+    public DbSet<MealScheduleSetting> MealScheduleSettings { get; set; }
+    public DbSet<MealPlanSchedule> MealPlanSchedules { get; set; }
+    public DbSet<DailyMenu> DailyMenus { get; set; }
+    public DbSet<MealConsumption> MealConsumptions { get; set; }
+    public DbSet<CompanyCustomerMealPlan> CompanyCustomerMealPlans { get; set; }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
@@ -49,7 +54,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
                      ))
             property.SetIsUnicode(false);
 
-        SimpleEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
+        BaseEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
             typeof(AppTable),
             typeof(Ingredient),
             typeof(Item),
@@ -60,7 +65,8 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
             typeof(Promotion),
             typeof(PromotionMenu),
             typeof(ProductionArea),
-            typeof(Recipe)
+            typeof(Recipe),
+            typeof(CompanyCustomerMealPlan)
         );
     }
 }

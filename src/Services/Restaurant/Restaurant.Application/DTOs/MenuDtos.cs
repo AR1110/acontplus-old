@@ -31,7 +31,7 @@ public record CreateMenuDto
 
     public string? S3ObjectUrl { get; init; }
 
-    public List<CreateMenuItemDto> MenuItems { get; init; } = new();
+    public List<CreateMenuItemDto> MenuItems { get; init; } = [];
 }
 
 public record UpdateMenuDto
@@ -63,7 +63,7 @@ public record UpdateMenuDto
 
     public string? S3ObjectUrl { get; init; }
 
-    public List<UpdateMenuItemDto> MenuItems { get; init; } = new();
+    public List<UpdateMenuItemDto> MenuItems { get; init; } = [];
 }
 
 public record CreateMenuItemDto

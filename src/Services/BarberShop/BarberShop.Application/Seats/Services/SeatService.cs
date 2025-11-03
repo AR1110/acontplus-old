@@ -40,19 +40,18 @@ public class SeatService(ISeatRepository seatRepository) : ISeatService
     public async Task<SpResponse> GetSeatByIdAsync(int id)
     {
         var seat = await seatRepository.GetSeatByIdAsync(id);
-        if (seat == null)
-            return new SpResponse
+        return seat == null
+            ? new SpResponse
             {
                 Code = "0",
                 Message = "Asiento no encontrado"
+            }
+            : new SpResponse
+            {
+                Code = "1",
+                Message = "Asiento obtenido exitosamente",
+                Payload = seat
             };
-
-        return new SpResponse
-        {
-            Code = "1",
-            Message = "Asiento obtenido exitosamente",
-            Payload = seat
-        };
     }
 
     public async Task<SpResponse> UpdateSeatAsync(int id, SeatDto seatDto)

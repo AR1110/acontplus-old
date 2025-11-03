@@ -11,7 +11,6 @@ global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Repositories;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions.Authentication;
-global using Acontplus.Services.Extensions.Infrastructure;
 global using Acontplus.Utilities.Data;
 global using Acontplus.Utilities.Time;
 global using Asp.Versioning;

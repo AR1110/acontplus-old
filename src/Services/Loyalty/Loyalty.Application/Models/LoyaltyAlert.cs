@@ -9,5 +9,5 @@ public class LoyaltyAlert
     public string Message { get; set; }
     public AlertPriority Priority { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public Dictionary<string, object> Metadata { get; set; } = new();
+    public Dictionary<string, object> Metadata { get; set; } = [];
 }

@@ -1,6 +1,4 @@
-
-using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Middleware;
+using Restaurant.API.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -70,6 +68,8 @@ try
 
     app.UseRateLimiter();
 
+    app.MapAllEndpoints();
+
     app.MapControllers().RequireAuthorization();
 
     app.UseStaticFiles();
@@ -77,19 +77,6 @@ try
     app.UseDefaultFiles();
 
     app.MapFallbackToFile("/index.html");
-
-    // using var scope = app.Services.CreateScope();
-    // var services = scope.ServiceProvider;
-    // var context = services.GetRequiredService<RestaurantContext>();
-    // try
-    // {
-    //     await context.Database.MigrateAsync();
-    //     await RestaurantContextSeed.SeedAsync(context);
-    // }
-    // catch (Exception ex)
-    // {
-    //     Console.WriteLine($"An error occured during migration: {ex.Message}");
-    // }
 
     await app.RunAsync();
 }

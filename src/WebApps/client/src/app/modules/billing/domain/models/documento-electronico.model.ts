@@ -22,6 +22,27 @@ export interface DocumentoElectronico {
   idEstablecimiento: number;
 }
 
+export interface DocElectList  {
+  id: number;
+  codDoc: string;
+  docName: string;
+  serieComprobante: string;
+  receiverRuc: string;
+  receiverName: string;
+  issueDate: string;
+  accessKey: string;
+  authorizationDate: string;
+  statusName: string;
+  statusCode: string;
+  version: string;
+  user: string;
+  codEstab: string;
+}
+export class DocElectListResult {
+  totalRecords = 0;
+  data: DocElectList[] = [];
+}
+
 export interface FilterData {
   estabs: any[];
   tipoDocumentos: any[];

@@ -21,3 +21,11 @@ export const enum BILLING_CODE_REPORT {
   LCRG = 'LCRG',
   RGGR = 'RGGR',
 }
+
+
+export const enum BILLING_MODULES_CODE {
+  DOC_ELECT='AUTH',
+  ATS='ATS',
+  RETENCION_ATS='RETENCION_ATS',
+  GUIA_REMISION='GUIA_REMISION'
+}

@@ -137,6 +137,91 @@
     min-width: 60px;
     padding: 0 calc((60px - var(--mat-checkbox-state-layer-size, 40px)) / 2);
   }
+
+
+
+
+
+  // Tamaño small
+  &.data-grid-size-small {
+    .mat-mdc-table {
+      .mat-mdc-header-row,
+      .mat-mdc-footer-cell,
+      .mat-mdc-row {
+        padding: 4px 8px;
+        font-size: 12px;
+        height: 32px;
+      }
+
+      .mat-mdc-header-cell {
+        height: 32px;
+      }
+    }
+
+    .data-grid-checkbox-cell {
+      width: 40px;
+      min-width: 40px;
+      padding: 0 calc((40px - var(--mat-checkbox-state-layer-size, 32px)) / 2);
+    }
+
+    .data-grid-row-expand-button {
+      width: 28px;
+      height: 28px;
+
+      .data-grid-icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+
+  // Tamaño medium
+  &.data-grid-size-medium {
+    .mat-mdc-table {
+      .mat-mdc-header-row,
+      .mat-mdc-header-cell,
+      .mat-mdc-footer-cell,
+      .mat-mdc-row,
+      .mat-mdc-cell {
+        padding: 8px 12px;
+        font-size: 13px;
+        height: 40px;
+      }
+
+      .mat-mdc-header-cell {
+        height: 48px;
+      }
+    }
+
+    .data-grid-checkbox-cell {
+      width: 50px;
+      min-width: 50px;
+      padding: 0 calc((50px - var(--mat-checkbox-state-layer-size, 36px)) / 2);
+    }
+  }
+
+  // Tamaño normal (por defecto)
+  &.data-grid-size-normal {
+    .mat-mdc-table {
+      .mat-mdc-header-cell,
+      .mat-mdc-footer-cell,
+      .mat-mdc-cell {
+        padding: 12px 16px;
+        font-size: 14px;
+        height: 48px;
+      }
+
+      .mat-mdc-header-cell {
+        height: 56px;
+      }
+    }
+
+    .data-grid-checkbox-cell {
+      width: 60px;
+      min-width: 60px;
+      padding: 0 calc((60px - var(--mat-checkbox-state-layer-size, 40px)) / 2);
+    }
+  }
 }
 
 // Barra de progreso superpuesta

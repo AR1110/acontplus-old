@@ -21,7 +21,7 @@ public class LoyaltyContext(DbContextOptions<LoyaltyContext> options) : BaseCont
 
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        SimpleEntityRegistration.RegisterEntitiesWithSchemas(modelBuilder, typeof(LoyaltyContext),
+        BaseEntityRegistration.RegisterEntitiesWithSchemas(modelBuilder, typeof(LoyaltyContext),
             (typeof(LoyaltyProgram), "Loyalty"),
             (typeof(LoyaltyReward), "Loyalty")
         );

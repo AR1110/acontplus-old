@@ -110,17 +110,13 @@ public class UserService : IUserService
     public async Task<bool> IsUserInRoleAsync(int userId, string roleName)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null) return false;
-
-        return await _userManager.IsInRoleAsync(user, roleName);
+        return user != null && await _userManager.IsInRoleAsync(user, roleName);
     }
 
     public async Task<IList<string>> GetUserRolesAsync(int userId)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
-        if (user == null) return new List<string>();
-
-        return await _userManager.GetRolesAsync(user);
+        return user == null ? [] : await _userManager.GetRolesAsync(user);
     }
 
     public async Task UpdateUserPhoneNumberAsync(int userId, string phoneNumber)
