@@ -20,6 +20,7 @@ import {MatIcon} from "@angular/material/icon";
 import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
 import {DataGrid} from "@shared/components/data-grid/data-grid";
 import {DataGridColumn} from "@shared/components/data-grid/types";
+import {TotalizadorUtil} from "@core/utils/totalizador.util";
 
 @Component({
   selector: 'app-proforma-invoice-add-edit',
@@ -331,6 +332,13 @@ export class ProformaInvoiceAddEdit {
     },
   ]);
 
+  displayedTotalsColumns: DataGridColumn[] = [
+    { header: '', field: 'label' },
+    { header: '', field: 'value' },
+
+  ]
+  totalRows: any[] = [];
+
   additionalInfo =signal<any>([
     {},
     {},
@@ -342,6 +350,39 @@ export class ProformaInvoiceAddEdit {
   ]
 
   ngOnInit() {
+
+    const items: any[] = [
+      {
+        cantidad: 2,
+        precioUnitario: 100,
+        precioTotalSinImpuesto: 200,
+        valorDescuento: 0,
+        codigoPorcentaje: '2',
+        ice: 0
+      },
+      {
+        cantidad: 1,
+        precioUnitario: 50,
+        precioTotalSinImpuesto: 50,
+        valorDescuento: 5,
+        codigoPorcentaje: '0',
+        ice: 0
+      }
+    ];
+
+    const tarifasImpuesto: any[] = [
+      { codigoPorcentaje: '0', descripcion: 'IVA 0%', tarifa: 0 },
+      { codigoPorcentaje: '2', descripcion: 'IVA 12%', tarifa: 12 }
+    ];
+
+    const totalizador = new TotalizadorUtil();
+
+    const resultado = totalizador.calcular({
+      items,
+      tarifasImpuesto
+    });
+
+    this.totalRows = resultado.totalRows;
 
     this.searchService.onResult().subscribe(result => {
       this.handleSearchResult(result);

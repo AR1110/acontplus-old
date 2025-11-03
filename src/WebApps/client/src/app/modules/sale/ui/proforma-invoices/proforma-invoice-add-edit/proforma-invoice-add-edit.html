@@ -129,7 +129,18 @@
         </div>
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-
+        <app-data-grid
+          [data]="totalRows"
+          [columns]="displayedTotalsColumns"
+          [showPaginator]="false"
+          [size]="'small'"
+          [headerTemplate]="{
+             op: opHeaderTpl,
+            }"
+          [cellTemplate]="{
+              op: opCellTpl,
+            }"
+        ></app-data-grid>
       </div>
     </div>
 <!--    end footer-->

@@ -139,33 +139,79 @@ export class ProformaInvoices {
    // this.initLoad()
   }
 
-  private getParams (){
-    if(!(this.dataSearch.estabId>0)){
-      throw new Error('Establecimiento no seleccionado')
+  private getParams() {
+    const {
+      estabId,
+      ptoEmiId,
+      codEstado,
+      fromDate,
+      toDate,
+      isTransferredToDoc,
+      esDatoAdicional,
+      esBuscarPorNro,
+      esBuscarUsuario
+    } = this.dataSearch;
+
+    const pagination = this.pagination();
+    const errors: string[] = [];
+
+    if (!(estabId > 0)) {
+      errors.push('Debe seleccionar un establecimiento.');
     }
+
+    if (!(ptoEmiId > 0)) {
+      errors.push('Debe seleccionar un punto de emisión.');
+    }
+
+    if (fromDate && toDate) {
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+
+      if (from > to) {
+        errors.push('La fecha inicial no puede ser mayor que la final.');
+      }
+    }
+
+    if (errors.length > 0) {
+      const listItems = errors.map(error => `<li>${error}</li>`).join('');
+      const htmlMessage = `<ul>${listItems}</ul>`;
+      this.notiSvc.warning({
+        message: htmlMessage,
+        options: {
+          enableHtml: true,
+          closeButton: true,
+        }
+      })
+      return null;
+    }
+
+    // 🔹 Retornar parámetros listos
     return {
-      estabId: this.dataSearch.estabId,
-      ptoEmiId: this.dataSearch.ptoEmiId,
-      codEstado: this.dataSearch.codEstado,
-      fromDate: this.dataSearch.fromDate,
-      toDate: this.dataSearch.toDate,
-      isTransferredToDoc: this.dataSearch.isTransferredToDoc,
-      esDatoAdicional: this.dataSearch.esDatoAdicional,
-      esBuscarPorNro: this.dataSearch.esBuscarPorNro,
-      esBuscarUsuario: this.dataSearch.esBuscarUsuario,
-      pageIndex: this.pagination().pageIndex + 1,
-      pageSize: this.pagination().pageSize,
-    }
+      estabId,
+      ptoEmiId,
+      codEstado,
+      fromDate,
+      toDate,
+      isTransferredToDoc,
+      esDatoAdicional,
+      esBuscarPorNro,
+      esBuscarUsuario,
+      pageIndex: pagination.pageIndex + 1,
+      pageSize: pagination.pageSize,
+    };
   }
+
 
   refresh(){
     this.getList()
   }
 
   getList() {
+    const params = this.getParams();
+    if (!params) return;
     this.isLoading.set(true);
     this.list.set([]);
-    this._listDataUseCase.execute(this.getParams())
+    this._listDataUseCase.execute(params)
       .pipe(
         finalize(() => {
           this.isLoading.set(false);
