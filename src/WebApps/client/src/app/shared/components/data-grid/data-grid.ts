@@ -74,6 +74,9 @@ export const DATA_GRID_DEFAULT_OPTIONS = new InjectionToken<DataGridDefaultOptio
   host: {
     'class': 'data-grid',
     '[class.data-grid-animations-enabled]': '!_animationsDisabled',
+    '[class.data-grid-size-small]': 'size() === "small"',
+    '[class.data-grid-size-medium]': 'size() === "medium"',
+    '[class.data-grid-size-normal]': 'size() === "normal"',
     '[attr.tabindex]': '0',
    // '(keydown)': 'handleKeyDown($event)'
   },
@@ -117,6 +120,10 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   noResultTemplate = input<TemplateRef<any>>();
   paginationTemplate = input<TemplateRef<any>>();
   summaryTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
+
+
+  size = input<'small' | 'medium' | 'normal'>('normal');
+  headerCellTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
 
   // Expansion
   expandable = input<boolean>(false);

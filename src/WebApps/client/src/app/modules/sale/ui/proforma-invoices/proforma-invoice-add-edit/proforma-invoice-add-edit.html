@@ -108,7 +108,24 @@
             [data]="additionalInfo()"
           [columns]="columnsAdditionalInfo"
             [showPaginator]="false"
+            [size]="'small'"
+            [headerTemplate]="{
+             op: opHeaderTpl,
+            }"
+            [cellTemplate]="{
+              op: opCellTpl,
+            }"
           ></app-data-grid>
+          <ng-template #opHeaderTpl>
+            <button mat-icon-button>
+              <mat-icon>add</mat-icon>
+            </button>
+          </ng-template>
+          <ng-template #opCellTpl>
+            <button mat-icon-button>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </ng-template>
         </div>
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
