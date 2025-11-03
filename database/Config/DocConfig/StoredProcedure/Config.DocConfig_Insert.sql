@@ -1,12 +1,12 @@
 USE [Acontplus]
-GO 
+GO
 
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE Config.DocConfig_Insert @userRoleId INT ,@json VARCHAR(MAX) ,@fromMobile BIT
+CREATE OR ALTER PROCEDURE [Config].[DocConfig_Insert] @userRoleId INT ,@json VARCHAR(MAX) ,@fromMobile BIT
 AS
 BEGIN 
 	SET NOCOUNT ON;
@@ -18,7 +18,9 @@ BEGIN
         @idEstablecimiento INT;
 
     --> Data Json
-    DECLARE @docs VARCHAR(MAX)
+    DECLARE
+        @docsValue NVARCHAR(MAX),
+        @docs VARCHAR(MAX)
 
     --> Data Config
     DECLARE @demoStepId INT
@@ -36,22 +38,38 @@ BEGIN
        ,estado BIT DEFAULT 1 NOT NULL
     )
 
-    
 
-	BEGIN TRY   
+	BEGIN TRY
         --> Variables Globales
         SELECT TOP 1 @userId = idUsuario, @username = nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-        --> Data Json
-        SELECT @docs = docs ,@demoStepId = ISNULL(demoStepId, 0)  FROM OPENJSON(@json) WITH(docs NVARCHAR(MAX) ,demoStepId INT)
+
+        -- Extraer el valor de $.docs (puede ser array JSON o texto que contiene JSON)
+        SET @docsValue = JSON_VALUE(@json, '$.docs');
+
+        IF JSON_QUERY(@json, '$.docs') IS NOT NULL
+            BEGIN
+                SET @docs = JSON_QUERY(@json, '$.docs');
+                SET @demoStepId = ISNULL(TRY_CAST(JSON_VALUE(@json, '$.demoStepId') AS INT), 0);
+            END
+        ELSE IF @docsValue IS NOT NULL AND ISJSON(@docsValue) = 1
+            BEGIN
+                SET @docs = JSON_QUERY(@docsValue, '$.docs');
+                SET @demoStepId = ISNULL(TRY_CAST(JSON_VALUE(@docsValue, '$.demoStepId') AS INT), 0);
+            END
+        ELSE
+            BEGIN
+                SELECT '0' code,'No se encontró un campo "docs" válido o no es JSON.' as 'message'
+                RETURN;
+            END
 
         --> Data Doc
         INSERT INTO @tblDocs
-              (id,idPuntoEmision,idTipoDocumento,ultimaSecuencia,infoAdicional,editInfo, estado)
+            (id,idPuntoEmision,idTipoDocumento,ultimaSecuencia,infoAdicional,editInfo, estado)
         SELECT id,idPuntoEmision,idTipoDocumento,ultimaSecuencia,infoAdicional,editInfo, estado
 	    FROM OPENJSON(@docs) WITH
         (
-		    id              INT 
+		    id              INT
            ,idPuntoEmision  INT
            ,idTipoDocumento INT
            ,ultimaSecuencia INT
@@ -66,7 +84,7 @@ BEGIN
 	    FROM @tblDocs
 
 		SELECT TOP 1 @codDoc = codigo FROM dbo.TipoDocumento WITH (NOLOCK) WHERE idTipoDocumento = @idTipoDocumento;
-        
+
         --> Validate
         IF NOT EXISTS (SELECT 1 FROM @tblDocs WHERE editInfo = 1)
             BEGIN
@@ -136,7 +154,7 @@ BEGIN
                 END 
 
 		BEGIN TRAN 
-            IF (@demoStepId > 0)
+      IF (@demoStepId > 0)
                 BEGIN
                     DECLARE @uuid UNIQUEIDENTIFIER ,@companyId INT
 
@@ -145,10 +163,11 @@ BEGIN
                     SELECT TOP 1 @companyId = Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid
 
                     IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
-                                                    WHERE Uuid        = @uuid 
-                                                    AND DemoStepId    = @demoStepId)
-                        BEGIN
+                        WHERE Uuid        = @uuid
+                        AND DemoStepId    = @demoStepId
+                    )
 
+                        BEGIN
                             INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
                             VALUES(@demoStepId, @companyId, @uuid, @fromMobile, @username);
                         END
@@ -163,13 +182,13 @@ BEGIN
                           ,cd.fechaActualizacion = GETDATE()
                           ,cd.estado = td.estado
                     FROM dbo.ConfiguracionDocumento cd WITH(ROWLOCK)
-                    INNER JOIN @tblDocs td ON td.id = cd.idConfiguracionDocumento 
+                    INNER JOIN @tblDocs td ON td.id = cd.idConfiguracionDocumento
 				END
 
 			ELSE 
 				BEGIN 
 					INSERT INTO dbo.ConfiguracionDocumento
-                          (idPuntoEmision,idTipoDocumento,ultimaSecuencia,estado,idUsuario ,fromMobile)
+                        (idPuntoEmision,idTipoDocumento,ultimaSecuencia,estado,idUsuario ,fromMobile)
                     SELECT idPuntoEmision,idTipoDocumento,ultimaSecuencia,estado,@userId  ,@fromMobile FROM @tblDocs
                     WHERE ISNULL(id,0) = 0
 				END
@@ -186,8 +205,9 @@ BEGIN
 
         INSERT INTO dbo.ErroresSistema
              (method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario)
-	    SELECT '/DocConfig/Post',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE(), @userId
+	    SELECT '/DocConfig/Post',ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),ERROR_PROCEDURE(),ERROR_LINE(),ERROR_MESSAGE() +' - '+ @json, @userId
 
 	    SELECT '0' code, 'Error en el procedimiento' as 'message'
 	END CATCH
 END
+GO
