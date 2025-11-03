@@ -102,8 +102,7 @@
       }
     </div>
 
-    <app-data-grid
-      [data]="list()"
+    <app-data-grid [data]="list()"
       [cellTemplate]="{
        document: documentTpl,
        client: clientTpl,
@@ -118,7 +117,7 @@
       [pageSize]="pagination().pageSize"
       [pageSizeOptions]="pagination().pageSizeOptions"
       (page)="handlePageEvent($event)"
-    ></app-data-grid>
+     />
     <ng-template #documentTpl let-row>
     <div class="doc-cell">
       <div class="code-name">{{ row.codDoc }} - {{ row.docName }}</div>

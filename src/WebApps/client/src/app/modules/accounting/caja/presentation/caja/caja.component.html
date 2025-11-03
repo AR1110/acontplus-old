@@ -17,16 +17,14 @@
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [tableData]="cashboxs()"
+    <app-mat-dynamic-table [tableData]="cashboxs()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [templateOp]="templateOp"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
-    >
-    </app-mat-dynamic-table>
+     />
   </mat-card-content>
 </mat-card>
 <ng-template #templateOp let-item="item">

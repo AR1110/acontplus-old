@@ -1,21 +1,21 @@
 import { Routes } from '@angular/router';
-import { TechnicalSupportPageComponent } from './pages/technical-support-page/technical-support-page.component';
-import { DevicePageComponent } from './pages/device-page/device-page.component';
-import { BrandPageComponent } from './pages/brand-page/brand-page.component';
-import { ModeloPageComponent } from './pages/modelo-page/modelo-page.component';
-import { CategoryPageComponent } from './pages/category-page/category-page.component';
-import { TechnicalSupportHomeComponent } from './pages/technical-support-home.component';
+
+
+
+
+
+
 
 export const routes: Routes = [
   {
     path: '',
-    component: TechnicalSupportHomeComponent,
+    loadComponent: () => import('./pages/technical-support-home.component').then(m => m.TechnicalSupportHomeComponent),
     data: { breadcrumb: 'Soporte Técnico' },
   },
   {
     path: 'technical-support-page',
     title: 'Soporte Técnico',
-    component: TechnicalSupportPageComponent,
+    loadComponent: () => import('./pages/technical-support-page/technical-support-page.component').then(m => m.TechnicalSupportPageComponent),
     data: {
       breadcrumb: 'Servicio Técnico',
     },
@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'category-page',
     title: 'Categorías',
-    component: CategoryPageComponent,
+    loadComponent: () => import('./pages/category-page/category-page.component').then(m => m.CategoryPageComponent),
     data: {
       breadcrumb: 'Categorías',
     },
@@ -31,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'brand-page',
     title: 'Marcas',
-    component: BrandPageComponent,
+    loadComponent: () => import('./pages/brand-page/brand-page.component').then(m => m.BrandPageComponent),
     data: {
       breadcrumb: 'Marcas',
     },
@@ -39,7 +39,7 @@ export const routes: Routes = [
   {
     path: 'modelo-page',
     title: 'Modelos',
-    component: ModeloPageComponent,
+    loadComponent: () => import('./pages/modelo-page/modelo-page.component').then(m => m.ModeloPageComponent),
     data: {
       breadcrumb: 'Modelos',
     },
@@ -47,7 +47,7 @@ export const routes: Routes = [
   {
     path: 'device-page',
     title: 'Equipos',
-    component: DevicePageComponent,
+    loadComponent: () => import('./pages/device-page/device-page.component').then(m => m.DevicePageComponent),
     data: {
       breadcrumb: 'Equipos',
     },

@@ -12,7 +12,7 @@
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="formatter">
       @if (isLoading) {
         <mat-option disabled>
-          <mat-spinner diameter="35" style="margin: 0 auto"></mat-spinner>
+          <mat-spinner diameter="35" style="margin: 0 auto" />
         </mat-option>
       }
       @for (supplier of filteredSuppliers | async; track $index) {
@@ -45,7 +45,7 @@
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="formatter">
       @if (isLoading) {
         <mat-option disabled>
-          <mat-spinner diameter="35" style="margin: 0 auto"></mat-spinner>
+          <mat-spinner diameter="35" style="margin: 0 auto" />
         </mat-option>
       }
       @for (supplier of filteredSuppliers | async; track $index) {
@@ -72,5 +72,5 @@
 
 <!-- Loading indicator for overall component state -->
 @if (isLoading) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" />
 }

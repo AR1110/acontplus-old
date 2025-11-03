@@ -152,7 +152,7 @@
             <td class="text-center">{{ $index + 1 }}</td>
             <td>{{ item.name }}</td>
             <td class="text-center">
-              <mat-slide-toggle [(ngModel)]="item.isActive" (change)="updateDocument(item)"></mat-slide-toggle>
+              <mat-slide-toggle [(ngModel)]="item.isActive" (change)="updateDocument(item)" />
             </td>
             <td class="text-center">
               @if (item.isActive) {

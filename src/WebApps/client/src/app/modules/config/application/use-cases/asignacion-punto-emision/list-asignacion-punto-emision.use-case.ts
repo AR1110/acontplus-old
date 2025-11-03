@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import {
   AsignacionPuntoEmisionList,
@@ -13,7 +13,12 @@ import { Observable } from 'rxjs';
 export class ListAsignacionPuntoEmisionUseCase
   implements BaseUseCase<AsignacionPuntoEmisionResponse, Partial<AsignacionPuntoEmisionList>>
 {
-  constructor(private repo: AsignacionPuntoEmisionRepository) {}
+  private repo = inject(AsignacionPuntoEmisionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: Partial<AsignacionPuntoEmisionList>): Observable<AsignacionPuntoEmisionResponse> {
     return this.repo.list(params);

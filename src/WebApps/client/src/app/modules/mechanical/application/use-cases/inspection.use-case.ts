@@ -1,11 +1,16 @@
 import { InspectionRepository } from '@mechanical/domain/repositories/inspection.repository';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InspectionUseCase {
-  constructor(private repo: InspectionRepository) {}
+  private repo = inject(InspectionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     return this.repo.getAll(obj);

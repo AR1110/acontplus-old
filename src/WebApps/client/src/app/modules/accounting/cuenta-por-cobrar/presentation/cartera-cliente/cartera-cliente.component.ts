@@ -18,7 +18,7 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule } from '@angular/material/select';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+
 import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -36,7 +36,6 @@ import { MatInputModule } from '@angular/material/input';
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     MatSelectModule,
-    UserSearchComponent,
     MatTabsModule,
     ReportButtonsComponent,
     MatDynamicCardComponent,

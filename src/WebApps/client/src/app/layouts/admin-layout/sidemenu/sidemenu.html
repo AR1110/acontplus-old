@@ -50,7 +50,7 @@
           </a>
         }
         @if (menuItem.type === 'sub') {
-          <button navAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!ripple">
+          <button appNavAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!ripple">
             <ng-container
               [ngTemplateOutlet]="linkTypeTpl"
               [ngTemplateOutletContext]="{ item: menuItem, level: level }"

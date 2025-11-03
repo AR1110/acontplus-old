@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
 import { ApiResponse } from '@core/models/api-response';
@@ -13,7 +13,12 @@ interface Params {
   providedIn: 'root',
 })
 export class FractionalProductGetAllUseCase<T> implements BaseUseCase<ApiResponse<Params>, T> {
-  constructor(private repo: FractionalProductRepository) {}
+  private repo = inject(FractionalProductRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: T): Observable<ApiResponse<Params>> {
     return this.repo.getAll(params);

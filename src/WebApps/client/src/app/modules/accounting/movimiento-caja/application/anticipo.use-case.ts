@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnticipoUseCase {
-  constructor(private repo: AnticipoRepository) {}
+  private repo = inject(AnticipoRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

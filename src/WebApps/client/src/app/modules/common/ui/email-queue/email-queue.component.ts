@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
@@ -38,14 +38,17 @@ export enum RecipientType {
   styles: [``],
 })
 export class EmailQueueComponent {
+  private readonly _fb = inject(FormBuilder);
+  private readonly _snackBar = inject(MatSnackBar);
+  private readonly _emailQueueUseCase = inject(EmailQueueUseCase);
+
   emailForm: FormGroup;
   RecipientType = RecipientType;
 
-  constructor(
-    private readonly _fb: FormBuilder,
-    private readonly _snackBar: MatSnackBar,
-    private readonly _emailQueueUseCase: EmailQueueUseCase,
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.emailForm = this._fb.group({
       isMassive: [false],
       recipientType: [RecipientType.USERS],

@@ -66,8 +66,8 @@
           <mat-label>Fecha Emisión</mat-label>
           <input matInput [matDatepicker]="picker1" [(ngModel)]="data.fechaEmision" />
           <mat-hint>MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
-          <mat-datepicker #picker1></mat-datepicker>
+          <mat-datepicker-toggle matIconSuffix [for]="picker1" />
+          <mat-datepicker #picker1 />
         </mat-form-field>
       </div>
       <!--      <div class="col">-->
@@ -113,7 +113,7 @@
           <mat-autocomplete #auto="matAutocomplete">
             @if (filteredCustomerVehicleLoading()) {
               <mat-option disabled style="display: flex; justify-content: center; align-items: center">
-                <mat-spinner diameter="35"></mat-spinner>
+                <mat-spinner diameter="35" />
               </mat-option>
             }
             @for (state of filteredCustomerVehicles | async; track $index) {

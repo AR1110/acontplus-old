@@ -1,15 +1,15 @@
 import { Route } from '@angular/router';
-import { ItemReportComponent } from '@restaurant/ui/reports/item-report/item-report.component';
-import { InfrastructurePageComponent } from '@restaurant/ui/pages/infrastructure-page/infrastructure-page.component';
-import { RestaurantHomeComponent } from './ui/restaurant-home.component';
+
+
+
 import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';
-import {Items} from "@restaurant/ui/items/items";
+
 
 export const routes: Route[] = [
   {
     path: 'products',
     title: 'Items',
-    component: Items,
+    loadComponent: () => import('@restaurant/ui/items/items').then(m => m.Items),
     data: {
       breadcrumb: 'Productos',
     },
@@ -19,14 +19,14 @@ export const routes: Route[] = [
   },
   {
     path: '',
-    component: RestaurantHomeComponent,
+    loadComponent: () => import('./ui/restaurant-home.component').then(m => m.RestaurantHomeComponent),
     data: { breadcrumb: 'Restaurante' },
   },
 
   {
     path: 'item-report',
     title: 'Reporte Items',
-    component: ItemReportComponent,
+    loadComponent: () => import('@restaurant/ui/reports/item-report/item-report.component').then(m => m.ItemReportComponent),
     data: {
       breadcrumb: 'Reporte Item-Ingrediente',
     },
@@ -34,7 +34,7 @@ export const routes: Route[] = [
   {
     path: 'infrastructure',
     title: 'Restaurant Infrastructure',
-    component: InfrastructurePageComponent,
+    loadComponent: () => import('@restaurant/ui/pages/infrastructure-page/infrastructure-page.component').then(m => m.InfrastructurePageComponent),
     data: {
       breadcrumb: 'Configuración del Restaurante',
     },

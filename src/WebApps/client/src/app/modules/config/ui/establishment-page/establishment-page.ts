@@ -13,9 +13,9 @@ import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.
 import { FormsModule } from '@angular/forms';
 import { EstablishmentLogoService } from '@modules/config/services/sri/establishment-logo.service';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -33,10 +33,7 @@ import {DataGridColumn} from "@shared/components/data-grid/types";
     FormsModule,
     MatCard,
     MatCardContent,
-    MatAccordion,
     MatExpansionModule,
-    MatButton,
-    MatIcon,
     MatCardHeader,
     MatRadioGroup,
     MatRadioButton,

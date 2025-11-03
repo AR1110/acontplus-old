@@ -1,20 +1,20 @@
 import { Routes } from '@angular/router';
-import { PetPageComponent } from '@modules/vet/pages/pet-page/pet-page.component';
-import { BreedPageComponent } from '@modules/vet/pages/breed-page/breed-page.component';
-import { MedicalHistoryPageComponent } from '@modules/vet/pages/medical-history-page/medical-history-page.component';
-import { StatsPageComponent } from '@modules/vet/pages/stats-page/stats-page.component';
-import { VetHomeComponent } from './pages/vet-home.component';
+
+
+
+
+
 
 export const routes: Routes = [
   {
     path: '',
-    component: VetHomeComponent,
+    loadComponent: () => import('./pages/vet-home.component').then(m => m.VetHomeComponent),
     data: { breadcrumb: 'Veterinaria' },
   },
   {
     path: 'breeds',
     title: 'Razas',
-    component: BreedPageComponent,
+    loadComponent: () => import('@modules/vet/pages/breed-page/breed-page.component').then(m => m.BreedPageComponent),
     data: {
       breadcrumb: 'Razas',
     },
@@ -22,7 +22,7 @@ export const routes: Routes = [
   {
     path: 'pets',
     title: 'Mascotas',
-    component: PetPageComponent,
+    loadComponent: () => import('@modules/vet/pages/pet-page/pet-page.component').then(m => m.PetPageComponent),
     data: {
       breadcrumb: 'Mascotas',
     },
@@ -30,7 +30,7 @@ export const routes: Routes = [
   {
     path: 'medical-history',
     title: 'Registro Clínico',
-    component: MedicalHistoryPageComponent,
+    loadComponent: () => import('@modules/vet/pages/medical-history-page/medical-history-page.component').then(m => m.MedicalHistoryPageComponent),
     data: {
       breadcrumb: 'Registro Clínico',
     },
@@ -38,7 +38,7 @@ export const routes: Routes = [
   {
     path: 'stats',
     title: 'Estadísticas',
-    component: StatsPageComponent,
+    loadComponent: () => import('@modules/vet/pages/stats-page/stats-page.component').then(m => m.StatsPageComponent),
     data: {
       breadcrumb: 'Estadísticas',
     },

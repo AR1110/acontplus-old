@@ -96,16 +96,14 @@
       </div>
     }
   </div>
-  <app-mat-dynamic-table
-    [tableData]="dataSource()"
+  <app-mat-dynamic-table [tableData]="dataSource()"
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [templateOp]="templateOp"
     [paginationConfig]="pagination()"
     [enablePagination]="true"
     (pageEvent)="handlePageEvent($event)"
-  >
-  </app-mat-dynamic-table>
+   />
 
   <ng-template #templateOp let-item="item">
     <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">

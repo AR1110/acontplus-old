@@ -15,21 +15,19 @@
   <mat-form-field class="w-100" [floatLabel]="'always'">
     <mat-label>Rango Fecha</mat-label>
     @if (showMatPrefix()) {
-      <mat-checkbox
-        matPrefix
+      <mat-checkbox matPrefix
         [(ngModel)]="checkbox"
         (click)="onCheckboxClick($event)"
         (change)="onCheckboxChange.emit()"
-      ></mat-checkbox>
+       />
     }
     <input matInput placeholder="Placeholder" [id]="uniqueId" #dateRangeInput />
     @if (showMatSuffix()) {
-      <mat-checkbox
-        matSuffix
+      <mat-checkbox matSuffix
         [(ngModel)]="checkbox"
         (click)="onCheckboxClick($event)"
         (change)="onCheckboxChange.emit()"
-      ></mat-checkbox>
+       />
     }
   </mat-form-field>
 } @else {

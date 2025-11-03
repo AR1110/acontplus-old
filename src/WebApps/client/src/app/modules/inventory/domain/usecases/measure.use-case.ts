@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TagRepository } from '@inventory/domain/repositories/tag.repository';
 import { BrandRepository } from '@inventory/domain/repositories/brand.repository';
 import { MeasureRepository } from '@inventory/domain/repositories/measure.repository';
@@ -7,7 +7,12 @@ import { MeasureRepository } from '@inventory/domain/repositories/measure.reposi
   providedIn: 'root',
 })
 export class MeasureUseCase {
-  constructor(private repo: MeasureRepository) {}
+  private repo = inject(MeasureRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

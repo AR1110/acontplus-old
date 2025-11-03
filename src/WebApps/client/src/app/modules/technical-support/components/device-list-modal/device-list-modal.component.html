@@ -21,14 +21,12 @@
                 <td>{{ item.year }}</td>
                 <td>{{ item.deviceWarranty }}</td>
                 <td>
-                  <app-theme-button
-                    matStyle="icon"
+                  <app-theme-button matStyle="icon"
                     variant="info"
                     icon="arrow_forward"
                     text="Seleccionar Equipo"
                     (handleClick)="select(item)"
-                  >
-                  </app-theme-button>
+                   />
                 </td>
               </tr>
             }

@@ -23,7 +23,7 @@
 
               <mat-checkbox [(ngModel)]="dataSearch.checkboxAgruparArticulo"> Agrupar Artículos </mat-checkbox>
             </div>
-            <mat-divider></mat-divider>
+            <mat-divider />
 
             <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
               <div class="col">
@@ -81,10 +81,9 @@
                 />
               </div>
               <div class="col">
-                <app-user-search
-                  (userSelected)="onUserSelected($event)"
+                <app-user-search (userSelected)="onUserSelected($event)"
                   (clearSearch)="onEmptyInputUserSearch()"
-                ></app-user-search>
+                 />
               </div>
             </div>
 
@@ -247,7 +246,7 @@
 
             <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
               <div class="col">
-                <ng-container *ngTemplateOutlet="rangeDate"></ng-container>
+                <ng-container *ngTemplateOutlet="rangeDate" />
               </div>
               <div class="col">
                 <app-sub-category-group
@@ -463,7 +462,7 @@
 
             <div class="row gx-1">
               <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <ng-container *ngTemplateOutlet="rangeDate"></ng-container>
+                <ng-container *ngTemplateOutlet="rangeDate" />
               </div>
             </div>
           </div>
@@ -478,19 +477,17 @@
       }
 
       @if (isReporting) {
-        <app-report-buttons
-          [fileType]="FORMAT_REPORT.EXCEL"
+        <app-report-buttons [fileType]="FORMAT_REPORT.EXCEL"
           text="Descargar Excel"
           (exportReport)="getReportExcel()"
-        ></app-report-buttons>
+         />
       }
       @if (selected.value === 0) {
-        <app-theme-button
-          icon="email"
+        <app-theme-button icon="email"
           text="Enviar por correo"
           (handleClick)="askToSendMail()"
           appActionEnviarCorreo
-        ></app-theme-button>
+         />
       }
     </div>
   </mat-card-actions>

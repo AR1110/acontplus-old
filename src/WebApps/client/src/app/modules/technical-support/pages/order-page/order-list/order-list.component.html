@@ -46,16 +46,14 @@
   </div>
 </div>
 
-<app-mat-dynamic-table
-  [tableData]="orders()"
+<app-mat-dynamic-table [tableData]="orders()"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
   [templateOp]="templateOp"
   [paginationConfig]="pagination()"
   [enablePagination]="true"
   (pageEvent)="handlePageEvent($event)"
->
-</app-mat-dynamic-table>
+ />
 
 <ng-template #templateOp let-item="item">
   <button mat-button [matMenuTriggerFor]="menu">

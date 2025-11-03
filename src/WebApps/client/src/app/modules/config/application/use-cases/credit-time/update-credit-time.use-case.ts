@@ -1,6 +1,6 @@
 import { BaseUseCase } from '@core/base-use-case';
 import { CreditTimeRepository } from '@modules/config/domain/repositories/credit-time.repository';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
 
@@ -8,7 +8,12 @@ import { ApiResponse } from '@core/models/api-response';
   providedIn: 'root',
 })
 export class UpdateCreditTimeUseCase implements BaseUseCase<ApiResponse, any> {
-  constructor(private repo: CreditTimeRepository) {}
+  private repo = inject(CreditTimeRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: any): Observable<ApiResponse> {
     return this.repo.update(params);

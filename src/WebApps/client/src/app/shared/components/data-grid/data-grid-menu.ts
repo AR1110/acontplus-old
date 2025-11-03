@@ -49,9 +49,9 @@ import {DataGridCellActionDisablePipe} from "@shared/pipes/data-grid.pipe";
       @if (item.icon) {
         <mat-icon class="mtx-grid-icon">{{ item.icon }}</mat-icon>
       } @else if (item.fontIcon) {
-        <mat-icon class="mtx-grid-icon" [fontIcon]="item.fontIcon"></mat-icon>
+        <mat-icon class="mtx-grid-icon" [fontIcon]="item.fontIcon" />
       } @else if (item.svgIcon) {
-        <mat-icon class="mtx-grid-icon" [svgIcon]="item.svgIcon"></mat-icon>
+        <mat-icon class="mtx-grid-icon" [svgIcon]="item.svgIcon" />
       }
     </ng-template>
   `,

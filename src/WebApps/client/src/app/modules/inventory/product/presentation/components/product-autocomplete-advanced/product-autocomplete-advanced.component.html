@@ -1,5 +1,4 @@
-<app-reusable-autocomplete
-  [config]="finalConfig"
+<app-reusable-autocomplete [config]="finalConfig"
   [searchFunction]="productSearchFunction"
   [itemTemplate]="productTemplate"
   (itemSelected)="onProductSelected($event)"
@@ -7,7 +6,7 @@
   (pageChanged)="pageChanged.emit($event)"
   (filterChanged)="filterChanged.emit($event)"
   (createClicked)="createProductClicked.emit($event)"
-></app-reusable-autocomplete>
+ />
 
 <ng-template #productTemplate let-product>
   <div class="product-item-advanced">

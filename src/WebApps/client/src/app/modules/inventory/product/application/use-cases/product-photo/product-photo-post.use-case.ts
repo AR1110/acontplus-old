@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { Observable } from 'rxjs';
@@ -9,7 +9,12 @@ import { ProductPhotoRepository } from '@inventory/product/domain/repositories/p
   providedIn: 'root',
 })
 export class ProductPhotoPostUseCase implements BaseUseCase<ApiResponse, ProductPhotoSaveParam> {
-  constructor(private repo: ProductPhotoRepository) {}
+  private repo = inject(ProductPhotoRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: ProductPhotoSaveParam): Observable<ApiResponse> {
     return this.repo.post(params);

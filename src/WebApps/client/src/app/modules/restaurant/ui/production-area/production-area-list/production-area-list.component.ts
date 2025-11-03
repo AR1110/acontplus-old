@@ -1,11 +1,10 @@
-import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import swal from 'sweetalert2';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
-
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -53,13 +52,13 @@ export class ProductionAreaListComponent implements OnInit {
     //   return;
     // }
     this.establecimientoId = idEstablecimiento;
-    this.#productionAreaService.getByEstab(this.establecimientoId).subscribe(response => {
+    this.#productionAreaService.getByEstab(this.establecimientoId).subscribe((response) => {
       this.productionAreas = (response.payload as ProductionArea[]) || [];
     });
   }
 
   getEstabs() {
-    this.#sharedService.getEstabAsign().subscribe(response => {
+    this.#sharedService.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
     });
   }
@@ -85,9 +84,9 @@ export class ProductionAreaListComponent implements OnInit {
         cancelButtonText: 'No',
         showCancelButton: true,
       })
-      .then(response => {
+      .then((response) => {
         if (response.isConfirmed) {
-          this.#productionAreaService.delete(item.id).subscribe(result => {
+          this.#productionAreaService.delete(item.id).subscribe((result) => {
             this.#tS.show({
               type: result.code == '1' ? 'success' : 'warning',
               message: result.message,
@@ -108,7 +107,7 @@ export class ProductionAreaListComponent implements OnInit {
       }),
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (typeof response == 'object') {
         if (response.code == '1') {
           this.loadData(this.establecimientoId);
@@ -116,13 +115,5 @@ export class ProductionAreaListComponent implements OnInit {
         this.data = {} as ProductionArea;
       }
     });
-  }
-
-  onPanelToggle(item: EstablecimientoSelectHtmlOnly) {
-    if (!this.accordionItem) return;
-    const isOpen = !this.accordionItem.collapsed;
-    if (isOpen) {
-      this.loadData(item.idEstablecimiento);
-    }
   }
 }

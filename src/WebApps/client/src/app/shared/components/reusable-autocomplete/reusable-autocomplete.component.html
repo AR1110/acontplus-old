@@ -27,7 +27,7 @@
 
     @if (isLoading()) {
       <div class="loading-spinner">
-        <mat-spinner diameter="20"></mat-spinner>
+        <mat-spinner diameter="20" />
       </div>
     }
   </div>
@@ -59,10 +59,8 @@
                   <div class="item-content" [class.selected]="$index === selectedIndex()" (click)="selectItem(item)">
                     <mat-icon class="history-icon">history</mat-icon>
                     <div class="item-details">
-                      <ng-container
-                        *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
-                      >
-                      </ng-container>
+                      <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
+                       />
                     </div>
                   </div>
                   <!--                  <button class="remove-btn" (click)="removeHistoryItem($index, $event)">-->
@@ -164,10 +162,8 @@
                   <li class="list-item result-item">
                     <div class="item-content" [class.selected]="$index === selectedIndex()" (click)="selectItem(item)">
                       <div class="item-info">
-                        <ng-container
-                          *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
-                        >
-                        </ng-container>
+                        <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
+                         />
                       </div>
                     </div>
                   </li>
@@ -182,10 +178,8 @@
           <div class="no-results">
             <mat-icon class="no-results-icon">search_off</mat-icon>
             <div class="no-results-content">
-              <ng-container
-                *ngTemplateOutlet="notFoundTemplate || defaultNotFoundTemplate; context: { $implicit: noResultsText() }"
-              >
-              </ng-container>
+              <ng-container *ngTemplateOutlet="notFoundTemplate || defaultNotFoundTemplate; context: { $implicit: noResultsText() }"
+               />
             </div>
           </div>
         }

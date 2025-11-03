@@ -4,6 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-credit-note',
   imports: [],
   templateUrl: './credit-note.component.html',
-  styleUrls: ['./credit-note.component.scss'],
+  styles: ``,
 })
 export class CreditNoteComponent {}

@@ -105,8 +105,7 @@
           </tr>
         </table>
       </section>
-      <mat-paginator
-        #paginator
+      <mat-paginator #paginator
         (page)="pageChanged($event)"
         [length]="pagination.totalRecords"
         [pageIndex]="pagination.pageIndex"
@@ -114,8 +113,7 @@
         [pageSize]="pagination.pageSize"
         aria-label="Select page"
         showFirstLastButtons
-      >
-      </mat-paginator>
+       />
     </div>
   </mat-card-content>
 </mat-card>

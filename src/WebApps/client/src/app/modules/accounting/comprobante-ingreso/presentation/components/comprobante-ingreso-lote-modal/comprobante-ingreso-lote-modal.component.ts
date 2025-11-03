@@ -17,7 +17,7 @@ import {
 } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { DatePipe } from '@angular/common';
+
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -29,7 +29,6 @@ import { DialogService } from '@core/services/dialog.service';
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
   imports: [
-    DatePipe,
     MatTableModule,
     MatIconModule,
     MatCard,

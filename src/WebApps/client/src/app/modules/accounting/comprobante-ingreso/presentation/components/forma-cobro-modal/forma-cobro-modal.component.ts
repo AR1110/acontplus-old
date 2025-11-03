@@ -1,10 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { SubEntidadFinancieraComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/sub-entidad-financiera/sub-entidad-financiera.component';
-import { ValorAbonoComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/valor-abono/valor-abono.component';
-import { FechaEmisionComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/fecha-emision/fecha-emision.component';
-import { BancoSelectComponent } from '@accounting/comprobante-ingreso/presentation/components/forma-cobro-modal/banco-select/banco-select.component';
+
+
+
+
 import { roundNumber } from '@core/utils/round-number.utils';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
@@ -13,9 +13,9 @@ import { PaymentData } from '@accounting/comprobante-ingreso/domain/comprobante-
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { map, Observable, startWith } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+
 import Swal from 'sweetalert2';
-import { MatButton } from '@angular/material/button';
+
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -34,12 +34,6 @@ export const _filter = (opt: any[], value: string): string[] => {
     FormsModule,
     MatAutocompleteModule,
     MatInputModule,
-    SubEntidadFinancieraComponent,
-    ValorAbonoComponent,
-    FechaEmisionComponent,
-    BancoSelectComponent,
-    AsyncPipe,
-    MatButton,
     ThemeButtonComponent,
     MatCustomDialogComponent,
   ],

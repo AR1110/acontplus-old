@@ -19,6 +19,10 @@ import { GlobalRoutes } from '@core/constants/global-routes';
   template: ` <router-outlet /> `,
 })
 export class App implements OnInit, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private _authUseCase = inject(AuthUseCase);
+
   title = 'Acontplus';
   //temporalmente
   themeOptions = THEME_OPTIONS;
@@ -32,14 +36,14 @@ export class App implements OnInit, AfterViewInit {
    private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
   private readonly permissionsService = inject(PermissionsService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
   //end temporalmente
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private _authUseCase: AuthUseCase,
-    library: FaIconLibrary,
-  ) {
+  constructor() {
+    const library = inject(FaIconLibrary);
+
     library.addIconPacks(fab);
     effect(() => {
       this._renderer.setAttribute(

@@ -8,7 +8,7 @@ import { CompraHabitualService } from '@purchase/data/services/compra-habitual.s
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import Swal from 'sweetalert2';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
@@ -19,7 +19,6 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     CustomTableContainerComponent,
     MatIconModule,
     MatButtonModule,
-    ThemeButtonComponent,
     MatCustomDialogComponent,
   ],
   templateUrl: './compra-habitual-historial-modal.component.html',

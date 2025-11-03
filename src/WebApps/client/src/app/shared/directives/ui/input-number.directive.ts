@@ -1,14 +1,17 @@
-import { Directive, HostListener } from '@angular/core';
+import { Directive, HostListener, inject } from '@angular/core';
 import { NgModel } from '@angular/forms';
 
 @Directive({
   selector: '[appInputNumber]',
 })
 export class InputNumberDirective {
-  constructor(private ngModel: NgModel) {}
+  private ngModel = inject(NgModel);
 
-  @HostListener('input', ['$event.target.value'])
-  onInput(value: string) {
+  @HostListener('input', ['$event'])
+  onInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    if (!target) return;
+    const value = target.value;
     let clean = value.replace(/[^-0-9\.]/g, '');
     const negativeCheck = clean.split('-');
     const decimalCheck = clean.split('.');

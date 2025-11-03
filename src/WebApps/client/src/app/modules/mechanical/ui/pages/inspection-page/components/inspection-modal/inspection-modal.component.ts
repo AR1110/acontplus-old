@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
@@ -37,7 +37,6 @@ type VehiclePartTypeNode = VehiclePartType & {
 @Component({
   selector: 'app-inspection-modal',
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonToggleModule,
     MatChipsModule,
@@ -47,8 +46,8 @@ type VehiclePartTypeNode = VehiclePartType & {
     MatInputModule,
     MatDatepickerModule,
     MatIcon,
-    MatExpansionModule,
-  ],
+    MatExpansionModule
+],
   templateUrl: './inspection-modal.component.html',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -162,14 +162,13 @@
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [isLoadingData]="loading()"
+    <app-mat-dynamic-table [isLoadingData]="loading()"
       [enablePagination]="true"
       [paginationConfig]="pagination()"
       [tableData]="comprobantesIngreso"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       (pageEvent)="handlePageEvent($event)"
-    ></app-mat-dynamic-table>
+     />
   </mat-card-content>
 </mat-card>

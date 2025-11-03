@@ -18,13 +18,11 @@
       </button>
     </div>
 
-    <app-sub-category-group
-      [isInputMat]="true"
+    <app-sub-category-group [isInputMat]="true"
       [subCategoryGroups]="subCategories"
       (onSelected)="onSelectSubCategory($event)"
       (onEmptyData)="clearDataSubCategory()"
-    >
-    </app-sub-category-group>
+     />
 
     <mat-form-field>
       <mat-label>Impuesto Inicial <span class="text-danger">*</span> </mat-label>

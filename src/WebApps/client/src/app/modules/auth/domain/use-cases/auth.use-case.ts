@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AuthRepository } from '../repositories/auth.repository';
 import { User } from '../models/user.model';
 
@@ -6,7 +6,12 @@ import { User } from '../models/user.model';
   providedIn: 'root',
 })
 export class AuthUseCase {
-  constructor(private authRepository: AuthRepository) {}
+  private authRepository = inject(AuthRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   login(credentials: { username: string; password: string; userAgent: string }) {
     return this.authRepository.login(credentials);

@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SriCustomerRepository } from '@customer/domain/repositories/sri-customer.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SriCustomerUseCase {
-  constructor(private repo: SriCustomerRepository) {}
+  private repo = inject(SriCustomerRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   search(codigoIdentificacion: string, id: string) {
     return this.repo.search(codigoIdentificacion, id);

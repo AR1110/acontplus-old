@@ -50,22 +50,18 @@
       <table [dataSource]="dataSource" class="mat-elevation-z0" mat-table>
         <ng-container matColumnDef="select">
           <th *matHeaderCellDef mat-header-cell>
-            <mat-checkbox
-              (change)="$event ? toggleAllRows() : null"
+            <mat-checkbox (change)="$event ? toggleAllRows() : null"
               [aria-label]="checkboxLabel()"
               [checked]="selection.hasValue() && isAllSelected()"
               [indeterminate]="selection.hasValue() && !isAllSelected()"
-            >
-            </mat-checkbox>
+             />
           </th>
           <td *matCellDef="let row" mat-cell>
-            <mat-checkbox
-              (change)="$event ? selection.toggle(row) : null"
+            <mat-checkbox (change)="$event ? selection.toggle(row) : null"
               (click)="$event.stopPropagation()"
               [aria-label]="checkboxLabel(row)"
               [checked]="selection.isSelected(row)"
-            >
-            </mat-checkbox>
+             />
           </td>
         </ng-container>
 

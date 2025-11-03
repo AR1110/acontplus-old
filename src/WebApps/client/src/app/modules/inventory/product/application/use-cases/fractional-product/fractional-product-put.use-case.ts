@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { Observable } from 'rxjs';
@@ -11,7 +11,12 @@ import { FractionalProductRepository } from '@inventory/product/domain/repositor
 export class FractionalProductPutUseCase
   implements BaseUseCase<ApiResponse, FractionalProductDataSave>
 {
-  constructor(private repo: FractionalProductRepository) {}
+  private repo = inject(FractionalProductRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: FractionalProductDataSave): Observable<ApiResponse> {
     return this.repo.post(params);

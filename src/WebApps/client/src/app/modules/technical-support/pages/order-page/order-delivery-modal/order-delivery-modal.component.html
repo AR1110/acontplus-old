@@ -45,13 +45,11 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
-    [disabled]="isOtherReceiver && !orderDeliveryForm.valid"
+  <app-theme-button [disabled]="isOtherReceiver && !orderDeliveryForm.valid"
     variant="success"
     icon="save"
     text="Guardar"
     type="submit"
     form="orderDeliveryForm"
-  >
-  </app-theme-button>
+   />
 </ng-template>

@@ -16,16 +16,14 @@
     </div>
   </div>
 
-  <app-mat-dynamic-table
-    [tableData]="subcategories()"
+  <app-mat-dynamic-table [tableData]="subcategories()"
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [templateOp]="templateOp"
     [paginationConfig]="pagination()"
     [enablePagination]="true"
     (pageEvent)="handlePageEvent($event)"
-  >
-  </app-mat-dynamic-table>
+   />
 </app-mat-dynamic-card>
 <ng-template #templateOp let-item="item">
   <button type="button" mat-icon-button (click)="edit(item)">

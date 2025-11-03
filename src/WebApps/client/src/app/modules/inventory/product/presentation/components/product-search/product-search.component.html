@@ -74,7 +74,7 @@
     <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
       @if (isLoading()) {
         <mat-option disabled style="display: flex; justify-content: center; align-items: center">
-          <mat-spinner diameter="35"></mat-spinner>
+          <mat-spinner diameter="35" />
         </mat-option>
       }
       @for (state of filteredProducts | async; track $index) {

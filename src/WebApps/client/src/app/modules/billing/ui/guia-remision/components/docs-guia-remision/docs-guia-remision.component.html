@@ -15,7 +15,7 @@
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento:</mat-label>
           <mat-select>
-            <mat-option></mat-option>
+            <mat-option />
           </mat-select>
         </mat-form-field>
       </div>
@@ -26,15 +26,13 @@
         </mat-form-field>
       </div>
     </div>
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
+    <app-mat-dynamic-table [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
-    >
-    </app-mat-dynamic-table>
+     />
   </div>
 </ng-template>
-<ng-template #footer></ng-template>
+<ng-template #footer />

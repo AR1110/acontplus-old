@@ -1,5 +1,4 @@
-<ng-select
-  [items]="filteredOptions"
+<ng-select [items]="filteredOptions"
   bindLabel="viewValue"
   bindValue="value"
   [searchable]="searchable()"
@@ -28,4 +27,4 @@
   [notFoundText]="notFoundText()"
   (change)="onSelectionChange($event)"
   [ngClass]="className()"
-></ng-select>
+ />

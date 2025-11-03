@@ -4,12 +4,11 @@
   <div class="vstack gap-2">
     <div class="row">
       <div class="col-md-2 col-12">
-        <app-theme-button
-          variant="success"
+        <app-theme-button variant="success"
           icon="add"
           text="Nuevo Historial"
           (handleClick)="onModalOpen()"
-        ></app-theme-button>
+         />
       </div>
     </div>
 
@@ -51,18 +50,16 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(item)"></app-theme-button>
-    <app-theme-button
-      variant="warning"
+    <app-theme-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(item)" />
+    <app-theme-button variant="warning"
       icon="delete "
       matStyle="icon"
       (handleClick)="onDelete(item)"
-    ></app-theme-button>
-    <app-theme-button
-      matStyle="icon"
+     />
+    <app-theme-button matStyle="icon"
       variant="secondary"
       icon="download"
       (handleClick)="onReport(item)"
-    ></app-theme-button>
+     />
   </ng-template>
 </app-mat-dynamic-card>

@@ -5,7 +5,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
-import { MatTooltip } from '@angular/material/tooltip';
+
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
 import { MatButton, MatIconButton } from '@angular/material/button';
@@ -40,7 +40,6 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     DateRangeSelectionComponent,
     SupplierSearchComponent,
     FormsModule,
-    MatTooltip,
     InputNumberDirective,
     MatPaginator,
     MatIcon,

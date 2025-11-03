@@ -63,10 +63,8 @@
     <mat-slide-toggle [(ngModel)]="dataSearch.ckHora">Hora</mat-slide-toggle>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')">
-      </app-theme-button>
-      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')">
-      </app-theme-button>
+      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
+      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')" />
     </div>
   </div>
 </ng-template>

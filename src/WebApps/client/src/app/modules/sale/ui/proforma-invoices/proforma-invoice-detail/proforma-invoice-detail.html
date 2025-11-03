@@ -78,7 +78,7 @@
                        pricing: pricingTpl,
                        taxes: taxesTpl,
                        }"
-                       [showPaginator]="false"  ></app-data-grid>
+                       [showPaginator]="false"   />
 
         <ng-template #productTpl let-row>
             <div class="product-info">
@@ -131,12 +131,11 @@
         </div>
 
           <div class="mt-2">
-              <app-data-grid
-                      [data]="additionalsInfo()" [columns]="columnsAdditionalsInfo"
+              <app-data-grid [data]="additionalsInfo()" [columns]="columnsAdditionalsInfo"
               [showPaginator]="false"
 
 
-              ></app-data-grid>
+               />
 
           </div>
 
@@ -150,4 +149,4 @@
   </div>
 </ng-template>
 
-<ng-template #actionsTemplate> </ng-template>
+<ng-template #actionsTemplate />

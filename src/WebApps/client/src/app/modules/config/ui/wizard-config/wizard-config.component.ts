@@ -37,7 +37,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 
 // Third-party Libraries
 import { catchError } from 'rxjs/operators';
@@ -150,13 +150,9 @@ interface EstabFormControls {
   styleUrls: ['./wizard-config.component.scss'],
   standalone: true,
   imports: [
-    // Angular modules
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-
-    // Material modules
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -166,14 +162,12 @@ interface EstabFormControls {
     MatSelectModule,
     MatStepperModule,
     MatTooltipModule,
-
-    // Components
     BreadcrumbComponent,
     TabulatorComponent,
     MatInputChipComponent,
     ThemeButtonComponent,
-    NgDynamicSelectComponent,
-  ],
+    NgDynamicSelectComponent
+],
 })
 export class WizardConfigComponent implements OnInit, AfterViewInit {
   @ViewChild('stepper') stepper!: MatStepper;

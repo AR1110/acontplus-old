@@ -8,23 +8,19 @@
         <!-- Checkbox Column (optional) -->
         <ng-container matColumnDef="select">
           <th *matHeaderCellDef mat-header-cell>
-            <mat-checkbox
-              (change)="$event ? masterToggle() : null"
+            <mat-checkbox (change)="$event ? masterToggle() : null"
               (click)="$event.stopPropagation()"
               [aria-label]="checkboxLabel()"
               [checked]="selection.hasValue() && isAllSelected()"
               [indeterminate]="selection.hasValue() && !isAllSelected()"
-            >
-            </mat-checkbox>
+             />
           </th>
           <td *matCellDef="let row" mat-cell>
-            <mat-checkbox
-              (change)="$event ? selection.toggle(row) : null"
+            <mat-checkbox (change)="$event ? selection.toggle(row) : null"
               (click)="$event.stopPropagation(); selectRow(row)"
               [aria-label]="checkboxLabel(row)"
               [checked]="selection.isSelected(row)"
-            >
-            </mat-checkbox>
+             />
           </td>
           <td *matFooterCellDef mat-footer-cell></td>
         </ng-container>
@@ -42,7 +38,7 @@
               <!-- Operations column with custom template -->
               @if (col.key === 'op') {
                 <div class="d-flex flex-row gap-1">
-                  <ng-container *ngTemplateOutlet="templateOp; context: { item: element }"></ng-container>
+                  <ng-container *ngTemplateOutlet="templateOp; context: { item: element }" />
                 </div>
               }
 
@@ -107,7 +103,7 @@
           <ng-container matColumnDef="expandedDetail">
             <td mat-cell *matCellDef="let element" [attr.colspan]="visibleColumns.length">
               <div class="m-0 p-0" [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
-                <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }"></ng-container>
+                <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }" />
               </div>
             </td>
           </ng-container>
@@ -141,8 +137,7 @@
   </div>
 
   @if (enablePagination() && paginationConfig()) {
-    <mat-paginator
-      #paginator
+    <mat-paginator #paginator
       [disabled]="isLoadingData()"
       (page)="handlePageEvent($event)"
       [length]="paginationConfig()?.totalRecords"
@@ -151,7 +146,6 @@
       [showFirstLastButtons]="true"
       [pageIndex]="paginationConfig()?.pageIndex"
       aria-label="Select page"
-    >
-    </mat-paginator>
+     />
   }
 </div>

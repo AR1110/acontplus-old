@@ -2,12 +2,11 @@
   <app-custom-mat-spinner [isLoadingResults]="isLoadingResults()" [isRateLimitReached]="isRateLimitReached()" />
 
   <div class="custom-table-container mt-2" [style.height]="valueHeight()">
-    <ng-content></ng-content>
+    <ng-content />
   </div>
 
   @if (pagination()) {
-    <mat-paginator
-      #paginator
+    <mat-paginator #paginator
       (page)="handlePageEvent($event)"
       [length]="pagination()?.totalRecords"
       [pageSize]="pagination()?.pageSize"
@@ -15,7 +14,6 @@
       [showFirstLastButtons]="true"
       [pageIndex]="pagination()?.pageIndex"
       aria-label="Select page"
-    >
-    </mat-paginator>
+     />
   }
 </div>

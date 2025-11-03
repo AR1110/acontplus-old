@@ -132,22 +132,22 @@
 //   },
 // ];
 
-import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
-import { LoginComponent } from '@modules/auth/ui/login/login.component';
-import { Dashboard } from '@modules/home/dashboard/dashboard';
+
+
+
 import { Routes } from '@angular/router';
-import {AuthLayoutComponent} from "./layouts/auth-layout/auth-layout.component";
+
 import {authGuard} from "@core/guards/auth.guard";
 
 export const routes: Routes = [
   {
     path: '',
-    component: AdminLayoutComponent,
+    loadComponent: () => import('./layouts/admin-layout/admin-layout.component').then(m => m.AdminLayoutComponent),
     canActivate: [authGuard],
     canActivateChild: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard },
+      { path: 'dashboard', loadComponent: () => import('@modules/home/dashboard/dashboard').then(m => m.Dashboard) },
       // { path: '403', component: Error403 },
       // { path: '404', component: Error404 },
       // { path: '500', component: Error500 },
@@ -260,14 +260,14 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
-    component: AuthLayoutComponent,
+    loadComponent: () => import('./layouts/auth-layout/auth-layout.component').then(m => m.AuthLayoutComponent),
     children: [
       {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full',
       },
-      { path: 'login', component: LoginComponent },
+      { path: 'login', loadComponent: () => import('@modules/auth/ui/login/login.component').then(m => m.LoginComponent) },
       // { path: 'register', component: Register },
     ],
   },

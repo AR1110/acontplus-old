@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PATHS_API, SRI_IDENTIFICATION_CODE } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { SriCustomerRepository } from '@customer/domain/repositories/sri-customer.repository';
@@ -8,10 +8,15 @@ import { SriCustomerRepository } from '@customer/domain/repositories/sri-custome
   providedIn: 'root',
 })
 export class SriCustomerWebRepository implements SriCustomerRepository {
+  private http = inject(HttpClient);
+
   //FROM REGISTRO CIVIL DATA
   url = `${PATHS_API.FACT_ELECT}Consultas/`;
 
-  constructor(private http: HttpClient) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   search(codigo: string, id: string) {
     let path;

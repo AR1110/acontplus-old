@@ -1,21 +1,21 @@
 import { Routes } from '@angular/router';
-import { ReportsComponent } from '@purchase/ui/reports/reports.component';
-import { ReceptionReportsComponent } from '@purchase/ui/reception-reports/reception-reports.component';
-import { DocumentReceivedComponent } from '@purchase/ui/documento-received/document-received.component';
-import { FacturaFisicaComponent } from '@purchase/ui/factura-fisica/factura-fisica.component';
-import { RetencionAtsComponent } from '@billing/ui/retencion-ats/retencion-ats.component';
-import { PurchaseHomeComponent } from './ui/purchase-home.component';
+
+
+
+
+
+
 
 export const routes: Routes = [
   {
     path: '',
-    component: PurchaseHomeComponent,
+    loadComponent: () => import('./ui/purchase-home.component').then(m => m.PurchaseHomeComponent),
     data: { breadcrumb: 'Compras' },
   },
   {
     path: 'documento-recibido',
     title: 'Documento Recibido',
-    component: DocumentReceivedComponent,
+    loadComponent: () => import('@purchase/ui/documento-received/document-received.component').then(m => m.DocumentReceivedComponent),
     data: {
       breadcrumb: 'Documento Recibido',
     },
@@ -23,7 +23,7 @@ export const routes: Routes = [
   {
     path: 'reports',
     title: 'Reporte Compras',
-    component: ReportsComponent,
+    loadComponent: () => import('@purchase/ui/reports/reports.component').then(m => m.ReportsComponent),
     data: {
       breadcrumb: 'Reporte Compras',
     },
@@ -31,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'reception-reports',
     title: 'Reportes Recepción',
-    component: ReceptionReportsComponent,
+    loadComponent: () => import('@purchase/ui/reception-reports/reception-reports.component').then(m => m.ReceptionReportsComponent),
     data: {
       breadcrumb: 'Reportes Recepción',
     },
@@ -39,7 +39,7 @@ export const routes: Routes = [
   {
     path: 'factura-fisica',
     title: 'Factura Física',
-    component: FacturaFisicaComponent,
+    loadComponent: () => import('@purchase/ui/factura-fisica/factura-fisica.component').then(m => m.FacturaFisicaComponent),
     data: {
       breadcrumb: 'Factura Física',
     },
@@ -47,7 +47,7 @@ export const routes: Routes = [
   {
     path: 'retencion-ats',
     title: 'Retención ATS',
-    component: RetencionAtsComponent,
+    loadComponent: () => import('@billing/ui/retencion-ats/retencion-ats.component').then(m => m.RetencionAtsComponent),
     data: {
       breadcrumb: 'Retención ATS',
     },

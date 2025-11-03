@@ -1,11 +1,9 @@
-<app-mat-dynamic-table
-  [tableData]="dataSource()"
+<app-mat-dynamic-table [tableData]="dataSource()"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
   [templateOp]="templateOp"
   [paginationConfig]="pagination()"
->
-</app-mat-dynamic-table>
+ />
 
 <ng-template #templateOp let-item="item">
   @if (item.idEstab_Asig > 0) {
@@ -28,6 +26,6 @@
 
 <ng-template #statusTemplate let-item>
   @if (item.estado) {
-    <mat-slide-toggle [(ngModel)]="item.defaultEstab" (change)="onChangeDefault(item)"></mat-slide-toggle>
+    <mat-slide-toggle [(ngModel)]="item.defaultEstab" (change)="onChangeDefault(item)" />
   }
 </ng-template>

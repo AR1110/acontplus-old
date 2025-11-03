@@ -1,5 +1,5 @@
 import { MatSelectModule } from '@angular/material/select';
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   inject,
@@ -48,9 +48,7 @@ import { MechanicalStore } from '@mechanical/application/store/mechanical.store'
 @Component({
   selector: 'app-support-page',
   imports: [
-    CommonModule,
     FormsModule,
-
     MatTableModule,
     MatCheckboxModule,
     MatMenuModule,
@@ -62,8 +60,8 @@ import { MechanicalStore } from '@mechanical/application/store/mechanical.store'
     MatSelectModule,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    CompanyCustomerSearchComponent,
-  ],
+    CompanyCustomerSearchComponent
+],
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent implements OnInit, AfterViewInit {

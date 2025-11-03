@@ -43,8 +43,7 @@
   </div>
 </div>
 
-<app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults()"
+<app-mat-dynamic-table [isLoadingData]="isLoadingResults()"
   [tableData]="dataSource()"
   [columnDefinitions]="columnsDefs"
   [visibleColumns]="columns"
@@ -52,8 +51,7 @@
   [paginationConfig]="pagination()"
   [enablePagination]="true"
   (pageEvent)="handlePageEvent($event)"
->
-</app-mat-dynamic-table>
+ />
 
 <ng-template #templateOp let-item="item">
   <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">

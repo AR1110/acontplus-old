@@ -48,6 +48,8 @@ import { TableUseCase } from '@restaurant/application/use-cases/table.use-case';
   styleUrl: './infrastructure-page.component.scss',
 })
 export class InfrastructurePageComponent implements OnInit {
+  private dialog = inject(MatDialog);
+
   private $sharedSvc = inject(SharedService);
   private $getFloorsUseCase = inject(GetFloorsByEstabIdUseCase);
   private _dialogSvc = inject(DialogService);
@@ -64,7 +66,10 @@ export class InfrastructurePageComponent implements OnInit {
 
   hasChild = (_: number, node: FloorTreeNode) => !!node.children && node.children.length > 0;
 
-  constructor(private dialog: MatDialog) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   ngOnInit() {
     this.$sharedSvc.getEstabAsign().subscribe(response => {

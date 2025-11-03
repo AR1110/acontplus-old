@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -46,7 +46,6 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 @Component({
   selector: 'app-order-maintenance-modal',
   imports: [
-    CommonModule,
     FormsModule,
     DrawTaxTotalComponent,
     ReactiveFormsModule,
@@ -56,8 +55,8 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     MatIcon,
     ThemeButtonComponent,
     MatButton,
-    MatCustomDialogComponent,
-  ],
+    MatCustomDialogComponent
+],
   templateUrl: './order-maintenance-modal.component.html',
 })
 export class OrderMaintenanceModalComponent implements OnInit {

@@ -17,12 +17,12 @@ import { PageEvent } from '@angular/material/paginator';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ReactiveFormsModule } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
-import { CommonModule } from '@angular/common';
+
 import { finalize, map, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-menu-search',
-  imports: [CommonModule, OverlayModule, ReactiveFormsModule, MenuSearchListComponent],
+  imports: [OverlayModule, ReactiveFormsModule, MenuSearchListComponent],
   templateUrl: './menu-search.component.html',
   styleUrl: './menu-search.component.scss',
 })
@@ -94,7 +94,7 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
         finalize(() => {
           this.isLoadingResults.set(false);
         }),
-        map(response => {
+        map((response) => {
           this.isRateLimitReached = response.menus.length === 0;
 
           if (this.isRateLimitReached) {
@@ -105,13 +105,13 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
       )
 
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.openOverlay();
           const results = structuredClone(response);
           this.dataSource = results;
           console.log(this.dataSource);
         },
-        error: err => {
+        error: (err) => {
           console.log(err);
         },
       });
@@ -192,13 +192,14 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
    * @param event
    */
   @HostListener('keydown.arrowdown', ['$event'])
-  onArrowDown(event: KeyboardEvent): void {
-    event.preventDefault();
+  onArrowDown(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault();
 
     if (this.overlayHasFocus && this.highlightRowIndex < this.dataSource.length - 1) {
       this.highlightRowIndex += 1;
 
-      this.onHighlightedRowChange(event);
+      this.onHighlightedRowChange(keyboardEvent);
     }
   }
 
@@ -207,12 +208,13 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
    * @param event
    */
   @HostListener('keydown.arrowup', ['$event'])
-  onArrowUp(event: KeyboardEvent): void {
-    event.preventDefault();
+  onArrowUp(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+    keyboardEvent.preventDefault();
 
     if (this.overlayHasFocus && this.highlightRowIndex > 0) {
       this.highlightRowIndex -= 1;
-      this.onHighlightedRowChange(event);
+      this.onHighlightedRowChange(keyboardEvent);
     }
   }
 
@@ -221,7 +223,7 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
    * @param event
    */
   @HostListener('keydown.enter', ['$event'])
-  onKeyEnter(event: KeyboardEvent): void {
+  onKeyEnter(event: Event): void {
     if (this.isOverlayOpen) {
       if (
         this.overlayHasFocus &&
@@ -241,14 +243,14 @@ export class MenuSearchComponent implements OnInit, OnDestroy {
    * @param event
    */
   @HostListener('keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {}
+  onKeyDown(event: Event): void {}
 
   /**
    * Close searchList without selecting any option
    * @param event
    */
   @HostListener('keydown.esc', ['$event'])
-  onKeyEsc(event: KeyboardEvent): void {
+  onKeyEsc(event: Event): void {
     this.checkValue();
     this.closeOverlay();
   }

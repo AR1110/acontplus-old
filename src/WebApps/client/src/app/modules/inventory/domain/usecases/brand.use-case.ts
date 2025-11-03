@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TagRepository } from '@inventory/domain/repositories/tag.repository';
 import { BrandRepository } from '@inventory/domain/repositories/brand.repository';
 
@@ -6,7 +6,12 @@ import { BrandRepository } from '@inventory/domain/repositories/brand.repository
   providedIn: 'root',
 })
 export class BrandUseCase {
-  constructor(private repo: BrandRepository) {}
+  private repo = inject(BrandRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

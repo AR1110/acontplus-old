@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
@@ -11,9 +11,12 @@ import { ElectronicSignatureRepository } from '@modules/config/domain/repositori
 export class SaveElectronicSignatureUseCase
   implements BaseUseCase<ApiResponse, ElectronicSignatureParam>
 {
-  constructor(
-    @Inject(ElectronicSignatureRepository) private repo: ElectronicSignatureRepository, // TODO: Provide concrete implementation in module providers
-  ) {}
+  private repo = inject<ElectronicSignatureRepository>(ElectronicSignatureRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(signature: ElectronicSignatureParam): Observable<ApiResponse> {
     return this.repo.save(signature);

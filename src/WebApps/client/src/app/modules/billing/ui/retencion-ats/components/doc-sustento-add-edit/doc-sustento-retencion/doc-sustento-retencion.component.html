@@ -76,23 +76,21 @@
 
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
       @if (formGroup.get('idRetAtsDocSustento')?.value) {
-        <app-theme-button
-          variant="success"
+        <app-theme-button variant="success"
           icon="save"
           matStyle="icon"
           id="btn-save-ret-{{ formGroup.get('uniqueIdDoc')?.value }}"
           title="Guardar retención del sustento"
           (handleClick)="onSave()"
-        ></app-theme-button>
+         />
       }
-      <app-theme-button
-        variant="danger"
+      <app-theme-button variant="danger"
         icon="delete"
         matStyle="icon"
         id="btnDeleteRetencion-{{ formGroup.get('uniqueIdDoc')?.value }}"
         title="Eliminar retención del sustento"
         (handleClick)="removeRetencion()"
-      ></app-theme-button>
+       />
     </div>
   </div>
 </form>

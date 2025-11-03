@@ -55,22 +55,18 @@
         <mat-table [dataSource]="dataSource.data" multiTemplateDataRows class="mat-elevation-z8 full-width-table">
           <ng-container matColumnDef="select" sticky>
             <mat-header-cell *matHeaderCellDef>
-              <mat-checkbox
-                (change)="$event ? masterToggle() : null"
+              <mat-checkbox (change)="$event ? masterToggle() : null"
                 [checked]="selection.hasValue()"
                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                 [disabled]="isSelectionDisabled()"
-              >
-              </mat-checkbox>
+               />
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
-              <mat-checkbox
-                (click)="$event.stopPropagation()"
+              <mat-checkbox (click)="$event.stopPropagation()"
                 (change)="$event ? selection.toggle(row) : null"
                 [checked]="selection.isSelected(row)"
                 [disabled]="!(row.estado === 'IMPORTAR')"
-              >
-              </mat-checkbox>
+               />
             </mat-cell>
           </ng-container>
 
@@ -88,15 +84,14 @@
             }
           }
 
-          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-          <mat-row
-            *matRowDef="let row; columns: displayedColumns"
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" />
+          <mat-row *matRowDef="let row; columns: displayedColumns"
             [ngClass]="{
               'item-import-register': row.estado === 'REGISTRADO',
               '': row.estado === 'IMPORTAR',
               'item-import-error': row.estado !== 'IMPORTAR' || row.estado !== 'REGISTRADO',
             }"
-          ></mat-row>
+           />
         </mat-table>
       </div>
     </div>

@@ -23,8 +23,7 @@
 
 </ng-template>
 
-<app-data-grid
-  showToolbar="true"
+<app-data-grid showToolbar="true"
   [toolbarTemplate]="toolbarTpl"
   [data]="list()"
   [columns]="columns"
@@ -38,7 +37,7 @@
   [pageSize]="pagination().pageSize"
   [pageSizeOptions]="pagination().pageSizeOptions"
   (page)="getNextPage($event)"
-></app-data-grid>
+ />
 
 <ng-template #productDataTpl let-row>
   <div class="product-info">

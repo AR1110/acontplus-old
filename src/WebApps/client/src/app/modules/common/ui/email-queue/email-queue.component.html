@@ -72,12 +72,11 @@
 
           <div class="row mb-3">
             <div class="col">
-              <quill-editor
-                [styles]="{ height: '200px' }"
+              <quill-editor [styles]="{ height: '200px' }"
                 [modules]="quillModules"
                 formControlName="body"
                 [placeholder]="'Escribe tu mensaje aqui...'"
-              ></quill-editor>
+               />
               @if (emailForm.get('body')?.hasError('required')) {
                 <mat-error> Message is required </mat-error>
               }

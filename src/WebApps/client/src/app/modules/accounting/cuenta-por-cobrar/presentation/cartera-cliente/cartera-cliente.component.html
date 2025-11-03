@@ -213,19 +213,15 @@
         </div>
         <div class="hstack gap-2">
           <!-- In your parent component template -->
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.PDF"
+          <app-report-buttons [fileType]="REPORT_FORMAT.PDF"
             text="Ver PDF"
             (exportReport)="handleFileDownload($event, 2)"
-          >
-          </app-report-buttons>
+           />
 
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.EXCEL"
+          <app-report-buttons [fileType]="REPORT_FORMAT.EXCEL"
             text="Descargar Excel"
             (exportReport)="handleFileDownload($event, 2)"
-          >
-          </app-report-buttons>
+           />
         </div>
       </div>
     </mat-tab>

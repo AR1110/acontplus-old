@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { GuiaRemisionRepository } from '@billing/domain/repositories/guia-remision.repository';
@@ -8,7 +8,12 @@ import { GuiasRemisionResponse } from '@billing/domain/models/guia-remision/guia
   providedIn: 'root',
 })
 export class ListGuiasRemisionUseCase implements BaseUseCase<GuiasRemisionResponse, any> {
-  constructor(private repo: GuiaRemisionRepository) {}
+  private repo = inject(GuiaRemisionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: any): Observable<GuiasRemisionResponse> {
     return this.repo.list(params);

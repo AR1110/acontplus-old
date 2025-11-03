@@ -1,13 +1,18 @@
 import { ApiResponse } from '@core/models/api-response';
 import { NotaEntregaRepository } from '@sale/domain/repositories/nota-entrega.repository';
 import { Observable } from 'rxjs';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotaEntregaUseCase {
-  constructor(private repo: NotaEntregaRepository) {}
+  private repo = inject(NotaEntregaRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getDataFilter(): Observable<any> {
     return this.repo.getDataFilter();

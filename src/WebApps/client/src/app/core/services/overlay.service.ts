@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { SpinnerComponent } from '@core/components/spinner/spinner.component';
@@ -7,9 +7,14 @@ import { SpinnerComponent } from '@core/components/spinner/spinner.component';
   providedIn: 'root',
 })
 export class OverlayService {
+  private overlay = inject(Overlay);
+
   private overlayRef!: OverlayRef;
 
-  constructor(private overlay: Overlay) {}
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   showSpinner() {
     if (!this.overlayRef) {

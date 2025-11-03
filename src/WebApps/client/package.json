@@ -16,11 +16,22 @@
     "format:check": "prettier --check \"src/**/*.{ts,js,html,scss,css,json}\"",
     "prepare": "husky"
   },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "parser": "angular"
+        }
+      }
+    ]
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^20.3.3",
     "@angular/cdk": "^20.2.7",
-    "@angular/cli": "^20.3.4",
     "@angular/common": "^20.3.3",
     "@angular/compiler": "^20.3.3",
     "@angular/core": "^20.3.3",
@@ -69,6 +80,7 @@
   },
   "devDependencies": {
     "@angular/build": "^20.3.4",
+    "@angular/cli": "^20.3.4",
     "@angular/compiler-cli": "^20.3.3",
     "@angular/localize": "^20.3.3",
     "@types/file-saver": "^2.0.7",

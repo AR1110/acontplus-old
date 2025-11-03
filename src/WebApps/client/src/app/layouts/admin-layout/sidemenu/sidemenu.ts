@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { AsyncPipe, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,8 +28,6 @@ import { MenuService } from '@core/bootstrap';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
-    SlicePipe,
     NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,

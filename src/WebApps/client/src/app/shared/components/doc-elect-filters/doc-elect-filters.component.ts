@@ -50,6 +50,8 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
   styles: ``,
 })
 export class DocElectFiltersComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   private destroy$ = new Subject<void>();
   filterOptions = input<FilterOptions>(getMergedDocElectFilterOptions());
   showMoreOptions = input.required();
@@ -79,7 +81,10 @@ export class DocElectFiltersComponent implements OnInit {
   isRefreshingFilters = false;
   isLoadingMainData = false;
 
-  constructor(private fb: FormBuilder) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.filterForm = this.fb.group({
       idEstablecimiento: [0],
       checkBoxFecha: [false],

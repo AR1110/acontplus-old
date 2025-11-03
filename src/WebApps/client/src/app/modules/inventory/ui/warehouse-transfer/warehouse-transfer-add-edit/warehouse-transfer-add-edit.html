@@ -58,8 +58,8 @@
           <mat-label>Fecha de Caducidad:</mat-label>
           <input matInput [matDatepicker]="issueDate" [(ngModel)]="dataForm.issueDate" />
           <mat-hint>MM/DD/YYYY</mat-hint>
-          <mat-datepicker-toggle matIconSuffix [for]="issueDate"></mat-datepicker-toggle>
-          <mat-datepicker #issueDate></mat-datepicker>
+          <mat-datepicker-toggle matIconSuffix [for]="issueDate" />
+          <mat-datepicker #issueDate />
         </mat-form-field>
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">

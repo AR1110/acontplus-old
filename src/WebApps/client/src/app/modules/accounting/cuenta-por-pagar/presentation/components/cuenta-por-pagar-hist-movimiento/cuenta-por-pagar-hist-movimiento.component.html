@@ -7,8 +7,7 @@
 />
 
 <ng-template #containerTemplate>
-  <app-mat-dynamic-table
-    [columnDefinitions]="columnsDefs"
+  <app-mat-dynamic-table [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [tableData]="comprobantesEgreso.data"
     [expandedDetail]="expandedDetail"
@@ -16,7 +15,7 @@
     (showExpanded)="onShowExpanded($event)"
     (hideExpanded)="onHideExpanded()"
     [templateOp]="templateOp"
-  ></app-mat-dynamic-table>
+   />
 
   <ng-template #expandedDetail let-row="row">
     <div
@@ -67,7 +66,7 @@
                   </div>
                 </div>
               </div>
-              <mat-divider></mat-divider>
+              <mat-divider />
 
               <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
                 <div class="vstack">
@@ -108,4 +107,4 @@
   </ng-template>
 </ng-template>
 
-<ng-template #actionsTemplate> </ng-template>
+<ng-template #actionsTemplate />

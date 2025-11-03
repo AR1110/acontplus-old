@@ -45,7 +45,7 @@
                   [matMenuTriggerFor]="btn.children && btn.children.length>0 ? gridMenu.menu : null"
                   (click)="$event.stopPropagation()"
                 >
-                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }"></mat-icon>
+                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }" />
                 </button>
 
                 <acp-data-grid-menu #gridMenu [items]="btn.children || []" [data]="rowData()" />
@@ -76,7 +76,7 @@
                   [matMenuTriggerFor]="btn.children && btn.children.length>0 ? gridMenu.menu : null"
                   (click)="$event.stopPropagation()"
                 >
-                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }"></mat-icon>
+                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }" />
                   <span>{{ btn.text | toObservable | async }}</span>
                 </button>
 
@@ -109,7 +109,7 @@
                   [matBadgeHidden]="(btn | cellActionBadge).hidden"
                   (click)="_onActionClick($event, btn, rowData())"
                 >
-                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }"></mat-icon>
+                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }" />
                 </button>
               } @else {
                 <button
@@ -137,7 +137,7 @@
                   [matBadgeHidden]="(btn | cellActionBadge).hidden"
                   (click)="_onActionClick($event, btn, rowData())"
                 >
-                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }"></mat-icon>
+                  <mat-icon *ngTemplateOutlet="iconTpl; context: { $implicit: btn }" />
                   <span>{{ btn.text | toObservable | async }}</span>
                 </button>
               }
@@ -205,8 +205,8 @@
   @if (btn.icon) {
     <mat-icon class="acp-grid-icon">{{btn.icon}}</mat-icon>
   } @else if(btn.fontIcon) {
-    <mat-icon class="acp-grid-icon" [fontIcon]="btn.fontIcon"></mat-icon>
+    <mat-icon class="acp-grid-icon" [fontIcon]="btn.fontIcon" />
   } @else if(btn.svgIcon) {
-    <mat-icon class="acp-grid-icon" [svgIcon]="btn.svgIcon"></mat-icon>
+    <mat-icon class="acp-grid-icon" [svgIcon]="btn.svgIcon" />
   }
 </ng-template>

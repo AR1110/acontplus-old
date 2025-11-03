@@ -29,7 +29,7 @@ import { ComprobanteEgresoList } from '@accounting/comprobante-egreso/domain/com
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+
 import { ActionComprobanteEgresoReportDirective } from '@accounting/shared/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/shared/directives/action-comprobante-egreso-anular.directive';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
@@ -51,9 +51,6 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatDynamicTableComponent,
     MatMenu,
     MatMenuItem,
-    UserSearchComponent,
-    UserSearchComponent,
-
     //Directives
     ActionComprobanteEgresoReportDirective,
     ActionComprobanteEgresoAnularDirective,

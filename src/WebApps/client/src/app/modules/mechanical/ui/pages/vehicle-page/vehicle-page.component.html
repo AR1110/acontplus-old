@@ -55,7 +55,7 @@
     </ng-template>
 
     <ng-template #statusTemplate let-item>
-      <mat-slide-toggle (change)="putState(item.id, item.enabled)" [(ngModel)]="item.enabled"></mat-slide-toggle>
+      <mat-slide-toggle (change)="putState(item.id, item.enabled)" [(ngModel)]="item.enabled" />
     </ng-template>
   </ng-container>
 </app-mat-dynamic-card>

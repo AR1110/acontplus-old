@@ -135,13 +135,11 @@
                       <ng-template matTabContent>
                         <div class="row mb-2">
                           <div class="col-12">
-                            <app-theme-button
-                              variant="danger"
+                            <app-theme-button variant="danger"
                               icon="delete"
                               text="Eliminar Categoría"
                               (handleClick)="removeSpecCategory(item.uuid)"
-                            >
-                            </app-theme-button>
+                             />
                           </div>
                         </div>
                         <div class="row">
@@ -192,13 +190,11 @@
                                         <td>{{ spec.name }}</td>
                                         <td>{{ spec.value }}</td>
                                         <th>
-                                          <app-theme-button
-                                            variant="danger"
+                                          <app-theme-button variant="danger"
                                             icon="delete"
                                             matStyle="icon"
                                             (handleClick)="removeSpec($index, item.uuid)"
-                                          >
-                                          </app-theme-button>
+                                           />
                                         </th>
                                       </tr>
                                     }

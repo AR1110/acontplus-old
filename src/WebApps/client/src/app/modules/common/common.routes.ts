@@ -1,18 +1,18 @@
 import { Route } from '@angular/router';
-import { UserManualPageComponent } from '@modules/common/ui/user-manual/user-manual-page.component';
-import { EmailQueueComponent } from '@modules/common/ui/email-queue/email-queue.component';
-import { CommonHomeComponent } from './ui/common-home.component';
+
+
+
 
 export const routes: Route[] = [
   {
     path: '',
-    component: CommonHomeComponent,
+    loadComponent: () => import('./ui/common-home.component').then(m => m.CommonHomeComponent),
     data: { breadcrumb: 'Común' },
   },
   {
     path: 'user-manual',
     title: 'Manual de Usuario',
-    component: UserManualPageComponent,
+    loadComponent: () => import('@modules/common/ui/user-manual/user-manual-page.component').then(m => m.UserManualPageComponent),
     data: {
       breadcrumb: 'Manual de Usuario',
     },
@@ -20,7 +20,7 @@ export const routes: Route[] = [
   {
     path: 'email-queue',
     title: 'Envio de Correos',
-    component: EmailQueueComponent,
+    loadComponent: () => import('@modules/common/ui/email-queue/email-queue.component').then(m => m.EmailQueueComponent),
     data: {
       breadcrumb: 'Envio de Correos',
     },

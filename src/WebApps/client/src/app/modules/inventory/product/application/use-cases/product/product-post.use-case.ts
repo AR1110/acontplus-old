@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
 import { ApiResponse } from '@core/models/api-response';
@@ -17,7 +17,12 @@ interface Params {
   providedIn: 'root',
 })
 export class ProductPostUseCase implements BaseUseCase<ApiResponse, Params> {
-  constructor(private repo: ProductRepository) {}
+  private repo = inject(ProductRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: Params): Observable<ApiResponse> {
     return this.repo.post(params, params.file);

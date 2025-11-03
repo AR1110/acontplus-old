@@ -5,7 +5,7 @@ import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { BrandModalComponent } from './brand-modal/brand-modal.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
+
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -16,8 +16,6 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
   selector: 'app-brand-page',
   imports: [
     BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
     MatButton,
     MatIcon,
     ThemeButtonComponent,

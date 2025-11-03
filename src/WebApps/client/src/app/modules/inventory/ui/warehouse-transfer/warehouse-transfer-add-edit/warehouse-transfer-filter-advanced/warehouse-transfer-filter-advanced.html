@@ -63,8 +63,7 @@ title="Filtro Avanzado"
       </div>
     </div>
 
-    <app-data-grid
-      [data]="list()"
+    <app-data-grid [data]="list()"
       [columns]="columns"
       [multiSelectable]="true"
       [rowSelectable]="true"
@@ -77,7 +76,7 @@ title="Filtro Avanzado"
       [pageSize]="query.per_page"
       [pageSizeOptions]="[100, 150, 200]"
       (page)="getNextPage($event)"
-    ></app-data-grid>
+     />
 
   </section>
   <div ngProjectAs="footer">

@@ -51,8 +51,8 @@
           <mat-form-field class="w-100">
             <mat-label>Fecha Emisión</mat-label>
             <input matInput [matDatepicker]="picker" [value]="comprobanteEgresoStore.dataFormaPago().fechaEmision" />
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker touchUi #picker></mat-datepicker>
+            <mat-datepicker-toggle matIconSuffix [for]="picker" />
+            <mat-datepicker touchUi #picker />
           </mat-form-field>
         </div>
         <div class="col w-100">

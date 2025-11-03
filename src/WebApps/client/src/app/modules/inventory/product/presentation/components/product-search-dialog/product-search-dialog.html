@@ -27,8 +27,7 @@
   </mat-form-field>
 
   <!-- 🧩 DataGrid -->
-  <app-data-grid
-    [data]="list()"
+  <app-data-grid [data]="list()"
     [columns]="columns()"
     [loading]="loading()"
     [keyboardNavigation]="true"
@@ -42,7 +41,7 @@
     (page)="getNextPage($event)"
     (focusedRowChange)="onFocusedRowChange($event)"
     (rowClick)="rowClick($event)"
-  ></app-data-grid>
+   />
 
   <!-- 🔹 Template para descripción de producto -->
   <ng-template #descriptionTpl let-row let-index="index" let-col="colDef">
@@ -53,7 +52,7 @@
   </ng-template>
 
   <!-- 🔹 Footer con atajos de teclado -->
-  <mat-divider></mat-divider>
+  <mat-divider />
   <div class="footer">
     <div class="hint">
       <mat-icon>keyboard_double_arrow_up</mat-icon> /

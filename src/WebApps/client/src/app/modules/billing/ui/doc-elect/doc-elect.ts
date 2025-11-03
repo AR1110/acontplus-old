@@ -10,14 +10,14 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
+
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+
 import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap } from 'rxjs';
 import {DataGrid} from "@shared/components/data-grid/data-grid";
@@ -37,8 +37,6 @@ import {DocElectList} from "@billing/domain/models/documento-electronico.model";
     MatFormFieldModule,
     MatInputModule,
     BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
     DateRangeSelectionComponent,
     DataGrid,
   ],

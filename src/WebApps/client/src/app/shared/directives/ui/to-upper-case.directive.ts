@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Directive({
@@ -12,10 +12,13 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 export class ToUpperCaseDirective implements ControlValueAccessor {
-  constructor(
-    private el: ElementRef,
-    private renderer: Renderer2,
-  ) {}
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   @HostListener('input') onInput() {
     const value = this.el.nativeElement.value;

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
@@ -19,13 +19,12 @@ import { DialogService } from '@core/services/dialog.service';
 @Component({
   selector: 'app-inspection-page',
   imports: [
-    CommonModule,
     FormsModule,
     MatMenuModule,
     MatIconModule,
     MatButtonModule,
-    MatDynamicTableComponent,
-  ],
+    MatDynamicTableComponent
+],
   templateUrl: './inspection-page.component.html',
 })
 export class InspectionPageComponent implements OnInit {

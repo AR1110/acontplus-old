@@ -11,7 +11,7 @@
         }
       </div>
 
-      <mat-divider></mat-divider>
+      <mat-divider />
       <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
         <div class="col">
           <mat-form-field class="w-100">
@@ -71,11 +71,10 @@
           <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
         </div>
         <div class="col">
-          <app-company-customer-search
-            [isSimpleMode]="true"
+          <app-company-customer-search [isSimpleMode]="true"
             (customerSelected)="onCustomerSelected($event)"
             (clearSearch)="clearSearchCustomer()"
-          ></app-company-customer-search>
+           />
         </div>
         <div class="col">
           <mat-form-field class="w-100">

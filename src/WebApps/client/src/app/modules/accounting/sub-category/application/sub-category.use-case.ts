@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SubCategoryRepository } from '@accounting/sub-category/domain/sub-category.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SubCategoryUseCase {
-  constructor(private repo: SubCategoryRepository) {}
+  private repo = inject(SubCategoryRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

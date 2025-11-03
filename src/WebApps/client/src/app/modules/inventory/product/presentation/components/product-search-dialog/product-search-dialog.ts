@@ -9,7 +9,7 @@ import {
   AfterViewInit,
   OnDestroy, output, computed,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { debounceTime, distinctUntilChanged, switchMap, finalize } from 'rxjs/operators';
 import { of, Subscription } from 'rxjs';
 
@@ -31,14 +31,13 @@ import {MatDialogRef} from "@angular/material/dialog";
   styleUrls: ['./product-search-dialog.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
-    DataGrid,
-  ]
+    DataGrid
+]
 })
 export class ProductSearchDialog {
   private dialogRef = inject(MatDialogRef<ProductSearchDialog>);

@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { VehicleRepository } from '@mechanical/domain/repositories/vehicle.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VehicleUseCase {
-  constructor(private repo: VehicleRepository) {}
+  private repo = inject(VehicleRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getDataForm() {
     return this.repo.getDataForm();

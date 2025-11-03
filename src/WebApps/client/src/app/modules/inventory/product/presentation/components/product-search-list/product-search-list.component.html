@@ -58,8 +58,7 @@
   <div class="acp-grid-footer">
     <div class="acp-grid-pagination">
       @if (pagination) {
-        <mat-paginator
-          #paginator
+        <mat-paginator #paginator
           class="demo-paginator"
           (click)="onClickPaginator.emit()"
           (page)="onPageEvent($event)"
@@ -68,8 +67,7 @@
           [showFirstLastButtons]="true"
           [pageIndex]="pagination.pageIndex"
           aria-label="Select page"
-        >
-        </mat-paginator>
+         />
       }
     </div>
   </div>

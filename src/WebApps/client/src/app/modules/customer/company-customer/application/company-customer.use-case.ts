@@ -1,11 +1,16 @@
 import { CompanyCustomerRepository } from '@company-customer/domain/company-customer.repository';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CompanyCustomerUseCase {
-  constructor(private repo: CompanyCustomerRepository) {}
+  private repo = inject(CompanyCustomerRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     return this.repo.getAll(obj);

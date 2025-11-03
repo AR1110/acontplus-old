@@ -1,12 +1,11 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
+<app-mat-custom-dialog [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
   (close)="close()"
   [title]="title"
   [options]="{
     showButtonClose: false,
   }"
-></app-mat-custom-dialog>
+ />
 
 <ng-template #containerTemplate>
   <mat-tab-group [selectedIndex]="selectedTab()" (selectedIndexChange)="selectOnChangeTab($event)">
@@ -184,11 +183,10 @@
 
           <div class="row m-0 p-0">
             <div class="col-lg-9 col-md-9 col-12">
-              <app-tabulator
-                [tableData]="productTarifa"
+              <app-tabulator [tableData]="productTarifa"
                 [options]="tabulatorOptions"
                 (cellEdited)="cellEdited($event)"
-              ></app-tabulator>
+               />
             </div>
             <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-12 d-flex justify-content-center">
               <div class="d-grid justify-content-center">
@@ -202,11 +200,10 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Adicionales:</mat-label>
-                <mat-checkbox
-                  matPrefix
+                <mat-checkbox matPrefix
                   [(ngModel)]="data.datosAdicionales"
                   (click)="$event.stopPropagation()"
-                ></mat-checkbox>
+                 />
                 <mat-select [(ngModel)]="data.idEtiqueta" [disabled]="!data.datosAdicionales">
                   @for (item of etiquetas(); track $index) {
                     <mat-option [value]="item.idEtiqueta">
@@ -360,8 +357,8 @@
                     <mat-label>Fecha de Caducidad:</mat-label>
                     <input matInput [matDatepicker]="fechaCaducidad" [(ngModel)]="data.fechaCaducidad" />
                     <mat-hint>MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="fechaCaducidad"></mat-datepicker-toggle>
-                    <mat-datepicker #fechaCaducidad></mat-datepicker>
+                    <mat-datepicker-toggle matIconSuffix [for]="fechaCaducidad" />
+                    <mat-datepicker #fechaCaducidad />
                   </mat-form-field>
                 }
               </div>
@@ -380,16 +377,16 @@
                     <mat-label>Fecha de Creación:</mat-label>
                     <input matInput [matDatepicker]="fechaCreacion" [(ngModel)]="data.fechaCreacion" />
                     <mat-hint>MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="fechaCreacion"></mat-datepicker-toggle>
-                    <mat-datepicker #fechaCreacion></mat-datepicker>
+                    <mat-datepicker-toggle matIconSuffix [for]="fechaCreacion" />
+                    <mat-datepicker #fechaCreacion />
                   </mat-form-field>
 
                   <mat-form-field>
                     <mat-label>Fecha de Caducidad:</mat-label>
                     <input matInput [matDatepicker]="fechaCaducidadLote" [(ngModel)]="data.fechaCaducidadLote" />
                     <mat-hint>MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="fechaCaducidadLote"></mat-datepicker-toggle>
-                    <mat-datepicker #fechaCaducidadLote></mat-datepicker>
+                    <mat-datepicker-toggle matIconSuffix [for]="fechaCaducidadLote" />
+                    <mat-datepicker #fechaCaducidadLote />
                   </mat-form-field>
                 }
               </div>

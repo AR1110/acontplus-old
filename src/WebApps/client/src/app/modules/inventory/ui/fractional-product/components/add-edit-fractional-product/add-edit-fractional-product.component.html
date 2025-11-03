@@ -12,7 +12,7 @@
   <div class="d-grid gap-2">
     <mat-list>
       <mat-list-item>Artículo: {{ data.codigo }}-{{ data.descripcion }}</mat-list-item>
-      <mat-divider></mat-divider>
+      <mat-divider />
     </mat-list>
 
     <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1">
@@ -109,11 +109,10 @@
 
     <div class="row">
       <div class="col-12 col-xxl-8 col-xl-8 col-lg-8 col-md-12">
-        <app-tabulator
-          [tableData]="productTarifa()"
+        <app-tabulator [tableData]="productTarifa()"
           [options]="tabulatorOptions"
           (cellEdited)="cellEdited($event)"
-        ></app-tabulator>
+         />
       </div>
     </div>
   </div>

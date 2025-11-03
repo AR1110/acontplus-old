@@ -1,32 +1,32 @@
-import { SolicitudAutorizacionComponent } from '@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component';
-import { ElectronicSignatureComponent } from '@modules/config/ui/electronic-signature/electronic-signature.component';
-import { EstablishmentPage } from '@modules/config/ui/establishment-page/establishment-page';
-import { UserProfilePageComponent } from '@modules/config/ui/user-profile-page/user-profile-page.component';
-import { GeneralConfigComponent } from '@modules/config/ui/general-config/general-config.component';
-import { WizardConfigComponent } from '@modules/config/ui/wizard-config/wizard-config.component';
-import { UserCustomerComponent } from '@modules/config/ui/user-customer/user-customer.component';
-import { ExcelImportComponent } from '@modules/config/ui/excel-import/excel-import.component';
-import { DocConfigPageComponent } from '@modules/config/ui/doc-config/doc-config.component';
-import { CreditTimeComponent } from '@modules/config/ui/credit-time/credit-time.component';
-import { PrinterComponent } from '@modules/config/ui/printer/printer.component';
-import { CompanyComponent } from '@modules/config/ui/company/company.component';
-import { ConfigHomeComponent } from './ui/config-home.component';
-import { ShiftComponent } from './ui/shift/shift.component';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Routes } from '@angular/router';
-import { WarehouseComponent } from '@inventory/ui/warehouse/warehouse.component';
-import {ProfileSettings} from "@modules/config/ui/profile/settings/settings";
-import {ProfileLayout} from "@modules/config/ui/profile/layout/layout";
+
+
+
 
 export const routes: Routes = [
   {
     path: 'profile',
-    component: ProfileLayout,
+    loadComponent: () => import('@modules/config/ui/profile/layout/layout').then(m => m.ProfileLayout),
     data: { breadcrumb: 'Perfil' },
     children: [
       { path: '', redirectTo: 'settings', pathMatch: 'full' },
       {
         path: 'settings',
-        component: ProfileSettings,
+        loadComponent: () => import('@modules/config/ui/profile/settings/settings').then(m => m.ProfileSettings),
         data: { breadcrumb: 'Configuración de Perfil' }
       },
       // { path: 'settings', component: ProfileSettings },
@@ -34,13 +34,13 @@ export const routes: Routes = [
   },
   {
     path: '',
-    component: ConfigHomeComponent,
+    loadComponent: () => import('./ui/config-home.component').then(m => m.ConfigHomeComponent),
     data: { breadcrumb: 'Configuración' },
   },
   {
     path: 'general-config',
     title: 'Config. General',
-    component: GeneralConfigComponent,
+    loadComponent: () => import('@modules/config/ui/general-config/general-config.component').then(m => m.GeneralConfigComponent),
     data: {
       breadcrumb: 'Config. General',
     },
@@ -48,7 +48,7 @@ export const routes: Routes = [
   {
     path: 'doc-config',
     title: 'Config. Docs',
-    component: DocConfigPageComponent,
+    loadComponent: () => import('@modules/config/ui/doc-config/doc-config.component').then(m => m.DocConfigPageComponent),
     data: {
       breadcrumb: 'Config. Docs',
     },
@@ -56,7 +56,7 @@ export const routes: Routes = [
   {
     path: 'user-customer',
     title: 'Usuario',
-    component: UserCustomerComponent,
+    loadComponent: () => import('@modules/config/ui/user-customer/user-customer.component').then(m => m.UserCustomerComponent),
     data: {
       breadcrumb: 'Usuario',
     },
@@ -64,7 +64,7 @@ export const routes: Routes = [
   {
     path: 'user-request',
     title: 'Solicitudes de Usuario',
-    component: SolicitudAutorizacionComponent,
+    loadComponent: () => import('@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component').then(m => m.SolicitudAutorizacionComponent),
     data: {
       breadcrumb: 'Solicitudes de Usuario',
     },
@@ -72,7 +72,7 @@ export const routes: Routes = [
   {
     path: 'user-profile-page',
     title: 'Configuración de Perfil',
-    component: UserProfilePageComponent,
+    loadComponent: () => import('@modules/config/ui/user-profile-page/user-profile-page.component').then(m => m.UserProfilePageComponent),
     data: {
       breadcrumb: 'Configuración de Perfil',
     },
@@ -80,7 +80,7 @@ export const routes: Routes = [
   {
     path: 'establishment',
     title: 'Establecimiento',
-    component: EstablishmentPage,
+    loadComponent: () => import('@modules/config/ui/establishment-page/establishment-page').then(m => m.EstablishmentPage),
     data: {
       breadcrumb: 'Establecimiento',
     },
@@ -88,7 +88,7 @@ export const routes: Routes = [
   {
     path: 'company',
     title: 'Entidad',
-    component: CompanyComponent,
+    loadComponent: () => import('@modules/config/ui/company/company.component').then(m => m.CompanyComponent),
     data: {
       breadcrumb: 'Entidad',
     },
@@ -96,7 +96,7 @@ export const routes: Routes = [
   {
     path: 'printer',
     title: 'Configuración Impresora',
-    component: PrinterComponent,
+    loadComponent: () => import('@modules/config/ui/printer/printer.component').then(m => m.PrinterComponent),
     data: {
       breadcrumb: 'Configuración Impresora',
     },
@@ -104,7 +104,7 @@ export const routes: Routes = [
   {
     path: 'wizard-config',
     title: 'Configuración Inicial',
-    component: WizardConfigComponent,
+    loadComponent: () => import('@modules/config/ui/wizard-config/wizard-config.component').then(m => m.WizardConfigComponent),
     data: {
       breadcrumb: 'Configuración Inicial',
     },
@@ -112,35 +112,35 @@ export const routes: Routes = [
   {
     path: 'excel-import',
     title: 'Importación',
-    component: ExcelImportComponent,
+    loadComponent: () => import('@modules/config/ui/excel-import/excel-import.component').then(m => m.ExcelImportComponent),
     data: {
       breadcrumb: 'Importación',
     },
   },
   {
     path: 'electronic-signature',
-    component: ElectronicSignatureComponent,
+    loadComponent: () => import('@modules/config/ui/electronic-signature/electronic-signature.component').then(m => m.ElectronicSignatureComponent),
     data: {
       breadcrumb: 'Firma Electronica',
     },
   },
   {
     path: 'credit-time',
-    component: CreditTimeComponent,
+    loadComponent: () => import('@modules/config/ui/credit-time/credit-time.component').then(m => m.CreditTimeComponent),
     data: {
       breadcrumb: 'Tiempo Crédito',
     },
   },
   {
     path: 'shift',
-    component: ShiftComponent,
+    loadComponent: () => import('./ui/shift/shift.component').then(m => m.ShiftComponent),
     data: {
       breadcrumb: 'Turno',
     },
   },
   {
     path: 'warehouse',
-    component: WarehouseComponent,
+    loadComponent: () => import('@inventory/ui/warehouse/warehouse.component').then(m => m.WarehouseComponent),
     data: {
       breadcrumb: 'Bodega',
     },

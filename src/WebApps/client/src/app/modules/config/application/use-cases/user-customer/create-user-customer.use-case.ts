@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponse } from '@core/models/api-response';
 import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
@@ -7,7 +7,12 @@ import { UserCustomerRepository } from '@modules/config/domain/repositories/user
   providedIn: 'root',
 })
 export class CreateUserCustomerUseCase<T> implements BaseUseCase<ApiResponse, T> {
-  constructor(private repo: UserCustomerRepository) {}
+  private repo = inject(UserCustomerRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: T) {
     return this.repo.create(params);

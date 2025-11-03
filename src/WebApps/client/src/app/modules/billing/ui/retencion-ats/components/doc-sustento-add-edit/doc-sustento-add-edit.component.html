@@ -82,8 +82,8 @@
         <mat-label>Fecha Registro Contable:</mat-label>
         <input matInput id="fechaRegistroContable" [matDatepicker]="picker" formControlName="fechaRegistroContable" />
         <mat-hint>DD/MM/YYYY</mat-hint>
-        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-datepicker-toggle matIconSuffix [for]="picker" />
+        <mat-datepicker #picker />
       </mat-form-field>
     </div>
   </div>
@@ -215,18 +215,16 @@
   </div>
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
-        text="Añadir Impuestos Automaticamente"
+      <app-theme-button text="Añadir Impuestos Automaticamente"
         icon="add"
         (handleClick)="addTaxes(indexDoc())"
-      ></app-theme-button>
+       />
     </div>
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
-        text="Añadir Impuestos Manualmente"
+      <app-theme-button text="Añadir Impuestos Manualmente"
         icon="add"
         (handleClick)="addTaxesManual(indexDoc())"
-      ></app-theme-button>
+       />
     </div>
   </div>
   <div class="row g-3 align-items-center mb-3" formArrayName="taxes">
@@ -245,11 +243,10 @@
   @if (docSustentoArray().length > 0) {
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button
-          text="Añadir Retenciones"
+        <app-theme-button text="Añadir Retenciones"
           icon="add"
           (handleClick)="addRetencion(indexDoc())"
-        ></app-theme-button>
+         />
       </div>
     </div>
   }
@@ -270,7 +267,7 @@
   @if (docSustentoArray().length > 0) {
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button text="Añadir Pagos" icon="add" (handleClick)="addPayment(indexDoc())"></app-theme-button>
+        <app-theme-button text="Añadir Pagos" icon="add" (handleClick)="addPayment(indexDoc())" />
       </div>
     </div>
   }
@@ -289,8 +286,7 @@
 
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
-        text="Guardar"
+      <app-theme-button text="Guardar"
         variant="success"
         icon="save"
         type="submit"
@@ -300,20 +296,17 @@
           docSustentoGroup().invalid
         "
         (handleClick)="onSave(indexDoc())"
-      >
-      </app-theme-button>
-      <app-theme-button
-        text="Ver Doc."
+       />
+      <app-theme-button text="Ver Doc."
         variant="info"
         icon="picture_as_pdf"
         (handleClick)="docPreview(indexDoc())"
-      ></app-theme-button>
-      <app-theme-button
-        text="Eliminar"
+       />
+      <app-theme-button text="Eliminar"
         variant="danger"
         icon="delete"
         (handleClick)="removeDocSustento(indexDoc())"
-      ></app-theme-button>
+       />
     </div>
   </div>
 </mat-expansion-panel>
