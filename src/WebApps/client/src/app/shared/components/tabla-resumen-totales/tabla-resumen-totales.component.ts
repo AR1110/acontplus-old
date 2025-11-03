@@ -18,11 +18,8 @@ export class TablaResumenTotalesComponent {
       tarifasImpuesto: this.tarifasImpuesto(),
     };
 
-    // Calculate totals using the utility function
-    const newTotalizadorUtil = new TotalizadorUtil();
-    newTotalizadorUtil.calcular(obj);
 
     // Update the signal with the new totals HTML
-    return newTotalizadorUtil.htmlTotales;
+    return  new TotalizadorUtil().calcular(obj).htmlCompleto
   });
 }
