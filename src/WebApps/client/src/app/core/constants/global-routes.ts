@@ -27,6 +27,8 @@ export enum GlobalRoutes {
   RestaurantReports = 'restaurant/item-report',
   RestaurantInfrastructure = 'restaurant/infrastructure-page',
   RestaurantProducts = 'restaurant/products-page',
+  RestaurantConfigTpv = 'restaurant/meal-schedule-setting',
+  RestaurantConsumoTpv = 'restaurant/meal-consumption-list',
   TechnicalSupport = 'technical-support/technical-support-page',
   TechnicalSupportBrand = 'technical-support/brand-page',
   TechnicalSupportCategory = 'technical-support/category-page',

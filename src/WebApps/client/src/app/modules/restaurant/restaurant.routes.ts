@@ -43,4 +43,26 @@ export const routes: Route[] = [
       breadcrumb: 'Configuración del Restaurante',
     },
   },
+  {
+    path: 'meal-schedule-setting',
+    title: 'Administrar Horarios de Comidas',
+    loadComponent: () =>
+      import(
+        '@restaurant/ui/meal-schedule-setting/meal-schedule-setting-list/meal-schedule-setting-list'
+      ).then((m) => m.MealScheduleSettingList),
+    data: {
+      breadcrumb: 'Administrar Horarios de Comida',
+    },
+  },
+  {
+    path: 'meal-consumption-list',
+    title: 'Consumo de Comidas',
+    loadComponent: () =>
+      import('@restaurant/ui/meal-consumption/meal-consumption-list/meal-consumption-list').then(
+        (m) => m.MealConsumptionList,
+      ),
+    data: {
+      breadcrumb: 'Consumo de Comidas',
+    },
+  },
 ];
