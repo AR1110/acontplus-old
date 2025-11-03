@@ -85,7 +85,7 @@ export class CarteraClienteComponent implements OnInit {
   format: any;
 
   getDataFilter() {
-    this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades, users } = response;
 
       this.establecimientos.set(estabs);
@@ -108,9 +108,9 @@ export class CarteraClienteComponent implements OnInit {
       }, []);
       this.provinciasAgrupadas.set(provinciasAgrupadas);
 
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
       this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
       this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision ?? 0;
 
@@ -128,12 +128,12 @@ export class CarteraClienteComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      estab => estab.codEstab === this.dataSearch.codEstab,
+      (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
     this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
     if (this.puntosEmision().length > 0) {
       this.dataSearch.idPuntoEmision =
-        this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
+        this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
       this.tS.show({
         type: 'warning',

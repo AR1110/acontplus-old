@@ -2,9 +2,6 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-
-
-
 import { roundNumber } from '@core/utils/round-number.utils';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
 import { isValidField } from '@core/utils/utils';
@@ -24,7 +21,7 @@ export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
   const filterValue = value.toLowerCase();
 
-  return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
+  return opt.filter((item) => item.descripcion.toLowerCase().includes(filterValue));
 };
 
 @Component({
@@ -125,7 +122,7 @@ export class FormaCobroModalComponent implements OnInit {
 
     this.ciudadesGroupOptions = this.ciudadForm.get('ciudadGroup')!.valueChanges.pipe(
       startWith(''),
-      map(value => this._filterGroup(value || '')),
+      map((value) => this._filterGroup(value || '')),
     );
   }
 
@@ -187,7 +184,7 @@ export class FormaCobroModalComponent implements OnInit {
 
   isValidData() {
     const paymentTypeCode = this.entidadesFinanciera.find(
-      e => e.idEntidadFinanciera === this.data.idEntidadFinanciera,
+      (e) => e.idEntidadFinanciera === this.data.idEntidadFinanciera,
     )?.codigo;
     const { nro, referencia, aprobacion, idCiudad, idBanco, lote } = this.data;
 
@@ -319,14 +316,14 @@ export class FormaCobroModalComponent implements OnInit {
   getDataPago(item: any = {}) {
     try {
       const entidadFinanciera = this.entidadesFinanciera.find(
-        item => item.idEntidadFinanciera === this.data.idEntidadFinanciera,
+        (item) => item.idEntidadFinanciera === this.data.idEntidadFinanciera,
       );
       const subEntidadFinanciera = entidadFinanciera?.subEntidadesFinanciera.find(
         (item: any) => item.idSubEntidadFinanciera === this.data.idSubEntidadFinanciera,
       );
 
-      const ciudad = this.ciudades.find(item => item.idCiudad === this.data.idCiudad);
-      const banco = this.bancos.find(item => item.idBanco === this.data.idBanco);
+      const ciudad = this.ciudades.find((item) => item.idCiudad === this.data.idCiudad);
+      const banco = this.bancos.find((item) => item.idBanco === this.data.idBanco);
 
       //  let formattedDateTime = formatDateMoment(this.infrastructure.fechaEmision);
 
@@ -412,7 +409,7 @@ export class FormaCobroModalComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, abonar',
       cancelButtonText: 'No, cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.modal.close(this.getDataPago(item));
       }
@@ -422,11 +419,11 @@ export class FormaCobroModalComponent implements OnInit {
   private _filterGroup(value: string): any[] {
     if (value) {
       return this.ciudades
-        .map(group => ({
+        .map((group) => ({
           provincia: group.provincia,
           ciudades: _filter(group.ciudades, value),
         }))
-        .filter(group => group.ciudades.length > 0);
+        .filter((group) => group.ciudades.length > 0);
     }
 
     return this.ciudades;

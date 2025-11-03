@@ -61,7 +61,7 @@ export class ProductHistPurchaseModalComponent implements OnInit {
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.deleteCH(item);
       }

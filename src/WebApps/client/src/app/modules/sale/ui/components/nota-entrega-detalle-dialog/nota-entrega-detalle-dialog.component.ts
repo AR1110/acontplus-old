@@ -34,7 +34,7 @@ export class NotaEntregaDetalleDialogComponent implements OnInit {
           this.isLoading.set(false);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         const { headerData, clienteData, detalles, datosAdicionalesDoc, tiposIva } = response;
 
         this.headerData = headerData;

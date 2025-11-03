@@ -25,7 +25,7 @@ export class TagWebRepository implements TagRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             tags: [] as any[],
           };

@@ -32,7 +32,7 @@ export class ReportApiRepository implements ReportRepository {
         observe: 'response',
         responseType: 'blob',
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (format === 'pdf' && openInModal && response.body) {
           // this.openPdfInModal(response.body)
         } else {

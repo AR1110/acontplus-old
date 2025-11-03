@@ -79,21 +79,23 @@
   </div>
   <div class="col-auto">
     @if (taxGroup().get('idRetAtsDocSustento')?.value) {
-      <app-theme-button variant="success"
+      <app-theme-button
+        variant="success"
         icon="save"
         matStyle="icon"
         id="btn-save-tax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         title="Guardar impuesto del sustento"
         (handleClick)="onSave()"
-       />
+      />
     }
-    <app-theme-button variant="danger"
+    <app-theme-button
+      variant="danger"
       icon="delete"
       matStyle="icon"
       id="btnDeleteTax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
       title="Eliminar impuesto del sustento"
       (handleClick)="removeTax()"
-     />
+    />
   </div>
 </div>
 

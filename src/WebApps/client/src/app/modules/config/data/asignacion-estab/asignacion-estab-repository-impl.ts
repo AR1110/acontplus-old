@@ -22,7 +22,7 @@ export class AsignacionEstabRepositoryImpl implements AsignacionEstabRepository 
   list<T>(parameters: T) {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${ListAsignacionEstabMapper.toJson(parameters)}`)
-      .pipe(map(response => ListAsignacionEstabMapper.fromJson(response)));
+      .pipe(map((response) => ListAsignacionEstabMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_ESTAB}`;

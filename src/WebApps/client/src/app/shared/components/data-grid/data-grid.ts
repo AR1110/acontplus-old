@@ -21,72 +21,112 @@ import {
   ViewEncapsulation,
   AfterViewInit,
   OnDestroy,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { fromEvent, Subject, takeUntil, debounceTime, filter } from 'rxjs';
 
 // Material Imports
 import {
-  MatCell, MatCellDef, MatColumnDef, MatFooterCell, MatFooterCellDef,
-  MatFooterRow, MatFooterRowDef, MatHeaderCell, MatHeaderCellDef,
-  MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTable,
+  MatCell,
+  MatCellDef,
+  MatColumnDef,
+  MatFooterCell,
+  MatFooterCellDef,
+  MatFooterRow,
+  MatFooterRowDef,
+  MatHeaderCell,
+  MatHeaderCellDef,
+  MatHeaderRow,
+  MatHeaderRowDef,
+  MatRow,
+  MatRowDef,
+  MatTable,
   MatTableDataSource,
 } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortHeader, Sort, SortDirection } from '@angular/material/sort';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatIconButton } from '@angular/material/button';
-import { MatProgressBar } from "@angular/material/progress-bar";
+import { MatProgressBar } from '@angular/material/progress-bar';
 import { SelectionModel } from '@angular/cdk/collections';
 
 // Shared Imports
 import {
-  DataGridCellTemplate, DataGridColumn, DataGridDefaultOptions,
-  DataGridRowClassFormatter, DataGridRowSelectionFormatter
-} from "./types";
-import { AcpIsTemplateRefPipe } from "../../pipes/is-template-ref.pipe";
-import { AcpToObservablePipe } from "../../pipes/to-observable.pipe";
-import { DataGridSelectableCell } from "../../directives/selectable-cell";
-import { DataGridUtils } from "../../utils/data-grid.util";
-import { DataGridExpansionToggle } from "../../directives/data-grid-expansion-toggle";
-import { DataGridCell } from "./data-grid-cell/data-grid-cell";
-import {DataGridColClassPipe, DataGridRowClassPipe} from "@shared/pipes/data-grid.pipe";
-import {KeyboardNavigationService} from "@shared/components/data-grid/keyboard-navigation";
+  DataGridCellTemplate,
+  DataGridColumn,
+  DataGridDefaultOptions,
+  DataGridRowClassFormatter,
+  DataGridRowSelectionFormatter,
+} from './types';
+import { AcpIsTemplateRefPipe } from '../../pipes/is-template-ref.pipe';
+import { AcpToObservablePipe } from '../../pipes/to-observable.pipe';
+import { DataGridSelectableCell } from '../../directives/selectable-cell';
+import { DataGridUtils } from '../../utils/data-grid.util';
+import { DataGridExpansionToggle } from '../../directives/data-grid-expansion-toggle';
+import { DataGridCell } from './data-grid-cell/data-grid-cell';
+import { DataGridColClassPipe, DataGridRowClassPipe } from '@shared/pipes/data-grid.pipe';
+import { KeyboardNavigationService } from '@shared/components/data-grid/keyboard-navigation';
 
 export const DATA_GRID_DEFAULT_OPTIONS = new InjectionToken<DataGridDefaultOptions>(
-  'data-grid-default-options'
+  'data-grid-default-options',
 );
 
 @Component({
   selector: 'app-data-grid',
   exportAs: 'dataGrid',
   imports: [
-    AsyncPipe, NgTemplateOutlet, MatProgressBar, MatIconButton, MatCheckbox,
-    MatTable, MatColumnDef, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow,
-    MatFooterRowDef, MatFooterRow, MatHeaderCellDef, MatHeaderCell, MatCellDef,
-    MatCell, MatFooterCellDef, MatFooterCell, MatSort, MatSortHeader, MatPaginator,
-    DataGridColClassPipe, AcpIsTemplateRefPipe, AcpToObservablePipe,
-    DataGridSelectableCell, DataGridExpansionToggle, DataGridCell, DataGridRowClassPipe,
+    AsyncPipe,
+    NgTemplateOutlet,
+    MatProgressBar,
+    MatIconButton,
+    MatCheckbox,
+    MatTable,
+    MatColumnDef,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatFooterRowDef,
+    MatFooterRow,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatFooterCellDef,
+    MatFooterCell,
+    MatSort,
+    MatSortHeader,
+    MatPaginator,
+    DataGridColClassPipe,
+    AcpIsTemplateRefPipe,
+    AcpToObservablePipe,
+    DataGridSelectableCell,
+    DataGridExpansionToggle,
+    DataGridCell,
+    DataGridRowClassPipe,
   ],
   templateUrl: './data-grid.html',
   styleUrl: './data-grid.scss',
   host: {
-    'class': 'data-grid',
+    class: 'data-grid',
     '[class.data-grid-animations-enabled]': '!_animationsDisabled',
     '[class.data-grid-size-small]': 'size() === "small"',
     '[class.data-grid-size-medium]': 'size() === "medium"',
     '[class.data-grid-size-normal]': 'size() === "normal"',
     '[attr.tabindex]': '0',
-   // '(keydown)': 'handleKeyDown($event)'
+    // '(keydown)': 'handleKeyDown($event)'
   },
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
-  protected _animationsDisabled = inject(ANIMATION_MODULE_TYPE, { optional: true }) === 'NoopAnimations';
+  protected _animationsDisabled =
+    inject(ANIMATION_MODULE_TYPE, { optional: true }) === 'NoopAnimations';
   private _utils = inject(DataGridUtils);
-  private _defaultOptions = inject<DataGridDefaultOptions>(DATA_GRID_DEFAULT_OPTIONS, { optional: true });
+  private _defaultOptions = inject<DataGridDefaultOptions>(DATA_GRID_DEFAULT_OPTIONS, {
+    optional: true,
+  });
   private _keyboardNavService = inject(KeyboardNavigationService);
   private _destroy$ = new Subject<void>();
 
@@ -101,7 +141,9 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
 
   // Toolbar
   showToolbar = input(this._defaultOptions?.showToolbar ?? false, { transform: booleanAttribute });
-  showColumnMenuButton = input(this._defaultOptions?.showColumnMenuButton ?? true, { transform: booleanAttribute });
+  showColumnMenuButton = input(this._defaultOptions?.showColumnMenuButton ?? true, {
+    transform: booleanAttribute,
+  });
   toolbarTitle = input(this._defaultOptions?.toolbarTitle ?? '');
   toolbarTemplate = input<TemplateRef<any>>();
 
@@ -121,14 +163,13 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   paginationTemplate = input<TemplateRef<any>>();
   summaryTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
 
-
   size = input<'small' | 'medium' | 'normal'>('normal');
   headerCellTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
 
   // Expansion
   expandable = input<boolean>(false);
   expansionTemplate = input<TemplateRef<any> | null>(null);
-  closeOthersOnExpand = input(false)
+  closeOthersOnExpand = input(false);
 
   // Pagination
   pageOnFront = input<boolean>(true);
@@ -148,7 +189,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   // Keyboard Navigation
   keyboardNavigation = input<boolean>(false);
 
-  focusedRowIndex = computed(()=>this._keyboardNavService.focusedRowIndex()); // Vinculado al servicio
+  focusedRowIndex = computed(() => this._keyboardNavService.focusedRowIndex()); // Vinculado al servicio
   // Sorting
   sortOnFront = input<boolean>(true);
   sortActive = input<string>('');
@@ -211,7 +252,9 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
 
   // Computed Properties
   displayedColumns = computed(() => {
-    const cols = this.columns().filter(item => !this.isColumnHide(item)).map(item => item.field);
+    const cols = this.columns()
+      .filter((item) => !this.isColumnHide(item))
+      .map((item) => item.field);
     if (this.rowSelectable() && !this.hideRowSelectionCheckbox()) {
       cols.unshift('DataGridCheckboxColumnDef');
     }
@@ -219,8 +262,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   });
 
   hasNoResult = computed(() => {
-    return  (this.data().length === 0) && !this.loading();
-
+    return this.data().length === 0 && !this.loading();
   });
   whetherShowSummary = computed(() => this.showSummary());
 
@@ -232,7 +274,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
       if (selected?.length > 0) {
         const selectionModel = this.selection();
         selectionModel.clear();
-        selected.forEach(row => selectionModel.select(row));
+        selected.forEach((row) => selectionModel.select(row));
       }
     });
     effect(() => {
@@ -262,13 +304,13 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     this.dataSource.sort = this.sortOnFront() ? this.sort : null;
 
     if (this.rowDefs?.length > 0 && this.useContentRowTemplate()) {
-      this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
+      this.rowDefs.forEach((rowDef) => this.table.addRowDef(rowDef));
     }
     if (this.headerRowDefs?.length > 0 && this.useContentHeaderRowTemplate()) {
-      this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
+      this.headerRowDefs.forEach((headerRowDef) => this.table.addHeaderRowDef(headerRowDef));
     }
     if (this.footerRowDefs?.length > 0 && this.useContentFooterRowTemplate()) {
-      this.footerRowDefs.forEach(footerRowDef => this.table.addFooterRowDef(footerRowDef));
+      this.footerRowDefs.forEach((footerRowDef) => this.table.addFooterRowDef(footerRowDef));
     }
 
     if (this.keyboardNavigation()) {
@@ -282,7 +324,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
         onFocusedChange: (index) => {
           // Cuando el índice cambia externamente, actualizar la fila enfocada
           this.focusRow(index);
-        }
+        },
       });
     }
 
@@ -302,19 +344,21 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   // Infinite Scroll
   private setupInfiniteScroll() {
     if (!this.tableContainer) return;
-    fromEvent(this.tableContainer.nativeElement, 'scroll').pipe(
-      takeUntil(this._destroy$),
-      debounceTime(200),
-      filter(() => !this.infiniteScrollDisabled() && !this.loading() && !this.isLoadingMore())
-    ).subscribe(() => {
-      const element = this.tableContainer.nativeElement;
-      const threshold = this.infiniteScrollThreshold();
-      const scrollPosition = element.scrollTop + element.clientHeight;
-      const scrollHeight = element.scrollHeight;
-      if (scrollPosition / scrollHeight >= threshold) {
-        this.loadMoreData();
-      }
-    });
+    fromEvent(this.tableContainer.nativeElement, 'scroll')
+      .pipe(
+        takeUntil(this._destroy$),
+        debounceTime(200),
+        filter(() => !this.infiniteScrollDisabled() && !this.loading() && !this.isLoadingMore()),
+      )
+      .subscribe(() => {
+        const element = this.tableContainer.nativeElement;
+        const threshold = this.infiniteScrollThreshold();
+        const scrollPosition = element.scrollTop + element.clientHeight;
+        const scrollHeight = element.scrollHeight;
+        if (scrollPosition / scrollHeight >= threshold) {
+          this.loadMoreData();
+        }
+      });
   }
 
   private loadMoreData() {
@@ -324,12 +368,9 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     setTimeout(() => this.isLoadingMore.set(false), 1000); // Prevent rapid-fire calls
   }
 
-
-
   @HostListener('document:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
-
-    if(!['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter', ' '].includes(event.key)) return;
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End', 'Enter', ' '].includes(event.key)) return;
     if (!this.keyboardNavigation() || this.hasNoResult()) return;
 
     const dataLength = this.dataSource.data.length;
@@ -387,7 +428,6 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     }
   }
 
-
   focusRow(index: number) {
     if (index < 0 || index >= this.dataSource.data.length) return;
     const row = this.dataSource.data[index];
@@ -427,7 +467,12 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     if (currentStates[index]) {
       currentStates[index].expanded = !currentStates[index].expanded;
       this.expansionRowStates.set(currentStates);
-      this.expansionChange.emit({ expanded: currentStates[index].expanded, data: row, index, column: null });
+      this.expansionChange.emit({
+        expanded: currentStates[index].expanded,
+        data: row,
+        index,
+        column: null,
+      });
     }
   }
 
@@ -452,11 +497,16 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
     this.page.emit(event);
   }
 
-  onExpansionChange(expansionRef: DataGridExpansionToggle, rowData: Record<string, any>, column: DataGridColumn, index: number) {
+  onExpansionChange(
+    expansionRef: DataGridExpansionToggle,
+    rowData: Record<string, any>,
+    column: DataGridColumn,
+    index: number,
+  ) {
     const currentStates = structuredClone(this.expansionRowStates());
 
-    if(this.closeOthersOnExpand()){
-      currentStates.forEach(item => item.expanded = false)
+    if (this.closeOthersOnExpand()) {
+      currentStates.forEach((item) => (item.expanded = false));
     }
     if (currentStates[index]) {
       currentStates[index].expanded = expansionRef.opened;
@@ -468,14 +518,18 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   // Selection Methods
   isAllSelected(): boolean {
     const numSelected = this.rowSelection.selected.length;
-    const numRows = this.dataSource.data.filter((row, index) => !this.rowSelectionFormatter().disabled?.(row, index)).length;
+    const numRows = this.dataSource.data.filter(
+      (row, index) => !this.rowSelectionFormatter().disabled?.(row, index),
+    ).length;
     return numSelected === numRows && numRows > 0;
   }
 
   toggleAllRows(): void {
-    this.isAllSelected() ? this.rowSelection.clear() : this.dataSource.data.forEach((row, index) => {
-      if (!this.rowSelectionFormatter().disabled?.(row, index)) this.rowSelection.select(row);
-    });
+    this.isAllSelected()
+      ? this.rowSelection.clear()
+      : this.dataSource.data.forEach((row, index) => {
+          if (!this.rowSelectionFormatter().disabled?.(row, index)) this.rowSelection.select(row);
+        });
     this.rowSelectedChange.emit(this.rowSelection.selected);
   }
 
@@ -495,7 +549,12 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
 
   // Row Selection
   selectRow(event: MouseEvent, rowData: Record<string, any>, index: number) {
-    if (this.rowSelectable() && !this.rowSelectionFormatter().disabled?.(rowData, index) && !this.rowSelectionFormatter().hideCheckbox?.(rowData, index) && !this.disableRowClickSelection()) {
+    if (
+      this.rowSelectable() &&
+      !this.rowSelectionFormatter().disabled?.(rowData, index) &&
+      !this.rowSelectionFormatter().hideCheckbox?.(rowData, index) &&
+      !this.disableRowClickSelection()
+    ) {
       if (!this.multiSelectionWithClick && !event.ctrlKey && !event.metaKey) {
         this.rowSelection.clear();
       }
@@ -508,7 +567,11 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   }
 
   // Cell Selection
-  selectCell(cellRef: DataGridSelectableCell, rowData: Record<string, any>, colDef: DataGridColumn): void {
+  selectCell(
+    cellRef: DataGridSelectableCell,
+    rowData: Record<string, any>,
+    colDef: DataGridColumn,
+  ): void {
     if (this._selectedCell !== cellRef) {
       const colValue = this._utils.getCellValue(rowData, colDef);
       this.cellSelection = [{ cellData: colValue, rowData, colDef }];
@@ -549,7 +612,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   // Private Helper Methods
   private updateDisplayedColumns() {
     if (this.showColumnMenuButton()) {
-      this.columns().forEach(item => {
+      this.columns().forEach((item) => {
         item.hide = this.isColumnHide(item);
         item.show = !item.hide;
       });
@@ -559,18 +622,20 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   private updateExpansionRowStates() {
     if (this.expandable()) {
       const newStates: any[] = [];
-      this.data()?.forEach(_ => newStates.push({ expanded: false }));
+      this.data()?.forEach((_) => newStates.push({ expanded: false }));
       this.expansionRowStates.set(newStates);
     }
   }
 
   private countPinnedPosition() {
     const count = (acc: number, cur: DataGridColumn) => acc + parseFloat(cur.width ?? '80px');
-    const pinnedLeftCols = this.columns().filter(col => col.pinned === 'left');
+    const pinnedLeftCols = this.columns().filter((col) => col.pinned === 'left');
     pinnedLeftCols.forEach((item, idx) => {
       item.left = pinnedLeftCols.slice(0, idx).reduce(count, 0) + 'px';
     });
-    const pinnedRightCols = this.columns().filter(col => col.pinned === 'right').reverse();
+    const pinnedRightCols = this.columns()
+      .filter((col) => col.pinned === 'right')
+      .reverse();
     pinnedRightCols.forEach((item, idx) => {
       item.right = pinnedRightCols.slice(0, idx).reduce(count, 0) + 'px';
     });

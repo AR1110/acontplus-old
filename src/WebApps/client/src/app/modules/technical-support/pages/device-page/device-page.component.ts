@@ -20,7 +20,7 @@ export class DevicePageComponent {
     const modalRef = this.modalService.open(DeviceModalComponent, {
       size: 'xl',
     });
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.child.get();
       }

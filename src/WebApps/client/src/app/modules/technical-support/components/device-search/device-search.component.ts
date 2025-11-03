@@ -49,7 +49,7 @@ export class DeviceSearchComponent implements OnInit {
 
   ngOnInit() {
     this.filteredItems = this.control.valueChanges.pipe(
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]
@@ -78,7 +78,7 @@ export class DeviceSearchComponent implements OnInit {
       data: structuredClone(this.device),
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       this.setDeviceData(response);
     });
   }

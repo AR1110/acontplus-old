@@ -66,7 +66,7 @@ export class TestTreeComponent implements OnInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         console.log(response.userCustomPermissions);
         this.treeData = response.userCustomPermissions;
 
@@ -78,7 +78,7 @@ export class TestTreeComponent implements OnInit {
 
   // Inicializa los estados y asigna nivel inicial
   initializeTreeData(nodes: TreeNode[], level = 0) {
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       node.isSelected = false;
       node.isExpanded = false;
       node.level = level;
@@ -98,7 +98,7 @@ export class TestTreeComponent implements OnInit {
 
   // Procesa recursivamente los nodos y sus hijos
   processNodeForFlatten(nodes: TreeNode[]) {
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       this.flattenedData.push(node);
 
       if (node.children && node.children.length > 0 && node.isExpanded) {
@@ -139,7 +139,7 @@ export class TestTreeComponent implements OnInit {
 
   // Actualiza recursivamente el estado de selección de los hijos
   setChildrenSelection(children: TreeNode[], isSelected: boolean) {
-    children.forEach(child => {
+    children.forEach((child) => {
       child.isSelected = isSelected;
       if (child.children && child.children.length > 0) {
         this.setChildrenSelection(child.children, isSelected);
@@ -156,7 +156,7 @@ export class TestTreeComponent implements OnInit {
   checkNodeChildrenSelection(nodes: TreeNode[]): boolean {
     let allSelected = true;
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (node.children && node.children.length > 0) {
         const childrenSelected = this.checkNodeChildrenSelection(node.children);
 

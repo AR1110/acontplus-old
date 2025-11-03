@@ -1,8 +1,15 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="modalTitle" (close)="onClose()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="modalTitle"
+  (close)="onClose()"
+/>
 <ng-template #body>
   <form (ngSubmit)="onSave()" id="medicalHistoryForm" [formGroup]="medicalHistoryForm">
     <div class="vstack gap-2">
-      <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2">
+      <div
+        class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento </mat-label>
@@ -180,7 +187,12 @@
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <div class="form-group">
           <label for="observations">Corte y Estilo</label>
-          <textarea class="form-control" formControlName="observations" id="observations" required></textarea>
+          <textarea
+            class="form-control"
+            formControlName="observations"
+            id="observations"
+            required
+          ></textarea>
         </div>
       </div>
       <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
@@ -216,11 +228,12 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button [disabled]="medicalHistoryForm.invalid"
+  <app-theme-button
+    [disabled]="medicalHistoryForm.invalid"
     variant="success"
     icon="save"
     text="Guardar"
     type="submit"
     form="medicalHistoryForm"
-   />
+  />
 </ng-template>

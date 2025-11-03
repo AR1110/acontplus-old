@@ -1,6 +1,12 @@
 @if (showHeader()) {
   <div class="m3-dialog-header">
-    <h6 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle (mousedown)="toTop(unique)">
+    <h6
+      mat-dialog-title
+      cdkDrag
+      cdkDragRootElement=".cdk-overlay-pane"
+      cdkDragHandle
+      (mousedown)="toTop(unique)"
+    >
       @if (icon()) {
         <mat-icon aria-hidden="false" aria-label="Dialog Icon" fontIcon="{{ icon() }}" />
       }

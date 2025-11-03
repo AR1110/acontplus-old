@@ -112,12 +112,12 @@ export class TourService {
 
   private removeHighlights(): void {
     // Remove previous highlights
-    document.querySelectorAll('.tour-highlight').forEach(el => {
+    document.querySelectorAll('.tour-highlight').forEach((el) => {
       el.classList.remove('tour-highlight');
     });
 
     // Remove spotlight and cutout
-    document.querySelectorAll('.tour-spotlight, .tour-cutout').forEach(el => {
+    document.querySelectorAll('.tour-spotlight, .tour-cutout').forEach((el) => {
       el.remove();
     });
   }

@@ -17,7 +17,13 @@
 
       <mat-form-field class="w-100">
         <mat-label>Descripción</mat-label>
-        <input matInput (keyup)="setCode()" [maxlength]="50" [minlength]="1" formControlName="description" />
+        <input
+          matInput
+          (keyup)="setCode()"
+          [maxlength]="50"
+          [minlength]="1"
+          formControlName="description"
+        />
       </mat-form-field>
 
       <mat-form-field class="w-100">

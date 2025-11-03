@@ -125,7 +125,7 @@ export class GuiaRemision {
       throw new Error('Solo se pueden quitar ítems de guías en estado BORRADOR');
     }
 
-    const indice = this.items.findIndex(item => item.getId()?.equals(itemId));
+    const indice = this.items.findIndex((item) => item.getId()?.equals(itemId));
     if (indice === -1) {
       throw new Error('El ítem no existe en la guía');
     }
@@ -224,7 +224,7 @@ export class GuiaRemision {
       direccionPartida: this.direccionPartida.toPlainObject(),
       direccionLlegada: this.direccionLlegada.toPlainObject(),
       transportista: this.transportista.toPlainObject(),
-      items: this.items.map(item => item.toPlainObject()),
+      items: this.items.map((item) => item.toPlainObject()),
       motivoTraslado: this.motivoTraslado,
       observaciones: this.observaciones,
       documentosReferencia: this.documentosReferencia,

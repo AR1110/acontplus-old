@@ -35,11 +35,20 @@
     <ng-container matSuffix>
       @if (isHandset()) {
         <!-- Mobile layout - menu button -->
-        <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()" aria-label="actions">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          (click)="$event.stopPropagation()"
+          aria-label="actions"
+        >
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item appCompanyCustomerAddEdit (companyCustomerSaved)="onSelectionChange($event)">
+          <button
+            mat-menu-item
+            appCompanyCustomerAddEdit
+            (companyCustomerSaved)="onSelectionChange($event)"
+          >
             <mat-icon>add</mat-icon>
             <span>Nuevo</span>
           </button>
@@ -61,7 +70,11 @@
         </mat-menu>
       } @else {
         <!-- Desktop layout - icon buttons -->
-        <button mat-icon-button appCompanyCustomerAddEdit (companyCustomerSaved)="onSelectionChange($event)">
+        <button
+          mat-icon-button
+          appCompanyCustomerAddEdit
+          (companyCustomerSaved)="onSelectionChange($event)"
+        >
           <mat-icon>add</mat-icon>
         </button>
 

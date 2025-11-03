@@ -14,13 +14,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 
 @Component({
   selector: 'app-brand-page',
-  imports: [
-    BreadcrumbComponent,
-    MatButton,
-    MatIcon,
-    ThemeButtonComponent,
-    MatDynamicCardComponent,
-  ],
+  imports: [BreadcrumbComponent, MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
   templateUrl: './brand-page.component.html',
   styles: ``,
 })
@@ -44,7 +38,7 @@ export class BrandPageComponent implements OnInit {
   }
   onGet() {
     this.brandService.get({ tipo: 1 }).subscribe({
-      next: response => {
+      next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
             this.brands.set(JSON.parse(response.payload as string));
@@ -63,7 +57,7 @@ export class BrandPageComponent implements OnInit {
       data: this.brandSelected.id > 0 ? structuredClone(this.brandSelected) : {},
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (this.brandSelected.id > 0) {
         this.brandSelected = {} as Brand;
       }

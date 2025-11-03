@@ -371,7 +371,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.notifySubscription = this.settings.notify.subscribe(opts => {
+    this.notifySubscription = this.settings.notify.subscribe((opts) => {
       this.updateCharts();
     });
   }
@@ -380,7 +380,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     this.ngZone.runOutsideAngular(() => this.initCharts());
 
     const apexStyles = document.querySelectorAll('style[id^="apexcharts"]');
-    apexStyles.forEach(s => s.remove());
+    apexStyles.forEach((s) => s.remove());
   }
 
   ngOnDestroy() {

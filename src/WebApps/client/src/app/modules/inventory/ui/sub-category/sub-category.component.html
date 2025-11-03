@@ -46,7 +46,12 @@
           <th mat-header-cell *matHeaderCellDef>Op.</th>
           <td mat-cell *matCellDef="let row">
             <div class="d-flex flex-row gap-1">
-              <button mat-icon-button appSubCategory [params]="row" (onResult)="onResultModal($event)">
+              <button
+                mat-icon-button
+                appSubCategory
+                [params]="row"
+                (onResult)="onResultModal($event)"
+              >
                 <mat-icon>edit</mat-icon>
               </button>
               <button mat-icon-button (click)="askToUpdateStatus(row)">

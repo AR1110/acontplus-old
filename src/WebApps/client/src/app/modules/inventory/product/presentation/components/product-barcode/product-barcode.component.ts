@@ -79,7 +79,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
     { key: 'nomMedida', label: 'Medida', type: 'string' },
     { key: 'color', label: 'Color', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   productBarCodeId = 0;
 
@@ -97,7 +97,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.colorTemplate;
       }
@@ -109,7 +109,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
     this.$productGetIdUseCase
       .execute(this.productId())
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource = response.productBarcodes || [];
       });
   }
@@ -131,7 +131,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   refreshMedida($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidasArray.set(response.medidas);
       });
     } catch (error) {
@@ -150,7 +150,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
 
   clear() {
     this.productBarCodeId = 0;
-    this.data.update(item => {
+    this.data.update((item) => {
       return {
         ...item,
         color: null,

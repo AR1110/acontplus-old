@@ -8,15 +8,15 @@ export const restaurantConfigDataResolver: ResolveFn<any> = (route, state) => {
 
   const mainData = inject(RestaurantConfigService).getMainData();
 
-  mainData.subscribe(response => {
-    const dataEstab = response.estabs.find(e => e.defaultEstab);
+  mainData.subscribe((response) => {
+    const dataEstab = response.estabs.find((e) => e.defaultEstab);
 
     if (dataEstab) {
       const puntosEmision = dataEstab.puntosEmision;
       const bodegas = dataEstab.bodegas;
-      const dataPuntoEmision = puntosEmision.find(p => p.defaultPtoEmi);
-      const dataBodega = bodegas.find(p => p.defaultBodega);
-      posStoreSvc.state.update(e => {
+      const dataPuntoEmision = puntosEmision.find((p) => p.defaultPtoEmi);
+      const dataBodega = bodegas.find((p) => p.defaultBodega);
+      posStoreSvc.state.update((e) => {
         return {
           ...e,
           dataEstab: dataEstab,

@@ -6,7 +6,10 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Transacción</mat-label>
-          <mat-select (selectionChange)="onChangeTypeTransaccion()" [(ngModel)]="dataSearch.idTipoTransaccion">
+          <mat-select
+            (selectionChange)="onChangeTypeTransaccion()"
+            [(ngModel)]="dataSearch.idTipoTransaccion"
+          >
             <mat-option [value]="0">Todos</mat-option>
 
             @for (item of transactionTypes(); track $index) {
@@ -16,7 +19,10 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
       @if (isPurchase) {
         <div class="col">
@@ -35,8 +41,18 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="reportPdf()" />
-      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="reportExcel()" />
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="reportPdf()"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="reportExcel()"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

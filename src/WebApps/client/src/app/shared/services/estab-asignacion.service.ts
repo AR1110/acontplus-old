@@ -16,10 +16,10 @@ export class EstabAsignacionService {
       tipo: 1,
     });
     return this.http.get(`${this.url}?json=${params}`).pipe(
-      map(response => {
+      map((response) => {
         let estabs: EstablecimientoSelectHtmlOnly[] = [];
         if (Array.isArray(response)) {
-          estabs = response.map(item => {
+          estabs = response.map((item) => {
             return {
               idEstablecimiento: item.idEstablecimiento,
               codEstab: item.codEstab,

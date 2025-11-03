@@ -4,13 +4,17 @@
   <div class="d-flex flex-column gap-2">
     <div class="row">
       <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
-        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+        >
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Establecimiento</mat-label>
               <mat-select [(ngModel)]="dataSearch.estabId" (selectionChange)="onEstabChange()">
                 @for (item of estabs(); track $index) {
-                  <mat-option [value]="item.idEstablecimiento">{{ item.nombreComercial }}</mat-option>
+                  <mat-option [value]="item.idEstablecimiento">{{
+                    item.nombreComercial
+                  }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>
@@ -39,9 +43,7 @@
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
           <button
-            *hasPermission="
-            action_aliases().CREATE;
-            context: sale_modules_code().PROFORMA_INVOICE"
+            *hasPermission="action_aliases().CREATE; context: sale_modules_code().PROFORMA_INVOICE"
             mat-icon-button
             (click)="openAddEditDialog('add')"
           >
@@ -64,15 +66,16 @@
           <mat-checkbox [(ngModel)]="dataSearch.esBuscarUsuario">Usuario</mat-checkbox>
           <mat-checkbox [(ngModel)]="dataSearch.esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
         </div>
-        <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1">
+        <div
+          class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+        >
           @if (dataSearch.esBuscarCliente) {
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Cliente</mat-label>
-              <input matInput />
-            </mat-form-field>
-          </div>
-
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Cliente</mat-label>
+                <input matInput />
+              </mat-form-field>
+            </div>
           }
           <div class="col">
             <mat-form-field class="w-100">
@@ -87,15 +90,15 @@
             </mat-form-field>
           </div>
           <div class="col">
-<!--            <mat-form-field class="w-100">-->
-<!--              <mat-label>Estado</mat-label>-->
-<!--              <mat-select [(ngModel)]="dataSearch.idEstadoDoc" (selectionChange)="refresh()">-->
-<!--                <mat-option [value]="0">Todos</mat-option>-->
-<!--                @for (item of estadosDoc; track $index) {-->
-<!--                  <mat-option [value]="item.idEstadoPago">{{ item.descripcion }}</mat-option>-->
-<!--                }-->
-<!--              </mat-select>-->
-<!--            </mat-form-field>-->
+            <!--            <mat-form-field class="w-100">-->
+            <!--              <mat-label>Estado</mat-label>-->
+            <!--              <mat-select [(ngModel)]="dataSearch.idEstadoDoc" (selectionChange)="refresh()">-->
+            <!--                <mat-option [value]="0">Todos</mat-option>-->
+            <!--                @for (item of estadosDoc; track $index) {-->
+            <!--                  <mat-option [value]="item.idEstadoPago">{{ item.descripcion }}</mat-option>-->
+            <!--                }-->
+            <!--              </mat-select>-->
+            <!--            </mat-form-field>-->
           </div>
         </div>
       </div>
@@ -103,14 +106,15 @@
   </div>
 </ng-template>
 
-<app-data-grid [showToolbar]="true"
+<app-data-grid
+  [showToolbar]="true"
   [toolbarTemplate]="toolbarTpl"
   [data]="list()"
   [columns]="columns"
   [cellTemplate]="{
-  document: documentTpl,
-         client: clientTpl,
-         actions: actionsTpl
+    document: documentTpl,
+    client: clientTpl,
+    actions: actionsTpl,
   }"
   [length]="pagination().totalRecords"
   [loading]="isLoading()"
@@ -119,12 +123,13 @@
   [pageSize]="pagination().pageSize"
   [pageSizeOptions]="pagination().pageSizeOptions"
   (page)="getNextPage($event)"
- />
+/>
 
 <ng-template #documentTpl let-row>
   <div class="doc-cell">
-    <div class="code-name">{{ row.codDoc }} - <span class="series">{{ row.nroDoc }}</span></div>
-
+    <div class="code-name">
+      {{ row.codDoc }} - <span class="series">{{ row.nroDoc }}</span>
+    </div>
   </div>
 </ng-template>
 
@@ -171,8 +176,6 @@
         <mat-icon>download</mat-icon>
         <span>Pdf</span>
       </button>
-
-
     </mat-menu>
 
     <button mat-icon-button aria-label="Icon Email">
@@ -185,6 +188,5 @@
         style="width: 24px; height: 24px"
       />
     </button>
-
   </div>
 </ng-template>

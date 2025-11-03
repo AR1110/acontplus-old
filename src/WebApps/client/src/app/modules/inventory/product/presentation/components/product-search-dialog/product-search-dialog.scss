@@ -7,7 +7,6 @@
   border-radius: 10px;
 }
 
-
 .footer {
   display: flex;
   justify-content: flex-end;
@@ -15,7 +14,6 @@
   padding: 6px 2px;
   align-items: center;
 }
-
 
 :host ::ng-deep .label {
   padding: 5px 10px;
@@ -25,4 +23,3 @@
 :host ::ng-deep .data-grid {
   height: 400px;
 }
-

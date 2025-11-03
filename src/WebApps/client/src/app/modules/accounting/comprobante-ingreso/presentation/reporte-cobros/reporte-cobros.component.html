@@ -88,7 +88,10 @@
       </div>
       @if (dataSearch.dateChecked) {
         <div class="col">
-          <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+          <app-date-range-selection
+            [showInputMaterial]="true"
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
         </div>
       }
       @if (dataSearch.supplierChecked) {
@@ -134,13 +137,11 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Usuario:</mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.userId"
-          >
+          <mat-select [(ngModel)]="dataSearch.userId">
             <mat-option [value]="0">Todos</mat-option>
 
             @for (item of users(); track $index) {
-              <mat-option [value]="item.idUsuario">{{item.nombreUsuario}}</mat-option>
+              <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
@@ -148,8 +149,18 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="PDF" (click)="getReport('pdf')" />
-      <app-theme-button variant="success" icon="download" text="EXCEL" (handleClick)="getReport('excel')" />
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="PDF"
+        (click)="getReport('pdf')"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="EXCEL"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

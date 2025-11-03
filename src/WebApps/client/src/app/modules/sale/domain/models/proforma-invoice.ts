@@ -18,13 +18,11 @@ export class ProformaInvoiceListResult {
   }
 }
 
-
-
 export interface ProformaInvoiceDetail {
   header: {
     estabName: string;
     serieComprobante: string;
-    issueDate: string;          // fechaEmision
+    issueDate: string; // fechaEmision
     subTotalWithoutTaxes: number;
     totalDiscount: number;
     discountPercentage: number;
@@ -35,36 +33,36 @@ export interface ProformaInvoiceDetail {
     observation: string;
   };
   customer: {
-    businessName: string
-    IDCard: string
-    address: string
-    email: string
+    businessName: string;
+    IDCard: string;
+    address: string;
+    email: string;
   };
   details: {
-    detailId: number;           // idProformaDetalle
-    code: string;               // codigo
+    detailId: number; // idProformaDetalle
+    code: string; // codigo
     description: string;
     quantity: number;
-    unitMeasure: string;        // medida
-    taxType: string;            // tipoIva
-    priceLevel: string;         // pvp
+    unitMeasure: string; // medida
+    taxType: string; // tipoIva
+    priceLevel: string; // pvp
     unitPrice: number;
     totalWithoutTax: number;
     note: string;
-    warehouse: string;          // bodega
+    warehouse: string; // bodega
     taxValue: number;
     discountValue: number;
     discountPercentage: number;
     ice: number;
-    taxCode: string;            // codigoPorcentaje
-    rate: number;               // tarifa
+    taxCode: string; // codigoPorcentaje
+    rate: number; // tarifa
   }[];
   taxes: {
     taxTypeId: number;
     taxId: number;
     description: string;
-    rate: number;               // porcentaje
-    taxCode: string;            // codigoPorcentaje
+    rate: number; // porcentaje
+    taxCode: string; // codigoPorcentaje
   }[];
-  additionalsInfo: any[]
+  additionalsInfo: any[];
 }

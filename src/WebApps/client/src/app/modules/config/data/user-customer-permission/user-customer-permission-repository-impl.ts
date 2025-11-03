@@ -25,7 +25,7 @@ export class UserCustomerPermissionRepositoryImpl implements UserCustomerPermiss
     const json = JSON.stringify(ListUserCustomerPermissionMapper.toJson(parameters));
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => ListUserCustomerPermissionMapper.fromJson(response)));
+      .pipe(map((response) => ListUserCustomerPermissionMapper.fromJson(response)));
   }
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_PERMISSION}`;
   private _http = inject(HttpClient);

@@ -20,9 +20,9 @@ import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-
 
 import { MatPagination } from '@shared/models/pagination.model';
 import { finalize, switchMap } from 'rxjs';
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
-import {DocElectList} from "@billing/domain/models/documento-electronico.model";
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn } from '@shared/components/data-grid/types';
+import { DocElectList } from '@billing/domain/models/documento-electronico.model';
 
 @Component({
   selector: 'app-doc-elect',
@@ -41,12 +41,7 @@ import {DocElectList} from "@billing/domain/models/documento-electronico.model";
     DataGrid,
   ],
   templateUrl: './doc-elect.html',
-  styles: `
-
-
-
-
-  `,
+  styles: ``,
 })
 export class DocElect implements OnInit {
   private docElectSvc = inject(DocElectHttpRepository);
@@ -62,7 +57,7 @@ export class DocElect implements OnInit {
 
   pagination = signal(new MatPagination());
 
-  dataSearch =  {
+  dataSearch = {
     codEstab: null as string | null | undefined,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
@@ -82,7 +77,7 @@ export class DocElect implements OnInit {
     { header: 'Fecha de emisión y autorización', field: 'dates' },
     { header: 'Versión', field: 'version' },
     { header: 'Estado', field: 'statusName' },
-    { header: 'Usuario', field: 'user' }
+    { header: 'Usuario', field: 'user' },
   ];
   list = signal<DocElectList[]>([]);
   refresh() {
@@ -90,7 +85,7 @@ export class DocElect implements OnInit {
   }
 
   private getDataParams() {
-    return  {
+    return {
       codDoc: isValidField(this.dataSearch.codDoc),
       codEstado: isValidField(this.dataSearch.codEstado),
       checkBoxDate: this.dataSearch.checkBoxDate,
@@ -108,7 +103,7 @@ export class DocElect implements OnInit {
 
   private successResponseList(response: any) {
     this.list.set(response.data);
-    this.pagination.update(p => ({
+    this.pagination.update((p) => ({
       ...p,
       totalRecords: response.totalRecords,
     }));
@@ -125,7 +120,7 @@ export class DocElect implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         this.successResponseList(response);
       });
   }
@@ -135,17 +130,17 @@ export class DocElect implements OnInit {
     this.docElectSvc
       .getFilters()
       .pipe(
-        switchMap(initialData => {
+        switchMap((initialData) => {
           this.estabs.set(initialData.estabs);
           this.tiposDoc.set(initialData.tipoDocumentos);
           this.estadosDoc.set(initialData.estadoDocumentos);
 
           if (this.estabs().length > 0) {
-            const dataEstab = this.estabs().find(estab => estab.defaultEstab);
-            this.puntosEmision.set(dataEstab?.puntosEmision || [])
+            const dataEstab = this.estabs().find((estab) => estab.defaultEstab);
+            this.puntosEmision.set(dataEstab?.puntosEmision || []);
             this.dataSearch.codEstab = dataEstab?.codEstab || '';
-            this.dataSearch.idPuntoEmision = this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0;
-
+            this.dataSearch.idPuntoEmision =
+              this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0;
           }
           return this.docElectSvc.getAll(this.getDataParams());
         }),
@@ -155,14 +150,14 @@ export class DocElect implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         this.successResponseList(response);
       });
   }
 
   setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
-    value: typeof this.dataSearch[K],
+    value: (typeof this.dataSearch)[K],
   ) {
     this.dataSearch = {
       ...this.dataSearch,
@@ -171,13 +166,13 @@ export class DocElect implements OnInit {
   }
 
   onEstabChange() {
-    const dataEstab = this.estabs().find(estab => estab.codEstab === this.dataSearch.codEstab);
+    const dataEstab = this.estabs().find((estab) => estab.codEstab === this.dataSearch.codEstab);
     this.puntosEmision.set(dataEstab?.puntosEmision || []);
 
     if (this.puntosEmision().length > 0) {
       this.setDataSearch(
         'idPuntoEmision',
-        this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+        this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0,
       );
       this.getDocElects();
     } else {
@@ -195,7 +190,7 @@ export class DocElect implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -205,6 +200,4 @@ export class DocElect implements OnInit {
     });
     this.refresh();
   }
-
-
 }

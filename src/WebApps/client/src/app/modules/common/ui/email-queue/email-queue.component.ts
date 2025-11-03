@@ -94,7 +94,7 @@ export class EmailQueueComponent {
         ...this.emailForm.value,
       };
       console.log('Email Queue Data:', formData);
-      this._emailQueueUseCase.send(formData).subscribe(response => {
+      this._emailQueueUseCase.send(formData).subscribe((response) => {
         this._snackBar.open('Email queued successfully!', 'Close', {
           duration: 3000,
         });

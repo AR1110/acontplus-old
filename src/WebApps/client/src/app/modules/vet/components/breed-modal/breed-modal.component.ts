@@ -35,7 +35,7 @@ export class BreedModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   loadPetTypes() {
-    this.petTypeService.get({}).subscribe(response => {
+    this.petTypeService.get({}).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         this.petTypes.set(response.payload as PetType[]);
       }
@@ -61,7 +61,7 @@ export class BreedModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.breedService.put(this.data.id, dataToSave).subscribe(response => {
+      this.breedService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -73,7 +73,7 @@ export class BreedModalComponent implements OnInit {
         }
       });
     } else {
-      this.breedService.post(dataToSave).subscribe(response => {
+      this.breedService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',

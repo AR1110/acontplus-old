@@ -21,7 +21,8 @@
     </mat-card-title-group>
   </mat-card-header>
   <mat-card-content>
-    <app-mat-dynamic-table [isLoadingData]="isLoadingResults()"
+    <app-mat-dynamic-table
+      [isLoadingData]="isLoadingResults()"
       [tableData]="dataSource.data"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
@@ -29,7 +30,7 @@
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
       [templateOp]="templateOp"
-     />
+    />
 
     <ng-template #templateOp let-item="item">
       <button mat-icon-button appModelAddEdit [params]="item" (onResult)="refresh()">

@@ -15,7 +15,7 @@ interface MainAdapt {
 
 export class InvoiceAdapter {
   static fromApiAll(response: any[]) {
-    return response.map(item => {
+    return response.map((item) => {
       return {
         idCuentaPorCobrar: item.idCuentaPorCobrar,
         idDocumentoElectronico: item.idDocumentoElectronico,
@@ -106,7 +106,7 @@ export class InvoiceAdapter {
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    const infoAdicionalDoc = input.infoAdicionalDoc.map(item => {
+    const infoAdicionalDoc = input.infoAdicionalDoc.map((item) => {
       return {
         nombre: item.name,
         valor: item.value,

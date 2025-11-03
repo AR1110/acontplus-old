@@ -56,17 +56,30 @@
             <ul class="item-list scrollable-list" #historyListElement>
               @for (item of historyList(); track $index) {
                 <li class="list-item history-item">
-                  <div class="item-content" [class.selected]="$index === selectedIndex()" (click)="selectItem(item)">
+                  <div
+                    class="item-content"
+                    [class.selected]="$index === selectedIndex()"
+                    (click)="selectItem(item)"
+                  >
                     <mat-icon class="history-icon">history</mat-icon>
                     <div class="item-details">
-                      <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
-                       />
+                      <ng-container
+                        *ngTemplateOutlet="
+                          itemTemplate || defaultItemTemplate;
+                          context: { $implicit: item }
+                        "
+                      />
                     </div>
                   </div>
                   <!--                  <button class="remove-btn" (click)="removeHistoryItem($index, $event)">-->
                   <!--                    <mat-icon>close</mat-icon>-->
                   <!--                  </button>-->
-                  <button type="button" mat-icon-button class="remove-btn" (click)="removeHistoryItem($index, $event)">
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="remove-btn"
+                    (click)="removeHistoryItem($index, $event)"
+                  >
                     <mat-icon>close</mat-icon>
                   </button>
                 </li>
@@ -89,7 +102,11 @@
                     @if (config.searchFields && config.searchFields.length > 1) {
                       <div class="filter-group">
                         <label class="filter-label">Buscar por:</label>
-                        <select class="filter-select" [(ngModel)]="filters.searchBy" (change)="onFilterChange()">
+                        <select
+                          class="filter-select"
+                          [(ngModel)]="filters.searchBy"
+                          (change)="onFilterChange()"
+                        >
                           @for (field of config.searchFields; track $index) {
                             <option [value]="field.value">{{ field.label }}</option>
                           }
@@ -100,7 +117,11 @@
                     @if (config.enableStockFilter && config.stockOptions) {
                       <div class="filter-group">
                         <label class="filter-label">Stock:</label>
-                        <select class="filter-select" [(ngModel)]="filters.stockFilter" (change)="onFilterChange()">
+                        <select
+                          class="filter-select"
+                          [(ngModel)]="filters.stockFilter"
+                          (change)="onFilterChange()"
+                        >
                           @for (option of config.stockOptions; track $index) {
                             <option [value]="option.value">{{ option.label }}</option>
                           }
@@ -117,10 +138,18 @@
                       <span>Página {{ currentPage() }} de {{ totalPages() }}</span>
                     </div>
                     <div class="pagination-controls">
-                      <button class="pagination-btn" (click)="goToFirstPage()" [disabled]="currentPage() === 1">
+                      <button
+                        class="pagination-btn"
+                        (click)="goToFirstPage()"
+                        [disabled]="currentPage() === 1"
+                      >
                         <mat-icon>first_page</mat-icon>
                       </button>
-                      <button class="pagination-btn" (click)="goToPreviousPage()" [disabled]="currentPage() === 1">
+                      <button
+                        class="pagination-btn"
+                        (click)="goToPreviousPage()"
+                        [disabled]="currentPage() === 1"
+                      >
                         <mat-icon>chevron_left</mat-icon>
                       </button>
                       <input
@@ -160,10 +189,18 @@
               <ul class="item-list scrollable-list" #resultsListElement>
                 @for (item of currentPageItems(); track $index) {
                   <li class="list-item result-item">
-                    <div class="item-content" [class.selected]="$index === selectedIndex()" (click)="selectItem(item)">
+                    <div
+                      class="item-content"
+                      [class.selected]="$index === selectedIndex()"
+                      (click)="selectItem(item)"
+                    >
                       <div class="item-info">
-                        <ng-container *ngTemplateOutlet="itemTemplate || defaultItemTemplate; context: { $implicit: item }"
-                         />
+                        <ng-container
+                          *ngTemplateOutlet="
+                            itemTemplate || defaultItemTemplate;
+                            context: { $implicit: item }
+                          "
+                        />
                       </div>
                     </div>
                   </li>
@@ -178,8 +215,12 @@
           <div class="no-results">
             <mat-icon class="no-results-icon">search_off</mat-icon>
             <div class="no-results-content">
-              <ng-container *ngTemplateOutlet="notFoundTemplate || defaultNotFoundTemplate; context: { $implicit: noResultsText() }"
-               />
+              <ng-container
+                *ngTemplateOutlet="
+                  notFoundTemplate || defaultNotFoundTemplate;
+                  context: { $implicit: noResultsText() }
+                "
+              />
             </div>
           </div>
         }
@@ -193,11 +234,19 @@
                   Mostrando {{ startItem() }}-{{ endItem() }} de {{ totalCount() }} resultados
                 </div>
                 <div class="pagination-controls-footer">
-                  <button class="pagination-btn" (click)="goToPreviousPage()" [disabled]="currentPage() === 1">
+                  <button
+                    class="pagination-btn"
+                    (click)="goToPreviousPage()"
+                    [disabled]="currentPage() === 1"
+                  >
                     <mat-icon>chevron_left</mat-icon>
                   </button>
                   <span class="page-indicator">{{ currentPage() }} / {{ totalPages() }}</span>
-                  <button class="pagination-btn" (click)="goToNextPage()" [disabled]="currentPage() === totalPages()">
+                  <button
+                    class="pagination-btn"
+                    (click)="goToNextPage()"
+                    [disabled]="currentPage() === totalPages()"
+                  >
                     <mat-icon>chevron_right</mat-icon>
                   </button>
                 </div>

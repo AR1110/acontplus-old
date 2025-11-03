@@ -44,7 +44,7 @@ export class ElectronicSignatureRepoImpl implements ElectronicSignatureRepositor
     const json = JSON.stringify({ tipo: 1 });
     return this._http
       .get<ApiResponse>(`${this._url}/Get?json=${json}`)
-      .pipe(map(response => ListElectronicSignatureMapper.fromJson(response)));
+      .pipe(map((response) => ListElectronicSignatureMapper.fromJson(response)));
   }
 
   save(signature: ElectronicSignatureParam): Observable<ApiResponse> {

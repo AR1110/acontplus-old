@@ -16,24 +16,24 @@ export class RoomWebService implements RoomRepository {
   get<T>(params: T) {
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${JSON.stringify({ params })}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   getByEstab(establecimientoId: number) {
     return this.#http
       .get<ApiResponse>(`${this.#url}GetByEstab/${establecimientoId}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data).pipe(map(response => response));
+    return this.#http.post<ApiResponse>(`${this.#url}`, data).pipe(map((response) => response));
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map(response => response));
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map((response) => response));
   }
 
   remove(id: number) {
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`).pipe(map(response => response));
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`).pipe(map((response) => response));
   }
 }

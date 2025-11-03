@@ -30,7 +30,7 @@ export class IngredientListComponent implements OnInit {
     { key: 'unit', label: 'Unidad', type: 'string' },
     { key: 'content', label: 'Contenido', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   pagination = signal(new MatPagination());
 
   dataSource = signal<Ingredient[]>([]);
@@ -41,7 +41,7 @@ export class IngredientListComponent implements OnInit {
       pageSize: this.pagination().pageSize,
       tipo: 1,
     };
-    this.#ingredientService.get(obj).subscribe(response => {
+    this.#ingredientService.get(obj).subscribe((response) => {
       this.dataSource.set(
         (response.ingredients || []).map((item: any, index: number) => ({
           ...item,
@@ -49,7 +49,7 @@ export class IngredientListComponent implements OnInit {
         })),
       );
 
-      this.pagination.update(e => {
+      this.pagination.update((e) => {
         return {
           ...e,
           totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
@@ -71,7 +71,7 @@ export class IngredientListComponent implements OnInit {
       size: 'lg',
       data: structuredClone(item),
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (typeof result === 'object' && result.code === '1') {
         this.loadData();
       }
@@ -79,7 +79,7 @@ export class IngredientListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

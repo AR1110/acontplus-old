@@ -8,11 +8,16 @@
 
 <ng-template #containerTemplate>
   <div class="d-flex flex-column gap-2">
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tiempo Credito</mat-label>
-          <mat-select [(ngModel)]="dataForm().tiempoCreditoId" (selectionChange)="onChangeTiempoCredito()">
+          <mat-select
+            [(ngModel)]="dataForm().tiempoCreditoId"
+            (selectionChange)="onChangeTiempoCredito()"
+          >
             @for (item of tiemposCredito(); track $index) {
               <mat-option [value]="item.idTiempoCredito">{{ item.descripcion }} </mat-option>
             }
@@ -25,7 +30,12 @@
         <!--                            [showMaskTyped]="true"-->
         <mat-form-field class="w-100">
           <mat-label>Configurar fecha:</mat-label>
-          <input matInput [formControl]="configDate" [matDatepicker]="picker" placeholder="MM/DD/YYYY" />
+          <input
+            matInput
+            [formControl]="configDate"
+            [matDatepicker]="picker"
+            placeholder="MM/DD/YYYY"
+          />
           <mat-hint>DD/MM/YYYY</mat-hint>
           <ng-container matSuffix>
             <mat-datepicker-toggle [for]="picker" />
@@ -77,11 +87,21 @@
             />
 
             @if (element.nroCuota === 0) {
-              <button type="button" mat-icon-button matSuffix (click)="calcularValorEntrada($event, element.cuota)">
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="calcularValorEntrada($event, element.cuota)"
+              >
                 <mat-icon matSuffix>refresh</mat-icon>
               </button>
             } @else {
-              <button type="button" mat-icon-button matSuffix (click)="calcularValorCuota($event, element)">
+              <button
+                type="button"
+                mat-icon-button
+                matSuffix
+                (click)="calcularValorCuota($event, element)"
+              >
                 <mat-icon matSuffix>refresh</mat-icon>
               </button>
             }
@@ -99,7 +119,12 @@
         <th mat-header-cell *matHeaderCellDef>Fecha Vencimiento</th>
         <td mat-cell *matCellDef="let element">
           <mat-form-field>
-            <input matInput [matDatepicker]="picker" placeholder="DD/MM/YYYY" [value]="element.fechaVencimiento" />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              placeholder="DD/MM/YYYY"
+              [value]="element.fechaVencimiento"
+            />
             <mat-datepicker-toggle matSuffix [for]="picker" />
             <mat-datepicker #picker />
           </mat-form-field>

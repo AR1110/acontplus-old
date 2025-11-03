@@ -6,36 +6,35 @@ import { MatIconButton } from '@angular/material/button';
 import {
   WarehouseTransferGetByIdUseCase,
   WarehouseTransferUpdateStatusUseCase,
-  WarehouseTransferUseCase
+  WarehouseTransferUseCase,
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import { MatPagination } from '@shared/models/pagination.model';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
-import {getValidId, isValidField, ValidatorUtils} from '@core/utils/utils';
+import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { finalize } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import {MatInput} from "@angular/material/input";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {DialogService} from "@core/services/dialog.service";
+import { MatInput } from '@angular/material/input';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { DialogService } from '@core/services/dialog.service';
+import { WarehouseTransferAddEdit } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit';
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn, DataGridRowClassFormatter } from '@shared/components/data-grid/types';
 import {
-  WarehouseTransferAddEdit
-} from "@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit";
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn, DataGridRowClassFormatter} from "@shared/components/data-grid/types";
-import {INVENTORY_CODE_REPORT, INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
-import {ACTION_ALIASES} from "@core/constants/permission-actions";
-import {HasPermissionDirective} from "@core/directives/permission";
-import {usePermissions} from "@core/composables/use-permissions";
-import {
-  WarehouseTransferDetail
-} from "@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail";
-import Swal from "sweetalert2";
-import {GenerateReportUseCase} from "@modules/api/reports/application/generate-report.use-case";
-import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
+  INVENTORY_CODE_REPORT,
+  INVENTORY_MODULES_CODE,
+} from '@inventory/domain/enums/inventory.enum';
+import { ACTION_ALIASES } from '@core/constants/permission-actions';
+import { HasPermissionDirective } from '@core/directives/permission';
+import { usePermissions } from '@core/composables/use-permissions';
+import { WarehouseTransferDetail } from '@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail';
+import Swal from 'sweetalert2';
+import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
+import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 
 @Component({
   selector: 'app-warehouse-transfer',
@@ -50,7 +49,7 @@ import {ReportParamsBuilder} from "@shared/utils/report-params.builder";
     FormsModule,
     MatInput,
     DataGrid,
-    HasPermissionDirective
+    HasPermissionDirective,
   ],
   templateUrl: './warehouse-transfer.html',
   styleUrl: './warehouse-transfer.scss',
@@ -61,15 +60,15 @@ export class WarehouseTransfer implements OnInit {
   action_aliases = signal(ACTION_ALIASES);
   public perms = usePermissions(this.inventory_modules_code().WAREHOUSE_TRANSFER);
   private _useCase = inject(WarehouseTransferUseCase);
-  private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase)
+  private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase);
   private _updateStatusUseCase = inject(WarehouseTransferUpdateStatusUseCase);
   private _reportUseCase = inject(GenerateReportUseCase);
-  private noti = inject(ToastrNotificationService)
-  private dgSvc = inject(DialogService)
+  private noti = inject(ToastrNotificationService);
+  private dgSvc = inject(DialogService);
   list = signal<any[]>([]);
 
   rowClassFormatter: DataGridRowClassFormatter = {
-    danger: (data) => data.estadoCodigo === "A",
+    danger: (data) => data.estadoCodigo === 'A',
   };
   columns: DataGridColumn[] = [
     { header: 'Nro.', field: 'index' },
@@ -87,39 +86,39 @@ export class WarehouseTransfer implements OnInit {
           icon: 'file_copy',
           tooltip: 'Duplicar',
           click: (rowData) => {
-            if(!this.perms.canCreate()){
+            if (!this.perms.canCreate()) {
               this.noti.warning({
-                message: "No tiene permisos para duplicar",
-              })
-              return
+                message: 'No tiene permisos para duplicar',
+              });
+              return;
             }
-            this.handleDuplicated(rowData)
+            this.handleDuplicated(rowData);
           },
         },
         {
           type: 'icon',
           icon: 'edit',
           tooltip: 'Editar',
-          click: (rowData:any) => {
-            if(!this.perms.canEdit()){
+          click: (rowData: any) => {
+            if (!this.perms.canEdit()) {
               this.noti.warning({
-                message: "No tiene permisos para editar",
-              })
-              return
+                message: 'No tiene permisos para editar',
+              });
+              return;
             }
-            this.handleEdit(rowData)
+            this.handleEdit(rowData);
           },
         },
         {
           type: 'icon',
           icon: 'cancel',
           tooltip: 'Anular',
-          click: async (item:any) => {
-            if(!this.perms.canCancel()){
+          click: async (item: any) => {
+            if (!this.perms.canCancel()) {
               this.noti.warning({
-                message: "No tiene permisos para anular",
-              })
-              return
+                message: 'No tiene permisos para anular',
+              });
+              return;
             }
 
             let { isConfirmed } = await Swal.fire({
@@ -130,23 +129,23 @@ export class WarehouseTransfer implements OnInit {
               confirmButtonColor: '#3085d6',
               cancelButtonColor: '#d33',
               confirmButtonText: 'Si',
-              cancelButtonText: 'No'
-            })
+              cancelButtonText: 'No',
+            });
 
-            if(!isConfirmed) return
+            if (!isConfirmed) return;
 
-            this._updateStatusUseCase.execute(item.id).subscribe(response => {
-              if(response.success){
+            this._updateStatusUseCase.execute(item.id).subscribe((response) => {
+              if (response.success) {
                 this.noti.success({
                   message: response.message,
-                })
+                });
                 this.refresh();
-              }else{
+              } else {
                 this.noti.warning({
                   message: response.message,
-                })
+                });
               }
-            })
+            });
           },
         },
         {
@@ -157,27 +156,27 @@ export class WarehouseTransfer implements OnInit {
             {
               icon: 'description',
               text: 'Detalle',
-              click: (rowData:any) =>  this.handleViewDetail(rowData)
+              click: (rowData: any) => this.handleViewDetail(rowData),
             },
             {
               icon: 'download',
               text: 'Reporte',
               click: (row) => {
-                if(!this.perms.canCancel()){
+                if (!this.perms.canCancel()) {
                   this.noti.warning({
-                    message: "No tiene permisos para descargar",
-                  })
-                  return
+                    message: 'No tiene permisos para descargar',
+                  });
+                  return;
                 }
 
                 const additionalParams = {
-                 id: row.id
+                  id: row.id,
                 };
 
-                const  reportParameters = ReportParamsBuilder.getReportParameters(
-                    INVENTORY_CODE_REPORT.RTB,
-                    additionalParams,
-                  );
+                const reportParameters = ReportParamsBuilder.getReportParameters(
+                  INVENTORY_CODE_REPORT.RTB,
+                  additionalParams,
+                );
 
                 this._reportUseCase.execute({
                   data: reportParameters,
@@ -190,10 +189,10 @@ export class WarehouseTransfer implements OnInit {
     },
     { header: 'Nro. Doc.', field: 'nroDoc' },
     { header: 'Fecha Emision', field: 'fechaEmision' },
-    { header: 'Bodega Origen', field: 'nomBodegaOrigen'},
-    { header: 'Bodega Destino', field: 'nomBodegaDestino'},
+    { header: 'Bodega Origen', field: 'nomBodegaOrigen' },
+    { header: 'Bodega Destino', field: 'nomBodegaDestino' },
     { header: 'Total', field: 'total', type: 'number' },
-    { header: 'Observación', field: 'obs',  },
+    { header: 'Observación', field: 'obs' },
     { header: 'Estado', field: 'nomEstado' },
   ];
   pagination = signal(new MatPagination());
@@ -215,12 +214,11 @@ export class WarehouseTransfer implements OnInit {
 
   isMoreFilter = signal(false);
 
-
   onChangeEstab() {
-    const dataEstab = this.estabs.find(e => e.codEstab === this.dataSearch.codEstab);
+    const dataEstab = this.estabs.find((e) => e.codEstab === this.dataSearch.codEstab);
     if (dataEstab) {
       this.puntosEmision = dataEstab?.puntosEmision;
-      const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
       if (dataPtoEmi) {
         this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
         this.getAll();
@@ -235,25 +233,25 @@ export class WarehouseTransfer implements OnInit {
   }
 
   refresh() {
-
     this.getAll();
   }
 
-  openAddEditDialog(operation: 'add' | 'edit' | 'duplicate'='add', id?: number, data?: any) {
-    this.dgSvc.open(WarehouseTransferAddEdit, {
-      size: 'xl',
-      data: {
-        id: 0,
-        operation,
-        data
-      }
-    }).subscribe(result => {
-      console.log(result)
-      if(result && typeof result === 'object') {
-        this.refresh();
-      }
-    });
-
+  openAddEditDialog(operation: 'add' | 'edit' | 'duplicate' = 'add', id?: number, data?: any) {
+    this.dgSvc
+      .open(WarehouseTransferAddEdit, {
+        size: 'xl',
+        data: {
+          id: 0,
+          operation,
+          data,
+        },
+      })
+      .subscribe((result) => {
+        console.log(result);
+        if (result && typeof result === 'object') {
+          this.refresh();
+        }
+      });
   }
 
   private getParams() {
@@ -266,15 +264,12 @@ export class WarehouseTransfer implements OnInit {
       endDate: this.dataSearch.toDate,
 
       ckFecha: this.dataSearch.useFilterDate,
-      nroSecuencial: ValidatorUtils.validAndFormatedRangeSequential(
-        this.dataSearch.nroSecuencial
-      ),
-      textSearch: ValidatorUtils.isValidField(this.dataSearch.obs)
+      nroSecuencial: ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
+      textSearch: ValidatorUtils.isValidField(this.dataSearch.obs),
     };
   }
 
   private getAll() {
-
     if (!isValidField(this.dataSearch.codEstab)) {
       throw new Error('CodEstab is required');
     }
@@ -283,27 +278,24 @@ export class WarehouseTransfer implements OnInit {
       throw new Error('idPuntoEmision is required');
     }
 
-
     if (this.dataSearch.nroSecuencial) {
-      if (
-        !ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)
-      ) {
+      if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
         this.dataSearch.useFilterDate = true;
         this.noti.warning({
-          message: "Define correctamente el número de secuencial o el rango de número secuencial!",
-        })
+          message: 'Define correctamente el número de secuencial o el rango de número secuencial!',
+        });
         return;
       }
       this.dataSearch.useFilterDate = false;
       this.noti.info({
-        message: "Buscando por número secuencial",
+        message: 'Buscando por número secuencial',
       });
     }
     this.isLoadingResults.set(true);
     this._useCase
       .getAll(this.getParams())
-      .pipe(finalize(() => (this.isLoadingResults.set(false))))
-      .subscribe(response => {
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
+      .subscribe((response) => {
         this.list.set(response.data);
         this.pagination.set({
           ...this.pagination(),
@@ -314,57 +306,55 @@ export class WarehouseTransfer implements OnInit {
 
   private getFilterData() {
     this.isLoadingResults.set(true);
-    this._useCase.getDataFilter()
-      .pipe(
-        finalize(() => (this.isLoadingResults.set(false)))
-      )
-      .subscribe(response => {
-      this.estabs = response.estabs;
+    this._useCase
+      .getDataFilter()
+      .pipe(finalize(() => this.isLoadingResults.set(false)))
+      .subscribe((response) => {
+        this.estabs = response.estabs;
 
-      const dataEstab = this.estabs.find(e => e.defaultEstab);
-      if (dataEstab) {
-        this.dataSearch.codEstab = dataEstab.codEstab;
-        this.puntosEmision = dataEstab.puntosEmision;
+        const dataEstab = this.estabs.find((e) => e.defaultEstab);
+        if (dataEstab) {
+          this.dataSearch.codEstab = dataEstab.codEstab;
+          this.puntosEmision = dataEstab.puntosEmision;
 
-        const dataPtoEmi = this.puntosEmision.find(p => p.defaultPtoEmi);
+          const dataPtoEmi = this.puntosEmision.find((p) => p.defaultPtoEmi);
 
-        if (dataPtoEmi) {
-          this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
+          if (dataPtoEmi) {
+            this.dataSearch.puntoEmisionId = dataPtoEmi.idPuntoEmision;
 
-          this.getAll();
+            this.getAll();
+          }
         }
-      }
-    });
+      });
   }
 
   ngOnInit() {
     this.getFilterData();
   }
 
-
-  handleDuplicated(rowData:any) {
-    this._getByIdUseCase.execute(rowData.id).subscribe(response => {
+  handleDuplicated(rowData: any) {
+    this._getByIdUseCase.execute(rowData.id).subscribe((response) => {
       this.openAddEditDialog('duplicate', rowData.id, response);
-    })
+    });
   }
 
-  handleEdit(rowData:any) {
-    this._getByIdUseCase.execute(rowData.id).subscribe(response => {
+  handleEdit(rowData: any) {
+    this._getByIdUseCase.execute(rowData.id).subscribe((response) => {
       this.openAddEditDialog('edit', rowData.id, response);
-    })
+    });
   }
 
-  handleViewDetail(rowData:any) {
-    this.dgSvc.open(WarehouseTransferDetail , {
+  handleViewDetail(rowData: any) {
+    this.dgSvc.open(WarehouseTransferDetail, {
       data: {
         id: rowData.id,
       },
-      size: 'xl'
-    })
+      size: 'xl',
+    });
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

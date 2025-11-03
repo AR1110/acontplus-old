@@ -11,7 +11,6 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
-
 import { UserCustomerRolePermissionComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-role-permission/user-customer-role-permission.component';
 
 import { UserCustomerAccessComponent } from '@modules/config/ui/user-customer/setting-user-customer/user-customer-access/user-customer-access.component';
@@ -51,7 +50,7 @@ export class SettingUserCustomerComponent implements OnInit {
       .execute({
         idUsuario: this.params.idUsuario,
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.data.length > 0) {
           this.userCustomerRoleData.set(response.data[0]);
           this.$userCustomerStore.setUserRoleId(this.userCustomerRoleData().idUsuarioRol);

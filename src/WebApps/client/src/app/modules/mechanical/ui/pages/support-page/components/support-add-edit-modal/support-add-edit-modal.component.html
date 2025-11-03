@@ -8,7 +8,9 @@
 
 <ng-template #containerTemplate>
   <div class="d-grid gap-2">
-    <div class="row row-cols-3 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3">
+    <div
+      class="row row-cols-3 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
+    >
       <div class="col">
         @if (params.id > 0) {
           <mat-form-field class="w-100">
@@ -53,7 +55,11 @@
         } @else {
           <mat-form-field class="w-100">
             <mat-label>Punto Emisión</mat-label>
-            <mat-select name="puntoEmision" [(ngModel)]="data.puntoEmisionId" (selectionChange)="generateSequence()">
+            <mat-select
+              name="puntoEmision"
+              [(ngModel)]="data.puntoEmisionId"
+              (selectionChange)="generateSequence()"
+            >
               @for (item of emissionPoints(); track $index) {
                 <mat-option [value]="item.puntoEmisionId">{{ item.ptoEmi }}</mat-option>
               }
@@ -78,7 +84,9 @@
       <!--      </div>-->
     </div>
 
-    <div class="row row-col-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-col-sm-1 row-cols-1">
+    <div
+      class="row row-col-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-col-sm-1 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Cliente/Vehiculo: <span class="text-danger">*</span></mat-label>
@@ -112,12 +120,18 @@
           </ng-container>
           <mat-autocomplete #auto="matAutocomplete">
             @if (filteredCustomerVehicleLoading()) {
-              <mat-option disabled style="display: flex; justify-content: center; align-items: center">
+              <mat-option
+                disabled
+                style="display: flex; justify-content: center; align-items: center"
+              >
                 <mat-spinner diameter="35" />
               </mat-option>
             }
             @for (state of filteredCustomerVehicles | async; track $index) {
-              <mat-option [value]="state.tradeName" (onSelectionChange)="onSelectCustomerVehicle(state)">
+              <mat-option
+                [value]="state.tradeName"
+                (onSelectionChange)="onSelectCustomerVehicle(state)"
+              >
                 <span>{{ state.tradeName }}</span> | <small>Marca: {{ state.brand }}</small> |
                 <small>Placa: {{ state.licensePlate }}</small>
               </mat-option>
@@ -138,7 +152,9 @@
     </div>
 
     @if (data.vehicleCompanyId > 0) {
-      <div class="row row-col-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-col-sm-1 row-cols-1">
+      <div
+        class="row row-col-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-col-sm-1 row-cols-1"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Marca</mat-label>

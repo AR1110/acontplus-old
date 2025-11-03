@@ -57,7 +57,7 @@ export class CuentaPorPagarMapper {
   }
 
   static fromApiCuotaConfig(response: any[]): CuentaPorPagarCuotaConfig[] {
-    return response.map(item => {
+    return response.map((item) => {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idCuentaPorPagar: item.idCuentaPorPagar,

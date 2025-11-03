@@ -25,7 +25,7 @@ export class CompanyCustomerAddEditDirective {
         },
         size: 'xl',
       })
-      .subscribe(result => {
+      .subscribe((result) => {
         if (result && typeof result === 'object') {
           this.companyCustomerSaved.emit(result);
         }

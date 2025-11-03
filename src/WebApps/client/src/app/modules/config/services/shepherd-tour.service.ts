@@ -169,17 +169,17 @@ export class ShepherdTourService {
 
   startTour(): void {
     if (this.tour) {
-      (this.tour).start();
+      this.tour.start();
     }
   }
 
   endTour(): void {
     if (this.tour) {
-      (this.tour).complete();
+      this.tour.complete();
     }
   }
 
   isActive(): boolean {
-    return this.tour ? (this.tour).isActive() : false;
+    return this.tour ? this.tour.isActive() : false;
   }
 }

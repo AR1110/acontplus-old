@@ -62,7 +62,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'expand', label: '', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   cuentaPorPagar = {} as Partial<CuentaPorPagarLista>;
 
@@ -78,7 +78,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     this.useCase
       .getHistorialMovimientoByIdCuentaPorPagar(this.data.idCuentaPorPagar)
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.comprobantesEgreso = new MatTableDataSource(response.comprobantesEgreso);
         this.tempHistorialPagos.set(response.historialPagos);
         this.tempPagosDetalle.set(response.pagosDetalle);
@@ -88,7 +88,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   onShowExpanded(row: ComprobanteEgresoLista) {
     this.historialPagos.set(
       this.tempHistorialPagos().filter(
-        item => item.idComprobanteEgreso === row.idComprobanteEgreso,
+        (item) => item.idComprobanteEgreso === row.idComprobanteEgreso,
       ),
     );
   }
@@ -100,7 +100,7 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   openPagoDetalle(item: HistorialPagoLista) {
     this.dialogSvc.open(PagoDetalleModalComponent, {
       size: 'md',
-      data: this.tempPagosDetalle().filter(pd => pd.idPago === item.idPago),
+      data: this.tempPagosDetalle().filter((pd) => pd.idPago === item.idPago),
     });
   }
 

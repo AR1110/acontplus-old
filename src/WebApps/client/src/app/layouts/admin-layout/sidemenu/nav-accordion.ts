@@ -16,7 +16,7 @@ export class NavAccordion {
 
   constructor() {
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => this.checkOpenedItems());
 
     // Fix opening status for async menu data
@@ -37,7 +37,7 @@ export class NavAccordion {
   }
 
   closeOtherItems(openedItem: NavAccordionItem) {
-    this.navItems.forEach(item => {
+    this.navItems.forEach((item) => {
       if (item !== openedItem) {
         item.expanded = false;
       }
@@ -45,7 +45,7 @@ export class NavAccordion {
   }
 
   checkOpenedItems() {
-    this.navItems.forEach(item => {
+    this.navItems.forEach((item) => {
       if (item.route && this.router.url.split('/').includes(item.route)) {
         item.expanded = true;
         this.closeOtherItems(item);

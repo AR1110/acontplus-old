@@ -49,13 +49,13 @@ export class ElectronicSignatureComponent implements OnInit {
     { key: 'fechaCaducidad', label: 'Fecha Caducidad', type: 'string' },
   ];
 
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   openModalAddUpdate(item?: ElectronicSignatureList) {
     const ref = this._dialogSvc.open(AddEditElectronicSignatureComponent, {
       data: structuredClone(item) || {},
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -67,7 +67,7 @@ export class ElectronicSignatureComponent implements OnInit {
   }
 
   private getList() {
-    this.$listUseCase.execute().subscribe(response => {
+    this.$listUseCase.execute().subscribe((response) => {
       this.dataSource.set(response.data);
     });
   }
@@ -108,7 +108,7 @@ export class ElectronicSignatureComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Actualizar',
       cancelButtonText: 'Cancelar',
-      inputValidator: value => {
+      inputValidator: (value) => {
         if (!value) {
           return 'La contraseña es requerida';
         }
@@ -175,7 +175,7 @@ export class ElectronicSignatureComponent implements OnInit {
   }
 
   downloadSignature(item: ElectronicSignatureList) {
-    this.$downloadSignature.execute(item.idFirmaElectronica).subscribe(response => {
+    this.$downloadSignature.execute(item.idFirmaElectronica).subscribe((response) => {
       const filename = this.getFileNameFromResponse(response) || 'firma.p12';
       const blob = new Blob([response.body!], { type: 'application/x-pkcs12' });
 

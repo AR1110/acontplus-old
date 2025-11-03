@@ -1,4 +1,9 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="titleModal" (close)="close()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="titleModal"
+  (close)="close()"
+/>
 <ng-template #body>
   <div class="d-grid gap-2">
     <mat-form-field>
@@ -6,7 +11,9 @@
       <input type="text" matInput [(ngModel)]="data.nombreComercial" appToUpperCase />
     </mat-form-field>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-4"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Nro. Establecimiento:</mat-label>
@@ -29,11 +36,16 @@
       </div>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Contribuyente: <span class="text-danger">*</span></mat-label>
-          <mat-select [(ngModel)]="data.contribuyente" (selectionChange)="onChangeTipoContribuyente()">
+          <mat-select
+            [(ngModel)]="data.contribuyente"
+            (selectionChange)="onChangeTipoContribuyente()"
+          >
             @for (item of contribuyentes(); track $index) {
               <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
             }
@@ -60,7 +72,9 @@
       </div>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Actividad: <span class="text-danger">*</span></mat-label>
@@ -81,12 +95,20 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Contribuyente Especial: </mat-label>
-          <input type="text" matInput [maxlength]="3" [minlength]="3" [(ngModel)]="data.contribuyenteEspecial" />
+          <input
+            type="text"
+            matInput
+            [maxlength]="3"
+            [minlength]="3"
+            [(ngModel)]="data.contribuyenteEspecial"
+          />
         </mat-form-field>
       </div>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <app-mat-input-chip [labelText]="'Correo'" [chips]="emails()" />
       </div>
@@ -95,7 +117,9 @@
       </div>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Cantón: <span class="text-danger">*</span></mat-label>
@@ -109,7 +133,12 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Dirección</mat-label>
-          <textarea matInput [(ngModel)]="data.dirEstablecimiento" appToUpperCase placeholder="..."></textarea>
+          <textarea
+            matInput
+            [(ngModel)]="data.dirEstablecimiento"
+            appToUpperCase
+            placeholder="..."
+          ></textarea>
         </mat-form-field>
       </div>
     </div>

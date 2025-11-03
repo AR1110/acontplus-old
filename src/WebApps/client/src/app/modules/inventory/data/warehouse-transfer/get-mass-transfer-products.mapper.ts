@@ -1,8 +1,8 @@
-import {mergeMeasureUtil} from "@inventory/domain/utils/merge-measure.util";
-import DecimalUtils from "@core/utils/decimal.util";
+import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import DecimalUtils from '@core/utils/decimal.util';
 
 export class GetMassTransferProductsMapper {
-  static toJson(obj:any) {
+  static toJson(obj: any) {
     return JSON.stringify({
       tipo: 6,
       subFamilias: obj.subCategories,
@@ -10,22 +10,20 @@ export class GetMassTransferProductsMapper {
     });
   }
 
-  static fromJson(response:any) {
+  static fromJson(response: any) {
     const result = {
       products: [],
-      totalRecords: 0
+      totalRecords: 0,
     };
 
-    if (response && typeof response === "object") {
+    if (response && typeof response === 'object') {
       const { articulos: items = [] } = response;
 
-      result.products = items.map((item:any) => {
-        const { principal:mainUnit, fraccionado:fractionalUnit , ...rest } = item;
+      result.products = items.map((item: any) => {
+        const { principal: mainUnit, fraccionado: fractionalUnit, ...rest } = item;
         const measures = mergeMeasureUtil(mainUnit, fractionalUnit);
 
-        const selectedMeasure = measures.find(
-          (m) => m.idMedida === rest.measureId
-        );
+        const selectedMeasure = measures.find((m) => m.idMedida === rest.measureId);
 
         return {
           id: rest.idArticulo,
@@ -42,11 +40,9 @@ export class GetMassTransferProductsMapper {
           total: DecimalUtils.multiplyAsNumber(rest.cantidad, rest.precioCosto),
         };
       });
-    result.totalRecords = items.length > 0 ? items[0].totalRecords : 0;
+      result.totalRecords = items.length > 0 ? items[0].totalRecords : 0;
     }
-
 
     return result;
   }
-
 }

@@ -1,4 +1,9 @@
-<div class="customizer-handle" matTooltip="Drag me around" cdkDrag (cdkDragStarted)="onDragStart($event)">
+<div
+  class="customizer-handle"
+  matTooltip="Drag me around"
+  cdkDrag
+  (cdkDragStarted)="onDragStart($event)"
+>
   <button mat-fab (click)="openPanel(customizerPanel)">
     <mat-icon aria-label="Example icon-button with a settings icon">settings</mat-icon>
   </button>
@@ -22,7 +27,10 @@
     </div>
     <h3 class="f-w-400">Encabezado</h3>
     <div class="m-l-8">
-      <mat-slide-toggle formControlName="showHeader" [disableControl]="isHeaderPosAbove || isNavPosTop">
+      <mat-slide-toggle
+        formControlName="showHeader"
+        [disableControl]="isHeaderPosAbove || isNavPosTop"
+      >
         Visible
       </mat-slide-toggle>
       <h4 class="f-w-400">Posición</h4>

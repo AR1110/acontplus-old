@@ -13,20 +13,20 @@ export class ProductionAreaService {
   #http = inject(HttpClient);
 
   delete(id: number) {
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`).pipe(map(response => response));
+    return this.#http.delete<ApiResponse>(`${this.#url}${id}`).pipe(map((response) => response));
   }
 
   getByEstab(idEstablecimiento: number) {
     return this.#http
       .get<ApiResponse>(`${this.#url}GetByEstab/${idEstablecimiento}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data).pipe(map(response => response));
+    return this.#http.post<ApiResponse>(`${this.#url}`, data).pipe(map((response) => response));
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map(response => response));
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map((response) => response));
   }
 }

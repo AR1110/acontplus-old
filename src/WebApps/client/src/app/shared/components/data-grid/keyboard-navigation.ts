@@ -29,7 +29,7 @@ export interface FocusableElement {
  * Permite mover el foco entre elementos usando las teclas de flecha y centraliza el estado del foco.
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class KeyboardNavigationService {
   /** Array privado que contiene todos los elementos registrados para la navegación */
@@ -67,7 +67,9 @@ export class KeyboardNavigationService {
     effect(() => {
       const focusedElementIndex = this.currentFocusIndex();
       const focusedElementName = this.focusedElementName();
-      console.log(`El foco cambió al elemento: ${focusedElementName} (índice: ${focusedElementIndex})`);
+      console.log(
+        `El foco cambió al elemento: ${focusedElementName} (índice: ${focusedElementIndex})`,
+      );
     });
   }
 
@@ -79,8 +81,8 @@ export class KeyboardNavigationService {
     if (!element || !element.element) {
       console.error(
         'KeyboardNavigationService: No se puede registrar el elemento. El ElementRef es undefined o nulo. ' +
-        'Asegúrate de que el @ViewChild esté correctamente configurado y que el elemento exista en el DOM cuando ngAfterViewInit se ejecute.',
-        element
+          'Asegúrate de que el @ViewChild esté correctamente configurado y que el elemento exista en el DOM cuando ngAfterViewInit se ejecute.',
+        element,
       );
       return; // Salimos del método para evitar el crash
     }
@@ -90,9 +92,9 @@ export class KeyboardNavigationService {
     fromEvent<KeyboardEvent>(element.element.nativeElement, 'keydown')
       .pipe(
         takeUntil(this.destroy$),
-        filter(event => ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key))
+        filter((event) => ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)),
       )
-      .subscribe(event => {
+      .subscribe((event) => {
         event.preventDefault(); // Prevenir el comportamiento por defecto del navegador (scroll, etc.)
         this.handleKeyNavigation(event.key);
       });
@@ -101,7 +103,7 @@ export class KeyboardNavigationService {
     fromEvent<FocusEvent>(element.element.nativeElement, 'focus')
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        const index = this.focusableElements.findIndex(e => e.element === element.element);
+        const index = this.focusableElements.findIndex((e) => e.element === element.element);
         this.currentFocusIndex.set(index);
 
         // Ejecutar el callback onFocus si está definido
@@ -111,13 +113,12 @@ export class KeyboardNavigationService {
       });
   }
 
-
   /**
    * Elimina un elemento del sistema de navegación por teclado.
    * @param element El ElementRef del elemento a desregistrar.
    */
   unregisterElement(element: ElementRef) {
-    const index = this.focusableElements.findIndex(e => e.element === element);
+    const index = this.focusableElements.findIndex((e) => e.element === element);
     if (index !== -1) {
       this.focusableElements.splice(index, 1);
 
@@ -134,7 +135,7 @@ export class KeyboardNavigationService {
    * @param index Opcional: el índice interno a enfocar (ej: el índice de una fila en una tabla).
    */
   focusElement(name: string, index?: number) {
-    const elementIndex = this.focusableElements.findIndex(e => e.name === name);
+    const elementIndex = this.focusableElements.findIndex((e) => e.name === name);
     if (elementIndex !== -1) {
       this.currentFocusIndex.set(elementIndex);
 

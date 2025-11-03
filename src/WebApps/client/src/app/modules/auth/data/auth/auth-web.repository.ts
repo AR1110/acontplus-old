@@ -22,7 +22,7 @@ export class AuthWebRepository implements AuthRepository {
     userRolesOriginal: any[];
   }> {
     return this.http.post<ApiResponse>(`${this._url}login`, credentials).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           success: false,
           message: '',
@@ -57,10 +57,10 @@ export class AuthWebRepository implements AuthRepository {
 
   createToken(params: any) {
     return this.http.post<ApiResponse>(`${this._url}createtoken`, params).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           success: false,
-          message: '' as string ,
+          message: '' as string,
           userRoles: [] as any[],
           userRolesOriginal: [] as any[],
         };

@@ -31,7 +31,7 @@ export class SupportDetailWebRepository extends SupportDetailRepository {
     });
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => SupportDetailMapper.fromApiGetId(response)));
+      .pipe(map((response) => SupportDetailMapper.fromApiGetId(response)));
   }
 
   post<T>(data: T) {

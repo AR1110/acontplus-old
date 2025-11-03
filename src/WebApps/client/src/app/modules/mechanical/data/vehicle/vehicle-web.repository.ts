@@ -23,7 +23,7 @@ export class VehicleWebRepository extends VehicleRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => ListVehicleMapper.fromJson(response)));
+      .pipe(map((response) => ListVehicleMapper.fromJson(response)));
   }
 
   getDataForm() {
@@ -34,7 +34,7 @@ export class VehicleWebRepository extends VehicleRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => VehicleMapper.fromApiDataForm(response)));
+      .pipe(map((response) => VehicleMapper.fromApiDataForm(response)));
   }
 
   getId(id: number) {

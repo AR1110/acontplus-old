@@ -79,7 +79,7 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.subscription$ = this.$dataFilterUseCase.execute().subscribe(response => {
+    this.subscription$ = this.$dataFilterUseCase.execute().subscribe((response) => {
       console.log(response);
       this.estabs.set(response.estabs);
       this.users.set(response.users);
@@ -87,7 +87,7 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
       this.tiposDoc.set(response.tiposDoc);
       this.subEntidadesFinanciera.set(response.subEntidadesFinanciera);
 
-      const dataEstab = this.estabs().find(e => e.defaultEstab);
+      const dataEstab = this.estabs().find((e) => e.defaultEstab);
       if (dataEstab) {
         this.filterParams.establecimientoId = dataEstab.idEstablecimiento;
       }

@@ -35,7 +35,11 @@
           <mat-card-content>
             <h5>RUC: {{ infoTributaria.ruc }}</h5>
             <h4>COMPROBANTE DE RETENCIÓN</h4>
-            <h5>No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{ infoTributaria.secuencial }}</h5>
+            <h5>
+              No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{
+                infoTributaria.secuencial
+              }}
+            </h5>
             <label>NÚMERO DE AUTORIZACIÓN:</label>
             <small>{{ infoTributaria.claveAcceso }}</small>
             <label>FECHA Y HORA DE AUTORIZACIÓN:</label>
@@ -124,7 +128,12 @@
 
   <!-- Modal Footer -->
   <div class="modal-footer">
-    <app-theme-button variant="success" icon="download" text="Descargar Ride" (handleClick)="download()" />
+    <app-theme-button
+      variant="success"
+      icon="download"
+      text="Descargar Ride"
+      (handleClick)="download()"
+    />
     <app-theme-button variant="dark" icon="close" text="Cancelar" (click)="onModalClose()" />
   </div>
 </form>

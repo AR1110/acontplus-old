@@ -25,7 +25,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
     BreadcrumbComponent,
   ],
 })
-export class ProfileLayout  {
+export class ProfileLayout {
   private readonly tokenUseCase = inject(TokenUseCase);
   private readonly router = inject(Router);
   user = signal({} as any);

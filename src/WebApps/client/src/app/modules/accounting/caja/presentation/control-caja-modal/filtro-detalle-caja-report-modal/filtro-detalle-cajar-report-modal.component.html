@@ -1,4 +1,8 @@
-<app-mat-custom-dialog [containerTemplate]="body" [title]="'Reporte Detalle Caja'" (close)="close()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [title]="'Reporte Detalle Caja'"
+  (close)="close()"
+/>
 <ng-template #body>
   <div class="d-grid gap-2">
     <mat-form-field>
@@ -63,8 +67,18 @@
     <mat-slide-toggle [(ngModel)]="dataSearch.ckHora">Hora</mat-slide-toggle>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
-      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')" />
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReport('pdf')"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </ng-template>

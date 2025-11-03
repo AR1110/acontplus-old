@@ -13,7 +13,7 @@ export class SaveInventoryAdjustmentMapper {
       observacion: isValidField(params.observations),
     };
 
-    const detalles = params.details.map(item => {
+    const detalles = params.details.map((item) => {
       return {
         idConsolidacionInventarioDetalle: item.id,
         orderIndex: item.orderIndex,

@@ -1,27 +1,32 @@
-import {ProformaInvoiceDetail, ProformaInvoiceListResult} from "@sale/domain/models/proforma-invoice";
-import {ApiResponse} from "@core/models/api-response";
+import {
+  ProformaInvoiceDetail,
+  ProformaInvoiceListResult,
+} from '@sale/domain/models/proforma-invoice';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ProformaInvoiceViewDetailMapper {
-  static toJson(id: number){
+  static toJson(id: number) {
     return JSON.stringify({
       tipo: 4,
-      id
-    })
+      id,
+    });
   }
 
-  static fromJson(response:ApiResponse){
-    const {header, customer, details, taxes, additionalsInfo} = JSON.parse(response.payload as string);
-    console.log(header, customer, details, taxes)
-    const headerData= header[0];
+  static fromJson(response: ApiResponse) {
+    const { header, customer, details, taxes, additionalsInfo } = JSON.parse(
+      response.payload as string,
+    );
+    console.log(header, customer, details, taxes);
+    const headerData = header[0];
     const customerData = customer[0];
     const proformaDetail: ProformaInvoiceDetail = {
-      header:  {
+      header: {
         estabName: headerData.nombreComercial,
         serieComprobante: headerData.serieComprobante,
         issueDate: headerData.fechaEmision,
         subTotalWithoutTaxes: headerData.subTotalSinImpuestos,
-     //   totalWithoutTaxes: headerData.totalSinImpuestos,
-      //  totalTaxes: headerData.totalImpuestos,
+        //   totalWithoutTaxes: headerData.totalSinImpuestos,
+        //  totalTaxes: headerData.totalImpuestos,
         total: headerData.total,
         discountPercentage: headerData.descuento,
         totalDiscount: headerData.totalDescuento,
@@ -36,9 +41,9 @@ export class ProformaInvoiceViewDetailMapper {
         businessName: customerData.razonSocialComprador,
         IDCard: customerData.identificacionComprador,
         address: customerData.direccionComprador,
-        email: customerData.correo
+        email: customerData.correo,
       },
-      details: details.map((d:any, index: number) => ({
+      details: details.map((d: any, index: number) => ({
         index: index + 1,
         detailId: d.idProformaDetalle,
         code: d.codigo,
@@ -56,16 +61,16 @@ export class ProformaInvoiceViewDetailMapper {
         discountPercentage: d.porcentajeDescuento,
         ice: d.ice,
         taxCode: d.codigoPorcentaje,
-        rate: d.tarifa
+        rate: d.tarifa,
       })),
-      taxes: taxes.map((t:any) => ({
+      taxes: taxes.map((t: any) => ({
         taxTypeId: t.idTipoIva,
         taxId: t.idImpuesto,
         description: t.descripcion,
         rate: t.tarifa,
-        taxCode: t.codigoPorcentaje
+        taxCode: t.codigoPorcentaje,
       })),
-      additionalsInfo
+      additionalsInfo,
     };
     return proformaDetail;
   }

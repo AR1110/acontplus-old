@@ -32,7 +32,7 @@ export class SupportWebRepository extends SupportRepository {
     const json = FilterDataSupportMapper.toJson();
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => FilterDataSupportMapper.fromJson(response)));
+      .pipe(map((response) => FilterDataSupportMapper.fromJson(response)));
   }
 
   getDataForm() {
@@ -43,7 +43,7 @@ export class SupportWebRepository extends SupportRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => SupportMapper.fromApiDataForm(response)));
+      .pipe(map((response) => SupportMapper.fromApiDataForm(response)));
   }
 
   getId(id: number) {
@@ -64,7 +64,7 @@ export class SupportWebRepository extends SupportRepository {
     });
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => SupportMapper.fromApiDashboard(response)));
+      .pipe(map((response) => SupportMapper.fromApiDashboard(response)));
   }
 
   getConvertToAprobDoc(id: number) {
@@ -74,7 +74,7 @@ export class SupportWebRepository extends SupportRepository {
     });
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => SupportMapper.fromApiGetAprobacion(response)));
+      .pipe(map((response) => SupportMapper.fromApiGetAprobacion(response)));
   }
 
   getDocView(id: number) {
@@ -94,7 +94,7 @@ export class SupportWebRepository extends SupportRepository {
       idPuntoEmision,
     };
     return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
-      map(res => {
+      map((res) => {
         let secuencual = '' as string;
         if (res.code === '1') {
           const { sequence } = JSON.parse(res.payload as string);
@@ -115,7 +115,7 @@ export class SupportWebRepository extends SupportRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => SupportMapper.fromApiSearch(response)));
+      .pipe(map((response) => SupportMapper.fromApiSearch(response)));
   }
 
   post<T>(data: T) {

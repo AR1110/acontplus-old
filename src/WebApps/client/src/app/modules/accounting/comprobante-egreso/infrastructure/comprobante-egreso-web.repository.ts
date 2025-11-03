@@ -36,20 +36,20 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
     const json = GetComprobanteEgresoForDeletionMapper.toJson({ id });
     return this.http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => GetComprobanteEgresoForDeletionMapper.fromJson(response)));
+      .pipe(map((response) => GetComprobanteEgresoForDeletionMapper.fromJson(response)));
   }
 
   getFilterData(): Observable<ComprobanteEgresoFilterResponse> {
     const json = DataFilterComprobanteEgresoMapper.toJson();
     return this.http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => DataFilterComprobanteEgresoMapper.fromJson(response)));
+      .pipe(map((response) => DataFilterComprobanteEgresoMapper.fromJson(response)));
   }
   list(params: any): Observable<ComprobanteEgresoResponse> {
     const json = ListComprobanteEgresoMapper.toJson(params);
     return this.http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => ListComprobanteEgresoMapper.fromJson(response)));
+      .pipe(map((response) => ListComprobanteEgresoMapper.fromJson(response)));
   }
   private _url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.COMPROBANTE_EGRESO}`;
   private http = inject(HttpClient);
@@ -60,7 +60,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
       idCuentaPorPagar,
     });
     return this.http.get(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const results = {
           cuotas: [] as CuotaPorPagarLista[],
         };
@@ -83,7 +83,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let results = {
             entidadesFinanciera: [] as EntidadFinanciera[],
             subEntidadesFinanciera: [] as SubEntidadFinancieraSelectHtmlOnly[],
@@ -104,7 +104,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
     const PARAMS = JSON.stringify({ tipo: 2 });
 
     return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           establecimientos: [] as GroupedEstab[],
           tiposDoc: [],

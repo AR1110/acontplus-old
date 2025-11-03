@@ -4,7 +4,13 @@
 
   <!-- Main Content -->
   <div class="bg-white rounded shadow overflow-hidden">
-    <mat-stepper #stepper [linear]="isLinear" aria-label="Configuration Wizard" role="tablist" aria-hidden="false">
+    <mat-stepper
+      #stepper
+      [linear]="isLinear"
+      aria-label="Configuration Wizard"
+      role="tablist"
+      aria-hidden="false"
+    >
       <!-- Step I: Welcome -->
       @for (step of demoSteps(); track trackByStep($index, step); let stepIndex = $index) {
         <mat-step [aria-label]="step.name" role="tab">
@@ -13,7 +19,9 @@
               <!-- <span class="step-number">{{ step.code }}</span> -->
               <span class="fw-medium">{{ step.name }}</span>
               @if (step.completed) {
-                <mat-icon class="step-completed" aria-label="Step completed"> check_circle </mat-icon>
+                <mat-icon class="step-completed" aria-label="Step completed">
+                  check_circle
+                </mat-icon>
               }
             </div>
           </ng-template>
@@ -26,10 +34,12 @@
                 <mat-card>
                   <mat-card-content>
                     <div class="text-center py-4">
-                      <h2 class="m-0 text-primary fs-1">Bienvenido al Asistente de Configuración</h2>
+                      <h2 class="m-0 text-primary fs-1">
+                        Bienvenido al Asistente de Configuración
+                      </h2>
                       <p class="m-0 mb-4 text-muted fs-5 lh-base">
-                        Este asistente le guiará a través del proceso de configuración inicial de su sistema. Complete
-                        cada paso para configurar correctamente su empresa.
+                        Este asistente le guiará a través del proceso de configuración inicial de su
+                        sistema. Complete cada paso para configurar correctamente su empresa.
                       </p>
                       <div class="mt-4">
                         <button mat-raised-button color="primary" (click)="stepper.next()">
@@ -68,7 +78,9 @@
                               placeholder="Ingrese número de identificación"
                               toUpperCase
                             />
-                            @if (userForm.controls.idCard.invalid && userForm.controls.idCard.touched) {
+                            @if (
+                              userForm.controls.idCard.invalid && userForm.controls.idCard.touched
+                            ) {
                               @if (userForm.controls.idCard.hasError('required')) {
                                 <mat-error> Número de identificación es requerido </mat-error>
                               }
@@ -81,8 +93,15 @@
                         <div class="col">
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Nombre de Usuario</mat-label>
-                            <input matInput formControlName="username" placeholder="Ingrese nombre de usuario" />
-                            @if (userForm.controls.username.invalid && userForm.controls.username.touched) {
+                            <input
+                              matInput
+                              formControlName="username"
+                              placeholder="Ingrese nombre de usuario"
+                            />
+                            @if (
+                              userForm.controls.username.invalid &&
+                              userForm.controls.username.touched
+                            ) {
                               @if (userForm.controls.username.hasError('required')) {
                                 <mat-error> Nombre de usuario es requerido </mat-error>
                               }
@@ -93,7 +112,9 @@
                                 <mat-error> No puede exceder 20 caracteres </mat-error>
                               }
                               @if (userForm.controls.username.hasError('pattern')) {
-                                <mat-error> Solo letras, números y guiones bajos permitidos </mat-error>
+                                <mat-error>
+                                  Solo letras, números y guiones bajos permitidos
+                                </mat-error>
                               }
                             }
                           </mat-form-field>
@@ -101,13 +122,23 @@
                         <div class="col">
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Nombres</mat-label>
-                            <input matInput formControlName="firstName" placeholder="Ingrese nombres" toUpperCase />
-                            @if (userForm.controls.firstName.invalid && userForm.controls.firstName.touched) {
+                            <input
+                              matInput
+                              formControlName="firstName"
+                              placeholder="Ingrese nombres"
+                              toUpperCase
+                            />
+                            @if (
+                              userForm.controls.firstName.invalid &&
+                              userForm.controls.firstName.touched
+                            ) {
                               @if (userForm.controls.firstName.hasError('required')) {
                                 <mat-error> Los nombres son requeridos </mat-error>
                               }
                               @if (userForm.controls.firstName.hasError('minlength')) {
-                                <mat-error> Los nombres deben tener al menos 2 caracteres </mat-error>
+                                <mat-error>
+                                  Los nombres deben tener al menos 2 caracteres
+                                </mat-error>
                               }
                               @if (userForm.controls.firstName.hasError('maxlength')) {
                                 <mat-error> Los nombres no pueden exceder 50 caracteres </mat-error>
@@ -118,16 +149,28 @@
                         <div class="col">
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Apellidos</mat-label>
-                            <input matInput formControlName="lastName" placeholder="Ingrese apellidos" toUpperCase />
-                            @if (userForm.controls.lastName.invalid && userForm.controls.lastName.touched) {
+                            <input
+                              matInput
+                              formControlName="lastName"
+                              placeholder="Ingrese apellidos"
+                              toUpperCase
+                            />
+                            @if (
+                              userForm.controls.lastName.invalid &&
+                              userForm.controls.lastName.touched
+                            ) {
                               @if (userForm.controls.lastName.hasError('required')) {
                                 <mat-error> Los apellidos son requeridos </mat-error>
                               }
                               @if (userForm.controls.lastName.hasError('minlength')) {
-                                <mat-error> Los apellidos deben tener al menos 2 caracteres </mat-error>
+                                <mat-error>
+                                  Los apellidos deben tener al menos 2 caracteres
+                                </mat-error>
                               }
                               @if (userForm.controls.lastName.hasError('maxlength')) {
-                                <mat-error> Los apellidos no pueden exceder 50 caracteres </mat-error>
+                                <mat-error>
+                                  Los apellidos no pueden exceder 50 caracteres
+                                </mat-error>
                               }
                             }
                           </mat-form-field>
@@ -136,8 +179,15 @@
                         <div class="col">
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Correo Electrónico</mat-label>
-                            <input matInput type="email" formControlName="email" placeholder="ejemplo@correo.com" />
-                            @if (userForm.controls.email.invalid && userForm.controls.email.touched) {
+                            <input
+                              matInput
+                              type="email"
+                              formControlName="email"
+                              placeholder="ejemplo@correo.com"
+                            />
+                            @if (
+                              userForm.controls.email.invalid && userForm.controls.email.touched
+                            ) {
                               @if (userForm.controls.email.hasError('email')) {
                                 <mat-error> Formato de correo inválido </mat-error>
                               }
@@ -146,7 +196,10 @@
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Teléfono</mat-label>
                             <input matInput formControlName="phoneNumber" />
-                            @if (userForm.controls.phoneNumber.invalid && userForm.controls.phoneNumber.touched) {
+                            @if (
+                              userForm.controls.phoneNumber.invalid &&
+                              userForm.controls.phoneNumber.touched
+                            ) {
                               @if (userForm.controls.phoneNumber.hasError('phoneNumber')) {
                                 <mat-error> Formato de teléfono inválido </mat-error>
                               }
@@ -164,20 +217,28 @@
                               placeholder="Ingrese una contraseña"
                               autocomplete="new-password"
                             />
-                            <button mat-icon-button matSuffix type="button" (click)="showPassword = !showPassword">
+                            <button
+                              mat-icon-button
+                              matSuffix
+                              type="button"
+                              (click)="showPassword = !showPassword"
+                            >
                               <mat-icon>
                                 {{ showPassword ? 'visibility_off' : 'visibility' }}
                               </mat-icon>
                             </button>
                             @if (
                               userForm.controls.password.invalid &&
-                              (userForm.controls.password.touched || userForm.controls.password.dirty)
+                              (userForm.controls.password.touched ||
+                                userForm.controls.password.dirty)
                             ) {
                               @if (userForm.controls.password.hasError('required')) {
                                 <mat-error> La contraseña es requerida </mat-error>
                               }
                               @if (userForm.controls.password.hasError('minlength')) {
-                                <mat-error> La contraseña debe tener al menos 6 caracteres </mat-error>
+                                <mat-error>
+                                  La contraseña debe tener al menos 6 caracteres
+                                </mat-error>
                               }
                             }
                           </mat-form-field>
@@ -205,7 +266,8 @@
                                 (userForm.controls.confirmPassword.touched ||
                                   userForm.controls.confirmPassword.dirty)) ||
                               (userForm.errors?.['passwordsMismatch'] &&
-                                (userForm.controls.confirmPassword.touched || userForm.controls.confirmPassword.dirty))
+                                (userForm.controls.confirmPassword.touched ||
+                                  userForm.controls.confirmPassword.dirty))
                             ) {
                               @if (userForm.controls.confirmPassword.hasError('required')) {
                                 <mat-error> Debe confirmar la contraseña </mat-error>
@@ -218,7 +280,12 @@
                         </div>
                       </div>
                       <div class="form-actions">
-                        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid">
+                        <button
+                          mat-raised-button
+                          color="primary"
+                          type="submit"
+                          [disabled]="!userForm.valid"
+                        >
                           <mat-icon>save</mat-icon>
                           Guardar Usuario
                         </button>
@@ -237,7 +304,9 @@
                     <!-- Basic Establishment Info -->
                     <h3>Información del Establecimiento</h3>
 
-                    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+                    <div
+                      class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+                    >
                       <div class="col">
                         <mat-form-field appearance="outline" class="w-100">
                           <mat-label>Nombre Comercial</mat-label>
@@ -248,7 +317,8 @@
                             toUpperCase
                           />
                           @if (
-                            estabForm.controls.nombreComercial.invalid && estabForm.controls.nombreComercial.touched
+                            estabForm.controls.nombreComercial.invalid &&
+                            estabForm.controls.nombreComercial.touched
                           ) {
                             @if (estabForm.controls.nombreComercial.hasError('required')) {
                               <mat-error> El nombre comercial es requerido </mat-error>
@@ -259,8 +329,16 @@
                       <div class="col">
                         <mat-form-field appearance="outline" class="w-100">
                           <mat-label>Establecimiento</mat-label>
-                          <input matInput formControlName="estab" placeholder="001" maxlength="3" toUpperCase />
-                          @if (estabForm.controls.estab.invalid && estabForm.controls.estab.touched) {
+                          <input
+                            matInput
+                            formControlName="estab"
+                            placeholder="001"
+                            maxlength="3"
+                            toUpperCase
+                          />
+                          @if (
+                            estabForm.controls.estab.invalid && estabForm.controls.estab.touched
+                          ) {
                             @if (estabForm.controls.estab.hasError('required')) {
                               <mat-error> El establecimiento es requerido </mat-error>
                             }
@@ -325,7 +403,9 @@
                           <mat-label>Tipo de Contribuyente</mat-label>
                           <mat-select
                             formControlName="contribuyente"
-                            (selectionChange)="onChangeTipoContribuyente(); showInfoTipoContribuyente()"
+                            (selectionChange)="
+                              onChangeTipoContribuyente(); showInfoTipoContribuyente()
+                            "
                           >
                             @for (contribuyente of contribuyentes(); track contribuyente.codigo) {
                               <mat-option [value]="contribuyente.codigo">
@@ -333,7 +413,10 @@
                               </mat-option>
                             }
                           </mat-select>
-                          @if (estabForm.controls.contribuyente.invalid && estabForm.controls.contribuyente.touched) {
+                          @if (
+                            estabForm.controls.contribuyente.invalid &&
+                            estabForm.controls.contribuyente.touched
+                          ) {
                             @if (estabForm.controls.contribuyente.hasError('required')) {
                               <mat-error> El tipo de contribuyente es requerido </mat-error>
                             }
@@ -383,24 +466,34 @@
                           [selectedValue]="estabForm.get('actividad')?.value"
                           (selectionChange)="onActividadEconomicaChange($event)"
                         />
-                        @if (estabForm.controls.actividad.invalid && estabForm.controls.actividad.touched) {
+                        @if (
+                          estabForm.controls.actividad.invalid &&
+                          estabForm.controls.actividad.touched
+                        ) {
                           @if (estabForm.controls.actividad.hasError('required')) {
-                            <div class="text-danger small mt-1">La actividad económica es requerida</div>
+                            <div class="text-danger small mt-1">
+                              La actividad económica es requerida
+                            </div>
                           }
                         }
                       </div>
                     </div>
 
                     <!-- Points of Emission -->
-                    <app-theme-button icon="add"
+                    <app-theme-button
+                      icon="add"
                       text="Agregar punto de emisión"
                       (handleClick)="addPtoEmi()"
                       [disabled]="ptosEmi.length >= 5"
                       title="Agregar punto de emisión"
-                     />
+                    />
 
                     <div formArrayName="ptosEmi" class="mt-3">
-                      @for (ptoEmi of ptosEmi.controls; track trackByPtoEmi($index); let i = $index) {
+                      @for (
+                        ptoEmi of ptosEmi.controls;
+                        track trackByPtoEmi($index);
+                        let i = $index
+                      ) {
                         <div
                           [formGroupName]="i"
                           class="row row-cols-1 row-cols-sm-1 row-cols-md-3 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
@@ -408,7 +501,13 @@
                           <div class="col">
                             <mat-form-field appearance="outline" class="w-100">
                               <mat-label>Punto de Emisión</mat-label>
-                              <input matInput formControlName="ptoEmi" placeholder="001" maxlength="3" toUpperCase />
+                              <input
+                                matInput
+                                formControlName="ptoEmi"
+                                placeholder="001"
+                                maxlength="3"
+                                toUpperCase
+                              />
                               @if (ptoEmi.get('ptoEmi')?.invalid && ptoEmi.get('ptoEmi')?.touched) {
                                 @if (ptoEmi.get('ptoEmi')?.hasError('required')) {
                                   <mat-error> El punto de emisión es requerido </mat-error>
@@ -426,7 +525,9 @@
                                   </mat-option>
                                 }
                               </mat-select>
-                              @if (ptoEmi.get('ambiente')?.invalid && ptoEmi.get('ambiente')?.touched) {
+                              @if (
+                                ptoEmi.get('ambiente')?.invalid && ptoEmi.get('ambiente')?.touched
+                              ) {
                                 @if (ptoEmi.get('ambiente')?.hasError('required')) {
                                   <mat-error> El ambiente es requerido </mat-error>
                                 }
@@ -462,13 +563,18 @@
                     </div>
 
                     @if (estabForm.controls.hasInventory.value) {
-                      <app-theme-button icon="add"
+                      <app-theme-button
+                        icon="add"
                         text="Agregar bodega"
                         title="Agregar bodega para control de los productos e inventario"
                         (handleClick)="addBodega()"
-                       />
+                      />
                       <div formArrayName="bodegas" class="mt-3">
-                        @for (bodega of bodegas.controls; track trackByBodega($index); let i = $index) {
+                        @for (
+                          bodega of bodegas.controls;
+                          track trackByBodega($index);
+                          let i = $index
+                        ) {
                           <div
                             [formGroupName]="i"
                             class="row row-cols-1 row-cols-sm-1 row-cols-md-4 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-4"
@@ -483,7 +589,10 @@
                                   title="Ingrese el nombre de la Bodega"
                                   toUpperCase
                                 />
-                                @if (bodega.get('descripcion')?.invalid && bodega.get('descripcion')?.touched) {
+                                @if (
+                                  bodega.get('descripcion')?.invalid &&
+                                  bodega.get('descripcion')?.touched
+                                ) {
                                   @if (bodega.get('descripcion')?.hasError('required')) {
                                     <mat-error> El nombre es requerido </mat-error>
                                   }
@@ -499,7 +608,10 @@
                                   placeholder="Ingrese dirección"
                                   toUpperCase
                                 />
-                                @if (bodega.get('direccion')?.invalid && bodega.get('direccion')?.touched) {
+                                @if (
+                                  bodega.get('direccion')?.invalid &&
+                                  bodega.get('direccion')?.touched
+                                ) {
                                   @if (bodega.get('direccion')?.hasError('required')) {
                                     <mat-error> La dirección es requerida </mat-error>
                                   }
@@ -509,11 +621,20 @@
                             <div class="col">
                               <mat-form-field appearance="outline" class="w-100">
                                 <mat-label>Teléfono</mat-label>
-                                <input matInput formControlName="telefono" placeholder="Ingrese teléfono" />
+                                <input
+                                  matInput
+                                  formControlName="telefono"
+                                  placeholder="Ingrese teléfono"
+                                />
                               </mat-form-field>
                             </div>
                             <div class="col">
-                              <button type="button" mat-icon-button color="warn" (click)="removeBodega(i)">
+                              <button
+                                type="button"
+                                mat-icon-button
+                                color="warn"
+                                (click)="removeBodega(i)"
+                              >
                                 <mat-icon>delete</mat-icon>
                               </button>
                             </div>
@@ -524,7 +645,12 @@
 
                     <!-- Form Actions -->
                     <div class="form-actions">
-                      <button mat-raised-button color="primary" type="submit" [disabled]="!estabForm.valid">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        type="submit"
+                        [disabled]="!estabForm.valid"
+                      >
                         <mat-icon>save</mat-icon>
                         Guardar Configuración
                       </button>
@@ -556,7 +682,12 @@
                         <div class="error-message p-4 text-center">
                           <mat-icon class="error-icon">error_outline</mat-icon>
                           <p class="mt-2">{{ loadError() }}</p>
-                          <button mat-button color="primary" (click)="fetchDocConfig()" class="mt-2">
+                          <button
+                            mat-button
+                            color="primary"
+                            (click)="fetchDocConfig()"
+                            class="mt-2"
+                          >
                             <mat-icon>refresh</mat-icon>
                             Reintentar
                           </button>
@@ -565,13 +696,14 @@
 
                       <!-- Success State -->
                       @if (!isLoadingDocs() && !loadError() && docsConfig().length > 0) {
-                        <app-tabulator [theme]="'semantic-ui'"
+                        <app-tabulator
+                          [theme]="'semantic-ui'"
                           [columnNames]="columnNames"
                           [tableData]="docsConfig()"
                           [options]="{ height: 400 }"
                           [dataTree]="true"
                           [dataTreeChildField]="'_children'"
-                         />
+                        />
                       }
 
                       <!-- Empty State -->
@@ -584,7 +716,9 @@
                     </div>
 
                     <div class="form-actions">
-                      <button mat-raised-button color="primary" (click)="saveDocs()">Guardar Secuencias</button>
+                      <button mat-raised-button color="primary" (click)="saveDocs()">
+                        Guardar Secuencias
+                      </button>
                     </div>
                   </mat-card-content>
                 </mat-card>
@@ -598,7 +732,10 @@
                   <mat-card-content>
                     <form [formGroup]="certificateForm" (ngSubmit)="saveCertificate()">
                       <h3>Firma Electrónica</h3>
-                      <p>Suba su archivo de firma electrónica (.p12) para poder emitir documentos electrónicos.</p>
+                      <p>
+                        Suba su archivo de firma electrónica (.p12) para poder emitir documentos
+                        electrónicos.
+                      </p>
 
                       <div class="row">
                         <div class="col-12 col-md-6">
@@ -628,7 +765,12 @@
                           />
 
                           <!-- Button to trigger file input -->
-                          <button mat-raised-button color="primary" type="button" (click)="fileInput.click()">
+                          <button
+                            mat-raised-button
+                            color="primary"
+                            type="button"
+                            (click)="fileInput.click()"
+                          >
                             <mat-icon>attach_file</mat-icon>
                             Seleccionar Archivo
                           </button>
@@ -680,11 +822,13 @@
                       <mat-icon class="completion-icon" color="primary"> check_circle </mat-icon>
                       <h2>¡Configuración Completada!</h2>
                       <p>
-                        Su sistema ha sido configurado exitosamente. Ya puede comenzar a usar todas las funcionalidades
-                        disponibles.
+                        Su sistema ha sido configurado exitosamente. Ya puede comenzar a usar todas
+                        las funcionalidades disponibles.
                       </p>
                       <div class="completion-actions">
-                        <button mat-raised-button color="primary" routerLink="/dashboard">Ir al Dashboard</button>
+                        <button mat-raised-button color="primary" routerLink="/dashboard">
+                          Ir al Dashboard
+                        </button>
                       </div>
                     </div>
                   </mat-card-content>
@@ -697,7 +841,12 @@
           <div class="step-actions">
             <button mat-button matStepperPrevious [disabled]="stepIndex === 0">Anterior</button>
 
-            <button mat-raised-button color="primary" matStepperNext [disabled]="!step.completed && step.code !== 'I'">
+            <button
+              mat-raised-button
+              color="primary"
+              matStepperNext
+              [disabled]="!step.completed && step.code !== 'I'"
+            >
               {{ stepIndex === demoSteps().length - 1 ? 'Finalizar' : 'Siguiente' }}
             </button>
           </div>

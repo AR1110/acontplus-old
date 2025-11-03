@@ -42,7 +42,7 @@ export class ShiftComponent implements OnInit {
 
   getShifts() {
     this.shifts.set([]);
-    this.$shiftUseCase.listShifts({ pageIndex: 1, pageSize: 10 }).subscribe(response => {
+    this.$shiftUseCase.listShifts({ pageIndex: 1, pageSize: 10 }).subscribe((response) => {
       this.shifts.set(response.data);
     });
   }
@@ -56,9 +56,9 @@ export class ShiftComponent implements OnInit {
       confirmButtonColor: '#3085d6',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.$shiftUseCase.deleteShift({ idTurno: item.idTurno }).subscribe(response => {
+        this.$shiftUseCase.deleteShift({ idTurno: item.idTurno }).subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

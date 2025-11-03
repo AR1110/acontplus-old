@@ -64,14 +64,14 @@ export class SubCategoryComponent implements OnInit {
     this.isLoadingResults = true;
 
     this.subCategorySvc.getAll(params).subscribe({
-      next: categories => {
+      next: (categories) => {
         this.isLoadingResults = false;
         this.dataSource = new MatTableDataSource(categories);
         //  this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
 
         if (this.dataSource.data.length > 0) {
-          this.pagination.update(e => {
+          this.pagination.update((e) => {
             return {
               ...e,
               totalRecords: this.dataSource.data[0].totalRecords,
@@ -79,7 +79,7 @@ export class SubCategoryComponent implements OnInit {
           });
         }
       },
-      error: err => {
+      error: (err) => {
         this.isLoadingResults = false;
         console.log(err);
       },
@@ -95,7 +95,7 @@ export class SubCategoryComponent implements OnInit {
   }
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -118,7 +118,7 @@ export class SubCategoryComponent implements OnInit {
       });
 
       if (isConfirmed) {
-        this.subCategorySvc.updateStatus(obj.idSubFamilia).subscribe(response => {
+        this.subCategorySvc.updateStatus(obj.idSubFamilia).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',

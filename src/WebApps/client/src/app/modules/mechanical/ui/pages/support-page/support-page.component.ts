@@ -60,8 +60,8 @@ import { MechanicalStore } from '@mechanical/application/store/mechanical.store'
     MatSelectModule,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
-    CompanyCustomerSearchComponent
-],
+    CompanyCustomerSearchComponent,
+  ],
   templateUrl: './support-page.component.html',
 })
 export class SupportPageComponent implements OnInit, AfterViewInit {
@@ -103,7 +103,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       templateOutlet: null,
     },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -116,7 +116,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         id,
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.getSupports();
       }
@@ -165,7 +165,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       this.supportUseCase
         .getAll(params)
         .pipe(finalize(() => this.isLoadingResults.set(false)))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.dataSource.set(response);
           if (this.dataSource().length > 0) {
             this.pagination().totalRecords = this.dataSource()[0].totalRecords;
@@ -179,7 +179,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const dataStatus = this.$store
       .supportStatus()
-      .find(st => st.code === this.$store.valueStatus());
+      .find((st) => st.code === this.$store.valueStatus());
     this.dataSearch.supportStatusId = dataStatus?.id || 0;
 
     if (this.$store.isDashboard()) {
@@ -217,7 +217,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
@@ -235,9 +235,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.remove(id).subscribe(response => {
+          this.supportUseCase.remove(id).subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -266,7 +266,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         id,
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -281,7 +281,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
       },
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getSupports();
       }
@@ -289,13 +289,13 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   }
 
   askToConvertToDoc(id: number) {
-    this.supportUseCase.getConvertToAprobDoc(id).subscribe(response => {
+    this.supportUseCase.getConvertToAprobDoc(id).subscribe((response) => {
       const dialogRef = this.dialogSvc.open(ConvertDocDialogComponent, {
         size: 'lg',
         data: response,
       });
 
-      dialogRef.subscribe(result => {
+      dialogRef.subscribe((result) => {
         if (result && typeof result === 'object') {
           this.getSupports();
         }
@@ -327,7 +327,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   putState(id: number) {
     const supportStatusId = this.$store
       .supportStatus()
-      .find(st => st.code === MECHANICAL_STATUS.POR_ENTREGAR)?.id;
+      .find((st) => st.code === MECHANICAL_STATUS.POR_ENTREGAR)?.id;
     if (!(supportStatusId > 0)) {
       this.tS.show({
         type: 'warning',
@@ -344,9 +344,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this.supportUseCase.putState(id, supportStatusId).subscribe(response => {
+          this.supportUseCase.putState(id, supportStatusId).subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -372,7 +372,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   getDocView(id: number) {
     try {
-      this.supportUseCase.getDocView(id).subscribe(response => {
+      this.supportUseCase.getDocView(id).subscribe((response) => {
         Swal.fire({
           icon: 'info',
           html: `<div class="d-flex flex-column bd-highlight mb-3">
@@ -391,7 +391,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

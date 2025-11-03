@@ -42,7 +42,12 @@
                   icon="edit"
                   (handleClick)="openModalNewOrEdit(item)"
                 />
-                <app-theme-button variant="danger" matStyle="icon" icon="delete" (handleClick)="askToDelete(item)" />
+                <app-theme-button
+                  variant="danger"
+                  matStyle="icon"
+                  icon="delete"
+                  (handleClick)="askToDelete(item)"
+                />
               </div>
             </td>
             <td class="text-center">{{ $index + 1 }}</td>

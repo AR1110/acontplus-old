@@ -1,13 +1,26 @@
 <div class="d-flex flex-row gap-1">
-  <app-theme-button [variant]="'success'" [icon]="'save'" [text]="'Guardar'" (handleClick)="onSave()" />
-  <app-theme-button [variant]="'danger'" [icon]="'delete'" [text]="'Eliminar'" (handleClick)="onDelete()" />
+  <app-theme-button
+    [variant]="'success'"
+    [icon]="'save'"
+    [text]="'Guardar'"
+    (handleClick)="onSave()"
+  />
+  <app-theme-button
+    [variant]="'danger'"
+    [icon]="'delete'"
+    [text]="'Eliminar'"
+    (handleClick)="onDelete()"
+  />
 </div>
 
 <hr />
 <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
   <!-- This is the tree node template for leaf nodes -->
   <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
-    <div class="d-flex flex-row gap-1 justify-content-center align-items-center" style="width: 310px">
+    <div
+      class="d-flex flex-row gap-1 justify-content-center align-items-center"
+      style="width: 310px"
+    >
       <button mat-icon-button disabled></button>
       <mat-checkbox
         (change)="todoItemSelectionToggle(node)"

@@ -17,11 +17,11 @@ export function fetchLimitUtil<T>(
       console.log('Estado de executing antes de la llamada:', executing);
 
       return fn(...args).pipe(
-        switchMap(result => {
+        switchMap((result) => {
           console.log('Resultado exitoso:', result);
           return of(result); // Emitir el resultado si todo está bien
         }),
-        catchError(error => {
+        catchError((error) => {
           console.error('Error al ejecutar la función:', error);
           return throwError(() => error); // Asegúrate de propagar el error
         }),

@@ -23,10 +23,10 @@ export class OrderService {
   url = `${PATHS_API.TECHSUPPORT}${TECH_SUPPORT_PATHS.ORDER}`;
   private http = inject(HttpClient);
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`).pipe(map(response => response));
+    return this.http.delete(`${this.url}${id}`).pipe(map((response) => response));
   }
   delivery(id: number, data: any) {
-    return this.http.put(`${this.url}delivery/${id}`, data).pipe(map(response => response));
+    return this.http.put(`${this.url}delivery/${id}`, data).pipe(map((response) => response));
   }
 
   getAll<T>(obj: T) {
@@ -35,7 +35,7 @@ export class OrderService {
       tipo: 2,
     });
     return this.http.get(`${this.url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let orders = [];
         let users = [];
         if (isApiResponse(response)) {
@@ -64,7 +64,7 @@ export class OrderService {
       tipo: 4,
     });
     return this.http.get(`${this.url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const data = {
           order: {} as any,
           establecimientos: [] as GroupedEstab[],
@@ -110,7 +110,7 @@ export class OrderService {
                 const medidas = mergeMeasureUtil(principal, fraccionado);
 
                 const dataMedida =
-                  medidas.find(m => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
+                  medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
                 const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
                   restItem.price,
@@ -181,17 +181,17 @@ export class OrderService {
   get<T>(params: T) {
     return this.http
       .get(`${this.url}?json=${JSON.stringify(params)}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   convert(data: any) {
-    return this.http.post(`${this.url}Convert`, data).pipe(map(response => response));
+    return this.http.post(`${this.url}Convert`, data).pipe(map((response) => response));
   }
 
   post(data: any) {
-    return this.http.post(`${this.url}`, data).pipe(map(response => response));
+    return this.http.post(`${this.url}`, data).pipe(map((response) => response));
   }
   put(id: number, data: any) {
-    return this.http.put(`${this.url}${id}`, data).pipe(map(response => response));
+    return this.http.put(`${this.url}${id}`, data).pipe(map((response) => response));
   }
 }

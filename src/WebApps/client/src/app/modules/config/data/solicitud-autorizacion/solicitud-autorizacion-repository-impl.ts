@@ -29,18 +29,18 @@ export class SolicitudAutorizacionRepositoryImpl implements SolicitudAutorizacio
 
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => ListSolicitudAutorizacionDetalleMapper.fromJson(response)));
+      .pipe(map((response) => ListSolicitudAutorizacionDetalleMapper.fromJson(response)));
   }
   filter(): Observable<SolicitudAutorizacionFilterResponse> {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${FilterSolicitudAutorizacionMapper.toJson()}`)
-      .pipe(map(response => FilterSolicitudAutorizacionMapper.fromJson(response)));
+      .pipe(map((response) => FilterSolicitudAutorizacionMapper.fromJson(response)));
   }
 
   list<T>(parameters: T) {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${ListSolicitudAutorizacionMapper.toJson(parameters)}`)
-      .pipe(map(response => ListSolicitudAutorizacionMapper.fromJson(response)));
+      .pipe(map((response) => ListSolicitudAutorizacionMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.SOLICITUD_AUTORIZACION}`;

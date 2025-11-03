@@ -8,17 +8,12 @@ import { AutocompleteService } from '@shared/services/autocomplete.service';
 import { ReusableAutocompleteComponent } from '@shared/components/reusable-autocomplete/reusable-autocomplete.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-
 import { CurrencyPipe } from '@angular/common';
 import { ListProductWithPricesUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
   selector: 'app-product-autocomplete-advanced',
-  imports: [
-    MatTooltipModule,
-    ReusableAutocompleteComponent,
-    CurrencyPipe,
-  ],
+  imports: [MatTooltipModule, ReusableAutocompleteComponent, CurrencyPipe],
   templateUrl: './product-autocomplete-advanced.component.html',
   styleUrl: './product-autocomplete-advanced.component.scss',
 })

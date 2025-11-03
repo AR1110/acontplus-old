@@ -1,7 +1,7 @@
-import {inject, Injectable} from '@angular/core';
-import {BaseUseCase} from "@core/base-use-case";
-import {WarehouseTransferRepository} from "@inventory/domain/repositories/warehouse-transfer.repository";
-import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
+import { inject, Injectable } from '@angular/core';
+import { BaseUseCase } from '@core/base-use-case';
+import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
+import { WarehouseTransferDataFormResult } from '@inventory/domain/models/warehouse-transfer';
 
 @Injectable({
   providedIn: 'root',
@@ -30,11 +30,12 @@ export class WarehouseTransferUseCase {
   }
 }
 
-
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferDataFormUseCase implements BaseUseCase<WarehouseTransferDataFormResult, any>{
+export class WarehouseTransferDataFormUseCase
+  implements BaseUseCase<WarehouseTransferDataFormResult, any>
+{
   private repo = inject(WarehouseTransferRepository);
 
   execute() {
@@ -45,9 +46,9 @@ export class WarehouseTransferDataFormUseCase implements BaseUseCase<WarehouseTr
 @Injectable({
   providedIn: 'root',
 })
-export class GetMassTransferProductsUseCase implements BaseUseCase<any, any>{
+export class GetMassTransferProductsUseCase implements BaseUseCase<any, any> {
   private repo = inject(WarehouseTransferRepository);
-  execute(obj:any) {
+  execute(obj: any) {
     return this.repo.getMassTransferProducts(obj);
   }
 }
@@ -55,9 +56,11 @@ export class GetMassTransferProductsUseCase implements BaseUseCase<any, any>{
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferGenerateSerieUseCase implements BaseUseCase<any, { puntoEmisionId: number }>{
+export class WarehouseTransferGenerateSerieUseCase
+  implements BaseUseCase<any, { puntoEmisionId: number }>
+{
   private repo = inject(WarehouseTransferRepository);
-  execute(obj:any) {
+  execute(obj: any) {
     return this.repo.generateSerie(obj);
   }
 }
@@ -65,40 +68,37 @@ export class WarehouseTransferGenerateSerieUseCase implements BaseUseCase<any, {
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferSaveUseCase implements BaseUseCase<any, any>{
+export class WarehouseTransferSaveUseCase implements BaseUseCase<any, any> {
   private repo = inject(WarehouseTransferRepository);
-  execute(obj:any) {
+  execute(obj: any) {
     return this.repo.post(obj);
   }
 }
 
-
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root',
 })
-export class WarehouseTransferGetByIdUseCase implements BaseUseCase<any, number>{
+export class WarehouseTransferGetByIdUseCase implements BaseUseCase<any, number> {
   private repo = inject(WarehouseTransferRepository);
   execute(id: number) {
     return this.repo.getById(id);
   }
 }
 
-
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferEditUseCase implements BaseUseCase<any, any>{
+export class WarehouseTransferEditUseCase implements BaseUseCase<any, any> {
   private repo = inject(WarehouseTransferRepository);
-  execute(obj:any) {
+  execute(obj: any) {
     return this.repo.put(obj.id, obj);
   }
 }
 
-
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferViewDetailUseCase implements BaseUseCase<any, number>{
+export class WarehouseTransferViewDetailUseCase implements BaseUseCase<any, number> {
   private repo = inject(WarehouseTransferRepository);
   execute(id: number) {
     return this.repo.viewDetail(id);
@@ -108,7 +108,7 @@ export class WarehouseTransferViewDetailUseCase implements BaseUseCase<any, numb
 @Injectable({
   providedIn: 'root',
 })
-export class WarehouseTransferUpdateStatusUseCase implements BaseUseCase<any, number>{
+export class WarehouseTransferUpdateStatusUseCase implements BaseUseCase<any, number> {
   private repo = inject(WarehouseTransferRepository);
   execute(id: number) {
     return this.repo.updateStatus(id);

@@ -7,7 +7,9 @@
 
 <ng-template #containerTemplate>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+    >
       <div class="col">
         <div class="border border-dark rounded-3 p-2">
           <div class="d-flex flex-column gap-1">
@@ -36,7 +38,9 @@
     </div>
 
     <div class="border border-dark rounded-3 p-2">
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col-7">
           <div class="d-flex">
             <small class="fw-semibold me-2">Razón Social/ Nombres:</small>
@@ -70,58 +74,57 @@
       </div>
     </div>
 
-    <div class="  p-2">
-        <app-data-grid [data]="details()" [columns]="columns"
-                       [cellTemplate]="{
-                       product: productTpl,
-                       quantityData: quantityTpl,
-                       pricing: pricingTpl,
-                       taxes: taxesTpl,
-                       }"
-                       [showPaginator]="false"   />
+    <div class="p-2">
+      <app-data-grid
+        [data]="details()"
+        [columns]="columns"
+        [cellTemplate]="{
+          product: productTpl,
+          quantityData: quantityTpl,
+          pricing: pricingTpl,
+          taxes: taxesTpl,
+        }"
+        [showPaginator]="false"
+      />
 
-        <ng-template #productTpl let-row>
-            <div class="product-info">
-                <div class="main">{{ row.description }}</div>
-                <small class="code">{{ row.code }}</small>
-                @if (row.note) {
-                <small class="note" >Nota: {{ row.note }}</small>
+      <ng-template #productTpl let-row>
+        <div class="product-info">
+          <div class="main">{{ row.description }}</div>
+          <small class="code">{{ row.code }}</small>
+          @if (row.note) {
+            <small class="note">Nota: {{ row.note }}</small>
+          }
+        </div>
+      </ng-template>
 
-                }
-            </div>
-        </ng-template>
-
-        <ng-template #quantityTpl let-row>
-            {{ row.quantity }} <small>{{ row.unitMeasure }}</small>
-        </ng-template>
-        <ng-template #pricingTpl let-row>
+      <ng-template #quantityTpl let-row>
+        {{ row.quantity }} <small>{{ row.unitMeasure }}</small>
+      </ng-template>
+      <ng-template #pricingTpl let-row>
+        <div>
+          <div>Unitario: {{ row.unitPrice }}</div>
+          @if (row.discountValue > 0) {
             <div>
-                <div>Unitario: {{ row.unitPrice  }}</div>
-                @if (row.discountValue > 0) {
-                <div  >
-                    Desc: {{ row.discountValue  }}
-                    @if (row.discountPercentage > 0) {
-                    <small  >
-                        ({{ row.discountPercentage }}%)
-                    </small>
-
-                    }
-                </div>
-
-                }
+              Desc: {{ row.discountValue }}
+              @if (row.discountPercentage > 0) {
+                <small> ({{ row.discountPercentage }}%) </small>
+              }
             </div>
-        </ng-template>
+          }
+        </div>
+      </ng-template>
 
-        <ng-template #taxesTpl let-row>
-            <div>
-                <div>{{ row.taxType }}</div>
-                <div>{{ row.taxValue}}</div>
-            </div>
-        </ng-template>
-
+      <ng-template #taxesTpl let-row>
+        <div>
+          <div>{{ row.taxType }}</div>
+          <div>{{ row.taxValue }}</div>
+        </div>
+      </ng-template>
     </div>
 
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-3"
+    >
       <div class="col-9">
         <div class="border border-dark rounded-3 p-2">
           <div class="d-flex">
@@ -130,15 +133,13 @@
           </div>
         </div>
 
-          <div class="mt-2">
-              <app-data-grid [data]="additionalsInfo()" [columns]="columnsAdditionalsInfo"
-              [showPaginator]="false"
-
-
-               />
-
-          </div>
-
+        <div class="mt-2">
+          <app-data-grid
+            [data]="additionalsInfo()"
+            [columns]="columnsAdditionalsInfo"
+            [showPaginator]="false"
+          />
+        </div>
       </div>
       <div class="col-3">
         <div class="border border-dark rounded-3 p-2">

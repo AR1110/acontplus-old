@@ -7,7 +7,9 @@ import {
   signal,
   OnInit,
   AfterViewInit,
-  OnDestroy, output, computed,
+  OnDestroy,
+  output,
+  computed,
 } from '@angular/core';
 
 import { debounceTime, distinctUntilChanged, switchMap, finalize } from 'rxjs/operators';
@@ -23,7 +25,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { PageEvent } from '@angular/material/paginator';
-import {MatDialogRef} from "@angular/material/dialog";
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-product-search-dialog.ts',
@@ -36,8 +38,8 @@ import {MatDialogRef} from "@angular/material/dialog";
     MatIconModule,
     MatButtonModule,
     MatDividerModule,
-    DataGrid
-]
+    DataGrid,
+  ],
 })
 export class ProductSearchDialog {
   private dialogRef = inject(MatDialogRef<ProductSearchDialog>);
@@ -51,8 +53,8 @@ export class ProductSearchDialog {
   list = signal<any[]>([]);
   total = signal(0);
 
-  columnsPrices  = signal<DataGridColumn[]>([])
-  originalColumns  = signal<DataGridColumn[]>([
+  columnsPrices = signal<DataGridColumn[]>([]);
+  originalColumns = signal<DataGridColumn[]>([
     { header: 'Nro.', field: 'index', type: 'number' },
     { header: 'Imagen', field: 'imageUrl', type: 'image' },
     { header: 'Descripción', field: 'dataDescription' },
@@ -62,12 +64,8 @@ export class ProductSearchDialog {
     { header: 'Medida', field: 'measure' },
   ]);
 
-  columns  =  computed(()=>{
-
-    return [
-      ...this.originalColumns(),
-      ...this.columnsPrices(),
-    ]
+  columns = computed(() => {
+    return [...this.originalColumns(), ...this.columnsPrices()];
   });
 
   query = {
@@ -119,7 +117,6 @@ export class ProductSearchDialog {
       this.searchWithLoader();
     }, 500); // espera 500ms antes de buscar
   }
-
 
   private searchWithLoader(): void {
     this.loading.set(true);
@@ -180,10 +177,9 @@ export class ProductSearchDialog {
     this.total.set(0);
   }
 
-
-  rowClick($event:any){
-    console.log($event)
-    this.dialogRef.close($event.rowData)
+  rowClick($event: any) {
+    console.log($event);
+    this.dialogRef.close($event.rowData);
   }
   getNextPage(e: PageEvent): void {
     this.query.page = e.pageIndex;
@@ -194,6 +190,4 @@ export class ProductSearchDialog {
   onFocusedRowChange(event: any): void {
     console.log('Fila enfocada:', event);
   }
-
-
 }

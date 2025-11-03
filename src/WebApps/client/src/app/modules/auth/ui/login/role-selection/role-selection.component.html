@@ -3,7 +3,8 @@
     <div class="container max-w-6xl mx-auto p-2">
       <h1 class="h3 h-md-1 fw-bolder text-dark mb-2">Selecciona tu Rol de Acceso</h1>
       <p class="text-muted mb-4 mb-md-4">
-        Tu cuenta está asociada a múltiples roles empresariales. Selecciona la identidad con la que deseas continuar.
+        Tu cuenta está asociada a múltiples roles empresariales. Selecciona la identidad con la que
+        deseas continuar.
       </p>
 
       <div id="rolesGrid" class="d-flex flex-column">
@@ -15,7 +16,11 @@
           >
             <div class="d-flex align-items-start">
               <div class="flex-shrink-0 me-4">
-                <img [src]="role.imageUrl" [alt]="'Logo de ' + role.tradeName" class="logo-circle" />
+                <img
+                  [src]="role.imageUrl"
+                  [alt]="'Logo de ' + role.tradeName"
+                  class="logo-circle"
+                />
               </div>
 
               <div class="flex-grow-1 min-w-0">

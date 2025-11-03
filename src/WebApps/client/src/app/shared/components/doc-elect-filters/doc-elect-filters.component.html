@@ -16,12 +16,13 @@
         >
           <mat-icon>visibility</mat-icon>
         </app-theme-button>
-        <app-theme-button variant="secondary"
+        <app-theme-button
+          variant="secondary"
           icon="refresh"
           matStyle="icon"
           title="Recargar"
           (handleClick)="reload()"
-         />
+        />
       </div>
     </div>
   </div>
@@ -51,18 +52,21 @@
             </mat-option>
           }
         </mat-select>
-        @if (filterForm.get('idPuntoEmision')?.invalid && filterForm.get('idPuntoEmision')?.touched) {
+        @if (
+          filterForm.get('idPuntoEmision')?.invalid && filterForm.get('idPuntoEmision')?.touched
+        ) {
           <mat-error> Campo requerido </mat-error>
         }
       </mat-form-field>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-      <app-date-range-selection [showInputMaterial]="true"
+      <app-date-range-selection
+        [showInputMaterial]="true"
         [(checkbox)]="checkBoxFecha"
         [showMatPrefix]="true"
         (onCheckboxChange)="setCheckBoxDate()"
         (onChangeDateRange)="onDateRangeSelected($event)"
-       />
+      />
     </div>
   </div>
 
@@ -74,9 +78,10 @@
           @if (this.filterOptions().personType()) {
             <app-supplier-search (supplierSelected)="onSelectSupplierHandler($event)" />
           } @else {
-            <app-company-customer-search [isSimpleMode]="true"
+            <app-company-customer-search
+              [isSimpleMode]="true"
               (customerSelected)="onSelectClienteHandler($event)"
-             />
+            />
           }
         </div>
       }

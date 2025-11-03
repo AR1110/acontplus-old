@@ -1,15 +1,25 @@
-<app-mat-custom-dialog [title]="'Documentos'" [containerTemplate]="body" [actionsTemplate]="footer" (close)="close()" />
+<app-mat-custom-dialog
+  [title]="'Documentos'"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="close()"
+/>
 
 <ng-template #body>
   <div class="d-grid gap-2">
     <div class="d-flex flex-column">
       <div class="p-1"><b>Cliente: </b> <span class="font-weight-bold"> xxxxx </span></div>
-      <div class="p-1"><b>Número Identificación:</b> <span class="font-weight-bold"> xxxxxx </span></div>
+      <div class="p-1">
+        <b>Número Identificación:</b> <span class="font-weight-bold"> xxxxxx </span>
+      </div>
     </div>
     <mat-divider />
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="changeDateRange($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="changeDateRange($event)"
+        />
       </div>
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
         <mat-form-field class="w-100">
@@ -26,13 +36,14 @@
         </mat-form-field>
       </div>
     </div>
-    <app-mat-dynamic-table [tableData]="dataSource()"
+    <app-mat-dynamic-table
+      [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
       [paginationConfig]="pagination()"
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
-     />
+    />
   </div>
 </ng-template>
 <ng-template #footer />

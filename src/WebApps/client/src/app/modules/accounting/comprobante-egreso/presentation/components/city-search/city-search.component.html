@@ -11,9 +11,11 @@
     @for (group of ciudadGroupOptions; track group) {
       <mat-optgroup [label]="group.provincia">
         @for (name of group.ciudades; track name) {
-          <mat-option [value]="name.descripcion" (onSelectionChange)="valueChangeCity(name.idCiudad)">{{
-            name.descripcion
-          }}</mat-option>
+          <mat-option
+            [value]="name.descripcion"
+            (onSelectionChange)="valueChangeCity(name.idCiudad)"
+            >{{ name.descripcion }}</mat-option
+          >
         }
       </mat-optgroup>
     }

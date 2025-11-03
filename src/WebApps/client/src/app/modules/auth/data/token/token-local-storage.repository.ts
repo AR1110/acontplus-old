@@ -22,9 +22,9 @@ export class TokenLocalStorageRepository implements TokenRepository {
         userData: session.userData,
         menuItems: session.menuItems,
         permissions: session.permissions,
-        company:session.company,
+        company: session.company,
         timestamp: Date.now(),
-        version: this.CACHE_VERSION
+        version: this.CACHE_VERSION,
       }),
     );
   }

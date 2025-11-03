@@ -17,14 +17,26 @@
         <tr>
           <td>{{ $index + 1 }}</td>
           <td>
-            <app-theme-button variant="warning" icon="edit" title="Editar" matStyle="icon" (click)="onEdit(item)" />
-            <app-theme-button variant="danger"
+            <app-theme-button
+              variant="warning"
+              icon="edit"
+              title="Editar"
+              matStyle="icon"
+              (click)="onEdit(item)"
+            />
+            <app-theme-button
+              variant="danger"
               icon="delete"
               title="Eliminar"
               matStyle="icon"
               (handleClick)="askToDelete(item)"
-             />
-            <app-theme-button icon="group" matStyle="icon" title="Clientes" (handleClick)="getCustomers(item.id)" />
+            />
+            <app-theme-button
+              icon="group"
+              matStyle="icon"
+              title="Clientes"
+              (handleClick)="getCustomers(item.id)"
+            />
           </td>
           <td>{{ item.name }}</td>
           <td>{{ item.brandName }}</td>

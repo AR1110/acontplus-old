@@ -33,7 +33,7 @@
   position: absolute;
   display: inline-block;
   border-bottom-color: rgba(0, 0, 0, 0.2);
-  content: "";
+  content: '';
 }
 
 .daterangepicker:before {

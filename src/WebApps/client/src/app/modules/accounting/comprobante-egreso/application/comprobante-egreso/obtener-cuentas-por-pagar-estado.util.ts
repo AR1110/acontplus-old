@@ -29,7 +29,7 @@ export const obtenerCuentasPorPagarEstado = function ({
 }: Props): CuentaPorPagarEstado[] {
   // Agrupando las cuentas por pagar y sumando los abonos para cada cuenta
   const cuentasPorPagarAgrupado = cuentasPorPagarHistorial.reduce((acc, curr) => {
-    const existeDato = acc.find(item => item.idCuentaPorPagar === curr.idCuentaPorPagar);
+    const existeDato = acc.find((item) => item.idCuentaPorPagar === curr.idCuentaPorPagar);
     if (!existeDato) {
       acc.push({
         idCuentaPorPagar: curr.idCuentaPorPagar,
@@ -53,13 +53,13 @@ export const obtenerCuentasPorPagarEstado = function ({
 
     // Calcular el total de pagos posfechados y no posfechados
     const totalPosfechado = pagosDetalle
-      .filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.esPosfechado)
-      .map(item => item.abono)
+      .filter((cd) => cd.idCuentaPorPagar === item.idCuentaPorPagar && cd.esPosfechado)
+      .map((item) => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
     const totalNoPosfechado = pagosDetalle
-      .filter(cd => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.esPosfechado)
-      .map(item => item.abono)
+      .filter((cd) => cd.idCuentaPorPagar === item.idCuentaPorPagar && !cd.esPosfechado)
+      .map((item) => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
     valorSaldo = minus(valorSaldo, totalNoPosfechado, DECIMALS.CINCO) as number;

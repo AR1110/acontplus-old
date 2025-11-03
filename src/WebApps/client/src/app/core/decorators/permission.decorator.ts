@@ -24,13 +24,17 @@ export function RequirePermission(actionCode: string, context?: string) {
         try {
           permissionsService = (target as any).injector?.get(PermissionsService);
         } catch (e) {
-          console.error(`RequirePermission: No se pudo inyectar PermissionsService en el método ${propertyKey}. Asegúrate de que el componente tenga el injector disponible.`);
+          console.error(
+            `RequirePermission: No se pudo inyectar PermissionsService en el método ${propertyKey}. Asegúrate de que el componente tenga el injector disponible.`,
+          );
           return;
         }
       }
 
       if (!permissionsService.hasPermission(actionCode, context)) {
-        console.warn(`Acceso denegado al método '${propertyKey}'. Permiso requerido: '${actionCode}' en contexto '${context}'`);
+        console.warn(
+          `Acceso denegado al método '${propertyKey}'. Permiso requerido: '${actionCode}' en contexto '${context}'`,
+        );
         return; // No ejecuta el método
       }
 

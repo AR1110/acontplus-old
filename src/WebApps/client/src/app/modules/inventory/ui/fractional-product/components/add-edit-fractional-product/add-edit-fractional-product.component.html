@@ -15,7 +15,9 @@
       <mat-divider />
     </mat-list>
 
-    <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1">
+    <div
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Nueva Medida: </mat-label>
@@ -44,7 +46,12 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Contiene(Conversión): <span class="text-danger">*</span></mat-label>
-          <input type="number" matInput [(ngModel)]="data.conversion" (keyup)="onChangeConversion()" />
+          <input
+            type="number"
+            matInput
+            [(ngModel)]="data.conversion"
+            (keyup)="onChangeConversion()"
+          />
         </mat-form-field>
       </div>
       <div class="col">
@@ -55,11 +62,18 @@
       </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
+    <div
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Precio Costo Medida Nueva: <span class="text-danger">*</span></mat-label>
-          <input type="number" matInput [(ngModel)]="data.precioCostoFraccionado" (keyup)="recalculateTarifaAdd()" />
+          <input
+            type="number"
+            matInput
+            [(ngModel)]="data.precioCostoFraccionado"
+            (keyup)="recalculateTarifaAdd()"
+          />
           <span matSuffix>
             <button mat-icon-button (click)="recalculatePercentage($event)">
               <svg
@@ -75,8 +89,12 @@
                 class="icon icon-tabler icons-tabler-outline icon-tabler-calculator"
               >
                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z" />
-                <path d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z" />
+                <path
+                  d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
+                />
+                <path
+                  d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z"
+                />
                 <path d="M8 14l0 .01" />
                 <path d="M12 14l0 .01" />
                 <path d="M16 14l0 .01" />
@@ -109,10 +127,11 @@
 
     <div class="row">
       <div class="col-12 col-xxl-8 col-xl-8 col-lg-8 col-md-12">
-        <app-tabulator [tableData]="productTarifa()"
+        <app-tabulator
+          [tableData]="productTarifa()"
           [options]="tabulatorOptions"
           (cellEdited)="cellEdited($event)"
-         />
+        />
       </div>
     </div>
   </div>
@@ -125,5 +144,11 @@
     [text]="btnText()"
     (handleClick)="save()"
   />
-  <app-theme-button [type]="'button'" [variant]="'dark'" [icon]="'clear'" [text]="'Cerrar'" (handleClick)="close()" />
+  <app-theme-button
+    [type]="'button'"
+    [variant]="'dark'"
+    [icon]="'clear'"
+    [text]="'Cerrar'"
+    (handleClick)="close()"
+  />
 </ng-template>

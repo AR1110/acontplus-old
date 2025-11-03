@@ -91,9 +91,9 @@ const initialComprobanteEgresoState: ComprobanteEgresoStore = {
 export const ComprobanteEgresoStore = signalStore(
   { providedIn: 'root' },
   withState(initialComprobanteEgresoState),
-  withComputed(store => {
+  withComputed((store) => {
     const { cuentasPorPagar, formasPago, dataFormaPago } = store;
-    const obtenerCuotas = () => cuentasPorPagar().flatMap(item => item.cuotas);
+    const obtenerCuotas = () => cuentasPorPagar().flatMap((item) => item.cuotas);
 
     const esTipoPago = (tipo: PaymentTypeCode | null) =>
       dataFormaPago().codigoEntidadFinanciera === tipo;
@@ -163,7 +163,7 @@ export const ComprobanteEgresoStore = signalStore(
         useCase
           .getDataFormPago(idProveedor)
           .pipe(finalize(() => patchState(store, { isLoading: false })))
-          .subscribe(response => {
+          .subscribe((response) => {
             console.log(response);
             patchState(store, {
               entidadesFinanciera: response.entidadesFinanciera,
@@ -179,7 +179,7 @@ export const ComprobanteEgresoStore = signalStore(
       updateDataEntidadFinanciera: (data: EntidadFinanciera) => {
         const subEntidadesFinancieraFiltered = store
           .subEntidadesFinanciera()
-          .filter(item => item.idEntidadFinanciera === data.idEntidadFinanciera);
+          .filter((item) => item.idEntidadFinanciera === data.idEntidadFinanciera);
         const dataSubEntidadFinanciera =
           subEntidadesFinancieraFiltered.length > 0 ? subEntidadesFinancieraFiltered[0] : null;
 
@@ -261,7 +261,7 @@ export const ComprobanteEgresoStore = signalStore(
           ],
         };
 
-        Object.keys(validations).forEach(key => {
+        Object.keys(validations).forEach((key) => {
           if (store[key as keyof typeof validations]()) {
             for (const { condition, message } of validations[key as keyof typeof validations]) {
               if (condition) {
@@ -292,13 +292,13 @@ export const ComprobanteEgresoStore = signalStore(
 
         const dataCiudad = store
           .provinciaCiudades()
-          .flatMap(item => item.ciudades)
-          .find(item => item.idCiudad === idCiudad);
+          .flatMap((item) => item.ciudades)
+          .find((item) => item.idCiudad === idCiudad);
 
-        const dataBanco = store.bancos().find(item => item.idBanco === idBanco);
+        const dataBanco = store.bancos().find((item) => item.idBanco === idBanco);
 
         const totalAbonoPagoDetalle = pagosDetalle
-          .filter(item => item.secuencial === secuencial)
+          .filter((item) => item.secuencial === secuencial)
           .reduce((acc, curr) => acc + curr.abono, 0);
 
         const dataFormaPago: FormaPago = {
@@ -332,9 +332,9 @@ export const ComprobanteEgresoStore = signalStore(
 
         try {
           if (isConfirmed) {
-            const formasPago = store.formasPago().filter(item => item.uuid !== data.uuid);
+            const formasPago = store.formasPago().filter((item) => item.uuid !== data.uuid);
 
-            const cuentasPorPagar = store.cuentasPorPagar().map(item => {
+            const cuentasPorPagar = store.cuentasPorPagar().map((item) => {
               return {
                 ...item,
                 cuotas: structuredClone(item.cuotasCopy),

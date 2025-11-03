@@ -64,7 +64,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     { key: 'saldo', label: 'Saldo', type: 'number' },
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   cuentaPorPagarColumnsDefs: ColumnDefinition[] = [
     { key: 'nombreDoc', label: 'Op.', type: 'string' },
@@ -72,7 +72,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'expand', label: '', type: 'string' },
   ];
-  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map(colDef => colDef.key);
+  cuentaPorPagaeColumns: string[] = this.cuentaPorPagarColumnsDefs.map((colDef) => colDef.key);
 
   ngOnInit() {
     this.comprobanteEgresoStore.updateMultipleFields({
@@ -102,13 +102,13 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
     // Filtrar los pagos relacionados con la cuota seleccionada
     const tempPagosDetalle = this.comprobanteEgresoStore
       .pagosDetalle()
-      .filter(item => item.idCuotaPorPagar === data.idCuotaPorPagar);
+      .filter((item) => item.idCuotaPorPagar === data.idCuotaPorPagar);
 
     // Construir el detalle de los pagos con la información adicional
-    const infoPagosDetalle = tempPagosDetalle.map(pd => {
+    const infoPagosDetalle = tempPagosDetalle.map((pd) => {
       const dataPago = this.comprobanteEgresoStore
         .formasPago()
-        .find(item => item.secuencial === pd.secuencial);
+        .find((item) => item.secuencial === pd.secuencial);
 
       return {
         ...pd,
@@ -183,7 +183,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
 
     // Filtrar las secuencias que no existen en los datos de referencia
     const secuenciasInvalidas = formasPago().filter(
-      dato => !pagosDetalle().some(referencia => referencia.secuencial === dato.secuencial),
+      (dato) => !pagosDetalle().some((referencia) => referencia.secuencial === dato.secuencial),
     );
 
     if (secuenciasInvalidas.length > 0) {
@@ -234,7 +234,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
       cuentasPorPagarHistorial: cuentasPorPagarHistorial(),
     };
 
-    this.useCase.post(data).subscribe(response => {
+    this.useCase.post(data).subscribe((response) => {
       if (response.code === '0') {
         this.tS.show({
           type: 'warning',

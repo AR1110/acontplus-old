@@ -82,15 +82,15 @@ export class UserCustomerPermissionComponent implements OnInit {
   };
 
   treeControl = new FlatTreeControl<any>(
-    node => node.level,
-    node => node.expandable,
+    (node) => node.level,
+    (node) => node.expandable,
   );
 
   treeFlattener = new MatTreeFlattener(
     this.transformer,
-    node => node.level,
-    node => node.expandable,
-    node => node.children,
+    (node) => node.level,
+    (node) => node.expandable,
+    (node) => node.children,
   );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -104,7 +104,7 @@ export class UserCustomerPermissionComponent implements OnInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.data = response.userCustomPermissions;
         this.userPermissionData = response.userPermissionData;
         this.usersCustomerAdmin = response.usersCustomerAdmin;
@@ -134,7 +134,7 @@ export class UserCustomerPermissionComponent implements OnInit {
 
   save() {
     const permissionsFiltered = this.treeControl.dataNodes.filter(
-      item => item.level === 1 && item.enabled,
+      (item) => item.level === 1 && item.enabled,
     );
 
     if (

@@ -64,7 +64,7 @@ export class FiltroControlCajaReportModal {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async clave => {
+          preConfirm: async (clave) => {
             const obj = {
               typeCheck: 1,
               clave,
@@ -84,7 +84,7 @@ export class FiltroControlCajaReportModal {
             return true;
           },
           allowOutsideClick: () => Swal.isLoading(),
-        }).then(result => {
+        }).then((result) => {
           if (result.isConfirmed) {
             this.generateReport();
           }

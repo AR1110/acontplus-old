@@ -55,7 +55,7 @@ export class SubcategoryModalComponent implements OnInit {
   private _subCategoryUseCase = inject(SubCategoryUseCase);
 
   get() {
-    this._subCategoryUseCase.getDataForm().subscribe(response => {
+    this._subCategoryUseCase.getDataForm().subscribe((response) => {
       this.categories.set(response.categories);
     });
   }

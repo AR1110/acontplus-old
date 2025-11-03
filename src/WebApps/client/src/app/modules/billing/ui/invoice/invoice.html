@@ -5,7 +5,9 @@
     <div class="d-flex flex-column gap-2">
       <div class="row">
         <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
-          <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Establecimiento</mat-label>
@@ -64,7 +66,9 @@
               >Doc. Transferida</mat-checkbox
             >
           </div>
-          <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1">
+          <div
+            class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Cliente</mat-label>
@@ -110,11 +114,12 @@
       [isLoadingResults]="isLoadingResults()"
       (onPageEvent)="handlePageEvent($event)"
     >
-      <app-mat-dynamic-table [templateOp]="templateOp"
+      <app-mat-dynamic-table
+        [templateOp]="templateOp"
         [tableData]="dataSource.data"
         [columnDefinitions]="columnsDefs"
         [visibleColumns]="columns"
-       />
+      />
     </app-custom-table-container>
 
     <ng-template #templateOp let-item="item">

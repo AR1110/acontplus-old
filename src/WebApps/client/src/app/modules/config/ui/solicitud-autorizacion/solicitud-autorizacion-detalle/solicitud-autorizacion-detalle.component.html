@@ -5,6 +5,10 @@
   [title]="'Detalle de Modificación'"
 />
 <ng-template #body>
-  <app-mat-dynamic-table [tableData]="dataSource()" [columnDefinitions]="columnsDefs" [visibleColumns]="columns" />
+  <app-mat-dynamic-table
+    [tableData]="dataSource()"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+  />
 </ng-template>
 <ng-template #footer />

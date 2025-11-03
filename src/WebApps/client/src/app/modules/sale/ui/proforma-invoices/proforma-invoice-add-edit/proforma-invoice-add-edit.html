@@ -1,6 +1,4 @@
-<app-mat-custom-dialog
-(close)="closeDg()"
->
+<app-mat-custom-dialog (close)="closeDg()">
   <div ngProjectAs="content">
     <div class="row">
       <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
@@ -35,13 +33,19 @@
       </div>
     </div>
 
-<!-- start   row products-->
+    <!-- start   row products-->
     <div class="row">
       <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 col-12">
         <div class="row">
           <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
             <mat-form-field class="w-100">
-              <input matInput placeholder="Search... (Ctrl + K)" readonly (click)="openSearch()" tabindex="0" />
+              <input
+                matInput
+                placeholder="Search... (Ctrl + K)"
+                readonly
+                (click)="openSearch()"
+                tabindex="0"
+              />
               <ng-container matSuffix>
                 <button mat-icon-button (click)="openSearch()">
                   <mat-icon>search</mat-icon>
@@ -54,8 +58,7 @@
           </div>
           <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
             <mat-form-field class="w-100">
-              <input matInput placeholder="Search by code..."  />
-
+              <input matInput placeholder="Search by code..." />
             </mat-form-field>
           </div>
         </div>
@@ -82,9 +85,9 @@
         </div>
       </div>
     </div>
-<!--    end row products -->
+    <!--    end row products -->
 
-<!--    start details-->
+    <!--    start details-->
     <app-tabulator
       [columnNames]="columns()"
       [tableData]="details()"
@@ -94,9 +97,9 @@
       }"
       (cellEdited)="cellEdited($event)"
     />
-<!--    end details-->
+    <!--    end details-->
 
-<!--    start footer-->
+    <!--    start footer-->
     <div class="row">
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="vstack gap-2">
@@ -104,17 +107,18 @@
             <mat-label>Observación</mat-label>
             <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
           </mat-form-field>
-          <app-data-grid [data]="additionalInfo()"
-          [columns]="columnsAdditionalInfo"
+          <app-data-grid
+            [data]="additionalInfo()"
+            [columns]="columnsAdditionalInfo"
             [showPaginator]="false"
             [size]="'small'"
             [headerTemplate]="{
-             op: opHeaderTpl,
+              op: opHeaderTpl,
             }"
             [cellTemplate]="{
               op: opCellTpl,
             }"
-           />
+          />
           <ng-template #opHeaderTpl>
             <button mat-icon-button>
               <mat-icon>add</mat-icon>
@@ -127,13 +131,9 @@
           </ng-template>
         </div>
       </div>
-      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-
-      </div>
+      <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12"></div>
     </div>
-<!--    end footer-->
-
+    <!--    end footer-->
   </div>
   <div ngProjectAs="actions"></div>
-
 </app-mat-custom-dialog>

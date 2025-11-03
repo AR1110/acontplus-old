@@ -65,7 +65,11 @@
     <div class="images-indicator">
       <div class="images-dots">
         @for (img of getDisplayImages(); track $index) {
-          <div class="image-dot" [class.active]="$index === currentImageIndex" (click)="selectImage($index)"></div>
+          <div
+            class="image-dot"
+            [class.active]="$index === currentImageIndex"
+            (click)="selectImage($index)"
+          ></div>
         }
       </div>
       <div class="images-count">
@@ -78,11 +82,19 @@
   <!-- Navegación de imágenes -->
   @if (hasMultipleImages && showNavigation()) {
     <div class="image-navigation">
-      <button class="nav-btn prev-btn" (click)="previousImage()" [disabled]="currentImageIndex === 0">
+      <button
+        class="nav-btn prev-btn"
+        (click)="previousImage()"
+        [disabled]="currentImageIndex === 0"
+      >
         <mat-icon>chevron_left</mat-icon>
       </button>
 
-      <button class="nav-btn next-btn" (click)="nextImage()" [disabled]="currentImageIndex >= getTotalImages() - 1">
+      <button
+        class="nav-btn next-btn"
+        (click)="nextImage()"
+        [disabled]="currentImageIndex >= getTotalImages() - 1"
+      >
         <mat-icon>chevron_right</mat-icon>
       </button>
     </div>

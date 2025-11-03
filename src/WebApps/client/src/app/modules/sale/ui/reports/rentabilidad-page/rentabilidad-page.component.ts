@@ -123,11 +123,11 @@ export class RentabilidadPageComponent implements OnInit {
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos().find(
-        estab => estab.codEstab === this.dataSearch.codEstab,
+        (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
-        const dataBodega = this.bodegas().find(b => b.defaultBodega);
+        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.dataSearch.idBodega = dataBodega.idBodega;
         }

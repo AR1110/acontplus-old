@@ -4,7 +4,11 @@
     <div class="row">
       <div class="col-6 d-flex justify-content-start">
         <span class="form-group pull-left page-size form-inline">
-          <select class="form-select control-color" [(ngModel)]="dataSearch.pageSize" (change)="changePageSize()">
+          <select
+            class="form-select control-color"
+            [(ngModel)]="dataSearch.pageSize"
+            (change)="changePageSize()"
+          >
             @for (item of recordsQuantity; track $index) {
               <option [ngValue]="item">{{ item }}</option>
             }

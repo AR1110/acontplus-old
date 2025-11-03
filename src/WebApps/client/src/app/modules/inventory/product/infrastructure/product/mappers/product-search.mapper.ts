@@ -1,5 +1,5 @@
-import { imgDefault } from "@core/utils/utils";
-import { ApiResponse } from "@core/models/api-response";
+import { imgDefault } from '@core/utils/utils';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ProductSearchMapper {
   static toJson(obj: any): any {
@@ -17,14 +17,14 @@ export class ProductSearchMapper {
       total: 0,
     };
 
-    const products = response.payload ? JSON.parse(response.payload as string): []
+    const products = response.payload ? JSON.parse(response.payload as string) : [];
 
-    result.items = products.map((product:any, index:number) => {
+    result.items = products.map((product: any, index: number) => {
       const prices = JSON.parse(product.priceSale); // 'tarifas' → 'prices'
       const mappedPrices = prices.map((price: any) => {
         return {
-          id: price.idTarifa,       // 'idTarifa' → 'id'
-          name: price.tarifa,       // 'tarifa' → 'name'
+          id: price.idTarifa, // 'idTarifa' → 'id'
+          name: price.tarifa, // 'tarifa' → 'name'
           salePrice: price.precioVenta, // 'precioVenta' → 'salePrice'
           price: price.precioVenta, // 'precioVenta' → 'salePrice'
         };
@@ -32,17 +32,17 @@ export class ProductSearchMapper {
 
       return {
         index: index + 1,
-        id: product.idArticulo,         // 'idArticulo' → 'id'
-        code: product.codigo,           // 'codigo' → 'code'
+        id: product.idArticulo, // 'idArticulo' → 'id'
+        code: product.codigo, // 'codigo' → 'code'
         description: product.descripcion, // 'descripcion' → 'description'
-        vat: product.iva,               // 'iva' → 'vat'
+        vat: product.iva, // 'iva' → 'vat'
         stock: product.stock,
-        subFamily: product.subFamilia,  // 'subFamilia' → 'subFamily'
-        brand: product.marca,           // 'marca' → 'brand'
-        measure: product.medida,        // 'medida' → 'measure'
+        subFamily: product.subFamilia, // 'subFamilia' → 'subFamily'
+        brand: product.marca, // 'marca' → 'brand'
+        measure: product.medida, // 'medida' → 'measure'
         fractional: product.fraccionado, // 'fraccionado' → 'fractional'
         style: product.style,
-        prices: mappedPrices,           // 'tarifas' → 'prices'
+        prices: mappedPrices, // 'tarifas' → 'prices'
         warehouses: JSON.parse(product.warehouses),
         priceWithoutSubsidy: product.precioSinSubsidio, // 'precioSinSubsidio' → 'priceWithoutSubsidy'
         imageUrl: product.s3ObjectUrl || imgDefault(),

@@ -110,7 +110,7 @@ export class LoginComponent implements OnInit {
         password: password,
         userAgent,
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (!response.success) {
           this.tS.show({
             type: 'warning',
@@ -133,7 +133,7 @@ export class LoginComponent implements OnInit {
           const modalRef = this.dialogSvc.open(AccessAuthorizationComponent, {
             size: 'lg',
           });
-          modalRef.subscribe(result => {
+          modalRef.subscribe((result) => {
             if (result && typeof result === 'object') {
               this.authSvc.createToken();
             }

@@ -27,12 +27,12 @@ export class SolicitudAutorizacionDetalleComponent implements OnInit {
     { key: 'nuevoValor', label: 'Nuevo Valor', type: 'string' },
     { key: 'obs', label: 'Observación', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = signal<SolicitudAutorizacionDetalle[]>([]);
 
   ngOnInit() {
-    this.$listDetalleUseCase.execute(this.params).subscribe(response => {
+    this.$listDetalleUseCase.execute(this.params).subscribe((response) => {
       this.dataSource.set(response);
     });
   }

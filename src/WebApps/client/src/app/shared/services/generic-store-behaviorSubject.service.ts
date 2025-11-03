@@ -6,7 +6,7 @@ export class GenericStoreBehaviorSubjectService<T> {
   constructor() {}
 
   public select<K extends keyof T>(key: K): BehaviorSubject<T[K]> {
-    return this.state.pipe(map(state => state[key])) as BehaviorSubject<T[K]>;
+    return this.state.pipe(map((state) => state[key])) as BehaviorSubject<T[K]>;
   }
 
   public set<K extends keyof T>(key: K, data: T[K]) {

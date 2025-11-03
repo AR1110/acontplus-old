@@ -13,14 +13,14 @@ export class DeviceSpecsService {
   private http = inject(HttpClient);
 
   get(params: any) {
-    return this.http.get(`${this.url}?json=${params}`).pipe(map(response => response));
+    return this.http.get(`${this.url}?json=${params}`).pipe(map((response) => response));
   }
 
   post(data: DeviceSpecs) {
-    return this.http.post(this.url, data).pipe(map(response => response));
+    return this.http.post(this.url, data).pipe(map((response) => response));
   }
 
   put(id: number, data: DeviceSpecs) {
-    return this.http.put(`${this.url}${id}`, data).pipe(map(response => response));
+    return this.http.put(`${this.url}${id}`, data).pipe(map((response) => response));
   }
 }

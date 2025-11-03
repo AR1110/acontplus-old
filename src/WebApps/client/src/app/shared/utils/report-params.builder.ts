@@ -75,7 +75,7 @@ export class ReportParamsBuilder {
       reportCode: INVENTORY_CODE_REPORT.RTB,
       format: REPORT_FORMAT.EXCEL,
       hasService: true,
-    }
+    },
   };
 
   /**

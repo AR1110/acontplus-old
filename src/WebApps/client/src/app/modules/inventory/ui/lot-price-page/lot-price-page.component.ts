@@ -129,7 +129,7 @@ export class LotPricePageComponent implements OnInit {
       if (cell.getValue() != null) {
         const dataRow = cell.getData();
         const dataAdded = this.productsModified.find(
-          d => dataRow.idTarifa === d.idTarifa && d.idArticuloPvP === dataRow.idArticuloPvP,
+          (d) => dataRow.idTarifa === d.idTarifa && d.idArticuloPvP === dataRow.idArticuloPvP,
         );
 
         if (dataAdded) {
@@ -143,7 +143,7 @@ export class LotPricePageComponent implements OnInit {
 
   editCheck = (cell: any) => {
     const data = cell.getRow().getData();
-    return this.productsModified.some(d => {
+    return this.productsModified.some((d) => {
       return this.isProductModified(data, d);
     });
   };
@@ -169,7 +169,7 @@ export class LotPricePageComponent implements OnInit {
                 const data = childRows[j].getData();
 
                 if (!childRows[j].isSelected()) {
-                  if (this.productsModified.some(d => this.isProductModified(data, d))) {
+                  if (this.productsModified.some((d) => this.isProductModified(data, d))) {
                     childRows[j].toggleSelect();
                   }
                 }
@@ -296,13 +296,13 @@ export class LotPricePageComponent implements OnInit {
   isCalculateManual = false;
 
   protected getDataFilter() {
-    this.lotPriceSvc.getDataFilter().subscribe(response => {
+    this.lotPriceSvc.getDataFilter().subscribe((response) => {
       this.tarifas = response.tarifas;
       this.taxRates = response.tarifasImpuesto;
       this.decimal = response.decimal;
       this.subCategorias = response.subFamilias;
 
-      const dataTarifa = this.tarifas.find(i => i.predeterminada);
+      const dataTarifa = this.tarifas.find((i) => i.predeterminada);
       if (dataTarifa) {
         this.addTarifaDefault(dataTarifa.idTarifa);
       }
@@ -327,7 +327,7 @@ export class LotPricePageComponent implements OnInit {
       this.nestedProducts.set([]);
       this.productsModified = [];
 
-      this.lotPriceSvc.getAll(dataSearch).subscribe(response => {
+      this.lotPriceSvc.getAll(dataSearch).subscribe((response) => {
         const results = structuredClone(response);
         this.nestedProducts.set(results);
         this.cloneNestedProducts = structuredClone(results);
@@ -363,7 +363,7 @@ export class LotPricePageComponent implements OnInit {
     let porcentajeUtilidad = parseFloat(data.porcentajeUtilidad);
 
     const dataTarifaImpuesto = this.taxRates.find(
-      tr => tr.idTarifaImpuesto === parentData.idTipoIva,
+      (tr) => tr.idTarifaImpuesto === parentData.idTipoIva,
     );
     const porcentajeImpuesto = dataTarifaImpuesto?.porcentaje || 0;
 
@@ -439,7 +439,7 @@ export class LotPricePageComponent implements OnInit {
       ...row,
       ...obj,
     });
-    let dataProductModified = this.productsModified.find(pm => this.isProductModified(data, pm));
+    let dataProductModified = this.productsModified.find((pm) => this.isProductModified(data, pm));
     if (dataProductModified) {
       dataProductModified = {
         ...dataProductModified,
@@ -450,7 +450,7 @@ export class LotPricePageComponent implements OnInit {
 
   cellClick(cell: any) {
     const data = cell.getData();
-    const isRowAdded = this.productsModified.some(d => {
+    const isRowAdded = this.productsModified.some((d) => {
       return this.isProductModified(data, d);
     });
     if (isRowAdded) {
@@ -657,7 +657,7 @@ export class LotPricePageComponent implements OnInit {
     const nestedProducts = structuredClone(this.cloneNestedProducts);
 
     for (const item of nestedProducts) {
-      const dataTarifaImpuesto = this.taxRates.find(tr => tr.idTarifaImpuesto === item.idTipoIva);
+      const dataTarifaImpuesto = this.taxRates.find((tr) => tr.idTarifaImpuesto === item.idTipoIva);
 
       //si no se encontró el impuesto o si la tarifa es vacia continuar con el siguiente items;
       if (!dataTarifaImpuesto || item._children.length === 0) continue;
@@ -882,8 +882,8 @@ export class LotPricePageComponent implements OnInit {
 
   getSelectedData() {
     const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
-    return this.productsModified.filter(data => {
-      return selectedData.some(rowSelect => {
+    return this.productsModified.filter((data) => {
+      return selectedData.some((rowSelect) => {
         return this.isProductModified(data, rowSelect);
       });
     });
@@ -916,9 +916,9 @@ export class LotPricePageComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí!',
       cancelButtonText: 'No!',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        const results = selectedData.map(item => {
+        const results = selectedData.map((item) => {
           return {
             idTipoIva: item.idTipoIva,
             idArticuloPvP: item.idArticuloPvP,
@@ -937,7 +937,7 @@ export class LotPricePageComponent implements OnInit {
           articles: results,
         };
 
-        this.lotPriceSvc.put(data).subscribe(response => {
+        this.lotPriceSvc.put(data).subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

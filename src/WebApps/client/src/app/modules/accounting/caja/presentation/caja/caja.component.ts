@@ -61,7 +61,7 @@ export class CajaComponent implements OnInit {
     { key: 'actividad', label: 'Actividad', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -75,9 +75,9 @@ export class CajaComponent implements OnInit {
       pageSize: this.pagination().pageSize,
     };
 
-    this._cajaUseCase.getAll(params).subscribe(response => {
+    this._cajaUseCase.getAll(params).subscribe((response) => {
       this.cashboxs.set(response.data);
-      this.pagination.update(item => {
+      this.pagination.update((item) => {
         return {
           ...item,
           totalRecords: response.totalRecords,
@@ -100,7 +100,7 @@ export class CajaComponent implements OnInit {
     const modalRef = this._dialogSvc.open(CajaModalComponent, {
       data: structuredClone(params) || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getCashboxs();
       }
@@ -117,9 +117,9 @@ export class CajaComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this._cajaUseCase.delete(id).subscribe(response => {
+          this._cajaUseCase.delete(id).subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -145,7 +145,7 @@ export class CajaComponent implements OnInit {
     const modalRef = this._dialogSvc.open(AperturaCajaModalComponent, {
       data: params || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getCashboxs();
       }
@@ -157,7 +157,7 @@ export class CajaComponent implements OnInit {
       data: params || {},
       size: 'xl',
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result) {
         this.getCashboxs();
       }
@@ -165,7 +165,7 @@ export class CajaComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

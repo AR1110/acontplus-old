@@ -44,7 +44,7 @@ export class AtsComponent {
       toDate: this.dataSearch.toDate,
       semiannual: this.dataSearch.semiannual,
     };
-    this._atsSvc.checkValidation(json).subscribe(response => {
+    this._atsSvc.checkValidation(json).subscribe((response) => {
       if (response.code === '0') {
         this._tS.show({
           type: 'warning',

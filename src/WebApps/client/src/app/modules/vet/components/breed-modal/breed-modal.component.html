@@ -21,7 +21,14 @@
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
         <div class="form-group">
           <label for="code">Código</label>
-          <input class="form-control" formControlName="code" id="code" maxlength="5" required type="text" />
+          <input
+            class="form-control"
+            formControlName="code"
+            id="code"
+            maxlength="5"
+            required
+            type="text"
+          />
         </div>
       </div>
     </div>
@@ -52,11 +59,12 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button [disabled]="breedForm.invalid"
+  <app-theme-button
+    [disabled]="breedForm.invalid"
     variant="success"
     icon="save"
     text="Guardar"
     type="submit"
     form="breedForm"
-   />
+  />
 </ng-template>

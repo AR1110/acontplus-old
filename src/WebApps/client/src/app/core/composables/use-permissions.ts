@@ -35,8 +35,15 @@ export function usePermissions(context?: string) {
     canCancel: computed(() => service.hasPermission(ACTION_ALIASES.CANCEL, context)),
 
     // Verificaciones combinadas
-    canManage: computed(() => service.hasAllPermissions([ACTION_ALIASES.READ, ACTION_ALIASES.EDIT], context)),
-    canFullControl: computed(() => service.hasAllPermissions([ACTION_ALIASES.CREATE, ACTION_ALIASES.EDIT, ACTION_ALIASES.DELETE], context)),
+    canManage: computed(() =>
+      service.hasAllPermissions([ACTION_ALIASES.READ, ACTION_ALIASES.EDIT], context),
+    ),
+    canFullControl: computed(() =>
+      service.hasAllPermissions(
+        [ACTION_ALIASES.CREATE, ACTION_ALIASES.EDIT, ACTION_ALIASES.DELETE],
+        context,
+      ),
+    ),
 
     // Utilidades
     hasPermission: (actionCode: string) => service.hasPermission(actionCode, context),

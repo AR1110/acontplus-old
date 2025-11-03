@@ -20,7 +20,7 @@ export class UserCustomerRepositoryImpl implements UserCustomerRepository {
     const json = JSON.stringify(GetUserCustomerFormDataMapper.toJson());
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => GetUserCustomerFormDataMapper.fromJson(response)));
+      .pipe(map((response) => GetUserCustomerFormDataMapper.fromJson(response)));
   }
   update(data: UserCustomer): Observable<ApiResponse> {
     return this._http.put<ApiResponse>(`${this._url}${data.id}`, data);
@@ -32,7 +32,7 @@ export class UserCustomerRepositoryImpl implements UserCustomerRepository {
   list<T>(parameters: T) {
     return this._http
       .get(`${this._url}?json=${ListUserCustomerMapper.toJson(parameters)}`)
-      .pipe(map(response => ListUserCustomerMapper.fromJson(response)));
+      .pipe(map((response) => ListUserCustomerMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER}`;

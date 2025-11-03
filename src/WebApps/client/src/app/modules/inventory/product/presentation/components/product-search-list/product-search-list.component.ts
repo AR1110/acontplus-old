@@ -73,7 +73,7 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
 
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.visibleColumns = this.columns.map(x => x.columnDef);
+    this.visibleColumns = this.columns.map((x) => x.columnDef);
   }
 
   ngAfterViewInit() {
@@ -83,7 +83,7 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData']?.currentValue) {
       this.columns = structuredClone(this.mainColumns);
-      this.visibleColumns = this.columns.map(x => x.columnDef);
+      this.visibleColumns = this.columns.map((x) => x.columnDef);
       this.pagination.totalRecords = 0;
 
       if (this.tableData().length > 0) {
@@ -99,7 +99,7 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
         });
       }
 
-      this.visibleColumns = this.columns.map(x => x.columnDef);
+      this.visibleColumns = this.columns.map((x) => x.columnDef);
       this.makeDynamicTarifa(this.tableData());
     }
   }
@@ -125,7 +125,7 @@ export class ProductSearchListComponent implements OnInit, AfterViewInit, OnChan
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map((str) => +str);
     }
   }
 

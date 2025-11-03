@@ -78,15 +78,15 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   };
 
   treeControl = new FlatTreeControl<MenuFlatNode>(
-    node => node.level,
-    node => node.expandable,
+    (node) => node.level,
+    (node) => node.expandable,
   );
 
   treeFlattener = new MatTreeFlattener<MenuNode, MenuFlatNode>(
     this.transformer,
-    node => node.level,
-    node => node.expandable,
-    node => node.children,
+    (node) => node.level,
+    (node) => node.expandable,
+    (node) => node.children,
   );
 
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
@@ -97,7 +97,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         this.accesoMenus.set(response.menus);
 
         this.actions = structuredClone(response.actions);
@@ -106,13 +106,13 @@ export class UserCustomerRoleAccessComponent implements OnInit {
         const makeMenusNode = [
           {
             name: 'Todos',
-            children: this.accesoMenus().map(m => {
+            children: this.accesoMenus().map((m) => {
               const { menus, ...rest } = m;
 
               const nodeSubMenus = menus.map((item: any) => {
                 const { isActive, ...restSm } = item;
 
-                const childrenActions = this.actions.map(a => {
+                const childrenActions = this.actions.map((a) => {
                   const isActive =
                     (item.isActive &&
                       item.actions.some((aRaw: any) => aRaw.code === a.codeAction)) ||
@@ -169,7 +169,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   toggleDescendantsSelection(node: MenuFlatNode): void {
     const descendants = this.treeControl?.getDescendants(node);
-    descendants.forEach(child => {
+    descendants.forEach((child) => {
       this.checklistSelection.isSelected(node)
         ? this.checklistSelection.select(child)
         : this.checklistSelection.deselect(child);
@@ -188,7 +188,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   checkRootNodeSelection(node: MenuFlatNode): void {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
-    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
+    const descAllSelected = descendants.every((child) => this.checklistSelection.isSelected(child));
     if (nodeSelected && !descAllSelected) {
       this.checklistSelection.deselect(node);
     } else if (!nodeSelected && descAllSelected) {
@@ -219,16 +219,16 @@ export class UserCustomerRoleAccessComponent implements OnInit {
 
   isNodeIndeterminate(node: MenuFlatNode): boolean {
     const descendants = this.treeControl?.getDescendants(node);
-    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
+    const descAllSelected = descendants.every((child) => this.checklistSelection.isSelected(child));
     const descAllDeselected = descendants.every(
-      child => !this.checklistSelection.isSelected(child),
+      (child) => !this.checklistSelection.isSelected(child),
     );
 
     return !descAllSelected && !descAllDeselected;
   }
 
   expandFirstLevelNodes(): void {
-    this.treeControl.dataNodes.forEach(node => {
+    this.treeControl.dataNodes.forEach((node) => {
       if (node.level === 0) {
         this.treeControl.expand(node);
       }
@@ -289,14 +289,14 @@ export class UserCustomerRoleAccessComponent implements OnInit {
   onSave() {
     const checklistSelection = this.checklistSelection.selected;
 
-    const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter(ck => ck.level === 2); //Nivel submenus
-    const filteredCheckedsLevel3 = checklistSelection.filter(ck => ck.level === 3); //Nivel acciones
+    const filteredCheckedsLevel2 = this.treeControl.dataNodes.filter((ck) => ck.level === 2); //Nivel submenus
+    const filteredCheckedsLevel3 = checklistSelection.filter((ck) => ck.level === 3); //Nivel acciones
 
     const mergeDuplicateLevel3 = filteredCheckedsLevel3.reduce((acc: any, curr: any) => {
-      const menuId = filteredCheckedsLevel2.find(l2 => l2.unique === curr.unique)?.menuId;
+      const menuId = filteredCheckedsLevel2.find((l2) => l2.unique === curr.unique)?.menuId;
 
       const existingNode = acc.find((m: any) => m.menuId === menuId);
-      const action = this.actions.find(a => a.codeAction === curr.codeAction);
+      const action = this.actions.find((a) => a.codeAction === curr.codeAction);
       const { codeAction, ...restAction } = action;
 
       if (!existingNode) {
@@ -341,7 +341,7 @@ export class UserCustomerRoleAccessComponent implements OnInit {
       showConfirmButton: true,
       cancelButtonText: 'No',
       confirmButtonText: 'Si',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         const data = {
           accesses: JSON.stringify(mappedLevel3),

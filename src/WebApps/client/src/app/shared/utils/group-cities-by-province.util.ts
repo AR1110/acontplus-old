@@ -14,7 +14,7 @@ export const groupCitiesByProvinceUtil = (ciudades: any[]): ProvinciaCiudad[] =>
   );
 
   // Transformar el objeto agrupado en un arreglo de objetos
-  return Object.keys(provincias).map(provincia => ({
+  return Object.keys(provincias).map((provincia) => ({
     provincia,
     ciudades: provincias[provincia],
   }));

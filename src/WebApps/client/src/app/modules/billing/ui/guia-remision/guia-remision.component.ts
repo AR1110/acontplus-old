@@ -92,7 +92,7 @@ export class GuiaRemisionComponent implements OnInit {
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -157,10 +157,10 @@ export class GuiaRemisionComponent implements OnInit {
 
     const params = this.getParams();
     if (!params) return;
-    this.$listGuiasRemisionUseCase.execute(params).subscribe(response => {
+    this.$listGuiasRemisionUseCase.execute(params).subscribe((response) => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update(e => {
+      this.pagination.update((e) => {
         return {
           ...e,
           totalRecords: response.totalRecords,
@@ -174,18 +174,18 @@ export class GuiaRemisionComponent implements OnInit {
     this.$getGuiaRemisionFilterDataUseCase
       .execute()
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe(filterData => {
+      .subscribe((filterData) => {
         this.estabs.set(filterData.estabs);
         this.estadosDoc = filterData.estadosDoc;
         this.users.set(filterData.users);
 
         if (this.estabs().length > 0) {
-          const dataEstab = this.estabs().find(item => item.defaultEstab);
+          const dataEstab = this.estabs().find((item) => item.defaultEstab);
 
           this.dataSearch.codEstab = dataEstab?.codEstab || '';
           this.puntosEmision.set(dataEstab?.puntosEmision || []);
           if (this.puntosEmision().length > 0) {
-            const dataPuntoEmision = this.puntosEmision().find(item => item.defaultPtoEmi);
+            const dataPuntoEmision = this.puntosEmision().find((item) => item.defaultPtoEmi);
 
             this.dataSearch.puntoEmisionId = dataPuntoEmision?.idPuntoEmision || 0;
           }
@@ -205,13 +205,13 @@ export class GuiaRemisionComponent implements OnInit {
       size: 'xl',
       data: {},
     });
-    ref.subscribe(rs => {
+    ref.subscribe((rs) => {
       console.log(rs);
     });
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

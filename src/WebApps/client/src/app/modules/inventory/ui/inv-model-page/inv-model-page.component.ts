@@ -48,7 +48,7 @@ export class InvModelPageComponent implements OnInit {
     { key: 'descripcion', label: 'Descripción', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = new MatTableDataSource<any>([]);
 
@@ -63,10 +63,10 @@ export class InvModelPageComponent implements OnInit {
     this._modeloUseCase
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource = new MatTableDataSource(response.data);
         if (this.dataSource.data.length > 0) {
-          this.pagination.update(e => {
+          this.pagination.update((e) => {
             return {
               ...e,
               totalRecords: this.dataSource.data[0].totalRecords,
@@ -86,7 +86,7 @@ export class InvModelPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -107,9 +107,9 @@ export class InvModelPageComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this._modeloUseCase.updateStatus(data.idModelo).subscribe(response => {
+          this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

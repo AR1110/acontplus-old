@@ -7,15 +7,25 @@
 />
 
 <ng-template #containerTemplate>
-  <form (ngSubmit)="onSave()" id="formCompanyCustomer" [formGroup]="customerForm" autocomplete="off">
+  <form
+    (ngSubmit)="onSave()"
+    id="formCompanyCustomer"
+    [formGroup]="customerForm"
+    autocomplete="off"
+  >
     <mat-tab-group>
       <mat-tab label="DATOS PRINCIPALES">
         <div class="d-grid gap-2 mx-3 mt-2">
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Tipo Identificación:</mat-label>
-                <mat-select formControlName="idTipoIdentificacion" (selectionChange)="identificationTypeChange($event)">
+                <mat-select
+                  formControlName="idTipoIdentificacion"
+                  (selectionChange)="identificationTypeChange($event)"
+                >
                   @for (item of tiposIdentificacion(); track $index) {
                     <mat-option [value]="item.idTipoIdentificacion">
                       {{ item.descripcion }}
@@ -74,7 +84,9 @@
             </div>
           </div>
 
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Nombre Fiscal:</mat-label>
@@ -106,11 +118,18 @@
           <div>
             <mat-form-field class="w-100">
               <mat-label>Dirección:</mat-label>
-              <input matInput formControlName="direccion" placeholder="AV. 09 DE OCTUBRE..." appToUpperCase />
+              <input
+                matInput
+                formControlName="direccion"
+                placeholder="AV. 09 DE OCTUBRE..."
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
 
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <app-mat-input-chip [chips]="emails" [labelText]="'Correo'" />
             </div>
@@ -131,10 +150,14 @@
       </mat-tab>
       <mat-tab label="DATOS ADICIONALES">
         <div class="d-grid gap-2 mx-3 mt-2">
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <app-mat-dynamic-card title="Información Básica" [showHeader]="true">
-                <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+                <div
+                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+                >
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Tipo Contribuyente:</mat-label>
@@ -223,7 +246,9 @@
             </div>
             <div class="col">
               <app-mat-dynamic-card title="Información Laboral" [showHeader]="true">
-                <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+                <div
+                  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+                >
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Empleado:</mat-label>
@@ -264,7 +289,9 @@
               </app-mat-dynamic-card>
             </div>
           </div>
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <app-mat-dynamic-card title="Configuración Financiera" [showHeader]="true">
                 <div
@@ -308,7 +335,9 @@
       </mat-tab>
       <mat-tab label="INFORMACIÓN CREDITICIA">
         <div class="d-grid gap-2 mx-3 mt-2">
-          <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
+          >
             <div class="col">
               <app-mat-dynamic-card title="Información Personal" [showHeader]="true">
                 <div
@@ -332,7 +361,11 @@
                   <div class="col">
                     <mat-form-field class="w-100">
                       <mat-label>Esposo(a):</mat-label>
-                      <input matInput formControlName="conyugeNombre" placeholder="Nombre del cónyuge" />
+                      <input
+                        matInput
+                        formControlName="conyugeNombre"
+                        placeholder="Nombre del cónyuge"
+                      />
                     </mat-form-field>
                   </div>
 
@@ -351,7 +384,11 @@
                   <div class="col w-100">
                     <mat-form-field class="w-100">
                       <mat-label>Referencia Familiar:</mat-label>
-                      <input matInput formControlName="refFamNombre" placeholder="Nombre de referencia familiar" />
+                      <input
+                        matInput
+                        formControlName="refFamNombre"
+                        placeholder="Nombre de referencia familiar"
+                      />
                     </mat-form-field>
                   </div>
                 </div>

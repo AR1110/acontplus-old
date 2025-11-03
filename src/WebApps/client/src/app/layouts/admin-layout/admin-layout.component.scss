@@ -1,5 +1,5 @@
-@use "@angular/material" as mat;
-@use "../../../styles/grid/breakpoints";
+@use '@angular/material' as mat;
+@use '../../../styles/grid/breakpoints';
 
 .acontplus-container-wrap,
 .acontplus-container {
@@ -84,13 +84,13 @@
   .acontplus-content {
     margin-left: var(--sidenav-collapsed-width) !important;
 
-    [dir="rtl"] & {
+    [dir='rtl'] & {
       margin-right: var(--sidenav-collapsed-width) !important;
       margin-left: auto !important;
     }
   }
 
-  &[dir="rtl"] .acontplus-content {
+  &[dir='rtl'] .acontplus-content {
     margin-right: var(--sidenav-collapsed-width) !important;
     margin-left: auto !important;
   }
@@ -105,7 +105,7 @@
   .acontplus-branding {
     margin-left: 1rem;
 
-    [dir="rtl"] & {
+    [dir='rtl'] & {
       margin-right: 1rem;
       margin-left: auto;
     }
@@ -135,7 +135,7 @@
   .acontplus-content {
     margin-left: var(--sidenav-width) !important;
 
-    [dir="rtl"] & {
+    [dir='rtl'] & {
       margin-right: var(--sidenav-width) !important;
       margin-left: auto !important;
     }

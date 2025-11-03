@@ -20,21 +20,21 @@ export class CajaWebRepository implements CajaRepository {
     const json = ListCajaMapper.toJson(params);
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(res => ListCajaMapper.fromJson(res)));
+      .pipe(map((res) => ListCajaMapper.fromJson(res)));
   }
 
   getId(id: number) {
     const json = GetIdCajaMapper.toJson(id);
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => GetIdCajaMapper.fromJson(response)));
+      .pipe(map((response) => GetIdCajaMapper.fromJson(response)));
   }
 
   getDataForm() {
     const json = FormDataCajaMapper.toJson();
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => FormDataCajaMapper.fromJson(response)));
+      .pipe(map((response) => FormDataCajaMapper.fromJson(response)));
   }
 
   create<T>(data: T) {

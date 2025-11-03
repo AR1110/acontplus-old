@@ -26,8 +26,8 @@ export class AuthService {
 
   getPublicIP() {
     fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(response => {
+      .then((response) => response.json())
+      .then((response) => {
         this.customerIp.set(response.ip);
       });
   }
@@ -56,7 +56,7 @@ export class AuthService {
         ipAddress: this.customerIp(),
       });
 
-      this.authUseCase.createToken(item).subscribe(response => {
+      this.authUseCase.createToken(item).subscribe((response) => {
         if (!response.success) {
           this.tS.show({
             type: 'warning',
@@ -116,8 +116,8 @@ export class AuthService {
     ]); // Common words to ignore
 
     const acronym = words
-      .filter(word => word.length > 0 && !stopWords.has(word.toLowerCase()))
-      .map(word => word.charAt(0))
+      .filter((word) => word.length > 0 && !stopWords.has(word.toLowerCase()))
+      .map((word) => word.charAt(0))
       .join('')
       .toUpperCase();
 

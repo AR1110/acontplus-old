@@ -63,7 +63,7 @@ export class ModeloModalComponent implements OnInit {
   }
   onBrandGet(brandId: number) {
     this.series.set([]);
-    this.serieService.get({ tipo: 2, brandId }).subscribe(response => {
+    this.serieService.get({ tipo: 2, brandId }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         this.series.set(JSON.parse(response.payload as string) || []);
         this.modeloForm.get('serieId')?.enable();
@@ -75,7 +75,7 @@ export class ModeloModalComponent implements OnInit {
     });
   }
   onGet() {
-    this.brandService.get({ tipo: 1 }).subscribe(response => {
+    this.brandService.get({ tipo: 1 }).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '1') {
           this.brands.set(JSON.parse(response.payload as string));

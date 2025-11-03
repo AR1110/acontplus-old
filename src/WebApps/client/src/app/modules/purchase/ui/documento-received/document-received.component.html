@@ -1,7 +1,9 @@
 <app-breadcrumb />
 <mat-card>
   <mat-card-content>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+    >
       <div class="col">
         <div class="form-group">
           <label for="estab">Establecimiento:</label>
@@ -21,7 +23,10 @@
       </div>
       <div class="col">
         <div class="form-group">
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="true" />
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+            [inputGroupDateChecked]="true"
+          />
         </div>
       </div>
       <div class="col">
@@ -42,17 +47,19 @@
               }
             </select>
             <div class="input-group-append">
-              <app-theme-button [icon]="extraOptionsIcon"
+              <app-theme-button
+                [icon]="extraOptionsIcon"
                 matStyle="icon"
                 title="Más Opciones"
                 (handleClick)="onClickBtnMore()"
-               />
-              <app-theme-button variant="success"
+              />
+              <app-theme-button
+                variant="success"
                 icon="refresh"
                 matStyle="icon"
                 (handleClick)="loadData()"
                 title="Recargar"
-               />
+              />
             </div>
           </div>
         </div>
@@ -61,9 +68,10 @@
     @if (moreOptionsFilter) {
       <div class="row mb-3">
         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-          <app-supplier-search [textSearch]="textSearch"
+          <app-supplier-search
+            [textSearch]="textSearch"
             (supplierSelected)="onSupplierSelected($event)"
-           />
+          />
         </div>
         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
           <div class="form-group">
@@ -129,15 +137,17 @@
       <div class="col">
         @if (this.documents.length > 0) {
           <div class="table-responsive">
-            <app-mat-dynamic-table [templateOp]="templateOp"
+            <app-mat-dynamic-table
+              [templateOp]="templateOp"
               [tableData]="documents"
               [columnDefinitions]="columnsDefs"
               [visibleColumns]="columns"
               [showSelectBox]="true"
-             />
+            />
           </div>
 
-          <mat-paginator #paginator
+          <mat-paginator
+            #paginator
             [length]="pagination().totalRecords"
             [pageIndex]="pagination().pageIndex"
             [pageSize]="pagination().pageSize"
@@ -145,7 +155,7 @@
             (page)="onPageChanged($event)"
             showFirstLastButtons
             aria-label="Select page"
-           />
+          />
         } @else {
           <h5>No hay registros</h5>
         }

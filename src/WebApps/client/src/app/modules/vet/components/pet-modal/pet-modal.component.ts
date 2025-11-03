@@ -61,7 +61,7 @@ export class PetModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   get() {
-    this.petService.get({ tipo: 3 }).subscribe(response => {
+    this.petService.get({ tipo: 3 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { petTypes, breeds, genders } = JSON.parse(response.payload as string);
         this.petTypes.set(petTypes);
@@ -93,7 +93,7 @@ export class PetModalComponent implements OnInit {
 
   onPetTypeChange($event: any) {
     this.breedsFiltered.set([]);
-    const breedsFiltered = this.breeds().filter(x => x.petTypeId === Number($event.target.value));
+    const breedsFiltered = this.breeds().filter((x) => x.petTypeId === Number($event.target.value));
     this.breedsFiltered.set(breedsFiltered);
   }
 
@@ -103,7 +103,7 @@ export class PetModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.petService.put(this.data.id, dataToSave).subscribe(response => {
+      this.petService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -115,7 +115,7 @@ export class PetModalComponent implements OnInit {
         }
       });
     } else {
-      this.petService.post(dataToSave).subscribe(response => {
+      this.petService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',

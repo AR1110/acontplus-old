@@ -1,4 +1,9 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="title" (close)="close()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="title"
+  (close)="close()"
+/>
 
 <ng-template #body>
   <div class="d-grid gap-3 my-2">
@@ -26,5 +31,11 @@
   </div>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button type="button" variant="success" [icon]="btnIcon" (handleClick)="save()" [text]="btnText" />
+  <app-theme-button
+    type="button"
+    variant="success"
+    [icon]="btnIcon"
+    (handleClick)="save()"
+    [text]="btnText"
+  />
 </ng-template>

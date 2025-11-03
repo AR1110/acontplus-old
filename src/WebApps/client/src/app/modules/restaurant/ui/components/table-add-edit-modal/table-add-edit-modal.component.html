@@ -1,8 +1,9 @@
-<app-mat-custom-dialog [containerTemplate]="containerTemplate"
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
   [actionsTemplate]="actionsTemplate"
   [title]="modalTitle"
   (close)="close()"
- />
+/>
 
 <ng-template #containerTemplate>
   <form id="formTableId" (ngSubmit)="onSave()" [formGroup]="tableForm" autocomplete="off">

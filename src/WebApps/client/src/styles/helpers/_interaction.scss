@@ -1,15 +1,15 @@
 $utilities: (
-  "cursor": (
+  'cursor': (
     property: cursor,
     class: cursor,
     values: default pointer text move copy not-allowed,
   ),
-  "user-select": (
+  'user-select': (
     property: user-select,
     class: select,
     values: all auto none,
   ),
-  "pointer-events": (
+  'pointer-events': (
     property: pointer-events,
     class: pointer-events,
     values: none auto,

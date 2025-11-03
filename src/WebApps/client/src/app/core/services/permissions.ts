@@ -62,7 +62,7 @@ export class PermissionsService {
     this.findPermissionsForRoute(this._currentRoute(), this.routePermissionsMap()),
   );
   readonly currentActions = computed(() => this.currentRoutePermissions()?.actions ?? []);
-  readonly currentActionCodes = computed(() => new Set(this.currentActions().map(a => a.code)));
+  readonly currentActionCodes = computed(() => new Set(this.currentActions().map((a) => a.code)));
 
   // --- COMPUTED SIGNALS DE ACCIONES COMUNES ---
   readonly canRead = computed(() => this.hasPermission(ACTION_ALIASES.READ));
@@ -111,7 +111,7 @@ export class PermissionsService {
 
   // --- CONFIGURACIÓN ---
   updateConfig(newConfig: Partial<PermissionConfig>): void {
-    this._config.update(current => ({ ...current, ...newConfig }));
+    this._config.update((current) => ({ ...current, ...newConfig }));
   }
 
   // --- MÉTODOS PÚBLICOS UNIFICADOS ---
@@ -137,21 +137,21 @@ export class PermissionsService {
    * Verifica si tiene ALGUNA de las acciones proporcionadas (modo 'any').
    */
   hasAnyPermission(actionCodes: string[], context?: string): boolean {
-    return actionCodes.some(code => this.hasPermission(code, context));
+    return actionCodes.some((code) => this.hasPermission(code, context));
   }
 
   /**
    * Verifica si tiene TODAS las acciones proporcionadas (modo 'all').
    */
   hasAllPermissions(actionCodes: string[], context?: string): boolean {
-    return actionCodes.every(code => this.hasPermission(code, context));
+    return actionCodes.every((code) => this.hasPermission(code, context));
   }
 
   // --- MÉTODOS LEGADOS (ahora privados y renombrados para claridad) ---
   private hasActionByRoute(route: string, actionCode: string): boolean {
     const map = this.routePermissionsMap();
     const permissions = this.findPermissionsForRoute(route, map);
-    const hasAction = permissions?.actions.some(a => a.name === actionCode) ?? false;
+    const hasAction = permissions?.actions.some((a) => a.name === actionCode) ?? false;
     this.logCheck(actionCode, route, hasAction, 'Route check');
     return hasAction;
   }
@@ -159,18 +159,18 @@ export class PermissionsService {
   private hasActionByCode(moduleCode: string, actionCode: string): boolean {
     const map = this.codePermissionsMap();
     const permissions = map.get(moduleCode);
-    const hasAction = permissions?.actions.some(a => a.name === actionCode) ?? false;
+    const hasAction = permissions?.actions.some((a) => a.name === actionCode) ?? false;
     this.logCheck(actionCode, moduleCode, hasAction, 'Module check');
     return hasAction;
   }
 
   // --- MÉTODOS PÚBLICOS ADICIONALES ---
   hasRouteAccess(route: string): boolean {
-  //  if (this.isAdmin()) return true;
+    //  if (this.isAdmin()) return true;
     return this.findPermissionsForRoute(route, this.routePermissionsMap()) !== null;
   }
   hasModuleAccess(moduleCode: string): boolean {
-  //  if (this.isAdmin()) return true;
+    //  if (this.isAdmin()) return true;
     return this.codePermissionsMap().has(moduleCode);
   }
   clearPermissions(): void {
@@ -181,7 +181,7 @@ export class PermissionsService {
 
   // --- MÉTODOS PRIVADOS ---
   private hasActionInCurrent(actionCode: string): boolean {
-  //  if (this.isAdmin()) return true;
+    //  if (this.isAdmin()) return true;
     return this.currentActionCodes().has(actionCode);
   }
   private isModuleCode(str: string): boolean {
@@ -207,18 +207,18 @@ export class PermissionsService {
         const normalizedUrl = this.normalizeRoute(item.url);
         map.set(normalizedUrl, item);
       }
-      if (item.children?.length) item.children.forEach(child => processItem(child));
+      if (item.children?.length) item.children.forEach((child) => processItem(child));
     };
-    items.forEach(item => processItem(item));
+    items.forEach((item) => processItem(item));
     return map;
   }
   private buildCodePermissionsMap(items: MenuItem[]): Map<string, MenuItem> {
     const map = new Map<string, MenuItem>();
     const processItem = (item: MenuItem) => {
       if (item.code) map.set(item.code, item);
-      if (item.children?.length) item.children.forEach(child => processItem(child));
+      if (item.children?.length) item.children.forEach((child) => processItem(child));
     };
-    items.forEach(item => processItem(item));
+    items.forEach((item) => processItem(item));
     return map;
   }
   private findPermissionsForRoute(route: string, map: Map<string, MenuItem>): MenuItem | null {
@@ -233,15 +233,15 @@ export class PermissionsService {
     return route.split('?')[0].split(';')[0].replace(/^\//, '').replace(/\/$/, '').toLowerCase();
   }
   private routesMatch(actualRoute: string, templateRoute: string): boolean {
-    const actualParts = actualRoute.split('/').filter(p => p);
-    const templateParts = templateRoute.split('/').filter(p => p);
+    const actualParts = actualRoute.split('/').filter((p) => p);
+    const templateParts = templateRoute.split('/').filter((p) => p);
     if (actualParts.length !== templateParts.length) return false;
     return templateParts.every(
       (part, index) => part.startsWith(':') || part === actualParts[index],
     );
   }
   private setupRouteTracking(): void {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this._currentRoute.set(this.normalizeRoute(this.router.url));
     });
     this._currentRoute.set(this.normalizeRoute(this.router.url));

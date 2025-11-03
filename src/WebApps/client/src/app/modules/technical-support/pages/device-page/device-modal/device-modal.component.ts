@@ -130,7 +130,7 @@ export class DeviceModalComponent implements OnInit {
       size: 'sm',
       data: {},
     });
-    modalBrand.subscribe(response => {
+    modalBrand.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.getDataForm();
       }
@@ -143,7 +143,7 @@ export class DeviceModalComponent implements OnInit {
         categoryId: this.deviceForm.value.categoryId,
       },
     });
-    modalBrand.subscribe(response => {
+    modalBrand.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         const categoyId = Number(this.deviceForm.get('categoryId')?.value);
         this.onBrandGet(categoyId);
@@ -158,7 +158,7 @@ export class DeviceModalComponent implements OnInit {
         brandId: this.deviceForm.value.brandId,
       },
     });
-    modalModelo.subscribe(response => {
+    modalModelo.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         const brandId = Number(this.deviceForm.get('brandId')?.value);
         this.onModeloGet(brandId);
@@ -182,7 +182,7 @@ export class DeviceModalComponent implements OnInit {
 
   onBrandGet(categoryId: number) {
     this.brands.set([]);
-    this.brandService.get({ tipo: 2, categoryId }).subscribe(response => {
+    this.brandService.get({ tipo: 2, categoryId }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         this.brands.set(JSON.parse(response.payload as string));
         if (this.brands().length > 0) {
@@ -204,7 +204,7 @@ export class DeviceModalComponent implements OnInit {
   onModeloChange($event: any) {}
   onModeloGet(brandId: number) {
     this.modelos.set([]);
-    this.modeloService.get({ tipo: 2, brandId }).subscribe(response => {
+    this.modeloService.get({ tipo: 2, brandId }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         this.modelos.set(JSON.parse(response.payload as string));
         if (this.modelos().length > 0) {
@@ -237,7 +237,7 @@ export class DeviceModalComponent implements OnInit {
     this.deviceSpecs.deviceSpecId = device.deviceSpecId;
 
     for (const item in specsTemp) {
-      this.deviceSpec.update(r => [
+      this.deviceSpec.update((r) => [
         ...r,
         {
           uuid: specsTemp[item][0].uuid,
@@ -255,7 +255,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   getDataForm() {
-    this.deviceService.get({ tipo: 1 }).subscribe(response => {
+    this.deviceService.get({ tipo: 1 }).subscribe((response) => {
       if (isApiResponse(response)) {
         const tempArray = JSON.parse(response.payload as string);
         this.categories.set(tempArray.categorias);
@@ -274,7 +274,7 @@ export class DeviceModalComponent implements OnInit {
     const deviceInsert = Object.assign(this.data, this.deviceForm.value);
     if (!this.onValidate(deviceInsert)) return;
 
-    this.deviceService.post(deviceInsert).subscribe(response => {
+    this.deviceService.post(deviceInsert).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
           this.tS.show({
@@ -303,7 +303,7 @@ export class DeviceModalComponent implements OnInit {
     if (!this.onValidate(deviceUpdate)) return;
     this.onUpdateSpecs();
 
-    this.deviceService.put(this.data.id, deviceUpdate).subscribe(response => {
+    this.deviceService.put(this.data.id, deviceUpdate).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
           this.tS.show({
@@ -323,7 +323,7 @@ export class DeviceModalComponent implements OnInit {
 
   onUpdateSpecs() {
     this.deviceSepcsService.put(this.data.deviceSpecId!, this.data.specs!).subscribe({
-      next: response => {
+      next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '0') {
             this.tS.show({
@@ -347,7 +347,7 @@ export class DeviceModalComponent implements OnInit {
   convertirFormato(arrayObjetos: DeviceTypeSpec[]) {
     const objetoResultado: any = {};
     for (const item of arrayObjetos) {
-      objetoResultado[item.name] = item.specs.map(spec => ({
+      objetoResultado[item.name] = item.specs.map((spec) => ({
         uuid: spec.uuid,
         name: spec.name,
         value: spec.value,
@@ -416,7 +416,7 @@ export class DeviceModalComponent implements OnInit {
         message: 'Ingrese una categoría valida!',
       });
     }
-    this.deviceSpec.update(r => [
+    this.deviceSpec.update((r) => [
       ...r,
       {
         uuid: generateUuidv4(),
@@ -448,7 +448,7 @@ export class DeviceModalComponent implements OnInit {
   }
 
   removeSpecCategory(uuid: string) {
-    this.deviceSpec.update(r => r.filter((x: any) => x.uuid !== uuid));
+    this.deviceSpec.update((r) => r.filter((x: any) => x.uuid !== uuid));
   }
 
   removeSpec(index: any, uuid: string) {

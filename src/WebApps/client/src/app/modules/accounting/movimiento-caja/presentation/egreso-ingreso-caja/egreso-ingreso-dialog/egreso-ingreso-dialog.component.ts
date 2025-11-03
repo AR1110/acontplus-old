@@ -82,7 +82,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
   // }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataForm().subscribe(response => {
+    this._movimientoCajaUseCase.getDataForm().subscribe((response) => {
       const {
         establecimientos,
         cajas,
@@ -92,7 +92,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
       } = response;
 
       this.establecimientos = establecimientos;
-      const dataEstab = this.establecimientos.find(estab => estab.predeterminado);
+      const dataEstab = this.establecimientos.find((estab) => estab.predeterminado);
       if (dataEstab) {
         this.dataForm.get('codEstab')?.setValue(dataEstab.codEstab);
       }
@@ -107,7 +107,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
       }
 
       if (this.entidadesFinanciera.length > 0) {
-        const dataEntidad = this.entidadesFinanciera.find(e => e.codigo === 'EFE');
+        const dataEntidad = this.entidadesFinanciera.find((e) => e.codigo === 'EFE');
         if (dataEntidad) {
           this.dataForm.get('idEntidadFinanciera')?.setValue(dataEntidad.idEntidadFinanciera);
           this.onChangeEntidadFinanciera();
@@ -119,7 +119,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
   onChangeTipoDoc() {
     const dataForm = this.dataForm.value;
     const dataTipoDoc = this.tiposDocumento.find(
-      t => t.idTipoDocumento === dataForm.idTipoDocumento,
+      (t) => t.idTipoDocumento === dataForm.idTipoDocumento,
     );
     if (!dataTipoDoc) return;
 
@@ -131,7 +131,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
     const idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
     if (idEntidadFinanciera) {
       this.subEntidadesFinanciera = this.tempSubEntidadesFinanciera.filter(
-        ef => ef.idEntidadFinanciera === idEntidadFinanciera,
+        (ef) => ef.idEntidadFinanciera === idEntidadFinanciera,
       );
 
       if (this.subEntidadesFinanciera.length > 0) {
@@ -253,7 +253,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
         return;
       }
 
-      this._movimientoCajaUseCase.create(params).subscribe(response => {
+      this._movimientoCajaUseCase.create(params).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

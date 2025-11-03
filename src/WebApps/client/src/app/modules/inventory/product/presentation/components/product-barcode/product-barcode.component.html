@@ -2,10 +2,17 @@
   <div class="d-grid gap-2">
     <mat-form-field class="w-100">
       <mat-label>Descripción</mat-label>
-      <textarea matInput placeholder="..." appToUpperCase [(ngModel)]="data().descripcion"></textarea>
+      <textarea
+        matInput
+        placeholder="..."
+        appToUpperCase
+        [(ngModel)]="data().descripcion"
+      ></textarea>
     </mat-form-field>
 
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Medida: </mat-label>
@@ -53,11 +60,12 @@
       </div>
     </div>
 
-    <app-mat-dynamic-table [templateOp]="templateOp"
+    <app-mat-dynamic-table
+      [templateOp]="templateOp"
       [tableData]="dataSource"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
-     />
+    />
 
     <ng-template #templateOp let-item="item">
       <div class="d-flex gap-1">
@@ -71,7 +79,11 @@
     </ng-template>
 
     <ng-template #colorTemplate let-item>
-      <div [style.width]="'20px'" [style.height]="'20px'" [style.background-color]="item.color"></div>
+      <div
+        [style.width]="'20px'"
+        [style.height]="'20px'"
+        [style.background-color]="item.color"
+      ></div>
     </ng-template>
   </div>
 </app-mat-dynamic-card>

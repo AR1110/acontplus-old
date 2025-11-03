@@ -1,5 +1,7 @@
 <app-mat-dynamic-card>
-  <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+  >
     <div class="col">
       <!--      <mat-form-field>-->
       <!--        <mat-label></mat-label>-->
@@ -34,7 +36,12 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button [variant]="'success'" [icon]="'edit'" [matStyle]="'icon'" (handleClick)="openAddEdit(item)" />
+    <app-theme-button
+      [variant]="'success'"
+      [icon]="'edit'"
+      [matStyle]="'icon'"
+      (handleClick)="openAddEdit(item)"
+    />
     <app-theme-button [variant]="'danger'" [icon]="'delete'" [matStyle]="'icon'" />
   </ng-template>
 </app-mat-dynamic-card>

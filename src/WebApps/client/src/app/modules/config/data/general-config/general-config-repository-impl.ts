@@ -21,7 +21,7 @@ export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
   list(parameters: string) {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${ListGeneralConfigMapper.toJson(parameters)}`)
-      .pipe(map(response => ListGeneralConfigMapper.fromJson(response, parameters)));
+      .pipe(map((response) => ListGeneralConfigMapper.fromJson(response, parameters)));
   }
 
   sendPolicy(codePolicy: string): Observable<ApiResponse> {
@@ -34,7 +34,7 @@ export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
     const params = new HttpParams().set('json', JSON.stringify(payload));
 
     return this._http.get<ApiResponse>(this._url, { params }).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
           const parsedPayload = JSON.parse(response.payload as string);
 
@@ -53,7 +53,7 @@ export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
           throw new Error(response.message || 'General error');
         }
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('Error in sendPolicy:', error);
         return throwError(() => error);
       }),

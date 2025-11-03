@@ -302,15 +302,15 @@ export class ProductKardexComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.transactionSvc.getDataFilter().subscribe(response => {
+    this.transactionSvc.getDataFilter().subscribe((response) => {
       this.establecimientos.set(response.estabs);
       this.tiposTransaccion.set(response.tiposTransaccion);
-      const dataEstab = this.establecimientos().find(e => e.defaultEstab);
+      const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
 
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
         this.dataSearch.codEstab = dataEstab.codEstab;
-        const dataBodega = this.bodegas().find(b => b.defaultBodega);
+        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.dataSearch.idBodega = dataBodega.idBodega;
         }
@@ -324,11 +324,11 @@ export class ProductKardexComponent implements OnInit {
 
   getBodegas() {
     const dataEstab = this.establecimientos().find(
-      item => item.codEstab === this.dataSearch.codEstab,
+      (item) => item.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
       this.bodegas.set(dataEstab.bodegas);
-      const dataBodega = this.bodegas().find(estab => estab.defaultBodega);
+      const dataBodega = this.bodegas().find((estab) => estab.defaultBodega);
 
       this.dataSearch.idBodega = dataBodega?.idBodega ?? 0;
       this.getDataKardex();
@@ -344,7 +344,7 @@ export class ProductKardexComponent implements OnInit {
 
   calculoTotales(prop: string) {
     const total = this.transacciones()
-      .map(item => item[prop] || 0)
+      .map((item) => item[prop] || 0)
       .reduce((obj, cur) => Number(obj) + Number(cur), 0);
     return roundNumber(total, 3);
   }
@@ -366,7 +366,7 @@ export class ProductKardexComponent implements OnInit {
         fechaFin: this.dataSearch.fechaFin,
         estado: this.dataSearch.estado,
       };
-      this.transactionSvc.getDataKardex(params).subscribe(response => {
+      this.transactionSvc.getDataKardex(params).subscribe((response) => {
         this.dataArticulo = response.dataArticulo || {};
         this.transacciones.set(response.kardex || []);
         if (this.transacciones().length === 0) {
@@ -442,7 +442,7 @@ export class ProductKardexComponent implements OnInit {
         pdf: 'PDF',
         excel: 'EXCEL',
       },
-      inputValidator: value => {
+      inputValidator: (value) => {
         if (!value) {
           return 'Seleccione el Tipo de Formato!';
         }

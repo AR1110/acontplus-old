@@ -17,7 +17,7 @@ export class VehicleAddEditDirective {
       data: this.params() || {},
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.resultModalHandler.emit(result);
       }

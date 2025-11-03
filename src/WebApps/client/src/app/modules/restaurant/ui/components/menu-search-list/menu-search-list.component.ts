@@ -70,7 +70,7 @@ export class MenuSearchListComponent implements OnInit, AfterViewInit, OnChanges
   productTarifas: any = [];
   ngOnInit(): void {
     this.pagination.pageIndex = 0;
-    this.visibleColumns = this.columns.map(x => x.columnDef);
+    this.visibleColumns = this.columns.map((x) => x.columnDef);
   }
 
   ngAfterViewInit() {
@@ -80,7 +80,7 @@ export class MenuSearchListComponent implements OnInit, AfterViewInit, OnChanges
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData']?.currentValue) {
-      this.visibleColumns = this.columns.map(x => x.columnDef);
+      this.visibleColumns = this.columns.map((x) => x.columnDef);
       this.pagination.totalRecords = 0;
 
       if (this.tableData.length > 0) {
@@ -102,7 +102,7 @@ export class MenuSearchListComponent implements OnInit, AfterViewInit, OnChanges
 
   setPageSizeOptions(setPageSizeOptionsInput: string) {
     if (setPageSizeOptionsInput) {
-      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map(str => +str);
+      this.pagination.pageSizeOptions = setPageSizeOptionsInput.split(',').map((str) => +str);
     }
   }
 

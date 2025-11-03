@@ -20,18 +20,18 @@ export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
     });
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => GetGuiaRemisionFormDataMapper.fromJson(response)));
+      .pipe(map((response) => GetGuiaRemisionFormDataMapper.fromJson(response)));
   }
   getFilterData() {
     const json = GetGuiaRemisionFilterDataMapper.toJson();
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => GetGuiaRemisionFilterDataMapper.fromJson(response)));
+      .pipe(map((response) => GetGuiaRemisionFilterDataMapper.fromJson(response)));
   }
   list<T>(parameters: T) {
     return this._http
       .get(`${this._url}?json=${ListGuiaRemisionMapper.toJson(parameters)}`)
-      .pipe(map(response => ListGuiaRemisionMapper.fromJson(response)));
+      .pipe(map((response) => ListGuiaRemisionMapper.fromJson(response)));
   }
   // override getById(id: number): Observable<any> {
   //   throw new Error('Method not implemented.');

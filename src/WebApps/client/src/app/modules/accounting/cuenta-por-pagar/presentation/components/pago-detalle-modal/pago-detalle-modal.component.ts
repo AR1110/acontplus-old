@@ -21,7 +21,7 @@ export class PagoDetalleModalComponent implements OnInit {
     { key: 'abono', label: 'Abono', type: 'number' },
     { key: 'saldo', label: 'Saldo', type: 'number' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = new MatTableDataSource<any>([]);
 

@@ -5,13 +5,13 @@
         <div class="table-responsive">
           <table class="table">
             <thead>
-            <tr>
-              <th>#</th>
-              <th>Rol</th>
-              <th>Empresa</th>
-              <th>Fecha registro</th>
-              <th>Estado</th>
-            </tr>
+              <tr>
+                <th>#</th>
+                <th>Rol</th>
+                <th>Empresa</th>
+                <th>Fecha registro</th>
+                <th>Estado</th>
+              </tr>
             </thead>
             <tbody>
               @for (item of roles; track $index) {
@@ -21,9 +21,9 @@
                   <td>{{ item.companyName }}</td>
                   <td>{{ item.fechaRegistro }}</td>
                   <td>
-                            <span class="label label-success">
-                              {{ item.estado ? 'Activo' : 'Inactivo' }}
-                            </span>
+                    <span class="label label-success">
+                      {{ item.estado ? 'Activo' : 'Inactivo' }}
+                    </span>
                   </td>
                 </tr>
               }
@@ -40,7 +40,8 @@
               <form [formGroup]="passwordForm" autocomplete="off" class="form-field-full">
                 <mat-form-field>
                   <mat-label>Contraseña</mat-label>
-                  <input matInput
+                  <input
+                    matInput
                     (change)="verifyPassword()"
                     [type]="isShowPassword ? 'text' : 'password'"
                     formControlName="password"
@@ -65,12 +66,13 @@
                   </mat-checkbox>
                 </section>
 
-                <app-theme-button variant="success"
+                <app-theme-button
+                  variant="success"
                   icon="save"
                   text="Actualizar Contraseña"
                   (handleClick)="confirmUpdate()"
                   [disabled]="!isVerified"
-                 />
+                />
               </form>
             </div>
           </div>

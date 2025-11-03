@@ -72,32 +72,32 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
     { key: 'templateSelect', label: '', type: 'template' },
     { key: 'templateSecuencia', label: 'Secuencia', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   @ViewChild('templateSecuencia') templateSecuencia!: TemplateRef<any>;
   @ViewChild('templateSelect') templateSelect!: TemplateRef<any>;
   getDocs() {
     this.docs.set([]);
-    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe(response => {
+    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe((response) => {
       this.docs.set(response.data);
     });
   }
 
   ngOnInit() {
-    this.$formDataDocConfig.execute().subscribe(response => {
+    this.$formDataDocConfig.execute().subscribe((response) => {
       this.establecimientos.set(response.establecimientos);
-      const dataEstab = this.establecimientos().find(e => e.defaultEstab);
+      const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
       if (dataEstab) {
         this.puntosEmision.set(dataEstab.puntosEmision);
-        const dataPuntoEmision = this.puntosEmision().find(p => p.defaultPtoEmi);
+        const dataPuntoEmision = this.puntosEmision().find((p) => p.defaultPtoEmi);
         if (dataPuntoEmision) {
-          this.dataSearch.update(ds => ({
+          this.dataSearch.update((ds) => ({
             ...ds,
             idPuntoEmision: dataPuntoEmision.idPuntoEmision,
           }));
           this.getDocs();
         }
-        this.dataSearch.update(ds => ({
+        this.dataSearch.update((ds) => ({
           ...ds,
           codEstab: dataEstab.codEstab,
         }));
@@ -108,7 +108,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template' && col.key === 'templateSecuencia') {
         col.templateOutlet = this.templateSecuencia;
       }
@@ -119,18 +119,20 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   }
 
   onChangeEstab() {
-    const dataEstab = this.establecimientos().find(e => e.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.establecimientos().find(
+      (e) => e.codEstab === this.dataSearch().codEstab,
+    );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
-      const dataPuntoEmision = this.puntosEmision().find(e => e.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
       if (dataPuntoEmision) {
-        this.dataSearch.update(ds => ({
+        this.dataSearch.update((ds) => ({
           ...ds,
           idPuntoEmision: dataPuntoEmision.idPuntoEmision,
         }));
         this.getDocs();
       } else {
-        this.dataSearch.update(ds => ({
+        this.dataSearch.update((ds) => ({
           ...ds,
           idPuntoEmision: 0,
         }));
@@ -162,7 +164,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
       ultimaSecuencia: item.ultimaSecuencia,
     };
 
-    this.$createUseCase.execute(data).subscribe(response => {
+    this.$createUseCase.execute(data).subscribe((response) => {
       this._tS.show({
         type: response.code === '1' ? 'success' : 'warning',
         message: response.message,
@@ -182,7 +184,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
       },
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getDocs();
       }

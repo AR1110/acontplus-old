@@ -131,14 +131,14 @@ export class MatDynamicTableComponent<T> implements AfterContentInit, OnInit, On
   isLoadingData = input<boolean>(false);
 
   ngAfterContentInit(): void {
-    this.columnDefs.forEach(columnDef => this.table.addColumnDef(columnDef));
-    this.rowDefs.forEach(rowDef => this.table.addRowDef(rowDef));
-    this.headerRowDefs.forEach(headerRowDef => this.table.addHeaderRowDef(headerRowDef));
+    this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
+    this.rowDefs.forEach((rowDef) => this.table.addRowDef(rowDef));
+    this.headerRowDefs.forEach((headerRowDef) => this.table.addHeaderRowDef(headerRowDef));
 
     if (this.showFooter) {
-      this.footerRowDefs.forEach(footerRowDef => this.table.addFooterRowDef(footerRowDef));
+      this.footerRowDefs.forEach((footerRowDef) => this.table.addFooterRowDef(footerRowDef));
     } else {
-      this.footerRowDefs.forEach(footerRowDef => this.table.removeFooterRowDef(footerRowDef));
+      this.footerRowDefs.forEach((footerRowDef) => this.table.removeFooterRowDef(footerRowDef));
     }
     // init grid state
     this.selection = new SelectionModel<T>(true, []);
@@ -147,7 +147,7 @@ export class MatDynamicTableComponent<T> implements AfterContentInit, OnInit, On
 
   ngOnInit(): void {
     if (!this.visibleColumns) {
-      this.visibleColumns = this.columnDefinitions.map(col => col.key);
+      this.visibleColumns = this.columnDefinitions.map((col) => col.key);
       this.columnDefinitions.forEach((col, index) => (col.index = index));
     }
 
@@ -231,7 +231,7 @@ export class MatDynamicTableComponent<T> implements AfterContentInit, OnInit, On
       this.selection.clear();
       this._selectedRows.clear();
     } else {
-      this.dataSource.data.forEach(row => {
+      this.dataSource.data.forEach((row) => {
         this.selection.select(row);
         this._selectedRows.add(row);
       });
@@ -311,6 +311,6 @@ export class MatDynamicTableComponent<T> implements AfterContentInit, OnInit, On
 
   ngOnDestroy(): void {
     // Clean up components and views to prevent memory leaks
-    this.embeddedViews.forEach(view => view.destroy());
+    this.embeddedViews.forEach((view) => view.destroy());
   }
 }

@@ -5,15 +5,23 @@ import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
-import {WarehouseTransferViewDetailUseCase} from "@inventory/domain/usecases/warehouse-transfer.use-case";
-import {DataGridColumn} from "@shared/components/data-grid/types";
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DatePipe, DecimalPipe} from "@angular/common";
-import {MatCard, MatCardContent} from "@angular/material/card";
-import {MatIcon} from "@angular/material/icon";
+import { WarehouseTransferViewDetailUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
+import { DataGridColumn } from '@shared/components/data-grid/types';
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-inventory-adjustment-detail',
-  imports: [MatCustomDialogComponent,  DataGrid,  DecimalPipe, DatePipe, MatCard, MatCardContent, MatIcon],
+  imports: [
+    MatCustomDialogComponent,
+    DataGrid,
+    DecimalPipe,
+    DatePipe,
+    MatCard,
+    MatCardContent,
+    MatIcon,
+  ],
   templateUrl: './warehouse-transfer-detail.html',
   styles: `
     .header-card {
@@ -76,11 +84,6 @@ import {MatIcon} from "@angular/material/icon";
         }
       }
     }
-
-
-
-
-
   `,
 })
 export class WarehouseTransferDetail implements OnInit {
@@ -123,16 +126,14 @@ export class WarehouseTransferDetail implements OnInit {
         digitsInfo: '1.2-2',
       },
     },
-
   ];
 
-
   ngOnInit() {
-    this.viewDetailUseCase.execute(this.params.id).subscribe(response => {
+    this.viewDetailUseCase.execute(this.params.id).subscribe((response) => {
       console.log(response);
 
-       this.header = response.header;
-       this.list.set(response.details);
+      this.header = response.header;
+      this.list.set(response.details);
     });
   }
 

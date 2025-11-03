@@ -50,7 +50,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
     { key: 'nombreComercial', label: 'Nombre Comercial', type: 'string' },
     { key: 'predeterminado', label: 'Predeterminado', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -59,7 +59,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.set(response.data);
       });
   }
@@ -69,7 +69,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
@@ -77,7 +77,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
   }
 
   onChangeDefault(data: AsignacionEstabList) {
-    this.$updateAsignacionEstabUseCase.execute(data).subscribe(response => {
+    this.$updateAsignacionEstabUseCase.execute(data).subscribe((response) => {
       if (response.code === '0') {
         this._tS.show({
           type: 'warning',
@@ -120,7 +120,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
         idUsuarioRol: this.$userCustomerStore.userRoleId(),
         codEstab: data.codEstab,
       };
-      this.$createAsignacionEstabUseCase.execute(params).subscribe(response => {
+      this.$createAsignacionEstabUseCase.execute(params).subscribe((response) => {
         if (response.code === '0') {
           this._tS.show({
             type: 'warning',

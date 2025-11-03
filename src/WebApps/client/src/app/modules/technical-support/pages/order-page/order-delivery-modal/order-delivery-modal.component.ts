@@ -66,7 +66,7 @@ export class OrderDeliveryModalComponent implements OnInit {
       receiver: this.orderDeliveryForm.value.receiver,
     };
 
-    this.orderService.delivery(this.data.id, dataModified).subscribe(response => {
+    this.orderService.delivery(this.data.id, dataModified).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',

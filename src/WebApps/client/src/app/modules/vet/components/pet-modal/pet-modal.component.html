@@ -9,10 +9,11 @@
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
-          <app-company-customer-search (customerSelected)="onCustomerSelected($event)"
+          <app-company-customer-search
+            (customerSelected)="onCustomerSelected($event)"
             [textSearch]="customerBusinessName"
             [isAdvancedMode]="true"
-           />
+          />
         </div>
       </div>
     </div>
@@ -23,7 +24,14 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="name">Nombre</label>
-              <input class="form-control" formControlName="name" id="name" placeholder="Nombre" required type="text" />
+              <input
+                class="form-control"
+                formControlName="name"
+                id="name"
+                placeholder="Nombre"
+                required
+                type="text"
+              />
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -95,11 +103,12 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button [disabled]="petForm.invalid"
+  <app-theme-button
+    [disabled]="petForm.invalid"
     variant="success"
     icon="save"
     text="Guardar"
     type="submit"
     form="petForm"
-   />
+  />
 </ng-template>

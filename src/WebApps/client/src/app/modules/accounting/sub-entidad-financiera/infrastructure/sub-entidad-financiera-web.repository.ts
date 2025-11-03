@@ -20,7 +20,7 @@ export class SubEntidadFinancieraWebRepository extends SubEntidadFinancieraRepos
   getAll() {
     const json = JSON.stringify({ tipo: 1 });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           entidadesFinancieras: [],
           subEntidadesFinancieras: [],

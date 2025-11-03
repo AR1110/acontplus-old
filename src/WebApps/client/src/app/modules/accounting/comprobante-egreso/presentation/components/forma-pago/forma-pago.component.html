@@ -36,13 +36,17 @@
         </button>
       </ng-template>
     } @else {
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>SubEntidad Financiera</mat-label>
             <mat-select [(ngModel)]="comprobanteEgresoStore.dataFormaPago().idSubEntidadFinanciera">
               @for (item of comprobanteEgresoStore.subEntidadesFinancieraFiltered(); track $index) {
-                <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }} </mat-option>
+                <mat-option [value]="item.idSubEntidadFinanciera"
+                  >{{ item.descripcion }}
+                </mat-option>
               }
             </mat-select>
           </mat-form-field>
@@ -50,7 +54,11 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Fecha Emisión</mat-label>
-            <input matInput [matDatepicker]="picker" [value]="comprobanteEgresoStore.dataFormaPago().fechaEmision" />
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [value]="comprobanteEgresoStore.dataFormaPago().fechaEmision"
+            />
             <mat-datepicker-toggle matIconSuffix [for]="picker" />
             <mat-datepicker touchUi #picker />
           </mat-form-field>
@@ -74,7 +82,9 @@
 
     <!--START TARJETA CREDITO / DEBITO-->
     @if (comprobanteEgresoStore.esTarjetaCreditoDebito()) {
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Número</mat-label>
@@ -99,7 +109,9 @@
         </div>
       </div>
 
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Lote:</mat-label>
@@ -147,7 +159,11 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Número</mat-label>
-            <input matInput placeholder="..." [(ngModel)]="comprobanteEgresoStore.dataFormaPago().nro" />
+            <input
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.dataFormaPago().nro"
+            />
           </mat-form-field>
         </div>
       </div>
@@ -157,7 +173,9 @@
     <!--START TRANSFERENCIA-->
 
     @if (comprobanteEgresoStore.esCheque()) {
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col">
           <app-city-search />
         </div>
@@ -173,11 +191,17 @@
         </div>
       </div>
 
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Número</mat-label>
-            <input matInput placeholder="..." [(ngModel)]="comprobanteEgresoStore.dataFormaPago().nro" />
+            <input
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.dataFormaPago().nro"
+            />
           </mat-form-field>
         </div>
         <div class="col d-flex align-items-center justify-content-center">
@@ -189,7 +213,11 @@
         <div class="col w-100">
           <mat-form-field class="w-100">
             <mat-label>Dirigido a:</mat-label>
-            <input matInput placeholder="..." [(ngModel)]="comprobanteEgresoStore.dataFormaPago().referencia" />
+            <input
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.dataFormaPago().referencia"
+            />
           </mat-form-field>
         </div>
       </div>
@@ -200,7 +228,11 @@
 
 <ng-template #actionsTemplate>
   @if (!comprobanteEgresoStore.esDoc()) {
-    <button mat-flat-button color="accent" (click)="comprobanteEgresoStore.agregarAbono(valorAbono()); close()">
+    <button
+      mat-flat-button
+      color="accent"
+      (click)="comprobanteEgresoStore.agregarAbono(valorAbono()); close()"
+    >
       Abonar
     </button>
   }

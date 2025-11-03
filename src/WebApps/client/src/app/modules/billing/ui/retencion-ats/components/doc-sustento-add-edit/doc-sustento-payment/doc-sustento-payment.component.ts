@@ -43,7 +43,7 @@ export class DocSustentoPaymentComponent {
       if (isConfirmed) {
         this._docSustentoPaymentUseCase
           .delete(paymentSelected.idRetencionAtsPago)
-          .subscribe(response => {
+          .subscribe((response) => {
             this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
@@ -74,14 +74,14 @@ export class DocSustentoPaymentComponent {
     if (paymentSelected.idRetencionAtsPago > 0) {
       this._docSustentoPaymentUseCase
         .update(paymentSelected.idRetencionAtsPago, paymentSelected)
-        .subscribe(response => {
+        .subscribe((response) => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoPaymentUseCase.create(paymentSelected).subscribe(response => {
+      this._docSustentoPaymentUseCase.create(paymentSelected).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

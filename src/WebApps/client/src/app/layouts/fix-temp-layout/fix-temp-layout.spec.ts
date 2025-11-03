@@ -8,9 +8,8 @@ describe('FixTempLayout', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FixTempLayout]
-    })
-    .compileComponents();
+      imports: [FixTempLayout],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(FixTempLayout);
     component = fixture.componentInstance;

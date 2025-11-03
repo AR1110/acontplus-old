@@ -1,34 +1,32 @@
-
-<app-breadcrumb/>
+<app-breadcrumb />
 <ng-template #toolbarTpl>
   <div class="d-flex gap-5 justify-content-center align-items-center">
-  <section>
-    <mat-button-toggle-group
-      name="ingredients"
-      aria-label="Ingredients"
-      multiple
-      [(ngModel)]="subCategories"
-      (change)="refresh()"
-    >
-      <mat-button-toggle value="RES">Items</mat-button-toggle>
-      <mat-button-toggle value="COM">Combos</mat-button-toggle>
-      <mat-button-toggle value="ING">Ingredientes</mat-button-toggle>
-    </mat-button-toggle-group>
-  </section>
-  <button mat-icon-button (click)="refresh()">
-    <mat-icon>search</mat-icon>
-  </button>
-
+    <section>
+      <mat-button-toggle-group
+        name="ingredients"
+        aria-label="Ingredients"
+        multiple
+        [(ngModel)]="subCategories"
+        (change)="refresh()"
+      >
+        <mat-button-toggle value="RES">Items</mat-button-toggle>
+        <mat-button-toggle value="COM">Combos</mat-button-toggle>
+        <mat-button-toggle value="ING">Ingredientes</mat-button-toggle>
+      </mat-button-toggle-group>
+    </section>
+    <button mat-icon-button (click)="refresh()">
+      <mat-icon>search</mat-icon>
+    </button>
   </div>
-
 </ng-template>
 
-<app-data-grid showToolbar="true"
+<app-data-grid
+  showToolbar="true"
   [toolbarTemplate]="toolbarTpl"
   [data]="list()"
   [columns]="columns"
   [cellTemplate]="{
-  productData: productDataTpl
+    productData: productDataTpl,
   }"
   [length]="pagination().totalRecords"
   [loading]="isLoading"
@@ -37,13 +35,12 @@
   [pageSize]="pagination().pageSize"
   [pageSizeOptions]="pagination().pageSizeOptions"
   (page)="getNextPage($event)"
- />
+/>
 
 <ng-template #productDataTpl let-row>
   <div class="product-info">
     <div class="main">{{ row.description }}</div>
     <small class="code">{{ row.code }}</small>
     <small class="auxiliary_code">{{ row.auxiliaryCode }}</small>
-
   </div>
 </ng-template>

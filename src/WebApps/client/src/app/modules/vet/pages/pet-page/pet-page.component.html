@@ -9,7 +9,13 @@
         </button>
       </div>
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-        <input #input (keyup)="applyFilter($event)" class="form-control" matInput placeholder="Buscar mascota" />
+        <input
+          #input
+          (keyup)="applyFilter($event)"
+          class="form-control"
+          matInput
+          placeholder="Buscar mascota"
+        />
       </div>
     </div>
     <br />
@@ -105,7 +111,8 @@
           </tr>
         </table>
       </section>
-      <mat-paginator #paginator
+      <mat-paginator
+        #paginator
         (page)="pageChanged($event)"
         [length]="pagination.totalRecords"
         [pageIndex]="pagination.pageIndex"
@@ -113,7 +120,7 @@
         [pageSize]="pagination.pageSize"
         aria-label="Select page"
         showFirstLastButtons
-       />
+      />
     </div>
   </mat-card-content>
 </mat-card>

@@ -19,10 +19,8 @@ import { ProductGetIdMapper } from '@inventory/product/infrastructure/product/ma
 import { ListProductWithPricesUseCaseMapper } from '@inventory/product/infrastructure/product/mappers/list-product-with-prices.mapper';
 import { SaveProductMapper } from '@inventory/product/infrastructure/product/mappers/save-product.mapper';
 import { GetProductPurchaseMapper } from '@inventory/product/infrastructure/product/mappers/get-product-purchase.mapper';
-import {
-  GetProductEstabsStockMapper
-} from "@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper";
-import {ProductSearchMapper} from "@inventory/product/infrastructure/product/mappers/product-search.mapper";
+import { GetProductEstabsStockMapper } from '@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper';
+import { ProductSearchMapper } from '@inventory/product/infrastructure/product/mappers/product-search.mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +39,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             products: [] as any[],
             totalRecords: 0,
@@ -64,7 +62,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let data = {
             subCategorias: [],
             medidas: [],
@@ -89,7 +87,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         params,
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let result = new ProductDataForm();
 
           if (response.code === '1') {
@@ -100,7 +98,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       );
   }
 
-  search<T extends { textSearch: string; pageIndex?: number; pageSize?: number, q?: string }>(
+  search<T extends { textSearch: string; pageIndex?: number; pageSize?: number; q?: string }>(
     data: T,
   ): Observable<any> {
     const json = ProductSearchMapper.toJson(data);
@@ -108,7 +106,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .get<ApiResponse>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe( map(response => ProductSearchMapper.fromJson(response)));
+      .pipe(map((response) => ProductSearchMapper.fromJson(response)));
   }
 
   getForSale(id: number) {
@@ -120,7 +118,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         params,
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let data = {
             product: {} as ProductSale,
             medidas: [] as MedidaProducto[],
@@ -137,7 +135,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   getForPurchase(id: number) {
-    console.log(id)
+    console.log(id);
     const params = {
       json: GetProductPurchaseMapper.toJson(id),
     };
@@ -145,7 +143,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .get<ApiResponse>(`${this._url}`, {
         params,
       })
-      .pipe(map(response => GetProductPurchaseMapper.fromJson(response)));
+      .pipe(map((response) => GetProductPurchaseMapper.fromJson(response)));
   }
 
   checkNotificationStock<
@@ -163,7 +161,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       .get<ApiResponse>(`${this._url}`, {
         params,
       })
-      .pipe(map(response => ProductMapper.fromApiCheckStockNotificacion(response)));
+      .pipe(map((response) => ProductMapper.fromApiCheckStockNotificacion(response)));
   }
 
   getDataReport() {
@@ -175,7 +173,7 @@ export class ProductRepositoryImpl implements ProductRepository {
         params,
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const estabs: GroupedEstab[] = [];
           let data = {
             estabs,
@@ -200,7 +198,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   getId(id: number) {
     return this._http
       .get<ApiResponse>(`${this._url}${id}`)
-      .pipe(map(response => ProductGetIdMapper.fromJson(response)));
+      .pipe(map((response) => ProductGetIdMapper.fromJson(response)));
   }
 
   post<T>(obj: T, file?: Blob) {
@@ -212,7 +210,7 @@ export class ProductRepositoryImpl implements ProductRepository {
     }
     return this._http
       .post<ApiResponse>(`${this._url}?json=${paramsJson}`, formData)
-      .pipe(map(response => SaveProductMapper.fromJson(response)));
+      .pipe(map((response) => SaveProductMapper.fromJson(response)));
   }
   put<T>(id: number, obj: T): Observable<ApiResponse> {
     throw new Error('Method not implemented.');
@@ -227,21 +225,21 @@ export class ProductRepositoryImpl implements ProductRepository {
           json,
         },
       })
-      .pipe(map(response => ListProductWithPricesUseCaseMapper.fromJson(response)));
+      .pipe(map((response) => ListProductWithPricesUseCaseMapper.fromJson(response)));
   }
 
-   getEstabStock(id: number): Observable<any> {
-     const json = JSON.stringify({
-       idArticulo: id,
-       tipo: 10,
-     })
-    return  this._http.get<ApiResponse>(`${this._url}`, {
-      params: {
-        json,
-      },
-      context: getNoLoader(),
-    }).pipe(
-      map(response=>GetProductEstabsStockMapper.fromJson(response))
-    )
+  getEstabStock(id: number): Observable<any> {
+    const json = JSON.stringify({
+      idArticulo: id,
+      tipo: 10,
+    });
+    return this._http
+      .get<ApiResponse>(`${this._url}`, {
+        params: {
+          json,
+        },
+        context: getNoLoader(),
+      })
+      .pipe(map((response) => GetProductEstabsStockMapper.fromJson(response)));
   }
 }

@@ -146,7 +146,7 @@ export class InventoryReportComponent implements OnInit {
   tiposDocSelected = new FormControl([]);
 
   getDatFormReport() {
-    this._productUseCase.getDataReport().subscribe(response => {
+    this._productUseCase.getDataReport().subscribe((response) => {
       const { estabs, subCategorias, marcas } = response;
       this.estabs = estabs;
       this.subCategories = subCategorias;
@@ -154,20 +154,20 @@ export class InventoryReportComponent implements OnInit {
       this.tarifas = response.tarifas;
       this.taxes.set(response.taxes);
       this.tiposDoc.set(response.tiposDoc);
-      const dataEstab = this.estabs.find(e => e.defaultEstab);
+      const dataEstab = this.estabs.find((e) => e.defaultEstab);
 
       if (dataEstab) {
         this.correoReceptor = dataEstab.correo;
         this.dataSearch.idEstablecimiento = dataEstab.idEstablecimiento;
         this.bodegas = dataEstab.bodegas;
-        this.dataSearch.idBodega = this.bodegas.find(item => item.defaultBodega)?.idBodega ?? 0;
+        this.dataSearch.idBodega = this.bodegas.find((item) => item.defaultBodega)?.idBodega ?? 0;
       }
     });
   }
 
   ngOnInit() {
     this.getDatFormReport();
-    this.pS.getAction().subscribe(res => {
+    this.pS.getAction().subscribe((res) => {
       this.isReporting = res?.reporte;
       this.isSendingEmail = res?.enviarCorreo;
     });
@@ -196,11 +196,11 @@ export class InventoryReportComponent implements OnInit {
       return;
     }
     const dataEstab = this.estabs.find(
-      item => item.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      (item) => item.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     this.bodegas = dataEstab?.bodegas ?? [];
     if (this.bodegas.length > 0) {
-      this.dataSearch.idBodega = this.bodegas.find(item => item.defaultBodega)?.idBodega ?? 0;
+      this.dataSearch.idBodega = this.bodegas.find((item) => item.defaultBodega)?.idBodega ?? 0;
     } else {
       this.dataSearch.idBodega = 0;
     }
@@ -396,7 +396,7 @@ export class InventoryReportComponent implements OnInit {
 
   private getCodEstab() {
     const dataEstab = this.estabs.find(
-      e => e.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      (e) => e.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
       return dataEstab.codEstab;
@@ -687,7 +687,7 @@ export class InventoryReportComponent implements OnInit {
     }
 
     // Validar formato de cada correo
-    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
+    const correosInvalidos = correos.filter((correo) => !isValidEmail(correo.trim()));
 
     if (correosInvalidos.length > 0) {
       Swal.fire({
@@ -731,7 +731,7 @@ export class InventoryReportComponent implements OnInit {
       receptor: this.correoReceptor,
     };
 
-    this.appNotifiSvc.post(params).subscribe(response => {
+    this.appNotifiSvc.post(params).subscribe((response) => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',

@@ -81,7 +81,7 @@ export class SalesDetailCalculationService {
       medidaId: function () {
         if (data.medidaId === oldValue) return;
 
-        const dataMedida = data.medidas.find(val => val.idMedida === data.medidaId);
+        const dataMedida = data.medidas.find((val) => val.idMedida === data.medidaId);
         let tarifas: TarifaProducto[] = [];
         if (dataMedida) {
           if (dataMedida && typeof dataMedida.tarifas === 'string') {
@@ -122,7 +122,7 @@ export class SalesDetailCalculationService {
       feeId: function () {
         try {
           if (feeId === oldValue) return;
-          const dataTarifa = data.tarifas.find(item => item.idTarifa === feeId);
+          const dataTarifa = data.tarifas.find((item) => item.idTarifa === feeId);
 
           if (!dataTarifa) {
             data.feeId = Number(oldValue);
@@ -303,9 +303,9 @@ export class SalesDetailCalculationService {
     }
     try {
       for (const row of obj.items) {
-        const tarifa = row.tarifas.find(item => item.idTarifa === obj.generalFeeId);
+        const tarifa = row.tarifas.find((item) => item.idTarifa === obj.generalFeeId);
         const dataTarifaImpuesto = obj.tarifasImpuesto.find(
-          ti => ti.idTarifaImpuesto === row.taxPercentId,
+          (ti) => ti.idTarifaImpuesto === row.taxPercentId,
         );
         if (!tarifa || !dataTarifaImpuesto) continue;
 
@@ -388,7 +388,7 @@ export class SalesDetailCalculationService {
     // Calcular totales específicos por tarifa de impuesto
     for (const dataTarifaImpuesto of tarifasImpuesto) {
       const filteredItems = items.filter(
-        item => item.taxPercentId === dataTarifaImpuesto.idTarifaImpuesto,
+        (item) => item.taxPercentId === dataTarifaImpuesto.idTarifaImpuesto,
       );
 
       const { totalNetoIva } = filteredItems.reduce(

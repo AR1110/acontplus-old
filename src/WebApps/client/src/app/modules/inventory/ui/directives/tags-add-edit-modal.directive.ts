@@ -16,7 +16,7 @@ export class TagsAddEditModalDirective {
     const modalRef = this.dialogSvc.open(TagsAddEditModalComponent, {
       data: structuredClone(this.params()) || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.onResult.emit(result);
       }

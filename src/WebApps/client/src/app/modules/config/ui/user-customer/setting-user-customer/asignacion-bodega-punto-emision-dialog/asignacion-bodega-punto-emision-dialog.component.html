@@ -8,11 +8,12 @@
 <ng-template #body>
   <div class="d-grid gap-2">
     <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Puntos de Emisión'">
-      <app-mat-dynamic-table [tableData]="dataSourcePuntoEmision()"
+      <app-mat-dynamic-table
+        [tableData]="dataSourcePuntoEmision()"
         [columnDefinitions]="columnsDefsPuntoEmision"
         [visibleColumns]="columnsPuntoEmision"
         [templateOp]="templateOpPuntoEmision"
-       />
+      />
 
       <ng-template #templateOpPuntoEmision let-item="item">
         @if (item.idPtoEmi_Asig > 0) {
@@ -28,19 +29,21 @@
 
       <ng-template #templatePuntoEmisionDefault let-item>
         @if (item.estado) {
-          <mat-slide-toggle [(ngModel)]="item.defaultPtoEmi"
+          <mat-slide-toggle
+            [(ngModel)]="item.defaultPtoEmi"
             (change)="onChangePuntoEmisionDefault(item)"
-           />
+          />
         }
       </ng-template>
     </app-mat-dynamic-card>
 
     <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Bodegas'">
-      <app-mat-dynamic-table [tableData]="dataSourceBodega()"
+      <app-mat-dynamic-table
+        [tableData]="dataSourceBodega()"
         [columnDefinitions]="columnsDefsBodega"
         [visibleColumns]="columnsBodega"
         [templateOp]="templateOpBodega"
-       />
+      />
 
       <ng-template #templateOpBodega let-item="item">
         @if (item.idBodeg_Asig > 0) {
@@ -55,7 +58,10 @@
       </ng-template>
       <ng-template #templateDefaultBodega let-item>
         @if (item.estado) {
-          <mat-slide-toggle [(ngModel)]="item.defaultBodga" (change)="onChangeBodegaDefault(item)" />
+          <mat-slide-toggle
+            [(ngModel)]="item.defaultBodga"
+            (change)="onChangeBodegaDefault(item)"
+          />
         }
       </ng-template>
     </app-mat-dynamic-card>

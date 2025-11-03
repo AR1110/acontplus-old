@@ -42,12 +42,12 @@ export class ConfigurationService {
 
   getSetupStatus(): SetupStatus {
     const steps = this.configurationSteps$.value;
-    const mandatorySteps = steps.filter(step => step.mandatory);
-    const completedMandatorySteps = mandatorySteps.filter(step => step.isCompleted);
+    const mandatorySteps = steps.filter((step) => step.mandatory);
+    const completedMandatorySteps = mandatorySteps.filter((step) => step.isCompleted);
     const allSteps = steps.length;
-    const completedSteps = steps.filter(step => step.isCompleted).length;
+    const completedSteps = steps.filter((step) => step.isCompleted).length;
 
-    const nextIncompleteStep = steps.find(step => step.mandatory && !step.isCompleted);
+    const nextIncompleteStep = steps.find((step) => step.mandatory && !step.isCompleted);
 
     return {
       isCompleted: completedMandatorySteps.length === mandatorySteps.length,
@@ -60,14 +60,14 @@ export class ConfigurationService {
   }
 
   getStepByRoute(route: string): ConfigurationStep | undefined {
-    return this.configurationSteps$.value.find(step => step.route === route);
+    return this.configurationSteps$.value.find((step) => step.route === route);
   }
   getStepById(id: number): ConfigurationStep | undefined {
-    return this.configurationSteps$.value.find(step => step.id === id);
+    return this.configurationSteps$.value.find((step) => step.id === id);
   }
 
   completeStep(stepId: number): void {
-    const steps = this.configurationSteps$.value.map(step =>
+    const steps = this.configurationSteps$.value.map((step) =>
       step.id === stepId ? { ...step, isCompleted: true } : step,
     );
 
@@ -83,7 +83,7 @@ export class ConfigurationService {
 
     if (setupStatus.nextIncompleteStep) {
       const nextStep = this.configurationSteps$.value.find(
-        step => step.id === setupStatus.nextIncompleteStep,
+        (step) => step.id === setupStatus.nextIncompleteStep,
       );
       if (nextStep) {
         this.currentStep$.next(nextStep.id);
@@ -96,7 +96,7 @@ export class ConfigurationService {
   }
 
   navigateToStep(stepId: number): void {
-    const step = this.configurationSteps$.value.find(s => s.id === stepId);
+    const step = this.configurationSteps$.value.find((s) => s.id === stepId);
     if (step) {
       this.currentStep$.next(stepId);
       this.router.navigate([step.route]);
@@ -120,7 +120,7 @@ export class ConfigurationService {
   }
 
   resetSetup(): void {
-    const resetSteps = SETUP_STEPS.map(step => ({
+    const resetSteps = SETUP_STEPS.map((step) => ({
       ...step,
       isCompleted: step.id === 1, // Only first step remains completed
     }));
@@ -151,8 +151,8 @@ export class ConfigurationService {
   getGroupedSteps(): { mandatory: ConfigurationStep[]; optional: ConfigurationStep[] } {
     const steps = this.configurationSteps$.value;
     return {
-      mandatory: steps.filter(step => step.mandatory),
-      optional: steps.filter(step => !step.mandatory),
+      mandatory: steps.filter((step) => step.mandatory),
+      optional: steps.filter((step) => !step.mandatory),
     };
   }
 }

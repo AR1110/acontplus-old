@@ -132,7 +132,7 @@ export class InventoryAdjustmentDetail {
 
   updateMeasure(unitOfMeasureId: number) {
     console.log('udpate meadoe', unitOfMeasureId);
-    const dataMedida = this._measures.find(val => val.idMedida === unitOfMeasureId);
+    const dataMedida = this._measures.find((val) => val.idMedida === unitOfMeasureId);
     this._unitOfMeasureId = unitOfMeasureId;
     this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);
     this._costPrice = Money.from(dataMedida?.precioCosto || 0);

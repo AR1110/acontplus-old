@@ -101,7 +101,7 @@ export class DocManualUploadComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._subCategoryUseCase.getAll({}).subscribe(response => {
+    this._subCategoryUseCase.getAll({}).subscribe((response) => {
       this.subcategories = response;
     });
 
@@ -134,7 +134,7 @@ export class DocManualUploadComponent implements OnInit {
         const uploadObservable = this._docReceivedService
           .uploadXml({ codEstab, subcategoryId }, formData)
           .pipe(
-            tap(response => {
+            tap((response) => {
               this._tS.show({
                 type: response.code === '1' ? 'success' : 'warning',
                 message: response.message,
@@ -146,7 +146,7 @@ export class DocManualUploadComponent implements OnInit {
                 this.removeXml(index); // Remove uploaded file from form
               }
             }),
-            catchError(error => {
+            catchError((error) => {
               console.error('Error uploading file:', error);
               this._tS.show({ type: error, message: 'Error uploading file' });
               return throwError(() => error); // Re-throw error to handle in forkJoin
@@ -173,7 +173,7 @@ export class DocManualUploadComponent implements OnInit {
           message: 'Archivos subidos exitosamente!',
         });
       },
-      error: error => {
+      error: (error) => {
         console.error('Overall upload error:', error);
         this._tS.show({
           type: 'error',

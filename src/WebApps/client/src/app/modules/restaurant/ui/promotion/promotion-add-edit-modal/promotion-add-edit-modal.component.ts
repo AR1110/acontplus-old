@@ -113,7 +113,7 @@ export class PromotionAddEditModalComponent implements OnInit {
 
       this.promotionMenuSvc
         .getByPromotionId(data.id, {})
-        .subscribe(response => [this.promotionMenus.set(response.promotionMenus)]);
+        .subscribe((response) => [this.promotionMenus.set(response.promotionMenus)]);
     } else {
       this.daysOfWeek.set(
         days.map((item: any) => {
@@ -132,17 +132,17 @@ export class PromotionAddEditModalComponent implements OnInit {
 
   onChangeAllDay() {
     console.log('onchang');
-    this.daysOfWeek.update(e => {
-      return e.map(item => ({ ...item, checked: this.allDay() }));
+    this.daysOfWeek.update((e) => {
+      return e.map((item) => ({ ...item, checked: this.allDay() }));
     });
   }
 
   onChangeDay() {
-    this.allDay.set(this.daysOfWeek().every(item => item.checked));
+    this.allDay.set(this.daysOfWeek().every((item) => item.checked));
   }
 
   onProductSelected($event: any) {
-    if (this.promotionMenus().some(e => e.menuId === $event.id)) {
+    if (this.promotionMenus().some((e) => e.menuId === $event.id)) {
       this.tS.show({
         type: 'warning',
         message: 'Ya existe agregado para la promoción',
@@ -158,14 +158,14 @@ export class PromotionAddEditModalComponent implements OnInit {
       s3ObjectUrl: $event.s3ObjectUrl,
     };
 
-    this.promotionMenus.update(e => {
+    this.promotionMenus.update((e) => {
       return [...e, newPromotionMenu];
     });
   }
 
   onRemove(id: number) {
-    this.promotionMenus.update(e => {
-      return e.filter(e => e.menuId !== id);
+    this.promotionMenus.update((e) => {
+      return e.filter((e) => e.menuId !== id);
     });
   }
 
@@ -205,7 +205,7 @@ export class PromotionAddEditModalComponent implements OnInit {
 
       if (
         this.daysOfWeek().some(
-          e => e.checked && !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
+          (e) => e.checked && !(isValidField(e.horaInicio) || !isValidField(e.horaFin)),
         )
       ) {
         this.tS.show({
@@ -215,7 +215,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         return;
       }
 
-      if (this.daysOfWeek().some(e => e.checked && !e.horaInicio.includes(':'))) {
+      if (this.daysOfWeek().some((e) => e.checked && !e.horaInicio.includes(':'))) {
         this.tS.show({
           type: 'warning',
           message: 'Hora de inicio formato incorrecto',
@@ -223,7 +223,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         return;
       }
 
-      if (this.daysOfWeek().some(e => e.checked && !e.horaFin.includes(':'))) {
+      if (this.daysOfWeek().some((e) => e.checked && !e.horaFin.includes(':'))) {
         this.tS.show({
           type: 'warning',
           message: 'Hora de fin formato incorrecto',
@@ -239,7 +239,7 @@ export class PromotionAddEditModalComponent implements OnInit {
         return;
       }
 
-      const newPromotionMenu = this.promotionMenus().map(e => ({
+      const newPromotionMenu = this.promotionMenus().map((e) => ({
         id: e.id,
         promotionId: e.promotionId,
         menuId: e.menuId,
@@ -258,7 +258,7 @@ export class PromotionAddEditModalComponent implements OnInit {
       };
 
       if (this.data.id > 0) {
-        this.promotionSvc.put(this.data.id, newObject, this.file).subscribe(response => {
+        this.promotionSvc.put(this.data.id, newObject, this.file).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',
@@ -274,7 +274,7 @@ export class PromotionAddEditModalComponent implements OnInit {
           }
         });
       } else {
-        this.promotionSvc.post(newObject, this.file).subscribe(response => {
+        this.promotionSvc.post(newObject, this.file).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',

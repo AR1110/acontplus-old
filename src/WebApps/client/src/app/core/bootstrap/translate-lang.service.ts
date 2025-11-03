@@ -10,7 +10,7 @@ export class TranslateLangService {
   private readonly settings = inject(SettingsService);
 
   load() {
-    return new Promise<void>(resolve => {
+    return new Promise<void>((resolve) => {
       const defaultLang = this.settings.getTranslateLang();
 
       this.translate.setFallbackLang(defaultLang);

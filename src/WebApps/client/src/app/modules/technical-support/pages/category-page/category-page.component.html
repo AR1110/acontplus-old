@@ -25,18 +25,20 @@
             <td>{{ item.code }}</td>
             <td>{{ item.name }}</td>
             <td>
-              <app-theme-button variant="warning"
+              <app-theme-button
+                variant="warning"
                 icon="edit"
                 matStyle="icon"
                 title="Editar"
                 (handleClick)="onEdit(item)"
-               />
-              <app-theme-button variant="danger"
+              />
+              <app-theme-button
+                variant="danger"
                 icon="delete"
                 matStyle="icon"
                 title="Eliminar"
                 (handleClick)="onDelete(item)"
-               />
+              />
             </td>
           </tr>
         }

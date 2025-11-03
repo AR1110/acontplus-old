@@ -5,7 +5,12 @@
   (close)="onModalClose()"
 />
 <ng-template #body>
-  <form [formGroup]="deviceForm" id="deviceForm" (ngSubmit)="isUpdate ? onUpdate() : onSave()" autocomplete="off">
+  <form
+    [formGroup]="deviceForm"
+    id="deviceForm"
+    (ngSubmit)="isUpdate ? onUpdate() : onSave()"
+    autocomplete="off"
+  >
     <div class="row">
       <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12 col-12">
         <div class="form-group">
@@ -25,7 +30,12 @@
                 <option [value]="item.id">{{ item.name }}</option>
               }
             </select>
-            <button mat-raised-button type="button" title="Añadir Categoría" (click)="addCategory()">
+            <button
+              mat-raised-button
+              type="button"
+              title="Añadir Categoría"
+              (click)="addCategory()"
+            >
               <mat-icon>add</mat-icon>
             </button>
           </div>
@@ -38,7 +48,12 @@
             <span class="text-danger">*</span>
           </label>
           <div class="input-group">
-            <select formControlName="brandId" id="brandId" class="form-select" (change)="onBrandChange($event)">
+            <select
+              formControlName="brandId"
+              id="brandId"
+              class="form-select"
+              (change)="onBrandChange($event)"
+            >
               <option [value]="0">Seleccione una marca</option>
               @for (item of brands(); track $index) {
                 <option [value]="item.id">{{ item.name }}</option>
@@ -63,7 +78,12 @@
             <span class="text-danger">*</span>
           </label>
           <div class="input-group">
-            <select formControlName="modeloId" id="modeloId" class="form-select" (change)="onModeloChange($event)">
+            <select
+              formControlName="modeloId"
+              id="modeloId"
+              class="form-select"
+              (change)="onModeloChange($event)"
+            >
               @for (item of modelos(); track $index) {
                 <option [value]="item.id">{{ item.name }}</option>
               }
@@ -88,13 +108,23 @@
             >Nombre Producto:
             <span class="text-danger">*</span>
           </label>
-          <input type="text" id="productName" formControlName="name" class="form-control border-select" />
+          <input
+            type="text"
+            id="productName"
+            formControlName="name"
+            class="form-control border-select"
+          />
         </div>
       </div>
       <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-xs-12 col-12">
         <div class="form-group">
           <label for="color">Color: </label>
-          <input type="text" formControlName="color" id="color" class="form-control border-select" />
+          <input
+            type="text"
+            formControlName="color"
+            id="color"
+            class="form-control border-select"
+          />
         </div>
       </div>
     </div>
@@ -129,24 +159,34 @@
               </div>
 
               @if (deviceSpec().length > 0) {
-                <mat-tab-group [selectedIndex]="selected()" (selectedIndexChange)="selectedIndexChange($event)">
+                <mat-tab-group
+                  [selectedIndex]="selected()"
+                  (selectedIndexChange)="selectedIndexChange($event)"
+                >
                   @for (item of deviceSpec(); track $index) {
                     <mat-tab [label]="item.name">
                       <ng-template matTabContent>
                         <div class="row mb-2">
                           <div class="col-12">
-                            <app-theme-button variant="danger"
+                            <app-theme-button
+                              variant="danger"
                               icon="delete"
                               text="Eliminar Categoría"
                               (handleClick)="removeSpecCategory(item.uuid)"
-                             />
+                            />
                           </div>
                         </div>
                         <div class="row">
                           <div class="col-md-6 col-12">
                             <div class="form-group">
                               <label for="name">Nombre:</label>
-                              <input #inputNameSpec type="text" id="name" formControlName="name" class="form-control" />
+                              <input
+                                #inputNameSpec
+                                type="text"
+                                id="name"
+                                formControlName="name"
+                                class="form-control"
+                              />
                             </div>
                           </div>
                           <div class="col-md-6 col-12">
@@ -190,11 +230,12 @@
                                         <td>{{ spec.name }}</td>
                                         <td>{{ spec.value }}</td>
                                         <th>
-                                          <app-theme-button variant="danger"
+                                          <app-theme-button
+                                            variant="danger"
                                             icon="delete"
                                             matStyle="icon"
                                             (handleClick)="removeSpec($index, item.uuid)"
-                                           />
+                                          />
                                         </th>
                                       </tr>
                                     }

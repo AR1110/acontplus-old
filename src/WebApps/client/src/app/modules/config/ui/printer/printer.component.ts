@@ -44,7 +44,7 @@ export class PrinterComponent implements OnInit {
         printers: structuredClone(this.printers()),
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getPrinters();
       }
@@ -53,7 +53,7 @@ export class PrinterComponent implements OnInit {
 
   getPrinters() {
     this.printers.set([]);
-    this._printerUseCase.getPrinters().subscribe(response => {
+    this._printerUseCase.getPrinters().subscribe((response) => {
       this.printers.set(response.printers);
     });
   }

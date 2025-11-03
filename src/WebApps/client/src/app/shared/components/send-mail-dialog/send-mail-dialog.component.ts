@@ -63,7 +63,7 @@ export class SendMailDialogComponent implements OnInit {
         return;
       }
 
-      if (!this.emails().every(item => this.isValidEmail(item))) {
+      if (!this.emails().every((item) => this.isValidEmail(item))) {
         this._tS.show({
           type: 'warning',
           message: 'Verifique que los correos del destinatario esten ingresado correctamente',

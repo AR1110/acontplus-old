@@ -21,34 +21,34 @@ export class ControlCajaWebRepository implements ControlCajaRepository {
     const json = ListControlCajaMapper.toJson(params);
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => ListControlCajaMapper.fromJson(response)));
+      .pipe(map((response) => ListControlCajaMapper.fromJson(response)));
   }
 
   getDataFilter() {
     const json = FilterDataControlCajaMapper.toJson();
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => FilterDataControlCajaMapper.fromJson(response)));
+      .pipe(map((response) => FilterDataControlCajaMapper.fromJson(response)));
   }
 
   getDataForm() {
     const json = FormDataControlCajaMapper.toJson();
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => FormDataControlCajaMapper.fromJson(response)));
+      .pipe(map((response) => FormDataControlCajaMapper.fromJson(response)));
   }
 
   getArqueoCaja(id: number) {
     const json = ArqueoControlCajaMapper.toJson(id);
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => ArqueoControlCajaMapper.fromJson(response)));
+      .pipe(map((response) => ArqueoControlCajaMapper.fromJson(response)));
   }
 
   getDataFormCashboxClose() {
     const json = JSON.stringify({ tipo: 3 });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let data = [] as any[];
         if (response.code === '1') {
           data = JSON.parse(response.payload as string).monedas || [];

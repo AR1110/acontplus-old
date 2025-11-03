@@ -50,13 +50,13 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
     const json = DocConfigInfoAdicionalesMapper.toJson(id);
     return this.#http
       .get(`${this.#url}?json=${json}`)
-      .pipe(map(response => DocConfigInfoAdicionalesMapper.fromJson(response)));
+      .pipe(map((response) => DocConfigInfoAdicionalesMapper.fromJson(response)));
   }
   list(puntoEmisionId: number): Observable<DocConfigListResponse> {
     const json = DocConfigListMapper.toJson(puntoEmisionId);
     return this.#http
       .get(`${this.#url}?json=${json}`)
-      .pipe(map(response => DocConfigListMapper.fromJson(response)));
+      .pipe(map((response) => DocConfigListMapper.fromJson(response)));
   }
 
   #url = `${PATHS_API.CONFIG}${CONFIG_PATHS.DOC_CONFIG}`;

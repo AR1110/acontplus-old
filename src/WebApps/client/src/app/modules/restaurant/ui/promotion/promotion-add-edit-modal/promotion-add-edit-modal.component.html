@@ -1,8 +1,15 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" (close)="close()" [title]="titleModal()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="close()"
+  [title]="titleModal()"
+/>
 <ng-template #body>
   <div class="row">
     <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-6 col-12">
-      <div class="row row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1 gap-2">
+      <div
+        class="row row-cols-1 row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1 gap-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento</mat-label>
@@ -23,7 +30,9 @@
         </div>
       </div>
 
-      <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1">
+      <div
+        class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1 row-cols-1"
+      >
         <div class="form-group">
           <label for="startDate">Fecha Inicio</label>
           <app-input-date [(value)]="data.startDate" />
@@ -43,7 +52,10 @@
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-6 col-12">
       <div class="container-upload">
         <div class="avatar-upload">
-          <div class="avatar-preview" [ngStyle]="{ 'background-image': 'url(' + imageUrl + ')' }"></div>
+          <div
+            class="avatar-preview"
+            [ngStyle]="{ 'background-image': 'url(' + imageUrl + ')' }"
+          ></div>
 
           <div class="avatar-actions">
             <!-- Botón de edición -->

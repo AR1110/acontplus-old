@@ -33,12 +33,12 @@ export class RoleSelectionComponent {
           uuid: role.uuid,
           userRoleId: role.userRoleId,
         })
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '1') {
             const modalRef = this.dialogSvc.open(AccessAuthorizationComponent, {
               size: 'lg',
             });
-            modalRef.subscribe(result => {
+            modalRef.subscribe((result) => {
               if (result && typeof result === 'object') {
                 this.dialogRef.close();
                 this.authSvc.createToken();

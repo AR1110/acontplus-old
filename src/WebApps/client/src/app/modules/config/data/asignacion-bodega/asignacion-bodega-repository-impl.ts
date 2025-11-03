@@ -22,7 +22,7 @@ export class AsignacionBodegaRepositoryImpl implements AsignacionBodegaRepositor
   list(parameters: Partial<AsignacionBodegaList>) {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${ListAsignacionBodegaMapper.toJson(parameters)}`)
-      .pipe(map(response => ListAsignacionBodegaMapper.fromJson(response)));
+      .pipe(map((response) => ListAsignacionBodegaMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_BODEGA}`;

@@ -35,12 +35,12 @@ export class CompanyComponent implements OnInit {
     { key: 'direccion', label: 'Dirección', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = signal<CompanyList[]>([]);
 
   getList() {
-    this.$listUseCase.execute().subscribe(response => {
+    this.$listUseCase.execute().subscribe((response) => {
       this.dataSource.set(response.data);
     });
   }
@@ -53,7 +53,7 @@ export class CompanyComponent implements OnInit {
     const modalRef = this.dialogSvc.open(CompanyAddEditModalComponent, {
       data: structuredClone(item) || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getList();
       }

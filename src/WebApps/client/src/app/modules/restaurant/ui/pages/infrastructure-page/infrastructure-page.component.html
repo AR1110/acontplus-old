@@ -15,14 +15,24 @@
       </div>
       <div class="col"></div>
       <div class="col">
-        <app-theme-button icon="plus" variant="success" text="Añadir piso" (handleClick)="addEditFloor()" />
+        <app-theme-button
+          icon="plus"
+          variant="success"
+          text="Añadir piso"
+          (handleClick)="addEditFloor()"
+        />
       </div>
     </div>
 
     <span>Piso → Sala → Mesa</span>
 
     <div class="tree-container">
-      <mat-tree #tree [dataSource]="dataSource()" [childrenAccessor]="childrenAccessor" class="tree">
+      <mat-tree
+        #tree
+        [dataSource]="dataSource()"
+        [childrenAccessor]="childrenAccessor"
+        class="tree"
+      >
         <!-- Nodo hoja (sin hijos) -->
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
           <button mat-icon-button disabled class="spacer-button"></button>
@@ -45,15 +55,30 @@
 
               <div class="node-actions">
                 @if (node.type === 'table') {
-                  <button mat-icon-button color="primary" (click)="addEditTable(node, true)" matTooltip="Edit">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addEditTable(node, true)"
+                    matTooltip="Edit"
+                  >
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="onTableDelete(node)" matTooltip="Delete">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="onTableDelete(node)"
+                    matTooltip="Delete"
+                  >
                     <mat-icon>delete</mat-icon>
                   </button>
                 }
                 @if (node.type === 'room') {
-                  <button mat-icon-button color="primary" (click)="addEditRoom(node)" matTooltip="Edit">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addEditRoom(node)"
+                    matTooltip="Edit"
+                  >
                     <mat-icon>edit</mat-icon>
                   </button>
                   <button
@@ -108,10 +133,20 @@
 
               <div class="node-actions">
                 @if (node.type === 'floor') {
-                  <button mat-icon-button color="primary" (click)="addEditFloor(node)" matTooltip="Edit">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addEditFloor(node)"
+                    matTooltip="Edit"
+                  >
                     <mat-icon>edit</mat-icon>
                   </button>
-                  <button mat-icon-button color="warn" (click)="onFloorDelete(node)" matTooltip="Delete">
+                  <button
+                    mat-icon-button
+                    color="warn"
+                    (click)="onFloorDelete(node)"
+                    matTooltip="Delete"
+                  >
                     <mat-icon>delete</mat-icon>
                   </button>
                 }
@@ -126,7 +161,12 @@
                   </button>
                 }
                 @if (node.type === 'room') {
-                  <button mat-icon-button color="primary" (click)="addEditRoom(node)" matTooltip="Edit">
+                  <button
+                    mat-icon-button
+                    color="primary"
+                    (click)="addEditRoom(node)"
+                    matTooltip="Edit"
+                  >
                     <mat-icon>edit</mat-icon>
                   </button>
                   <button

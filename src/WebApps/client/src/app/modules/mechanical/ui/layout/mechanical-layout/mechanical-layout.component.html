@@ -1,7 +1,10 @@
 <app-breadcrumb />
 
 <app-mat-dynamic-card>
-  <mat-tab-group [selectedIndex]="store.selectedIndex()" (selectedIndexChange)="store.selectedIndexChange($event)">
+  <mat-tab-group
+    [selectedIndex]="store.selectedIndex()"
+    (selectedIndexChange)="store.selectedIndexChange($event)"
+  >
     <mat-tab label="Dashboard">
       <ng-template matTabContent>
         <div class="mx-3 mt-2">

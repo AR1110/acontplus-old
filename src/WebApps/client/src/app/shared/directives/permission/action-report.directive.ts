@@ -16,7 +16,7 @@ export class ActionReportDirective implements OnInit {
 
   ngOnInit() {
     this.pS.select('accion').subscribe({
-      next: value => {
+      next: (value) => {
         if (value && value.reporte) return;
         this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },

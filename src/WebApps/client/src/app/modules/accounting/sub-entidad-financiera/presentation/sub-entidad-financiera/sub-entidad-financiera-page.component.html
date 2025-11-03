@@ -13,11 +13,12 @@
             Nuevo
           </button>
           @if (subEntidadesFinanciera.data.length > 0) {
-            <app-mat-dynamic-table [tableData]="subEntidadesFinanciera.data"
+            <app-mat-dynamic-table
+              [tableData]="subEntidadesFinanciera.data"
               [columnDefinitions]="columnsDefs"
               [visibleColumns]="columns"
               [templateOp]="templateOp"
-             />
+            />
           } @else {
             <p class="text-center">Sin datos</p>
           }

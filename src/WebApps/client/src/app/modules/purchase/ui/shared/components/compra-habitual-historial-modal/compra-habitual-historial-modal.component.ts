@@ -62,7 +62,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
         idArticulo: this.params.idArticulo,
       })
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.isLoadingResults = false;
           this.comprasHabituales.set(response.comprasHabituales);
           if (this.comprasHabituales().length > 0) {
@@ -91,7 +91,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.deleteCH(item);
       }
@@ -105,7 +105,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       });
       const params = { idDocumento, id: idCompraHabitual };
 
-      this.compraHabitualSvc.delete(params).subscribe(response => {
+      this.compraHabitualSvc.delete(params).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

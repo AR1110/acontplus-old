@@ -9,7 +9,9 @@
               <mat-icon class="title-icon">rocket_launch</mat-icon>
               ¡Configuremos tu empresa!
             </h1>
-            <p class="setup-subtitle">Completa estos pasos para comenzar a usar todas las funcionalidades</p>
+            <p class="setup-subtitle">
+              Completa estos pasos para comenzar a usar todas las funcionalidades
+            </p>
           </div>
           <div class="header-actions">
             <button mat-raised-button color="primary" (click)="startTour()" type="button">
@@ -42,14 +44,17 @@
             <div class="progress-details">
               <span class="progress-text">{{ setupStatus.completionPercentage }}% completado</span>
               <span class="progress-steps">
-                {{ setupStatus.mandatoryStepsCompleted }}/{{ setupStatus.totalMandatorySteps }} pasos obligatorios
+                {{ setupStatus.mandatoryStepsCompleted }}/{{ setupStatus.totalMandatorySteps }}
+                pasos obligatorios
               </span>
             </div>
           </div>
           <div class="completion-status">
             <mat-chip-set>
               <mat-chip [class.completed]="setupStatus.isCompleted">
-                <mat-icon matChipAvatar>{{ setupStatus.isCompleted ? 'check_circle' : 'schedule' }}</mat-icon>
+                <mat-icon matChipAvatar>{{
+                  setupStatus.isCompleted ? 'check_circle' : 'schedule'
+                }}</mat-icon>
                 {{ setupStatus.isCompleted ? 'Configuración Completa' : 'En Progreso' }}
               </mat-chip>
             </mat-chip-set>
@@ -68,7 +73,9 @@
           <mat-icon class="section-icon error">priority_high</mat-icon>
           Pasos Obligatorios
         </h2>
-        <p class="section-description">Estos pasos son necesarios para el funcionamiento básico del sistema</p>
+        <p class="section-description">
+          Estos pasos son necesarios para el funcionamiento básico del sistema
+        </p>
       </div>
 
       <div class="steps-grid">
@@ -77,14 +84,25 @@
             class="step-card mandatory"
             [class.completed]="step.isCompleted"
             [class.current]="step.isCurrent"
-            [class.disabled]="!step.isCompleted && !step.isCurrent && currentStepId !== null && step.id > currentStepId"
+            [class.disabled]="
+              !step.isCompleted &&
+              !step.isCurrent &&
+              currentStepId !== null &&
+              step.id > currentStepId
+            "
             [attr.data-tour]="'step-' + step.id"
             appearance="outlined"
           >
             <mat-card-header>
               <div mat-card-avatar class="step-avatar">
                 <mat-icon [class.completed]="step.isCompleted" [class.current]="step.isCurrent">
-                  {{ step.isCompleted ? 'check_circle' : step.isCurrent ? 'play_circle' : 'radio_button_unchecked' }}
+                  {{
+                    step.isCompleted
+                      ? 'check_circle'
+                      : step.isCurrent
+                        ? 'play_circle'
+                        : 'radio_button_unchecked'
+                  }}
                 </mat-icon>
               </div>
               <mat-card-title class="step-name">{{ step.name }}</mat-card-title>
@@ -150,7 +168,9 @@
           <mat-icon class="section-icon warn">star</mat-icon>
           Pasos Opcionales
         </h2>
-        <p class="section-description">Recomendados para una mejor experiencia, pero puedes configurarlos más tarde</p>
+        <p class="section-description">
+          Recomendados para una mejor experiencia, pero puedes configurarlos más tarde
+        </p>
       </div>
 
       <div class="steps-grid">
@@ -235,7 +255,10 @@
             <mat-card-subtitle>Recursos de soporte disponibles</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p>Accede a nuestra documentación, tutoriales y soporte técnico para resolver cualquier duda.</p>
+            <p>
+              Accede a nuestra documentación, tutoriales y soporte técnico para resolver cualquier
+              duda.
+            </p>
             <div class="info-card-features">
               <div class="feature-item">
                 <mat-icon>book</mat-icon>
@@ -271,7 +294,9 @@
             <mat-card-subtitle>Optimiza tu configuración</mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <p>Sigue estos consejos para obtener el máximo rendimiento de tu sistema empresarial.</p>
+            <p>
+              Sigue estos consejos para obtener el máximo rendimiento de tu sistema empresarial.
+            </p>
             <div class="info-card-features">
               <div class="feature-item">
                 <mat-icon>security</mat-icon>

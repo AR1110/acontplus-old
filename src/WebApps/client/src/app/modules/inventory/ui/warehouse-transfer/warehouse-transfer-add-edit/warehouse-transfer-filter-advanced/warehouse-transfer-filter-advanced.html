@@ -1,13 +1,12 @@
-<app-mat-custom-dialog
-title="Filtro Avanzado"
-(close)="close()"
->
+<app-mat-custom-dialog title="Filtro Avanzado" (close)="close()">
   <section ngProjectAs="content">
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1">
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Bodega Origen</mat-label>
-          <input type="text" matInput [value]="sourceWarehouseText()" disabled>
+          <input type="text" matInput [value]="sourceWarehouseText()" disabled />
         </mat-form-field>
       </div>
       <div class="col">
@@ -24,9 +23,7 @@ title="Filtro Avanzado"
             </mat-select-trigger>
 
             <!-- Seleccionar todo -->
-            <mat-option
-              [value]="allValue"
-              (onSelectionChange)="toggleSelectAll($event)">
+            <mat-option [value]="allValue" (onSelectionChange)="toggleSelectAll($event)">
               Seleccionar todo
             </mat-option>
 
@@ -36,7 +33,8 @@ title="Filtro Avanzado"
               <mat-option
                 [value]="'GROUP_' + item.name"
                 (onSelectionChange)="toggleGroup($event, item)"
-                class="group-option">
+                class="group-option"
+              >
                 <strong>{{ item.name }}</strong>
               </mat-option>
 
@@ -49,10 +47,9 @@ title="Filtro Avanzado"
             }
           </mat-select>
         </mat-form-field>
-
       </div>
 
-      <div class="col  text-end">
+      <div class="col text-end">
         <app-theme-button
           variant="info"
           icon="search"
@@ -63,7 +60,8 @@ title="Filtro Avanzado"
       </div>
     </div>
 
-    <app-data-grid [data]="list()"
+    <app-data-grid
+      [data]="list()"
       [columns]="columns"
       [multiSelectable]="true"
       [rowSelectable]="true"
@@ -76,19 +74,17 @@ title="Filtro Avanzado"
       [pageSize]="query.per_page"
       [pageSizeOptions]="[100, 150, 200]"
       (page)="getNextPage($event)"
-     />
-
+    />
   </section>
   <div ngProjectAs="footer">
-    @if (rowSelected().length>0) {
-    <app-theme-button
-      variant="success"
-      icon="move_to_inbox"
-      text="Buscar"
-      matStyle="basic"
-      (handleClick)="addToDetail()"
-    />
-
+    @if (rowSelected().length > 0) {
+      <app-theme-button
+        variant="success"
+        icon="move_to_inbox"
+        text="Buscar"
+        matStyle="basic"
+        (handleClick)="addToDetail()"
+      />
     }
   </div>
 </app-mat-custom-dialog>

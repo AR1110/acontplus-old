@@ -54,7 +54,7 @@ export class AutocompleteService {
       return [];
     }
 
-    let filteredItems = items.filter(item => {
+    let filteredItems = items.filter((item) => {
       if (item && typeof item === 'string') {
         return true;
       }
@@ -66,7 +66,7 @@ export class AutocompleteService {
 
     // Aplicar filtro de stock si está habilitado
     if (config.enableStockFilter && filters.stockFilter !== 'all') {
-      filteredItems = filteredItems.filter(item => {
+      filteredItems = filteredItems.filter((item) => {
         if (typeof item === 'string') return true;
 
         const stockValue = item[config.stockProperty || 'stock'];
@@ -96,7 +96,7 @@ export class AutocompleteService {
     searchBy: string,
     config: AutocompleteConfig,
   ): string {
-    const searchField = config.searchFields?.find(field => field.value === searchBy);
+    const searchField = config.searchFields?.find((field) => field.value === searchBy);
     if (searchField) {
       return item[searchField.property] || '';
     }
@@ -126,7 +126,7 @@ export class AutocompleteService {
     const currentHistory = this.historySubject.value;
 
     // Remover si ya existe
-    const filteredHistory = currentHistory.filter(historyItem => {
+    const filteredHistory = currentHistory.filter((historyItem) => {
       if (typeof item === 'string' && typeof historyItem === 'string') {
         return item !== historyItem;
       } else if (typeof item === 'object' && typeof historyItem === 'object') {
@@ -232,7 +232,7 @@ export class AutocompleteService {
       };
 
       return config.search(params).pipe(
-        map(response => {
+        map((response) => {
           if (config.responseMapper) {
             return config.responseMapper(response);
           }

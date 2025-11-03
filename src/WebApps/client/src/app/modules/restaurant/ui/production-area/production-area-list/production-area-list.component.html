@@ -48,7 +48,10 @@
                       <td class="text-center">{{ item.code }}</td>
                       <td>{{ item.description }}</td>
                       <td>
-                        <span [ngClass]="item.enabled ? 'text-success' : 'text-danger'" class="badge">
+                        <span
+                          [ngClass]="item.enabled ? 'text-success' : 'text-danger'"
+                          class="badge"
+                        >
                           {{ item.enabled ? 'Activo' : 'Inactivo' }}
                         </span>
                       </td>

@@ -48,7 +48,7 @@ export class TarifaPageComponent implements OnInit {
     const params = {};
     this.isLoadingResults = true;
     this.tarifaSvc.getAll(params).subscribe({
-      next: response => {
+      next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tarifas);
       },
@@ -70,7 +70,7 @@ export class TarifaPageComponent implements OnInit {
       data: data || {},
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getTarifas();
       }

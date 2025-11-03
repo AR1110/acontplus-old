@@ -5,11 +5,12 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
 @Component({
   selector: 'app-report-buttons',
   template: `
-    <app-theme-button [variant]="getButtonColor()"
+    <app-theme-button
+      [variant]="getButtonColor()"
       [text]="text()"
       [icon]="getFileIcon()"
       (handleClick)="handleClick()"
-     />
+    />
   `,
   styles: [``],
   imports: [ThemeButtonComponent],

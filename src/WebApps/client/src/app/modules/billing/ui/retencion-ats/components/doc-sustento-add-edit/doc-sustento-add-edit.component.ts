@@ -112,7 +112,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
       this.docSustentoArray().controls[index].get('tipoComprobanteId')?.value;
 
     this.sustentosFiltered.set(
-      this.sustentosTributarios().filter(x => x.tipoComprobanteId === tipoComprobanteId),
+      this.sustentosTributarios().filter((x) => x.tipoComprobanteId === tipoComprobanteId),
     );
   }
 
@@ -153,17 +153,17 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
 
       parsedData.documentosSustento.forEach((doc: RetAtsDocSustento) => {
         if (doc.taxes) {
-          doc.taxes.forEach(tax => {
+          doc.taxes.forEach((tax) => {
             this.createTaxWithValue(this.indexDoc(), tax);
           });
         }
         if (doc.retenciones) {
-          doc.retenciones.forEach(retencion => {
+          doc.retenciones.forEach((retencion) => {
             this.createRetencion(this.indexDoc(), retencion);
           });
         }
         if (doc.payments) {
-          doc.payments.forEach(payment => {
+          doc.payments.forEach((payment) => {
             this.createPaymentWithValue(this.indexDoc(), payment);
           });
         }
@@ -259,7 +259,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     const documentId = this.docSustentoArray().controls[indexDoc].get('idDocumento')?.value;
     const isAutomatic = this.docSustentoArray().controls[indexDoc].get('isAutomatic')?.value;
 
-    this._docSustentoUseCase.getTaxes({ documentId, isAutomatic }).subscribe(response => {
+    this._docSustentoUseCase.getTaxes({ documentId, isAutomatic }).subscribe((response) => {
       let totalSinImpuestos = 0;
       response.taxes.forEach((tax: any) => {
         this.createTaxWithValue(indexDoc, tax);
@@ -291,7 +291,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     const doc = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
     if (doc.isAutomatic) {
       if (!doc.idDocumento) return;
-      this._documentoReceivedUseCase.previewXml(doc.idDocumento).subscribe(response => {
+      this._documentoReceivedUseCase.previewXml(doc.idDocumento).subscribe((response) => {
         this._dialogService.open(DocElectViewerComponent, {
           size: 'xxl',
           data: response.payload,
@@ -321,7 +321,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
         cancelButtonText: 'No',
       });
       if (isConfirmed) {
-        this._docSustentoUseCase.delete(doc.idRetAtsDocSustento).subscribe(response => {
+        this._docSustentoUseCase.delete(doc.idRetAtsDocSustento).subscribe((response) => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -351,9 +351,11 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   onSave(index: number) {
     const docSustento = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
 
-    const taxes = this.getTaxesArray(index).controls.map(tax => tax.value);
-    const retenciones = this.getRetencionesArray(index).controls.map(retencion => retencion.value);
-    const payments = this.getPaymentsArray(index).controls.map(payment => payment.value);
+    const taxes = this.getTaxesArray(index).controls.map((tax) => tax.value);
+    const retenciones = this.getRetencionesArray(index).controls.map(
+      (retencion) => retencion.value,
+    );
+    const payments = this.getPaymentsArray(index).controls.map((payment) => payment.value);
 
     docSustento.taxes = taxes;
     docSustento.retenciones = retenciones;
@@ -364,14 +366,14 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     if (docSustento.idRetAtsDocSustento > 0) {
       this._docSustentoUseCase
         .update(docSustento.idRetAtsDocSustento, docSustento)
-        .subscribe(response => {
+        .subscribe((response) => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
           });
         });
     } else {
-      this._docSustentoUseCase.create(docSustento).subscribe(response => {
+      this._docSustentoUseCase.create(docSustento).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

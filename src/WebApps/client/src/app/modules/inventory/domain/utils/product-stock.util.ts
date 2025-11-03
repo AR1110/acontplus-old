@@ -18,16 +18,16 @@ interface MergeProductStockProps {
 export const mergeProductStock = function (obj: MergeProductStockProps) {
   // Filtra los elementos que tienen las mismas propiedades idArticulo e idBodega que rowEntity.
   const foundItemByArticuloAndBodega = obj.rows.filter(
-    item => item.productId === obj.row.productId && item.bodegaId === obj.row.bodegaId,
+    (item) => item.productId === obj.row.productId && item.bodegaId === obj.row.bodegaId,
   );
 
   const { totalCantidadFraccionada, totalCantidadPrincipal } = foundItemByArticuloAndBodega.reduce(
     (total, item) => {
       const dataMedidaFraccionado = item.medidas.find(
-        medida => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO',
+        (medida) => medida.idMedida === item.medidaId && medida.tipo === 'FRACCIONADO',
       );
       const dataMedidaPrincipal = item.medidas.find(
-        medida => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL',
+        (medida) => medida.idMedida === item.medidaId && medida.tipo === 'PRINCIPAL',
       );
       if (dataMedidaFraccionado) {
         const conversionSum = item.quantity * dataMedidaFraccionado.conversion;
@@ -68,7 +68,7 @@ export const getCantidadStock = function (obj: GetCantidadStockProps): number {
   const { fechaEmision, cantidadStock, consolidacionesFecha, bodegaId } = obj;
 
   const dataConsolidacionFecha = consolidacionesFecha.find(
-    cdataFecha => cdataFecha.idBodega === bodegaId,
+    (cdataFecha) => cdataFecha.idBodega === bodegaId,
   );
 
   if (dataConsolidacionFecha) {

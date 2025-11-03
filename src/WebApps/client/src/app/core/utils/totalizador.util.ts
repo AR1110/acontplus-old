@@ -41,7 +41,7 @@ export class TotalizadorUtil {
         acc.totalIce += totalIce;
         acc.totalPrecioTotalSinImpuesto = plus(
           acc.totalPrecioTotalSinImpuesto,
-          roundNumber((item.precioTotalSinImpuesto ?? item.totalWithoutTax), DECIMALS.DOS),
+          roundNumber(item.precioTotalSinImpuesto ?? item.totalWithoutTax, DECIMALS.DOS),
           DECIMALS.GENERAL,
         );
         acc.totalDescuento = plus(acc.totalDescuento, item.valorDescuento, DECIMALS.GENERAL);
@@ -58,7 +58,7 @@ export class TotalizadorUtil {
   }
 
   private calcularTotalesPorTarifa(items: any[], codigoPorcentaje: string) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
+    const itemsFiltrados = items.filter((item) => item.codigoPorcentaje === codigoPorcentaje);
     return itemsFiltrados.reduce(
       (acc, item) => {
         acc.totalNetoIva = plus(
@@ -73,7 +73,7 @@ export class TotalizadorUtil {
   }
 
   private calcularTotalIvaPorTarifa(items: any[], codigoPorcentaje: string, tarifa: number) {
-    const itemsFiltrados = items.filter(item => item.codigoPorcentaje === codigoPorcentaje);
+    const itemsFiltrados = items.filter((item) => item.codigoPorcentaje === codigoPorcentaje);
     return itemsFiltrados.reduce(
       (acc, item) => {
         const totalIva =
@@ -117,7 +117,7 @@ export class TotalizadorUtil {
     let htmlIvaTotal = '';
 
     // Procesar cada tarifa de impuesto
-    tarifasImpuesto.forEach(tarifa => {
+    tarifasImpuesto.forEach((tarifa) => {
       const dataTotalNetoIva = this.calcularTotalesPorTarifa(items, tarifa.codigoPorcentaje);
 
       if (dataTotalNetoIva.totalNetoIva > 0) {

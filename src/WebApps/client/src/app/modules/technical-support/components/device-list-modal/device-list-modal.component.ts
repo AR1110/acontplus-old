@@ -30,7 +30,7 @@ export class DeviceListModalComponent implements OnInit {
         tipo: 4,
         customerCompanyId: this.data.customerCompanyId,
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (isApiResponse(response)) {
           const { devices } = JSON.parse(response.payload as string) || [];
           this.devices.set(devices);

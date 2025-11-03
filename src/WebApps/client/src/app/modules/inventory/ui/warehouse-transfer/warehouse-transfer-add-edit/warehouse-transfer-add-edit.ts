@@ -22,8 +22,10 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
 import {
-  WarehouseTransferDataFormUseCase, WarehouseTransferEditUseCase,
-  WarehouseTransferGenerateSerieUseCase, WarehouseTransferSaveUseCase,
+  WarehouseTransferDataFormUseCase,
+  WarehouseTransferEditUseCase,
+  WarehouseTransferGenerateSerieUseCase,
+  WarehouseTransferSaveUseCase,
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
 import {
   GroupedEstab,
@@ -49,8 +51,8 @@ import { mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
 import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
-import {finalize} from "rxjs/operators";
-import {WarehouseTransferDataFormResult} from "@inventory/domain/models/warehouse-transfer";
+import { finalize } from 'rxjs/operators';
+import { WarehouseTransferDataFormResult } from '@inventory/domain/models/warehouse-transfer';
 
 interface CommonType {
   id: number;
@@ -89,13 +91,14 @@ export class WarehouseTransferAddEdit implements OnInit {
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
   private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
   private saveUseCase = inject(WarehouseTransferSaveUseCase);
-  private editUseCase = inject(WarehouseTransferEditUseCase)
+  private editUseCase = inject(WarehouseTransferEditUseCase);
 
   private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
-  private params = inject<{ id: number, operation: 'add' | 'edit' | 'duplicate', data: any }>(MAT_DIALOG_DATA);
+  private params = inject<{ id: number; operation: 'add' | 'edit' | 'duplicate'; data: any }>(
+    MAT_DIALOG_DATA,
+  );
 
   isSaving = signal(false);
-
 
   sourceEstablishments = signal<GroupedEstab[]>([]);
   destinationEstablishments = signal<GroupedEstab[]>([]);
@@ -305,41 +308,37 @@ export class WarehouseTransferAddEdit implements OnInit {
     return roundNumber(totalValue);
   });
 
-  title = computed(()=>{
-
-    if(this.isEdit()){
+  title = computed(() => {
+    if (this.isEdit()) {
       return 'Editar Transferencia';
     }
-    if(this.isDuplicate()){
+    if (this.isDuplicate()) {
       return 'Duplicar Transferencia';
     }
-      return 'Nueva Transferencia';
-
+    return 'Nueva Transferencia';
   });
-  btnText = computed(()=>{
-    if(this.isEdit()){
-      return 'Editar'
+  btnText = computed(() => {
+    if (this.isEdit()) {
+      return 'Editar';
     }
-    return 'Guardar'
+    return 'Guardar';
   });
-  btnIcon = computed(()=>{
-    if(this.isEdit()){
-      return 'edit'
+  btnIcon = computed(() => {
+    if (this.isEdit()) {
+      return 'edit';
     }
-    return 'save'
-  })
+    return 'save';
+  });
   isAdd() {
     return this.params.operation === 'add';
   }
   isEdit() {
-    return this.params.operation==='edit';
+    return this.params.operation === 'edit';
   }
 
   isDuplicate() {
-    return this.params.operation === 'duplicate'
+    return this.params.operation === 'duplicate';
   }
-
-
 
   openFilterAdvanced() {
     this.dgSvc
@@ -351,14 +350,14 @@ export class WarehouseTransferAddEdit implements OnInit {
           categories: structuredClone(this.categories()),
         },
       })
-      .subscribe(result => {
-        if(result && typeof result === 'object'){
+      .subscribe((result) => {
+        if (result && typeof result === 'object') {
           const merge = [...this.details(), ...result.rowSelected].reduce((acc, item) => {
             acc[item.productId] = item;
             return acc;
           }, {});
           const listaUnida = Object.values(merge);
-          this.details.set(listaUnida)
+          this.details.set(listaUnida);
         }
       });
   }
@@ -381,7 +380,7 @@ export class WarehouseTransferAddEdit implements OnInit {
       error: (err) => {
         this.notiSvc.error({ message: 'Error al cargar datos del formulario' });
         console.error(err);
-      }
+      },
     });
   }
 
@@ -415,11 +414,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     };
 
     // Detalles
-    this.details.set(
-      isDuplicate
-        ? details.map((d: any) => ({ ...d, id: 0 }))
-        : details
-    );
+    this.details.set(isDuplicate ? details.map((d: any) => ({ ...d, id: 0 })) : details);
 
     if (isDuplicate) {
       console.log('Duplicando registro:', structuredClone(header));
@@ -427,19 +422,19 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   private findEstablishmentByEmissionPoint(puntoEmisionId: number): GroupedEstab | undefined {
-    return this.sourceEstablishments().find(es =>
-      es.puntosEmision.some(pp => pp.idPuntoEmision === puntoEmisionId)
+    return this.sourceEstablishments().find((es) =>
+      es.puntosEmision.some((pp) => pp.idPuntoEmision === puntoEmisionId),
     );
   }
 
   private findEstablishmentByWarehouse(warehouseId: number): GroupedEstab | undefined {
-    return this.destinationEstablishments().find(es =>
-      es.bodegas.some(bb => bb.idBodega === warehouseId)
+    return this.destinationEstablishments().find((es) =>
+      es.bodegas.some((bb) => bb.idBodega === warehouseId),
     );
   }
 
   setDataAdd() {
-    const dataEstab = this.sourceEstablishments().find(estab => estab.defaultEstab);
+    const dataEstab = this.sourceEstablishments().find((estab) => estab.defaultEstab);
 
     if (!dataEstab) {
       this.warnAndThrow('No se encontró Establecimiento por defecto');
@@ -456,7 +451,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     // Punto de Emisión
     if (this.emissionPoints().length > 0) {
       this.dataForm.puntoEmisionId =
-        this.emissionPoints().find(pto => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
+        this.emissionPoints().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
       this.notiSvc.warning({ message: 'No tienes asignado ningún Punto de Emisión' });
     }
@@ -464,7 +459,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     // Bodega Origen
     if (this.sourceWarehouses().length > 0) {
       this.dataForm.sourceWarehouseId =
-        this.sourceWarehouses().find(bod => bod.defaultBodega)?.idBodega ?? 0;
+        this.sourceWarehouses().find((bod) => bod.defaultBodega)?.idBodega ?? 0;
     } else {
       this.notiSvc.warning({ message: 'No tienes asignada ninguna Bodega' });
     }
@@ -482,7 +477,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   ngOnInit() {
     this.loadDataForm();
 
-    this.searchService.onResult().subscribe(result => {
+    this.searchService.onResult().subscribe((result) => {
       this.handleSearchResult(result);
     });
   }
@@ -506,7 +501,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     }
 
     const dataEstab = this.sourceEstablishments().find(
-      estab => estab.id === this.dataForm.sourceEstablishmentId,
+      (estab) => estab.id === this.dataForm.sourceEstablishmentId,
     );
 
     if (dataEstab) {
@@ -517,7 +512,7 @@ export class WarehouseTransferAddEdit implements OnInit {
 
     if (this.emissionPoints().length > 0) {
       this.dataForm.puntoEmisionId =
-        this.emissionPoints().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision ?? 0;
+        this.emissionPoints().find((ptoEmi) => ptoEmi.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
       this.notiSvc.warning({
         message: 'No tienes asignado ningún Punto de Emisión a este Establecimiento',
@@ -525,7 +520,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     }
     if (this.sourceWarehouses().length > 0) {
       this.dataForm.sourceWarehouseId =
-        this.sourceWarehouses().find(bodega => bodega.defaultBodega)?.idBodega ?? 0;
+        this.sourceWarehouses().find((bodega) => bodega.defaultBodega)?.idBodega ?? 0;
     } else {
       this.notiSvc.warning({
         message: 'No tienes asignado ninguna Bodega a este Establecimiento',
@@ -533,16 +528,16 @@ export class WarehouseTransferAddEdit implements OnInit {
     }
     this.dataForm.destinationEstablishmentId = 0;
     this.dataForm.destinationWarehouseId = 0;
-    this.details.set(this.details().map(item => ({ ...item, cantidad: 0 })));
+    this.details.set(this.details().map((item) => ({ ...item, cantidad: 0 })));
   }
 
   changeEstabDestination() {
     const dataEstab = this.destinationEstablishments().find(
-      item => item.id === this.dataForm.destinationEstablishmentId,
+      (item) => item.id === this.dataForm.destinationEstablishmentId,
     );
     if (dataEstab) {
       this.destinationWarehouses.set(
-        structuredClone(dataEstab.bodegas).filter(item => {
+        structuredClone(dataEstab.bodegas).filter((item) => {
           return item.idBodega !== this.dataForm.sourceWarehouseId;
         }),
       );
@@ -556,7 +551,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   openSearch(): void {
-    this.searchService.open(ProductSearchDialog)?.subscribe(result => {
+    this.searchService.open(ProductSearchDialog)?.subscribe((result) => {
       this.handleSearchResult(result);
     });
   }
@@ -567,7 +562,7 @@ export class WarehouseTransferAddEdit implements OnInit {
       .execute(result.id)
       .pipe(take(1))
       .subscribe({
-        next: response => {
+        next: (response) => {
           const { data, measures } = response;
 
           if (!data || !Array.isArray(measures)) {
@@ -581,8 +576,8 @@ export class WarehouseTransferAddEdit implements OnInit {
 
           const measure =
             existingIndex !== -1
-              ? measures.find(m => m.idMedida === Number(tempDetails[existingIndex].measureId))
-              : measures.find(m => m.defaultMedida);
+              ? measures.find((m) => m.idMedida === Number(tempDetails[existingIndex].measureId))
+              : measures.find((m) => m.defaultMedida);
 
           if (!measure) {
             console.error('No corresponding measure found');
@@ -626,7 +621,7 @@ export class WarehouseTransferAddEdit implements OnInit {
 
           this.details.set(tempDetails);
         },
-        error: err => {
+        error: (err) => {
           console.error('Error getting product:', err);
         },
       });
@@ -725,13 +720,13 @@ export class WarehouseTransferAddEdit implements OnInit {
 
     data.total = DecimalUtil.multiplyAsNumber(data.quantity, data.costPrice);
 
-    this.details.set(this.details().map(item => (item.uuid === data.uuid ? data : item)));
+    this.details.set(this.details().map((item) => (item.uuid === data.uuid ? data : item)));
   }
   private updateDetailInList(uuid: string, newData: any): any[] {
-    return this.details().map(item => (item.uuid === uuid ? { ...newData } : item));
+    return this.details().map((item) => (item.uuid === uuid ? { ...newData } : item));
   }
   private validateStockAsync(details: any[]): Promise<boolean> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.validateStock(details, (cont: boolean) => resolve(cont));
     });
   }
@@ -749,9 +744,9 @@ export class WarehouseTransferAddEdit implements OnInit {
     });
     if (!isConfirmed) return;
 
-    const filteredResults = this.details().filter(item => item.uuid !== row.uuid);
+    const filteredResults = this.details().filter((item) => item.uuid !== row.uuid);
     if (row.id > 0) {
-      this.detailsDeleted.update(res => [
+      this.detailsDeleted.update((res) => [
         ...res,
         {
           ...row,
@@ -819,7 +814,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   async save(): Promise<void> {
-    if(this.isSaving()) return ;
+    if (this.isSaving()) return;
     if (!this.isValidForm()) return;
 
     let serieComprobante: string | null = null;
@@ -877,21 +872,20 @@ export class WarehouseTransferAddEdit implements OnInit {
 
       const save = this.isAdd() || this.isDuplicate() ? this.saveUseCase : this.editUseCase;
 
-      save.execute({
-        id: this.dataForm.id,
-        data: {
-          ...this.dataForm,
-          total: this.total(),
-        },
-        details: this.details(),
-        transactionTypes: this.transactionTypes(),
-        documentTypes: this.documentTypes(),
-        detailsDeleted : this.detailsDeleted(),
-      })
-        .pipe(
-          finalize(()=>this.isSaving.set(false))
-        )
-        .subscribe(this.commonResponse)
+      save
+        .execute({
+          id: this.dataForm.id,
+          data: {
+            ...this.dataForm,
+            total: this.total(),
+          },
+          details: this.details(),
+          transactionTypes: this.transactionTypes(),
+          documentTypes: this.documentTypes(),
+          detailsDeleted: this.detailsDeleted(),
+        })
+        .pipe(finalize(() => this.isSaving.set(false)))
+        .subscribe(this.commonResponse);
     } catch (error) {
       console.error('Error al guardar la transferencia:', error);
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
@@ -899,18 +893,17 @@ export class WarehouseTransferAddEdit implements OnInit {
     }
   }
 
-  private commonResponse = (response: any)=> {
+  private commonResponse = (response: any) => {
     if (response.code === '0') {
       this.notiSvc.warning({ message: response.message });
-      return
+      return;
     }
     if (response.code === '1') {
       this.notiSvc.success({ message: 'La transferencia se guardó correctamente.' });
-
     } else {
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });
     }
-  }
+  };
   closeDg() {
     this.dialogRef.close();
   }

@@ -124,7 +124,7 @@ export class GeneralConfigComponent implements OnInit {
   formasPagoSri = signal<any[]>([]);
 
   private getList() {
-    this.$listUseCase.execute(this.selectedTabValue()).subscribe(response => {
+    this.$listUseCase.execute(this.selectedTabValue()).subscribe((response) => {
       switch (this.selectedTabValue()) {
         case this.CODE_TABS.CV:
           this.configVenta = response.configVenta;
@@ -145,7 +145,7 @@ export class GeneralConfigComponent implements OnInit {
 
         case this.CODE_TABS.CS:
           this.notificaciones.set(response.notificaciones);
-          this.notificacionesSelected = this.notificaciones().filter(item => item.estado);
+          this.notificacionesSelected = this.notificaciones().filter((item) => item.estado);
           break;
         default:
           break;
@@ -265,7 +265,7 @@ export class GeneralConfigComponent implements OnInit {
           });
           return;
         }
-        if (!this.emails.every(e => isValidEmail(e))) {
+        if (!this.emails.every((e) => isValidEmail(e))) {
           Swal.fire({
             icon: 'warning',
             text: 'Verifique que los correos esten en formato correcto',
@@ -306,7 +306,7 @@ export class GeneralConfigComponent implements OnInit {
           return;
         } else {
           jsonConfig = this.metodosValoracion.find(
-            item => item.idMetodoValoracion === this.configInventario.idMetodoValoracion,
+            (item) => item.idMetodoValoracion === this.configInventario.idMetodoValoracion,
           );
         }
       } else {
@@ -336,17 +336,17 @@ export class GeneralConfigComponent implements OnInit {
     if (this.selectedTabValue() === this.CODE_TABS.CS) {
       data = {
         idSistema: this.notificaciones()[0].idSistema,
-        jsonConfig: this.notificaciones().map(item => ({
+        jsonConfig: this.notificaciones().map((item) => ({
           idNotificacionSistema: item.idNotificacionSistema,
           estado: this.notificacionesSelected.some(
-            n => n.idNotificacionSistema === item.idNotificacionSistema,
+            (n) => n.idNotificacionSistema === item.idNotificacionSistema,
           ),
           codigo: item.codigo,
         })),
       };
     }
 
-    this.$updateUseCase.execute(data).subscribe(response => {
+    this.$updateUseCase.execute(data).subscribe((response) => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',

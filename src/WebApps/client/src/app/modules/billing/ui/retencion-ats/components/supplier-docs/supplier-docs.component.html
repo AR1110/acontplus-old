@@ -6,13 +6,14 @@
   (close)="onClose()"
 />
 <ng-template #contentTemplate>
-  <app-mat-dynamic-table [templateOp]="templateOp"
+  <app-mat-dynamic-table
+    [templateOp]="templateOp"
     [tableData]="documents()"
     [columnDefinitions]="columnsDefs"
     [visibleColumns]="columns"
     [showSelectBox]="true"
     (rowSelected)="onRowSelected($event)"
-   />
+  />
 </ng-template>
 <ng-template #templateOp let-item="item" />
 <ng-template #actionsTemplate>

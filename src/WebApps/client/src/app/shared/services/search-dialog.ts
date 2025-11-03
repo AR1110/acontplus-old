@@ -50,7 +50,7 @@ export class SearchDialogService {
         if (this.isCtrlKOpen) {
           this.resultSubject.next(result);
           this.isCtrlKOpen = false;
-          return
+          return;
         }
       }
     });

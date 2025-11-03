@@ -1,23 +1,18 @@
 import { Route } from '@angular/router';
 
-
-
-
-
-
-import {ACTION_ALIASES} from "@core/constants/permission-actions";
-import {BILLING_MODULES_CODE} from "@billing/domain/enums/billing.enum.ts";
+import { ACTION_ALIASES } from '@core/constants/permission-actions';
+import { BILLING_MODULES_CODE } from '@billing/domain/enums/billing.enum.ts';
 
 export const routes: Route[] = [
   {
     path: '',
-    loadComponent: () => import('./ui/billing-home.component').then(m => m.BillingHomeComponent),
+    loadComponent: () => import('./ui/billing-home.component').then((m) => m.BillingHomeComponent),
     data: { breadcrumb: 'Facturación' },
   },
   {
     path: 'ats',
     title: 'Ats',
-    loadComponent: () => import('@billing/ui/ats/ats.component').then(m => m.AtsComponent),
+    loadComponent: () => import('@billing/ui/ats/ats.component').then((m) => m.AtsComponent),
     data: {
       breadcrumb: 'Ats',
     },
@@ -25,7 +20,10 @@ export const routes: Route[] = [
   {
     path: 'fact-elect-report',
     title: 'Reporte Tributario',
-    loadComponent: () => import('@billing/ui/reports/fact-elect-report-page/fact-elect-report-page.component').then(m => m.FactElectReportPageComponent),
+    loadComponent: () =>
+      import('@billing/ui/reports/fact-elect-report-page/fact-elect-report-page.component').then(
+        (m) => m.FactElectReportPageComponent,
+      ),
     data: {
       breadcrumb: 'Reporte Tributario',
     },
@@ -34,18 +32,18 @@ export const routes: Route[] = [
   {
     path: 'doc-elects',
     title: 'Documento Electrónico',
-    loadComponent: () => import('@billing/ui/doc-elect/doc-elect').then(m => m.DocElect),
+    loadComponent: () => import('@billing/ui/doc-elect/doc-elect').then((m) => m.DocElect),
     data: {
       breadcrumb: 'Documento Electrónico',
       context: BILLING_MODULES_CODE.DOC_ELECT,
-      requiredActions: [ACTION_ALIASES.READ]
+      requiredActions: [ACTION_ALIASES.READ],
     },
   },
 
   {
     path: 'invoices',
     title: 'Factura',
-    loadComponent: () => import('@billing/ui/invoice/invoice').then(m => m.Invoice),
+    loadComponent: () => import('@billing/ui/invoice/invoice').then((m) => m.Invoice),
     data: {
       breadcrumb: 'Factura',
     },
@@ -53,7 +51,10 @@ export const routes: Route[] = [
   {
     path: 'guia-remision',
     title: 'Guia Remisión',
-    loadComponent: () => import('@billing/ui/guia-remision/guia-remision.component').then(m => m.GuiaRemisionComponent),
+    loadComponent: () =>
+      import('@billing/ui/guia-remision/guia-remision.component').then(
+        (m) => m.GuiaRemisionComponent,
+      ),
     data: {
       breadcrumb: 'Guía de Remisión',
     },

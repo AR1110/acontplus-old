@@ -22,7 +22,7 @@ export interface DocumentoElectronico {
   idEstablecimiento: number;
 }
 
-export interface DocElectList  {
+export interface DocElectList {
   id: number;
   codDoc: string;
   docName: string;

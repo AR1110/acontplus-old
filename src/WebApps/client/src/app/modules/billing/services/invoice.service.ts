@@ -25,15 +25,14 @@ export class InvoiceService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const resultData = {
             estabs: [] as GroupedEstab[],
             estadosDoc: [] as any[],
           };
 
           if (response.code === '1') {
-            const {estabs, status
-          } = JSON.parse(response.payload as string);
+            const { estabs, status } = JSON.parse(response.payload as string);
 
             const dataToGroup = {
               estabs,
@@ -58,13 +57,13 @@ export class InvoiceService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             data: [] as any[],
             totalRecords: 0,
           };
           if (response && response.code === '1') {
-            let {invoices} = JSON.parse(response.payload as string);
+            let { invoices } = JSON.parse(response.payload as string);
             result.data = InvoiceAdapter.fromApiAll(invoices ?? []);
             result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
           }
@@ -83,7 +82,7 @@ export class InvoiceService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let result = {} as any;
           if (response.code === '1') {
             const mainData = JSON.parse(response.payload as string);

@@ -69,7 +69,7 @@ export class InventoryAdjustmentComponent {
     { key: 'total', label: 'Total', type: 'number' },
     { key: 'usuarioNombre', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -124,9 +124,9 @@ export class InventoryAdjustmentComponent {
   private getList() {
     const params = this.getDataParams();
     if (!params) return;
-    this.inventorySvc.getAll(params).subscribe(response => {
+    this.inventorySvc.getAll(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update(pag => ({
+      this.pagination.update((pag) => ({
         ...pag,
         totalRecords: response.totalRecords,
       }));
@@ -135,14 +135,14 @@ export class InventoryAdjustmentComponent {
 
   ngOnInit() {
     this.inventorySvc.formDataUseCase.execute().subscribe((response) => {
-      this.$inventoryAdjustmentStore.setMainFormData(response)
+      this.$inventoryAdjustmentStore.setMainFormData(response);
       this.tiposDoc.set(response.tiposDoc);
       this.estabs.set(response.estabs);
-      const dataEstab = this.estabs().find(e=>e.defaultEstab);
-      if(dataEstab) {
+      const dataEstab = this.estabs().find((e) => e.defaultEstab);
+      if (dataEstab) {
         this.dataFilter.estabId = dataEstab.idEstablecimiento;
       }
-       this.refresh()
+      this.refresh();
     });
   }
 
@@ -151,7 +151,7 @@ export class InventoryAdjustmentComponent {
       size: 'xxl',
       data: {},
     });
-    ref.subscribe(res => {
+    ref.subscribe((res) => {
       if (res && typeof res == 'object') {
         this.refresh();
       }
@@ -168,7 +168,7 @@ export class InventoryAdjustmentComponent {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

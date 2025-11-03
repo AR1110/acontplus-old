@@ -16,7 +16,7 @@ export class ActionEditDirective implements OnInit {
 
   ngOnInit() {
     this.pS.select('accion').subscribe({
-      next: value => {
+      next: (value) => {
         if (value && value.editar) return;
         this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },

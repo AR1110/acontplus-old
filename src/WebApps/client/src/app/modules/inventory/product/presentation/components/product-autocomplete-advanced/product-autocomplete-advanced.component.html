@@ -1,4 +1,5 @@
-<app-reusable-autocomplete [config]="finalConfig"
+<app-reusable-autocomplete
+  [config]="finalConfig"
   [searchFunction]="productSearchFunction"
   [itemTemplate]="productTemplate"
   (itemSelected)="onProductSelected($event)"
@@ -6,7 +7,7 @@
   (pageChanged)="pageChanged.emit($event)"
   (filterChanged)="filterChanged.emit($event)"
   (createClicked)="createProductClicked.emit($event)"
- />
+/>
 
 <ng-template #productTemplate let-product>
   <div class="product-item-advanced">
@@ -111,7 +112,9 @@
                 @if (price.minQuantity || price.validTo) {
                   <div class="price-details">
                     @if (price.minQuantity) {
-                      <span class="min-quantity"> Min: {{ price.minQuantity }} {{ product.unit || 'uds' }} </span>
+                      <span class="min-quantity">
+                        Min: {{ price.minQuantity }} {{ product.unit || 'uds' }}
+                      </span>
                     }
                     @if (price.validTo && isPromotional(price)) {
                       <span class="valid-until"> Hasta: {{ price.validTo }} </span>

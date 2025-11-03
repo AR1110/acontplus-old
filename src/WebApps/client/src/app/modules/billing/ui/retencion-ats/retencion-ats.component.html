@@ -1,7 +1,8 @@
 <app-breadcrumb />
 <mat-card appearance="outlined">
   <mat-card-content>
-    <app-doc-elect-filters [showMoreOptions]="showMoreOptions()"
+    <app-doc-elect-filters
+      [showMoreOptions]="showMoreOptions()"
       [filterOptions]="myCustomFilterOptions"
       (triggerSearch)="onSearch($event)"
       (selectCliente)="onSelectCliente($event)"
@@ -10,27 +11,29 @@
       (selectUsuario)="onSelectUsuario($event)"
       (keyupUsuario)="onKeyupUsuario($event)"
       (dialogOpen)="onDialogOpen()"
-     />
+    />
     <div class="row mb-3">
       <div class="col">
         @if (this.retenciones().length > 0) {
           <div class="table-responsive">
-            <app-mat-dynamic-table [templateOp]="templateOp"
+            <app-mat-dynamic-table
+              [templateOp]="templateOp"
               [tableData]="retenciones()"
               [columnDefinitions]="columnsDefs"
               [visibleColumns]="columns"
               [showSelectBox]="true"
-             />
+            />
           </div>
 
-          <mat-paginator [length]="pagination().totalRecords"
+          <mat-paginator
+            [length]="pagination().totalRecords"
             [pageIndex]="pagination().pageIndex"
             [pageSize]="pagination().pageSize"
             [pageSizeOptions]="pagination().pageSizeOptions"
             (page)="onPageChanged($event)"
             showFirstLastButtons
             aria-label="Select page"
-           />
+          />
         } @else {
           <h5>No hay registros</h5>
         }

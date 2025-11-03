@@ -132,13 +132,13 @@ export class ComprobanteEgresoUtil {
   // Filtra los pagos detalle asociados a la cuenta actual
   private filtrarPagosDetalle() {
     return this.pagosDetalle.filter(
-      cd => cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar,
+      (cd) => cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar,
     );
   }
 
   // Calcula el total de abonos para la cuenta actual
   private calcularTotalAbonoCuenta(pagosDetalle: any[]) {
-    return pagosDetalle.map(item => item.abono).reduce((acc, curr) => acc + curr, 0);
+    return pagosDetalle.map((item) => item.abono).reduce((acc, curr) => acc + curr, 0);
   }
 
   // Verifica si el saldo total ya ha sido pagado
@@ -170,7 +170,7 @@ export class ComprobanteEgresoUtil {
   // Obtiene el último cobro registrado en el historial
   private obtenerUltimoCobro() {
     const historialFiltrado = this.cuentasPorPagarHistorial.filter(
-      cd =>
+      (cd) =>
         cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
         cd.secuencial === this.secuencial,
     );
@@ -227,7 +227,7 @@ export class ComprobanteEgresoUtil {
 
     let valorMovimientoSaldo = 0;
     const pagosDetalleFiltered = this.pagosDetalle.filter(
-      cd =>
+      (cd) =>
         cd.idCuentaPorPagar === this.dataCuentaPorPagarCuota.idCuentaPorPagar &&
         cd.idCuotaPorPagar === dataCuota.idCuotaPorPagar,
     );

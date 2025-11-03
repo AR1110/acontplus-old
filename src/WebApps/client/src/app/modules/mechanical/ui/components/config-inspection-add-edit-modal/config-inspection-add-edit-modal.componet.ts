@@ -9,13 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-vehicle-add-edit-modal',
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    ReactiveFormsModule,
-    MatButtonModule,
-  ],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule],
   templateUrl: './config-inspection-add-edit-modal.componet.html',
   styles: ``,
 })

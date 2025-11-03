@@ -15,19 +15,15 @@
 
     <!-- 🔹 Botón limpiar solo si hay texto -->
     @if (searchInput.value.length > 0) {
-      <button
-        matSuffix
-        mat-icon-button
-        (click)="clearSearch()"
-      >
+      <button matSuffix mat-icon-button (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
-
     }
   </mat-form-field>
 
   <!-- 🧩 DataGrid -->
-  <app-data-grid [data]="list()"
+  <app-data-grid
+    [data]="list()"
     [columns]="columns()"
     [loading]="loading()"
     [keyboardNavigation]="true"
@@ -41,7 +37,7 @@
     (page)="getNextPage($event)"
     (focusedRowChange)="onFocusedRowChange($event)"
     (rowClick)="rowClick($event)"
-   />
+  />
 
   <!-- 🔹 Template para descripción de producto -->
   <ng-template #descriptionTpl let-row let-index="index" let-col="colDef">
@@ -59,11 +55,7 @@
       <mat-icon>keyboard_double_arrow_down</mat-icon>
       Mover
     </div>
-    <div class="hint">
-      <mat-icon>check</mat-icon> Enter
-    </div>
-    <div class="hint">
-      <mat-icon>escape</mat-icon> Esc
-    </div>
+    <div class="hint"><mat-icon>check</mat-icon> Enter</div>
+    <div class="hint"><mat-icon>escape</mat-icon> Esc</div>
   </div>
 </div>

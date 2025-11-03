@@ -1,31 +1,41 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   inject,
   input,
-  KeyValueChangeRecord, KeyValueChanges,
+  KeyValueChangeRecord,
+  KeyValueChanges,
   KeyValueDiffer,
   KeyValueDiffers,
-  output
+  output,
 } from '@angular/core';
-import {isObservable} from "rxjs";
-import {DataGridUtils} from "@shared/utils/data-grid.util";
-import {DataGridColumnButton} from "@shared/components/data-grid/types";
+import { isObservable } from 'rxjs';
+import { DataGridUtils } from '@shared/utils/data-grid.util';
+import { DataGridColumnButton } from '@shared/components/data-grid/types';
 import {
   DataGridCellActionBadgePipe,
   DataGridCellActionDisablePipe,
-  DataGridCellActionsPipe, DataGridCellActionTooltipPipe,
-  DataGridCellSummaryPipe
-} from "@shared/pipes/data-grid.pipe";
-import {MatButton, MatIconButton} from "@angular/material/button";
-import {AcpToObservablePipe} from "@shared/pipes/to-observable.pipe";
-import {AsyncPipe, CurrencyPipe, DatePipe, DecimalPipe, NgTemplateOutlet, PercentPipe} from "@angular/common";
-import {MatMenuModule} from "@angular/material/menu";
-import {MatTooltipModule} from "@angular/material/tooltip";
-import {MatBadgeModule} from "@angular/material/badge";
-import {DataGridMenu} from "@shared/components/data-grid/data-grid-menu";
-import {MatChip, MatChipListbox} from "@angular/material/chips";
-import {MatIcon} from "@angular/material/icon";
+  DataGridCellActionsPipe,
+  DataGridCellActionTooltipPipe,
+  DataGridCellSummaryPipe,
+} from '@shared/pipes/data-grid.pipe';
+import { MatButton, MatIconButton } from '@angular/material/button';
+import { AcpToObservablePipe } from '@shared/pipes/to-observable.pipe';
+import {
+  AsyncPipe,
+  CurrencyPipe,
+  DatePipe,
+  DecimalPipe,
+  NgTemplateOutlet,
+  PercentPipe,
+} from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBadgeModule } from '@angular/material/badge';
+import { DataGridMenu } from '@shared/components/data-grid/data-grid-menu';
+import { MatChip, MatChipListbox } from '@angular/material/chips';
+import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'acp-data-grid-cell',
@@ -50,28 +60,26 @@ import {MatIcon} from "@angular/material/icon";
     DecimalPipe,
     CurrencyPipe,
     PercentPipe,
-    DatePipe
+    DatePipe,
   ],
   templateUrl: './data-grid-cell.html',
   styleUrl: './data-grid-cell.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataGridCell {
   private _utils = inject(DataGridUtils);
   private _differs = inject(KeyValueDiffers);
   private _changeDetectorRef = inject(ChangeDetectorRef);
 
-   rowData = input<Record<string, any>>({})
-   colDef = input<any>();
+  rowData = input<Record<string, any>>({});
+  colDef = input<any>();
 
+  summary = input(false);
+  data = input<any[]>([]);
 
-    summary = input(false);
-   data = input<any[]>([]);
+  placeholder = input('--');
 
-
-   placeholder = input('--');
-
-   rowDataChange = output<KeyValueChangeRecord<string, any>>();
+  rowDataChange = output<KeyValueChangeRecord<string, any>>();
 
   private rowDataDiffer?: KeyValueDiffer<string, any>;
 
@@ -93,7 +101,7 @@ export class DataGridCell {
   }
 
   private _applyChanges(changes: KeyValueChanges<string, any>) {
-    changes.forEachChangedItem(record => {
+    changes.forEachChangedItem((record) => {
       this.rowChangeRecord = record;
       this.rowDataChange.emit(record);
       this._changeDetectorRef.markForCheck();
@@ -117,9 +125,9 @@ export class DataGridCell {
     event.stopPropagation();
 
     if (typeof btn.pop === 'string' || isObservable(btn.pop)) {
-     alert('')
+      alert('');
     } else if (typeof btn.pop === 'object') {
-       alert('objecg')
+      alert('objecg');
     } else {
       btn.click?.(rowData);
     }

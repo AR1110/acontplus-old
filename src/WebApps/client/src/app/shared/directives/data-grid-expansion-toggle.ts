@@ -1,4 +1,4 @@
-import {Directive,  Input, output, TemplateRef} from '@angular/core';
+import { Directive, Input, output, TemplateRef } from '@angular/core';
 
 @Directive({
   selector: '[acp-data-grid-expansion-toggle]',
@@ -20,7 +20,7 @@ export class DataGridExpansionToggle {
     this._opened = newValue;
     this.openedChange.emit(newValue);
   }
-   openedChange = output<boolean>();
+  openedChange = output<boolean>();
 
   @Input()
   set expandableRow(value: any) {

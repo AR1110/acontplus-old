@@ -24,12 +24,12 @@ export class ProductSearchBarService {
     const lowerCaseTerm = searchTerm.toLowerCase();
     this.recentSearches.set([
       lowerCaseTerm,
-      ...this.recentSearches().filter(s => s !== searchTerm),
+      ...this.recentSearches().filter((s) => s !== searchTerm),
     ]);
   }
 
   deleteRecentSearch(searchTerm: string) {
-    this.recentSearches.set(this.recentSearches().filter(s => s !== searchTerm));
+    this.recentSearches.set(this.recentSearches().filter((s) => s !== searchTerm));
   }
 
   saveLocalStorage = effect(() => {

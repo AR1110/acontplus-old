@@ -1,4 +1,3 @@
-
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -55,8 +54,8 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     MatIcon,
     ThemeButtonComponent,
     MatButton,
-    MatCustomDialogComponent
-],
+    MatCustomDialogComponent,
+  ],
   templateUrl: './order-maintenance-modal.component.html',
 })
 export class OrderMaintenanceModalComponent implements OnInit {
@@ -530,7 +529,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     groupBy: 'orderDetailId',
     groupValues: [[]] as any,
     groupHeader: (value: any, count: any) => {
-      const dataOrderDetail = this.orderDetails().find(od => od.orderDetailId === value);
+      const dataOrderDetail = this.orderDetails().find((od) => od.orderDetailId === value);
 
       if (dataOrderDetail) {
         return `${dataOrderDetail.deviceName} (${count} items)`;
@@ -546,12 +545,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   getId() {
     this.orderSvc.getId(this.params.id).subscribe({
-      next: response => {
+      next: (response) => {
         this.establecimientos.set(response.establecimientos);
         this.order = response.order;
         this.orderDetails.set(response.orderDetails);
         const orderMaintenances = response.orderMaintenances.map((d: any) => {
-          const od = this.orderDetails().find(od => od.orderDetailId === d.orderDetailId);
+          const od = this.orderDetails().find((od) => od.orderDetailId === d.orderDetailId);
           return {
             ...d,
             deviceName: od.deviceName,
@@ -565,12 +564,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
         this.decimal = response.decimal;
 
         const dataEstab = this.establecimientos().find(
-          e => e.idEstablecimiento === this.order.establecimientoId,
+          (e) => e.idEstablecimiento === this.order.establecimientoId,
         );
         if (dataEstab) {
           this.puntosEmision.set(dataEstab.puntosEmision);
           this.bodegas.set(dataEstab.bodegas);
-          const dataBodega = this.bodegas().find(b => b.defaultBodega);
+          const dataBodega = this.bodegas().find((b) => b.defaultBodega);
           if (dataBodega) {
             this.order.bodegaId = dataBodega.idBodega;
             this.cloneOrder.bodegaId = this.order.bodegaId;
@@ -578,7 +577,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           this.cloneOrder.establecimientoId = this.order.establecimientoId;
         }
 
-        const dataTarifa = this.feeds().find(t => t.predeterminada);
+        const dataTarifa = this.feeds().find((t) => t.predeterminada);
         if (dataTarifa) {
           this.order.feeId = dataTarifa.idTarifa;
           this.cloneOrder.feeId = dataTarifa.idTarifa;
@@ -618,7 +617,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
   }
 
   onChangeOrderDetail() {
-    this.order.obs = this.orderDetails().find(x => x.orderDetailId == this.order.orderDetailId).obs;
+    this.order.obs = this.orderDetails().find(
+      (x) => x.orderDetailId == this.order.orderDetailId,
+    ).obs;
   }
 
   setIdBodegaInDetalle() {
@@ -661,7 +662,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       }
 
       const dataEstab = this.establecimientos().find(
-        item => item.idEstablecimiento === this.order.establecimientoId,
+        (item) => item.idEstablecimiento === this.order.establecimientoId,
       );
       if (!dataEstab) return;
 
@@ -685,13 +686,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
         return;
       }
 
-      const dataPtoEmi = this.puntosEmision().find(item => item.defaultPtoEmi);
+      const dataPtoEmi = this.puntosEmision().find((item) => item.defaultPtoEmi);
       if (dataPtoEmi) {
         this.order.puntoEmisionId = dataPtoEmi.idPuntoEmision;
       }
 
       //Bodegas
-      const dataBodega = this.bodegas().find(item => item.defaultBodega);
+      const dataBodega = this.bodegas().find((item) => item.defaultBodega);
       if (dataBodega) {
         this.order.bodegaId = dataBodega.idBodega;
       }
@@ -707,7 +708,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   async onChangeBodega() {
     try {
-      const bodega = this.bodegas().find(item => item.idBodega === this.order.bodegaId);
+      const bodega = this.bodegas().find((item) => item.idBodega === this.order.bodegaId);
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -754,7 +755,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí',
         cancelButtonText: 'No',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           this.tS.show({
             type: 'info',
@@ -798,7 +799,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       //   return
       // }
 
-      const tarifa = this.feeds().find(item => item.idTarifa === this.order.feeId);
+      const tarifa = this.feeds().find((item) => item.idTarifa === this.order.feeId);
       const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
@@ -841,9 +842,9 @@ export class OrderMaintenanceModalComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          const index = this.orderMaintenances().findIndex(r => r.rowguid === data.rowguid);
+          const index = this.orderMaintenances().findIndex((r) => r.rowguid === data.rowguid);
           this.orderMaintenances().splice(index, 1);
 
           this.drawImpuestoTotales();
@@ -856,7 +857,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
   openModalProductEdit(data: OrderMaintenance) {
     try {
-      this.openModalProductSvc.open({ id: data.productId }).then(response => {
+      this.openModalProductSvc.open({ id: data.productId }).then((response) => {
         console.log(response, 'closed produc');
       });
     } catch (error) {
@@ -929,13 +930,13 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     const taxPercents = this.taxPercents();
     let row = this.getDataRowEmpty();
-    const dataTaxPercent = taxPercents.find(d => d.codigo === product.codigoPorcentaje);
+    const dataTaxPercent = taxPercents.find((d) => d.codigo === product.codigoPorcentaje);
     const dataOrderDetail = this.orderDetails().find(
-      od => od.orderDetailId === this.order.orderDetailId,
+      (od) => od.orderDetailId === this.order.orderDetailId,
     );
 
     const findDataProduct = this.orderMaintenances().find(
-      item => item.llevaInventario && item.productId === product.idArticulo,
+      (item) => item.llevaInventario && item.productId === product.idArticulo,
     );
 
     row.productId = product.idArticulo;
@@ -963,7 +964,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       row.deviceName = dataOrderDetail.deviceName;
       row.orderDetailId = dataOrderDetail.orderDetailId;
 
-      const dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+      const dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
 
       row.feeId = dataTarifa?.idTarifa ?? 0;
       row.price = dataTarifa?.precioVenta ?? 0;
@@ -991,14 +992,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
       row.precioConIva = this.importeTotal;
       row.taxValue = this.importeTotal - row.price;
 
-      this.orderMaintenances.update(r => [...r, row]);
+      this.orderMaintenances.update((r) => [...r, row]);
       this.setCalculoTotales('quantity', row, undefined);
       return;
     }
 
     //Producto de tipo Servicio
     if (!product.llevaInventario) {
-      this.orderMaintenances.update(r => [...r, row]);
+      this.orderMaintenances.update((r) => [...r, row]);
 
       this.setCalculoTotales('quantity', row, undefined);
       this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
@@ -1009,7 +1010,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     if (product.llevaInventario) {
       let oldValue = 1;
       const productsDuplicated = structuredClone(this.orderMaintenances()).filter(
-        item => item.llevaInventario && item.productId === product.idArticulo,
+        (item) => item.llevaInventario && item.productId === product.idArticulo,
       );
 
       productsDuplicated.push({ ...row });
@@ -1022,7 +1023,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
         row = findDataProduct;
         row.quantity += 1;
       } else {
-        this.orderMaintenances.update(r => [...r, row]);
+        this.orderMaintenances.update((r) => [...r, row]);
       }
 
       const dataProductMerge = mergeProductStock({
@@ -1045,7 +1046,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           cantidad: cantidadStock,
         })
         .subscribe({
-          next: async response => {
+          next: async (response) => {
             if (isApiResponse(response)) {
               const { code, message, titleSms } = response;
 
@@ -1189,7 +1190,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxId') {
-      if (!this.taxPercents().some(t => t.idImpuesto === Number(value))) {
+      if (!this.taxPercents().some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
         const cellInOtherColumn = row.getCell('taxPercentId');
@@ -1341,7 +1342,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.orderMaintenances().some(row => row.llevaInventario && row.quantity === 0)) {
+    if (this.orderMaintenances().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.show({
         type: 'warning',
         message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -1349,7 +1350,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.orderMaintenances().some(row => !(row.bodegaId > 0))) {
+    if (this.orderMaintenances().some((row) => !(row.bodegaId > 0))) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -1359,8 +1360,8 @@ export class OrderMaintenanceModalComponent implements OnInit {
 
     if ((!this.detailCustom && this.codDoc === DOC_TYPE.FV) || this.codDoc === DOC_TYPE.NE) {
       if (
-        !this.orderDetails().every(od =>
-          this.orderMaintenances().some(item => item.orderDetailId === od.orderDetailId),
+        !this.orderDetails().every((od) =>
+          this.orderMaintenances().some((item) => item.orderDetailId === od.orderDetailId),
         )
       ) {
         this.tS.show({
@@ -1395,7 +1396,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.save();
       }
@@ -1408,14 +1409,14 @@ export class OrderMaintenanceModalComponent implements OnInit {
       let customDetails: any[] = [];
 
       if (this.detailCustom) {
-        detalles = this.cloneOrderMaintenances().map(item => {
+        detalles = this.cloneOrderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: false,
           };
         });
 
-        customDetails = this.orderMaintenances().map(item => {
+        customDetails = this.orderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: true,
@@ -1423,7 +1424,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
           };
         });
       } else {
-        detalles = this.orderMaintenances().map(item => {
+        detalles = this.orderMaintenances().map((item) => {
           return {
             ...item,
             envioSri: true,
@@ -1443,7 +1444,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       console.log(params);
 
       this.orderMaintenanceSvc.post(params).subscribe({
-        next: response => {
+        next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
               this.tS.show({

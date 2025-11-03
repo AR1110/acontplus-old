@@ -80,11 +80,11 @@ export class RoomAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.#roomService.put(this.data.id, dataToSave).subscribe(response => {
+      this.#roomService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this.#roomService.post(dataToSave).subscribe(response => {
+      this.#roomService.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }

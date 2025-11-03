@@ -16,7 +16,7 @@ interface SubCategoryGroup {
 const _filter = (opt: any[], value: string): string[] => {
   const filterValue = value.toLowerCase();
 
-  return opt.filter(item => item.subFamilia.toLowerCase().includes(filterValue));
+  return opt.filter((item) => item.subFamilia.toLowerCase().includes(filterValue));
 };
 
 @Component({
@@ -49,12 +49,12 @@ export class SubCategoryGroupComponent implements OnChanges {
     if (changes['subCategoryGroups']) {
       this.stateGroupOptions = this.stateForm.get('subCategoryGroup')!.valueChanges.pipe(
         startWith(''),
-        tap(e => {
+        tap((e) => {
           if (!isValidField(e)) {
             this.onEmptyData.emit();
           }
         }),
-        map(value => this._filterGroup(value || '')),
+        map((value) => this._filterGroup(value || '')),
       );
     }
   }
@@ -66,11 +66,11 @@ export class SubCategoryGroupComponent implements OnChanges {
   private _filterGroup(value: string): SubCategoryGroup[] {
     if (value) {
       return this.subCategoryGroups
-        .map(group => ({
+        .map((group) => ({
           familia: group.familia,
           subFamilias: _filter(group.subFamilias, value),
         }))
-        .filter(group => group.subFamilias.length > 0);
+        .filter((group) => group.subFamilias.length > 0);
     }
 
     return this.subCategoryGroups;

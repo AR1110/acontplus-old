@@ -26,7 +26,7 @@ export class BrandWebRepository implements BrandRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             brands: [] as any[],
           };

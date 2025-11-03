@@ -23,13 +23,13 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository {
     const json = DataFilterCuentaPorCobrarMapper.toJson();
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => DataFilterCuentaPorCobrarMapper.fromJson(response)));
+      .pipe(map((response) => DataFilterCuentaPorCobrarMapper.fromJson(response)));
   }
 
   getAll<T>(obj: T) {
     const json = JSON.stringify({ ...obj, tipo: 1 });
     return this._http.get(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         return CuentaPorCobrarMapper.fromApiGetAll(response);
       }),
     );
@@ -116,7 +116,7 @@ export class CuentaPorCobrarWebRepository extends CuentaPorCobrarRepository {
   getCuotasById(idCuentaPorCobrar: number) {
     const json = JSON.stringify({ idCuentaPorCobrar, tipo: 8 });
     return this._http.get(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         return CuentaPorCobrarMapper.fromApiGetCuotasById(response);
       }),
     );

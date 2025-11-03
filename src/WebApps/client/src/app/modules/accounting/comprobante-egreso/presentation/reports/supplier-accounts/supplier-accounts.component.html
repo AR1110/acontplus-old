@@ -6,7 +6,10 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo de Reporte: </mat-label>
-          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="searchFilters.reportTypeCode">
+          <mat-select
+            (selectionChange)="onChangeEstab()"
+            [(ngModel)]="searchFilters.reportTypeCode"
+          >
             @for (item of reportTypes(); track $index) {
               <mat-option [value]="item.code">{{ item.name }}</mat-option>
             }
@@ -34,7 +37,10 @@
           @if (searchFilters.useDateFilter && !searchFilters.useQuotaDueDateFilter) {
             <div class="vstack">
               <label>Filtrar fecha por:</label>
-              <mat-radio-group aria-label="Tipo de fecha" [(ngModel)]="searchFilters.dateFilterType">
+              <mat-radio-group
+                aria-label="Tipo de fecha"
+                [(ngModel)]="searchFilters.dateFilterType"
+              >
                 <mat-radio-button [value]="dateFilterType.emission">Emisión</mat-radio-button>
                 <mat-radio-button [value]="dateFilterType.expiration">Vencimiento</mat-radio-button>
               </mat-radio-group>
@@ -54,7 +60,10 @@
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Establecimiento</mat-label>
-                <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="searchFilters.codEstab">
+                <mat-select
+                  (selectionChange)="onChangeEstab()"
+                  [(ngModel)]="searchFilters.codEstab"
+                >
                   <mat-option [value]="''">Todos</mat-option>
 
                   @for (item of establecimientos(); track $index) {
@@ -117,8 +126,18 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
-      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')" />
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReport('pdf')"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

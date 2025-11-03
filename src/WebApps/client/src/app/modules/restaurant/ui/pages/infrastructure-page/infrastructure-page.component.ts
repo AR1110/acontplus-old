@@ -72,16 +72,16 @@ export class InfrastructurePageComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    this.$sharedSvc.getEstabAsign().subscribe(response => {
+    this.$sharedSvc.getEstabAsign().subscribe((response) => {
       this.estabs.set(response);
-      const dataEstab = this.estabs().find(item => item.predeterminado);
+      const dataEstab = this.estabs().find((item) => item.predeterminado);
       this.estabId.set(dataEstab?.idEstablecimiento || 0);
       this.getFloors();
     });
   }
 
   getFloors() {
-    this.$getFloorsUseCase.execute(this.estabId()).subscribe(res => {
+    this.$getFloorsUseCase.execute(this.estabId()).subscribe((res) => {
       // this.floors = res;
       console.log(res);
       this.dataSource.set(res.floors);
@@ -90,7 +90,7 @@ export class InfrastructurePageComponent implements OnInit {
 
   addEditFloor(data?: FloorTreeNode) {
     const codEstab =
-      this.estabs().find(x => x.idEstablecimiento === this.estabId())?.codEstab || null;
+      this.estabs().find((x) => x.idEstablecimiento === this.estabId())?.codEstab || null;
     const ref = this._dialogSvc.open(FloorAddEditModalComponent, {
       data: {
         codEstab,
@@ -99,7 +99,7 @@ export class InfrastructurePageComponent implements OnInit {
       },
       size: 'lg',
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getFloors();
       }
@@ -116,9 +116,9 @@ export class InfrastructurePageComponent implements OnInit {
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
       showCancelButton: true,
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
-        this._floorUseCase.remove(item.id).subscribe(result => {
+        this._floorUseCase.remove(item.id).subscribe((result) => {
           Swal.fire({
             icon: result.code == '1' ? 'success' : 'warning',
             html: result.message,
@@ -148,7 +148,7 @@ export class InfrastructurePageComponent implements OnInit {
     const ref = this._dialogSvc.open(TableAddEditModalComponent, {
       data: dialogData,
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getFloors();
       }
@@ -165,9 +165,9 @@ export class InfrastructurePageComponent implements OnInit {
       cancelButtonText: 'No',
       allowOutsideClick: false,
       allowEscapeKey: false,
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
-        this._tableUseCase.remove(table.id).subscribe(response => {
+        this._tableUseCase.remove(table.id).subscribe((response) => {
           Swal.fire({
             icon: response.code == '1' ? 'success' : 'warning',
             html: response.message,
@@ -200,7 +200,7 @@ export class InfrastructurePageComponent implements OnInit {
     const ref = this._dialogSvc.open(RoomAddEditModalComponent, {
       data,
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getFloors();
       }

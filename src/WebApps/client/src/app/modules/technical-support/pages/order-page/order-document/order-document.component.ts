@@ -1,4 +1,3 @@
-
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';

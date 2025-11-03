@@ -122,7 +122,7 @@ export class ExcelImportComponent implements OnInit {
   selection = new SelectionModel<any>(true, []);
 
   ngOnInit() {
-    this.$getFormData.execute().subscribe(response => {
+    this.$getFormData.execute().subscribe((response) => {
       this.modules.set(response.modules);
     });
   }
@@ -145,7 +145,7 @@ export class ExcelImportComponent implements OnInit {
     if (this.isAllSelected()) {
       this.selection.clear();
     } else {
-      this.dataSource.data.forEach(row => this.selection.select(row));
+      this.dataSource.data.forEach((row) => this.selection.select(row));
     }
   }
 
@@ -154,11 +154,11 @@ export class ExcelImportComponent implements OnInit {
   }
 
   isSelectionDisabled() {
-    return this.dataSource.data.some(item => !(item.estado === 'IMPORTAR'));
+    return this.dataSource.data.some((item) => !(item.estado === 'IMPORTAR'));
   }
 
   handleChangeModule() {
-    const dataModule = this.modules().find(item => item.codigo === this.data().codeModule);
+    const dataModule = this.modules().find((item) => item.codigo === this.data().codeModule);
     this.data.set({
       nameModule: dataModule.descripcion,
       codeModule: dataModule.codigo,
@@ -172,12 +172,12 @@ export class ExcelImportComponent implements OnInit {
 
     try {
       const rawData = await this._excelImportSvc.parseExcelFile(target.files[0]);
-      const displayedColumns = Object.keys(rawData[0]).map(c => c.trim());
+      const displayedColumns = Object.keys(rawData[0]).map((c) => c.trim());
 
       // this.displayedColumns = [...this.displayedColumns, ...displayedColumns]
       this.tempArrayFiles = this._excelImportSvc
         .mapItems(rawData, this.displayedColumns)
-        .map(row => this._excelImportSvc.cleanRow(row, displayedColumns, this.data().codeModule));
+        .map((row) => this._excelImportSvc.cleanRow(row, displayedColumns, this.data().codeModule));
       this.validateImport();
     } catch (error) {
       console.error('Error al leer el archivo:', error);
@@ -228,7 +228,7 @@ export class ExcelImportComponent implements OnInit {
         },
       })
       .pipe(finalize(() => Swal.close()))
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.code === '0') {
           Swal.fire({ icon: 'warning', html: `<small>${response.message}</small>` });
         } else if (response.code === '1') {
@@ -236,7 +236,7 @@ export class ExcelImportComponent implements OnInit {
           const payload = JSON.parse(response.payload as string);
           this.dataSource.data = payload;
           const displayedColumns = Object.keys(payload[0]).filter(
-            item => !['idArticulo', 'idMedida', 'idSubFamilia', 'idTipoIva'].includes(item),
+            (item) => !['idArticulo', 'idMedida', 'idSubFamilia', 'idTipoIva'].includes(item),
           );
 
           this.displayedColumns = [...this.displayedColumns, ...displayedColumns];
@@ -311,7 +311,7 @@ export class ExcelImportComponent implements OnInit {
       confirmButtonText: 'Sí, guardar',
       denyButtonText: 'No, cancelar',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (!result.isConfirmed) return;
       const sendData = {
         code: this.data().codeModule,
@@ -323,7 +323,7 @@ export class ExcelImportComponent implements OnInit {
       this.$saveUseCase
         .execute(sendData)
         .pipe(finalize(() => Swal.close()))
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

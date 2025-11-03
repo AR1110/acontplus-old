@@ -42,7 +42,7 @@ export class ItemListComponent implements OnInit {
     { key: 'descripcion', label: 'Descripción', type: 'string' },
     { key: 'summary', label: 'Resumen', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = signal<any>([]);
 
@@ -55,7 +55,7 @@ export class ItemListComponent implements OnInit {
       tipo: 1,
       textSearch: isValidField(this.dataSearch.textSearch),
     };
-    this.#itemService.get(obj).subscribe(response => {
+    this.#itemService.get(obj).subscribe((response) => {
       const items = response.items.map((item: any, index: number) => {
         return {
           index: index + 1,
@@ -81,7 +81,7 @@ export class ItemListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -96,7 +96,7 @@ export class ItemListComponent implements OnInit {
       size: 'xl',
       data: structuredClone(item),
     });
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (typeof response === 'object' && response.code === '1') {
         this.loadData();
       }

@@ -114,7 +114,7 @@ export class PetPageComponent implements OnInit {
         showDenyButton: true,
         denyButtonText: 'No',
         confirmButtonText: 'Si',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           event.source.checked = event.checked;
           //this.enableDisable(item.id, event.checked);
@@ -147,14 +147,13 @@ export class PetPageComponent implements OnInit {
       pageSize: this.pagination.pageSize,
     };
     const clonedParams = Object.assign(params, this.dataSearch);
-    this.petService.get(clonedParams).subscribe(response => {
+    this.petService.get(clonedParams).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { pets } = JSON.parse(response.payload as string);
-        petsModified =
-          pets?.map((pet: any, index: number) => ({
-            ...pet,
-            position: index + 1,
-          }));
+        petsModified = pets?.map((pet: any, index: number) => ({
+          ...pet,
+          position: index + 1,
+        }));
       }
       this.dataSource = new MatTableDataSource(petsModified);
       this.dataSource.paginator = this.paginator;
@@ -179,9 +178,9 @@ export class PetPageComponent implements OnInit {
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
-        this.petService.delete(item.id).subscribe(response => {
+        this.petService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
@@ -207,7 +206,7 @@ export class PetPageComponent implements OnInit {
       data: this.data.id > 0 ? this.data : {},
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.loadPets();
       }

@@ -50,7 +50,7 @@ export class UserCustomerComponent implements OnInit {
     { key: 'email', label: 'Correo', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -75,9 +75,9 @@ export class UserCustomerComponent implements OnInit {
       .execute(params)
       .pipe(finalize(() => this.$loading.set(false)))
 
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.set(response.data);
-        this.pagination.update(item => ({
+        this.pagination.update((item) => ({
           ...item,
           totalRecords: response.totalRecords,
         }));
@@ -98,7 +98,7 @@ export class UserCustomerComponent implements OnInit {
       size: 'md',
       data: item ? structuredClone(item) : {},
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -113,7 +113,7 @@ export class UserCustomerComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

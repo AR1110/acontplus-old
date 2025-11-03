@@ -124,7 +124,7 @@ export const THEME_OPTIONS: ThemeOption[] = [
   },
 ];
 
-export const THEME_CLASSES = THEME_OPTIONS.flatMap(option => [
+export const THEME_CLASSES = THEME_OPTIONS.flatMap((option) => [
   option.light.class,
   option.dark.class,
 ]);

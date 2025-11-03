@@ -16,7 +16,7 @@ export class ActionMovCajaDirective implements OnInit {
 
   ngOnInit() {
     this.pS.select('accion').subscribe({
-      next: value => {
+      next: (value) => {
         if (value && value.movimiento) return;
         this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },

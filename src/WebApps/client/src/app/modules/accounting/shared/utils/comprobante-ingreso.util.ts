@@ -58,7 +58,7 @@ class ComprobanteIngresoUtil {
           historialAbono = 0;
 
         const cobrosDetalleFiltered = this.paymentDetails.filter(
-          cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
+          (cd) => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
         );
 
         const totalAbonoCuenta = roundNumber(
@@ -68,7 +68,7 @@ class ComprobanteIngresoUtil {
 
         if (cobrosDetalleFiltered.length === 0) {
           const historialCuentasFiltered = this.historialCuentas.filter(
-            cd =>
+            (cd) =>
               cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
               cd.secuencial === this.sequencia,
           );
@@ -99,7 +99,7 @@ class ComprobanteIngresoUtil {
         if (cobrosDetalleFiltered.length > 0) {
           if (totalAbonoCuenta !== roundNumber(this.voucher.saldo, this.MAX_NUMBER_ROUND_GENERAL)) {
             const historialCuentasFiltered = this.historialCuentas.filter(
-              cd => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
+              (cd) => cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar,
             );
 
             const dataUltimoCobroDetalle = historialCuentasFiltered.pop();
@@ -244,7 +244,7 @@ class ComprobanteIngresoUtil {
 
     let valorMovimientoSaldo = 0;
     const cobrosDetalleFiltered = this.paymentDetails.filter(
-      cd =>
+      (cd) =>
         cd.idCuentaPorCobrar === this.voucher.idCuentaPorCobrar &&
         cd.idCuotaPorCobrar === item.idCuotaPorCobrar,
     );
@@ -323,7 +323,7 @@ export const getPaymentSubTotales = (
   );
 
   const totalSaldo = cuotasPorCobrar
-    .flatMap(item => item.cuotas)
+    .flatMap((item) => item.cuotas)
     .reduce((prev, curr) => prev + curr.saldo, 0);
   let valorCambio = 0;
 

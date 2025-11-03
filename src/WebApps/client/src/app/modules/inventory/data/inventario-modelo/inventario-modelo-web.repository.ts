@@ -25,7 +25,7 @@ export class InventarioModeloWebRepository implements InventarioModeloRepository
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             data: [] as any[],
           };

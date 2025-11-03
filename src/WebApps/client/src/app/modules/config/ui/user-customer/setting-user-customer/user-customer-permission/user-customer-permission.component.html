@@ -6,7 +6,12 @@
       [text]="userPermissionData.idUserPermission > 0 ? 'Actualizar' : 'Guardar'"
       (handleClick)="save()"
     />
-    <app-theme-button [variant]="'info'" [matStyle]="'icon'" [icon]="'refresh'" (handleClick)="refresh()" />
+    <app-theme-button
+      [variant]="'info'"
+      [matStyle]="'icon'"
+      [icon]="'refresh'"
+      (handleClick)="refresh()"
+    />
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -64,8 +69,8 @@
                   }
                 </mat-select>
                 <mat-hint
-                  >Son usuarios administradores a los que se les enviará la solicitud pertinente para realizar esta
-                  acción.</mat-hint
+                  >Son usuarios administradores a los que se les enviará la solicitud pertinente
+                  para realizar esta acción.</mat-hint
                 >
               </mat-form-field>
             </div>

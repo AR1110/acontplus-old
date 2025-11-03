@@ -112,7 +112,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   someCompleteSaleComprobante() {
     const comprobantePermisos =
       this.permissionSaleComprobanteKey.filter(
-        permiso => this.mainPermissionSale.comprobante[permiso].enabled,
+        (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
       ).length > 0 && !this.allCompleteSaleComprobante();
     return comprobantePermisos;
   }
@@ -120,7 +120,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   setAllSaleComprobante(completed: boolean) {
     this.allCompleteSaleComprobante.set(completed);
 
-    this.permissionSaleComprobanteKey.forEach(permiso => {
+    this.permissionSaleComprobanteKey.forEach((permiso) => {
       this.mainPermissionSale.comprobante[permiso].enabled = completed;
     });
   }
@@ -128,7 +128,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   updateAllCompleteSaleComprobante() {
     this.allCompleteSaleComprobante.set(
       this.permissionSaleComprobanteKey.every(
-        permiso => this.mainPermissionSale.comprobante[permiso].enabled,
+        (permiso) => this.mainPermissionSale.comprobante[permiso].enabled,
       ),
     );
   }
@@ -140,7 +140,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   someCompleteSaleDetail() {
     const isSome =
       this.permissionSaleDetailKey.filter(
-        permiso => this.mainPermissionSale.detail[permiso].enabled,
+        (permiso) => this.mainPermissionSale.detail[permiso].enabled,
       ).length > 0 && !this.allCompleteSaleDetail;
     return isSome;
   }
@@ -148,13 +148,13 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   setAllSaleDetail(completed: boolean) {
     this.allCompleteSaleDetail = completed;
 
-    this.permissionSaleDetailKey.forEach(permiso => {
+    this.permissionSaleDetailKey.forEach((permiso) => {
       this.mainPermissionSale.detail[permiso].enabled = completed;
     });
   }
   updateAllCompleteSaleDetail() {
     this.allCompleteSaleDetail = this.permissionSaleDetailKey.every(
-      permiso => this.mainPermissionSale.detail[permiso].enabled,
+      (permiso) => this.mainPermissionSale.detail[permiso].enabled,
     );
   }
   //=======================================
@@ -166,7 +166,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   someCompleteSaleAdditional() {
     const isSome =
       this.permissionSaleAdditionalKey.filter(
-        permiso => this.mainPermissionSale.additional[permiso].enabled,
+        (permiso) => this.mainPermissionSale.additional[permiso].enabled,
       ).length > 0 && !this.allCompleteSaleAdditional;
     return isSome;
   }
@@ -174,14 +174,14 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   setAllSaleAdditional(completed: boolean) {
     this.allCompleteSaleAdditional = completed;
 
-    this.permissionSaleAdditionalKey.forEach(permiso => {
+    this.permissionSaleAdditionalKey.forEach((permiso) => {
       this.mainPermissionSale.additional[permiso].enabled = completed;
     });
   }
 
   updateAllCompleteSaleAdditional() {
     this.allCompleteSaleAdditional = this.permissionSaleAdditionalKey.every(
-      permiso => this.mainPermissionSale.additional[permiso].enabled,
+      (permiso) => this.mainPermissionSale.additional[permiso].enabled,
     );
   }
 
@@ -192,7 +192,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   someCompleteProduct() {
     const isSome =
       this.permissionProductKey.filter(
-        permiso => this.mainPermission?.permissionsProduct?.permission[permiso].enabled,
+        (permiso) => this.mainPermission?.permissionsProduct?.permission[permiso].enabled,
       ).length > 0 && !this.allCompleteProduct;
     return isSome;
   }
@@ -200,14 +200,14 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   setAllProduct(completed: boolean) {
     this.allCompleteProduct = completed;
 
-    this.permissionProductKey.forEach(permiso => {
+    this.permissionProductKey.forEach((permiso) => {
       this.mainPermission.permissionsProduct.permission[permiso].enabled = completed;
     });
   }
 
   updateAllCompleteProduct() {
     this.allCompleteProduct = this.permissionProductKey.every(
-      permiso => this.mainPermission?.permissionsProduct?.permission[permiso].enabled,
+      (permiso) => this.mainPermission?.permissionsProduct?.permission[permiso].enabled,
     );
   }
 
@@ -218,7 +218,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   someCompleteCashBox() {
     const isSome =
       this.permissionCashBoxKey.filter(
-        permiso => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled,
+        (permiso) => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled,
       ).length > 0 && !this.allCompleteCashBox;
     return isSome;
   }
@@ -226,14 +226,14 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   setAllCashBox(completed: boolean) {
     this.allCompleteCashBox = completed;
 
-    this.permissionCashBoxKey.forEach(permiso => {
+    this.permissionCashBoxKey.forEach((permiso) => {
       this.mainPermission.permissionsCashBox.permission[permiso].enabled = completed;
     });
   }
 
   updateAllCompleteCashBox() {
     this.allCompleteCashBox = this.permissionCashBoxKey.every(
-      permiso => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled,
+      (permiso) => this.mainPermission?.permissionsCashBox?.permission[permiso].enabled,
     );
   }
 
@@ -269,7 +269,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
         dataPermissions,
       };
 
-      this.$updateUseCase.execute(data).subscribe(response => {
+      this.$updateUseCase.execute(data).subscribe((response) => {
         if (response.code === '0') {
           Swal.fire({
             icon: 'warning',

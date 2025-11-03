@@ -138,7 +138,7 @@ export class ComprobanteEgresoMapper {
       observacion: isValidField(observacion),
     };
 
-    const pagos = formasPago.map(item => {
+    const pagos = formasPago.map((item) => {
       return {
         idSubEntidadFinanciera: item.idSubEntidadFinanciera,
         idEntidadFinanciera: item.idEntidadFinanciera,
@@ -167,7 +167,7 @@ export class ComprobanteEgresoMapper {
       };
     });
 
-    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map(item => {
+    const cuentasPorPagarHistorialMapper = cuentasPorPagarHistorial.map((item) => {
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         saldo: item.saldo,
@@ -176,7 +176,7 @@ export class ComprobanteEgresoMapper {
       };
     });
 
-    const cuentasPorPagarDeterminarEstado = cuentasPorPagarEstado.map(item => {
+    const cuentasPorPagarDeterminarEstado = cuentasPorPagarEstado.map((item) => {
       return {
         idCuentaPorPagar: item.idCuentaPorPagar,
         idEstadoPago: item.idEstadoPago,
@@ -184,7 +184,7 @@ export class ComprobanteEgresoMapper {
       };
     });
 
-    const cuotasPorPagarDeterminarEstado = cuotasPorPagarEstado.map(item => {
+    const cuotasPorPagarDeterminarEstado = cuotasPorPagarEstado.map((item) => {
       return {
         idCuotaPorPagar: item.idCuotaPorPagar,
         idEstadoPago: item.idEstadoPago,

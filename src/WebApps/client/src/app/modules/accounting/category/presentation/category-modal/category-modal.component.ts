@@ -40,7 +40,7 @@ export class CategoryModalComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   get() {
-    this._categoryUseCase.get({ tipo: 2 }).subscribe(response => {
+    this._categoryUseCase.get({ tipo: 2 }).subscribe((response) => {
       if (response.code == '1') {
         const { tipos } = JSON.parse(response.payload as string);
         this.tipos = tipos;

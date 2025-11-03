@@ -42,7 +42,13 @@
           </a>
         }
         @if (menuItem.type === 'extTabLink') {
-          <a class="menu-heading" [href]="menuItem.route" target="_blank" matRipple [matRippleDisabled]="!ripple">
+          <a
+            class="menu-heading"
+            [href]="menuItem.route"
+            target="_blank"
+            matRipple
+            [matRippleDisabled]="!ripple"
+          >
             <ng-container
               [ngTemplateOutlet]="linkTypeTpl"
               [ngTemplateOutletContext]="{ item: menuItem, level: level }"
@@ -50,7 +56,12 @@
           </a>
         }
         @if (menuItem.type === 'sub') {
-          <button appNavAccordionToggle class="menu-heading menu-toggle" matRipple [matRippleDisabled]="!ripple">
+          <button
+            appNavAccordionToggle
+            class="menu-heading menu-toggle"
+            matRipple
+            [matRippleDisabled]="!ripple"
+          >
             <ng-container
               [ngTemplateOutlet]="linkTypeTpl"
               [ngTemplateOutletContext]="{ item: menuItem, level: level }"

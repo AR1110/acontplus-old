@@ -1,4 +1,9 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="title" (close)="close()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="title"
+  (close)="close()"
+/>
 
 <ng-template #body>
   <div class="d-grid gap-2">
@@ -7,7 +12,11 @@
       <input matInput [(ngModel)]="data.descripcion" />
     </mat-form-field>
 
-    <mat-radio-group aria-label="Select an option" [(ngModel)]="data.tipo" (change)="handleChangeType()">
+    <mat-radio-group
+      aria-label="Select an option"
+      [(ngModel)]="data.tipo"
+      (change)="handleChangeType()"
+    >
       <mat-radio-button [value]="true">Contado</mat-radio-button>
       <mat-radio-button [value]="false">Crédito</mat-radio-button>
     </mat-radio-group>

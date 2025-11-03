@@ -4,8 +4,12 @@
     <div class="col-xl-9 col-lg-9 col-md-12 col-12">
       <mat-chip-listbox aria-label="Option selection" [(ngModel)]="dataSearch.option">
         <mat-chip-option [value]="1" color="accent"> Fecha</mat-chip-option>
-        <mat-chip-option [value]="2" color="accent">Buscar consolidaciones de Inventario</mat-chip-option>
-        <mat-chip-option [value]="3" color="accent">Buscar a partir de la ultima consolidación</mat-chip-option>
+        <mat-chip-option [value]="2" color="accent"
+          >Buscar consolidaciones de Inventario</mat-chip-option
+        >
+        <mat-chip-option [value]="3" color="accent"
+          >Buscar a partir de la ultima consolidación</mat-chip-option
+        >
       </mat-chip-listbox>
     </div>
     <div class="col-xl-3 col-lg-3 col-md-12 col-12">
@@ -92,7 +96,13 @@
     </div>
     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
       <div class="d-grid gap-2 d-md-flex justify-content-end mt-4">
-        <app-theme-button variant="info" icon="search" text="Buscar" matStyle="icon" (handleClick)="searchKardex()" />
+        <app-theme-button
+          variant="info"
+          icon="search"
+          text="Buscar"
+          matStyle="icon"
+          (handleClick)="searchKardex()"
+        />
         <app-theme-button variant="secondary" icon="download" (handleClick)="getReport()" />
       </div>
     </div>
