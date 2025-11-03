@@ -4,10 +4,10 @@ namespace Sales.Application.DTOs;
 public record CreateAprobacionDocumentoDto
 {
     public ComprobanteDto Comprobante { get; init; } = new();
-    public List<DetalleDto> Detalles { get; init; } = new();
-    public List<ImpuestoDto> Impuestos { get; init; } = new();
-    public List<InfoAdicionalDto> InfoAdicional { get; init; } = new();
-    public List<InfoAdicionalArticuloDto> InfoAdicionalArticulo { get; init; } = new();
+    public List<DetalleDto> Detalles { get; init; } = [];
+    public List<ImpuestoDto> Impuestos { get; init; } = [];
+    public List<InfoAdicionalDto> InfoAdicional { get; init; } = [];
+    public List<InfoAdicionalArticuloDto> InfoAdicionalArticulo { get; init; } = [];
     public HistorialDto Historial { get; init; } = new();
 }
 
@@ -15,21 +15,21 @@ public record CreateAprobacionDocumentoDto
 public record UpdateAprobacionDocumentoDto
 {
     public ComprobanteDto Comprobante { get; init; } = new();
-    public List<DetalleDto> Detalles { get; init; } = new();
-    public List<ImpuestoDto> Impuestos { get; init; } = new();
-    public List<InfoAdicionalDto> InfoAdicional { get; init; } = new();
-    public List<InfoAdicionalArticuloDto> InfoAdicionalArticulo { get; init; } = new();
+    public List<DetalleDto> Detalles { get; init; } = [];
+    public List<ImpuestoDto> Impuestos { get; init; } = [];
+    public List<InfoAdicionalDto> InfoAdicional { get; init; } = [];
+    public List<InfoAdicionalArticuloDto> InfoAdicionalArticulo { get; init; } = [];
 }
 
 // DTO for converting AprobacionDocumento to Document
 public record ConvertToDocumentDto
 {
     public ComprobanteConvertDto Comprobante { get; init; } = new();
-    public List<DetalleConvertDto> Detalles { get; init; } = new();
-    public List<ImpuestoDto> Impuestos { get; init; } = new();
-    public List<InfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<DetalleConvertDto> Detalles { get; init; } = [];
+    public List<ImpuestoDto> Impuestos { get; init; } = [];
+    public List<InfoAdicionalDto> InfoAdicional { get; init; } = [];
     public FormaPagoDto FormaPago { get; init; } = new();
-    public List<CuotaDto> Cuotas { get; init; } = new();
+    public List<CuotaDto> Cuotas { get; init; } = [];
 }
 
 // Supporting DTOs based on OPENJSON mappings from SPs

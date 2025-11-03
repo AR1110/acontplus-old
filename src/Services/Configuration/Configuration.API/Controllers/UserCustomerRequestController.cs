@@ -10,9 +10,7 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
         { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
     };
         var response = await userCustomerRequestService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
 
@@ -37,8 +35,6 @@ public class UserCustomerRequestController(IUserCustomerRequestService userCusto
         { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateUserCustomerRequestDto>(data)) }
     };
         var response = await userCustomerRequestService.UpdateAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 }

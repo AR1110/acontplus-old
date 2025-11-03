@@ -7,9 +7,7 @@ public class FacturaCompraRepository(IAdoRepository adoRepository) : IFacturaCom
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
-        if (ds.Tables[0].Rows.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds.Tables[0].Rows.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
@@ -20,9 +18,7 @@ public class FacturaCompraRepository(IAdoRepository adoRepository) : IFacturaCom
     public async Task<object> GetByIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync($"{ModuleName}Get_Id", parameters);
-        if (ds.Tables[0].Rows.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds.Tables[0].Rows.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)

@@ -3,17 +3,17 @@ namespace Sales.Application.DTOs;
 public record CreateProformaDto
 {
     public ProformaInfoDto Proforma { get; init; } = new();
-    public List<ProformaDetalleDto> Detalles { get; init; } = new();
-    public List<ProformaImpuestoDto> Impuestos { get; init; } = new();
-    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<ProformaDetalleDto> Detalles { get; init; } = [];
+    public List<ProformaImpuestoDto> Impuestos { get; init; } = [];
+    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = [];
 }
 
 public record UpdateProformaDto
 {
     public ProformaInfoDto Proforma { get; init; } = new();
-    public List<ProformaDetalleDto> Detalles { get; init; } = new();
-    public List<ProformaImpuestoDto> Impuestos { get; init; } = new();
-    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<ProformaDetalleDto> Detalles { get; init; } = [];
+    public List<ProformaImpuestoDto> Impuestos { get; init; } = [];
+    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = [];
 }
 
 public record ProformaInfoDto
@@ -78,7 +78,7 @@ public record ProformaInfoAdicionalDto
 public record ProformaConvertToDocDto
 {
     public ProformaInfoDto Proforma { get; init; } = new();
-    public List<ProformaDetalleDto> Detalles { get; init; } = new();
-    public List<ProformaImpuestoDto> Impuestos { get; init; } = new();
-    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<ProformaDetalleDto> Detalles { get; init; } = [];
+    public List<ProformaImpuestoDto> Impuestos { get; init; } = [];
+    public List<ProformaInfoAdicionalDto> InfoAdicional { get; init; } = [];
 }

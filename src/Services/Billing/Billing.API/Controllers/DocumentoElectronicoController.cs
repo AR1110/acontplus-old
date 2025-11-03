@@ -112,9 +112,7 @@ public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElect
             { "id", id }
         };
         var response = await documentoElectronicoService.GetXmlSriAsync(parameters);
-        if (response == null) return BadRequest("No se encontro xml");
-
-        return File(response.Content, "text/xml", response.FileName);
+        return response == null ? BadRequest("No se encontro xml") : File(response.Content, "text/xml", response.FileName);
     }
 
     [HttpPut("{id}")]

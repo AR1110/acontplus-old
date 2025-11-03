@@ -32,7 +32,7 @@ public static class ApplicationServicesExtensions
         [
             "Common.Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
-            
+
             "Acontplus.Services.Extensions.Context"
         ];
 

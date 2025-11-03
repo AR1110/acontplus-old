@@ -15,9 +15,7 @@ public class ProductPhotoController(
     public async Task<IActionResult> Get(int productId)
     {
         var response = await productPhoto.GetAsync(productId);
-        if (response == null) return BadRequest($"Cant get data: {productId}");
-
-        return Ok(response);
+        return response == null ? BadRequest($"Cant get data: {productId}") : Ok(response);
     }
 
     [HttpPost("{productId}")]

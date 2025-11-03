@@ -13,5 +13,5 @@ public class Menu : BaseEntity
     public int? MenuTypeId { get; set; }
     public string? Content { get; set; }
     public bool ForPromotion { get; set; }
-    public ICollection<MenuItem> MenuItems { get; set; } = new List<MenuItem>();
+    public ICollection<MenuItem> MenuItems { get; set; } = [];
 }

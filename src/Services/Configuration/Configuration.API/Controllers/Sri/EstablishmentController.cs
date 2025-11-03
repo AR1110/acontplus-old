@@ -15,9 +15,7 @@ public class EstablishmentController(IEstablishmentService service) : BaseApiCon
         { "json", SqlStringParam.Sanitize(json) }
     };
         var response = await service.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPost]

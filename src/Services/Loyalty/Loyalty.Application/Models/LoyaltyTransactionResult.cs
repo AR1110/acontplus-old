@@ -9,5 +9,5 @@ public class LoyaltyTransactionResult
     public int NewPointsBalance { get; set; }
     public bool TierChanged { get; set; }
     public string NewTier { get; set; }
-    public List<string> NewTierBenefits { get; set; } = new();
+    public List<string> NewTierBenefits { get; set; } = [];
 }

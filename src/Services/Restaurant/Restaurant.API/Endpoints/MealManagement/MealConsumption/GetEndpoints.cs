@@ -1,6 +1,4 @@
-using Acontplus.Core.DTOs.Requests;
 using Acontplus.Core.DTOs.Responses;
-using Acontplus.Utilities.DTOs;
 
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
 

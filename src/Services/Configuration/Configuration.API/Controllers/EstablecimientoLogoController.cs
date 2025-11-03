@@ -14,9 +14,7 @@ public class EstablecimientoLogoController : BaseApiController
     public async Task<IActionResult> Get(int establecimientoId)
     {
         var response = await _establecimientoLogoService.GetAsync(establecimientoId);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPost("{establecimientoId}")]
@@ -28,9 +26,7 @@ public class EstablecimientoLogoController : BaseApiController
         estabLogo.CreatedByUserId = User.GetUserId();
         estabLogo.CreatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.AddAsync(estabLogo);
-        if (response == null) return BadRequest($"No response: {establecimientoId}");
-
-        return Ok(response);
+        return response == null ? BadRequest($"No response: {establecimientoId}") : Ok(response);
     }
 
     [HttpPost("Put/{id}")]
@@ -42,17 +38,13 @@ public class EstablecimientoLogoController : BaseApiController
         var estabLogo = ObjectMapper.Map<FileModel, EstablecimientoLogo>(fileModel);
         estabLogo.UpdatedByUserId = User.GetUserId();
         var response = await _establecimientoLogoService.UpdateAsync(id, estabLogo);
-        if (response == null) return BadRequest($"No response {id}");
-
-        return Ok(response);
+        return response == null ? BadRequest($"No response {id}") : Ok(response);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var response = await _establecimientoLogoService.DeleteAsync(id);
-        if (response == null) return BadRequest($"No response {id}");
-
-        return Ok(response);
+        return response == null ? BadRequest($"No response {id}") : Ok(response);
     }
 }

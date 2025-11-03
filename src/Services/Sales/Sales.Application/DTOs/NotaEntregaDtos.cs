@@ -3,17 +3,17 @@ namespace Sales.Application.DTOs;
 public record CreateNotaEntregaDto
 {
     public NotaEntregaInfoDto InfoNotaEntrega { get; init; } = new();
-    public List<NotaEntregaDetalleDto> Detalles { get; init; } = new();
-    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = new();
-    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<NotaEntregaDetalleDto> Detalles { get; init; } = [];
+    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = [];
+    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = [];
 }
 
 public record UpdateNotaEntregaDto
 {
     public NotaEntregaInfoDto InfoNotaEntrega { get; init; } = new();
-    public List<NotaEntregaDetalleDto> Detalles { get; init; } = new();
-    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = new();
-    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = new();
+    public List<NotaEntregaDetalleDto> Detalles { get; init; } = [];
+    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = [];
+    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = [];
 }
 
 public record NotaEntregaInfoDto
@@ -79,11 +79,11 @@ public record NotaEntregaInfoAdicionalDto
 public record NotaEntregaConvertToDocDto
 {
     public NotaEntregaComprobanteDto Comprobante { get; init; } = new();
-    public List<NotaEntregaDetalleDto> Detalles { get; init; } = new();
-    public List<NotaEntregaFormaPagoDto> FormaPago { get; init; } = new();
-    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = new();
-    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = new();
-    public List<NotaEntregaCuotaDto> Cuotas { get; init; } = new();
+    public List<NotaEntregaDetalleDto> Detalles { get; init; } = [];
+    public List<NotaEntregaFormaPagoDto> FormaPago { get; init; } = [];
+    public List<NotaEntregaImpuestoDto> Impuestos { get; init; } = [];
+    public List<NotaEntregaInfoAdicionalDto> InfoAdicional { get; init; } = [];
+    public List<NotaEntregaCuotaDto> Cuotas { get; init; } = [];
 }
 
 public record NotaEntregaComprobanteDto

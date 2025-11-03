@@ -11,9 +11,7 @@ public class MassiveTaxController(IMassiveTaxService massiveTaxService) : BaseAp
       { "json", SqlStringParam.Sanitize(json) }
     };
         var response = await massiveTaxService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPut]

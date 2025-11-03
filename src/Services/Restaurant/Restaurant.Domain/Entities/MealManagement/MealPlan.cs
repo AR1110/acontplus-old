@@ -17,7 +17,7 @@ public class MealPlan : BaseEntity
     public bool IsDefault { get; set; }
 
     // Navigation Properties
-    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = new List<MealPlanSchedule>();
-    public ICollection<CompanyCustomerMealPlan> CompanyCustomerMealPlans { get; set; } = new List<CompanyCustomerMealPlan>();
-    public ICollection<DailyMenu> DailyMenus { get; set; } = new List<DailyMenu>();
+    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = [];
+    public ICollection<CompanyCustomerMealPlan> CompanyCustomerMealPlans { get; set; } = [];
+    public ICollection<DailyMenu> DailyMenus { get; set; } = [];
 }

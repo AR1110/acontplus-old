@@ -7,7 +7,7 @@ public class Account : BaseEntity
 
     public required Account ParentAccount { get; set; } // Propiedad de navegación a la cuenta padre
 
-    public ICollection<Account> ChildAccounts { get; set; } = new List<Account>(); // Colección de cuentas hijas
+    public ICollection<Account> ChildAccounts { get; set; } = []; // Colección de cuentas hijas
 
     public required Tipo Tipo { get; set; }
     public int? TipoId { get; set; }

@@ -13,9 +13,9 @@ public class ComprobanteIngresoRepository : IComprobanteIngresoRepository
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
-        if (ds.Tables.Count == 0) return new SpResponse { Code = "1", Message = "No existen datos." };
-
-        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return ds.Tables.Count == 0
+            ? new SpResponse { Code = "1", Message = "No existen datos." }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
 

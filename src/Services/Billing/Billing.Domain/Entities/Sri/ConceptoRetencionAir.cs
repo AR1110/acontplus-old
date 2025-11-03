@@ -14,5 +14,5 @@ public class ConceptoRetencionAir : BaseEntity
     public decimal Porcentaje { get; set; }
 
     public ICollection<PorcentajeRetencionAir> PorcentajeRetencionAirs { get; set; } =
-        new List<PorcentajeRetencionAir>();
+        [];
 }

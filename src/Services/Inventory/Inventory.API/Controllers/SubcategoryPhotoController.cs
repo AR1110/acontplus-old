@@ -18,9 +18,7 @@ public class SubcategoryPhotoController(
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) return BadRequest($"Cant get data: {json}");
-
-        return Ok(response);
+        return response == null ? BadRequest($"Cant get data: {json}") : Ok(response);
     }
 
     [HttpPost("{subcategoryId}")]

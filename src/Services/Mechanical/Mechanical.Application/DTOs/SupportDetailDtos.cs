@@ -3,13 +3,13 @@ namespace Mechanical.Application.DTOs;
 public record CreateSupportDetailDto
 {
     public SupportDto Support { get; init; } = new();
-    public List<SupportDetailItemDto> SupportDetails { get; init; } = new();
+    public List<SupportDetailItemDto> SupportDetails { get; init; } = [];
 }
 
 public record UpdateSupportDetailDto
 {
     public SupportDto Support { get; init; } = new();
-    public List<SupportDetailItemDto> SupportDetails { get; init; } = new();
+    public List<SupportDetailItemDto> SupportDetails { get; init; } = [];
 }
 
 public record SupportDto

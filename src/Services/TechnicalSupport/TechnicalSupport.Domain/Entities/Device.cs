@@ -13,6 +13,6 @@ public class Device : BaseEntity
 
     [MaxLength(100)] public string? Color { get; set; }
 
-    public ICollection<DeviceCustomer> Customers { get; set; } = new List<DeviceCustomer>();
+    public ICollection<DeviceCustomer> Customers { get; set; } = [];
     public required DeviceSpecs Specs { get; set; }
 }

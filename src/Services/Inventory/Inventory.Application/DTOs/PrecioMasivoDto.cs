@@ -3,7 +3,7 @@ namespace Inventory.Application.DTOs;
 public record PrecioMasivoDto
 {
     public int Tipo { get; init; }
-    public List<ArticuloPrecioDto> Articulos { get; init; } = new();
+    public List<ArticuloPrecioDto> Articulos { get; init; } = [];
 }
 
 public record ArticuloPrecioDto

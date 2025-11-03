@@ -10,9 +10,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await bodegaAsignacionService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPost]
@@ -25,9 +23,7 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
         { "fromMobile", HttpContext.Items["FromMobile"] as bool? ?? false }
     };
         var response = await bodegaAsignacionService.AddAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
 
@@ -37,8 +33,6 @@ public class BodegaAsignacionController(IBodegaAsignacionService bodegaAsignacio
         var parameters = new Dictionary<string, object>
         { { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id } };
         var response = await bodegaAsignacionService.UpdateAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 }

@@ -11,9 +11,7 @@ public class PrecioMasivoController(IPrecioMasivoService precioMasivoService) : 
             { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await precioMasivoService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? (ActionResult<SpResponse>)NoContent() : (ActionResult<SpResponse>)Ok(response);
     }
 
     [HttpPut]

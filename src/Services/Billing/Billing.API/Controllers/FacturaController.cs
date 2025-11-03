@@ -12,9 +12,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         });
-        if (response == null) return NoContent();
-
-        return Ok(new { code = "1", payload = response });
+        return response == null ? NoContent() : Ok(new { code = "1", payload = response });
     }
 
     [HttpPost]
@@ -53,9 +51,7 @@ public class FacturaController(IFacturaService service) : BaseApiController
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "id", id }
         });
-        if (response == null) return NoContent();
-
-        return Ok(new { code = "1", payload = response });
+        return response == null ? NoContent() : Ok(new { code = "1", payload = response });
     }
 
     [HttpPut("Cancel/{id}")]

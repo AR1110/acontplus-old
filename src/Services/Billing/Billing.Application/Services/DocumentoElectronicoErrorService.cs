@@ -26,7 +26,7 @@ public class DocumentoElectronicoErrorService(IAdoRepository adoRepository, ICon
             // Log successful cleanup (optional)
             // _logger.LogInformation($"Error cleanup completed successfully with batch size: {batchSize}");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // Log error (optional)
             // _logger.LogError(ex, "Error occurred during cleanup process");

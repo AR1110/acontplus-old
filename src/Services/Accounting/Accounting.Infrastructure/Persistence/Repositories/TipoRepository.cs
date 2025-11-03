@@ -33,13 +33,13 @@ public class TipoRepository : ITipoRepository
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var tipos = await _context.Tipos.Where(x => x.IsActive == true).ToListAsync();
-        if (tipos.Count == 0) return new SpResponse { Code = "0", Message = "Data no existe" };
-
-        return new SpResponse
-        {
-            Code = "1",
-            Payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
-        };
+        return tipos.Count == 0
+            ? new SpResponse { Code = "0", Message = "Data no existe" }
+            : new SpResponse
+            {
+                Code = "1",
+                Payload = DataConverters.SerializeObjectCustom<List<Tipo>>(tipos)
+            };
     }
 
     public async Task<SpResponse> UpdateAsync(int id, Tipo tipo)

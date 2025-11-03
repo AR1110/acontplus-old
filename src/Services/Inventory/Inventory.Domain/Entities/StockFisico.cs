@@ -17,5 +17,5 @@ public class StockFisico : BaseEntity
     [MaxLength(500)] public string? Obs { get; set; }
 
     public DateTime? FechaRevision { get; set; }
-    public ICollection<StockFisicoDetalle> StockFisicoDetalles { get; set; } = new List<StockFisicoDetalle>();
+    public ICollection<StockFisicoDetalle> StockFisicoDetalles { get; set; } = [];
 }

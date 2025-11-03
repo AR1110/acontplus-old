@@ -20,9 +20,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompanyCustomerDtos.CreateCompanyCustomerDto>(data)) }
         });
-        if (response == null) return BadRequest("Cant Save");
-
-        return Ok(response);
+        return response == null ? BadRequest("Cant Save") : Ok(response);
     }
 
     [HttpPut("{id}")]
@@ -34,9 +32,7 @@ public class CompanyCustomerController(ICompanyCustomerService companyCustomer) 
             { "id", id },
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompanyCustomerDtos.UpdateCompanyCustomerDto>(data)) }
         });
-        if (response == null) return BadRequest("Cant Save");
-
-        return Ok(response);
+        return response == null ? BadRequest("Cant Save") : Ok(response);
     }
 
 

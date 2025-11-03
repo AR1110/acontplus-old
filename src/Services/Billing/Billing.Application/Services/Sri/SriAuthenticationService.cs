@@ -152,7 +152,7 @@ public class SriAuthenticationService : ISriAuthenticationService
 
         // CI: 10 digits, RUC: 13 digits, Passport: varies but typically alphanumeric
         var length = identification.Length;
-        return length == 10 || length == 13 || (length >= 6 && length <= 20);
+        return length is 10 or 13 or >= 6 and <= 20;
     }
 
     private string MaskValue(string? value) =>
@@ -286,7 +286,7 @@ public class SriAuthenticationService : ISriAuthenticationService
             _logger.LogDebug("Login response content length: {Length}", content.Length);
 
             // 1️⃣ Token directly in redirect fragment
-            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
+            if (response.StatusCode is HttpStatusCode.Redirect or HttpStatusCode.Found)
             {
                 var location = response.Headers.Location?.ToString();
                 _logger.LogDebug("Redirect after login: {Location}", location ?? "NULL");
@@ -444,7 +444,7 @@ public class SriAuthenticationService : ISriAuthenticationService
             _logger.LogDebug("Redirect response status: {StatusCode}", response.StatusCode);
 
             // Check for another redirect with tokens
-            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
+            if (response.StatusCode is HttpStatusCode.Redirect or HttpStatusCode.Found)
             {
                 var location = response.Headers.Location?.ToString();
                 if (!string.IsNullOrEmpty(location))
@@ -506,21 +506,18 @@ public class SriAuthenticationService : ISriAuthenticationService
             var hasSuccessIndicators = successIndicators.Any(indicator =>
                 content.Contains(indicator, StringComparison.OrdinalIgnoreCase));
 
-            if (hasSuccessIndicators && !content.Contains("kc-form-login"))
-            {
-                return new SriAuthenticationResult
+            return hasSuccessIndicators && !content.Contains("kc-form-login")
+                ? new SriAuthenticationResult
                 {
                     IsSuccess = true,
                     Cookies = cookies
+                }
+                : new SriAuthenticationResult
+                {
+                    IsSuccess = false,
+                    ErrorMessage = "Redirect followed but no tokens or success indicators found",
+                    Cookies = cookies
                 };
-            }
-
-            return new SriAuthenticationResult
-            {
-                IsSuccess = false,
-                ErrorMessage = "Redirect followed but no tokens or success indicators found",
-                Cookies = cookies
-            };
         }
         catch (Exception ex)
         {
@@ -565,7 +562,7 @@ public class SriAuthenticationService : ISriAuthenticationService
 
             var response = await tempClient.SendAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.Redirect || response.StatusCode == HttpStatusCode.Found)
+            if (response.StatusCode is HttpStatusCode.Redirect or HttpStatusCode.Found)
             {
                 var location = response.Headers.Location?.ToString();
                 if (!string.IsNullOrEmpty(location))
@@ -722,9 +719,7 @@ public class SriAuthenticationService : ISriAuthenticationService
 
         // Try to extract from hidden input
         match = Regex.Match(content, @"<input[^>]*name=""session_code""[^>]*value=""([^""]+)""", RegexOptions.IgnoreCase);
-        if (match.Success) return match.Groups[1].Value;
-
-        return string.Empty;
+        return match.Success ? match.Groups[1].Value : string.Empty;
     }
 
     private string ExtractExecutionCode(string content)

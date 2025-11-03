@@ -18,9 +18,7 @@ public class DeviceSpecController : BaseApiController
         };
 
         var response = await _service.GetAsync(parameters);
-        if (response == null) return BadRequest("Can't Get Data");
-
-        return Ok(response);
+        return response == null ? BadRequest("Can't Get Data") : Ok(response);
     }
 
     [HttpPost]
@@ -28,9 +26,7 @@ public class DeviceSpecController : BaseApiController
     {
         data.CreatedByUserId = User.GetUserId();
         var response = await _service.AddAsync(data);
-        if (response == null) return BadRequest("Cant Save");
-
-        return Ok(response);
+        return response == null ? BadRequest("Cant Save") : Ok(response);
     }
 
     [HttpPut("{id}")]
@@ -38,8 +34,6 @@ public class DeviceSpecController : BaseApiController
     {
         data.UpdatedByUserId = User.GetUserId();
         var response = await _service.UpdateAsync(id, data);
-        if (response == null) return BadRequest("Cant Update");
-
-        return Ok(response);
+        return response == null ? BadRequest("Cant Update") : Ok(response);
     }
 }

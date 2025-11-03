@@ -10,9 +10,7 @@ public class DocConfigController(IDocConfigService docConfigService) : BaseApiCo
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await docConfigService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPost]

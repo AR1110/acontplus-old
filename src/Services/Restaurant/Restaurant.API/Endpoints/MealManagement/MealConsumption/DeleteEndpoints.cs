@@ -1,6 +1,3 @@
-using Acontplus.Utilities.Extensions;
-using Restaurant.Application.Interfaces.MealManagement;
-
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
 
 public static class DeleteEndpoints

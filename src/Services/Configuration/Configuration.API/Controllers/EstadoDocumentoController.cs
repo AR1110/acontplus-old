@@ -6,8 +6,6 @@ public class EstadoDocumentoController(IEstadoDocumentoService estadoDocumento) 
     public async Task<IActionResult> Get(string json)
     {
         var response = await estadoDocumento.GetAsync(json);
-        if (response.Code == "1") return Ok(response);
-
-        return BadRequest("No data");
+        return response.Code == "1" ? Ok(response) : BadRequest("No data");
     }
 }

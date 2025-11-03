@@ -18,11 +18,6 @@ public class SriController : BaseApiController
             request.Password,
             request.AdditionalCi);
 
-        if (result.IsSuccess)
-        {
-            return Ok(result);
-        }
-
-        return BadRequest(result);
+        return result.IsSuccess ? (ActionResult<SriAuthenticationResult>)Ok(result) : (ActionResult<SriAuthenticationResult>)BadRequest(result);
     }
 }

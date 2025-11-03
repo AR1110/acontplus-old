@@ -23,17 +23,15 @@ public class PetTypeRepository(VetContext context) : IPetTypeRepository
     public async Task<SpResponse> GetAsync()
     {
         var response = await context.PetTypes.Where(x => !x.IsDeleted).ToListAsync();
-        if (response.Count > 0) return new SpResponse { Code = "1", Payload = response };
-
-        return new SpResponse { Code = "0", Message = "No data!" };
+        return response.Count > 0 ? new SpResponse { Code = "1", Payload = response } : new SpResponse { Code = "0", Message = "No data!" };
     }
 
     public async Task<SpResponse> GetByIdAsync(int id)
     {
         var petType = await context.PetTypes.FindAsync(id);
-        if (petType == null) return new SpResponse { Code = "0", Message = "No se encontro raza para actualizar" };
-
-        return new SpResponse { Code = "1", Payload = petType };
+        return petType == null
+            ? new SpResponse { Code = "0", Message = "No se encontro raza para actualizar" }
+            : new SpResponse { Code = "1", Payload = petType };
     }
 
     public async Task<SpResponse> UpdateAsync(int id, PetType petType)

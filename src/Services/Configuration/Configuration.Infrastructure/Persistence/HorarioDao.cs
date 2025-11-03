@@ -61,7 +61,7 @@ public class HorarioDao
 
             // _gr.data = listar;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // _gr.id = "0";
             // _gr.typeNotify = "warning";
@@ -111,7 +111,7 @@ public class HorarioDao
 
             // _gr.data = listar;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // _gr.id = "0";
             // _gr.typeNotify = "warning";

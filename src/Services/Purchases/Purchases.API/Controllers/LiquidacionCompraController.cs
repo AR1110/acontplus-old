@@ -15,8 +15,7 @@ public class LiquidacionCompraController(ILiquidacionCompraRepository _svc) : Ba
           { "json", SqlStringParam.Sanitize(json) }
       });
 
-            if (response == null) return NoContent();
-            return Ok(new { code = "1", payload = response });
+            return response == null ? NoContent() : Ok(new { code = "1", payload = response });
         }
         catch (Exception ex)
         {
@@ -34,9 +33,7 @@ public class LiquidacionCompraController(ILiquidacionCompraRepository _svc) : Ba
         { "id", id }
       });
 
-            if (response == null) return NoContent();
-
-            return Ok(new { code = "1", payload = response });
+            return response == null ? NoContent() : Ok(new { code = "1", payload = response });
         }
         catch (Exception ex)
         {

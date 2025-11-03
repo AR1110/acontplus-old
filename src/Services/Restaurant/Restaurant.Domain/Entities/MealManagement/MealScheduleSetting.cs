@@ -16,7 +16,7 @@ public class MealScheduleSetting : BaseEntity
     public int DisplayOrder { get; set; }
 
     // Navigation Properties
-    public ICollection<MealConsumption> MealConsumptions { get; set; } = new List<MealConsumption>();
-    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = new List<MealPlanSchedule>();
-    public ICollection<DailyMenu> DailyMenus { get; set; } = new List<DailyMenu>();
+    public ICollection<MealConsumption> MealConsumptions { get; set; } = [];
+    public ICollection<MealPlanSchedule> MealPlanSchedules { get; set; } = [];
+    public ICollection<DailyMenu> DailyMenus { get; set; } = [];
 }

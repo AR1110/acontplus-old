@@ -1,4 +1,4 @@
-namespace Inventory.API.Dtos;
+namespace Inventory.Application.DTOs;
 
 public record JsonArticuloDto
 {

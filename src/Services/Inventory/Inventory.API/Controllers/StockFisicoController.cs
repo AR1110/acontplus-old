@@ -18,9 +18,7 @@ public class StockFisicoController(InventoryContext context, IStockFisicoService
                 { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", json }
             };
             var response = await stockFisico.GetAsync(parameters);
-            if (response == null) return NoContent();
-
-            return Ok(response);
+            return response == null ? NoContent() : Ok(response);
         }
         catch (Exception)
         {
@@ -36,9 +34,7 @@ public class StockFisicoController(InventoryContext context, IStockFisicoService
 
         var stockFisico = await context.StockFisicos.FindAsync(id);
 
-        if (stockFisico == null) return NotFound();
-
-        return stockFisico;
+        return stockFisico == null ? (ActionResult<StockFisico>)NotFound() : (ActionResult<StockFisico>)stockFisico;
     }
 
     // PUT: api/StockFisico/5

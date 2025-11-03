@@ -13,16 +13,14 @@ public class ModeloService : IModeloService
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-        if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-            return new SpResponse { Code = "0", Message = "Sin registros", Payload = null };
-
-
-        return new SpResponse
-        {
-            Code = "1",
-            Message = "Listado exitosamente",
-            Payload = DataConverters.DataSetToJson(ds)
-        };
+        return ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0
+            ? new SpResponse { Code = "0", Message = "Sin registros", Payload = null }
+            : new SpResponse
+            {
+                Code = "1",
+                Message = "Listado exitosamente",
+                Payload = DataConverters.DataSetToJson(ds)
+            };
     }
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)

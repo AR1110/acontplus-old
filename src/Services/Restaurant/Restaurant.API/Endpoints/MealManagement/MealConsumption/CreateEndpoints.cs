@@ -1,8 +1,3 @@
-using Acontplus.Core.Abstractions.Context;
-using Acontplus.Utilities.Extensions;
-using Restaurant.Application.DTOs.MealManagement;
-using Restaurant.Application.Interfaces.MealManagement;
-
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
 
 public static class CreateEndpoints

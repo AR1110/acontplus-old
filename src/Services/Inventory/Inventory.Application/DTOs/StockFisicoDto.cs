@@ -3,7 +3,7 @@ namespace Inventory.Application.DTOs;
 public record StockFisicoDto
 {
     public StockFisicoHeaderDto Header { get; init; } = null!;
-    public List<StockFisicoDetalleDto> StockFisicoDetalles { get; init; } = new();
+    public List<StockFisicoDetalleDto> StockFisicoDetalles { get; init; } = [];
 }
 
 public record StockFisicoHeaderDto

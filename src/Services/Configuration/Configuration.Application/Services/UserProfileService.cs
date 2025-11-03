@@ -19,8 +19,8 @@ public class UserProfileService : IUserProfileService
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
 
-        if (ds == null) return new SpResponse { Code = "0", Message = "No se pudo obtener los datos" };
-
-        return new SpResponse { Code = "0", Message = "Ok", Payload = DataConverters.DataSetToJson(ds) };
+        return ds == null
+            ? new SpResponse { Code = "0", Message = "No se pudo obtener los datos" }
+            : new SpResponse { Code = "0", Message = "Ok", Payload = DataConverters.DataSetToJson(ds) };
     }
 }

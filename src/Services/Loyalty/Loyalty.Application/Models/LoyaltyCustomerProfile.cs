@@ -13,6 +13,6 @@ public class LoyaltyCustomerProfile
     public string CurrentTier { get; set; }
     public DateTime FirstVisitDate { get; set; }
     public DateTime? LastVisitDate { get; set; }
-    public List<AvailableBenefit> AvailableBenefits { get; set; } = new();
-    public List<LoyaltyReward> ActiveRewards { get; set; } = new();
+    public List<AvailableBenefit> AvailableBenefits { get; set; } = [];
+    public List<LoyaltyReward> ActiveRewards { get; set; } = [];
 }

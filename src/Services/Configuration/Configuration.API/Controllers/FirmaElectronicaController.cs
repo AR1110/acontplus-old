@@ -105,8 +105,8 @@ public class FirmaElectronicaController(
             { "id", id }
         };
         var response = await firmaElectronicaService.DownloadAsync(parameters);
-        if (response == null) return BadRequest("No se encontro firma electrónica");
-
-        return File(response.Content, "application/x-pkcs12", response.FileName);
+        return response == null
+            ? BadRequest("No se encontro firma electrónica")
+            : File(response.Content, "application/x-pkcs12", response.FileName);
     }
 }

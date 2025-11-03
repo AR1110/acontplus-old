@@ -31,7 +31,7 @@ public static class ApplicationServicesExtensions
         [
             "Accounting.Infrastructure.Persistence.Repositories",
             "Acontplus.Persistence.SqlServer.Repositories",
-            
+
             "Acontplus.Services.Extensions.Context"
         ];
 

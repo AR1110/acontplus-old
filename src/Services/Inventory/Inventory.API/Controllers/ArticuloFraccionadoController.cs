@@ -13,9 +13,7 @@ public class ArticuloFraccionadoController(IArticuloFraccionadoService articuloF
           { "json", SqlStringParam.Sanitize(json) }
       };
             var response = await articuloFraccionadoService.GetAsync(parameters);
-            if (response == null) return NoContent();
-
-            return Ok(response);
+            return response == null ? NoContent() : Ok(response);
         }
         catch (Exception)
         {

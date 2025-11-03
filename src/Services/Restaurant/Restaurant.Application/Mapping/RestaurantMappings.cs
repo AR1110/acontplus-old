@@ -3,7 +3,7 @@ using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Domain.DTOs;
 
-namespace Restaurant.Application.Extensions
+namespace Restaurant.Application.Mapping
 {
     public static class RestaurantMappings
     {

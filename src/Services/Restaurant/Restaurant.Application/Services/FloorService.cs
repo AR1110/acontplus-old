@@ -114,9 +114,9 @@ public class FloorService : IFloorService
                     IsActive = room.IsActive,
                     Tables = room.Tables?
                         .Where(t => !t.IsDeleted)
-                        .Adapt<List<TableResponseDto>>() ?? new List<TableResponseDto>()
+                        .Adapt<List<TableResponseDto>>() ?? []
                 })
-                .ToList() ?? new List<RoomResponseDto>()
+                .ToList() ?? []
         }).ToList();
 
         return CreateResponse(floorDtos);
@@ -132,9 +132,7 @@ public class FloorService : IFloorService
         var tables = await _tableRepository.FindAsync(t => roomIds.Contains(t.RoomId) && !t.IsDeleted);
         var tableIds = tables.Select(t => t.Id).ToList();
 
-        if (!tableIds.Any()) return false;
-
-        return await _orderRepository.ExistsAsync(o => tableIds.Contains(o.TableId ?? 0) && !o.IsDeleted);
+        return tableIds.Any() && await _orderRepository.ExistsAsync(o => tableIds.Contains(o.TableId ?? 0) && !o.IsDeleted);
     }
 
     private async Task<bool> FloorExistsCodeEstabAsync(string code, string codEstab)

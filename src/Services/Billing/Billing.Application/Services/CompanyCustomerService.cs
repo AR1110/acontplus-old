@@ -17,10 +17,9 @@ public class CompanyCustomerService(IAdoRepository repository) : ICompanyCustome
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync($"{ModuleName}Get", parameters);
-        if (DataValidation.DataSetIsNull(ds))
-            return new SpResponse { Code = "0", Message = "No se encontraron clientes" };
-
-        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return DataValidation.DataSetIsNull(ds)
+            ? new SpResponse { Code = "0", Message = "No se encontraron clientes" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<SpResponse> SearchAsync(Dictionary<string, object> parameters)

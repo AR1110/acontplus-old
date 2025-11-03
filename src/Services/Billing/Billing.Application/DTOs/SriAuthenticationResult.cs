@@ -11,5 +11,5 @@ public class SriAuthenticationResult
     public string? SessionCode { get; set; }
     public string? ExecutionCode { get; set; }
     public string? TabId { get; set; }
-    public Dictionary<string, string> Cookies { get; set; } = new();
+    public Dictionary<string, string> Cookies { get; set; } = [];
 }

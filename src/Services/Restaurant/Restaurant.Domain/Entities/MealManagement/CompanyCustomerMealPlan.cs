@@ -22,5 +22,5 @@ public class CompanyCustomerMealPlan : BaseEntity
     // Navigation Properties
     public required MealPlan MealPlan { get; set; }
 
-    public ICollection<MealConsumption> MealConsumptions { get; set; } = new List<MealConsumption>();
+    public ICollection<MealConsumption> MealConsumptions { get; set; } = [];
 }

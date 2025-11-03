@@ -6,7 +6,7 @@ public record CreateMealScheduleSettingRequest(
     string Description,
     TimeSpan StartTime,
     TimeSpan EndTime,
-    int DisplayOrder, 
+    int DisplayOrder,
     int CreatedByUserId);
 
 public record UpdateMealScheduleSettingRequest(int Id,

@@ -43,12 +43,9 @@ public static class UserAgentHelper
                 };
             }
 
-            if (userAgentSummary == null)
-            {
-                return CreateFallbackContainer("Failed to parse UserAgent summary", userAgentContainer.IpAddress);
-            }
-
-            return ProcessUserAgentSummary(userAgentSummary, userAgentContainer.IpAddress);
+            return userAgentSummary == null
+                ? CreateFallbackContainer("Failed to parse UserAgent summary", userAgentContainer.IpAddress)
+                : ProcessUserAgentSummary(userAgentSummary, userAgentContainer.IpAddress);
         }
         catch (JsonException ex)
         {

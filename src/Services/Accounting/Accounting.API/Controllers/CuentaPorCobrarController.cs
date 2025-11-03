@@ -11,9 +11,7 @@ public class CuentaPorCobrarController(ICuentaPorCobrarRepository cuentaPorCobra
             { "userRoleId", User.GetClaimValue<int>("userRoleId") }, { "json", SqlStringParam.Sanitize(json) }
         };
         var response = await cuentaPorCobrarService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     // Cuotas

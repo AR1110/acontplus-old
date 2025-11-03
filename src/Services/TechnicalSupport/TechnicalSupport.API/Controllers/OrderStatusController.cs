@@ -12,9 +12,7 @@ public class OrderStatusController : BaseApiController
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        if (!_context.Categories.Any()) return NoContent();
-
-        return Ok(await _context.OrderStatuses.ToListAsync());
+        return !_context.Categories.Any() ? NoContent() : Ok(await _context.OrderStatuses.ToListAsync());
     }
 
     [HttpDelete("{id}")]

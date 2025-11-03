@@ -1,6 +1,5 @@
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.DTOs.Responses;
-global using Acontplus.Core.Extensions;
 global using Acontplus.Core.Validation;
 global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Context;
@@ -15,4 +14,3 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.Extensions.Configuration;
 global using System.Data;
 global using System.Reflection;
-global using System.Text.Json;

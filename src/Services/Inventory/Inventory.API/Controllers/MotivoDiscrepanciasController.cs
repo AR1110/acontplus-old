@@ -26,9 +26,7 @@ public class MotivoDiscrepanciasController(InventoryContext context) : BaseApiCo
 
         var motivoDiscrepancia = await context.MotivoDiscrepancias.FindAsync(id);
 
-        if (motivoDiscrepancia == null) return NotFound();
-
-        return motivoDiscrepancia;
+        return motivoDiscrepancia == null ? (ActionResult<MotivoDiscrepancia>)NotFound() : (ActionResult<MotivoDiscrepancia>)motivoDiscrepancia;
     }
 
     // PUT: api/MotivoDiscrepancias/5

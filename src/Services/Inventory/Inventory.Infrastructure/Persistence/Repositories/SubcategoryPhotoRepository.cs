@@ -16,9 +16,7 @@ public class SubcategoryPhotoRepository : ISubcategoryPhotoRepository
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync("Inventario.SubcategoryPhoto_Get", parameters);
-        if (ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds == null || ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
     public async Task<SpResponse> AddAsync(SubcategoryPhoto data)

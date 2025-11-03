@@ -7,9 +7,7 @@ public class MassiveTaxService(IAdoRepository adoRepository) : IMassiveTaxServic
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await adoRepository.GetDataSetAsync(ModuleName + "_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds.Tables.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
 

@@ -11,6 +11,6 @@ public record RoomResponseDto
     public required string Description { get; set; }
     public int Capacity { get; set; }
     public bool IsActive { get; set; }
-    public ICollection<TableResponseDto>? Tables { get; set; } = new List<TableResponseDto>();
+    public ICollection<TableResponseDto>? Tables { get; set; } = [];
 
 }

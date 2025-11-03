@@ -3,17 +3,17 @@ namespace Inventory.Application.DTOs;
 public record CreateTransferenciaBodegaDto
 {
     public ComprobanteTransferenciaBodegaDto Comprobante { get; set; } = new();
-    public List<TransferenciaBodegaDetalleDto> Detalles { get; set; } = new();
-    public List<TransaccionTransferenciaBodegaDto> Transaccion { get; set; } = new();
-    public List<TransaccionTransferenciaBodegaDetalleDto> TransaccionDetalles { get; set; } = new();
+    public List<TransferenciaBodegaDetalleDto> Detalles { get; set; } = [];
+    public List<TransaccionTransferenciaBodegaDto> Transaccion { get; set; } = [];
+    public List<TransaccionTransferenciaBodegaDetalleDto> TransaccionDetalles { get; set; } = [];
 }
 
 public record UpdateTransferenciaBodegaDto
 {
     public int Id { get; set; }
     public ComprobanteTransferenciaBodegaDto Comprobante { get; set; } = new();
-    public List<TransferenciaBodegaDetalleDto> Detalles { get; set; } = new();
-    public List<TransaccionTransferenciaBodegaDetalleDto> TransaccionDetalles { get; set; } = new();
+    public List<TransferenciaBodegaDetalleDto> Detalles { get; set; } = [];
+    public List<TransaccionTransferenciaBodegaDetalleDto> TransaccionDetalles { get; set; } = [];
 }
 
 public record ComprobanteTransferenciaBodegaDto

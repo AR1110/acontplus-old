@@ -7,17 +7,13 @@ public class TransferenciaBodegaService(IAdoRepository _repository) : ITransfere
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds.Tables.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
     public async Task<object> GetIdAsync(Dictionary<string, object> parameters)
     {
         var ds = await _repository.GetDataSetAsync(nameSchema + "_Get_Id", parameters);
-        if (ds.Tables.Count == 0) return null;
-
-        return DataConverters.DataSetToJson(ds);
+        return ds.Tables.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
 

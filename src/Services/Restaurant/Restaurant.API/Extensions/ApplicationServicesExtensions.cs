@@ -1,6 +1,6 @@
 using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
-using Restaurant.Application.Extensions;
+using Restaurant.Application.Mapping;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
 

@@ -11,9 +11,7 @@ public class ControlCajaController(IControlCajaRepository controlCajaRepository)
         };
 
         var response = await controlCajaRepository.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
 
@@ -26,9 +24,7 @@ public class ControlCajaController(IControlCajaRepository controlCajaRepository)
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CreateControlCajaDto>(data)) }
         };
         var response = await controlCajaRepository.AddAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPut("{id}")]
@@ -41,8 +37,6 @@ public class ControlCajaController(IControlCajaRepository controlCajaRepository)
             { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateControlCajaDto>(data)) }
         };
         var response = await controlCajaRepository.UpdateAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 }

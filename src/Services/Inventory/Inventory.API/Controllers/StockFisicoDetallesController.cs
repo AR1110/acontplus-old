@@ -6,9 +6,7 @@ public class StockFisicoDetallesController(InventoryContext context) : BaseApiCo
     [HttpGet]
     public async Task<ActionResult<IEnumerable<StockFisicoDetalle>>> GetStockFisicoDetalles()
     {
-        if (context.StockFisicoDetalles == null) return NotFound();
-
-        return await context.StockFisicoDetalles.ToListAsync();
+        return context.StockFisicoDetalles == null ? (ActionResult<IEnumerable<StockFisicoDetalle>>)NotFound() : (ActionResult<IEnumerable<StockFisicoDetalle>>)await context.StockFisicoDetalles.ToListAsync();
     }
 
     // GET: api/StockFisicoDetalles/5
@@ -19,9 +17,7 @@ public class StockFisicoDetallesController(InventoryContext context) : BaseApiCo
 
         var stockFisicoDetalle = await context.StockFisicoDetalles.FindAsync(id);
 
-        if (stockFisicoDetalle == null) return NotFound();
-
-        return stockFisicoDetalle;
+        return stockFisicoDetalle == null ? (ActionResult<StockFisicoDetalle>)NotFound() : (ActionResult<StockFisicoDetalle>)stockFisicoDetalle;
     }
 
     // PUT: api/StockFisicoDetalles/5

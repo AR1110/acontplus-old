@@ -27,9 +27,9 @@ public class DocumentoRecibidoRepository(IAdoRepository repository) : IDocumento
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
         var ds = await repository.GetDataSetAsync("Recepcion.Documento_Get", parameters);
-        if (DataValidation.DataSetIsNull(ds, true)) return new SpResponse { Code = "0", Message = "Data not found" };
-
-        return new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        return DataValidation.DataSetIsNull(ds, true)
+            ? new SpResponse { Code = "0", Message = "Data not found" }
+            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
     public async Task<XmlDocument> GetById(Dictionary<string, object> parameters)

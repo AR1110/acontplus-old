@@ -21,7 +21,7 @@ public record CreateItemDto
 
     public bool Enabled { get; init; } = true;
 
-    public List<CreateRecipeDto> RecipeJson { get; init; } = new();
+    public List<CreateRecipeDto> RecipeJson { get; init; } = [];
 
     public CreateProductionAreaDto ProductionAreaJson { get; init; } = new();
 }
@@ -45,7 +45,7 @@ public record UpdateItemDto
 
     public bool Enabled { get; init; } = true;
 
-    public List<UpdateRecipeDto> RecipeJson { get; init; } = new();
+    public List<UpdateRecipeDto> RecipeJson { get; init; } = [];
 
     public UpdateProductionAreaDto ProductionAreaJson { get; init; } = new();
 }

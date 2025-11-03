@@ -12,5 +12,5 @@ public class Room : BaseEntity
 
     [Required] public int Capacity { get; set; }
 
-    public ICollection<AppTable> Tables { get; set; } = new List<AppTable>();
+    public ICollection<AppTable> Tables { get; set; } = [];
 }

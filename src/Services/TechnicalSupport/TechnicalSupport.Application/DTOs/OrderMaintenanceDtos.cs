@@ -3,13 +3,13 @@ namespace TechnicalSupport.Application.DTOs;
 public record CreateOrderMaintenanceDto
 {
     public OrderDto Order { get; init; } = new();
-    public List<OrderMaintenanceDetailDto> Detalles { get; init; } = new();
+    public List<OrderMaintenanceDetailDto> Detalles { get; init; } = [];
 }
 
 public record UpdateOrderMaintenanceDto
 {
     public OrderDto Order { get; init; } = new();
-    public List<OrderMaintenanceDetailDto> Detalles { get; init; } = new();
+    public List<OrderMaintenanceDetailDto> Detalles { get; init; } = [];
 }
 
 public record OrderDto

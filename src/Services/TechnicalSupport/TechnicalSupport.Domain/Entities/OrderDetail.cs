@@ -15,5 +15,5 @@ public class OrderDetail : BaseEntity
 
     [MaxLength(500)] public string? Obs { get; set; }
 
-    public ICollection<OrderMaintenance> OrderMaintenances { get; set; } = new List<OrderMaintenance>();
+    public ICollection<OrderMaintenance> OrderMaintenances { get; set; } = [];
 }

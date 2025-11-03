@@ -18,8 +18,6 @@ global using Configuration.Application.Interfaces;
 global using Configuration.Application.Interfaces.Printing;
 global using Configuration.Application.Interfaces.Sri;
 global using Configuration.Application.Interfaces.WizardConfig;
-global using Configuration.Application.Services;
-global using Configuration.Application.Services.Notifications;
 global using Configuration.Domain.Entities;
 global using Configuration.Domain.Models;
 global using Configuration.Domain.Repositories;

@@ -10,5 +10,5 @@ public class Category : BaseEntity
 
     [Required][MaxLength(300)] public required string Name { get; set; }
 
-    public ICollection<Subcategory> Subcategories { get; set; } = new List<Subcategory>();
+    public ICollection<Subcategory> Subcategories { get; set; } = [];
 }

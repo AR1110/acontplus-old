@@ -23,14 +23,14 @@ public class BodegaService : IBodegaService
     {
         var ds = await _repository.GetDataSetAsync("Inventario.Bodega_Get", parameters);
         var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
-        if (dt.Rows.Count == 0) return new SpResponse { Code = "0", Message = "Sin registros", Payload = null };
-
-        return new SpResponse
-        {
-            Code = "1",
-            Message = "Listado exitosamente",
-            Payload = DataConverters.DataTableToJson(dt)
-        };
+        return dt.Rows.Count == 0
+            ? new SpResponse { Code = "0", Message = "Sin registros", Payload = null }
+            : new SpResponse
+            {
+                Code = "1",
+                Message = "Listado exitosamente",
+                Payload = DataConverters.DataTableToJson(dt)
+            };
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)

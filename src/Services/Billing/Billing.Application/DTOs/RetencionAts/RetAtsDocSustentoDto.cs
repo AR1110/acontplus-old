@@ -21,7 +21,7 @@ public class RetAtsDocSustentoDto
     public decimal TotalImpuestoReembolso { get; set; }
     public decimal TotalSinImpuestos { get; set; }
     public decimal ImporteTotal { get; set; }
-    public List<RetAtsImpDocSustentoDto> Taxes { get; set; } = new();
-    public List<RetencionAtsRetDto> Retenciones { get; set; } = new();
-    public List<RetencionAtsPagoDto> Payments { get; set; } = new();
+    public List<RetAtsImpDocSustentoDto> Taxes { get; set; } = [];
+    public List<RetencionAtsRetDto> Retenciones { get; set; } = [];
+    public List<RetencionAtsPagoDto> Payments { get; set; } = [];
 }

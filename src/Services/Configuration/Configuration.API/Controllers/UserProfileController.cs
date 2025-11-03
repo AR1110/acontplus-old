@@ -7,9 +7,7 @@ public class UserProfileController(IUserProfileService userProfileService) : Bas
     {
         var parameters = new Dictionary<string, object> { { "userRoleId", User.GetClaimValue<int>("userRoleId") } };
         var response = await userProfileService.GetAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 
     [HttpPut("{id}")]
@@ -20,8 +18,6 @@ public class UserProfileController(IUserProfileService userProfileService) : Bas
             { "id", id }, { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UserProfileDto>(dto)) }
         };
         var response = await userProfileService.UpdateAsync(parameters);
-        if (response == null) return NoContent();
-
-        return Ok(response);
+        return response == null ? NoContent() : Ok(response);
     }
 }
