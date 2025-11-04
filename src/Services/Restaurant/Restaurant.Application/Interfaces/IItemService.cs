@@ -3,6 +3,6 @@
 public interface IItemService
 {
     Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> GetByIdAsync(int id);
+    Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters);
     Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
 }
