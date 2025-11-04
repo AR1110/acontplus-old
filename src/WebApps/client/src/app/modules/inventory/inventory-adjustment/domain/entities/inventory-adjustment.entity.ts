@@ -93,7 +93,7 @@ export class InventoryAdjustment {
   }
 
   getDetailIndex(productId: number) {
-    return this.toPlainObject().details.findIndex(detail => detail.productId === productId);
+    return this.toPlainObject().details.findIndex((detail) => detail.productId === productId);
   }
 
   getDetail(index: number): InventoryAdjustmentDetail {
@@ -119,26 +119,26 @@ export class InventoryAdjustment {
   }
 
   updateDetail(detailIndex: number, additionalQuantity = 1) {
-    return this.executeDetailUpdate(detailIndex, detail => {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
       const newQuantity = detail.quantity.add(Quantity.from(additionalQuantity));
       detail.updateQuantity(newQuantity.value);
     });
   }
 
   updateQuantityDetail(detailIndex: number, newQuantity: number) {
-    return this.executeDetailUpdate(detailIndex, detail => {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
       detail.updateQuantity(newQuantity);
     });
   }
 
   updateMeasure(detailIndex: number, unitOfMeasureId: number) {
-    return this.executeDetailUpdate(detailIndex, detail => {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
       detail.updateMeasure(unitOfMeasureId);
     });
   }
 
   updatePricing(detailIndex: number, unitPrice: number) {
-    return this.executeDetailUpdate(detailIndex, detail => {
+    return this.executeDetailUpdate(detailIndex, (detail) => {
       detail.updatePricing(unitPrice, detail.costPrice.value);
     });
   }
@@ -146,7 +146,7 @@ export class InventoryAdjustment {
   updateWarehouseId(detailIndex: number, warehouseId: number) {
     return this.executeDetailUpdate(
       detailIndex,
-      detail => {
+      (detail) => {
         detail.updateWarehouseId(warehouseId);
       },
       false,
@@ -205,7 +205,7 @@ export class InventoryAdjustment {
       observations: this.observations,
       total: this.total,
       registrationDate: this.registrationDate,
-      details: [...this.details.map(item => item.toPlainObject())],
+      details: [...this.details.map((item) => item.toPlainObject())],
     };
   }
 }

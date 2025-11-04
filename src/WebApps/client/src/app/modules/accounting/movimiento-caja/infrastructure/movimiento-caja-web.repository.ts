@@ -25,13 +25,13 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
       .get<ApiResponse>(`${this._url}Get?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => ListMovimientoCajaMapper.fromJson(response)));
+      .pipe(map((response) => ListMovimientoCajaMapper.fromJson(response)));
   }
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 3 });
     return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
           const { establecimiento = [] } = JSON.parse(response.payload as string);
           return {
@@ -48,7 +48,7 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
   getDataForm() {
     const json = JSON.stringify({ tipo: 2 });
     return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           cajas: [],
           entidadesFinanciera: [],

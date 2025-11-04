@@ -22,7 +22,7 @@ export class EmployeeService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (isApiResponse(response)) {
             const employees = (response.payload && JSON.parse(response.payload as string)) || [];
             return employees.map((employee: any) => {

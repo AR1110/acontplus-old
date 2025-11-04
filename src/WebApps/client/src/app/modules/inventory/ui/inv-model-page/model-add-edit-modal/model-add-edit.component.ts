@@ -91,7 +91,7 @@ export class ModelAddEditComponent implements OnInit {
   }
 
   private getDataForm() {
-    this._productUseCase.getDataForm().subscribe(response => {
+    this._productUseCase.getDataForm().subscribe((response) => {
       this.marcas.set(response.marcas);
     });
   }

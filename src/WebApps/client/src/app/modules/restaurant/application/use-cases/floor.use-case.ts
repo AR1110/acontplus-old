@@ -1,11 +1,16 @@
 import { FloorRepository } from '@restaurant/domain/repositories/floor.repository';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FloorUseCase {
-  constructor(private repo: FloorRepository) {}
+  private repo = inject(FloorRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   remove(id: number) {
     return this.repo.remove(id);

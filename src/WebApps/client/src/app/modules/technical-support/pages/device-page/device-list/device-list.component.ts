@@ -28,7 +28,7 @@ export class DeviceListComponent implements OnInit {
       size: 'lg',
       data: item || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.get();
       }
@@ -45,7 +45,7 @@ export class DeviceListComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: `Eliminar!`,
       cancelButtonText: 'Cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.delete(item);
       }
@@ -53,7 +53,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   get() {
-    this.deviceService.get({ tipo: 2 }).subscribe(response => {
+    this.deviceService.get({ tipo: 2 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const tempArray = JSON.parse(response.payload as string);
         tempArray.devices.forEach((device: any) => {
@@ -65,7 +65,7 @@ export class DeviceListComponent implements OnInit {
   }
 
   delete(item: Device) {
-    this.deviceService.delete(item.id).subscribe(response => {
+    this.deviceService.delete(item.id).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -80,7 +80,7 @@ export class DeviceListComponent implements OnInit {
 
   updateStatus(item: any) {
     item.enabled = item.enabled ? 0 : 1;
-    this.deviceService.put(item.id, item).subscribe(response => {
+    this.deviceService.put(item.id, item).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '0') {
           this.tS.show({

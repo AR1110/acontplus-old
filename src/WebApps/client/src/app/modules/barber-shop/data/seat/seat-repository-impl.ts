@@ -30,7 +30,9 @@ export class SeatRepositoryImpl implements SeatRepository {
   //     throw new Error("Method not implemented.");
   // }
   list() {
-    return this.http.get<ApiResponse>(`${this.url}`).pipe(map(res => ListSeatMapper.fromJson(res)));
+    return this.http
+      .get<ApiResponse>(`${this.url}`)
+      .pipe(map((res) => ListSeatMapper.fromJson(res)));
   }
 
   private url = `${PATHS_API.BARBER_SHOP}/${BARBER_SHOP_PATHS.SEAT}`;

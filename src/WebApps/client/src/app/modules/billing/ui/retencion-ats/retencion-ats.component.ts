@@ -71,7 +71,7 @@ export class RetencionAtsComponent implements OnInit {
     { key: 'usuario', label: 'Usuario', type: 'string' },
     { key: 'importeTotal', label: 'Total Retenido', type: 'number' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   faWhatsapp: IconProp = faWhatsapp;
 
@@ -89,7 +89,7 @@ export class RetencionAtsComponent implements OnInit {
       ...this.pagination(),
       ...this.dataSearch(),
     };
-    this._retencionAtsUseCase.getAll(obj).subscribe(response => {
+    this._retencionAtsUseCase.getAll(obj).subscribe((response) => {
       if (response.retenciones.length > 0) {
         this.retenciones.set(response.retenciones);
         this.pagination().totalRecords = response.retenciones[0].totalRecords || 0;
@@ -106,7 +106,7 @@ export class RetencionAtsComponent implements OnInit {
       size: 'xxl',
     });
 
-    dialogRef.subscribe(response => {
+    dialogRef.subscribe((response) => {
       if (isApiResponse(response) && response.code === '1') {
         this.loadData();
       }
@@ -148,9 +148,9 @@ export class RetencionAtsComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Sí',
       cancelButtonText: 'No',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        this._retencionAtsUseCase.cancel(item.idDocumentoElectronico).subscribe(response => {
+        this._retencionAtsUseCase.cancel(item.idDocumentoElectronico).subscribe((response) => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -171,11 +171,11 @@ export class RetencionAtsComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Sí, autorizar',
       cancelButtonText: 'No, cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this._documentoElectronicoUseCase
           .authorize(item.idDocumentoElectronico)
-          .subscribe(response => {
+          .subscribe((response) => {
             this._tS.show({
               type: response.code === '1' ? 'success' : 'warning',
               message: response.message,
@@ -200,13 +200,13 @@ export class RetencionAtsComponent implements OnInit {
   }
 
   edit(item: RetencionAtsList) {
-    this._retencionAtsUseCase.getById(item.idRetencionAts).subscribe(response => {
+    this._retencionAtsUseCase.getById(item.idRetencionAts).subscribe((response) => {
       const dialogRef = this._dialogService.open(RetencionAtsAddEditComponent, {
         size: 'xxl',
         data: response,
       });
 
-      dialogRef.subscribe(response => {
+      dialogRef.subscribe((response) => {
         if (isApiResponse(response) && response.code === '1') {
           this.loadData();
         }

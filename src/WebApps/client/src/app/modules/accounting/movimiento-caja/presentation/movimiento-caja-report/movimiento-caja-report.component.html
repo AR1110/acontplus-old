@@ -4,7 +4,9 @@
   <div class="d-grid gap-2">
     <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-2">
       <div class="col">
-        <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomerEmployee">Cliente</mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomerEmployee"
+          >Cliente</mat-checkbox
+        >
       </div>
       <div class="col">
         <mat-checkbox [(ngModel)]="dataSearch.checkboxUser">Usuario</mat-checkbox>
@@ -33,7 +35,10 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
     </div>
 
@@ -60,13 +65,12 @@
         icon="picture_as_pdf"
         text="Pdf"
         (handleClick)="getReportPdf()"
-      ></app-theme-button
-      ><app-theme-button
+      /><app-theme-button
         variant="success"
         icon="download"
         text="EXCEL"
         (handleClick)="getReportExcel()"
-      ></app-theme-button>
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

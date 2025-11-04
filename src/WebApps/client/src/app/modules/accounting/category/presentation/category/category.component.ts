@@ -35,7 +35,7 @@ export class CategoryComponent implements OnInit {
   }
 
   get() {
-    this._categoryUseCase.get({ tipo: 1 }).subscribe(response => {
+    this._categoryUseCase.get({ tipo: 1 }).subscribe((response) => {
       if (response.code == '1') {
         const { categories } = JSON.parse(response.payload as string);
         this.categories.set(categories);
@@ -53,7 +53,7 @@ export class CategoryComponent implements OnInit {
       data: this.data.id > 0 ? structuredClone(this.data) : {},
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }

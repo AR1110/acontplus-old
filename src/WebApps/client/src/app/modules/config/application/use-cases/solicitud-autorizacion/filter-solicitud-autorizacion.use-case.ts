@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
 import {
@@ -13,7 +13,12 @@ import { SolicitudAutorizacionRepository } from '@modules/config/domain/reposito
 export class FilterSolicitudAutorizacionUseCase
   implements BaseUseCase<SolicitudAutorizacionFilterResponse, any>
 {
-  constructor(private repo: SolicitudAutorizacionRepository) {}
+  private repo = inject(SolicitudAutorizacionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute() {
     return this.repo.filter();

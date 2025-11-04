@@ -23,28 +23,28 @@ export class InventoryAdjustmentRepositoryImpl implements InventoryAdjustmentRep
     const json = InventoryAdjustmentListMapper.toJson(params);
     return this.#http
       .get<any>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InventoryAdjustmentListMapper.fromJson(response)));
+      .pipe(map((response) => InventoryAdjustmentListMapper.fromJson(response)));
   }
 
   formData() {
     const json = InventoryAdjustmentFormDataMapper.toJson();
     return this.#http
       .get<any>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InventoryAdjustmentFormDataMapper.fromJson(response)));
+      .pipe(map((response) => InventoryAdjustmentFormDataMapper.fromJson(response)));
   }
 
   detail(id: number) {
     const json = InventoryAdjustmentDetailMapper.toJson(id);
     return this.#http
       .get<any>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InventoryAdjustmentDetailMapper.fromJson(response)));
+      .pipe(map((response) => InventoryAdjustmentDetailMapper.fromJson(response)));
   }
 
   listProducts(params: any) {
     const json = InventoryAdjustmentListProductsMapper.toJson(params);
     return this.#http
       .get<any>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InventoryAdjustmentListProductsMapper.fromJson(response)));
+      .pipe(map((response) => InventoryAdjustmentListProductsMapper.fromJson(response)));
   }
 
   create(params: CreateInventoryAdjustmentCommand): Observable<ApiResponse> {

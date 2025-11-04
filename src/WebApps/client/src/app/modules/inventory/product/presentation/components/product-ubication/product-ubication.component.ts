@@ -59,7 +59,7 @@ export class ProductUbicationComponent implements OnInit {
     { key: 'nomBodega', label: 'Bodega', type: 'string' },
     { key: 'ubicacion', label: 'Ubicación', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   productUbicationId = 0;
 
@@ -80,14 +80,14 @@ export class ProductUbicationComponent implements OnInit {
     this.$productGetIdUseCase
       .execute(this.productId())
       .pipe(finalize(() => (this.loading = false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource = new MatTableDataSource(response?.productLocations || []);
       });
   }
 
   clear() {
     this.productUbicationId = 0;
-    this.data.update(item => {
+    this.data.update((item) => {
       return {
         ...item,
         ubicacion: null,
@@ -97,11 +97,11 @@ export class ProductUbicationComponent implements OnInit {
   }
 
   edit(item: any) {
-    const dataBodega = this.bodegas().find(bodega => bodega.idBodega === item.idBodega);
+    const dataBodega = this.bodegas().find((bodega) => bodega.idBodega === item.idBodega);
 
     if (dataBodega) {
       const dataEstab = this.estabs().find(
-        estab => estab.idEstablecimiento === dataBodega.idEstablecimiento,
+        (estab) => estab.idEstablecimiento === dataBodega.idEstablecimiento,
       );
 
       this.productUbicationId = item.idArticuloUbicacion;

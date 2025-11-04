@@ -25,7 +25,7 @@ export class CompraHabitualService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (response.code !== '1') {
             return { comprasHabituales: [] };
           }

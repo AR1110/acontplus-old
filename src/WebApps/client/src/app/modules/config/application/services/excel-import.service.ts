@@ -10,7 +10,7 @@ export class ExcelImportService {
     const workbook = XLSX.read(data, { type: 'array', cellDates: true });
 
     const result: any[] = [];
-    workbook.SheetNames.forEach(sheetName => {
+    workbook.SheetNames.forEach((sheetName) => {
       const sheet = workbook.Sheets[sheetName];
       const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
       result.push(...rows);
@@ -20,9 +20,9 @@ export class ExcelImportService {
   }
 
   mapItems(rows: any[], columns: string[]): any[] {
-    return rows.map(row => {
+    return rows.map((row) => {
       const cleanedRow: any = {};
-      columns.forEach(col => {
+      columns.forEach((col) => {
         let value = row[col];
         if (['', null, undefined].includes(value)) value = '';
         cleanedRow[col] = typeof value === 'string' ? value.trim() : value;

@@ -131,7 +131,9 @@ export function formatDateToString(date: Date) {
   // 🔸 Formato con hora 12h + AM/PM
   return format({
     date: dateZone,
-    format: 'YYYY-MM-DD hh:mm:ss A', tz: zonaHorariaEcuador });
+    format: 'YYYY-MM-DD hh:mm:ss A',
+    tz: zonaHorariaEcuador,
+  });
 }
 /**
  * Verifica si una fecha es válida.

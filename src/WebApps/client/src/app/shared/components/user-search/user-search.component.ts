@@ -71,7 +71,7 @@ export class UserSearchComponent {
         this.searching = true;
         this.searchFailed = false;
       }),
-      switchMap(term => {
+      switchMap((term) => {
         // If term too short, return empty array
         if (!term || term.length < 2) {
           this.searching = false;
@@ -90,7 +90,7 @@ export class UserSearchComponent {
               this.searchFailed = true;
             },
           }),
-          catchError(error => {
+          catchError((error) => {
             console.error(error);
             return of([]);
           }),

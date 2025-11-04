@@ -11,15 +11,14 @@
 }
 
 .acp-grid-main {
-
 }
-.acp-grid-layout{
+.acp-grid-layout {
   display: flex;
   flex: 1 1 auto;
   overflow: auto;
 }
 
-.acp-grid-content{
+.acp-grid-content {
   flex-direction: column;
   width: 0;
 }
@@ -28,7 +27,6 @@
   position: relative;
   z-index: 1;
 }
-
 
 .mat-mdc-table-sticky {
   // background: #59abfd;

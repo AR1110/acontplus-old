@@ -24,7 +24,7 @@ export class SeatComponent implements OnInit {
       data: structuredClone(data) || {},
       size: 'sm',
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -32,7 +32,7 @@ export class SeatComponent implements OnInit {
   }
 
   private getList() {
-    this.$listUseCase.execute({}).subscribe(response => {
+    this.$listUseCase.execute({}).subscribe((response) => {
       this.dataSource.set(response.data);
     });
   }

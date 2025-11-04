@@ -1,4 +1,4 @@
-import {DocElectListResult} from "@billing/domain/models/documento-electronico.model";
+import { DocElectListResult } from '@billing/domain/models/documento-electronico.model';
 
 export class ElectronicDocListMapper {
   static toJson(params: any) {

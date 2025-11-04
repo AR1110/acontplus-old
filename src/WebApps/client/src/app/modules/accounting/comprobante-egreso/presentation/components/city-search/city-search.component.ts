@@ -8,7 +8,7 @@ import { ComprobanteEgresoStore } from '@accounting/comprobante-egreso/applicati
 const _filterCiudadGroup = (opt: any[], value: string): string[] => {
   const filterValue = value.toLowerCase();
 
-  return opt.filter(item => item.descripcion.toLowerCase().includes(filterValue));
+  return opt.filter((item) => item.descripcion.toLowerCase().includes(filterValue));
 };
 
 @Component({
@@ -35,11 +35,11 @@ export class CitySearchComponent {
     if (value) {
       return this.comprobanteEgresoStore
         .provinciaCiudades()
-        .map(group => ({
+        .map((group) => ({
           provincia: group.provincia,
           ciudades: _filterCiudadGroup(group.ciudades, value),
         }))
-        .filter(group => group.ciudades.length > 0);
+        .filter((group) => group.ciudades.length > 0);
     }
 
     return this.comprobanteEgresoStore.provinciaCiudades();

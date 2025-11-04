@@ -14,8 +14,7 @@
               [aria-label]="checkboxLabel()"
               [checked]="selection.hasValue() && isAllSelected()"
               [indeterminate]="selection.hasValue() && !isAllSelected()"
-            >
-            </mat-checkbox>
+            />
           </th>
           <td *matCellDef="let row" mat-cell>
             <mat-checkbox
@@ -23,8 +22,7 @@
               (click)="$event.stopPropagation(); selectRow(row)"
               [aria-label]="checkboxLabel(row)"
               [checked]="selection.isSelected(row)"
-            >
-            </mat-checkbox>
+            />
           </td>
           <td *matFooterCellDef mat-footer-cell></td>
         </ng-container>
@@ -38,11 +36,15 @@
             </th>
 
             <!-- Column cell -->
-            <td mat-cell *matCellDef="let element; let i = index" [ngClass]="{ highlighted: highlightRowIndex === i }">
+            <td
+              mat-cell
+              *matCellDef="let element; let i = index"
+              [ngClass]="{ highlighted: highlightRowIndex === i }"
+            >
               <!-- Operations column with custom template -->
               @if (col.key === 'op') {
                 <div class="d-flex flex-row gap-1">
-                  <ng-container *ngTemplateOutlet="templateOp; context: { item: element }"></ng-container>
+                  <ng-container *ngTemplateOutlet="templateOp; context: { item: element }" />
                 </div>
               }
 
@@ -58,7 +60,12 @@
               }
               @switch (col.type) {
                 @case ('image') {
-                  <img [src]="element[col.key]" class="img-fluid img-thumbnail my-1" width="50" alt="" />
+                  <img
+                    [src]="element[col.key]"
+                    class="img-fluid img-thumbnail my-1"
+                    width="50"
+                    alt=""
+                  />
                 }
                 @case ('number') {
                   <div>{{ element[col.key] | number: '1.2' : locale }}</div>
@@ -67,12 +74,16 @@
                   <div>{{ element[col.key] | date: 'dd.MM.yyyy' }}</div>
                 }
                 @case ('template') {
-                  <ng-container *ngTemplateOutlet="col.templateOutlet; context: { $implicit: element }" />
+                  <ng-container
+                    *ngTemplateOutlet="col.templateOutlet; context: { $implicit: element }"
+                  />
                 }
                 @case ('custom') {
                   <!-- Dynamic component column -->
                   @if (col.columnType === 'component') {
-                    <ng-container *ngComponentOutlet="col.body; injector: createInjector(element)" />
+                    <ng-container
+                      *ngComponentOutlet="col.body; injector: createInjector(element)"
+                    />
                   }
                   @if (col.columnType === 'html') {
                     <!-- HTML content column -->
@@ -106,15 +117,22 @@
         @if (showExpand) {
           <ng-container matColumnDef="expandedDetail">
             <td mat-cell *matCellDef="let element" [attr.colspan]="visibleColumns.length">
-              <div class="m-0 p-0" [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'">
-                <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }"></ng-container>
+              <div
+                class="m-0 p-0"
+                [@detailExpand]="element === expandedElement ? 'expanded' : 'collapsed'"
+              >
+                <ng-container *ngTemplateOutlet="expandedDetail; context: { row: element }" />
               </div>
             </td>
           </ng-container>
         }
 
         <!-- Rows -->
-        <tr mat-header-row *matHeaderRowDef="visibleColumns; sticky: true" class="small-header"></tr>
+        <tr
+          mat-header-row
+          *matHeaderRowDef="visibleColumns; sticky: true"
+          class="small-header"
+        ></tr>
         <tr
           mat-row
           *matRowDef="let row; columns: visibleColumns"
@@ -124,7 +142,11 @@
           [style]="getRowColor(row) || {}"
         ></tr>
         @if (showExpand) {
-          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+          ></tr>
         }
 
         <!-- No Data Row -->
@@ -151,7 +173,6 @@
       [showFirstLastButtons]="true"
       [pageIndex]="paginationConfig()?.pageIndex"
       aria-label="Select page"
-    >
-    </mat-paginator>
+    />
   }
 </div>

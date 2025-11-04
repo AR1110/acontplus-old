@@ -2,28 +2,18 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "incremental": true,
     "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "sourceMap": true,
-    "declaration": false,
-    "experimentalDecorators": true,
-    "moduleResolution": "bundler",
-    "importHelpers": true,
     "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022",
-    "lib": ["ES2022", "dom"],
-    "allowSyntheticDefaultImports": true,
-    "useDefineForClassFields": false,
+    "module": "preserve",
     "paths": {
       "@core/*": ["src/app/core/*"],
       "@company-customer/*": ["src/app/modules/customer/company-customer/*"],
@@ -46,7 +36,16 @@
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true,
-    "enableResourceInlining": true
-  }
+    "typeCheckHostBindings": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

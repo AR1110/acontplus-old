@@ -1,4 +1,4 @@
-@use "@angular/material" as mat;
+@use '@angular/material' as mat;
 
 .acontplus-user-panel {
   display: flex;
@@ -25,7 +25,7 @@
   transition: transform mat.$private-swift-ease-out-duration
     mat.$private-swift-ease-out-timing-function;
 
-  [dir="rtl"] & {
+  [dir='rtl'] & {
     transform-origin: 3rem 1.5rem;
   }
 }
@@ -38,7 +38,7 @@
   transition: opacity mat.$private-swift-ease-out-duration
     mat.$private-swift-ease-out-timing-function;
 
-  [dir="rtl"] & {
+  [dir='rtl'] & {
     margin-right: 0.75rem;
     margin-left: 0;
   }

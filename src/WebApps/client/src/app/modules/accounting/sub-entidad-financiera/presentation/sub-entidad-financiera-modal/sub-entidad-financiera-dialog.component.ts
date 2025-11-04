@@ -106,7 +106,7 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
       const data = this.dataForm.value;
 
       if (!(this.params.idSubEntidadFinanciera > 0)) {
-        this.useCase.create(data).subscribe(response => {
+        this.useCase.create(data).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',
@@ -124,7 +124,7 @@ export class SubEntidadFinancieraDialogComponent implements OnInit {
       }
 
       if (this.params.idSubEntidadFinanciera > 0) {
-        this.useCase.update(this.params.idSubEntidadFinanciera, data).subscribe(response => {
+        this.useCase.update(this.params.idSubEntidadFinanciera, data).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',

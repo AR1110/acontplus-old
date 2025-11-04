@@ -163,7 +163,7 @@ export class Money extends ValueObject<number> {
     // Last allocation gets the remainder
     allocatedCents.push(remainder);
 
-    return allocatedCents.map(cents => Money.cents(cents));
+    return allocatedCents.map((cents) => Money.cents(cents));
   }
 
   override toString() {

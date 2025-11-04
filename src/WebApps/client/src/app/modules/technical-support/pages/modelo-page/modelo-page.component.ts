@@ -37,7 +37,7 @@ export class ModeloPageComponent implements OnInit {
   }
   onGet() {
     this.modeloService.get({ tipo: 1 }).subscribe({
-      next: response => {
+      next: (response) => {
         if (isApiResponse(response)) {
           if (response.code == '1') {
             this.modelos.set(JSON.parse(response.payload as string));
@@ -56,7 +56,7 @@ export class ModeloPageComponent implements OnInit {
       data: this.modeloSelected.id > 0 ? structuredClone(this.modeloSelected) : {},
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (this.modeloSelected.id > 0) {
         this.modeloSelected = {} as Modelo;
       }

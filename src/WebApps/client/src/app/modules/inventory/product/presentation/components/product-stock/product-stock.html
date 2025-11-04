@@ -1,39 +1,36 @@
 @if (loading()) {
   <mat-spinner></mat-spinner>
-} @else if (!loading() && establishments().length >0) {
-
-<div class="p-0">
-  <div class="table-responsive">
-    <table class="table table-sm table-bordered mb-0">
-      <thead class="thead-light">
-      <tr>
-        <th>Estab.</th>
-        <th>Bodega</th>
-        <th>Stock</th>
-        <th>Ub.</th>
-      </tr>
-      </thead>
-      <tbody>
-          @for (branch of establishments(); track $index) {
-              @for (wh of branch.warehouses; let idx = $index; track wh) {
-                <tr>
-                  @if (idx === 0) {
-                    <td [attr.rowspan]="branch.warehouses.length">{{ branch.nameEstab }}</td>
-                  }
-                  <td>{{ wh.nameWarehouse }}</td>
-                  <td>{{ wh.stock }}</td>
-                  <td>{{ wh.ubication || '-' }}</td>
-                </tr>
-              }
-          } @empty {
-
+} @else if (!loading() && establishments().length > 0) {
+  <div class="p-0">
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered mb-0">
+        <thead class="thead-light">
           <tr>
-            <td colspan="4" class="text-center">No hay datos disponibles</td>
+            <th>Estab.</th>
+            <th>Bodega</th>
+            <th>Stock</th>
+            <th>Ub.</th>
           </tr>
+        </thead>
+        <tbody>
+          @for (branch of establishments(); track $index) {
+            @for (wh of branch.warehouses; let idx = $index; track wh) {
+              <tr>
+                @if (idx === 0) {
+                  <td [attr.rowspan]="branch.warehouses.length">{{ branch.nameEstab }}</td>
+                }
+                <td>{{ wh.nameWarehouse }}</td>
+                <td>{{ wh.stock }}</td>
+                <td>{{ wh.ubication || '-' }}</td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center">No hay datos disponibles</td>
+            </tr>
           }
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
-
 }

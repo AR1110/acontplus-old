@@ -17,7 +17,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
   if (isGroupPuntoEmision && estabs) {
     groupEstabs = estabs.reduce((acc, item) => {
       const existingItem = acc.find(
-        el => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
+        (el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
       );
 
       if (!existingItem) {
@@ -50,12 +50,12 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
     }, [] as GroupedEstab[]);
 
     if (isGroupBodega) {
-      groupEstabs = groupEstabs.map(estab => ({
+      groupEstabs = groupEstabs.map((estab) => ({
         ...estab,
         bodegas:
           bodegas
-            ?.filter(bodega => bodega.idEstablecimiento === estab.idEstablecimiento)
-            .map(bodega => ({
+            ?.filter((bodega) => bodega.idEstablecimiento === estab.idEstablecimiento)
+            .map((bodega) => ({
               idBodega: bodega.idBodega,
               bodega: bodega.bodega,
               descripcion: bodega.bodega,
@@ -70,7 +70,7 @@ export const groupEstabUtil = function (obj: GroupEstabProps): GroupedEstab[] {
   if (isGroupBodega && bodegas) {
     groupEstabs = bodegas.reduce((acc, item) => {
       const existingItem = acc.find(
-        el => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
+        (el) => el.idEstablecimiento === item.idEstablecimiento && el.codEstab === item.codEstab,
       );
 
       if (!existingItem) {

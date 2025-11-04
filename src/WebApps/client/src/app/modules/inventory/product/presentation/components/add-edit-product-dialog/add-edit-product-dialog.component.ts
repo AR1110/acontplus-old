@@ -298,11 +298,11 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   private loadDataForm() {
-    this.userRoleStateSvc.select('permission').subscribe(p => {
+    this.userRoleStateSvc.select('permission').subscribe((p) => {
       this.isChangePrecio = p?.product?.precio;
     });
 
-    this.onLoadForm().subscribe(response => {
+    this.onLoadForm().subscribe((response) => {
       const [dataForm, dataId] = response as any;
       const {
         categorias,
@@ -332,13 +332,13 @@ export class AddEditProductDialogComponent implements OnInit {
       this.tiposIce = tiposIce;
 
       if (this.estabs().length > 0) {
-        const dataEstab = this.estabs().find(estab => estab.defaultEstab);
+        const dataEstab = this.estabs().find((estab) => estab.defaultEstab);
         if (dataEstab) {
           this.bodegas = dataEstab.bodegas;
           this.dataUbicacion.idEstablecimiento = dataEstab.idEstablecimiento;
         }
         if (this.bodegas.length > 0) {
-          const dataBodega = this.bodegas.find(bodega => bodega.defaultBodega);
+          const dataBodega = this.bodegas.find((bodega) => bodega.defaultBodega);
           if (dataBodega) {
             this.dataUbicacion.idBodega = dataBodega.idBodega;
           }
@@ -388,7 +388,7 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   setDataSubCategoria() {
-    if (this.subCategoriesGroup().length === 0 || (this.params?.isImport)) return;
+    if (this.subCategoriesGroup().length === 0 || this.params?.isImport) return;
 
     const { codigo, idSubFamilia } = this.subCategories()[0];
 
@@ -457,11 +457,11 @@ export class AddEditProductDialogComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           if (this.subCategories().length > 0) {
             const { codigo } = this.subCategories().find(
-              val => val.idSubFamilia === this.data.idSubFamilia,
+              (val) => val.idSubFamilia === this.data.idSubFamilia,
             );
             this.setCodigo(codigo);
           }
@@ -472,7 +472,7 @@ export class AddEditProductDialogComponent implements OnInit {
 
     if (!(this.data.idArticulo > 0) && this.subCategories().length > 0) {
       const { codigo } = this.subCategories().find(
-        val => val.idSubFamilia === this.data.idSubFamilia,
+        (val) => val.idSubFamilia === this.data.idSubFamilia,
       );
       this.setCodigo(codigo);
     }
@@ -482,7 +482,7 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
 
@@ -499,7 +499,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshSubFamilia($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.subCategories.set(response.subCategorias);
         this.subCategoriesGroup.set(response.subCategoriasGroup);
       });
@@ -512,7 +512,7 @@ export class AddEditProductDialogComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
         this.data.idMedida = this.medidas().at(this.medidas().length - 1).idMedida;
       });
@@ -524,7 +524,7 @@ export class AddEditProductDialogComponent implements OnInit {
   refreshMedida($event: MouseEvent) {
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
       });
     } catch (error) {
@@ -547,7 +547,7 @@ export class AddEditProductDialogComponent implements OnInit {
       if ($event) {
         $event.stopPropagation();
       }
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.etiquetas.set(response.etiquetas);
       });
     } catch (error) {
@@ -558,7 +558,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultBrand($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.marcas = response.marcas;
       });
     } catch (error) {
@@ -569,7 +569,7 @@ export class AddEditProductDialogComponent implements OnInit {
   resultModel($event: MouseEvent) {
     $event.stopPropagation();
     try {
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.modelos = response.modelos;
       });
     } catch (error) {
@@ -612,7 +612,7 @@ export class AddEditProductDialogComponent implements OnInit {
   }
 
   private recalculateTarifaAdd() {
-    const dataTipoIva = this.tiposIva().find(item => item.idTipoIva === this.data.idTipoIva);
+    const dataTipoIva = this.tiposIva().find((item) => item.idTipoIva === this.data.idTipoIva);
     if (!dataTipoIva) {
       this.tS.show({
         type: 'warning',
@@ -768,7 +768,7 @@ export class AddEditProductDialogComponent implements OnInit {
           }),
           file: this.selectedFile(),
         })
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code == '0') {
             this.tS.show({
               type: 'warning',
@@ -789,7 +789,7 @@ export class AddEditProductDialogComponent implements OnInit {
           productId: this.params.id,
           file: this.selectedFile(),
         })
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code == '0') {
             this.tS.show({
               type: 'warning',
@@ -896,7 +896,7 @@ export class AddEditProductDialogComponent implements OnInit {
     };
 
     if (this.isAdd()) {
-      this.$productPostUseCase.execute(senData).subscribe(response => {
+      this.$productPostUseCase.execute(senData).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -916,7 +916,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
 
     if (this.isUpdate()) {
-      this.$productPutUseCase.execute(senData).subscribe(response => {
+      this.$productPutUseCase.execute(senData).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -942,7 +942,7 @@ export class AddEditProductDialogComponent implements OnInit {
         confirmButtonText: 'Sí',
         showDenyButton: true,
         denyButtonText: 'No',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           this.params.id = response.idArticulo;
           this.loadDataForm();
@@ -980,11 +980,11 @@ export class AddEditProductDialogComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.estabs().find(
-      estab => estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento,
+      (estab) => estab.idEstablecimiento === this.dataUbicacion.idEstablecimiento,
     );
     if (dataEstab) {
       this.bodegas = dataEstab.bodegas;
-      const dataBodega = this.bodegas.find(b => b.defaultBodega);
+      const dataBodega = this.bodegas.find((b) => b.defaultBodega);
       if (dataBodega) {
         this.dataUbicacion.idBodega = dataBodega.idBodega;
       }

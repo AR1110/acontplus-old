@@ -22,7 +22,7 @@ export class AsignacionPuntoEmisionRepositoryImpl implements AsignacionPuntoEmis
   list(parameters: Partial<AsignacionPuntoEmisionList>) {
     return this._http
       .get<ApiResponse>(`${this._url}?json=${ListAsignacionPuntoEmisionMapper.toJson(parameters)}`)
-      .pipe(map(response => ListAsignacionPuntoEmisionMapper.fromJson(response)));
+      .pipe(map((response) => ListAsignacionPuntoEmisionMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_PUNTO_EMISION}`;

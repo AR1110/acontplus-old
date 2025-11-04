@@ -76,7 +76,7 @@ export class FacturaFisicaComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
     { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = new MatTableDataSource<FacturaFisicaLista>();
 
@@ -120,7 +120,7 @@ export class FacturaFisicaComponent implements OnInit {
 
   private successResponseNotaEntregaAll(response: any) {
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update(p => ({
+    this.pagination.update((p) => ({
       ...p,
       totalRecords: response.totalRecords,
     }));
@@ -137,7 +137,7 @@ export class FacturaFisicaComponent implements OnInit {
           this.isLoadingResults.set(false);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         this.successResponseNotaEntregaAll(response);
       });
   }
@@ -156,15 +156,15 @@ export class FacturaFisicaComponent implements OnInit {
           this.estadosDoc = initialData.estadosDoc;
 
           if (this.estabs.length > 0) {
-            const dataEstab = this.estabs.find(estab => estab.defaultEstab);
+            const dataEstab = this.estabs.find((estab) => estab.defaultEstab);
             this.puntosEmision = dataEstab?.puntosEmision || [];
 
-            this.dataSearch.update(e => {
+            this.dataSearch.update((e) => {
               return {
                 ...e,
                 codEstab: dataEstab?.codEstab,
                 idPuntoEmision:
-                  this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+                  this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0,
               };
             });
           } else {
@@ -179,7 +179,7 @@ export class FacturaFisicaComponent implements OnInit {
         }),
       )
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.successResponseNotaEntregaAll(response);
       });
   }
@@ -188,7 +188,7 @@ export class FacturaFisicaComponent implements OnInit {
     key: K,
     value: ReturnType<typeof this.dataSearch>[K],
   ) {
-    this.dataSearch.update(ds => {
+    this.dataSearch.update((ds) => {
       return {
         ...ds,
         [key]: value,
@@ -197,13 +197,13 @@ export class FacturaFisicaComponent implements OnInit {
   }
 
   onEstabChange() {
-    const dataEstab = this.estabs.find(estab => estab.codEstab === this.dataSearch().codEstab);
+    const dataEstab = this.estabs.find((estab) => estab.codEstab === this.dataSearch().codEstab);
     this.puntosEmision = dataEstab?.puntosEmision || [];
 
     if (this.puntosEmision.length > 0) {
       this.setDataSearch(
         'idPuntoEmision',
-        this.puntosEmision.find(pto => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+        this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0,
       );
       this.refresh();
     } else {
@@ -215,7 +215,7 @@ export class FacturaFisicaComponent implements OnInit {
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.update(e => {
+    this.dataSearch.update((e) => {
       return {
         ...e,
         fromDate: range.from,
@@ -229,11 +229,11 @@ export class FacturaFisicaComponent implements OnInit {
     const dialogSvc = this.dialogSvc.open(FacturaFisicaAddEditModalComponent, {
       size: 'xl',
     });
-    dialogSvc.subscribe(result => {});
+    dialogSvc.subscribe((result) => {});
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

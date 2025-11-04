@@ -29,7 +29,7 @@ export class CategoryPageComponent implements OnInit {
       pageSize: this.dataSearch.pageSize,
     };
 
-    this.categorySvc.getAll(params).subscribe(categories => {
+    this.categorySvc.getAll(params).subscribe((categories) => {
       this.categories = categories;
       this.dataSearch.totalRecords =
         this.categories.length > 0 ? this.categories[0].totalRecords : 0;

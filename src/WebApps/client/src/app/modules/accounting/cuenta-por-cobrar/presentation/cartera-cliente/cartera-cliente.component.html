@@ -19,7 +19,9 @@
             <mat-checkbox [(ngModel)]="dataSearch.ckCuotas">Cuotas</mat-checkbox>
           </div>
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
-            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente">Dir. Vivienda Cliente</mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
+              >Dir. Vivienda Cliente</mat-checkbox
+            >
           </div>
         </div>
         <mat-divider />
@@ -45,7 +47,10 @@
             </mat-form-field>
           </div>
           <div class="col-lg-4 col-md-4 col-sm-6 col-12">
-            <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+            <app-date-range-selection
+              [showInputMaterial]="true"
+              (onChangeDateRange)="onDateRangeSelection($event)"
+            />
           </div>
           <div class="col-lg-3 col-md-3 col-sm-6 col-12">
             <mat-form-field class="w-100">
@@ -158,7 +163,9 @@
       <div class="d-grid gap-2 my-2 mx-3">
         <div class="row">
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente">Dir. Vivienda Cliente</mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
+              >Dir. Vivienda Cliente</mat-checkbox
+            >
           </div>
 
           <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
@@ -192,7 +199,11 @@
           <div class="col-lg-4 col-md-4 col-sm-6 col-12">
             <mat-form-field class="w-100">
               <mat-label>Dirección de vivienda</mat-label>
-              <input matInput [(ngModel)]="dataSearch.dirViviendaCliente" placeholder="Ej: (Sector, Barrio y Calle):" />
+              <input
+                matInput
+                [(ngModel)]="dataSearch.dirViviendaCliente"
+                placeholder="Ej: (Sector, Barrio y Calle):"
+              />
             </mat-form-field>
           </div>
           <div class="col-lg-3 col-md-3 col-sm-6 col-12">
@@ -217,15 +228,13 @@
             [fileType]="REPORT_FORMAT.PDF"
             text="Ver PDF"
             (exportReport)="handleFileDownload($event, 2)"
-          >
-          </app-report-buttons>
+          />
 
           <app-report-buttons
             [fileType]="REPORT_FORMAT.EXCEL"
             text="Descargar Excel"
             (exportReport)="handleFileDownload($event, 2)"
-          >
-          </app-report-buttons>
+          />
         </div>
       </div>
     </mat-tab>

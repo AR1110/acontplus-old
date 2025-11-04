@@ -11,7 +11,9 @@
         >
           <mat-option [value]="">Seleccione un impuesto</mat-option>
           @for (impuesto of impuestosRetencion(); track $index) {
-            <mat-option [value]="impuesto.id"> {{ impuesto.codigo }} - {{ impuesto.descripcion }} </mat-option>
+            <mat-option [value]="impuesto.id">
+              {{ impuesto.codigo }} - {{ impuesto.descripcion }}
+            </mat-option>
           }
         </mat-select>
       </mat-form-field>
@@ -83,7 +85,7 @@
           id="btn-save-ret-{{ formGroup.get('uniqueIdDoc')?.value }}"
           title="Guardar retención del sustento"
           (handleClick)="onSave()"
-        ></app-theme-button>
+        />
       }
       <app-theme-button
         variant="danger"
@@ -92,7 +94,7 @@
         id="btnDeleteRetencion-{{ formGroup.get('uniqueIdDoc')?.value }}"
         title="Eliminar retención del sustento"
         (handleClick)="removeRetencion()"
-      ></app-theme-button>
+      />
     </div>
   </div>
 </form>

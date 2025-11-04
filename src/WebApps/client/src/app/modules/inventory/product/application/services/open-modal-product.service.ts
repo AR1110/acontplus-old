@@ -17,7 +17,7 @@ export class OpenModalProductService {
       },
     });
 
-    dialogRef.subscribe(result => {
+    dialogRef.subscribe((result) => {
       return result;
     });
   }
@@ -29,7 +29,7 @@ export class OpenModalProductService {
         id: data?.id,
       },
     });
-    dialogRef.subscribe(result => {
+    dialogRef.subscribe((result) => {
       console.log(result);
     });
   }

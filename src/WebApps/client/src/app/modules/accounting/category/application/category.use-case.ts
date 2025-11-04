@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CategoryRepository } from '@accounting/category/domain/category.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CategoryUseCase {
-  constructor(private repo: CategoryRepository) {}
+  private repo = inject(CategoryRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   get<T>(params: T) {
     return this.repo.get(params);
   }

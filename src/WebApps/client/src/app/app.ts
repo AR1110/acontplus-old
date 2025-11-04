@@ -1,8 +1,16 @@
-import {Component, inject , Renderer2, effect, DOCUMENT, OnInit, AfterViewInit} from '@angular/core';
-import {ActivatedRoute, Router, RouterOutlet} from '@angular/router';
+import {
+  Component,
+  inject,
+  Renderer2,
+  effect,
+  DOCUMENT,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { THEME_OPTIONS } from '@core/theme/theme-options';
 import { PreloaderService, SettingsService } from '@core/bootstrap';
-import {PermissionsService} from "@core/services/permissions";
+import { PermissionsService } from '@core/services/permissions';
 import { ThemeClass } from '@core/theme/types';
 import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
 import { ThemeService } from '@core/theme/theme.service';
@@ -19,6 +27,10 @@ import { GlobalRoutes } from '@core/constants/global-routes';
   template: ` <router-outlet /> `,
 })
 export class App implements OnInit, AfterViewInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private _authUseCase = inject(AuthUseCase);
+
   title = 'Acontplus';
   //temporalmente
   themeOptions = THEME_OPTIONS;
@@ -29,17 +41,17 @@ export class App implements OnInit, AfterViewInit {
   private readonly _document = inject(DOCUMENT);
   private readonly _renderer = inject(Renderer2);
   private readonly _tokenUseCase = inject(TokenUseCase);
-   private readonly preloader = inject(PreloaderService);
+  private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
   private readonly permissionsService = inject(PermissionsService);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
   //end temporalmente
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private _authUseCase: AuthUseCase,
-    library: FaIconLibrary,
-  ) {
+  constructor() {
+    const library = inject(FaIconLibrary);
+
     library.addIconPacks(fab);
     effect(() => {
       this._renderer.setAttribute(
@@ -55,7 +67,7 @@ export class App implements OnInit, AfterViewInit {
     this._themeService.changeTheme(newTheme);
   }
 
- // end temporalmente
+  // end temporalmente
 
   ngOnInit() {
     Object.keys(sessionStorage).forEach(function (key) {
@@ -92,8 +104,7 @@ export class App implements OnInit, AfterViewInit {
 
       if (token) {
         //temporalmente
-        const themeClass = this.themeOptions.find((x) => x.name === 'azure')
-          ?.light.class;
+        const themeClass = this.themeOptions.find((x) => x.name === 'azure')?.light.class;
         if (themeClass) {
           //this.changeTheme(themeClass);
         } else {

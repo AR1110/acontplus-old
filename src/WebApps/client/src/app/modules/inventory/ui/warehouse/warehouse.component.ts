@@ -50,14 +50,14 @@ export class WarehouseComponent implements OnInit {
     { key: 'nomEstado', label: 'Estado', type: 'boolean' },
   ];
 
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   async openModalAddUpdate(params?: WarehouseList) {
     await firstValueFrom(this.$sendMaxWarehousesUseCase.execute());
     const ref = this._dialogSvc.open(AddEditWarehouseComponent, {
       data: structuredClone(params) || {},
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -73,7 +73,7 @@ export class WarehouseComponent implements OnInit {
       pageIndex: 1,
       pageSize: 25,
     };
-    this.$listUseCase.execute(dataSearch).subscribe(response => {
+    this.$listUseCase.execute(dataSearch).subscribe((response) => {
       this.dataSource.set(response.data);
     });
   }
@@ -95,7 +95,7 @@ export class WarehouseComponent implements OnInit {
 
     if (!isConfirmed) return;
 
-    this.$deleteUseCase.execute({ idBodega: item.idBodega }).subscribe(response => {
+    this.$deleteUseCase.execute({ idBodega: item.idBodega }).subscribe((response) => {
       if (response.code === '0') {
         this._tS.show({
           type: 'warning',

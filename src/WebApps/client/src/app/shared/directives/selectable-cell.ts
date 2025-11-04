@@ -1,4 +1,4 @@
-import {Directive,   input,   output,  } from '@angular/core';
+import { Directive, input, output } from '@angular/core';
 
 @Directive({
   selector: '[acp-grid-selectable-cell]',
@@ -16,9 +16,9 @@ export class DataGridSelectableCell {
   }
   private _selected = false;
 
-   cellSelectable = input(true);
+  cellSelectable = input(true);
 
-   cellSelectedChange = output<DataGridSelectableCell>();
+  cellSelectedChange = output<DataGridSelectableCell>();
 
   onClick(event: MouseEvent) {
     this.ctrlKeyPressed = event.ctrlKey;

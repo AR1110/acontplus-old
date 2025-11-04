@@ -86,7 +86,7 @@
         id="btn-save-tax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
         title="Guardar impuesto del sustento"
         (handleClick)="onSave()"
-      ></app-theme-button>
+      />
     }
     <app-theme-button
       variant="danger"
@@ -95,7 +95,7 @@
       id="btnDeleteTax-{{ taxGroup().get('uniqueIdDoc')?.value }}"
       title="Eliminar impuesto del sustento"
       (handleClick)="removeTax()"
-    ></app-theme-button>
+    />
   </div>
 </div>
 

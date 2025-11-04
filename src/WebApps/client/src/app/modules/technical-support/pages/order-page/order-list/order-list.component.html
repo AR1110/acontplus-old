@@ -54,8 +54,7 @@
   [paginationConfig]="pagination()"
   [enablePagination]="true"
   (pageEvent)="handlePageEvent($event)"
->
-</app-mat-dynamic-table>
+/>
 
 <ng-template #templateOp let-item="item">
   <button mat-button [matMenuTriggerFor]="menu">
@@ -80,7 +79,9 @@
         Anular
       </button>
     }
-    <button mat-menu-item (click)="getReport(item)" title="Reporte"><mat-icon>download</mat-icon>Reporte</button>
+    <button mat-menu-item (click)="getReport(item)" title="Reporte">
+      <mat-icon>download</mat-icon>Reporte
+    </button>
 
     @if (orderStatusCode === 4) {
       <button mat-menu-item (click)="askToDelivery(item)" title="Entregar">

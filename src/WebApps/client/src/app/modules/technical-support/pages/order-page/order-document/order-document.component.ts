@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -10,7 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   selector: 'app-order-document',
   templateUrl: './order-document.component.html',
   styles: ``,
-  imports: [CommonModule, TabulatorComponent, FormsModule, MatCustomDialogComponent],
+  imports: [TabulatorComponent, FormsModule, MatCustomDialogComponent],
 })
 export class OrderDocumentComponent implements OnInit {
   private modalRef = inject(MatDialogRef<OrderDocumentComponent>);

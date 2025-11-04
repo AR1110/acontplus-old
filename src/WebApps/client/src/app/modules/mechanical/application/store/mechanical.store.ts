@@ -39,7 +39,7 @@ export const MechanicalStore = signalStore(
 
   withMethods((store, $filterData = inject(FilterDataSupportUseCase)) => ({
     loadFilterData() {
-      $filterData.execute().subscribe(response => {
+      $filterData.execute().subscribe((response) => {
         patchState(store, () => {
           return {
             supportStatus: response.supportStatus,

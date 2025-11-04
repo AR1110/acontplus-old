@@ -76,14 +76,12 @@ describe('WizardConfigComponent', () => {
         {
           provide: GetDocConfigFormDataUseCase,
           useValue: {
-            execute: jest
-              .fn()
-              .mockReturnValue(
-                of({
-                  establecimientos: [{ nombreComercial: '', puntosEmision: [] }],
-                  tiposDoc: [],
-                }),
-              ),
+            execute: jest.fn().mockReturnValue(
+              of({
+                establecimientos: [{ nombreComercial: '', puntosEmision: [] }],
+                tiposDoc: [],
+              }),
+            ),
           },
         },
         {

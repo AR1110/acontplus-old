@@ -36,7 +36,10 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
       @if (dataSearch.codDoc === '01') {
         <div class="col">

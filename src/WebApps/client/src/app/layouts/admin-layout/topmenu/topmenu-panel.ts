@@ -45,7 +45,7 @@ export class TopmenuPanel implements OnInit, OnDestroy {
   private routerSubscription = Subscription.EMPTY;
 
   ngOnInit() {
-    this.items.forEach(item => {
+    this.items.forEach((item) => {
       this.menuStates.push({ active: this.checkRoute(item), route: item.route });
     });
   }
@@ -63,7 +63,7 @@ export class TopmenuPanel implements OnInit, OnDestroy {
   }
 
   checkChildRoute(menuItems: MenuChildrenItem[] = []) {
-    return menuItems.some(child => {
+    return menuItems.some((child) => {
       if (this.router.url.split('/').includes(child.route)) {
         return true;
       }
@@ -83,9 +83,9 @@ export class TopmenuPanel implements OnInit, OnDestroy {
 
     this.routerSubscription.unsubscribe();
     this.routerSubscription = this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(e => {
-        this.menuStates.forEach(item => (item.active = false));
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((e) => {
+        this.menuStates.forEach((item) => (item.active = false));
         setTimeout(() => {
           this.menuStates[index].active = rla.isActive;
           this.cdr.markForCheck();

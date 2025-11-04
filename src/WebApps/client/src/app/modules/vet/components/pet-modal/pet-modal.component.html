@@ -13,7 +13,7 @@
             (customerSelected)="onCustomerSelected($event)"
             [textSearch]="customerBusinessName"
             [isAdvancedMode]="true"
-          ></app-company-customer-search>
+          />
         </div>
       </div>
     </div>
@@ -24,7 +24,14 @@
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
             <div class="form-group">
               <label for="name">Nombre</label>
-              <input class="form-control" formControlName="name" id="name" placeholder="Nombre" required type="text" />
+              <input
+                class="form-control"
+                formControlName="name"
+                id="name"
+                placeholder="Nombre"
+                required
+                type="text"
+              />
             </div>
           </div>
           <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
@@ -103,6 +110,5 @@
     text="Guardar"
     type="submit"
     form="petForm"
-  >
-  </app-theme-button>
+  />
 </ng-template>

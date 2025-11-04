@@ -19,7 +19,9 @@
       <mat-hint>Tamaño recomendado 500x500 y 1MB</mat-hint>
     </mat-form-field>
 
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+    >
       @for (item of productPhotos(); track $index) {
         <div class="col">
           <mat-card class="custom-card" appearance="outlined">
@@ -29,7 +31,12 @@
 
             <!-- Imagen centrada con borde -->
             <div class="image-container m-3" (click)="setDefault(item)">
-              <img mat-card-image [src]="item.s3ObjectUrl" [alt]="'img' + $index" class="custom-image-center" />
+              <img
+                mat-card-image
+                [src]="item.s3ObjectUrl"
+                [alt]="'img' + $index"
+                class="custom-image-center"
+              />
             </div>
 
             <mat-card-actions>

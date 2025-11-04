@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovimientoCajaUseCase {
-  constructor(private repo: MovimientoCajaRepository) {}
+  private repo = inject(MovimientoCajaRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

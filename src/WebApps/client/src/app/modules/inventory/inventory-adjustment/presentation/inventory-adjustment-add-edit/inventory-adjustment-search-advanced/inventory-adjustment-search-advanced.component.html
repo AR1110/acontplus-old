@@ -60,7 +60,13 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Seleccionar archivo</mat-label>
-          <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" />
+          <input
+            #fileInput
+            type="file"
+            hidden
+            (change)="onFileSelected($event)"
+            accept=".xls,.xlsx"
+          />
           <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
 
           <ng-container matSuffix>

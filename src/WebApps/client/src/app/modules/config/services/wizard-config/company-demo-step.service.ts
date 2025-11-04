@@ -13,10 +13,10 @@ export class CompanyDemoStepService {
   private readonly url = `${PATHS_API.CONFIG}${CONFIG_PATHS.COMPANY_DEMO_STEP}`;
 
   get() {
-    return this.http.get<ApiResponse>(`${this.url}`).pipe(map(response => response));
+    return this.http.get<ApiResponse>(`${this.url}`).pipe(map((response) => response));
   }
 
   post(id: number) {
-    return this.http.post<ApiResponse>(`${this.url}${id}`, null).pipe(map(response => response));
+    return this.http.post<ApiResponse>(`${this.url}${id}`, null).pipe(map((response) => response));
   }
 }

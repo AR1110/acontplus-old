@@ -15,7 +15,7 @@ export class CategoryService {
   getAll<T>(data: T) {
     const params = JSON.stringify({ ...data, tipo: 1 });
     return this.http.get(`${this.url}Get?json=${params}`).pipe(
-      map(response => {
+      map((response) => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
             throw response;

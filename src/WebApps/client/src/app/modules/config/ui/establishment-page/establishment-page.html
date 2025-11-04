@@ -6,24 +6,23 @@
   [expandable]="true"
   [expansionTemplate]="expansionTpl"
   [cellTemplate]="{
-  status: statusTpl,
-  op: opTpl
+    status: statusTpl,
+    op: opTpl,
   }"
   [hidePageSize]="true"
   [showPaginator]="false"
-
   [closeOthersOnExpand]="true"
   (expansionChange)="expanded($event)"
   [showToolbar]="true"
   [toolbarTemplate]="toolbarTpl"
-></app-data-grid>
+/>
 
 <ng-template #toolbarTpl>
   <app-theme-button
-  [icon]="'add'"
-  matStyle="basic"
-  [text]="'Nuevo'"
-  (handleClick)="openAddEstablishment()"
+    [icon]="'add'"
+    matStyle="basic"
+    [text]="'Nuevo'"
+    (handleClick)="openAddEstablishment()"
   />
 </ng-template>
 
@@ -35,8 +34,7 @@
       icon="edit"
       variant="warning"
       (handleClick)="openModalAddEdit(row.idEstablecimiento)"
-    >
-    </app-theme-button>
+    />
 
     @if (row.estado) {
       <app-theme-button
@@ -94,7 +92,12 @@
                   <h6>Vista previa:</h6>
 
                   <div class="d-flex flex-column">
-                    <img [src]="imageUrl()" alt="Image preview" class="img-thumbnail" style="max-height: 300px" />
+                    <img
+                      [src]="imageUrl()"
+                      alt="Image preview"
+                      class="img-thumbnail"
+                      style="max-height: 300px"
+                    />
 
                     <div class="d-flex flex-row gap-1 p-1">
                       @if (newEstablishmentImgUploaded()) {
@@ -132,25 +135,25 @@
             </mat-radio-group>
 
             <div class="alert alert-info" role="alert">
-              En caso de que sea "Automática", los documentos electrónicos, una vez creados, no se podrán editar
-              más y se autorizarán automáticamente.
+              En caso de que sea "Automática", los documentos electrónicos, una vez creados, no se
+              podrán editar más y se autorizarán automáticamente.
             </div>
           </mat-card-content>
         </mat-card>
       </div>
     </div>
     <div class="col-xl-7 col-lg-7 col-md-12 col-12">
-
-      <app-data-grid [data]="puntosEmision()"
-                     [columns]="columnsPuntosEmision"
-                     [showPaginator]="false"
-                     [showToolbar]="true"
-                     [toolbarTemplate]="toolbarPuntoEmisionTpl"
-                     [cellTemplate]="{
-                     status: statusPuntoEmisionTpl,
-                     op: opPuntoEmisionTpl
-                     }"
-      ></app-data-grid>
+      <app-data-grid
+        [data]="puntosEmision()"
+        [columns]="columnsPuntosEmision"
+        [showPaginator]="false"
+        [showToolbar]="true"
+        [toolbarTemplate]="toolbarPuntoEmisionTpl"
+        [cellTemplate]="{
+          status: statusPuntoEmisionTpl,
+          op: opPuntoEmisionTpl,
+        }"
+      />
       <ng-template #toolbarPuntoEmisionTpl>
         <app-theme-button
           [icon]="'add'"
@@ -167,24 +170,20 @@
             icon="edit"
             matStyle="icon"
             (handleClick)="modalAddEditPuntoEmision(estabTemp, row)"
-          >
-          </app-theme-button>
+          />
           <app-theme-button
             type="button"
             variant="danger"
             icon="delete"
             matStyle="icon"
             (handleClick)="askToDeletePtoEmision(row.idPuntoEmision)"
-          >
-          </app-theme-button>
+          />
         </div>
       </ng-template>
 
       <ng-template #statusPuntoEmisionTpl let-row>
         <div [innerHTML]="row.estado | primaryStatus"></div>
       </ng-template>
-
     </div>
   </div>
 </ng-template>
-

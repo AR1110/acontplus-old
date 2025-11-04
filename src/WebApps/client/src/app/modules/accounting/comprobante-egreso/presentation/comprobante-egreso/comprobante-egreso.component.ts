@@ -29,7 +29,7 @@ import { ComprobanteEgresoList } from '@accounting/comprobante-egreso/domain/com
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+
 import { ActionComprobanteEgresoReportDirective } from '@accounting/shared/directives/action-comprobante-egreso-report.directive';
 import { ActionComprobanteEgresoAnularDirective } from '@accounting/shared/directives/action-comprobante-egreso-anular.directive';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
@@ -51,9 +51,6 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatDynamicTableComponent,
     MatMenu,
     MatMenuItem,
-    UserSearchComponent,
-    UserSearchComponent,
-
     //Directives
     ActionComprobanteEgresoReportDirective,
     ActionComprobanteEgresoAnularDirective,
@@ -78,7 +75,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'custom', columnType: 'html' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -149,10 +146,10 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
       ),
     };
 
-    this.$listUseCase.execute(params).subscribe(response => {
+    this.$listUseCase.execute(params).subscribe((response) => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update(i => ({
+      this.pagination.update((i) => ({
         ...i,
         totalRecords: response.totalRecords,
       }));
@@ -160,13 +157,13 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.$dataFilterUseCase.execute().subscribe(response => {
+    this.$dataFilterUseCase.execute().subscribe((response) => {
       console.log(response);
       this.estabs = response.estabs;
       this.users.set(response.users);
-      const dataEstab = this.estabs.find(item => item.defaultEstab);
+      const dataEstab = this.estabs.find((item) => item.defaultEstab);
       if (dataEstab) {
-        this.dataSearch.update(i => ({
+        this.dataSearch.update((i) => ({
           ...i,
           codEstab: dataEstab.codEstab,
         }));
@@ -176,7 +173,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.columnsDefs = this.columnsDefs.map(col => {
+    this.columnsDefs = this.columnsDefs.map((col) => {
       if (col.type === 'custom' && col.key === 'nomUsuario') {
         return { ...col, body: (ele: any) => `<strong>${ele.nomUsuario}-Emilio</strong>` };
       }
@@ -186,7 +183,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   onChangeDateRange($event: any) {
-    this.dataSearch.update(item => ({
+    this.dataSearch.update((item) => ({
       ...item,
       fromDate: $event.from,
       toDate: $event.to,
@@ -195,7 +192,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   onSupplierSelected(data: any) {
-    this.dataSearch.update(item => ({
+    this.dataSearch.update((item) => ({
       ...item,
       byPersona: data.identificacionComprador,
       nameSupplier: data.name,
@@ -203,14 +200,14 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   supplierclearSearch($event: any) {
-    this.dataSearch.update(item => ({
+    this.dataSearch.update((item) => ({
       ...item,
       byPersona: 0,
     }));
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

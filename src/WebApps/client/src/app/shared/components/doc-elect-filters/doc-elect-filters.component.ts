@@ -50,6 +50,8 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
   styles: ``,
 })
 export class DocElectFiltersComponent implements OnInit {
+  private fb = inject(FormBuilder);
+
   private destroy$ = new Subject<void>();
   filterOptions = input<FilterOptions>(getMergedDocElectFilterOptions());
   showMoreOptions = input.required();
@@ -79,7 +81,10 @@ export class DocElectFiltersComponent implements OnInit {
   isRefreshingFilters = false;
   isLoadingMainData = false;
 
-  constructor(private fb: FormBuilder) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
     this.filterForm = this.fb.group({
       idEstablecimiento: [0],
       checkBoxFecha: [false],
@@ -106,11 +111,11 @@ export class DocElectFiltersComponent implements OnInit {
       .getFilters()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: data => {
+        next: (data) => {
           this.handleFilterDataReceived(data);
           this.isLoadingFilters = false;
         },
-        error: error => {
+        error: (error) => {
           console.error('Error al cargar filtros:', error);
           this.isLoadingFilters = false;
           // Aquí puedes mostrar un toast o mensaje de error
@@ -134,13 +139,13 @@ export class DocElectFiltersComponent implements OnInit {
       .refreshFilters()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: data => {
+        next: (data) => {
           this.handleFilterDataReceived(data);
           this.isRefreshingFilters = false;
           console.log('✅ Filtros actualizados exitosamente');
           // Aquí puedes mostrar un toast de éxito
         },
-        error: error => {
+        error: (error) => {
           console.error('Error al refrescar filtros:', error);
           this.isRefreshingFilters = false;
           // Aquí puedes mostrar un toast de error
@@ -149,7 +154,7 @@ export class DocElectFiltersComponent implements OnInit {
   }
   onEstabChange(): void {
     const dataEstab = this.establecimientos().find(
-      estab => estab.idEstablecimiento === this.filterForm.get('idEstablecimiento')?.value,
+      (estab) => estab.idEstablecimiento === this.filterForm.get('idEstablecimiento')?.value,
     );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
@@ -206,11 +211,13 @@ export class DocElectFiltersComponent implements OnInit {
    * Se suscribe a cambios en los datos de filtros
    */
   private subscribeToFilterDataChanges(): void {
-    this._documentoElectronicoUseCase.filterData$.pipe(takeUntil(this.destroy$)).subscribe(data => {
-      if (data) {
-        this.handleFilterDataReceived(data);
-      }
-    });
+    this._documentoElectronicoUseCase.filterData$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        if (data) {
+          this.handleFilterDataReceived(data);
+        }
+      });
   }
 
   /**
@@ -222,7 +229,7 @@ export class DocElectFiltersComponent implements OnInit {
     // Extraer arrays para usar en los dropdowns
     this.establecimientos.set(data.estabs);
     if (this.establecimientos().length > 0) {
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.filterForm.get('idEstablecimiento')?.setValue(dataEstab?.idEstablecimiento);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
     }
@@ -245,7 +252,7 @@ export class DocElectFiltersComponent implements OnInit {
   private setupFormSubscription(): void {
     this.filterForm.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(formValue => {
+      .subscribe((formValue) => {
         console.log('🔍 Filtros cambiados:', formValue);
         // this.loadMainData();
       });

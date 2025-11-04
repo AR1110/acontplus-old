@@ -14,21 +14,21 @@ export class DeviceService {
   private http = inject(HttpClient);
 
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`).pipe(map(response => response));
+    return this.http.delete(`${this.url}${id}`).pipe(map((response) => response));
   }
 
   get(params: any) {
     return this.http
       .get(`${this.url}?json=${JSON.stringify(params)}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   post(data: Device) {
-    return this.http.post(this.url, data).pipe(map(response => response));
+    return this.http.post(this.url, data).pipe(map((response) => response));
   }
 
   put(id: number, data: Device) {
-    return this.http.put(`${this.url}${id}`, data).pipe(map(response => response));
+    return this.http.put(`${this.url}${id}`, data).pipe(map((response) => response));
   }
 
   search<T extends { textSearch: string }>(data: T): Observable<DeviceSearch[]> {
@@ -37,7 +37,7 @@ export class DeviceService {
       textSearch: data.textSearch,
     };
     return this.http.get(`${this.url}?json=${JSON.stringify(query)}`).pipe(
-      map(response => {
+      map((response) => {
         if (isApiResponse(response)) {
           const { devices } = (response.payload && JSON.parse(response.payload as string)) || [];
           return devices || [];

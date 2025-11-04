@@ -16,7 +16,7 @@ export class MenuItemService {
     return this.#http
       .get<ApiResponse>(`${this.#url}GetById/${id}/?json=${JSON.stringify(params)}`)
       .pipe(
-        map(response => {
+        map((response) => {
           if (response.code !== '1') {
             return { menuItems: [], tarifas: [] };
           }

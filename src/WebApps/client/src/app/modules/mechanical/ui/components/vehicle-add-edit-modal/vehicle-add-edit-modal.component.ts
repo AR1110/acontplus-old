@@ -124,7 +124,7 @@ export class VehicleAddEditModalComponent implements OnInit {
     this.vehicleUseCase
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         const { countries, vehicleTypes } = response;
         this.countries.set(countries);
         this.vehicleTypes.set(vehicleTypes);
@@ -139,7 +139,7 @@ export class VehicleAddEditModalComponent implements OnInit {
           this.vehicleUseCase
             .getId(this.data.id)
             .pipe(finalize(() => this.loading.set(false)))
-            .subscribe(response => {
+            .subscribe((response) => {
               // hideLoader()
               this.customer = response.customer;
               this.dataForm = {
@@ -171,7 +171,7 @@ export class VehicleAddEditModalComponent implements OnInit {
 
   filterCountry(): void {
     const filterValue = this.input.nativeElement.value.toLowerCase();
-    const filteredCountryOptions = this.optionsCountry().filter(o =>
+    const filteredCountryOptions = this.optionsCountry().filter((o) =>
       o.description.toLowerCase().includes(filterValue),
     );
     this.filteredCountryOptions.set(filteredCountryOptions);

@@ -42,7 +42,7 @@ export class UserCustomerAccessComponent implements OnInit {
       .execute({
         userRoleId: this.$userCustomerStore.userRoleId(),
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         this.actions = response.actions;
         const makeMenusNode = [
           {
@@ -73,7 +73,7 @@ export class UserCustomerAccessComponent implements OnInit {
 
     checkNodes(nodes);
 
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (node.children) {
         this.updateParentNodeCheckStatus(node);
       }
@@ -86,7 +86,7 @@ export class UserCustomerAccessComponent implements OnInit {
       return;
     }
 
-    const allChildrenChecked = node.children.every(child =>
+    const allChildrenChecked = node.children.every((child) =>
       this.checklistSelection.isSelected(child),
     );
 
@@ -97,7 +97,7 @@ export class UserCustomerAccessComponent implements OnInit {
     }
 
     // Recursively update for nested children
-    node.children.forEach(child => {
+    node.children.forEach((child) => {
       if (child.children) {
         this.updateParentNodeCheckStatus(child);
       }
@@ -121,7 +121,7 @@ export class UserCustomerAccessComponent implements OnInit {
 
     const addDescendants = (currentNode: TreeNode) => {
       if (currentNode.children) {
-        currentNode.children.forEach(child => {
+        currentNode.children.forEach((child) => {
           descendants.push(child);
           addDescendants(child);
         });
@@ -136,13 +136,13 @@ export class UserCustomerAccessComponent implements OnInit {
     const descendants = this.getDescendants(node);
     return (
       descendants.length > 0 &&
-      descendants.every(child => this.checklistSelection.isSelected(child))
+      descendants.every((child) => this.checklistSelection.isSelected(child))
     );
   }
 
   descendantsPartiallySelected(node: TreeNode): boolean {
     const descendants = this.getDescendants(node);
-    const result = descendants.some(child => this.checklistSelection.isSelected(child));
+    const result = descendants.some((child) => this.checklistSelection.isSelected(child));
     return result && !this.descendantsAllSelected(node);
   }
 
@@ -190,8 +190,10 @@ export class UserCustomerAccessComponent implements OnInit {
       return; // Skip processing if there are no descendants
     }
 
-    const descAllSelected = descendants.every(child => this.checklistSelection.isSelected(child));
-    const descNoneSelected = descendants.every(child => !this.checklistSelection.isSelected(child));
+    const descAllSelected = descendants.every((child) => this.checklistSelection.isSelected(child));
+    const descNoneSelected = descendants.every(
+      (child) => !this.checklistSelection.isSelected(child),
+    );
 
     // If all descendants are selected, select the parent
     if (descAllSelected) {
@@ -242,10 +244,10 @@ export class UserCustomerAccessComponent implements OnInit {
   };
 
   onSave() {
-    const menus = this.checklistSelection.selected.filter(cl => cl.level === 3);
+    const menus = this.checklistSelection.selected.filter((cl) => cl.level === 3);
     const mergeDuplicateLevel3 = menus.reduce((acc: any, curr: any) => {
       const existingNode = acc.find((m: any) => m.menuId === curr.menuId);
-      const action = this.actions.find(a => a.code === curr.code);
+      const action = this.actions.find((a) => a.code === curr.code);
 
       if (!existingNode) {
         acc.push({
@@ -281,7 +283,7 @@ export class UserCustomerAccessComponent implements OnInit {
       showConfirmButton: true,
       cancelButtonText: 'No',
       confirmButtonText: 'Si',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         const data = {
           accesses: JSON.stringify(mappedLevel3),

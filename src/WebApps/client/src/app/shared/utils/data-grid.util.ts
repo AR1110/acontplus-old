@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {DataGridColumn} from "@shared/components/data-grid/types";
+import { DataGridColumn } from '@shared/components/data-grid/types';
 
 @Injectable({ providedIn: 'root' })
 export class DataGridUtils {
@@ -31,7 +31,7 @@ export class DataGridUtils {
    * @returns
    */
   getColData(data: any[], colDef: DataGridColumn): any[] {
-    return data.map(rowData => this.getCellValue(rowData, colDef));
+    return data.map((rowData) => this.getCellValue(rowData, colDef));
   }
 
   /**

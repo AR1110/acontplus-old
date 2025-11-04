@@ -8,18 +8,24 @@
 
 <ng-template #containerTemplate>
   <div class="d-grid gap-4">
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    >
       <div class="col">
         <mat-card appearance="outlined">
           <mat-card-content>
-            <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+            <div
+              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+            >
               <div class="vstack">
                 <small class="fw-semibold">Proveedor: </small>
                 <small>{{ comprobanteEgresoStore.dataCuentaPorPagar().nombreComprador }}</small>
               </div>
               <div class="vstack">
                 <small class="fw-semibold">Nro. Identificación</small>
-                <small>{{ comprobanteEgresoStore.dataCuentaPorPagar().identificacionComprador }}</small>
+                <small>{{
+                  comprobanteEgresoStore.dataCuentaPorPagar().identificacionComprador
+                }}</small>
               </div>
             </div>
           </mat-card-content>
@@ -29,7 +35,9 @@
       <div class="col">
         <mat-card appearance="outlined">
           <mat-card-content>
-            <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+            <div
+              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+            >
               <div class="vstack">
                 <small class="fw-semibold">Total</small>
                 <small>{{ comprobanteEgresoStore.total() }}</small>
@@ -91,7 +99,9 @@
                   <div class="col">
                     <mat-card appearance="outlined">
                       <mat-card-header class="d-flex align-items-center justify-content-between">
-                        <mat-card-subtitle class="small">{{ item.nombreFormaPago }} </mat-card-subtitle>
+                        <mat-card-subtitle class="small"
+                          >{{ item.nombreFormaPago }}
+                        </mat-card-subtitle>
 
                         <button
                           mat-icon-button
@@ -119,7 +129,7 @@
                               <small>{{ item.abono | currency }}</small>
                             </div>
                           </div>
-                          <mat-divider></mat-divider>
+                          <mat-divider />
 
                           <div
                             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
@@ -170,7 +180,11 @@
 
           <mat-form-field class="w-100">
             <mat-label>Nota (Opcional)</mat-label>
-            <textarea matInput placeholder="..." [(ngModel)]="comprobanteEgresoStore.nota"></textarea>
+            <textarea
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.nota"
+            ></textarea>
           </mat-form-field>
         </div>
       </div>
@@ -183,7 +197,7 @@
           </mat-card-header>
           <mat-card-content>
             <mat-list>
-              <mat-divider></mat-divider>
+              <mat-divider />
               @for (item of comprobanteEgresoStore.entidadesFinanciera(); track $index) {
                 <mat-list-item
                   [disabled]="comprobanteEgresoStore.saldo() === 0"
@@ -195,7 +209,7 @@
                     <mat-icon>keyboard_arrow_right</mat-icon>
                   </div>
                 </mat-list-item>
-                <mat-divider></mat-divider>
+                <mat-divider />
               }
             </mat-list>
           </mat-card-content>

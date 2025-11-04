@@ -1,19 +1,19 @@
 import { Routes } from '@angular/router';
-import { VehiclePageComponent } from '@mechanical/ui/pages/vehicle-page/vehicle-page.component';
-import { MechanicalLayoutComponent } from '@mechanical/ui/layout/mechanical-layout/mechanical-layout.component';
-import { MechanicalHomeComponent } from './ui/mechanical-home.component';
-import { ConfigInspectionComponent } from './ui/pages/config-inspection-page/config-inspection-page.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: MechanicalHomeComponent,
+    loadComponent: () =>
+      import('./ui/mechanical-home.component').then((m) => m.MechanicalHomeComponent),
     data: { breadcrumb: 'Mecánica' },
   },
   {
     path: 'vehicle-page',
     title: 'Vehiculo',
-    component: VehiclePageComponent,
+    loadComponent: () =>
+      import('@mechanical/ui/pages/vehicle-page/vehicle-page.component').then(
+        (m) => m.VehiclePageComponent,
+      ),
     data: {
       breadcrumb: 'Vehiculo',
     },
@@ -21,7 +21,10 @@ export const routes: Routes = [
   {
     path: 'layout',
     title: 'Layot - Mechanical',
-    component: MechanicalLayoutComponent,
+    loadComponent: () =>
+      import('@mechanical/ui/layout/mechanical-layout/mechanical-layout.component').then(
+        (m) => m.MechanicalLayoutComponent,
+      ),
     data: {
       breadcrumb: 'Mecánica',
     },
@@ -29,7 +32,10 @@ export const routes: Routes = [
   {
     path: 'config-inspection-page',
     title: 'Config. Inspección',
-    component: ConfigInspectionComponent,
+    loadComponent: () =>
+      import('./ui/pages/config-inspection-page/config-inspection-page.component').then(
+        (m) => m.ConfigInspectionComponent,
+      ),
     data: {
       breadcrumb: 'Config. Inspección',
     },

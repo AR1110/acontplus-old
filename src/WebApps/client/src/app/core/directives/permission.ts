@@ -1,4 +1,13 @@
-import { Directive, Input, TemplateRef, ViewContainerRef, inject, signal, computed, effect } from '@angular/core';
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+  inject,
+  signal,
+  computed,
+  effect,
+} from '@angular/core';
 import { PermissionsService } from '@core/services/permissions';
 
 /**
@@ -13,7 +22,7 @@ import { PermissionsService } from '@core/services/permissions';
  */
 @Directive({
   selector: '[hasPermission]',
-  standalone: true
+  standalone: true,
 })
 export class HasPermissionDirective {
   private permissionsService = inject(PermissionsService);
@@ -27,7 +36,7 @@ export class HasPermissionDirective {
 
   // Computed que revisa los permisos automáticamente
   private canAccess = computed(() =>
-    this.permissionsService.hasAnyPermission(this.actionCodes(), this.context())
+    this.permissionsService.hasAnyPermission(this.actionCodes(), this.context()),
   );
 
   constructor() {

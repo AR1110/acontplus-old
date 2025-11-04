@@ -16,7 +16,7 @@ export const registerGenerateQuota = (obj: QuotaProps) => {
   const { fechaEmision, tiemposCredito, idTiempoCredito, total } = obj;
 
   // Encontrar datos de tiempo de crédito según el id proporcionado
-  const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+  const dataTiempoCredito = tiemposCredito.find((t) => t.idTiempoCredito === idTiempoCredito);
 
   // Manejo del caso en que no se encuentran datos de tiempo de crédito
   if (!dataTiempoCredito) {
@@ -90,7 +90,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
   const { fechaEmision, tiemposCredito, idTiempoCredito, total, cuotas } = obj;
 
   // Encontrar datos de tiempo de crédito según el id proporcionado
-  const dataTiempoCredito = tiemposCredito.find(t => t.idTiempoCredito === idTiempoCredito);
+  const dataTiempoCredito = tiemposCredito.find((t) => t.idTiempoCredito === idTiempoCredito);
 
   // Manejo del caso en que no se encuentran datos de tiempo de crédito
   if (!dataTiempoCredito) {
@@ -107,7 +107,7 @@ export const updateGeneratQCuota = (obj: QuotaProps) => {
   // Cálculo del monto de cada cuota
   const valorCuota = total / dataTiempoCredito.numeroCuota;
 
-  const resultCuotas = cuotas.map(cuota => {
+  const resultCuotas = cuotas.map((cuota) => {
     if (!cuota.entrada) {
       const sumDia = cuota.nroCuota * diaCuota;
       // Cálculo de la fecha de vencimiento para la cuota

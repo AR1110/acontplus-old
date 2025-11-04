@@ -90,15 +90,15 @@ export class TotalizadorUtil {
 
     // 4. Calcular importe total
     const importeTotal = DecimalUtil.addAsNumber(
-      totalesGenerales.totalPrecioTotalSinImpuesto,
-      totalesPorTarifa.sumTotalIva
+        totalesGenerales.totalPrecioTotalSinImpuesto,
+        totalesPorTarifa.sumTotalIva
     );
 
     // 5. Calcular porcentaje de descuento si aplica
     if (totalesGenerales.totalDescuento > 0) {
       totalesGenerales.totalPorcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(
-        totalesGenerales.totalSinImpuesto,
-        totalesGenerales.totalDescuento
+          totalesGenerales.totalSinImpuesto,
+          totalesGenerales.totalDescuento
       );
     }
 
@@ -145,13 +145,13 @@ export class TotalizadorUtil {
         ...acc,
         totalIce: DecimalUtil.addAsNumber(acc.totalIce, totalIce),
         totalPrecioTotalSinImpuesto: DecimalUtil.addAsNumber(
-          acc.totalPrecioTotalSinImpuesto,
-          roundNumber(item.precioTotalSinImpuesto ?? item.totalWithoutTax ?? 0, DECIMALS.DOS),
+            acc.totalPrecioTotalSinImpuesto,
+            roundNumber(item.precioTotalSinImpuesto ?? item.totalWithoutTax ?? 0, DECIMALS.DOS),
         ),
         totalDescuento: DecimalUtil.addAsNumber(acc.totalDescuento, item.valorDescuento),
         totalSinImpuesto: DecimalUtil.addAsNumber(
-          acc.totalSinImpuesto,
-          roundNumber(totalSinImpuesto, DECIMALS.DOS)
+            acc.totalSinImpuesto,
+            roundNumber(totalSinImpuesto, DECIMALS.DOS)
         ),
       };
     }, {
@@ -173,8 +173,8 @@ export class TotalizadorUtil {
   }
 
   private calcularTotalesPorTarifa(
-    itemsPorTarifa: Record<string, Item[]>,
-    tarifasImpuesto: TarifaImpuesto[]
+      itemsPorTarifa: Record<string, Item[]>,
+      tarifasImpuesto: TarifaImpuesto[]
   ): { totalesPorTarifa: TotalesPorTarifa[]; sumTotalIva: number } {
     const totalesPorTarifa: TotalesPorTarifa[] = [];
     let sumTotalIva = 0;
@@ -185,8 +185,8 @@ export class TotalizadorUtil {
       // Calcular total neto IVA
       const totalNetoIva = items.reduce((acc, item) => {
         return DecimalUtil.addAsNumber(
-          acc,
-          roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS)
+            acc,
+            roundNumber(item.precioTotalSinImpuesto, DECIMALS.DOS)
         );
       }, 0);
 
@@ -195,8 +195,8 @@ export class TotalizadorUtil {
       if (tarifa.tarifa > 0) {
         totalIva = items.reduce((acc, item) => {
           const valorImpuesto =
-            item.valorImpuesto ??
-            pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa.tarifa);
+              item.valorImpuesto ??
+              pricingCalculateUtil.calculateTaxValue(item.precioTotalSinImpuesto, tarifa.tarifa);
           return DecimalUtil.addAsNumber(acc, roundNumber(valorImpuesto, DECIMALS.DOS), DECIMALS.DOS);
         }, 0);
         sumTotalIva = DecimalUtil.addAsNumber(sumTotalIva, totalIva, DECIMALS.DOS);

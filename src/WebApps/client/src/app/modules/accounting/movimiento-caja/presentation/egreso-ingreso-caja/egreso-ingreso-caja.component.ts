@@ -82,7 +82,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -105,9 +105,9 @@ export class EgresoIngresoCajaComponent implements OnInit {
     this.$listUseCase
       .execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource = response.data;
-        this.pagination.update(e => {
+        this.pagination.update((e) => {
           return {
             ...e,
             totalRecords: response.totalRecords,
@@ -117,10 +117,10 @@ export class EgresoIngresoCajaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataFilter().subscribe(response => {
+    this._movimientoCajaUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos = response.establecimientos;
       if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find(item => item.predeterminado);
+        const dataEstab = this.establecimientos.find((item) => item.predeterminado);
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
           this.getMovimientosCaja();
@@ -153,7 +153,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
       size: 'lg',
       data: params || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getMovimientosCaja();
       }
@@ -211,9 +211,9 @@ export class EgresoIngresoCajaComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe(response => {
+          this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -235,7 +235,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     }
   }
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

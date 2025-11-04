@@ -5,7 +5,9 @@
     <div class="d-flex flex-column gap-2">
       <div class="row">
         <div class="col-xxl-10 col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12">
-          <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Establecimiento</mat-label>
@@ -56,7 +58,9 @@
             <mat-checkbox>Usuario</mat-checkbox>
             <mat-checkbox>Buscar por Nro. Doc</mat-checkbox>
           </div>
-          <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1">
+          <div
+            class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Estado</mat-label>
@@ -105,11 +109,11 @@
     <app-data-grid
       [data]="list()"
       [cellTemplate]="{
-       document: documentTpl,
-       client: clientTpl,
-       dates: datesTpl,
-       version: versionTpl,
-       actions: actionsTpl
+        document: documentTpl,
+        client: clientTpl,
+        dates: datesTpl,
+        version: versionTpl,
+        actions: actionsTpl,
       }"
       [columns]="columns"
       [length]="pagination().totalRecords"
@@ -118,12 +122,12 @@
       [pageSize]="pagination().pageSize"
       [pageSizeOptions]="pagination().pageSizeOptions"
       (page)="handlePageEvent($event)"
-    ></app-data-grid>
+    />
     <ng-template #documentTpl let-row>
-    <div class="doc-cell">
-      <div class="code-name">{{ row.codDoc }} - {{ row.docName }}</div>
-      <div class="series">{{ row.serieComprobante }}</div>
-    </div>
+      <div class="doc-cell">
+        <div class="code-name">{{ row.codDoc }} - {{ row.docName }}</div>
+        <div class="series">{{ row.serieComprobante }}</div>
+      </div>
     </ng-template>
     <ng-template #clientTpl let-row>
       <div class="client-cell">
@@ -133,15 +137,14 @@
     </ng-template>
     <ng-template #datesTpl let-row>
       <div class="dates-cell">
-        <div>Emisión: {{ row.issueDate  }}</div>
+        <div>Emisión: {{ row.issueDate }}</div>
         @if (row.authorizationDate) {
-        <div>
-          Autorización:
-          <span class="auth-date">
-      {{ row.authorizationDate  }}
-    </span>
-        </div>
-
+          <div>
+            Autorización:
+            <span class="auth-date">
+              {{ row.authorizationDate }}
+            </span>
+          </div>
         }
       </div>
     </ng-template>
@@ -152,8 +155,6 @@
         <div>Clave: {{ row.accessKey }}</div>
       </div>
     </ng-template>
-
-
 
     <ng-template #actionsTpl let-row>
       <div class="hstack gap-1 justify-content-end align-items-center">
@@ -178,12 +179,11 @@
         </button>
         <button mat-icon-button aria-label="Icon Email">
           <img
-            src="../../../../../assets/icons/icons8/svg/whatsapp.svg"
+            src="../../../../../../public/icons/icons8/svg/whatsapp.svg"
             alt="WhatsApp Icon"
             style="width: 24px; height: 24px"
           />
         </button>
-
       </div>
     </ng-template>
   </mat-card-content>

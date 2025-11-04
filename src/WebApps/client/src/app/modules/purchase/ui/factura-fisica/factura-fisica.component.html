@@ -1,11 +1,13 @@
-<app-breadcrumb></app-breadcrumb>
+<app-breadcrumb />
 
 <mat-card>
   <mat-card-content>
     <div class="d-flex flex-column gap-2">
       <div class="row">
         <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
-          <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Establecimiento</mat-label>
@@ -57,13 +59,17 @@
           <div class="d-flex justify-content-center gap-3 pb-2">
             <mat-checkbox [(ngModel)]="dataSearch().esBuscarCliente">Ciente </mat-checkbox>
             <mat-checkbox [(ngModel)]="dataSearch().esBuscarUsuario">Usuario</mat-checkbox>
-            <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro"
+              >Buscar por Nro. Doc</mat-checkbox
+            >
             <mat-checkbox [(ngModel)]="dataSearch().esDatoAdicional">Dato Adicional</mat-checkbox>
             <mat-checkbox [(ngModel)]="dataSearch().isTransferredToDoc" (change)="refresh()"
               >Doc. Transferida</mat-checkbox
             >
           </div>
-          <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1">
+          <div
+            class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+          >
             <div class="col">
               <mat-form-field class="w-100">
                 <mat-label>Cliente</mat-label>
@@ -114,7 +120,7 @@
         [tableData]="dataSource.data"
         [columnDefinitions]="columnsDefs"
         [visibleColumns]="columns"
-      ></app-mat-dynamic-table>
+      />
     </app-custom-table-container>
 
     <ng-template #templateOp let-item="item">

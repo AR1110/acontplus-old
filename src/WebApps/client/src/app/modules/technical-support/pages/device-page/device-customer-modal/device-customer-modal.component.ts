@@ -29,7 +29,7 @@ export class DeviceCustomerModalComponent implements OnInit {
         }),
       )
       .subscribe({
-        next: response => {
+        next: (response) => {
           if (isApiResponse(response)) {
             console.log(JSON.parse(response.payload as string));
           }

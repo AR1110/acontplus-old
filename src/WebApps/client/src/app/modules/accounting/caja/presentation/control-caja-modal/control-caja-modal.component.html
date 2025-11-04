@@ -14,7 +14,10 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Estado: </mat-label>
-          <mat-select [(ngModel)]="dataSearch.statusMovement" (selectionChange)="getMovimientosCaja()">
+          <mat-select
+            [(ngModel)]="dataSearch.statusMovement"
+            (selectionChange)="getMovimientosCaja()"
+          >
             <mat-option [value]="''">--Todos--</mat-option>
 
             @for (item of estadosMovimiento; track $index) {
@@ -51,7 +54,9 @@
     </button>
     <mat-menu #menu="matMenu">
       @if (cerrarCaja(item.estado)) {
-        <button mat-menu-item (click)="openModalCashboxClose(item)"><mat-icon>payments</mat-icon> Cerrar caja</button>
+        <button mat-menu-item (click)="openModalCashboxClose(item)">
+          <mat-icon>payments</mat-icon> Cerrar caja
+        </button>
       }
 
       @if (verReporteMovimientoCaja(item.estado)) {
@@ -81,7 +86,12 @@
       }
 
       @if (!item.estado) {
-        <button mat-menu-item appSendMailDialog [data]="getDataSendMail(item)" [notificationAcontPlus]="true">
+        <button
+          mat-menu-item
+          appSendMailDialog
+          [data]="getDataSendMail(item)"
+          [notificationAcontPlus]="true"
+        >
           <mat-icon>mail</mat-icon> Enviar correo
         </button>
       }

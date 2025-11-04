@@ -2,7 +2,9 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-4"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Módulo</mat-label>
@@ -22,7 +24,13 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Seleccionar archivo</mat-label>
-            <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".xls,.xlsx" />
+            <input
+              #fileInput
+              type="file"
+              hidden
+              (change)="onFileSelected($event)"
+              accept=".xls,.xlsx"
+            />
             <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
 
             <ng-container matSuffix>
@@ -36,7 +44,13 @@
 
       <div class="col">
         @if (selection.selected.length) {
-          <app-theme-button type="button" text="Guardar" variant="success" icon="save" (handleClick)="save()" />
+          <app-theme-button
+            type="button"
+            text="Guardar"
+            variant="success"
+            icon="save"
+            (handleClick)="save()"
+          />
         }
       </div>
     </div>
@@ -52,7 +66,11 @@
   @if (dataSource.data.length > 0) {
     <div class="table-container small-table">
       <div class="table-container">
-        <mat-table [dataSource]="dataSource.data" multiTemplateDataRows class="mat-elevation-z8 full-width-table">
+        <mat-table
+          [dataSource]="dataSource.data"
+          multiTemplateDataRows
+          class="mat-elevation-z8 full-width-table"
+        >
           <ng-container matColumnDef="select" sticky>
             <mat-header-cell *matHeaderCellDef>
               <mat-checkbox
@@ -60,8 +78,7 @@
                 [checked]="selection.hasValue()"
                 [indeterminate]="selection.hasValue() && !isAllSelected()"
                 [disabled]="isSelectionDisabled()"
-              >
-              </mat-checkbox>
+              />
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
               <mat-checkbox
@@ -69,8 +86,7 @@
                 (change)="$event ? selection.toggle(row) : null"
                 [checked]="selection.isSelected(row)"
                 [disabled]="!(row.estado === 'IMPORTAR')"
-              >
-              </mat-checkbox>
+              />
             </mat-cell>
           </ng-container>
 
@@ -88,7 +104,7 @@
             }
           }
 
-          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+          <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" />
           <mat-row
             *matRowDef="let row; columns: displayedColumns"
             [ngClass]="{
@@ -96,7 +112,7 @@
               '': row.estado === 'IMPORTAR',
               'item-import-error': row.estado !== 'IMPORTAR' || row.estado !== 'REGISTRADO',
             }"
-          ></mat-row>
+          />
         </mat-table>
       </div>
     </div>

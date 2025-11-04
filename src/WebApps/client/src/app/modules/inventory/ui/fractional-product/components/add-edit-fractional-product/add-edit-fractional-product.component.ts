@@ -164,7 +164,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
         this.data.idMedida = this.medidas().at(this.medidas().length - 1).idMedida;
       });
@@ -176,7 +176,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     $event.stopPropagation();
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe(response => {
+      this.$productDataFormUseCase.execute().subscribe((response) => {
         this.medidas.set(response.medidas);
       });
     } catch (error) {
@@ -269,7 +269,7 @@ export class AddEditFractionalProductComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.$productDataFormUseCase.execute().subscribe(response => {
+    this.$productDataFormUseCase.execute().subscribe((response) => {
       this.medidas.set(response.medidas);
       this.data.idMedida = this.medidas().length > 0 ? this.medidas()[0].idMedida : 0;
 
@@ -288,12 +288,11 @@ export class AddEditFractionalProductComponent implements OnInit {
   }
 
   private loadDataUpdate() {
-    this.$fractionalProductGetIdUseCase.execute(this.params.id).subscribe(response => {
-      if( response.payload){
-      const {data, productPvps} = response.payload;
-      this.data = data;
-      this.productTarifa.set(productPvps);
-
+    this.$fractionalProductGetIdUseCase.execute(this.params.id).subscribe((response) => {
+      if (response.payload) {
+        const { data, productPvps } = response.payload;
+        this.data = data;
+        this.productTarifa.set(productPvps);
       }
     });
   }
@@ -311,13 +310,13 @@ export class AddEditFractionalProductComponent implements OnInit {
 
   private selectProduct(idArticulo: number) {
     try {
-      this.$productGetIdUseCase.execute(idArticulo).subscribe(response => {
+      this.$productGetIdUseCase.execute(idArticulo).subscribe((response) => {
         this.data = response.data;
 
         const productoTarifas = structuredClone(response.productPvps);
         this.articuloPrincipalTarifa.set(structuredClone(productoTarifas));
 
-        const productTarifa = structuredClone(productoTarifas).map(item => {
+        const productTarifa = structuredClone(productoTarifas).map((item) => {
           item.precioVenta = 0;
           item.precioConIva = 0;
           item.porcentajeUtilidad = 0;
@@ -404,7 +403,7 @@ export class AddEditFractionalProductComponent implements OnInit {
 
     const precioCosto = Number(this.data.precioCostoFraccionado);
 
-    const productTarifa = structuredClone(this.productTarifa())
+    const productTarifa = structuredClone(this.productTarifa());
     this.articuloPrincipalTarifa().forEach((item, index) => {
       const precioVenta = pricingCalculateUtil.calculatePriceSaleOfValuePercentageUtility(
         precioCosto,

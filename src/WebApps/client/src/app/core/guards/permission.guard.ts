@@ -1,5 +1,10 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  CanActivateFn,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { PermissionsService } from '@core/services/permissions';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
@@ -32,7 +37,7 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
  */
 export const permissionGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  state: RouterStateSnapshot,
 ) => {
   const permissionsService = inject(PermissionsService);
   const router = inject(Router);
@@ -40,9 +45,11 @@ export const permissionGuard: CanActivateFn = (
   // 1. Verificación inicial: ¿Hay una sesión de permisos cargada?
   // Si no hay datos de usuario, los permisos no se han cargado.
   if (!permissionsService.userData()) {
-    console.warn('Guard: No hay sesión de usuario o permisos cargados. Redirigiendo a no autorizado.');
+    console.warn(
+      'Guard: No hay sesión de usuario o permisos cargados. Redirigiendo a no autorizado.',
+    );
     router.navigate(['/unauthorized'], {
-      queryParams: { returnUrl: state.url, reason: 'no_session' }
+      queryParams: { returnUrl: state.url, reason: 'no_session' },
     });
     return false;
   }
@@ -59,11 +66,12 @@ export const permissionGuard: CanActivateFn = (
   // - Si se definen 'requiredActions', se usan.
   // - Si no, por defecto se requiere permiso de 'leer' para acceder a la página.
   // Esto asegura que las rutas protegidas siempre necesiten un permiso mínimo.
-  const actionsToCheck = (requiredActions && requiredActions.length > 0)
-    ? requiredActions
-    : [ACTION_ALIASES.READ];
+  const actionsToCheck =
+    requiredActions && requiredActions.length > 0 ? requiredActions : [ACTION_ALIASES.READ];
 
-  console.log(`Guard: Verificando acceso a '${state.url}' con contexto '${targetContext}' y acciones [${actionsToCheck.join(', ')}]`);
+  console.log(
+    `Guard: Verificando acceso a '${state.url}' con contexto '${targetContext}' y acciones [${actionsToCheck.join(', ')}]`,
+  );
 
   // 5. Realizar la verificación unificada
   // Usamos el nuevo método hasAllPermissions que:
@@ -81,8 +89,8 @@ export const permissionGuard: CanActivateFn = (
         returnUrl: state.url,
         reason: 'forbidden',
         context: targetContext,
-        required: actionsToCheck.join(',')
-      }
+        required: actionsToCheck.join(','),
+      },
     });
     return false;
   }

@@ -72,7 +72,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent implements OnInit, Afte
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'defaultPtoEmi', label: 'Predeterminado', type: 'template' },
   ];
-  columnsPuntoEmision: string[] = this.columnsDefsPuntoEmision.map(colDef => colDef.key);
+  columnsPuntoEmision: string[] = this.columnsDefsPuntoEmision.map((colDef) => colDef.key);
 
   columnsDefsBodega: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
@@ -81,13 +81,13 @@ export class AsignacionBodegaPuntoEmisionDialogComponent implements OnInit, Afte
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'defaultBodga', label: 'Predeterminado', type: 'template' },
   ];
-  columnsBodega: string[] = this.columnsDefsBodega.map(colDef => colDef.key);
+  columnsBodega: string[] = this.columnsDefsBodega.map((colDef) => colDef.key);
 
   fetchAllData() {
     forkJoin([
       this.$listAsignacionPuntoEmisionUseCase.execute({ codEstab_Asig: this.params.codEstab_Asig }),
       this.$listAsignacionBodegaUseCase.execute({ codEstab_Asig: this.params.codEstab_Asig }),
-    ]).subscribe(response => {
+    ]).subscribe((response) => {
       const [puntosEmision, bodegas] = response;
       this.dataSourcePuntoEmision.set(puntosEmision.data);
       this.dataSourceBodega.set(bodegas.data);
@@ -115,12 +115,12 @@ export class AsignacionBodegaPuntoEmisionDialogComponent implements OnInit, Afte
   }
 
   ngAfterViewInit(): void {
-    this.columnsDefsPuntoEmision.forEach(col => {
+    this.columnsDefsPuntoEmision.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.templatePuntoEmisionDefault;
       }
     });
-    this.columnsDefsBodega.forEach(col => {
+    this.columnsDefsBodega.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.templateDefaultBodega;
       }

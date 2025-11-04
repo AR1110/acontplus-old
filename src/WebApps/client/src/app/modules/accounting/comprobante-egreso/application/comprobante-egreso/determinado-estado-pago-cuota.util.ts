@@ -29,7 +29,7 @@ export const determinadoEstadoPagoCuotaUtil = function ({
     estadoKey = CodigoEstadoPago.PENDIENTE;
     nombreEstado = 'PENDIENTE';
   }
-  const estadoPago = estadosPago.find(ep => ep.codigo === estadoKey) || {
+  const estadoPago = estadosPago.find((ep) => ep.codigo === estadoKey) || {
     idEstadoPago: 0,
     descripcion: '',
   };

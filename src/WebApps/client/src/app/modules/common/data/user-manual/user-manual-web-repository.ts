@@ -12,7 +12,7 @@ export class UserManualWebRepository extends UserManualRepository {
 
   get<T>(parameters: T) {
     return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(parameters)}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code !== '1') {
           return { modules: [], userManuals: [] };
         }

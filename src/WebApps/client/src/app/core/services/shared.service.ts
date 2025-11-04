@@ -81,7 +81,7 @@ export class SharedService {
         observe: 'response',
         responseType: 'blob',
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (format === 'pdf' && openInModal && response.body) {
           // this.openPdfInModal(response.body)
         } else {
@@ -109,7 +109,7 @@ export class SharedService {
           context: customUrl(),
         })
         .subscribe({
-          next: response => {
+          next: (response) => {
             if (isApiResponse(response)) {
               if (response.code === '1') {
                 this.tS.show({
@@ -136,7 +136,7 @@ export class SharedService {
     try {
       const url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
       this.http.get(url).subscribe({
-        next: response => {
+        next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
               this.tS.show({
@@ -178,7 +178,7 @@ export class SharedService {
       }`;
 
       this.http.post(urlPrinter, null).subscribe({
-        next: response => {
+        next: (response) => {
           if (isApiResponse(response)) {
             if (response.code === '1') {
               this.tS.show({
@@ -204,7 +204,7 @@ export class SharedService {
 
   getEstabAsign() {
     return this.http.get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 })).pipe(
-      map(response => {
+      map((response) => {
         let estabs: any[] = [];
         let results: any[] = [];
         if (isApiResponse(response)) {

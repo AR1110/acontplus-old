@@ -63,7 +63,7 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
     { key: 'tradeName', label: 'Cliente/Conductor', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'template', templateOutlet: null },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -90,9 +90,9 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
       this.$listUseCase
         .execute(params)
         .pipe(finalize(() => this.isLoading.set(false)))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.dataSource.set(response.data);
-          this.pagination.update(p => {
+          this.pagination.update((p) => {
             return {
               ...p,
               totalRecords: response.totalRecords,
@@ -110,7 +110,7 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
@@ -137,9 +137,9 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí',
       cancelButtonText: 'No',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
-        this.vehicleUseCase.remove(id).subscribe(response => {
+        this.vehicleUseCase.remove(id).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',
@@ -160,7 +160,7 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
 
   //Status Vehicle
   putState(id: number, state: boolean) {
-    this.vehicleUseCase.putState(id, state).subscribe(response => {
+    this.vehicleUseCase.putState(id, state).subscribe((response) => {
       if (response) {
         this.tS.show({
           type: 'success',
@@ -177,7 +177,7 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

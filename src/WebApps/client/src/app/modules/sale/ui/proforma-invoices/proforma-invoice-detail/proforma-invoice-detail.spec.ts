@@ -8,9 +8,8 @@ describe('ProformaInvoiceDetail', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProformaInvoiceDetail]
-    })
-    .compileComponents();
+      imports: [ProformaInvoiceDetail],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ProformaInvoiceDetail);
     component = fixture.componentInstance;

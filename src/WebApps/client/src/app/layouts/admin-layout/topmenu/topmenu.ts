@@ -8,7 +8,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatMenuModule } from '@angular/material/menu';
@@ -17,7 +17,7 @@ import { NgxPermissionsModule } from 'ngx-permissions';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
-import {  MenuService } from '@core/bootstrap';
+import { MenuService } from '@core/bootstrap';
 import { TopmenuPanel } from './topmenu-panel';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
@@ -37,7 +37,6 @@ export interface TopmenuState {
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
@@ -99,7 +98,7 @@ export class Topmenu {
   constructor() {
     this.router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd),
+        filter((event) => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((e: NavigationEnd) => {
@@ -109,7 +108,7 @@ export class Topmenu {
 
   // 🔁 Computed: genera el estado de cada menú automáticamente
   readonly menuStates = computed<TopmenuState[]>(() =>
-    this.menuList().map(item => ({
+    this.menuList().map((item) => ({
       active: this.currentUrl().split('/').includes(item.route),
       route: item.route,
     })),

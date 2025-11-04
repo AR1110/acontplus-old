@@ -24,8 +24,10 @@ export const mergeMeasureUtil = function (
     tipo,
   });
 
-  const medidasPrincipalMapper = medidasPrincipalTemp.map(medida => mapMedida(medida, 'PRINCIPAL'));
-  const medidasFraccionadoMapper = medidasFraccionadoTemp.map(medida =>
+  const medidasPrincipalMapper = medidasPrincipalTemp.map((medida) =>
+    mapMedida(medida, 'PRINCIPAL'),
+  );
+  const medidasFraccionadoMapper = medidasFraccionadoTemp.map((medida) =>
     mapMedida(medida, 'FRACCIONADO'),
   );
 
@@ -49,7 +51,7 @@ export const mergeMeasureUtil = function (
   let orderMedidaArray = mergedMedidasArray
     .slice()
     .sort((a, b) => a.orden - b.orden)
-    .map(medida => ({
+    .map((medida) => ({
       ...medida,
       defaultMedida: false,
     }));
@@ -61,7 +63,7 @@ export const mergeMeasureUtil = function (
   }
 
   // Crear un nuevo array de medidas con un formato específico
-  const medidas = orderMedidaArray.map(item => {
+  const medidas = orderMedidaArray.map((item) => {
     const tarifasParse =
       (typeof item.tarifas === 'string' ? JSON.parse(item.tarifas) : item.tarifas) || [];
     const tarifas = tarifasParse.map((t: any) => ({

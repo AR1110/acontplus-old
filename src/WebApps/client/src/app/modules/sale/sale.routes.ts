@@ -1,31 +1,28 @@
 import { Route } from '@angular/router';
-import { SaleReportPageComponent } from '@sale/ui/reports/sale-report-page/sale-report-page.component';
 
-import { DeliveryNotes } from '@sale/ui/delivery-notes/delivery-notes';
-import { ProformaInvoices } from '@sale/ui/proforma-invoices/proforma-invoices';
-import { RentabilidadPageComponent } from '@sale/ui/reports/rentabilidad-page/rentabilidad-page.component';
-import { SaleHomeComponent } from './ui/sale-home.component';
-import {ACTION_ALIASES} from "@core/constants/permission-actions";
-import {SALE_MODULES_CODE} from "@sale/domain/enums/sale.enum";
+import { ACTION_ALIASES } from '@core/constants/permission-actions';
+import { SALE_MODULES_CODE } from '@sale/domain/enums/sale.enum';
 
 export const routes: Route[] = [
   {
     path: '',
-    component: SaleHomeComponent,
+    loadComponent: () => import('./ui/sale-home.component').then((m) => m.SaleHomeComponent),
     data: { breadcrumb: 'Ventas' },
   },
   {
     path: 'proforma-invoices',
-    component: ProformaInvoices,
+    loadComponent: () =>
+      import('@sale/ui/proforma-invoices/proforma-invoices').then((m) => m.ProformaInvoices),
     data: {
       breadcrumb: 'Proformas',
       context: SALE_MODULES_CODE.PROFORMA_INVOICE,
-      requiredActions: [ACTION_ALIASES.READ]
+      requiredActions: [ACTION_ALIASES.READ],
     },
   },
   {
     path: 'delivery-notes',
-    component: DeliveryNotes,
+    loadComponent: () =>
+      import('@sale/ui/delivery-notes/delivery-notes').then((m) => m.DeliveryNotes),
     data: {
       breadcrumb: 'Notas de Entrega',
     },
@@ -35,7 +32,10 @@ export const routes: Route[] = [
     children: [
       {
         path: 'rentabilidad-page',
-        component: RentabilidadPageComponent,
+        loadComponent: () =>
+          import('@sale/ui/reports/rentabilidad-page/rentabilidad-page.component').then(
+            (m) => m.RentabilidadPageComponent,
+          ),
         title: 'Reporte Rentabilidad',
         data: {
           breadcrumb: 'Reporte Rentabilidad',
@@ -43,7 +43,10 @@ export const routes: Route[] = [
       },
       {
         path: 'sale-report',
-        component: SaleReportPageComponent,
+        loadComponent: () =>
+          import('@sale/ui/reports/sale-report-page/sale-report-page.component').then(
+            (m) => m.SaleReportPageComponent,
+          ),
         title: 'Reporte Venta',
         data: {
           breadcrumb: 'Reporte Venta',
@@ -51,7 +54,10 @@ export const routes: Route[] = [
       },
       {
         path: 'sale-report',
-        component: SaleReportPageComponent,
+        loadComponent: () =>
+          import('@sale/ui/reports/sale-report-page/sale-report-page.component').then(
+            (m) => m.SaleReportPageComponent,
+          ),
         title: 'Reporte Venta',
         data: {
           breadcrumb: 'Reporte Venta',

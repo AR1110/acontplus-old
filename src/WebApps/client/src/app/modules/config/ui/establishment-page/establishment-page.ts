@@ -13,17 +13,16 @@ import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.
 import { FormsModule } from '@angular/forms';
 import { EstablishmentLogoService } from '@modules/config/services/sri/establishment-logo.service';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
-import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
-import { MatButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
+import { MatExpansionModule } from '@angular/material/expansion';
+
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { DialogService } from '@core/services/dialog.service';
 import { SendMaxEstablishmentsUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { firstValueFrom } from 'rxjs';
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn } from '@shared/components/data-grid/types';
 
 @Component({
   selector: 'app-establishment-page',
@@ -33,10 +32,7 @@ import {DataGridColumn} from "@shared/components/data-grid/types";
     FormsModule,
     MatCard,
     MatCardContent,
-    MatAccordion,
     MatExpansionModule,
-    MatButton,
-    MatIcon,
     MatCardHeader,
     MatRadioGroup,
     MatRadioButton,
@@ -71,7 +67,6 @@ export class EstablishmentPage implements OnInit {
   private readonly _tS = inject(ToastrNotificationService);
   private $sendMaxEstablishmentUseCase = inject(SendMaxEstablishmentsUseCase);
 
-
   columns: DataGridColumn[] = [
     { header: '', field: 'expand', showExpand: true },
     { header: 'Op.', field: 'op' },
@@ -90,10 +85,10 @@ export class EstablishmentPage implements OnInit {
   ];
 
   expanded(e: any) {
-    if(!e.expanded) {
+    if (!e.expanded) {
       this.puntosEmision.set([]);
       this.data = {};
-      return
+      return;
     }
     this.onEstabShow(e.data.idEstablecimiento);
   }
@@ -160,7 +155,7 @@ export class EstablishmentPage implements OnInit {
       pageIndex: this.dataSeach.pageIndex,
       pageSize: this.dataSeach.pageSize,
     };
-    this._estabService.getAll(params).subscribe(response => {
+    this._estabService.getAll(params).subscribe((response) => {
       this.establishments.set(response);
     });
   }
@@ -181,7 +176,7 @@ export class EstablishmentPage implements OnInit {
         id,
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') this.getEstabs();
     });
   }
@@ -207,7 +202,7 @@ export class EstablishmentPage implements OnInit {
     });
 
     if (isConfirmed) {
-      this._estabService.closeEstab(id).subscribe(response => {
+      this._estabService.closeEstab(id).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
@@ -224,7 +219,7 @@ export class EstablishmentPage implements OnInit {
     this.fileError = null;
     this.imageUrl.set(null);
 
-    this._estabService.getId(id).subscribe(response => {
+    this._estabService.getId(id).subscribe((response) => {
       this.puntosEmision.set(response.puntosEmision);
       this.data = response.data;
     });
@@ -233,7 +228,7 @@ export class EstablishmentPage implements OnInit {
   }
 
   getDataLogo(id: number) {
-    this._estabLogService.getDataLogo(id).subscribe(response => {
+    this._estabLogService.getDataLogo(id).subscribe((response) => {
       this.dataLogo = response;
 
       if (this.dataLogo && !this.dataLogo.isCompressed) {
@@ -261,7 +256,7 @@ export class EstablishmentPage implements OnInit {
       },
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') this.getEstabs();
     });
   }
@@ -293,7 +288,7 @@ export class EstablishmentPage implements OnInit {
     });
 
     if (isConfirmed) {
-      this._estabLogService.removeImage(this.dataLogo.id).subscribe(response => {
+      this._estabLogService.removeImage(this.dataLogo.id).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
@@ -329,7 +324,7 @@ export class EstablishmentPage implements OnInit {
     });
 
     if (isConfirmed) {
-      this._puntoEmisionService.annul(id).subscribe(response => {
+      this._puntoEmisionService.annul(id).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
@@ -344,7 +339,7 @@ export class EstablishmentPage implements OnInit {
   configSaveFactElect() {
     this._estabService
       .putSriAuth(this.data.idEstablecimiento, this.data.autoSriAuth)
-      .subscribe(response => {
+      .subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

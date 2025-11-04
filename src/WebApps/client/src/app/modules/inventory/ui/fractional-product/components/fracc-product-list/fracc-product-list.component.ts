@@ -52,7 +52,7 @@ export class FraccProductListComponent implements OnInit {
     { key: 'nomMedida', label: 'Médida', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
   isLoadingResults = signal(false);
@@ -75,9 +75,9 @@ export class FraccProductListComponent implements OnInit {
     this.$fractionalProductGetAllUseCase
       .execute(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.set(response.payload?.data ?? []);
-        this.pagination.update(item => {
+        this.pagination.update((item) => {
           return {
             ...item,
             totalRecords: response.payload?.totalRecords ?? 0,
@@ -109,7 +109,7 @@ export class FraccProductListComponent implements OnInit {
       size: 'xl',
     });
 
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -117,7 +117,7 @@ export class FraccProductListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

@@ -130,7 +130,7 @@ export class SupportAddEditModalComponent implements OnInit {
     this.supportUseCase
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.establishments.set(response.establishments);
         this.cloneEmissionPoints.set(response.emissionPoints);
         this.users.set(response.users);
@@ -143,12 +143,12 @@ export class SupportAddEditModalComponent implements OnInit {
           this.supportUseCase
             .getId(this.params.id)
             .pipe(finalize(() => this.loading.set(false)))
-            .subscribe(value => {
+            .subscribe((value) => {
               this.data = value.data;
 
               this.vehicle = value.vehicle;
               const emissionPoints = this.cloneEmissionPoints().filter(
-                e => e.establecimientoId === this.data.establecimientoId,
+                (e) => e.establecimientoId === this.data.establecimientoId,
               );
               this.emissionPoints.set(emissionPoints);
 
@@ -163,7 +163,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
     this.filteredCustomerVehicles = this.filteredCustomerVehicleFormControl.valueChanges.pipe(
       distinctUntilChanged(),
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
           return this._filterCustomerVehicle(val);
         }
@@ -183,7 +183,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
   onChangeEstab() {
     const emissionPoints = this.cloneEmissionPoints().filter(
-      e => e.establecimientoId === this.data.establecimientoId,
+      (e) => e.establecimientoId === this.data.establecimientoId,
     );
     this.emissionPoints.set(emissionPoints);
 
@@ -194,7 +194,7 @@ export class SupportAddEditModalComponent implements OnInit {
   }
   generateSequence() {
     const dataPuntoEmision = this.emissionPoints().find(
-      p => p.puntoEmisionId === this.data.puntoEmisionId,
+      (p) => p.puntoEmisionId === this.data.puntoEmisionId,
     );
     if (dataPuntoEmision) {
       this.data.sequence = dataPuntoEmision.ptoEmi + '-' + dataPuntoEmision.sequence;
@@ -206,7 +206,7 @@ export class SupportAddEditModalComponent implements OnInit {
   }
 
   getDataVehicleById(id: number) {
-    this.vehicleSvc.getId(id).subscribe(response => {
+    this.vehicleSvc.getId(id).subscribe((response) => {
       const { customer, vehicle } = response;
       this.data.vehicleCompanyId = id;
       this.data.customerId = customer.id;
@@ -315,7 +315,7 @@ export class SupportAddEditModalComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Sí!',
       cancelButtonText: 'No!',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         try {
           const data = {
@@ -344,7 +344,7 @@ export class SupportAddEditModalComponent implements OnInit {
 
   async save() {
     if (!(this.params.id > 0)) {
-      this.supportUseCase.generateSequential(this.data.puntoEmisionId).subscribe(res => {
+      this.supportUseCase.generateSequential(this.data.puntoEmisionId).subscribe((res) => {
         this.executeSave(res);
       });
     } else {

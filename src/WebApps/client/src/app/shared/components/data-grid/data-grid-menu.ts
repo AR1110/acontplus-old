@@ -1,14 +1,15 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  Component, input,
+  Component,
+  input,
   ViewChild,
   ViewEncapsulation,
 } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import {DataGridMenuItem} from "@shared/components/data-grid/types";
-import {DataGridCellActionDisablePipe} from "@shared/pipes/data-grid.pipe";
+import { DataGridMenuItem } from '@shared/components/data-grid/types';
+import { DataGridCellActionDisablePipe } from '@shared/pipes/data-grid.pipe';
 
 @Component({
   selector: 'acp-data-grid-menu',
@@ -49,9 +50,9 @@ import {DataGridCellActionDisablePipe} from "@shared/pipes/data-grid.pipe";
       @if (item.icon) {
         <mat-icon class="mtx-grid-icon">{{ item.icon }}</mat-icon>
       } @else if (item.fontIcon) {
-        <mat-icon class="mtx-grid-icon" [fontIcon]="item.fontIcon"></mat-icon>
+        <mat-icon class="mtx-grid-icon" [fontIcon]="item.fontIcon" />
       } @else if (item.svgIcon) {
-        <mat-icon class="mtx-grid-icon" [svgIcon]="item.svgIcon"></mat-icon>
+        <mat-icon class="mtx-grid-icon" [svgIcon]="item.svgIcon" />
       }
     </ng-template>
   `,
@@ -69,7 +70,6 @@ import {DataGridCellActionDisablePipe} from "@shared/pipes/data-grid.pipe";
 export class DataGridMenu {
   @ViewChild(MatMenu, { static: true }) menu!: MatMenu;
 
-    items = input<DataGridMenuItem[]>([]);
-    data = input< Record<string, any>>({});
-
+  items = input<DataGridMenuItem[]>([]);
+  data = input<Record<string, any>>({});
 }

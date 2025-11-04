@@ -1,12 +1,12 @@
 $utilities: (
-  "flex": (
+  'flex': (
     property: flex,
     class: flex,
     values: (
       fill: 1 1 auto,
     ),
   ),
-  "flex-direction": (
+  'flex-direction': (
     property: flex-direction,
     class: flex,
     values: (
@@ -16,7 +16,7 @@ $utilities: (
       col-reverse: column-reverse,
     ),
   ),
-  "flex-grow": (
+  'flex-grow': (
     property: flex-grow,
     class: flex,
     values: (
@@ -24,7 +24,7 @@ $utilities: (
       grow-1: 1,
     ),
   ),
-  "flex-shrink": (
+  'flex-shrink': (
     property: flex-shrink,
     class: flex,
     values: (
@@ -32,12 +32,12 @@ $utilities: (
       shrink-1: 1,
     ),
   ),
-  "flex-wrap": (
+  'flex-wrap': (
     property: flex-wrap,
     class: flex,
     values: wrap nowrap wrap-reverse,
   ),
-  "justify-content": (
+  'justify-content': (
     property: justify-content,
     class: justify-content,
     values: (
@@ -48,7 +48,7 @@ $utilities: (
       around: space-around,
     ),
   ),
-  "align-content": (
+  'align-content': (
     property: align-content,
     class: align-content,
     values: (
@@ -60,7 +60,7 @@ $utilities: (
       stretch: stretch,
     ),
   ),
-  "align-items": (
+  'align-items': (
     property: align-items,
     class: align-items,
     values: (
@@ -71,7 +71,7 @@ $utilities: (
       stretch: stretch,
     ),
   ),
-  "align-self": (
+  'align-self': (
     property: align-self,
     class: align-self,
     values: (

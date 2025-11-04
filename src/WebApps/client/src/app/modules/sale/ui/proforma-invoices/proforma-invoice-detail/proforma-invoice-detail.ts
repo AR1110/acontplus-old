@@ -1,23 +1,19 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {TablaResumenTotalesComponent} from "@shared/components/tabla-resumen-totales/tabla-resumen-totales.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {NotaEntregaService} from "@sale/data/services/nota-entrega.service";
-import {finalize} from "rxjs";
-import {ProformaInvoiceViewDetailUseCase} from "@sale/domain/use-cases/proforma-invoice.use-case";
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-totales/tabla-resumen-totales.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
+import { finalize } from 'rxjs';
+import { ProformaInvoiceViewDetailUseCase } from '@sale/domain/use-cases/proforma-invoice.use-case';
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn } from '@shared/components/data-grid/types';
 
 @Component({
   selector: 'app-proforma-invoice-detail',
-  imports: [
-    MatCustomDialogComponent,
-    TablaResumenTotalesComponent,
-    DataGrid
-  ],
+  imports: [MatCustomDialogComponent, TablaResumenTotalesComponent, DataGrid],
   templateUrl: './proforma-invoice-detail.html',
   styleUrl: './proforma-invoice-detail.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProformaInvoiceDetail {
   readonly dialogRef = inject(MatDialogRef<ProformaInvoiceDetail>);
@@ -41,16 +37,16 @@ export class ProformaInvoiceDetail {
       field: 'quantityData',
     },
     { header: ' Precios y Descuentos ', field: 'pricing' },
-    {header: 'Subtotal sin Impuestos', field: 'totalWithoutTax'},
+    { header: 'Subtotal sin Impuestos', field: 'totalWithoutTax' },
     { header: 'Impuesto', field: 'taxes' },
     { header: 'Total', field: 'total' },
-    { header: 'Bodega', field: 'warehouse' }
+    { header: 'Bodega', field: 'warehouse' },
   ];
 
   columnsAdditionalsInfo: DataGridColumn[] = [
-    {header: 'Nombre', field: 'name'},
-    {header: 'Valor', field: 'value'},
-  ]
+    { header: 'Nombre', field: 'name' },
+    { header: 'Valor', field: 'value' },
+  ];
 
   ngOnInit() {
     this.isLoading.set(true);
@@ -61,13 +57,13 @@ export class ProformaInvoiceDetail {
           this.isLoading.set(false);
         }),
       )
-      .subscribe(response => {
-        console.log(response)
+      .subscribe((response) => {
+        console.log(response);
         const { header, customer, details, additionalsInfo, taxes } = response;
 
         this.headerData = header;
         this.clienteData = customer;
-        this.details.set(details)
+        this.details.set(details);
         this.additionalsInfo.set(additionalsInfo);
         this.taxes.set(taxes);
       });

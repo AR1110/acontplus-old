@@ -18,7 +18,7 @@ import { DATA_CUSTOMER_IOC } from '@customer/data/data-customer.ioc';
 import { settingsInterceptor } from '@core/interceptors/settings-interceptor';
 import { noopInterceptor } from '@core/interceptors/noop-interceptor';
 import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
-import {DATA_SALE_IOC} from "@sale/data/sale.ioc";
+import { DATA_SALE_IOC } from '@sale/data/sale.ioc';
 
 export const infrastructureProviders = [
   provideHttpClient(

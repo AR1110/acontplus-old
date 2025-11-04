@@ -1,7 +1,9 @@
-<app-breadcrumb></app-breadcrumb>
+<app-breadcrumb />
 <mat-card>
   <mat-card-content>
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3">
+    <div
+      class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+    >
       <div class="col">
         <div class="form-group">
           <label for="estab">Establecimiento:</label>
@@ -21,7 +23,10 @@
       </div>
       <div class="col">
         <div class="form-group">
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" [inputGroupDateChecked]="true" />
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+            [inputGroupDateChecked]="true"
+          />
         </div>
       </div>
       <div class="col">
@@ -47,16 +52,14 @@
                 matStyle="icon"
                 title="Más Opciones"
                 (handleClick)="onClickBtnMore()"
-              >
-              </app-theme-button>
+              />
               <app-theme-button
                 variant="success"
                 icon="refresh"
                 matStyle="icon"
                 (handleClick)="loadData()"
                 title="Recargar"
-              >
-              </app-theme-button>
+              />
             </div>
           </div>
         </div>
@@ -68,7 +71,7 @@
           <app-supplier-search
             [textSearch]="textSearch"
             (supplierSelected)="onSupplierSelected($event)"
-          ></app-supplier-search>
+          />
         </div>
         <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
           <div class="form-group">
@@ -140,7 +143,7 @@
               [columnDefinitions]="columnsDefs"
               [visibleColumns]="columns"
               [showSelectBox]="true"
-            ></app-mat-dynamic-table>
+            />
           </div>
 
           <mat-paginator
@@ -152,8 +155,7 @@
             (page)="onPageChanged($event)"
             showFirstLastButtons
             aria-label="Select page"
-          >
-          </mat-paginator>
+          />
         } @else {
           <h5>No hay registros</h5>
         }

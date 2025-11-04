@@ -11,9 +11,9 @@ const initialUserCustomerState: UserCustomerState = {
 export const UserCustomerStore = signalStore(
   { providedIn: 'root' },
   withState(initialUserCustomerState),
-  withComputed(store => ({})),
+  withComputed((store) => ({})),
 
-  withMethods(store => ({
+  withMethods((store) => ({
     setUserRoleId(userRoleId: number) {
       patchState(store, () => {
         return {

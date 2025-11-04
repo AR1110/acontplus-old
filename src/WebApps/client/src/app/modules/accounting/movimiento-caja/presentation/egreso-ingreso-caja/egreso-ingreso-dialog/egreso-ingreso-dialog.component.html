@@ -9,7 +9,9 @@
 <ng-template #containerTemplate>
   <form autocomplete="off" id="ingresoEgresoForm" [formGroup]="dataForm" (ngSubmit)="save()">
     <div class="d-grid gap-2">
-      <div class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3">
+      <div
+        class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-3"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento:</mat-label>
@@ -44,11 +46,16 @@
         </div>
       </div>
 
-      <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
+      <div
+        class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Entidad Financiera:</mat-label>
-            <mat-select (selectionChange)="onChangeEntidadFinanciera()" formControlName="idEntidadFinanciera">
+            <mat-select
+              (selectionChange)="onChangeEntidadFinanciera()"
+              formControlName="idEntidadFinanciera"
+            >
               @for (item of entidadesFinanciera; track $index) {
                 <mat-option [value]="item.idEntidadFinanciera">{{ item.descripcion }}</mat-option>
               }
@@ -60,14 +67,18 @@
             <mat-label>Sub Entidad Financiera</mat-label>
             <mat-select formControlName="idSubEntidadFinanciera">
               @for (item of subEntidadesFinanciera; track $index) {
-                <mat-option [value]="item.idSubEntidadFinanciera">{{ item.descripcion }}</mat-option>
+                <mat-option [value]="item.idSubEntidadFinanciera">{{
+                  item.descripcion
+                }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         </div>
       </div>
 
-      <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
+      <div
+        class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Valor::</mat-label>
@@ -85,7 +96,12 @@
 
       <mat-form-field class="w-100">
         <mat-label>Observación::</mat-label>
-        <textarea matInput formControlName="observaciones" appToUpperCase placeholder="..."></textarea>
+        <textarea
+          matInput
+          formControlName="observaciones"
+          appToUpperCase
+          placeholder="..."
+        ></textarea>
       </mat-form-field>
     </div>
   </form>

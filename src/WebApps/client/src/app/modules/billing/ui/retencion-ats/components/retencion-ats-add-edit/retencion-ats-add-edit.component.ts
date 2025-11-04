@@ -210,12 +210,12 @@ export class RetencionAtsAddEditComponent implements OnInit {
     this.infoAdicionalArray.push(infoAdicionalGroup);
   }
   initialLoad() {
-    this._retencionAtsUseCase.getDataForm({}).subscribe(response => {
+    this._retencionAtsUseCase.getDataForm({}).subscribe((response) => {
       this.estabs = groupEstabUtil({
         estabs: response.estabs,
         isGroupPuntoEmision: true,
       });
-      const idEstablecimiento = this.estabs.find(x => x.defaultEstab)?.idEstablecimiento || 0;
+      const idEstablecimiento = this.estabs.find((x) => x.defaultEstab)?.idEstablecimiento || 0;
       this.retencionAtsForm.get('idEstablecimiento')?.setValue(idEstablecimiento);
 
       if (idEstablecimiento > 0) {
@@ -252,11 +252,11 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.retencionAtsForm.get('fechaEmision')?.setValue(formatedDate.toISOString());
       this.getPeriod();
       this.retAtsDocSustentos = parsedData.documentosSustento;
-      this.retAtsDocSustentos.forEach(doc => {
+      this.retAtsDocSustentos.forEach((doc) => {
         this.addDocSustento(doc);
       });
       this.infoAdicional = parsedData.infoAdicional;
-      this.infoAdicional.forEach(info => {
+      this.infoAdicional.forEach((info) => {
         this.addInfoAdicionalWithValues(info);
       });
     } else {
@@ -275,12 +275,12 @@ export class RetencionAtsAddEditComponent implements OnInit {
     const idEstablecimiento = this.retencionAtsForm.get('idEstablecimiento')?.value;
 
     if (idEstablecimiento) {
-      const estab = this.estabs.find(x => x.idEstablecimiento == idEstablecimiento);
+      const estab = this.estabs.find((x) => x.idEstablecimiento == idEstablecimiento);
 
       this.puntosEmision = estab?.puntosEmision;
 
       if (this.puntosEmision && this.puntosEmision.length > 0) {
-        const idPuntoEmision = this.puntosEmision.find(x => x.defaultPtoEmi)?.idPuntoEmision;
+        const idPuntoEmision = this.puntosEmision.find((x) => x.defaultPtoEmi)?.idPuntoEmision;
 
         if (idPuntoEmision) {
           this.retencionAtsForm.get('idPuntoEmision')?.setValue(idPuntoEmision);
@@ -332,12 +332,12 @@ export class RetencionAtsAddEditComponent implements OnInit {
       },
     });
 
-    dialogRef.subscribe(response => {
+    dialogRef.subscribe((response) => {
       if (typeof response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
           this.retAtsDocSustentos = documents;
-          this.retAtsDocSustentos.forEach(doc => {
+          this.retAtsDocSustentos.forEach((doc) => {
             this.addDocSustento(doc);
           });
         }
@@ -349,7 +349,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     if (this._data && this._data.idRetencionAts > 0) {
       this._retencionAtsUseCase
         .update(this._data.idRetencionAts, this.retencionAtsForm.value)
-        .subscribe(response => {
+        .subscribe((response) => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
             message: response.message,
@@ -359,7 +359,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
           }
         });
     } else {
-      this._retencionAtsUseCase.create(this.retencionAtsForm.value).subscribe(response => {
+      this._retencionAtsUseCase.create(this.retencionAtsForm.value).subscribe((response) => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

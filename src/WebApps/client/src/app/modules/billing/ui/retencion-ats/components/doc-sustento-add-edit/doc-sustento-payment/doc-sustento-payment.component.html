@@ -3,7 +3,10 @@
     <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 col-10">
       <mat-form-field class="w-100">
         <mat-label>Forma Pago</mat-label>
-        <mat-select id="formaPagoId-{{ paymentGroup().get('uniqueIdDoc')?.value }}" formControlName="formaPagoId">
+        <mat-select
+          id="formaPagoId-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
+          formControlName="formaPagoId"
+        >
           <mat-option>-- Seleccione una forma de pago --</mat-option>
           @for (item of formasPago(); track item.id) {
             <mat-option [value]="item.id">
@@ -39,7 +42,7 @@
           id="btn-save-payment-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
           title="Guardar retención del sustento"
           (handleClick)="onSave()"
-        ></app-theme-button>
+        />
       }
       <app-theme-button
         variant="danger"
@@ -47,7 +50,7 @@
         matStyle="icon"
         id="btnDeletePayment-{{ paymentGroup().get('uniqueIdDoc')?.value }}"
         (handleClick)="removePayment()"
-      ></app-theme-button>
+      />
     </div>
   </div>
 </form>

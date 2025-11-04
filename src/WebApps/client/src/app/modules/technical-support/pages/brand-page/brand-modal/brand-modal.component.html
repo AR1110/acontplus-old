@@ -27,15 +27,21 @@
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="name">Nombre:</label>
-          <input type="text" formControlName="name" id="name" class="form-control" maxlength="100" />
+          <input
+            type="text"
+            formControlName="name"
+            id="name"
+            class="form-control"
+            maxlength="100"
+          />
         </div>
       </div>
     </div>
     <div class="row">
       <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
-        <app-theme-button icon="add" text="Añadir Serie" (handleClick)="onSerieAdd()"> </app-theme-button>
+        <app-theme-button icon="add" text="Añadir Serie" (handleClick)="onSerieAdd()" />
         @if (this.series.length > 0) {
-          <app-tabulator [columnNames]="columnNames" [tableData]="series"></app-tabulator>
+          <app-tabulator [columnNames]="columnNames" [tableData]="series" />
         }
       </div>
     </div>

@@ -41,7 +41,7 @@ export class DocsGuiaRemisionComponent {
     { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
     { key: 'total', label: 'Total', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -50,7 +50,7 @@ export class DocsGuiaRemisionComponent {
   changeDateRange($event: { from: string; to: string }) {}
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

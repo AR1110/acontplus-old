@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ComprobanteIngresoRepository } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ComprobanteIngresoUseCase {
-  constructor(private repo: ComprobanteIngresoRepository) {}
+  private repo = inject(ComprobanteIngresoRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getDataFilter() {
     return this.repo.getDataFilter();

@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CuentaPorCobrarUseCase {
-  constructor(private repo: CuentaPorCobrarRepository) {}
+  private repo = inject(CuentaPorCobrarRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T>(obj: T) {
     return this.repo.getAll(obj);

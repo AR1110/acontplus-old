@@ -2,7 +2,7 @@
 <mat-autocomplete #auto="matAutocomplete" [displayWith]="formatCustomer">
   @if (isLoading()) {
     <mat-option disabled style="display: flex; justify-content: center; align-items: center">
-      <mat-spinner diameter="35"></mat-spinner>
+      <mat-spinner diameter="35" />
     </mat-option>
   }
   @for (customer of filteredCustomers | async; track $index) {
@@ -35,11 +35,20 @@
     <ng-container matSuffix>
       @if (isHandset()) {
         <!-- Mobile layout - menu button -->
-        <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()" aria-label="actions">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="menu"
+          (click)="$event.stopPropagation()"
+          aria-label="actions"
+        >
           <mat-icon>more_vert</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item appCompanyCustomerAddEdit (companyCustomerSaved)="onSelectionChange($event)">
+          <button
+            mat-menu-item
+            appCompanyCustomerAddEdit
+            (companyCustomerSaved)="onSelectionChange($event)"
+          >
             <mat-icon>add</mat-icon>
             <span>Nuevo</span>
           </button>
@@ -61,7 +70,11 @@
         </mat-menu>
       } @else {
         <!-- Desktop layout - icon buttons -->
-        <button mat-icon-button appCompanyCustomerAddEdit (companyCustomerSaved)="onSelectionChange($event)">
+        <button
+          mat-icon-button
+          appCompanyCustomerAddEdit
+          (companyCustomerSaved)="onSelectionChange($event)"
+        >
           <mat-icon>add</mat-icon>
         </button>
 
@@ -143,5 +156,5 @@
 
 <!-- Loading indicator -->
 @if (isLoading()) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" />
 }

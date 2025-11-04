@@ -6,7 +6,6 @@ import { SortDirection } from '@angular/material/sort';
 import { TooltipPosition, TooltipTouchGestures } from '@angular/material/tooltip';
 import { Observable } from 'rxjs';
 
-
 export interface DataGridColumn<T = any> {
   field: string;
   header?: string | Observable<string>;
@@ -35,15 +34,12 @@ export interface DataGridColumn<T = any> {
   headerCellTemplate?: TemplateRef<any>;
 }
 
-
 export declare type DataGridColumnPinValue = 'left' | 'right' | null;
-
 
 export interface DataGridColumnPinOption {
   label: string | Observable<string>;
   value: DataGridColumnPinValue;
 }
-
 
 export declare type DataGridColumnType =
   | 'button'
@@ -56,7 +52,6 @@ export declare type DataGridColumnType =
   | 'percent'
   | 'date';
 
-
 export interface DataGridColumnTypeParameter {
   currencyCode?: string;
   display?: string | boolean;
@@ -66,7 +61,6 @@ export interface DataGridColumnTypeParameter {
   timezone?: string;
 }
 
-
 export interface DataGridSortProp {
   arrowPosition?: 'before' | 'after';
   disableClear?: boolean;
@@ -74,18 +68,15 @@ export interface DataGridSortProp {
   start?: 'asc' | 'desc';
 }
 
-
 export interface DataGridColumnTag {
   [key: number]: DataGridColumnTagValue;
   [key: string]: DataGridColumnTagValue;
 }
 
-
 export interface DataGridColumnTagValue {
   text?: string;
   color?: string;
 }
-
 
 export interface DataGridColumnButton<T = any> {
   type?: DataGridButtonType;
@@ -104,7 +95,6 @@ export interface DataGridColumnButton<T = any> {
   children?: DataGridMenuItem<T>[];
 }
 
-
 export interface DataGridColumnButtonPop {
   title: string | Observable<string>;
   description?: string | Observable<string>;
@@ -113,7 +103,6 @@ export interface DataGridColumnButtonPop {
   closeColor?: ThemePalette;
   closeText?: string | Observable<string>;
 }
-
 
 export interface DataGridColumnButtonTooltip {
   message: string | Observable<string>;
@@ -126,7 +115,6 @@ export interface DataGridColumnButtonTooltip {
   disabled?: boolean;
 }
 
-
 export interface DataGridColumnButtonBadge {
   content: number | string | Observable<string>;
   description?: string | Observable<string>;
@@ -138,22 +126,18 @@ export interface DataGridColumnButtonBadge {
   hidden?: boolean;
 }
 
-
 export interface DataGridCellTemplate {
   [key: string]: TemplateRef<any>;
 }
-
 
 export interface DataGridRowSelectionFormatter<T = any> {
   disabled?: (rowData: T, index: number) => boolean;
   hideCheckbox?: (rowData: T, index: number) => boolean;
 }
 
-
 export interface DataGridRowClassFormatter<T = any> {
   [className: string]: (rowData: T, index: number) => boolean;
 }
-
 
 export type DataGridButtonType = MatButtonAppearance | 'icon';
 
@@ -217,7 +201,6 @@ export interface DataGridDefaultOptions {
 
   noResultText?: string;
 }
-
 
 export interface DataGridMenuItem<T = any> {
   text: string | Observable<string>;

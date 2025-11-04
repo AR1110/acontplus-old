@@ -78,7 +78,7 @@ export class CompanyCustomerComponent implements OnInit {
     { key: 'nomValidationSri', label: 'Validación Sri', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -94,9 +94,9 @@ export class CompanyCustomerComponent implements OnInit {
       textSearch: isValidField(this.dataSearch.textSearch),
     };
 
-    this.$listUseCase.execute(params).subscribe(response => {
+    this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update(re => ({
+      this.pagination.update((re) => ({
         ...re,
         totalRecords: response.totalRecords,
       }));
@@ -119,7 +119,7 @@ export class CompanyCustomerComponent implements OnInit {
     });
     if (!isConfirmed) return;
 
-    this.$updateState.execute(item.idCliente).subscribe(response => {
+    this.$updateState.execute(item.idCliente).subscribe((response) => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',
@@ -165,7 +165,7 @@ export class CompanyCustomerComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

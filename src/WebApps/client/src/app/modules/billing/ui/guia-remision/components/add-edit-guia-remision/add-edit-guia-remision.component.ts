@@ -127,9 +127,9 @@ export class AddEditGuiaRemisionComponent implements OnInit {
   }
 
   private initForm() {
-    this.$getGuiaRemisionFormDataUseCase.execute().subscribe(response => {
+    this.$getGuiaRemisionFormDataUseCase.execute().subscribe((response) => {
       this.estabs.set(response.estabs);
-      const dataEstab = this.estabs().find(item => item.defaultEstab);
+      const dataEstab = this.estabs().find((item) => item.defaultEstab);
 
       if (!dataEstab) {
         Swal.fire({
@@ -141,7 +141,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
       }
 
       this.puntosEmision.set(dataEstab.puntosEmision);
-      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
       if (!dataPuntoEmision) {
         Swal.fire({
           icon: 'warning',
@@ -181,7 +181,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
 
     this.dataFormClone.codEstab = this.dataForm.value?.codEstab;
 
-    const dataEstab = this.estabs().find(item => item.codEstab === this.dataForm.value.codEstab);
+    const dataEstab = this.estabs().find((item) => item.codEstab === this.dataForm.value.codEstab);
     if (!dataEstab) {
       Swal.fire({
         icon: 'warning',
@@ -192,7 +192,7 @@ export class AddEditGuiaRemisionComponent implements OnInit {
     }
 
     this.puntosEmision.set(dataEstab.puntosEmision);
-    const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+    const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
     if (!dataPuntoEmision) {
       Swal.fire({
         icon: 'warning',
@@ -210,12 +210,12 @@ export class AddEditGuiaRemisionComponent implements OnInit {
   private asignarInfoAdicionalPorPuntoDeEmision() {
     // Elimina info adicional existente relacionada a algún punto de emisión
     this.informacionAdicionalDocumento.set(
-      this.informacionAdicionalDocumento().filter(info => !(info.idPuntoEmision > 0)),
+      this.informacionAdicionalDocumento().filter((info) => !(info.idPuntoEmision > 0)),
     );
 
     // Busca la configuración para el punto de emisión actual
     const configuracionPuntoEmision = this.configuracionesInfoAdicional().find(
-      config => config.idPuntoEmision === this.dataForm.value.puntoEmisionId,
+      (config) => config.idPuntoEmision === this.dataForm.value.puntoEmisionId,
     );
 
     if (!configuracionPuntoEmision) return;

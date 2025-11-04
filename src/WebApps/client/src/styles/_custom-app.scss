@@ -1,15 +1,15 @@
 /* Estilos compartidos */
 .small-button {
-  width: 23px;            /* tamaño pequeño */
+  width: 23px; /* tamaño pequeño */
   height: 23px;
-  border-radius: 50%;      /* circular */
+  border-radius: 50%; /* circular */
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   padding: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
 }
 
@@ -38,20 +38,33 @@ button svg {
   background-color: #b91c1c;
 }
 
-
 //celdas filas documentos
-.doc-cell, .client-cell, .dates-cell, .status-cell, .version-cell, .product-cell {
+.doc-cell,
+.client-cell,
+.dates-cell,
+.status-cell,
+.version-cell,
+.product-cell {
   div {
     margin: 2px 0;
   }
 }
 
-.doc-cell .code-name, .product-cell .code, .client-cell .ruc, .status-cell div:first-child, .version-cell div:first-child {
+.doc-cell .code-name,
+.product-cell .code,
+.client-cell .ruc,
+.status-cell div:first-child,
+.version-cell div:first-child {
   font-weight: 600;
   font-size: 12px;
 }
 
-.doc-cell .series, .client-cell .name, .dates-cell div, .status-cell .user, .product-cell .name, .version-cell div:last-child {
+.doc-cell .series,
+.client-cell .name,
+.dates-cell div,
+.status-cell .user,
+.product-cell .name,
+.version-cell div:last-child {
   font-size: 12px;
   color: gray;
 }

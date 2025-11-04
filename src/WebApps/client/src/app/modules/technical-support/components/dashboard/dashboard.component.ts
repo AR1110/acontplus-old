@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
   }
 
   get() {
-    this.statsService.get({}).subscribe(response => {
+    this.statsService.get({}).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { stats, totalOrders, totalCustomers, totalEmployes } = JSON.parse(
           response.payload as string,

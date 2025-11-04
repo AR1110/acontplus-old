@@ -15,21 +15,21 @@ export class PetService {
   private url = `${PATHS_API.VET}${API_ENDPOINTS.PET}`;
 
   delete(id: number) {
-    return this.http.delete(`${this.url}${id}`).pipe(map(response => response));
+    return this.http.delete(`${this.url}${id}`).pipe(map((response) => response));
   }
 
   get<T>(parameters: T) {
     return this.http
       .get(`${this.url}?json=${JSON.stringify(parameters)}`)
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
 
   post(data: any) {
-    return this.http.post(`${this.url}`, data).pipe(map(response => response));
+    return this.http.post(`${this.url}`, data).pipe(map((response) => response));
   }
 
   put(id: number, data: any) {
-    return this.http.put(`${this.url}${id}`, data).pipe(map(response => response));
+    return this.http.put(`${this.url}${id}`, data).pipe(map((response) => response));
   }
 
   search<T extends { textSearch: string }>(data: T): Observable<Pet[]> {
@@ -44,7 +44,7 @@ export class PetService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (isApiResponse(response)) {
             const { pets } = (response.payload && JSON.parse(response.payload as string)) || [];
             return pets || [];

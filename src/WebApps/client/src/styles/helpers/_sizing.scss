@@ -1,12 +1,12 @@
-@use "variables";
+@use 'variables';
 
 $utilities: (
-  "width": (
+  'width': (
     property: width,
     class: w,
     values: variables.$sizes,
   ),
-  "height": (
+  'height': (
     property: height,
     class: h,
     values: variables.$sizes,

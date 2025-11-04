@@ -2,7 +2,9 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-2 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
@@ -40,10 +42,19 @@
 
           <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
             @for (state of filteredProducts | async; track state) {
-              <mat-option [value]="state.descripcion" (onSelectionChange)="onSelectionChange(state)">
+              <mat-option
+                [value]="state.descripcion"
+                (onSelectionChange)="onSelectionChange(state)"
+              >
                 <div class="item-container">
                   <div class="left-column">
-                    <img class="img-fluid img-thumbnail" [src]="state.s3ObjectUrl" alt="" width="30" height="30" />
+                    <img
+                      class="img-fluid img-thumbnail"
+                      [src]="state.s3ObjectUrl"
+                      alt=""
+                      width="30"
+                      height="30"
+                    />
                   </div>
                   <div class="right-column">
                     <div class="right-container">
@@ -60,10 +71,17 @@
     </div>
 
     <div class="hstack gap-2">
-      <app-theme-button variant="danger" text="Pdf" icon="picture_as_pdf" (handleClick)="getReport('pdf')">
-      </app-theme-button
-      ><app-theme-button variant="success" text="Excel" icon="download" (handleClick)="getReport('excel')">
-      </app-theme-button>
+      <app-theme-button
+        variant="danger"
+        text="Pdf"
+        icon="picture_as_pdf"
+        (handleClick)="getReport('pdf')"
+      /><app-theme-button
+        variant="success"
+        text="Excel"
+        icon="download"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

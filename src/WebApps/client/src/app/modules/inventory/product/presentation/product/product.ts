@@ -13,8 +13,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import {  PageEvent } from '@angular/material/paginator';
-import {   MatTableModule } from '@angular/material/table';
+import { PageEvent } from '@angular/material/paginator';
+import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ApiResponse } from '@core/models/api-response';
@@ -36,14 +36,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import {MtxPopoverModule} from "@ng-matero/extensions/popover";
-import {ProductStock} from "@inventory/product/presentation/components/product-stock/product-stock";
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
-import {HasPermissionDirective} from "@core/directives/permission";
-import {INVENTORY_MODULES_CODE} from "@inventory/domain/enums/inventory.enum";
-import {usePermissions} from "@core/composables/use-permissions";
-import {ACTION_ALIASES} from "@core/constants/permission-actions";
+import { MtxPopoverModule } from '@ng-matero/extensions/popover';
+import { ProductStock } from '@inventory/product/presentation/components/product-stock/product-stock';
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn } from '@shared/components/data-grid/types';
+import { HasPermissionDirective } from '@core/directives/permission';
+import { INVENTORY_MODULES_CODE } from '@inventory/domain/enums/inventory.enum';
+import { usePermissions } from '@core/composables/use-permissions';
+import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 @Component({
   selector: 'app-inventory-product',
@@ -69,17 +69,16 @@ import {ACTION_ALIASES} from "@core/constants/permission-actions";
     MtxPopoverModule,
     ProductStock,
     DataGrid,
-    HasPermissionDirective
+    HasPermissionDirective,
   ],
   templateUrl: './product.html',
   styles: `
     :host ::ng-deep .data-grid {
       height: 400px;
     }
-
-  `
+  `,
 })
-export class Product implements OnInit  {
+export class Product implements OnInit {
   @ViewChildren('selectElement') selectElements!: QueryList<ElementRef<HTMLSelectElement>>;
 
   inventory_modules_code = signal(INVENTORY_MODULES_CODE);
@@ -115,7 +114,7 @@ export class Product implements OnInit  {
   positionEnd: any = 'center';
 
   columns: DataGridColumn[] = [
-    { header: 'Nro.', field: 'index', showExpand: true  },
+    { header: 'Nro.', field: 'index', showExpand: true },
     {
       header: 'Op.',
       field: 'operation',
@@ -140,17 +139,15 @@ export class Product implements OnInit  {
     per_page: 10,
   };
 
-
   setDataSearch<K extends keyof typeof this.dataSearch>(
     key: K,
-    value: (typeof this.dataSearch)[K]
+    value: (typeof this.dataSearch)[K],
   ) {
     this.dataSearch = {
       ...this.dataSearch,
       [key]: value,
     };
   }
-
 
   ngOnInit() {
     this.resetDataAfterFetch();
@@ -162,7 +159,7 @@ export class Product implements OnInit  {
         }),
       )
       .subscribe({
-        next: response => {
+        next: (response) => {
           const [dataForm, responseProduct] = response;
           this.subCategorias.set(dataForm.subCategorias);
           this.medidas.set(dataForm.medidas);
@@ -172,7 +169,7 @@ export class Product implements OnInit  {
 
           this.setResponseGetAll(responseProduct);
         },
-        error: err => {
+        error: (err) => {
           console.error('Error load infrastructure form and products:', err);
         },
       });
@@ -184,7 +181,7 @@ export class Product implements OnInit  {
   }
 
   toggleSelectsState(): void {
-    this.selectElements?.forEach(selectRef => {
+    this.selectElements?.forEach((selectRef) => {
       selectRef.nativeElement.disabled = this.isLoading();
     });
   }
@@ -242,7 +239,7 @@ export class Product implements OnInit  {
       data,
     });
 
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object' && result.isRefresh) {
         this.refresh();
       }
@@ -257,7 +254,7 @@ export class Product implements OnInit  {
     }));
 
     this.list.set(products);
-    this.total.set(products.length> 0 ? products[0].totalRecords : 0)
+    this.total.set(products.length > 0 ? products[0].totalRecords : 0);
   }
 
   private getDataParams() {
@@ -303,7 +300,7 @@ export class Product implements OnInit  {
           this.toggleSelectsState();
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         this.setResponseGetAll(response);
       });
   }
@@ -327,6 +324,6 @@ export class Product implements OnInit  {
   getNextPage(e: PageEvent) {
     this.query.page = e.pageIndex;
     this.query.per_page = e.pageSize;
-    this.refresh()
+    this.refresh();
   }
 }

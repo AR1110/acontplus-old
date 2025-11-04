@@ -20,7 +20,7 @@ export class PromotionService {
     });
 
     return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           days: [] as any[],
           promotions: [] as any[],

@@ -40,7 +40,7 @@ export class MassiveTaxPageComponent implements OnInit {
     { key: 'user', label: 'Usuario', type: 'string' },
   ];
 
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -50,7 +50,7 @@ export class MassiveTaxPageComponent implements OnInit {
 
   openDialog() {
     const dialogRef = this._dialogSvc.open(MassiveTaxDialogComponent, {});
-    dialogRef.subscribe(result => {
+    dialogRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -65,7 +65,7 @@ export class MassiveTaxPageComponent implements OnInit {
       this._massiveTaxUseCase
         .getAll({})
         .pipe(finalize(() => this.isLoadingResults.set(false)))
-        .subscribe(response => {
+        .subscribe((response) => {
           this.dataSource.set(response);
         });
     } catch (error) {

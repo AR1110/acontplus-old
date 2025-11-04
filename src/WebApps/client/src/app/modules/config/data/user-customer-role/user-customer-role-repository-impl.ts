@@ -17,7 +17,7 @@ export class UserCustomerRoleRepositoryImpl implements UserCustomerRoleRepositor
     const json = ListAccessUserCustomerRoleMapper.toJson(params);
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => ListAccessUserCustomerRoleMapper.fromJson(response)));
+      .pipe(map((response) => ListAccessUserCustomerRoleMapper.fromJson(response)));
   }
   updateAccess(parameters: any): Observable<ApiResponse> {
     return this._http.put<ApiResponse>(`${this._url}${parameters.userRoleId}`, {
@@ -28,7 +28,7 @@ export class UserCustomerRoleRepositoryImpl implements UserCustomerRoleRepositor
   list<T>(parameters: T) {
     return this._http
       .get(`${this._url}?json=${ListUserCustomerRoleMapper.toJson(parameters)}`)
-      .pipe(map(response => ListUserCustomerRoleMapper.fromJson(response)));
+      .pipe(map((response) => ListUserCustomerRoleMapper.fromJson(response)));
   }
 
   private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE}`;

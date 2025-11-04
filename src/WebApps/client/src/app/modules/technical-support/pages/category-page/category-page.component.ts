@@ -32,7 +32,7 @@ export class CategoryPageComponent implements OnInit {
     this.onModalOpen();
   }
   onGet() {
-    this.categoryService.get({ tipo: 1 }).subscribe(response => {
+    this.categoryService.get({ tipo: 1 }).subscribe((response) => {
       if (response.code == '1') {
         this.categories.set(JSON.parse(response.payload as string));
       }
@@ -44,7 +44,7 @@ export class CategoryPageComponent implements OnInit {
       data: this.categorySelected.id > 0 ? structuredClone(this.categorySelected) : {},
     });
 
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (this.categorySelected.id > 0) {
         this.categorySelected = {} as Category;
       }

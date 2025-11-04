@@ -131,7 +131,9 @@
     </div>
     <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
       <div class="form-group">
-        <mat-slide-toggle id="serverDevice" [(ngModel)]="data.serverDevice">Servidor</mat-slide-toggle>
+        <mat-slide-toggle id="serverDevice" [(ngModel)]="data.serverDevice"
+          >Servidor</mat-slide-toggle
+        >
       </div>
     </div>
   </div>
@@ -152,7 +154,7 @@
             <td class="text-center">{{ $index + 1 }}</td>
             <td>{{ item.name }}</td>
             <td class="text-center">
-              <mat-slide-toggle [(ngModel)]="item.isActive" (change)="updateDocument(item)"></mat-slide-toggle>
+              <mat-slide-toggle [(ngModel)]="item.isActive" (change)="updateDocument(item)" />
             </td>
             <td class="text-center">
               @if (item.isActive) {

@@ -13,7 +13,7 @@ export class ComprobanteIngresoOpenModalService {
       size: 'xl',
       data: structuredClone(data),
     });
-    await modalRef.subscribe(result => {
+    await modalRef.subscribe((result) => {
       return result;
     });
   }

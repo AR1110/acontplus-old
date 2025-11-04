@@ -6,12 +6,10 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { ApiResponse } from '@core/models/api-response';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { DocumentoElectronicoRepository } from '@billing/domain/repositories/documento-electronico.repository';
-import {
-  FilterData,
-} from '@billing/domain/models/documento-electronico.model';
+import { FilterData } from '@billing/domain/models/documento-electronico.model';
 import { SharedService } from '@core/services/shared.service';
 import { catchError } from 'rxjs/operators';
-import {ElectronicDocListMapper} from "@billing/data/documento-electronico/doc-elect-list.mapper";
+import { ElectronicDocListMapper } from '@billing/data/documento-electronico/doc-elect-list.mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -25,12 +23,12 @@ export class DocElectHttpRepository implements DocumentoElectronicoRepository {
   filterDataSubject = new BehaviorSubject<FilterData | null>(null);
 
   authorize(id: number) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, '').pipe(map(response => response));
+    return this._http.put<ApiResponse>(`${this._url}${id}`, '').pipe(map((response) => response));
   }
   cancel(id: number) {
     return this._http
       .put<ApiResponse>(`${this._url}Cancel/${id}`, '')
-      .pipe(map(response => response));
+      .pipe(map((response) => response));
   }
   downloadXml(id: number) {
     return this._http
@@ -53,14 +51,14 @@ export class DocElectHttpRepository implements DocumentoElectronicoRepository {
     }
 
     return this._http.get<ApiResponse>(`${this._url}GetFilters`).pipe(
-      map(response => this.processFilterResponse(response)),
-      tap(processedData => {
+      map((response) => this.processFilterResponse(response)),
+      tap((processedData) => {
         // Actualizar caché local
         this.filterDataCache = processedData;
         this.filterDataSubject.next(processedData);
         console.log('💾 Datos de filtros actualizados en caché local');
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('❌ Error al obtener datos de filtros:', error);
 
         // Si hay error y tenemos caché, devolver caché como fallback
@@ -75,14 +73,14 @@ export class DocElectHttpRepository implements DocumentoElectronicoRepository {
   }
   refreshFilters(): Observable<FilterData> {
     return this._http.get<ApiResponse>(`${this._url}RefreshFilters`).pipe(
-      map(response => this.processFilterResponse(response)),
-      tap(processedData => {
+      map((response) => this.processFilterResponse(response)),
+      tap((processedData) => {
         // Actualizar caché local
         this.filterDataCache = processedData;
         this.filterDataSubject.next(processedData);
         console.log('💾 Datos de filtros actualizados en caché local');
       }),
-      catchError(error => {
+      catchError((error) => {
         console.error('❌ Error al obtener datos de filtros:', error);
 
         // Si hay error y tenemos caché, devolver caché como fallback
@@ -100,9 +98,9 @@ export class DocElectHttpRepository implements DocumentoElectronicoRepository {
   }
   getAll<T>(obj: T) {
     const json = ElectronicDocListMapper.toJson(obj);
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response =>ElectronicDocListMapper.fromJson(response)),
-    );
+    return this._http
+      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .pipe(map((response) => ElectronicDocListMapper.fromJson(response)));
   }
 
   /**

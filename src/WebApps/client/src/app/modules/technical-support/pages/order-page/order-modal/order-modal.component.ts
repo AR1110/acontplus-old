@@ -163,7 +163,7 @@ export class OrderModalComponent implements OnInit {
   });
 
   addDetail(device: any) {
-    if (this.orderDetails().some(x => x.deviceId == device.id)) {
+    if (this.orderDetails().some((x) => x.deviceId == device.id)) {
       return this.tS.show({
         type: 'warning',
         message: 'Este equipo ya se encuentra agregado en el detalle',
@@ -189,7 +189,7 @@ export class OrderModalComponent implements OnInit {
     deviceToAdd.deviceCustomerId = !device.deviceCustomerId ? 0 : device.deviceCustomerId;
     deviceToAdd.deviceSerie = !device.deviceSerie ? 0 : device.deviceSerie;
     deviceToAdd.deviceWarranty = !device.deviceWarranty ? '' : device.deviceWarranty;
-    this.orderDetails.update(r => [...r, deviceToAdd]);
+    this.orderDetails.update((r) => [...r, deviceToAdd]);
   }
 
   askToDeleteDetail(detail: OrderDetail) {
@@ -199,16 +199,16 @@ export class OrderModalComponent implements OnInit {
       showCancelButton: true,
       confirmButtonText: 'Si',
       cancelButtonText: 'No',
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
-        this.oDS.delete(detail.id).subscribe(response => {
+        this.oDS.delete(detail.id).subscribe((response) => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code == '1' ? 'success' : 'warning',
               message: response.message,
             });
             if (response.code == '1') {
-              this.orderDetails.update(r => r.filter(x => x.id != detail.id));
+              this.orderDetails.update((r) => r.filter((x) => x.id != detail.id));
             }
           }
         });
@@ -221,7 +221,7 @@ export class OrderModalComponent implements OnInit {
   }
 
   editDetail(detail: any) {
-    this.oDS.put(detail.id, detail).subscribe(response => {
+    this.oDS.put(detail.id, detail).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -237,7 +237,7 @@ export class OrderModalComponent implements OnInit {
       this.modalTitle = 'Editar Orden';
       this.modalIcon = 'edit';
     }
-    this.orderService.get(parameters).subscribe(response => {
+    this.orderService.get(parameters).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '1') {
           const parsedResponse = JSON.parse(response.payload as string);
@@ -247,14 +247,14 @@ export class OrderModalComponent implements OnInit {
             isGroupPuntoEmision: true,
           });
           this.establecimientos.set(establecimientos);
-          const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+          const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
           if (dataEstab) {
             this.orderForm.patchValue({
               establecimientoId: dataEstab.idEstablecimiento,
             });
             this.order.codEstab = dataEstab.codEstab;
             this.puntosEmision.set(dataEstab.puntosEmision);
-            const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+            const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
             if (dataPuntoEmision) {
               this.orderForm.patchValue({
                 puntoEmisionId: dataPuntoEmision.idPuntoEmision,
@@ -282,7 +282,7 @@ export class OrderModalComponent implements OnInit {
         customerCompanyId: this.order.customerCompanyId,
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result) {
         this.addDetail({
           deviceCustomerId: result.deviceCustomerId,
@@ -305,11 +305,11 @@ export class OrderModalComponent implements OnInit {
     const establecimientoId = this.orderForm.get('establecimientoId')?.value;
     if (isValidField(establecimientoId)) {
       const estabs = this.establecimientos().find(
-        x => x.idEstablecimiento == Number(establecimientoId),
+        (x) => x.idEstablecimiento == Number(establecimientoId),
       );
       this.puntosEmision.set(estabs?.puntosEmision || []);
       const puntoEmisionId =
-        this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
+        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
       this.orderForm.patchValue({
         establecimientoId: establecimientoId,
         puntoEmisionId: puntoEmisionId,
@@ -326,7 +326,7 @@ export class OrderModalComponent implements OnInit {
   }
 
   removeFromList(deviceId: number) {
-    this.orderDetails.update(r => r.filter(x => x.deviceId !== deviceId));
+    this.orderDetails.update((r) => r.filter((x) => x.deviceId !== deviceId));
   }
 
   onChangeDate(event: Event) {

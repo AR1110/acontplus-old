@@ -1,4 +1,4 @@
-@use "@angular/material" as mat;
+@use '@angular/material' as mat;
 
 html {
   color-scheme: light;
@@ -16,11 +16,11 @@ html {
 }
 
 $compact-theme: mat.define-theme(
-    (
-      density: (
-        scale: -4,
-      ),
-    )
+  (
+    density: (
+      scale: -4,
+    ),
+  )
 );
 :root {
   @include mat.form-field-density($compact-theme);
@@ -28,5 +28,3 @@ $compact-theme: mat.define-theme(
 .theme-dark {
   color-scheme: light dark;
 }
-
-

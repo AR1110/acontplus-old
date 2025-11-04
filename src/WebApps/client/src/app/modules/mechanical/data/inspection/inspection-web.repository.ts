@@ -28,7 +28,7 @@ export class InspectionWebRepository implements InspectionRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => InspeccionMapper.getAll(response)));
+      .pipe(map((response) => InspeccionMapper.getAll(response)));
   }
 
   getDataForm(supportId: number) {
@@ -38,7 +38,7 @@ export class InspectionWebRepository implements InspectionRepository {
     });
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InspeccionMapper.getDataForm(response)));
+      .pipe(map((response) => InspeccionMapper.getDataForm(response)));
   }
 
   getId(id: number) {
@@ -48,7 +48,7 @@ export class InspectionWebRepository implements InspectionRepository {
     });
     return this.#http
       .get<ApiResponse>(`${this.#url}?json=${json}`)
-      .pipe(map(response => InspeccionMapper.getId(response)));
+      .pipe(map((response) => InspeccionMapper.getId(response)));
   }
 
   post<T>(data: T) {

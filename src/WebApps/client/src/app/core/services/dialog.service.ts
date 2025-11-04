@@ -1,5 +1,5 @@
 import { Overlay } from '@angular/cdk/overlay';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 interface DialogOptions {
@@ -15,10 +15,13 @@ interface DialogOptions {
   providedIn: 'root',
 })
 export class DialogService {
-  constructor(
-    private dialog: MatDialog,
-    private overlay: Overlay,
-  ) {}
+  private dialog = inject(MatDialog);
+  private overlay = inject(Overlay);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   open(component: any, options: DialogOptions) {
     const dialogConfig = new MatDialogConfig();

@@ -60,7 +60,7 @@ export class FormaPagoComponent {
     { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
     { key: 'total', label: 'Total', type: 'number' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   close() {
     this.comprobanteEgresoStore.updateDataFormaPago(getDataFormaPagoState());

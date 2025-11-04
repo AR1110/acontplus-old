@@ -3,7 +3,7 @@
 <mat-card appearance="outlined">
   <mat-card-header>
     <mat-card-title-group>
-      <mat-card-title></mat-card-title>
+      <mat-card-title />
 
       <div class="d-flex flex-row gap-2">
         @if (!isLoadingResults()) {
@@ -30,8 +30,7 @@
       [enablePagination]="true"
       (pageEvent)="handlePageEvent($event)"
       [templateOp]="templateOp"
-    >
-    </app-mat-dynamic-table>
+    />
 
     <ng-template #templateOp let-item="item">
       <button mat-icon-button appModelAddEdit [params]="item" (onResult)="refresh()">

@@ -136,7 +136,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
       startWith(''),
       debounceTime(300),
       distinctUntilChanged(),
-      switchMap(term => {
+      switchMap((term) => {
         if (term && typeof term !== 'string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
@@ -150,7 +150,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
         // Call company customer search use case
         return this.companyCustomerUseCase.search({ textSearch: term }).pipe(
           finalize(() => this.isLoading.set(false)),
-          catchError(error => {
+          catchError((error) => {
             console.error('Company customer search error:', error);
             this.searchFailed.set(true);
             return of([]);
@@ -172,7 +172,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
     if (!customer) return;
 
     if (this.isGetId()) {
-      this.companyCustomerUseCase.getId(customer.idCliente || customer.id).subscribe(response => {
+      this.companyCustomerUseCase.getId(customer.idCliente || customer.id).subscribe((response) => {
         this.customerSelected.emit(response);
       });
       return;
@@ -238,7 +238,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
           size: 'xl',
           data: params,
         })
-        .subscribe(result => {
+        .subscribe((result) => {
           if (result && typeof result === 'object') {
             this.onSelectionChange(result);
           }
@@ -249,7 +249,7 @@ export class CompanyCustomerSearchComponent implements OnChanges {
   // Toggle customer detail overlay
   toggleOverlay(event: Event) {
     event.stopPropagation();
-    this.isOpenDetail.update(value => !value);
+    this.isOpenDetail.update((value) => !value);
 
     if (this.isOpenDetail()) {
       // Configure position strategy for overlay
@@ -286,10 +286,10 @@ export class CompanyCustomerSearchComponent implements OnChanges {
       // Fetch customer details
       if (this.id() > 0) {
         this.companyCustomerUseCase.getId(this.id(), true).subscribe({
-          next: customer => {
+          next: (customer) => {
             this.customerDetail.set(customer);
           },
-          error: error => {
+          error: (error) => {
             console.error('Error fetching customer details:', error);
             this.toasterService.show({
               type: 'error',

@@ -21,7 +21,7 @@ export class ExcelImportRepositoryImpl implements ExcelImportRepository {
   }
   getFormData(): Observable<ImportacionResponse> {
     return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify({})}`).pipe(
-      map(response => {
+      map((response) => {
         const modules = JSON.parse(response.payload as string);
 
         return {
@@ -33,7 +33,7 @@ export class ExcelImportRepositoryImpl implements ExcelImportRepository {
 
   list() {
     return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify({})}`).pipe(
-      map(response => {
+      map((response) => {
         return {} as ImportacionResponse;
       }),
     );

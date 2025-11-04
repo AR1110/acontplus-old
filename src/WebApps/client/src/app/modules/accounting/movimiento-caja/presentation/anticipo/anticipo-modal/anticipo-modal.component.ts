@@ -67,11 +67,11 @@ export class AnticipoModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._anticipoUseCase.getDataForm().subscribe(response => {
+    this._anticipoUseCase.getDataForm().subscribe((response) => {
       const { establecimientos, entidadesFinanciera, subEntidadesFinanciera } = response;
 
       this.establecimientos.set(establecimientos);
-      const dataEstab = this.establecimientos().find(estab => estab.predeterminado);
+      const dataEstab = this.establecimientos().find((estab) => estab.predeterminado);
       if (dataEstab) {
         this.dataForm.get('codEstab')?.setValue(dataEstab.codEstab);
       }
@@ -87,7 +87,7 @@ export class AnticipoModalComponent implements OnInit {
     const idEntidadFinanciera = this.dataForm.value.idEntidadFinanciera;
     if (idEntidadFinanciera) {
       const subEntidadesFinanciera = this.tempSubEntidadesFinanciera().filter(
-        ef => ef.idEntidadFinanciera === idEntidadFinanciera,
+        (ef) => ef.idEntidadFinanciera === idEntidadFinanciera,
       );
       this.subEntidadesFinanciera.set(subEntidadesFinanciera);
     }
@@ -112,7 +112,7 @@ export class AnticipoModalComponent implements OnInit {
         return;
       }
 
-      this._anticipoUseCase.create(params).subscribe(response => {
+      this._anticipoUseCase.create(params).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

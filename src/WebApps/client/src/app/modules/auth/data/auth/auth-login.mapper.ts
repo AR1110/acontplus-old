@@ -1,8 +1,7 @@
 import { UserData } from '../../domain/models/user-data.model';
-import {isValidJSON} from "@core/utils/utils";
+import { isValidJSON } from '@core/utils/utils';
 
 export class AuthLoginMapper {
-
   static fromJson(response: any) {
     const parsed = JSON.parse(response.payload as string);
 
@@ -14,12 +13,13 @@ export class AuthLoginMapper {
 
       items.forEach((item) => {
         if (!nodeMap.has(item.id)) {
-          const  actions = isValidJSON(item.actions) ? JSON.parse(item.actions) : [];
+          const actions = isValidJSON(item.actions) ? JSON.parse(item.actions) : [];
 
           nodeMap.set(item.id, {
             ...item,
             actions,
-            children: [] });
+            children: [],
+          });
         }
       });
 
@@ -106,7 +106,7 @@ export class AuthLoginMapper {
         uuid,
         needAuthorization,
         codeRole,
-        userRoleId
+        userRoleId,
       } = item;
 
       const fullTree = mapModules(menus);
@@ -140,12 +140,12 @@ export class AuthLoginMapper {
         token,
         uuid,
         needAuthorization,
-        userRoleId
+        userRoleId,
       };
     });
     return {
       userRoles,
-      dto
+      dto,
     };
   }
 }

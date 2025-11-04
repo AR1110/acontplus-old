@@ -40,7 +40,7 @@ export class SubcategoryComponent implements OnInit {
     { key: 'name', label: 'Nombre', type: 'string' },
     { key: 'nomEstado', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -57,7 +57,7 @@ export class SubcategoryComponent implements OnInit {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    this._subCategoryUseCase.getAll(params).subscribe(response => {
+    this._subCategoryUseCase.getAll(params).subscribe((response) => {
       this.subcategories.set(response);
     });
   }
@@ -71,7 +71,7 @@ export class SubcategoryComponent implements OnInit {
       size: 'sm',
       data: this.data.id > 0 ? structuredClone(this.data) : {},
     });
-    modalRef.subscribe(response => {
+    modalRef.subscribe((response) => {
       if (response !== null && typeof response === 'object') {
         this.refresh();
       }
@@ -80,7 +80,7 @@ export class SubcategoryComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

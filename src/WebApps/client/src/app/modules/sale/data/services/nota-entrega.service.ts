@@ -26,7 +26,7 @@ export class NotaEntregaService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const resultData = {
             estabs: [] as GroupedEstab[],
             estadosDoc: [] as any[],
@@ -58,7 +58,7 @@ export class NotaEntregaService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             data: [] as any[],
             totalRecords: 0,
@@ -86,7 +86,7 @@ export class NotaEntregaService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let result = {} as any;
           if (response.code === '1') {
             const mainData = JSON.parse(response.payload as string);

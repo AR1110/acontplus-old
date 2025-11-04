@@ -88,7 +88,7 @@ export class UserProfilePageComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: '¡Sí, actualizar!',
       cancelButtonText: 'Cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         // clean spaces
 

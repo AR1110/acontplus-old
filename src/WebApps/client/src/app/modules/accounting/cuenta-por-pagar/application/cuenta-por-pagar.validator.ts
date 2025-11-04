@@ -20,7 +20,8 @@ export class CuentaPorPagarValidator {
 
     if (
       cuotas.some(
-        val => val.nroCuota === 'E' && [null, undefined, '', 0, '0', '.', '-'].includes(val.cuota),
+        (val) =>
+          val.nroCuota === 'E' && [null, undefined, '', 0, '0', '.', '-'].includes(val.cuota),
       )
     ) {
       return ['Ingrese el Valor de la Entrada'];
@@ -28,13 +29,13 @@ export class CuentaPorPagarValidator {
 
     if (
       cuotas.some(
-        val => [null, undefined, '', 0, '0', '.', '-'].includes(val.cuota) || val.cuota < 0,
+        (val) => [null, undefined, '', 0, '0', '.', '-'].includes(val.cuota) || val.cuota < 0,
       )
     ) {
       return ['Verifique el valor de las Cuotas'];
     }
 
-    if (cuotas.some(val => [null, undefined, ''].includes(val.fechaVencimiento as any))) {
+    if (cuotas.some((val) => [null, undefined, ''].includes(val.fechaVencimiento as any))) {
       return ['Ingrese las fechas de vencimiento correctamente'];
     }
 

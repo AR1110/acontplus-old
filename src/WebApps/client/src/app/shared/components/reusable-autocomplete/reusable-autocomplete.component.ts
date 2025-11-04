@@ -176,7 +176,7 @@ export class ReusableAutocompleteComponent implements OnInit, OnDestroy {
         takeUntil(this.destroy$),
         switchMap(({ query }) => this.performSearch(query)),
       )
-      .subscribe(result => {
+      .subscribe((result) => {
         this.filteredItems.set(result.items);
         this.totalCount.set(result.totalCount);
         this.isLoading.set(false);
@@ -213,7 +213,7 @@ export class ReusableAutocompleteComponent implements OnInit, OnDestroy {
   }
 
   private loadHistory() {
-    this.autocompleteService.history$.pipe(takeUntil(this.destroy$)).subscribe(history => {
+    this.autocompleteService.history$.pipe(takeUntil(this.destroy$)).subscribe((history) => {
       this.historyList.set(history);
     });
   }

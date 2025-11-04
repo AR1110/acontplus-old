@@ -24,7 +24,7 @@ export class RestaurantConfigService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             estabs: [] as GroupedEstab[],
           };

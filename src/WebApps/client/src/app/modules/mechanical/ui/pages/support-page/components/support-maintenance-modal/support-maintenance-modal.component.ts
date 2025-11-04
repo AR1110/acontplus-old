@@ -214,15 +214,15 @@ export class SupportMaintenanceModalComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           const details = structuredClone(this.details());
-          const index = details.findIndex(r => r.rowguid === data.rowguid);
+          const index = details.findIndex((r) => r.rowguid === data.rowguid);
           details.splice(index, 1);
           this.details.set(details);
 
           if (data.id > 0) {
-            this.detailsDeleted.update(prev => [
+            this.detailsDeleted.update((prev) => [
               ...prev,
               {
                 ...data,
@@ -507,7 +507,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    this.supportDetailUseCase.getId(this.params.id).subscribe(response => {
+    this.supportDetailUseCase.getId(this.params.id).subscribe((response) => {
       this.data = {
         ...this.data,
         ...response.data,
@@ -523,17 +523,17 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
       this.details.set(response.details);
       const dataEstab = this.estabs().find(
-        e => e.idEstablecimiento === this.data.establecimientoId,
+        (e) => e.idEstablecimiento === this.data.establecimientoId,
       );
       if (dataEstab) {
         this.bodegas.set(dataEstab.bodegas);
-        const dataBodega = this.bodegas().find(b => b.defaultBodega);
+        const dataBodega = this.bodegas().find((b) => b.defaultBodega);
         if (dataBodega) {
           this.data.bodegaId = dataBodega.idBodega;
         }
       }
 
-      const dataTarifa = this.feeds().find(t => t.predeterminada);
+      const dataTarifa = this.feeds().find((t) => t.predeterminada);
       if (dataTarifa) {
         this.data.feeId = dataTarifa.idTarifa;
         this.cloneData.feeId = dataTarifa.idTarifa;
@@ -585,10 +585,10 @@ export class SupportMaintenanceModalComponent implements OnInit {
     const consolidacionesFecha = response.consolidacionesFecha as ConsolidacionBodega[];
 
     let row = this.getDataRowEmpty();
-    const dataTaxPercent = this.taxPercents().find(d => d.codigo === product.codigoPorcentaje);
+    const dataTaxPercent = this.taxPercents().find((d) => d.codigo === product.codigoPorcentaje);
 
     const findDataProduct = tempDetails.find(
-      item => item.llevaInventario && item.productId === product.idArticulo,
+      (item) => item.llevaInventario && item.productId === product.idArticulo,
     );
 
     row.productId = product.idArticulo;
@@ -603,7 +603,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       row.taxId = dataTaxPercent.idImpuesto;
     }
 
-    const dataMedida = medidas.find(m => m.defaultMedida);
+    const dataMedida = medidas.find((m) => m.defaultMedida);
 
     if (dataMedida) {
       row.medidas = medidas;
@@ -614,7 +614,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       row.costoFraccionado = dataMedida.precioCostoFraccionado;
       row.conversion = dataMedida.conversion;
 
-      const dataTarifa = row.tarifas.find(t => t.defaultTarifa);
+      const dataTarifa = row.tarifas.find((t) => t.defaultTarifa);
 
       row.feeId = dataTarifa?.idTarifa ?? 0;
       row.price = dataTarifa?.precioVenta ?? 0;
@@ -633,7 +633,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     if (product.llevaInventario) {
       let oldValue = 1;
       const productsDuplicated = structuredClone(tempDetails).filter(
-        item => item.llevaInventario && item.productId === product.idArticulo,
+        (item) => item.llevaInventario && item.productId === product.idArticulo,
       );
 
       productsDuplicated.push({ ...row });
@@ -669,7 +669,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
           cantidad: cantidadStock,
         })
         .subscribe({
-          next: async response => {
+          next: async (response) => {
             if (isApiResponse(response)) {
               const { code, message, titleSms } = response;
 
@@ -706,7 +706,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
 
   async onChangeBodega() {
     try {
-      const bodega = this.bodegas().find(item => item.idBodega === this.data.bodegaId);
+      const bodega = this.bodegas().find((item) => item.idBodega === this.data.bodegaId);
       const swalWithBootstrapButtons = Swal.mixin({
         customClass: {
           confirmButton: 'btn btn-success',
@@ -771,7 +771,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       //   return
       // }
 
-      const tarifa = this.feeds().find(item => item.idTarifa === this.data.feeId);
+      const tarifa = this.feeds().find((item) => item.idTarifa === this.data.feeId);
       const { isConfirmed } = await Swal.fire({
         html: `<small>¿Esta seguro de aplicar este tarifa: <b>${tarifa?.descripcion}</b> en los precios de venta en todo el Documento?</small>`,
         icon: 'warning',
@@ -900,7 +900,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
     }
 
     if (column === 'taxId') {
-      if (!this.taxPercents().some(t => t.idImpuesto === Number(value))) {
+      if (!this.taxPercents().some((t) => t.idImpuesto === Number(value))) {
         taxId = oldValue;
       } else {
         const cellInOtherColumn = row.getCell('taxPercentId');
@@ -942,7 +942,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.details().some(row => row.llevaInventario && row.quantity === 0)) {
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.show({
         type: 'warning',
         message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -950,7 +950,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       return;
     }
 
-    if (this.details().some(row => !(row.bodegaId > 0))) {
+    if (this.details().some((row) => !(row.bodegaId > 0))) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -992,7 +992,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
       };
       const params = SupportMaintenanceAdapter.to(obj);
 
-      this.supportDetailUseCase.post(params).subscribe(response => {
+      this.supportDetailUseCase.post(params).subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
             this.tS.show({

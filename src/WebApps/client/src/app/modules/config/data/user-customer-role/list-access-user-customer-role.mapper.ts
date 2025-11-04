@@ -6,8 +6,8 @@ import { isValidJSON } from '@core/utils/utils';
 
 function groupByParent(items: any[]) {
   // Separar padres e hijos
-  const parents = items.filter(item => !item.parentId);
-  const children = items.filter(item => item.parentId);
+  const parents = items.filter((item) => !item.parentId);
+  const children = items.filter((item) => item.parentId);
 
   // Agrupar hijos por parentId
   const childrenByParent = children.reduce((acc, child) => {
@@ -19,7 +19,7 @@ function groupByParent(items: any[]) {
   }, {});
 
   // Construir árbol
-  return parents.map(parent => ({
+  return parents.map((parent) => ({
     ...parent,
     children: childrenByParent[parent.menuId] || [],
   }));
@@ -53,7 +53,7 @@ export class ListAccessUserCustomerRoleMapper {
       // }, {});
     };
 
-    const menusWithActions = groupByParent(response.menus || []).map(menu => ({
+    const menusWithActions = groupByParent(response.menus || []).map((menu) => ({
       ...menu,
       level: 1,
       actions: processMenuActions(menu.actions),

@@ -343,7 +343,7 @@ export class ProductSearchComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.filteredProducts = this.control.valueChanges.pipe(
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]
@@ -365,7 +365,7 @@ export class ProductSearchComponent implements OnInit, OnChanges {
     this.isLoading.set(true);
     return this._productUseCase.search({ textSearch: value }).pipe(
       finalize(() => this.isLoading.set(false)),
-      map(response => {
+      map((response) => {
         return response;
       }),
     );

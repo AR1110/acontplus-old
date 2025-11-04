@@ -55,7 +55,12 @@
       <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
         <div class="form-group">
           <label for="assignedUserId"> Responsable: <span class="text-danger">*</span> </label>
-          <select formControlName="assignedUserId" id="assignedUserId" class="form-select border-select" required>
+          <select
+            formControlName="assignedUserId"
+            id="assignedUserId"
+            class="form-select border-select"
+            required
+          >
             <option [value]="0">Pendiente</option>
             @for (item of users(); track $index) {
               <option [ngValue]="item.idUsuario">
@@ -73,7 +78,7 @@
             [textSearch]="customerBusinessName"
             (customerSelected)="onCustomerSelected($event)"
             [isAdvancedMode]="true"
-          ></app-company-customer-search>
+          />
         </div>
       </div>
     </div>
@@ -87,14 +92,19 @@
           </div>
         </div>
         <div class="col">
-          <button type="button" mat-raised-button title="Ver Historial de equipos del cliente" (click)="getDevices()">
+          <button
+            type="button"
+            mat-raised-button
+            title="Ver Historial de equipos del cliente"
+            (click)="getDevices()"
+          >
             <mat-icon>history</mat-icon> Historial
           </button>
         </div>
       </div>
     }
     @if (orderDetails().length > 0) {
-      <app-tabulator [columnNames]="columnNames" [tableData]="orderDetails()"></app-tabulator>
+      <app-tabulator [columnNames]="columnNames" [tableData]="orderDetails()" />
     }
 
     <div class="row">

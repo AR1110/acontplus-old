@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
@@ -18,14 +17,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-inspection-page',
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    MatDynamicTableComponent,
-  ],
+  imports: [FormsModule, MatMenuModule, MatIconModule, MatButtonModule, MatDynamicTableComponent],
   templateUrl: './inspection-page.component.html',
 })
 export class InspectionPageComponent implements OnInit {
@@ -47,7 +39,7 @@ export class InspectionPageComponent implements OnInit {
     { key: 'mileage', label: 'Kilometraje', type: 'string' },
     { key: 'fuellevel', label: 'Combustible', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -76,7 +68,7 @@ export class InspectionPageComponent implements OnInit {
     this._inspectionUseCase
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource = response;
         if (this.dataSource.length > 0) {
           this.pagination().totalRecords = this.dataSource[0].totalRecords;
@@ -117,7 +109,7 @@ export class InspectionPageComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

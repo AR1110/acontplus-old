@@ -45,7 +45,7 @@ export class PromotionListComponent implements OnInit {
     { key: 'startDate', label: 'Fecha Inicio', type: 'string' },
     { key: 'endDate', label: 'Fecha Fin', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   pagination = signal(new MatPagination());
 
   dataSource = signal<any>([]);
@@ -58,7 +58,7 @@ export class PromotionListComponent implements OnInit {
         data: (data && structuredClone(data)) || {},
       },
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getPromotions();
       }
@@ -72,7 +72,7 @@ export class PromotionListComponent implements OnInit {
       estabId: this.estabId(),
     };
     this.dataSource.set([]);
-    this.promotionSvc.getAll(params).subscribe(response => {
+    this.promotionSvc.getAll(params).subscribe((response) => {
       this.dataSource.set(
         (response.promotions || []).map((item: any, index: number) => ({
           ...item,
@@ -81,7 +81,7 @@ export class PromotionListComponent implements OnInit {
       );
       this.days.set(response.days);
       if (this.dataSource().length > 0) {
-        this.pagination.update(e => {
+        this.pagination.update((e) => {
           return {
             ...e,
             totalRecords: this.dataSource()[0].totalRecords,
@@ -100,7 +100,7 @@ export class PromotionListComponent implements OnInit {
   }
 
   onChangeEstab($event: any) {
-    this.restaurantStore.state.update(e => {
+    this.restaurantStore.state.update((e) => {
       return {
         ...e,
         establecimientoId: $event.value,
@@ -110,7 +110,7 @@ export class PromotionListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Router, RouterLink } from '@angular/router';
 import { SettingsService } from '@core/bootstrap';
 import { debounceTime, tap } from 'rxjs';
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
   selector: 'app-user',
@@ -52,7 +52,7 @@ export class UserButton implements OnInit {
 
   logout() {
     this.tokenUseCase.clear();
-    this.router.navigateByUrl('/auth').then()
+    this.router.navigateByUrl('/auth').then();
   }
 
   restore() {

@@ -2,7 +2,9 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    >
       <div class="col">
         <div class="hstack gap-2">
           <mat-form-field class="w-100">
@@ -17,7 +19,12 @@
           </mat-form-field>
           <mat-form-field class="w-100">
             <mat-label>Buscar</mat-label>
-            <input matInput [(ngModel)]="dataSearch.textSearch" (keydown.enter)="onEnter($event)" placeholder="..." />
+            <input
+              matInput
+              [(ngModel)]="dataSearch.textSearch"
+              (keydown.enter)="onEnter($event)"
+              placeholder="..."
+            />
             <span matSuffix>
               <button type="button" mat-icon-button (click)="refresh()">
                 <mat-icon>search</mat-icon>
@@ -31,15 +38,20 @@
           <button
             *hasPermission="action_aliases().CREATE; context: inventory_modules_code().PRODUCT"
             mat-icon-button
-                  appAddEditProduct
-                  (onResult)="refresh()"
-                  [disabled]="isLoading()">
+            appAddEditProduct
+            (onResult)="refresh()"
+            [disabled]="isLoading()"
+          >
             <mat-icon>add</mat-icon>
           </button>
           <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
             <mat-icon>refresh</mat-icon>
           </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())" [disabled]="isLoading()">
+          <button
+            mat-icon-button
+            (click)="isSearchAdvanced.set(!isSearchAdvanced())"
+            [disabled]="isLoading()"
+          >
             <mat-icon>filter_list</mat-icon>
           </button>
         </div>
@@ -47,7 +59,9 @@
     </div>
 
     @if (isSearchAdvanced()) {
-      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
         <div class="col">
           <app-sub-category-group
             [isInputMat]="true"
@@ -98,7 +112,9 @@
         </div>
       </div>
 
-      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Tipo Iva</mat-label>
@@ -169,7 +185,6 @@
     }
   </div>
 
-
   <app-data-grid
     [data]="list()"
     [columns]="columns"
@@ -181,10 +196,10 @@
     [pageSizeOptions]="[10, 25, 50, 100]"
     (page)="getNextPage($event)"
     [cellTemplate]="{
-    estado: statusTemplate,
-    stock: stockTemplate ,
-    operation: templateOp,
-    dataDescription: descriptionTpl
+      estado: statusTemplate,
+      stock: stockTemplate,
+      operation: templateOp,
+      dataDescription: descriptionTpl,
     }"
     [expandable]="true"
     [expansionTemplate]="expansionTpl"
@@ -194,7 +209,7 @@
     {{ row.descripcion }}
   </ng-template>
 
-  <ng-template #templateOp let-row >
+  <ng-template #templateOp let-row>
     <div class="d-flex flex-row gap-1">
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
         <mat-icon>more_vert</mat-icon>
@@ -226,7 +241,8 @@
         mat-icon-button
         matTooltip="Editar"
         appAddEditProduct
-        [id]="row.idArticulo">
+        [id]="row.idArticulo"
+      >
         <mat-icon>edit</mat-icon>
       </button>
       <button
@@ -234,47 +250,50 @@
         mat-icon-button
         appProductKardexModal
         [params]="row"
-        matTooltip="Kardex">
+        matTooltip="Kardex"
+      >
         <mat-icon>timeline</mat-icon>
       </button>
     </div>
   </ng-template>
 
-  <ng-template #descriptionTpl let-row  >
+  <ng-template #descriptionTpl let-row>
     <div class="d-flex flex-column gap-1">
       <span class="font-medium fw-semibold">{{ row.codigo }}</span>
       <span>{{ row.descripcion }}</span>
     </div>
   </ng-template>
 
-  <ng-template #statusTemplate let-row >
+  <ng-template #statusTemplate let-row>
     <div [innerHTML]="row.estado | primaryStatus"></div>
   </ng-template>
 
-  <ng-template #stockTemplate let-row >
+  <ng-template #stockTemplate let-row>
     @let bgSuccess = row.stock > 0;
     @let bgDanger = row.stock <= 0;
     @let bgWarning = row.stock > 0 && row.stock <= 5;
     @let bgInfo = row.stock > 5;
 
-
-      <span
-        [class.bg-success]="bgSuccess"
-        [class.bg-danger]="bgDanger"
-        class="badge font-weight-100 cursor-pointer"
-            #popoverTrigger="mtxPopoverTrigger"
-            [mtxPopoverTriggerFor]="popover"
-            [mtxPopoverTriggerData]="{ id: row.id }"
-        mtxPopoverTriggerOn="click"
-
-      >{{row.stock}}</span>
+    <span
+      [class.bg-success]="bgSuccess"
+      [class.bg-danger]="bgDanger"
+      class="badge font-weight-100 cursor-pointer"
+      #popoverTrigger="mtxPopoverTrigger"
+      [mtxPopoverTriggerFor]="popover"
+      [mtxPopoverTriggerData]="{ id: row.id }"
+      mtxPopoverTriggerOn="click"
+      >{{ row.stock }}</span
+    >
   </ng-template>
 
-  <mtx-popover #popover="mtxPopover" [arrowWidth]="900" [arrowHeight]="100"  [position]="[positionStart, positionEnd]">
+  <mtx-popover
+    #popover="mtxPopover"
+    [arrowWidth]="900"
+    [arrowHeight]="100"
+    [position]="[positionStart, positionEnd]"
+  >
     <ng-template mtxPopoverContent let-id="id">
       <app-product-stock [id]="id" />
     </ng-template>
   </mtx-popover>
-
-
 </app-mat-dynamic-card>

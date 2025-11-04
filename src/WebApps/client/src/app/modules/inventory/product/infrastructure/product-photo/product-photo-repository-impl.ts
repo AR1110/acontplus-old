@@ -20,7 +20,7 @@ export class ProductPhotoRepositoryImpl implements ProductPhotoRepository {
 
   getByProductId(productId: number) {
     return this._http.get<ApiResponse>(`${this._url}${productId}`).pipe(
-      map(response => {
+      map((response) => {
         const result = new ApiResponse<ProductPhotoGetId>();
         let productPhotos = [] as any[];
         if (response.code === '1') {

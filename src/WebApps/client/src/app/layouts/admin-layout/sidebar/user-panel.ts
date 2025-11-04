@@ -1,10 +1,10 @@
-import {Component, OnInit, ViewEncapsulation, inject, signal} from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject, signal } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
   selector: 'app-user-panel',
@@ -23,11 +23,11 @@ import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
 })
 export class UserPanel implements OnInit {
   tokenUseCase = inject(TokenUseCase);
-  user = signal({} as any)
+  user = signal({} as any);
 
   ngOnInit(): void {
     const session = this.tokenUseCase.getSession();
-    if(session){
+    if (session) {
       this.user.set(session.userData);
     }
   }

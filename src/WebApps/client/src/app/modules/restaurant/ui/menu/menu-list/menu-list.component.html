@@ -8,7 +8,11 @@
 
       <!-- Product Image Section -->
       <div class="product-image-section" [class]="'gradient-' + (($index % 6) + 1)">
-        <img [src]="item.s3ObjectUrl || '../assets/images/blank.png'" alt="{{ item.title }}" class="circular-image" />
+        <img
+          [src]="item.s3ObjectUrl || '../assets/images/blank.png'"
+          alt="{{ item.title }}"
+          class="circular-image"
+        />
       </div>
 
       <!-- Product Content -->

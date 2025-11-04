@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     @if (isLoadingResults() || isRateLimitReached()) {
       <div class="loading-shade">
         @if (isLoadingResults()) {
-          <mat-spinner [diameter]="50"></mat-spinner>
+          <mat-spinner [diameter]="50" />
         }
         @if (isRateLimitReached()) {
           <div class="rate-limit-reached">

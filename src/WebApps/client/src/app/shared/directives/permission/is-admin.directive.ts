@@ -14,7 +14,7 @@ export class IsAdminDirective implements OnInit {
 
   ngOnInit() {
     this.pS.select('codeRole').subscribe({
-      next: value => {
+      next: (value) => {
         if (value === CODE_ROLE.ADM) return;
         this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },

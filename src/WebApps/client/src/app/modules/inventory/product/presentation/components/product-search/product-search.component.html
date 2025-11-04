@@ -1,5 +1,11 @@
 @if (props.isSearchAdvanced) {
-  <input type="text" placeholder="..." [formControl]="control" [matAutocomplete]="auto" class="form-control" />
+  <input
+    type="text"
+    placeholder="..."
+    [formControl]="control"
+    [matAutocomplete]="auto"
+    class="form-control"
+  />
 
   <mat-autocomplete #auto="matAutocomplete" class="mat-autocomplete">
     <!-- <div class="sticky-header">
@@ -74,14 +80,20 @@
     <mat-autocomplete #autoProductSearchSimple="matAutocomplete">
       @if (isLoading()) {
         <mat-option disabled style="display: flex; justify-content: center; align-items: center">
-          <mat-spinner diameter="35"></mat-spinner>
+          <mat-spinner diameter="35" />
         </mat-option>
       }
       @for (state of filteredProducts | async; track $index) {
         <mat-option [value]="state.descripcion" (onSelectionChange)="onSelectionChange(state)">
           <div class="item-container">
             <div class="left-column">
-              <img class="img-fluid img-thumbnail" [src]="state.s3ObjectUrl" alt="" width="30" height="30" />
+              <img
+                class="img-fluid img-thumbnail"
+                [src]="state.s3ObjectUrl"
+                alt=""
+                width="30"
+                height="30"
+              />
             </div>
             <div class="right-column">
               <div class="right-container">
@@ -109,7 +121,13 @@
       <mat-option [value]="state.descripcion" (onSelectionChange)="onSelectionChange(state)">
         <div class="item-container">
           <div class="left-column">
-            <img class="img-fluid img-thumbnail" [src]="state.s3ObjectUrl" alt="" width="30" height="30" />
+            <img
+              class="img-fluid img-thumbnail"
+              [src]="state.s3ObjectUrl"
+              alt=""
+              width="30"
+              height="30"
+            />
           </div>
           <div class="right-column">
             <div class="right-container">

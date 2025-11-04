@@ -55,7 +55,7 @@ export class AddEditWarehouseComponent implements OnInit {
   };
 
   ngOnInit() {
-    this.sharedSvc.getEstabAsign().subscribe(response => {
+    this.sharedSvc.getEstabAsign().subscribe((response) => {
       this.estabs.set(response);
     });
 

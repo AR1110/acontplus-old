@@ -2,7 +2,9 @@
 
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
@@ -14,7 +16,10 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
 
       <div class="col">
@@ -39,7 +44,9 @@
         </div>
       </div>
     </div>
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Usuario Solicitante</mat-label>
@@ -74,8 +81,7 @@
     [paginationConfig]="pagination()"
     [enablePagination]="true"
     (pageEvent)="handlePageEvent($event)"
-  >
-  </app-mat-dynamic-table>
+  />
 
   <ng-template #templateOp let-item="item">
     @if (item.codigoEstado === 'P') {
@@ -101,7 +107,11 @@
         </svg>
       </button>
 
-      <button mat-icon-button matTooltip="Rechazar solicitud de autorización" (click)="rechazar(item)">
+      <button
+        mat-icon-button
+        matTooltip="Rechazar solicitud de autorización"
+        (click)="rechazar(item)"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"

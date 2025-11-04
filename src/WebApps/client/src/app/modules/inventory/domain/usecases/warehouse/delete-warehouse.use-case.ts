@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { WarehouseRepository } from '@inventory/domain/repositories/warehouse.repository';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
@@ -8,7 +8,12 @@ import { ApiResponse } from '@core/models/api-response';
   providedIn: 'root',
 })
 export class DeleteWarehouseUseCase implements BaseUseCase<ApiResponse, Partial<WarehouseList>> {
-  constructor(private repo: WarehouseRepository) {}
+  private repo = inject(WarehouseRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
   execute(params: Partial<WarehouseList>) {
     return this.repo.delete(params);
   }

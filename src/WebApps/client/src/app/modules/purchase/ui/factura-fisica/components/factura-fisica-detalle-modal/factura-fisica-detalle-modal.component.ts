@@ -35,7 +35,7 @@ export class FacturaFisicaDetalleModalComponent implements OnInit {
           this.isLoading.set(false);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         console.log(response);
         const { infoTributaria, infoFactura, detalles, datosAdicionalesDoc, tiposIva } = response;
 

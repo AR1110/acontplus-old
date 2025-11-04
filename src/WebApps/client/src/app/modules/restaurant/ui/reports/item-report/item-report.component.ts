@@ -49,11 +49,11 @@ export class ItemReportComponent implements OnInit {
   private _productUseCase = inject(ProductUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe(response => {
+    this._productUseCase.getDataReport().subscribe((response) => {
       const { estabs, subCategorias } = response;
       this.establecimientos.set(estabs);
       this.subCategorias.set(subCategorias);
-      const dataEstab = this.establecimientos().find(e => e.defaultEstab);
+      const dataEstab = this.establecimientos().find((e) => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
       }
@@ -63,7 +63,7 @@ export class ItemReportComponent implements OnInit {
       startWith(''),
       debounceTime(400),
       distinctUntilChanged(),
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]
@@ -110,7 +110,7 @@ export class ItemReportComponent implements OnInit {
   private _filter(value: string) {
     const filterValue = this._normalizeValue(value);
     return this.itemSvc.search({ textSearch: filterValue }).pipe(
-      map(response => {
+      map((response) => {
         return response;
       }),
     );

@@ -6,9 +6,7 @@ import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { FractionalProductRepository } from '@inventory/product/domain/repositories/fractional-product.repository';
 import { FractionalProductGetAllMapper } from '@inventory/product/infrastructure/fractional-product/fractional-product-get-all.mapper';
-import {
-  FractionalProductDataSave,
-} from '@inventory/product/domain/entities/fractional-product.model';
+import { FractionalProductDataSave } from '@inventory/product/domain/entities/fractional-product.model';
 import { FractionalProductPostMapper } from '@inventory/product/infrastructure/fractional-product/fractional-product-post.mapper';
 import { FractionalProductGetIdMapper } from '@inventory/product/infrastructure/fractional-product/fractional-product-get-id.mapper';
 
@@ -27,7 +25,7 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
       .get(`${this._url}`, {
         params,
       })
-      .pipe(map(response => FractionalProductGetAllMapper.fromJson(response)));
+      .pipe(map((response) => FractionalProductGetAllMapper.fromJson(response)));
   }
 
   getId(id: number) {
@@ -37,7 +35,7 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
     });
     return this._http
       .get(`${this._url}?json=${json}`)
-      .pipe(map(response => FractionalProductGetIdMapper.fromJson(response)));
+      .pipe(map((response) => FractionalProductGetIdMapper.fromJson(response)));
   }
 
   post(obj: FractionalProductDataSave) {

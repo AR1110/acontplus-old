@@ -24,7 +24,7 @@ export class CustomerWebRepository extends CustomerRepository {
     });
 
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
         }
         return [];

@@ -15,7 +15,9 @@
         </div>
       </div>
     </div>
-    <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2">
+    <div
+      class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+    >
       <div class="col">
         <mat-radio-group aria-label="Seleccione una opcion" formControlName="tipo">
           <mat-radio-button value="1">Clave Acceso</mat-radio-button>
@@ -56,7 +58,7 @@
           <div class="row mt-3">
             <div class="col-4">
               <div class="form-group">
-                <app-theme-button icon="add" text="Añadir" (handleClick)="addClaveAcceso()"> </app-theme-button>
+                <app-theme-button icon="add" text="Añadir" (handleClick)="addClaveAcceso()" />
               </div>
             </div>
           </div>

@@ -62,9 +62,9 @@ export class MovimientoCajaReportComponent implements OnInit {
     userId: 0,
   };
   ngOnInit() {
-    this.sharedSvc.getEstabAsign().subscribe(response => {
+    this.sharedSvc.getEstabAsign().subscribe((response) => {
       this.establecimientos = response;
-      this.dataSearch.codEstab = this.establecimientos.find(e => e.predeterminado)?.codEstab;
+      this.dataSearch.codEstab = this.establecimientos.find((e) => e.predeterminado)?.codEstab;
     });
   }
 

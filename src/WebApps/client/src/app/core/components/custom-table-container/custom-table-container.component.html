@@ -1,8 +1,11 @@
 <div class="custom-main-container">
-  <app-custom-mat-spinner [isLoadingResults]="isLoadingResults()" [isRateLimitReached]="isRateLimitReached()" />
+  <app-custom-mat-spinner
+    [isLoadingResults]="isLoadingResults()"
+    [isRateLimitReached]="isRateLimitReached()"
+  />
 
   <div class="custom-table-container mt-2" [style.height]="valueHeight()">
-    <ng-content></ng-content>
+    <ng-content />
   </div>
 
   @if (pagination()) {
@@ -15,7 +18,6 @@
       [showFirstLastButtons]="true"
       [pageIndex]="pagination()?.pageIndex"
       aria-label="Select page"
-    >
-    </mat-paginator>
+    />
   }
 </div>

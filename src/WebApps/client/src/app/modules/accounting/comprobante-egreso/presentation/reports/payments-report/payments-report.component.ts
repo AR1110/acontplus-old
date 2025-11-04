@@ -9,7 +9,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
-import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component';
+
 import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
 import { Subscription } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
@@ -42,7 +42,6 @@ enum ReportTypeEnum {
     MatCheckbox,
     MatDivider,
     ThemeButtonComponent,
-    SvgIconComponent,
     FormsModule,
   ],
   templateUrl: './payments-report.component.html',
@@ -80,7 +79,7 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.subscription$ = this.$dataFilterUseCase.execute().subscribe(response => {
+    this.subscription$ = this.$dataFilterUseCase.execute().subscribe((response) => {
       console.log(response);
       this.estabs.set(response.estabs);
       this.users.set(response.users);
@@ -88,7 +87,7 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
       this.tiposDoc.set(response.tiposDoc);
       this.subEntidadesFinanciera.set(response.subEntidadesFinanciera);
 
-      const dataEstab = this.estabs().find(e => e.defaultEstab);
+      const dataEstab = this.estabs().find((e) => e.defaultEstab);
       if (dataEstab) {
         this.filterParams.establecimientoId = dataEstab.idEstablecimiento;
       }

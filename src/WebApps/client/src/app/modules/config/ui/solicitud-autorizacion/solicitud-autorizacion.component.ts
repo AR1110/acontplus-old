@@ -101,18 +101,18 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
     { key: 'fechaRespuesta', label: 'Fecha Respuesta', type: 'string' },
     { key: 'estado', label: 'Estado', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
   loading = false;
 
   fetchDataFilter() {
-    this.$filterUseCase.execute().subscribe(response => {
+    this.$filterUseCase.execute().subscribe((response) => {
       this.establecimientos = response.estabs;
       this.usersRole = response.usersRole;
 
-      const dataEstab = this.establecimientos.find(e => e.defaultEstab);
+      const dataEstab = this.establecimientos.find((e) => e.defaultEstab);
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.fetchAllData();
@@ -133,10 +133,10 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
     };
 
     this.dataSource = [];
-    this.$listUseCase.execute(params).subscribe(response => {
+    this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource = response.data;
 
-      this.pagination.update(e => {
+      this.pagination.update((e) => {
         return {
           ...e,
           totalRecords: response.totalRecords,
@@ -152,7 +152,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template') {
         col.templateOutlet = this.statusTemplate;
       }
@@ -175,7 +175,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Aprobar!',
         cancelButtonText: 'Cancelar!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           try {
             const params = {
@@ -183,7 +183,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
               idSolicitudAutorizacion: data.idSolicitudAutorizacion,
               rowguid: data.rowguid,
             };
-            this.$updateUseCase.execute(params).subscribe(response => {
+            this.$updateUseCase.execute(params).subscribe((response) => {
               const icon = response.code === '1' ? 'success' : 'warning';
               Swal.fire({
                 icon: icon as any,
@@ -213,7 +213,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Rechazar!',
         cancelButtonText: 'Cancelar!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           try {
             const params = {
@@ -221,7 +221,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
               idSolicitudAutorizacion: data.idSolicitudAutorizacion,
               rowguid: data.rowguid,
             };
-            this.$updateUseCase.execute(params).subscribe(response => {
+            this.$updateUseCase.execute(params).subscribe((response) => {
               const icon = response.code === '1' ? 'success' : 'warning';
               Swal.fire({
                 icon: icon as any,
@@ -249,7 +249,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

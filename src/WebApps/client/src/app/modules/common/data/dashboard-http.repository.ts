@@ -1,44 +1,41 @@
-import {PATHS_API} from "@core/constants/global.constants";
-import {inject, Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
-import {map} from "rxjs";
-import {DashboardRepository} from "@modules/common/core/repositories/dashboard.repository";
-import {ApiResponse} from "@core/models/api-response";
-import {API_ENDPOINTS} from "@modules/common/core/enums/common.constants";
-
+import { PATHS_API } from '@core/constants/global.constants';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs';
+import { DashboardRepository } from '@modules/common/core/repositories/dashboard.repository';
+import { ApiResponse } from '@core/models/api-response';
+import { API_ENDPOINTS } from '@modules/common/core/enums/common.constants';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DashboardHttpRepository implements DashboardRepository{
+export class DashboardHttpRepository implements DashboardRepository {
   private http = inject(HttpClient);
-  private url = `${PATHS_API.COMMON}${API_ENDPOINTS.DASHBOARD}`
+  private url = `${PATHS_API.COMMON}${API_ENDPOINTS.DASHBOARD}`;
 
-  list<T>(params: T){
+  list<T>(params: T) {
     const json = JSON.stringify({
       tipo: 1,
       ...params,
-    })
+    });
     return this.http.get<ApiResponse>(`${this.url}/?json=${json}`).pipe(
-      map(response => {
-
-       const resultStatistics = {
-              "itemCount": 0,
-              "customerCount": 0,
-              "supplierCount": 0,
-              "userCount": 0
-       };
-        const  result = {
-          licenses : [],
-         stepsConfig : [],
-         expiredSignatures : [],
-         emittedDocuments : [ ],
-         receivedDocuments : [ ],
-         anotherSalesDocs : [ ],
-
+      map((response) => {
+        const resultStatistics = {
+          itemCount: 0,
+          customerCount: 0,
+          supplierCount: 0,
+          userCount: 0,
+        };
+        const result = {
+          licenses: [],
+          stepsConfig: [],
+          expiredSignatures: [],
+          emittedDocuments: [],
+          receivedDocuments: [],
+          anotherSalesDocs: [],
         };
 
-        if(response.code === '1'){
+        if (response.code === '1') {
           const {
             statistics,
             licenses,
@@ -46,7 +43,7 @@ export class DashboardHttpRepository implements DashboardRepository{
             expiredSignatures,
             emittedDocuments,
             receivedDocuments,
-            anotherSalesDocs
+            anotherSalesDocs,
           } = JSON.parse(response.payload as string);
           const {
             cantidadArticulo: itemCount,
@@ -66,16 +63,13 @@ export class DashboardHttpRepository implements DashboardRepository{
           result.emittedDocuments = emittedDocuments;
           result.receivedDocuments = receivedDocuments;
           result.anotherSalesDocs = anotherSalesDocs;
-
-
         }
 
         return {
           statistics: resultStatistics,
           ...result,
         };
-      })
-    )
+      }),
+    );
   }
-
 }

@@ -1,24 +1,29 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
-import {UserProfileService} from "@modules/config/services/user-profile.service";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import Swal from "sweetalert2";
-import {MatCheckbox} from "@angular/material/checkbox";
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {Router} from "@angular/router";
-import {TokenUseCase} from "@modules/auth/domain/use-cases/token.use-case";
+import { UserProfileService } from '@modules/config/services/user-profile.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import Swal from 'sweetalert2';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { Router } from '@angular/router';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 
 @Component({
   selector: 'app-profile-settings',
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
-  imports: [MatCardModule, MatTabsModule, MatCheckbox, ReactiveFormsModule, ThemeButtonComponent,
-  MatFormFieldModule,
-    MatInputModule
+  imports: [
+    MatCardModule,
+    MatTabsModule,
+    MatCheckbox,
+    ReactiveFormsModule,
+    ThemeButtonComponent,
+    MatFormFieldModule,
+    MatInputModule,
   ],
 })
 export class ProfileSettings {
@@ -89,7 +94,7 @@ export class ProfileSettings {
       cancelButtonColor: '#d33',
       confirmButtonText: '¡Sí, actualizar!',
       cancelButtonText: 'Cancelar',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         // clean spaces
 
@@ -107,7 +112,7 @@ export class ProfileSettings {
             }
 
             this.tS.show({ type: 'success', message: response.message });
-            this.tokenUseCase.clear()
+            this.tokenUseCase.clear();
             this.router.navigate(['/auth']).then();
             this.resetPasswordForm();
           });

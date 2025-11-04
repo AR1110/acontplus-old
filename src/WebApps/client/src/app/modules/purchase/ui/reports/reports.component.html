@@ -7,7 +7,9 @@
     </div>
     <mat-divider />
 
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Documento</mat-label>
@@ -59,7 +61,9 @@
       </div>
     </div>
 
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4"
+    >
       @if (dataSearch.supplierChecked) {
         <div class="col">
           <app-supplier-search
@@ -71,7 +75,10 @@
         </div>
       }
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
       <div class="col">
         <mat-form-field class="w-100">
@@ -89,8 +96,18 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="success" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
-      <app-theme-button variant="info" icon="picture_as_pdf" text="Excel" (handleClick)="getReport('excel')" />
+      <app-theme-button
+        variant="success"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReport('pdf')"
+      />
+      <app-theme-button
+        variant="info"
+        icon="picture_as_pdf"
+        text="Excel"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

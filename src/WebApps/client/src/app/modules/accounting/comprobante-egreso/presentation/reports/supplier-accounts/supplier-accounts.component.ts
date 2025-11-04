@@ -86,13 +86,13 @@ export class SupplierAccountsComponent implements OnInit {
   ]);
 
   private initialed() {
-    this.$getFilterDataUseCase.execute().subscribe(response => {
+    this.$getFilterDataUseCase.execute().subscribe((response) => {
       this.establecimientos.set(response.estabs);
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       if (dataEstab) {
         this.searchFilters.codEstab = dataEstab.codEstab;
         this.puntosEmision.set(dataEstab.puntosEmision);
-        const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+        const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
         if (dataPuntoEmision) {
           this.searchFilters.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
@@ -125,13 +125,13 @@ export class SupplierAccountsComponent implements OnInit {
     }
 
     const dataEstab = this.establecimientos().find(
-      estab => estab.codEstab === this.searchFilters.codEstab,
+      (estab) => estab.codEstab === this.searchFilters.codEstab,
     );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
 
       this.searchFilters.idPuntoEmision =
-        this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
+        this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
     }
   }
 

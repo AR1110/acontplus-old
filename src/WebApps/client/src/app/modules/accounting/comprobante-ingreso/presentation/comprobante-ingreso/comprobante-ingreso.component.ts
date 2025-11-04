@@ -46,7 +46,7 @@ export class ComprobanteIngresoComponent implements OnInit {
     { key: 'nomEstado', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   comprobantesIngreso: ComprobanteIngreso[] = [];
   dataSearch = {
@@ -101,16 +101,16 @@ export class ComprobanteIngresoComponent implements OnInit {
     this._comprobanteIngresoUseCase
       .getAll(params)
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.comprobantesIngreso = response.data;
       });
   }
 
   ngOnInit() {
-    this.sharedSvc.getEstabAsign().subscribe(establecimientos => {
+    this.sharedSvc.getEstabAsign().subscribe((establecimientos) => {
       this.establecimientos = establecimientos as EstablecimientoSelectHtmlOnly[];
       if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find(estab => estab.predeterminado);
+        const dataEstab = this.establecimientos.find((estab) => estab.predeterminado);
         this.dataSearch.codEstab = dataEstab?.codEstab || '';
         this.getComprobantesIngreso();
       }
@@ -188,7 +188,7 @@ export class ComprobanteIngresoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

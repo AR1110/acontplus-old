@@ -9,7 +9,13 @@
         aria-label="Checkbox for following text input"
       />
     </div>
-    <input type="text" class="form-control" id="date-range-selection-input-checked" #dateRangeInput [id]="uniqueId" />
+    <input
+      type="text"
+      class="form-control"
+      id="date-range-selection-input-checked"
+      #dateRangeInput
+      [id]="uniqueId"
+    />
   </div>
 } @else if (showInputMaterial()) {
   <mat-form-field class="w-100" [floatLabel]="'always'">
@@ -20,7 +26,7 @@
         [(ngModel)]="checkbox"
         (click)="onCheckboxClick($event)"
         (change)="onCheckboxChange.emit()"
-      ></mat-checkbox>
+      />
     }
     <input matInput placeholder="Placeholder" [id]="uniqueId" #dateRangeInput />
     @if (showMatSuffix()) {
@@ -29,7 +35,7 @@
         [(ngModel)]="checkbox"
         (click)="onCheckboxClick($event)"
         (change)="onCheckboxChange.emit()"
-      ></mat-checkbox>
+      />
     }
   </mat-form-field>
 } @else {

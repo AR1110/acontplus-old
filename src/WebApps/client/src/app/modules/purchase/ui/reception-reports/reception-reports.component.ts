@@ -79,7 +79,7 @@ export class ReceptionReportsComponent implements OnInit {
   private tS = inject(ToastrNotificationService);
 
   ngOnInit() {
-    this.docReceivedSvc.getDataFilter().subscribe(response => {
+    this.docReceivedSvc.getDataFilter().subscribe((response) => {
       const { establecimientos, documentTypes, subcategories } = response;
       this.establecimientos.set(establecimientos);
       this.documentTypes.set(documentTypes);
@@ -89,7 +89,7 @@ export class ReceptionReportsComponent implements OnInit {
       }
       if (this.documentTypes().length > 0) {
         this.dataSearch.codDoc =
-          this.documentTypes().find(tipoDoc => tipoDoc.codigoSri === DOC_TYPE_SRI.F)?.codigoSri ||
+          this.documentTypes().find((tipoDoc) => tipoDoc.codigoSri === DOC_TYPE_SRI.F)?.codigoSri ||
           '';
       }
     });

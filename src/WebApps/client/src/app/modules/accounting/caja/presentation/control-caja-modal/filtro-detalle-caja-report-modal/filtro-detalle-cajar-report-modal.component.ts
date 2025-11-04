@@ -71,7 +71,7 @@ export class FiltroDetalleCajaReportModal implements OnInit {
 
     try {
       this._controlCajaUseCase.getDataForm().subscribe({
-        next: response => {
+        next: (response) => {
           const { formaPagos, tipoDocumento } = response as {
             formaPagos: any;
             tipoDocumento: any;

@@ -8,7 +8,7 @@ import { CompraHabitualService } from '@purchase/data/services/compra-habitual.s
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import Swal from 'sweetalert2';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
@@ -19,7 +19,6 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     CustomTableContainerComponent,
     MatIconModule,
     MatButtonModule,
-    ThemeButtonComponent,
     MatCustomDialogComponent,
   ],
   templateUrl: './compra-habitual-historial-modal.component.html',
@@ -63,7 +62,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
         idArticulo: this.params.idArticulo,
       })
       .subscribe({
-        next: response => {
+        next: (response) => {
           this.isLoadingResults = false;
           this.comprasHabituales.set(response.comprasHabituales);
           if (this.comprasHabituales().length > 0) {
@@ -92,7 +91,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.deleteCH(item);
       }
@@ -106,7 +105,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
       });
       const params = { idDocumento, id: idCompraHabitual };
 
-      this.compraHabitualSvc.delete(params).subscribe(response => {
+      this.compraHabitualSvc.delete(params).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

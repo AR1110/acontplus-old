@@ -14,7 +14,7 @@ import { AppSettings } from '@core/settings';
 import { Topmenu } from './topmenu/topmenu';
 import { Sidebar } from './sidebar/sidebar';
 import { Header } from './header/header';
-import {AdminLayoutService} from "@core/services/admin-layout.service";
+import { AdminLayoutService } from '@core/services/admin-layout.service';
 
 const MOBILE_MEDIAQUERY = 'screen and (max-width: 599px)';
 const TABLET_MEDIAQUERY = 'screen and (min-width: 600px) and (max-width: 959px)';
@@ -50,7 +50,7 @@ export class AdminLayoutComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly settings = inject(SettingsService);
 
-  private adminLayoutSvc = inject(AdminLayoutService)
+  private adminLayoutSvc = inject(AdminLayoutService);
 
   options = this.settings.options;
 
@@ -89,7 +89,7 @@ export class AdminLayoutComponent implements OnDestroy {
   constructor() {
     this.layoutChangesSubscription = this.breakpointObserver
       .observe([MOBILE_MEDIAQUERY, TABLET_MEDIAQUERY, MONITOR_MEDIAQUERY])
-      .subscribe(state => {
+      .subscribe((state) => {
         // SidenavOpened must be reset true when layout changes
         this.options.sidenavOpened = true;
 
@@ -98,7 +98,7 @@ export class AdminLayoutComponent implements OnDestroy {
         this.isContentWidthFixed = state.breakpoints[MONITOR_MEDIAQUERY];
       });
 
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(e => {
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((e) => {
       if (this.isOver) {
         this.sidenav.close();
       }
@@ -106,8 +106,8 @@ export class AdminLayoutComponent implements OnDestroy {
     });
   }
 
-  ngOnInit(){
-   // this.adminLayoutSvc.loadDashboardData()
+  ngOnInit() {
+    // this.adminLayoutSvc.loadDashboardData()
   }
 
   ngOnDestroy() {

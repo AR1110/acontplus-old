@@ -66,7 +66,7 @@ export class SupportDetailMapper {
         const medidas = mergeMeasureUtil(principal, fraccionado);
 
         const dataMedida =
-          medidas.find(m => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
+          medidas.find((m) => m.idMedida === restItem.medidaId) || ({} as MedidaProducto);
 
         const precioConIva = pricingCalculateUtil.calculatePriceWithVat(
           restItem.price,

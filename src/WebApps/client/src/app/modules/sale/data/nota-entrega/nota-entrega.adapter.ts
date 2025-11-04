@@ -15,7 +15,7 @@ class NotaEntregaAdapter {
 
     const details = this.detailAdapt(input.details);
     const impuestos = impuestoDetailAdapter.to(input.details);
-    const infoAdicionalDoc = input.infoAdicionalDoc.map(item => {
+    const infoAdicionalDoc = input.infoAdicionalDoc.map((item) => {
       return {
         nombre: item.name,
         valor: item.value,

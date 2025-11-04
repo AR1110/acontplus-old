@@ -37,5 +37,3 @@ export interface PermissionsCache {
   timestamp: number;
   version: string; // Para invalidar cache en actualizaciones
 }
-
-

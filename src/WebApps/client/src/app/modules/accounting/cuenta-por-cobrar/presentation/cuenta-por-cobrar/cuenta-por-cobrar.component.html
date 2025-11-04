@@ -35,7 +35,9 @@
     </div>
 
     <div class="row">
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center">
+      <div
+        class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center"
+      >
         <div class="d-grid gap-2 text-center w-100">
           <button (click)="openDocPaymentModal()" mat-raised-button type="button">
             <mat-icon>payments</mat-icon>
@@ -55,8 +57,7 @@
               [aria-label]="checkboxLabel()"
               [checked]="selection.hasValue() && isAllSelected()"
               [indeterminate]="selection.hasValue() && !isAllSelected()"
-            >
-            </mat-checkbox>
+            />
           </th>
           <td *matCellDef="let row" mat-cell>
             <mat-checkbox
@@ -64,8 +65,7 @@
               (click)="$event.stopPropagation()"
               [aria-label]="checkboxLabel(row)"
               [checked]="selection.isSelected(row)"
-            >
-            </mat-checkbox>
+            />
           </td>
         </ng-container>
 

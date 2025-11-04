@@ -34,12 +34,14 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
       }),
     );
   }
+
   create(params: any): Observable<ApiResponse> {
     const data = {
       docs: JSON.stringify(params),
     };
     return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
+
   save(docConfig: DocConfig): Observable<ApiResponse> {
     const data = {
       docs: JSON.stringify(docConfig),
@@ -50,13 +52,13 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
     const json = DocConfigInfoAdicionalesMapper.toJson(id);
     return this.#http
       .get(`${this.#url}?json=${json}`)
-      .pipe(map(response => DocConfigInfoAdicionalesMapper.fromJson(response)));
+      .pipe(map((response) => DocConfigInfoAdicionalesMapper.fromJson(response)));
   }
   list(puntoEmisionId: number): Observable<DocConfigListResponse> {
     const json = DocConfigListMapper.toJson(puntoEmisionId);
     return this.#http
       .get(`${this.#url}?json=${json}`)
-      .pipe(map(response => DocConfigListMapper.fromJson(response)));
+      .pipe(map((response) => DocConfigListMapper.fromJson(response)));
   }
 
   #url = `${PATHS_API.CONFIG}${CONFIG_PATHS.DOC_CONFIG}`;

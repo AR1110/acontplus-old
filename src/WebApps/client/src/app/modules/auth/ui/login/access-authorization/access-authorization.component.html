@@ -7,14 +7,9 @@
         </div>
 
         <h2 class="title">Autenticación en Dos Pasos</h2>
-        <p class="subtitle">
-          Ingresa el código de verificación enviado a tu email.
-        </p>
+        <p class="subtitle">Ingresa el código de verificación enviado a tu email.</p>
 
-        <div
-          class="otp-container"
-          (paste)="onPaste($event)"
-        >
+        <div class="otp-container" (paste)="onPaste($event)">
           @for (code of codes; track $index) {
             <input
               type="text"
@@ -29,23 +24,12 @@
         </div>
 
         <div class="actions">
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="verifyCode()"
-          >
-            Verificar código
-          </button>
+          <button mat-raised-button color="primary" (click)="verifyCode()">Verificar código</button>
         </div>
 
         <div class="resend">
           ¿No lo has recibido?
-          <a
-            href="#"
-            (click)="resendCode()"
-          >
-            Reenviar nuevo código
-          </a>
+          <a href="#" (click)="resendCode()"> Reenviar nuevo código </a>
         </div>
       </mat-card>
     } @else {
@@ -54,9 +38,7 @@
         <h2>¡Inicio de Sesión Exitoso!</h2>
         <p>Ahora has iniciado sesión de forma segura.</p>
         <h3 class="access">Acceso Concedido</h3>
-        <p class="text-muted">
-          Tus comprobaciones de seguridad han pasado con éxito.
-        </p>
+        <p class="text-muted">Tus comprobaciones de seguridad han pasado con éxito.</p>
       </mat-card>
     }
   </section>

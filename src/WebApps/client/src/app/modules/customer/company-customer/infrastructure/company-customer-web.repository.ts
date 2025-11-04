@@ -24,14 +24,14 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
     const json = ListCompanyCustomerMapper.toJson(obj);
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => ListCompanyCustomerMapper.fromJson(response)));
+      .pipe(map((response) => ListCompanyCustomerMapper.fromJson(response)));
   }
 
   getDataForm() {
     const json = GetFormDataCompanyCustomerMapper.toJson();
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => GetFormDataCompanyCustomerMapper.fromJson(response)));
+      .pipe(map((response) => GetFormDataCompanyCustomerMapper.fromJson(response)));
   }
 
   getId(id: number, noLoader?: boolean) {
@@ -39,7 +39,7 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
       .get<ApiResponse>(`${this._url}GetId/${id}`, {
         context: noLoader ? getNoLoader() : new HttpContext(),
       })
-      .pipe(map(response => GetIdCompanyCustomerMapper.fromJson(response)));
+      .pipe(map((response) => GetIdCompanyCustomerMapper.fromJson(response)));
   }
 
   search(obj: SearchCompanyCustomerParams) {
@@ -48,13 +48,13 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
       .get<ApiResponse>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => SearchCompanyCustomerMapper.fromJson(response)));
+      .pipe(map((response) => SearchCompanyCustomerMapper.fromJson(response)));
   }
 
   checkExistence<T>(params: T) {
     const json = JSON.stringify({ ...params, tipo: 3 });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
           const [mainData] = JSON.parse(response.payload as string);
           const clienteRepository = mainData[0];
@@ -76,7 +76,7 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
   post(params: any) {
     return this._http
       .post<ApiResponse>(this._url, { data: CreateUpdateCompanyCustomerMapper.toJson(params) })
-      .pipe(map(response => CreateUpdateCompanyCustomerMapper.fromJson(response)));
+      .pipe(map((response) => CreateUpdateCompanyCustomerMapper.fromJson(response)));
   }
 
   put(params: UpdateCompanyCustomerParamsDto) {

@@ -16,7 +16,7 @@
     (showExpanded)="onShowExpanded($event)"
     (hideExpanded)="onHideExpanded()"
     [templateOp]="templateOp"
-  ></app-mat-dynamic-table>
+  />
 
   <ng-template #expandedDetail let-row="row">
     <div
@@ -28,12 +28,18 @@
             <mat-card-header class="d-flex justify-content-between">
               <mat-card-subtitle>{{ row.serieComprobante }}</mat-card-subtitle>
 
-              <button mat-icon-button (click)="openPagoDetalle(item)" matTooltip="Historial de pagos">
+              <button
+                mat-icon-button
+                (click)="openPagoDetalle(item)"
+                matTooltip="Historial de pagos"
+              >
                 <mat-icon>visibility</mat-icon>
               </button>
             </mat-card-header>
             <mat-card-content>
-              <div class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2">
+              <div
+                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+              >
                 <div class="d-flex flex-column">
                   <div class="vstack">
                     <small class="fw-semibold">Fecha Emisión</small>
@@ -67,9 +73,11 @@
                   </div>
                 </div>
               </div>
-              <mat-divider></mat-divider>
+              <mat-divider />
 
-              <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2">
+              <div
+                class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+              >
                 <div class="vstack">
                   <small class="fw-semibold">Banco:</small>
                   <small>{{ item.nombreBanco }}</small>
@@ -108,4 +116,4 @@
   </ng-template>
 </ng-template>
 
-<ng-template #actionsTemplate> </ng-template>
+<ng-template #actionsTemplate />

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
-import {BaseUseCase} from "@core/base-use-case";
-import { GetProductEstabStockResult} from "@inventory/product/domain/entities/product.entity";
+import { BaseUseCase } from '@core/base-use-case';
+import { GetProductEstabStockResult } from '@inventory/product/domain/entities/product.entity';
 
 @Injectable({
   providedIn: 'root',
@@ -21,9 +21,9 @@ export class ProductUseCase {
     return this.repo.getDataForm();
   }
 
-  search(obj: any)  {
+  search(obj: any) {
     return this.repo.search(obj);
-  };
+  }
 
   getForSale(id: number) {
     return this.repo.getForSale(id);

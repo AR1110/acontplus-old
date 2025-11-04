@@ -25,7 +25,7 @@ export class FacturaFisicaRepositoryMapper {
   }
 
   static fromApiGetAll(response: any[]): FacturaFisicaLista[] {
-    return response.map(item => {
+    return response.map((item) => {
       return {
         id: item.id,
         fechaEmision: item.fechaEmision,

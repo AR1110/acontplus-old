@@ -92,7 +92,7 @@ export class SaleReportPageComponent implements OnInit {
   private _tokenUseCase = inject(TokenUseCase);
 
   getDataFilter() {
-    this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades } = response;
 
       this.establecimientos.set(estabs);
@@ -122,9 +122,9 @@ export class SaleReportPageComponent implements OnInit {
       }, []);
       this.provinciasAgrupadas.set(provinciasAgrupadas);
 
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
 
       this.estabCorreo = dataEstab?.correo || null;
 
@@ -137,7 +137,7 @@ export class SaleReportPageComponent implements OnInit {
         )?.codigo;
       }
 
-      const dataTipoDoc = this.tiposDoc().find(tipoDoc => tipoDoc.codigo === DOC_TYPE.CDV);
+      const dataTipoDoc = this.tiposDoc().find((tipoDoc) => tipoDoc.codigo === DOC_TYPE.CDV);
       this.dataSearch.codDoc = dataTipoDoc.codigo;
     });
   }
@@ -152,7 +152,7 @@ export class SaleReportPageComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     if (dataEstab) {
       this.estabCorreo = dataEstab.correo;
@@ -195,10 +195,10 @@ export class SaleReportPageComponent implements OnInit {
 
   private getDataParams() {
     const dataEstab = this.establecimientos().find(
-      estab => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
     );
     const dataEstado = this.estadosDoc().find(
-      estado => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
+      (estado) => estado.idEstadoPago === this.dataSearch.idEstadoDocumento,
     );
 
     const identificacion = this.dataSearch.checkBoxCustomer
@@ -213,8 +213,8 @@ export class SaleReportPageComponent implements OnInit {
       tipo: 2,
       ckFecha: true,
       codDoc: this.getTipoDoc(),
-      codEstab: (dataEstab?.codEstab) || null,
-      codEstado: (dataEstado?.codigo) || null,
+      codEstab: dataEstab?.codEstab || null,
+      codEstado: dataEstado?.codigo || null,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
       identificacion,
@@ -290,7 +290,7 @@ export class SaleReportPageComponent implements OnInit {
     }
 
     // Validar formato de cada correo
-    const correosInvalidos = correos.filter(correo => !isValidEmail(correo.trim()));
+    const correosInvalidos = correos.filter((correo) => !isValidEmail(correo.trim()));
 
     if (correosInvalidos.length > 0) {
       Swal.fire({
@@ -337,7 +337,7 @@ export class SaleReportPageComponent implements OnInit {
       receptor: this.estabCorreo,
     };
 
-    this.appNotifiSvc.post(params).subscribe(response => {
+    this.appNotifiSvc.post(params).subscribe((response) => {
       if (response.code === '0') {
         Swal.fire({
           icon: 'warning',

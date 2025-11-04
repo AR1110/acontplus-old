@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '@core/models/api-response';
@@ -11,7 +11,12 @@ import { AsignacionBodegaRepository } from '@modules/config/domain/repositories/
 export class UpdateAsignacionBodegaUseCase
   implements BaseUseCase<ApiResponse, Partial<AsignacionBodegaList>>
 {
-  constructor(private repo: AsignacionBodegaRepository) {}
+  private repo = inject(AsignacionBodegaRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: Partial<AsignacionBodegaList>): Observable<ApiResponse<unknown>> {
     return this.repo.update(params);

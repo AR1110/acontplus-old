@@ -14,7 +14,7 @@ class InventoryAdjustmentState {
 export const InventoryAdjustmentStore = signalStore(
   { providedIn: 'root' },
   withState(new InventoryAdjustmentState()),
-  withMethods(store => ({
+  withMethods((store) => ({
     setMainFormData(params: InventoryAdjustmentFormDataDto) {
       console.log(params);
       patchState(store, {

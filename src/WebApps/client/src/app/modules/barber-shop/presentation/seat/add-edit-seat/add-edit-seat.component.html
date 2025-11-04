@@ -1,4 +1,9 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" (close)="close()" [title]="title" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  (close)="close()"
+  [title]="title"
+/>
 
 <ng-template #body>
   <form id="formSeat" [formGroup]="dataForm" (ngSubmit)="save()">

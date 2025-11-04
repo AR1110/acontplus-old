@@ -51,7 +51,7 @@ export class ProductPhotoComponent implements OnInit {
   productPhotos = signal<any[]>([]);
 
   private getProductPhotos() {
-    this.$getProductPhotoUseCase.execute(this.productPhoto.idArticulo).subscribe(response => {
+    this.$getProductPhotoUseCase.execute(this.productPhoto.idArticulo).subscribe((response) => {
       if (response.payload) {
         this.productPhotos.set(response.payload.productPhotos);
       }
@@ -130,7 +130,7 @@ export class ProductPhotoComponent implements OnInit {
             data,
             file: this.selectedFile,
           })
-          .subscribe(response => {
+          .subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -152,7 +152,7 @@ export class ProductPhotoComponent implements OnInit {
             productId: this.productPhoto.idArticulo,
             file: this.selectedFile,
           })
-          .subscribe(response => {
+          .subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',
@@ -189,7 +189,7 @@ export class ProductPhotoComponent implements OnInit {
     });
 
     if (isConfirmed) {
-      this.$productPhotoDefaultUseCase.execute(item.id, !item.isDefault).subscribe(response => {
+      this.$productPhotoDefaultUseCase.execute(item.id, !item.isDefault).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -221,7 +221,7 @@ export class ProductPhotoComponent implements OnInit {
     });
 
     if (isConfirmed) {
-      this.$productPhotoPutStatusUseCase.execute(item.id).subscribe(response => {
+      this.$productPhotoPutStatusUseCase.execute(item.id).subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',

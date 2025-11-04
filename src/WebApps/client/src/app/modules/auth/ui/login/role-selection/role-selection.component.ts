@@ -5,12 +5,12 @@ import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
 import { MatCardModule } from '@angular/material/card';
-import { NgClass } from '@angular/common';
+
 import { AuthService } from '@modules/auth/domain/auth.service';
 
 @Component({
   selector: 'app-role-selection',
-  imports: [MatCustomDialogComponent, MatCardModule, NgClass],
+  imports: [MatCustomDialogComponent, MatCardModule],
   templateUrl: './role-selection.component.html',
   styleUrl: './role-selection.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,12 +33,12 @@ export class RoleSelectionComponent {
           uuid: role.uuid,
           userRoleId: role.userRoleId,
         })
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '1') {
             const modalRef = this.dialogSvc.open(AccessAuthorizationComponent, {
               size: 'lg',
             });
-            modalRef.subscribe(result => {
+            modalRef.subscribe((result) => {
               if (result && typeof result === 'object') {
                 this.dialogRef.close();
                 this.authSvc.createToken();

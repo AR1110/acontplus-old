@@ -2,7 +2,7 @@ import { BodegaEstablecimiento } from './bodega.model';
 import { PuntoEmisionEstablecimiento } from './punto-emision.model';
 
 export interface Establecimiento {
-  id?: number
+  id?: number;
   idEstab_Asig: number;
   codEstab_Asig: string;
   idUsuarioRol: number;

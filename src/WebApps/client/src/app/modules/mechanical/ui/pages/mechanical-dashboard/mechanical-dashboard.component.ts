@@ -22,7 +22,7 @@ export class MechanicalDashboardComponent implements OnInit {
   };
   supportUseCase = inject(SupportUseCase);
   ngOnInit(): void {
-    this.supportUseCase.getDashboard().subscribe(response => {
+    this.supportUseCase.getDashboard().subscribe((response) => {
       console.log(response);
       this.data = response.data;
       const labels = response.barchart.map((i: any) => i.status);

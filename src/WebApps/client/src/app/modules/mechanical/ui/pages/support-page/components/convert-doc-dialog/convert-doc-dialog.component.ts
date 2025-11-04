@@ -130,7 +130,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           const index = this.infoAdicionalDoc().indexOf(data);
           this.infoAdicionalDoc().splice(index, 1);
@@ -205,7 +205,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
     //Por defecto tomamos SIN UTILIZACION DEL SISTEMA FINANCIERO
     if (this.params.formasPagoSri.length > 0) {
-      const dataFormaPago = this.params.formasPagoSri.find(item => {
+      const dataFormaPago = this.params.formasPagoSri.find((item) => {
         if (this.params.config.idFormaPagoSri > 0) {
           return item.idFormaPagoSri === this.params.config.idFormaPagoSri;
         } else {
@@ -350,7 +350,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
       return;
     }
 
-    if (this.details().some(row => row.llevaInventario && row.quantity === 0)) {
+    if (this.details().some((row) => row.llevaInventario && row.quantity === 0)) {
       this.tS.show({
         type: 'warning',
         message: 'No es posible vender artículos con inventario cuando la cantidad es igual a 0.',
@@ -358,7 +358,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
       return;
     }
 
-    if (this.details().some(row => !(row.bodegaId > 0))) {
+    if (this.details().some((row) => !(row.bodegaId > 0))) {
       this.tS.show({
         type: 'warning',
         message: 'Seleccione la bodega en el detalle de los artículos',
@@ -440,7 +440,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
       if (!isConfirmed) return;
 
-      const details = this.details().map(item => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,
@@ -508,7 +508,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
       if (!isConfirmed) return;
 
-      const details = this.details().map(item => {
+      const details = this.details().map((item) => {
         return {
           ...item,
           taxId: item.idImpuesto,

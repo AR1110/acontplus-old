@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -279,7 +286,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       const index = this.currentAdjustment.getDetailIndex(row.productId);
       this.currentAdjustment.removeDetail(index);
       if (row.id > 0) {
-        this.dataSourceItemsDeleted.update(r => [...r, { ...row, status: false }]);
+        this.dataSourceItemsDeleted.update((r) => [...r, { ...row, status: false }]);
       }
       this.updateDataSourceItems();
     }
@@ -292,12 +299,12 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
     this.initializeForms();
     this.checkEditMode();
 
-    const dataEstab = this.estabs().find(estabs => estabs.defaultEstab);
+    const dataEstab = this.estabs().find((estabs) => estabs.defaultEstab);
 
     this.emissionsPoint.set(dataEstab?.puntosEmision || []);
     this.warehouses.set(dataEstab?.bodegas ?? []);
-    const emissionPointData = this.emissionsPoint().find(item => item.defaultPtoEmi);
-    const warehouseData = this.warehouses().find(b => b.defaultBodega);
+    const emissionPointData = this.emissionsPoint().find((item) => item.defaultPtoEmi);
+    const warehouseData = this.warehouses().find((b) => b.defaultBodega);
     const establishmentId = dataEstab?.idEstablecimiento ?? 0;
     const warehouseId = warehouseData?.idBodega ?? 0;
     this.adjustmentForm.patchValue({
@@ -325,7 +332,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       observations: [''],
     });
 
-    this.adjustmentForm.get('documentType')?.valueChanges.subscribe(change => {
+    this.adjustmentForm.get('documentType')?.valueChanges.subscribe((change) => {
       console.log(change);
 
       const transactionTypeMap = {
@@ -383,7 +390,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       reverseButtons: false,
       allowOutsideClick: false,
       allowEscapeKey: false,
-    }).then(result => {
+    }).then((result) => {
       if (!result.isConfirmed) {
         this.adjustmentForm.patchValue({
           establishmentId: this.cloneEstablishmentId(),
@@ -393,12 +400,12 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       const establishmentId = this.adjustmentForm.value.establishmentId;
 
       this.cloneEstablishmentId.set(establishmentId);
-      const dataEstab = this.estabs().find(item => item.idEstablecimiento === establishmentId);
+      const dataEstab = this.estabs().find((item) => item.idEstablecimiento === establishmentId);
 
       this.emissionsPoint.set(dataEstab?.puntosEmision || []);
       this.warehouses.set(dataEstab?.bodegas ?? []);
-      const emissionPointData = this.emissionsPoint().find(item => item.defaultPtoEmi);
-      const warehouseData = this.warehouses().find(b => b.defaultBodega);
+      const emissionPointData = this.emissionsPoint().find((item) => item.defaultPtoEmi);
+      const warehouseData = this.warehouses().find((b) => b.defaultBodega);
       const warehouseId = warehouseData?.idBodega ?? 0;
       this.adjustmentForm.patchValue({
         establishmentId: dataEstab?.idEstablecimiento ?? 0,
@@ -442,7 +449,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si!',
       cancelButtonText: 'No',
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.setZeroInDetail();
       }
@@ -460,7 +467,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       },
     );
 
-    dialogRef.subscribe(result => {
+    dialogRef.subscribe((result) => {
       if (!this.isValidResult(result)) {
         return;
       }
@@ -484,11 +491,11 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
     const existItem = (productId: number) => {
       return !this.currentAdjustment
         .toPlainObject()
-        .details.some(existingItem => existingItem.productId === productId);
+        .details.some((existingItem) => existingItem.productId === productId);
     };
     selectedRows
-      .filter(item => existItem(item.idArticulo))
-      .forEach(item => {
+      .filter((item) => existItem(item.idArticulo))
+      .forEach((item) => {
         this.createItemForDataSource(item, opcion, isExcelImport);
       });
     this.updateDataSourceItems();
@@ -519,7 +526,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
   }
 
   itemSelected($event: any) {
-    this.inventoryAdjustmentSvc.getProductById($event.id).subscribe(result => {
+    this.inventoryAdjustmentSvc.getProductById($event.id).subscribe((result) => {
       const { data, measures } = result;
       if (!data.hasInventory) {
         Swal.fire({
@@ -539,7 +546,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
           cancelButtonColor: '#d33',
           confirmButtonText: 'Si!',
           cancelButtonText: 'No',
-        }).then(result => {
+        }).then((result) => {
           if (result) {
             this.currentAdjustment.updateDetail(existingDetailIndex);
           }
@@ -547,7 +554,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
         return;
       }
 
-      const measureData = measures.find(m => m.defaultMedida);
+      const measureData = measures.find((m) => m.defaultMedida);
       if (!measureData) {
         return;
       }
@@ -606,7 +613,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
             idBodega: data.warehouseId,
             idMedida: data.unitOfMeasureId,
           })
-          .subscribe(async response => {
+          .subscribe(async (response) => {
             const { code, message, titleSms } = response;
 
             if (code === '1') {
@@ -654,7 +661,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
         showCancelButton: true,
         confirmButtonText: 'Si',
         cancelButtonText: 'No',
-      }).then(result => {
+      }).then((result) => {
         let warehouseId = value;
         if (!result.isConfirmed) {
           warehouseId = oldValue;
@@ -687,11 +694,13 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       }
       const formValue = this.adjustmentForm.getRawValue();
 
-      const dataTipoDoc = this.tiposDoc().find(t => t.codigo === formValue.documentType);
+      const dataTipoDoc = this.tiposDoc().find((t) => t.codigo === formValue.documentType);
       const dataTipoTransaccion = this.tiposTransaccion().find(
-        t => t.codigo === formValue.transactionType,
+        (t) => t.codigo === formValue.transactionType,
       );
-      const dataEstab = this.estabs().find(t => t.idEstablecimiento === formValue.establishmentId);
+      const dataEstab = this.estabs().find(
+        (t) => t.idEstablecimiento === formValue.establishmentId,
+      );
 
       const documentTypeId = dataTipoDoc?.idTipoDocumento;
       const transactionTypeId = dataTipoTransaccion?.idTipoTransaccion;
@@ -720,7 +729,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
       const details = [...this.dataSourceItems(), ...this.dataSourceItemsDeleted()];
 
       const hasInvalidQuantities = details.some(
-        detail => detail.quantity <= 0 || detail.transactionQuantity <= 0,
+        (detail) => detail.quantity <= 0 || detail.transactionQuantity <= 0,
       );
       if (hasInvalidQuantities) {
         Swal.fire({
@@ -730,7 +739,9 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
         return;
       }
 
-      const hasInvalidPrices = details.some(detail => detail.unitPrice < 0 || detail.costPrice < 0);
+      const hasInvalidPrices = details.some(
+        (detail) => detail.unitPrice < 0 || detail.costPrice < 0,
+      );
 
       if (hasInvalidPrices) {
         Swal.fire({

@@ -2,17 +2,26 @@
   @for (menuItem of menuList(); track $index) {
     @if (menuItem.type === 'link') {
       <a mat-button [routerLink]="buildRoute([menuItem.route])" routerLinkActive="active">
-        <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{ item: menuItem }" />
+        <ng-container
+          [ngTemplateOutlet]="linkTypeTpl"
+          [ngTemplateOutletContext]="{ item: menuItem }"
+        />
       </a>
     }
     @if (menuItem.type === 'extLink') {
       <a mat-button [href]="menuItem.route">
-        <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{ item: menuItem }" />
+        <ng-container
+          [ngTemplateOutlet]="linkTypeTpl"
+          [ngTemplateOutletContext]="{ item: menuItem }"
+        />
       </a>
     }
     @if (menuItem.type === 'extTabLink') {
       <a mat-button [href]="menuItem.route" target="_blank">
-        <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{ item: menuItem }" />
+        <ng-container
+          [ngTemplateOutlet]="linkTypeTpl"
+          [ngTemplateOutletContext]="{ item: menuItem }"
+        />
       </a>
     }
     @if (menuItem.type === 'sub') {
@@ -23,7 +32,10 @@
         #rla="routerLinkActive"
         [class.active]="rla.isActive || menuStates()[$index].active"
       >
-        <ng-container [ngTemplateOutlet]="linkTypeTpl" [ngTemplateOutletContext]="{ item: menuItem }" />
+        <ng-container
+          [ngTemplateOutlet]="linkTypeTpl"
+          [ngTemplateOutletContext]="{ item: menuItem }"
+        />
 
         <app-topmenu-panel
           #submenu

@@ -30,7 +30,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
       .get<ApiResponse>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => GetFilterDataCuentaPorPagarMapper.fromJson(response)));
+      .pipe(map((response) => GetFilterDataCuentaPorPagarMapper.fromJson(response)));
   }
 
   getAll<T>(obj: T) {
@@ -43,7 +43,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             data: [] as CuentaPorPagarLista[],
             totalRecords: 0,
@@ -67,7 +67,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             tiemposCredito: [] as TiempoCreditoSelectHtmlOnly[],
           };
@@ -91,7 +91,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             data: [] as CuentaPorPagarCuotaConfig[],
           };
@@ -114,7 +114,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           let result = {
             cuentaPorPagar: {} as Partial<CuentaPorPagarLista>,
             comprobantesEgreso: [] as ComprobanteEgresoLista[],

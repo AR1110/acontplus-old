@@ -36,7 +36,7 @@ export class PetSearchComponent implements OnInit {
   isLoading = signal(false);
   ngOnInit() {
     this.filteredItems = this.control.valueChanges.pipe(
-      switchMap(val => {
+      switchMap((val) => {
         if (val && val.length > 2) {
           return this._filter(val);
           // return this.products as any[]

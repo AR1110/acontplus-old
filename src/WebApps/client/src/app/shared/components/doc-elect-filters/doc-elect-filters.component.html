@@ -2,7 +2,7 @@
   <div class="row mb-3">
     <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
       @if (this.filterOptions().showButtonNew()) {
-        <app-theme-button icon="add" text="Registrar" (handleClick)="onDialogOpen()"></app-theme-button>
+        <app-theme-button icon="add" text="Registrar" (handleClick)="onDialogOpen()" />
       }
     </div>
     <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-8 col-6 d-flex">
@@ -22,7 +22,7 @@
           matStyle="icon"
           title="Recargar"
           (handleClick)="reload()"
-        ></app-theme-button>
+        />
       </div>
     </div>
   </div>
@@ -52,7 +52,9 @@
             </mat-option>
           }
         </mat-select>
-        @if (filterForm.get('idPuntoEmision')?.invalid && filterForm.get('idPuntoEmision')?.touched) {
+        @if (
+          filterForm.get('idPuntoEmision')?.invalid && filterForm.get('idPuntoEmision')?.touched
+        ) {
           <mat-error> Campo requerido </mat-error>
         }
       </mat-form-field>
@@ -64,7 +66,7 @@
         [showMatPrefix]="true"
         (onCheckboxChange)="setCheckBoxDate()"
         (onChangeDateRange)="onDateRangeSelected($event)"
-      ></app-date-range-selection>
+      />
     </div>
   </div>
 
@@ -74,12 +76,12 @@
       @if (this.filterOptions().showPersonSearch()) {
         <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
           @if (this.filterOptions().personType()) {
-            <app-supplier-search (supplierSelected)="onSelectSupplierHandler($event)"></app-supplier-search>
+            <app-supplier-search (supplierSelected)="onSelectSupplierHandler($event)" />
           } @else {
             <app-company-customer-search
               [isSimpleMode]="true"
               (customerSelected)="onSelectClienteHandler($event)"
-            ></app-company-customer-search>
+            />
           }
         </div>
       }

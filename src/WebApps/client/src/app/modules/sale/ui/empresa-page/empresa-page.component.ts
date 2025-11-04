@@ -4,6 +4,6 @@ import { Component } from '@angular/core';
   selector: 'app-empresa-page',
   imports: [],
   templateUrl: './empresa-page.component.html',
-  styleUrls: ['./empresa-page.component.scss'],
+  styles: ``,
 })
 export class EmpresaPageComponent {}

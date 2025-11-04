@@ -21,7 +21,7 @@ export class SubCategoryService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (isApiResponse(response)) {
             if (response.code === '0') {
               throw response;

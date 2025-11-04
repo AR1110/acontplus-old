@@ -79,13 +79,13 @@ export class ReportsComponent implements OnInit {
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos.find(
-        estab => estab.codEstab === this.dataSearch.codEstab,
+        (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.puntosEmision = dataEstab.puntosEmision;
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
+          this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
         return;
       }
     }
@@ -165,7 +165,7 @@ export class ReportsComponent implements OnInit {
           json: JSON.stringify({ tipo: 6 }),
         },
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (isApiResponse(response)) {
           if (response.code === '0') {
             console.log(response);
@@ -179,18 +179,18 @@ export class ReportsComponent implements OnInit {
               estabs,
               isGroupPuntoEmision: true,
             });
-            const dataEstab = this.establecimientos.find(estab => estab.defaultEstab);
+            const dataEstab = this.establecimientos.find((estab) => estab.defaultEstab);
             if (dataEstab) {
               this.dataSearch.codEstab = dataEstab.codEstab;
               this.puntosEmision = dataEstab.puntosEmision;
-              const dataPuntoEmision = this.puntosEmision.find(ptoEmi => ptoEmi.defaultPtoEmi);
+              const dataPuntoEmision = this.puntosEmision.find((ptoEmi) => ptoEmi.defaultPtoEmi);
               if (dataPuntoEmision) {
                 this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
               }
             }
             this.tiposDoc = tiposDoc;
             this.dataSearch.codDoc =
-              this.tiposDoc.find(tipoDoc => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
+              this.tiposDoc.find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FC)?.codDoc || '';
             //console.log(this.tiposDoc)
             this.estadosDoc = estadosDoc;
             this.subcategories = subcategories;

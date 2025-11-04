@@ -1,8 +1,14 @@
 @if (showHeader()) {
   <div class="m3-dialog-header">
-    <h6 mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle (mousedown)="toTop(unique)">
+    <h6
+      mat-dialog-title
+      cdkDrag
+      cdkDragRootElement=".cdk-overlay-pane"
+      cdkDragHandle
+      (mousedown)="toTop(unique)"
+    >
       @if (icon()) {
-        <mat-icon aria-hidden="false" aria-label="Dialog Icon" fontIcon="{{ icon() }}"></mat-icon>
+        <mat-icon aria-hidden="false" aria-label="Dialog Icon" fontIcon="{{ icon() }}" />
       }
 
       {{ title() }}
@@ -17,15 +23,15 @@
 <mat-dialog-content class="mat-typography">
   @if (loading()) {
     <div class="loading-overlay">
-      <mat-spinner></mat-spinner>
+      <mat-spinner />
     </div>
   }
-  <ng-container *ngTemplateOutlet="containerTemplate"></ng-container>
-  <ng-content select="content"></ng-content>
+  <ng-container *ngTemplateOutlet="containerTemplate" />
+  <ng-content select="content" />
 </mat-dialog-content>
 <mat-dialog-actions [align]="align()">
-  <ng-container *ngTemplateOutlet="actionsTemplate"></ng-container>
-  <ng-content select="actions"></ng-content>
+  <ng-container *ngTemplateOutlet="actionsTemplate" />
+  <ng-content select="actions" />
 
   @if (this.options().showButtonClose) {
     <app-theme-button

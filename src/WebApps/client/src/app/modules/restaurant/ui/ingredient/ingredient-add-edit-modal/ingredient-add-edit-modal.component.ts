@@ -69,7 +69,7 @@ export class IngredientAddEditModalComponent implements OnInit {
       ...this.ingredientForm.value,
     };
     if (this.data.id > 0) {
-      this.#ingredientService.put(this.data.id, dataToSave).subscribe(response => {
+      this.#ingredientService.put(this.data.id, dataToSave).subscribe((response) => {
         this.#tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,

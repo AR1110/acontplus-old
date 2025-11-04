@@ -23,7 +23,7 @@ export class ResumenContableWebRepository extends ResumenContableRepository {
       tipo: 2,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const results = {
           transactionTypes: [] as any[],
           subCategories: [] as SubCategorySelectHtmlOnly[],

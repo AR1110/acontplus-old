@@ -14,14 +14,16 @@
       [displayWith]="formatter"
     >
       @for (user of filteredUsers | async; track $index) {
-        <mat-option [value]="user"> {{ user.nroIdentificacion }} - {{ user.nombreCompleto }} </mat-option>
+        <mat-option [value]="user">
+          {{ user.nroIdentificacion }} - {{ user.nombreCompleto }}
+        </mat-option>
       }
     </mat-autocomplete>
   </mat-form-field>
 }
 
 @if (searching) {
-  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  <mat-progress-bar mode="indeterminate" />
 }
 
 @if (searchFailed) {

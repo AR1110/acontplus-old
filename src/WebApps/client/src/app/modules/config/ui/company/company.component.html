@@ -7,6 +7,11 @@
     [templateOp]="templateOp"
   />
   <ng-template #templateOp let-item="item">
-    <app-theme-button variant="info" icon="edit" matStyle="icon" (handleClick)="openModalEdit(item)" />
+    <app-theme-button
+      variant="info"
+      icon="edit"
+      matStyle="icon"
+      (handleClick)="openModalEdit(item)"
+    />
   </ng-template>
 </app-mat-dynamic-card>

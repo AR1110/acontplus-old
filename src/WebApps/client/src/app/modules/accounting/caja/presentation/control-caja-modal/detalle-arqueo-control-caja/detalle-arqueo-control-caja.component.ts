@@ -32,10 +32,10 @@ export class DetalleArqueoControlCajaComponent implements OnInit {
     { key: 'valor', label: 'Valor', type: 'string' },
     { key: 'total', label: 'Total', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   getList() {
-    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe(response => {
+    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe((response) => {
       this.arqueoCajaDetalle.set(response.data || []);
       this.total = this.arqueoCajaDetalle().reduce(
         (acc: number, current: any) => acc + current.total,

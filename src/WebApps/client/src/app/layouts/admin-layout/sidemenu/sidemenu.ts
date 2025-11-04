@@ -8,7 +8,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { AsyncPipe, NgTemplateOutlet, SlicePipe } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,8 +28,6 @@ import { MenuService } from '@core/bootstrap';
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
-    SlicePipe,
     NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
@@ -64,38 +62,38 @@ export class Sidemenu {
       },
       ...resultMenus,
       {
-        "route": "menu-level",
-        "name": "menu-level",
-        "type": "sub",
-        "icon": "subject",
-        "children": [
+        route: 'menu-level',
+        name: 'menu-level',
+        type: 'sub',
+        icon: 'subject',
+        children: [
           {
-            "route": "level-1-1",
-            "name": "level-1-1",
-            "type": "sub",
-            "children": [
+            route: 'level-1-1',
+            name: 'level-1-1',
+            type: 'sub',
+            children: [
               {
-                "route": "level-2-1",
-                "name": "level-2-1",
-                "type": "link",
+                route: 'level-2-1',
+                name: 'level-2-1',
+                type: 'link',
               },
               {
-                "route": "level-2-2",
-                "name": "level-2-2",
-                "type": "link"
-              }
-            ]
+                route: 'level-2-2',
+                name: 'level-2-2',
+                type: 'link',
+              },
+            ],
           },
           {
-            "route": "level-1-2",
-            "name": "level-1-2",
-            "type": "link"
-          }
+            route: 'level-1-2',
+            name: 'level-1-2',
+            type: 'link',
+          },
         ],
-        "permissions": {
-          "only": "ADMIN"
-        }
-      }
+        permissions: {
+          only: 'ADMIN',
+        },
+      },
     ];
   });
 

@@ -10,7 +10,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
       [text]="text()"
       [icon]="getFileIcon()"
       (handleClick)="handleClick()"
-    ></app-theme-button>
+    />
   `,
   styles: [``],
   imports: [ThemeButtonComponent],

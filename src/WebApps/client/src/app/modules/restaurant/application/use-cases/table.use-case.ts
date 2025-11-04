@@ -1,11 +1,16 @@
 import { TableRepository } from '@restaurant/domain/repositories/table.repository';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TableUseCase {
-  constructor(private repo: TableRepository) {}
+  private repo = inject(TableRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   remove(id: number) {
     return this.repo.remove(id);

@@ -3,7 +3,7 @@ import { FieldDefinitionDetailSale } from '@shared/models/field-definition-detai
 
 class ImpuestoDetailAdapter {
   to(details: FieldDefinitionDetailSale[]) {
-    const impuestosTarifa = details.map(item => {
+    const impuestosTarifa = details.map((item) => {
       const obj = {
         taxId: item.taxId,
         taxPercentId: item.taxPercentId,

@@ -81,11 +81,11 @@ export class TableAddEditModalComponent implements OnInit {
     };
 
     if (this.params.id > 0) {
-      this.#tableService.put(this.params.id, dataToSave).subscribe(response => {
+      this.#tableService.put(this.params.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this.#tableService.post(dataToSave).subscribe(response => {
+      this.#tableService.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }

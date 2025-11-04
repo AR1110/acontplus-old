@@ -73,7 +73,7 @@ export class ReporteCobrosComponent implements OnInit {
     loteChecked: false,
     lote: '',
     userChecked: false,
-    userId: 0
+    userId: 0,
   };
   // Services
   private tS = inject(ToastrNotificationService);
@@ -86,18 +86,18 @@ export class ReporteCobrosComponent implements OnInit {
   }
 
   getInitialLoad() {
-    this._comprobanteIngresoUseCase.getDataFilter().subscribe(response => {
+    this._comprobanteIngresoUseCase.getDataFilter().subscribe((response) => {
       const { establecimientos, tiposDoc, subEntidadesFinanciera, bancos } = response;
 
       this.establecimientos.set(establecimientos);
 
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
 
       if (dataEstab) {
         this.dataSearch.codEstab = dataEstab.codEstab;
         this.puntosEmision.set(dataEstab.puntosEmision);
 
-        const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+        const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
         if (dataPuntoEmision) {
           this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
         }
@@ -106,8 +106,7 @@ export class ReporteCobrosComponent implements OnInit {
       this.subEntidadFinanciera.set(subEntidadesFinanciera);
       this.bancos.set(bancos);
       this.dataSearch.codDoc =
-        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)
-          ?.codDoc || '';
+        this.tiposDoc().find((tipoDoc) => tipoDoc.codDoc === DOC_TYPE.FV)?.codDoc || '';
       this.users.set(response.users);
     });
   }
@@ -115,13 +114,13 @@ export class ReporteCobrosComponent implements OnInit {
   onChangeEstab() {
     if (isValidField(this.dataSearch.codEstab)) {
       const dataEstab = this.establecimientos().find(
-        estab => estab.codEstab === this.dataSearch.codEstab,
+        (estab) => estab.codEstab === this.dataSearch.codEstab,
       );
       if (dataEstab) {
         this.puntosEmision.set(dataEstab.puntosEmision);
 
         this.dataSearch.idPuntoEmision =
-          this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
+          this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi)?.idPuntoEmision || 0;
         return;
       }
     }
@@ -190,7 +189,7 @@ export class ReporteCobrosComponent implements OnInit {
         reference: removeSpacesInValue(this.dataSearch.reference),
         loteChecked: this.dataSearch.loteChecked,
         lote: removeSpacesInValue(this.dataSearch.lote),
-        userId
+        userId,
       };
 
       const parameters = {

@@ -26,7 +26,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => NotaEntregaMapper.fromApiDataFilter(response)));
+      .pipe(map((response) => NotaEntregaMapper.fromApiDataFilter(response)));
   }
 
   getAll<T>(obj: T) {
@@ -38,7 +38,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => NotaEntregaMapper.fromApiGetAll(response)));
+      .pipe(map((response) => NotaEntregaMapper.fromApiGetAll(response)));
   }
 
   getDetalleCompleto(id: number) {
@@ -50,7 +50,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => NotaEntregaMapper.fromApiDetalleCompleto(response)));
+      .pipe(map((response) => NotaEntregaMapper.fromApiDetalleCompleto(response)));
   }
 
   post<T>(data: T) {

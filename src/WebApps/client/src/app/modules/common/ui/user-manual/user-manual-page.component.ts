@@ -166,7 +166,7 @@ export class UserManualPageComponent implements OnInit {
     this.data.pageIndex = this.pagination().pageIndex + 1;
     this.data.pageSize = this.pagination().pageSize;
 
-    this._userManualUseCase.get(this.data).subscribe(response => {
+    this._userManualUseCase.get(this.data).subscribe((response) => {
       this.modules.set(response.modules);
       const manuals = response.userManuals.map((manual: UserManual) => ({
         ...manual,
@@ -194,13 +194,13 @@ export class UserManualPageComponent implements OnInit {
         return acc;
       }, []);
       this.manualTree.set(manualsTree);
-      this.manualTree().forEach(node => {
+      this.manualTree().forEach((node) => {
         if (node.children) {
           this.expandedNodes.add(node);
         }
       });
 
-      this.pagination.update(e => {
+      this.pagination.update((e) => {
         return {
           ...e,
           totalRecords: this.manuals()[0]?.totalRecords || 0,
@@ -259,7 +259,7 @@ export class UserManualPageComponent implements OnInit {
 
   onPageChanged($event: PageEvent) {
     this.pageEvent = $event;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: $event.length,

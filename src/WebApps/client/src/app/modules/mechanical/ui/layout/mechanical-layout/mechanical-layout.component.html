@@ -1,7 +1,10 @@
 <app-breadcrumb />
 
 <app-mat-dynamic-card>
-  <mat-tab-group [selectedIndex]="store.selectedIndex()" (selectedIndexChange)="store.selectedIndexChange($event)">
+  <mat-tab-group
+    [selectedIndex]="store.selectedIndex()"
+    (selectedIndexChange)="store.selectedIndexChange($event)"
+  >
     <mat-tab label="Dashboard">
       <ng-template matTabContent>
         <div class="mx-3 mt-2">
@@ -11,17 +14,17 @@
     </mat-tab>
     <mat-tab label="Pendiente">
       <ng-template matTabContent>
-        <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
+        <ng-container *ngTemplateOutlet="templateSupport" />
       </ng-template>
     </mat-tab>
     <mat-tab label="En Proceso">
       <ng-template matTabContent>
-        <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
+        <ng-container *ngTemplateOutlet="templateSupport" />
       </ng-template>
     </mat-tab>
     <mat-tab label="Por Entregar">
       <ng-template matTabContent>
-        <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
+        <ng-container *ngTemplateOutlet="templateSupport" />
       </ng-template>
     </mat-tab>
 
@@ -33,13 +36,13 @@
 
     <mat-tab label="Aprobado">
       <ng-template matTabContent>
-        <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
+        <ng-container *ngTemplateOutlet="templateSupport" />
       </ng-template>
     </mat-tab>
 
     <mat-tab label="Anulado">
       <ng-template matTabContent>
-        <ng-container *ngTemplateOutlet="templateSupport"></ng-container>
+        <ng-container *ngTemplateOutlet="templateSupport" />
       </ng-template>
     </mat-tab>
   </mat-tab-group>

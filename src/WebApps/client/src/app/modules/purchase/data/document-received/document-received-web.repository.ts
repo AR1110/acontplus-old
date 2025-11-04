@@ -22,7 +22,7 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
       tipo: 2,
     };
     return this._http.get(`${this._url}?json=${JSON.stringify(query)}`).pipe(
-      map(response => {
+      map((response) => {
         if (isApiResponse(response)) {
           const mainData = JSON.parse(response.payload as string);
           const documentTypes = mainData.tipoComprobantes.map((tipoDoc: TipoDoc) => {
@@ -48,7 +48,7 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
 
   get<T>(params: T) {
     return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code !== '1') {
           return { documents: [] as DocumentReceived[] };
         }

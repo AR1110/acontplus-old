@@ -1,10 +1,15 @@
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2">
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento: </mat-label>
-          <mat-select [(ngModel)]="data().idEstablecimiento" (selectionChange)="onChangeEstab.emit()">
+          <mat-select
+            [(ngModel)]="data().idEstablecimiento"
+            (selectionChange)="onChangeEstab.emit()"
+          >
             @for (item of estabs(); track $index) {
               <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
             }
@@ -49,8 +54,7 @@
       [tableData]="dataSource.data"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
-    >
-    </app-mat-dynamic-table>
+    />
 
     <ng-template #templateOp let-item="item">
       <div class="d-flex gap-1">

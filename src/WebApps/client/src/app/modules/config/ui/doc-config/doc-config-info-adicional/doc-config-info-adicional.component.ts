@@ -62,7 +62,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
     { key: 'valor', label: 'Valor', type: 'template' },
     { key: 'politicaCredito', label: 'Política Crédito', type: 'template' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   @ViewChild('templateName') templateName!: TemplateRef<any>;
   @ViewChild('templateValue') templateValue!: TemplateRef<any>;
@@ -70,7 +70,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
 
   getInfoAdicional() {
     this.dataSource.set([]);
-    this.$getInfoAdicional.execute(this.params.idConfiguracionDocumento).subscribe(response => {
+    this.$getInfoAdicional.execute(this.params.idConfiguracionDocumento).subscribe((response) => {
       this.dataSource.set(response);
     });
   }
@@ -81,7 +81,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach(col => {
+    this.columnsDefs.forEach((col) => {
       if (col.type === 'template' && col.key === 'nombre') {
         col.templateOutlet = this.templateName;
       }
@@ -96,7 +96,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
   }
 
   addRow() {
-    this.dataSource.update(ds => {
+    this.dataSource.update((ds) => {
       return [...ds, { unique: generateUuidv4(), nombre: '', valor: '', politicaCredito: false }];
     });
   }
@@ -111,10 +111,10 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si!',
         cancelButtonText: 'No!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this.dataSource.update(ds => {
-            return ds.filter(ds => ds.unique !== item.unique);
+          this.dataSource.update((ds) => {
+            return ds.filter((ds) => ds.unique !== item.unique);
           });
         }
       });
@@ -126,7 +126,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
   save() {
     try {
       if (
-        this.dataSource().some(item => !(isValidField(item.nombre) || isValidField(item.valor)))
+        this.dataSource().some((item) => !(isValidField(item.nombre) || isValidField(item.valor)))
       ) {
         this.tS.show({
           type: 'warning',
@@ -149,7 +149,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
               JSON.stringify(this.dataSource().map(({ unique, ...rest }) => rest)),
       };
 
-      this.$createUseCase.execute(data).subscribe(response => {
+      this.$createUseCase.execute(data).subscribe((response) => {
         if (response.code === '0') {
           Swal.fire({
             icon: 'warning',

@@ -52,7 +52,7 @@ export class ComprobanteIngresoMapper {
       nombreFiscal: comprobante.nombreFiscal,
     };
 
-    const comprosMappeado = cobros.map(cobro => {
+    const comprosMappeado = cobros.map((cobro) => {
       return {
         idSubEntidadFinanciera: cobro.idSubEntidadFinanciera,
         idEntidadFinanciera: cobro.idEntidadFinanciera,
@@ -70,7 +70,7 @@ export class ComprobanteIngresoMapper {
       };
     });
 
-    const cobroDetalleMappeado = cobroDetalle.map(detalle => {
+    const cobroDetalleMappeado = cobroDetalle.map((detalle) => {
       return {
         idCuentaPorCobrar: detalle.idCuentaPorCobrar,
         idCuotaPorCobrar: detalle.idCuotaPorCobrar,
@@ -84,7 +84,7 @@ export class ComprobanteIngresoMapper {
       };
     });
 
-    const historialCobrosMappeado = historialCobros.map(hc => {
+    const historialCobrosMappeado = historialCobros.map((hc) => {
       return {
         idCuentaPorCobrar: hc.idCuentaPorCobrar,
         abono: roundNumber(hc.abono, 5),

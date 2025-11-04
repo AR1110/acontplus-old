@@ -132,7 +132,7 @@ export class BrandModalComponent implements OnInit {
     this.onGet();
   }
   onGet() {
-    this.categoryService.get({}).subscribe(response => {
+    this.categoryService.get({}).subscribe((response) => {
       if (isApiResponse(response)) {
         if (response.code == '1') {
           this.categories.set(JSON.parse(response.payload as string));
@@ -145,7 +145,7 @@ export class BrandModalComponent implements OnInit {
   }
   onSave() {
     if (this.series.length > 0) {
-      this.series.forEach(x => {
+      this.series.forEach((x) => {
         if (!x.code) {
           return this.tS.show({
             type: 'warning',
@@ -185,9 +185,9 @@ export class BrandModalComponent implements OnInit {
       showDenyButton: true,
       denyButtonText: 'No',
       confirmButtonText: 'Si',
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
-        this.serieService.delete(item.id).subscribe(response => {
+        this.serieService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
             this.tS.show({
               type: response.code === '1' ? 'success' : 'warning',
@@ -195,7 +195,7 @@ export class BrandModalComponent implements OnInit {
             });
             if (response.code === '1') {
               this.series.splice(
-                this.series.findIndex(x => x.id == item.id),
+                this.series.findIndex((x) => x.id == item.id),
                 1,
               );
             }

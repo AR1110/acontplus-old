@@ -11,7 +11,7 @@ import { isApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { MatIcon } from '@angular/material/icon';
+
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -20,7 +20,6 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
   selector: 'app-order-delivery-modal',
   imports: [
     FormsModule,
-    MatIcon,
     MatCheckboxModule,
     ReactiveFormsModule,
     ThemeButtonComponent,
@@ -67,7 +66,7 @@ export class OrderDeliveryModalComponent implements OnInit {
       receiver: this.orderDeliveryForm.value.receiver,
     };
 
-    this.orderService.delivery(this.data.id, dataModified).subscribe(response => {
+    this.orderService.delivery(this.data.id, dataModified).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',

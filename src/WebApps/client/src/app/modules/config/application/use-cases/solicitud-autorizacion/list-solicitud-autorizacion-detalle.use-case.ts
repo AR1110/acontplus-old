@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import {
   SolicitudAutorizacionDetalle,
@@ -12,7 +12,12 @@ import { SolicitudAutorizacionRepository } from '@modules/config/domain/reposito
 export class ListSolicitudAutorizacionDetalleUseCase
   implements BaseUseCase<SolicitudAutorizacionDetalle[], Partial<SolicitudAutorizacionList>>
 {
-  constructor(private repo: SolicitudAutorizacionRepository) {}
+  private repo = inject(SolicitudAutorizacionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: Partial<SolicitudAutorizacionList>) {
     return this.repo.listDetalle(params);

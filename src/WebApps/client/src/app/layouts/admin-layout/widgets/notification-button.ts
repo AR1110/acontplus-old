@@ -3,15 +3,20 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import {Component, inject, ViewEncapsulation} from '@angular/core';
-import {AdminLayoutService} from "@core/services/admin-layout.service";
-import {NgClass} from "@angular/common";
+import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { AdminLayoutService } from '@core/services/admin-layout.service';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-notification',
   template: `
     <button mat-icon-button [matMenuTriggerFor]="menu">
-      <mat-icon [matBadge]="adminLayoutSvc.getNotifications().length" matBadgeColor="warn" aria-hidden="false">notifications</mat-icon>
+      <mat-icon
+        [matBadge]="adminLayoutSvc.getNotifications().length"
+        matBadgeColor="warn"
+        aria-hidden="false"
+        >notifications</mat-icon
+      >
     </button>
 
     <mat-menu #menu="matMenu" class="notifications-menu">
@@ -48,15 +53,22 @@ import {NgClass} from "@angular/common";
         cursor: pointer;
         transition: background-color 0.2s ease;
 
-
         .mat-icon {
           font-size: 24px;
           flex-shrink: 0;
 
-          &.icon-info { color: #facc15; }
-          &.icon-warning { color: #f97316; }
-          &.icon-error { color: #ef4444; }
-          &.icon-success { color: #22c55e; }
+          &.icon-info {
+            color: #facc15;
+          }
+          &.icon-warning {
+            color: #f97316;
+          }
+          &.icon-error {
+            color: #ef4444;
+          }
+          &.icon-success {
+            color: #22c55e;
+          }
         }
 
         .notification-content {
@@ -132,12 +144,11 @@ import {NgClass} from "@angular/common";
       text-align: center;
       min-width: 18px;
     }
-
   `,
   imports: [MatBadgeModule, MatButtonModule, MatIconModule, MatListModule, MatMenuModule, NgClass],
   encapsulation: ViewEncapsulation.None,
 })
 export class NotificationButton {
-  adminLayoutSvc = inject(AdminLayoutService)
+  adminLayoutSvc = inject(AdminLayoutService);
   messages = ['Server Error Reports 1', 'Server Error Reports 2', 'Server Error Reports 3'];
 }

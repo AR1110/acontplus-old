@@ -20,7 +20,7 @@ export class FacturaFisicaRepository {
       tipo: 3,
     });
     return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
           const dataApi = JSON.parse(response.payload as string);
 
@@ -37,7 +37,7 @@ export class FacturaFisicaRepository {
       ...obj,
     });
     return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const resultData = {
           data: [] as FacturaFisicaLista[],
           totalRecords: 0,
@@ -63,7 +63,7 @@ export class FacturaFisicaRepository {
       id,
     });
     return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let resultData = {} as any;
         if (response && response.code === '1') {
           const mainData = JSON.parse(response.payload as string);
@@ -85,7 +85,7 @@ export class FacturaFisicaRepository {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (response.code === '1') {
             const dataApi = JSON.parse(response.payload as string);
             return FacturaFisicaRepositoryMapper.fromApiDataForm(dataApi);

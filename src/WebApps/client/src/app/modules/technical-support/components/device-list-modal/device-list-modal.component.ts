@@ -2,14 +2,14 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DeviceService } from '@modules/technical-support/services/device.service';
-import { MatIcon } from '@angular/material/icon';
+
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-device-list-modal',
-  imports: [MatIcon, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ThemeButtonComponent, MatCustomDialogComponent],
   templateUrl: './device-list-modal.component.html',
   styles: ``,
 })
@@ -30,7 +30,7 @@ export class DeviceListModalComponent implements OnInit {
         tipo: 4,
         customerCompanyId: this.data.customerCompanyId,
       })
-      .subscribe(response => {
+      .subscribe((response) => {
         if (isApiResponse(response)) {
           const { devices } = JSON.parse(response.payload as string) || [];
           this.devices.set(devices);

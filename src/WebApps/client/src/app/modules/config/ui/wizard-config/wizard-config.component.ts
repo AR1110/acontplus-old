@@ -37,7 +37,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInput, MatLabel } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
 // Third-party Libraries
 import { catchError } from 'rxjs/operators';
@@ -150,13 +149,9 @@ interface EstabFormControls {
   styleUrls: ['./wizard-config.component.scss'],
   standalone: true,
   imports: [
-    // Angular modules
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
-
-    // Material modules
     MatButtonModule,
     MatCardModule,
     MatIconModule,
@@ -166,8 +161,6 @@ interface EstabFormControls {
     MatSelectModule,
     MatStepperModule,
     MatTooltipModule,
-
-    // Components
     BreadcrumbComponent,
     TabulatorComponent,
     MatInputChipComponent,
@@ -248,10 +241,10 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   showConfirmPassword = false;
   userSubmitted = false;
 
-  readonly currentStepIndex = computed(() => this.demoSteps().findIndex(step => !step.completed));
+  readonly currentStepIndex = computed(() => this.demoSteps().findIndex((step) => !step.completed));
 
   readonly actividadesEconomicaOptions = computed<SelectOption[]>(() =>
-    this.actividadesEconomica().map(actividad => ({
+    this.actividadesEconomica().map((actividad) => ({
       value: actividad.codigo,
       viewValue: actividad.descripcion,
     })),
@@ -394,7 +387,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
           return of(null);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response?.code === '1') {
           const tempArray = JSON.parse(response.payload as string);
           this.demoSteps.set(tempArray.companyDemoSteps as DemoStep[]);
@@ -409,7 +402,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
     this.loadError.set(null);
 
     this._formDataDocConfig.execute().subscribe({
-      next: response => {
+      next: (response) => {
         try {
           this.establecimientos.set(response.establecimientos);
 
@@ -421,10 +414,10 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
           console.debug('Document configuration loaded successfully', this.establecimientos());
 
-          const combinedData = this.establecimientos().map(pto => ({
+          const combinedData = this.establecimientos().map((pto) => ({
             ...pto,
             ptoEmi: pto.puntosEmision?.[0]?.ptoEmi || '',
-            _children: (response.tiposDoc || []).map(doc => ({
+            _children: (response.tiposDoc || []).map((doc) => ({
               ...doc,
               parentId: pto.puntosEmision?.[0]?.idPuntoEmision || '',
               ultimaSecuencia: doc.codigoSri ? 0 : 1,
@@ -439,7 +432,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
           this.docsConfig.set([]);
         }
       },
-      error: error => {
+      error: (error) => {
         console.error('Error fetching document configuration:', error);
         this.loadError.set('Error al cargar la configuración de documentos');
         this.docsConfig.set([]);
@@ -451,7 +444,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   }
 
   fetchEstabData(): void {
-    this._estabService.getDataForm().subscribe(response => {
+    this._estabService.getDataForm().subscribe((response) => {
       this.cantones.set(response.cantones);
       this.actividadesEconomica.set(response.actividadesEconomica);
       this.agentesRetencion.set(response.agentesRetencion);
@@ -553,7 +546,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
             return of(null);
           }),
         )
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response && isApiResponse(response)) {
             this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
@@ -567,7 +560,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
           }
         });
     } else {
-      Object.keys(this.userForm.controls).forEach(key => {
+      Object.keys(this.userForm.controls).forEach((key) => {
         const control = this.userForm.get(key);
         control?.markAsTouched();
       });
@@ -667,7 +660,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
       demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'III')?.id,
     };
 
-    this._estabService.post(dataEstab).subscribe(response => {
+    this._estabService.post(dataEstab).subscribe((response) => {
       if (isApiResponse(response)) {
         this._toasterService.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -726,7 +719,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
           return of(null);
         }),
       )
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response && isApiResponse(response)) {
           this._toasterService.show({
             type: response.code === '1' ? 'success' : 'warning',
@@ -762,7 +755,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
             return of(null);
           }),
         )
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response && isApiResponse(response)) {
             this._toasterService.show({
               type: response.code === '1' ? 'success' : 'warning',
@@ -805,7 +798,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   showInfoTipoContribuyente(): void {
     const contribuyente = this.estabForm.get('contribuyente')?.value;
-    const dataInfo = this.contribuyentes().find(item => item.codigo === contribuyente);
+    const dataInfo = this.contribuyentes().find((item) => item.codigo === contribuyente);
     if (contribuyente && dataInfo?.contribuyenteRimpe) {
       Swal.fire({
         icon: 'info',
@@ -822,7 +815,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
 
   showInfoActividadEconomica(): void {
     const actividad = this.estabForm.get('actividad')?.value;
-    const groupActEconomica = this.actividadesEconomica().find(item => item.codigo === actividad);
+    const groupActEconomica = this.actividadesEconomica().find((item) => item.codigo === actividad);
     if (actividad && groupActEconomica?.grupo) {
       Swal.fire({
         icon: 'info',
@@ -842,10 +835,10 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
       icon: 'info',
       text: `Esta seguro de saltar este paso?, recuerde que si va a usar el módulo de facturación electrónica,
        debe de subir una firma electrónica!`,
-    }).then(response => {
+    }).then((response) => {
       if (response.isConfirmed) {
         const id = this.demoSteps().find((step: DemoStep) => step.code === 'V')?.id;
-        this._companyDemoStepService.post(Number(id)).subscribe(response => {
+        this._companyDemoStepService.post(Number(id)).subscribe((response) => {
           if (response.code === '1') {
             this.fetchCompanyDemoSteps();
             this.stepper.next();

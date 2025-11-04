@@ -1,23 +1,15 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
   <div class="d-grid gap-2">
-    <div
-      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1"
-    >
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
-        <mat-checkbox [(ngModel)]="dataSearch.productChecked">
-          Artículo
-        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.productChecked"> Artículo </mat-checkbox>
       </div>
       <div class="col">
-        <mat-checkbox [(ngModel)]="dataSearch.userChecked">
-          Usuario
-        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.userChecked"> Usuario </mat-checkbox>
       </div>
       <div class="col">
-        <mat-checkbox [(ngModel)]="dataSearch.subCategoriaChecked">
-          SubFamilia
-        </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch.subCategoriaChecked"> SubFamilia </mat-checkbox>
       </div>
       <div class="col">
         <mat-checkbox [(ngModel)]="dataSearch.checkboxRentabCustom">
@@ -27,9 +19,7 @@
     </div>
     <mat-divider />
 
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1"
-    >
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
@@ -59,22 +49,20 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
       </div>
     </div>
 
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1"
-    >
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>SubFamilia</mat-label>
           <mat-select [formControl]="checkedSubCategorias" multiple>
             @for (item of subCategorias(); track $index) {
-              <mat-optgroup
-                [label]="item.familia"
-                style="font-weight: bold"
-              >
+              <mat-optgroup [label]="item.familia" style="font-weight: bold">
                 @for (sf of item.subFamilias; track $index) {
                   <mat-option [value]="sf.idSubFamilia">
                     {{ sf.subFamilia }}
@@ -102,9 +90,7 @@
       </div>
     </div>
 
-    <div
-      class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-2 row-cols-1"
-    >
+    <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Artículo</mat-label>
@@ -172,9 +158,7 @@
         </div>
       }
     </div>
-    <div
-      class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-2 row-cols-1"
-    >
+    <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-2 row-cols-1">
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Tipo Iva</mat-label>
@@ -192,8 +176,18 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="getReport('pdf')" />
-      <app-theme-button variant="success" icon="download" text="Excel" (handleClick)="getReport('excel')" />
+      <app-theme-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="getReport('pdf')"
+      />
+      <app-theme-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="getReport('excel')"
+      />
     </div>
   </div>
 </app-mat-dynamic-card>

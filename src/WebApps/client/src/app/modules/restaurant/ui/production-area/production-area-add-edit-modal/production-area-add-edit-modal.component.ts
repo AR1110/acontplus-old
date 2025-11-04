@@ -46,7 +46,7 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
   #tS = inject(ToastrNotificationService);
 
   getEstabAsign() {
-    this.#sharedService.getEstabAsign().subscribe(response => {
+    this.#sharedService.getEstabAsign().subscribe((response) => {
       if (response) {
         this.establecimientos = response;
       }
@@ -78,11 +78,11 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this.#productionAreaService.put(this.data.id, dataToSave).subscribe(response => {
+      this.#productionAreaService.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this.#productionAreaService.post(dataToSave).subscribe(response => {
+      this.#productionAreaService.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }

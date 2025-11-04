@@ -6,9 +6,8 @@
 
 <ng-template #body>
   <!-- Información del encabezado -->
-  <mat-card class="header-card header-split " appearance="outlined">
+  <mat-card class="header-card header-split" appearance="outlined">
     <mat-card-content class="header-content flex flex-wrap justify-between items-start gap-4">
-
       <!-- Columna Origen -->
       <div class="header-column">
         <h6 class="fw-semibold mb-2 text-primary">Origen</h6>
@@ -31,21 +30,18 @@
 
       <!-- Columna Extra -->
       <div class="header-column text-end ml-4">
-        <div><span class="label">Fecha Emisión:</span> {{ header.issueDate | date:'yyyy-MM-dd HH:mm' }}</div>
+        <div>
+          <span class="label">Fecha Emisión:</span>
+          {{ header.issueDate | date: 'yyyy-MM-dd HH:mm' }}
+        </div>
         <div><span class="label">Observación:</span> {{ header.observation || '—' }}</div>
-        <div class="fw-bold total mt-1"><span class="label">Total:</span> {{ header.total | number:'1.2-2' }}</div>
+        <div class="fw-bold total mt-1">
+          <span class="label">Total:</span> {{ header.total | number: '1.2-2' }}
+        </div>
       </div>
-
     </mat-card-content>
   </mat-card>
 
-
-
   <!-- Tabla de detalles -->
-  <app-data-grid
-    [data]="list()"
-    [columns]="columns"
-    [showPaginator]="false"
-  ></app-data-grid>
+  <app-data-grid [data]="list()" [columns]="columns" [showPaginator]="false" />
 </ng-template>
-

@@ -21,13 +21,13 @@ export class AnticipoWebRepository implements AnticipoRepository {
       .get<ApiResponse>(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => ListAnticipoMapper.fromJson(response)));
+      .pipe(map((response) => ListAnticipoMapper.fromJson(response)));
   }
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 3 });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code === '1') {
           const mainData = JSON.parse(response.payload as string);
           const { establecimiento } = mainData;
@@ -45,7 +45,7 @@ export class AnticipoWebRepository implements AnticipoRepository {
   getDataForm() {
     const json = JSON.stringify({ tipo: 2 });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let entidadesFinanciera = [],
           establecimientos = [],
           subEntidadesFinanciera = [];

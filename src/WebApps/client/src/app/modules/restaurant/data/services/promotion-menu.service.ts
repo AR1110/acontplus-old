@@ -20,7 +20,7 @@ export class PromotionMenuService {
     });
 
     return this.http.get<ApiResponse>(`${this.url}GetById/${id}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           promotionMenus: [],
         };

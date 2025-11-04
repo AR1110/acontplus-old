@@ -100,7 +100,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
 
     this.initLoad()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(result => {
+      .subscribe((result) => {
         console.log(result);
         const { responseCuotaData$, responseCuotaConfig$ } = result;
         this.tiemposCredito.set(responseCuotaData$.tiemposCredito);
@@ -112,7 +112,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
     key: K,
     value: ReturnType<typeof this.dataForm>[K],
   ) {
-    this.dataForm.update(ds => {
+    this.dataForm.update((ds) => {
       return {
         ...ds,
         [key]: value,
@@ -122,7 +122,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
 
   async onChangeTiempoCredito() {
     const dataTiempoCredito = this.tiemposCredito().find(
-      item => item.idTiempoCredito === this.dataForm().tiempoCreditoId,
+      (item) => item.idTiempoCredito === this.dataForm().tiempoCreditoId,
     );
     if (!dataTiempoCredito) return;
     const { numeroCuota } = dataTiempoCredito;
@@ -150,7 +150,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
         codigoEstado: this.data.codigoEstado,
       })
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         if (response.code === '0') {
           this.tS.show({
             type: 'warning',
@@ -172,7 +172,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
     this.useCase
       .getCuotasConfigByIdCuentaPorPagar(this.data.idCuentaPorPagar)
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.set(response.data);
       });
   }
@@ -210,7 +210,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
 
     if (!configDate) return;
 
-    const resultCuotas = this.dataSource().map(item => {
+    const resultCuotas = this.dataSource().map((item) => {
       // Obtener el último día del mes actual
       const lastDayOfMonth = new Date(
         configDate.getFullYear(),
@@ -264,7 +264,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
     console.log(cuotasIndexMayor);
 
     let totalCuotaIndexMenor = cuotasIndexMenor
-      .map(val => Number(val.cuota))
+      .map((val) => Number(val.cuota))
       .reduce((prev, curr) => prev + curr, 0);
 
     totalCuotaIndexMenor = roundNumber(totalCuotaIndexMenor, DECIMALS.CINCO);
@@ -311,8 +311,9 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
 
       // Calcular el total y la cuota
       const numeroCuota =
-        this.tiemposCredito().find(item => item.idTiempoCredito === this.dataForm().tiempoCreditoId)
-          ?.numeroCuota || 0;
+        this.tiemposCredito().find(
+          (item) => item.idTiempoCredito === this.dataForm().tiempoCreditoId,
+        )?.numeroCuota || 0;
       let total = this.data.total - parseFloat(valorEntrada);
       total = roundNumber(total, DECIMALS.DOS);
 
@@ -320,7 +321,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
       valorCuota = roundNumber(valorCuota, DECIMALS.CINCO);
 
       // Actualizar cuotas de forma más eficiente con map
-      const cuotasAfectadas = this.dataSource().map(item => {
+      const cuotasAfectadas = this.dataSource().map((item) => {
         if (item.nroCuota === 0) {
           item.cuota = valorCuota === 0 ? this.data.total : valorEntrada;
         } else {
@@ -356,7 +357,7 @@ export class CuentaPorPagarCuotaModalComponent implements OnInit {
       showCancelButton: true,
       cancelButtonText: 'No ',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.loading.set(false);
         // this.cuentaPorPagarSvc.actualizarCuotas(this.infrastructure.idCuentaPorPagar, this.dataSource())

@@ -83,7 +83,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
     { key: 'stock', label: 'Estado', type: 'string' },
     { key: 'precioCosto', label: 'Precio Costo', type: 'number' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   optionChange() {
     this.searchAdvancedForm.rucProveedor = null;
@@ -124,7 +124,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
       nroDocumento: isValidField(this.searchAdvancedForm.nroDocumento),
       idBodega: this.searchAdvancedForm.opcion === 6 ? this.params.warehouseId : null,
     };
-    this.inventoryAdjustmentSvc.getProductListImported(dataSearch).subscribe(res => {
+    this.inventoryAdjustmentSvc.getProductListImported(dataSearch).subscribe((res) => {
       console.log(res);
       this.dataSource.set(res.data);
     });
@@ -133,9 +133,9 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
   rowSelected(row: any) {
     console.log(row);
     const current = this.selectedRows();
-    const exists = current.some(r => r.idArticulo === row.idArticulo);
+    const exists = current.some((r) => r.idArticulo === row.idArticulo);
     if (exists) {
-      this.selectedRows.set([...current.filter(r => r.idArticulo !== row.idArticulo)]);
+      this.selectedRows.set([...current.filter((r) => r.idArticulo !== row.idArticulo)]);
     } else {
       this.selectedRows.set([...current, row]);
     }
@@ -151,7 +151,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
       const file = input.files[0];
 
       const rawData = await this._excelImportSvc.parseExcelFile(file);
-      const displayedColumns = Object.keys(rawData[0]).map(c => c.trim());
+      const displayedColumns = Object.keys(rawData[0]).map((c) => c.trim());
       if (!(displayedColumns.includes('codigo') && displayedColumns.includes('cantidad'))) {
         Swal.fire({
           icon: 'error',
@@ -166,7 +166,7 @@ export class InventoryAdjustmentSearchAdvancedComponent implements OnInit {
         },
       };
 
-      this.validateExcelUseCase.execute(params).subscribe(res => {
+      this.validateExcelUseCase.execute(params).subscribe((res) => {
         if (res.code === '0') return;
         const parseData = JSON.parse(res.payload as string)[0];
 

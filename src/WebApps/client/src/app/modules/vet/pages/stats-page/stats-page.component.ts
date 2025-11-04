@@ -30,7 +30,7 @@ export class StatsPageComponent implements OnInit {
       return groups;
     }, {});
     const labels = Object.keys(groupedPets);
-    const lengths = labels.map(key => groupedPets[key][0].total);
+    const lengths = labels.map((key) => groupedPets[key][0].total);
 
     this.chartPetType = new Chart('chartPetType', {
       type: 'bar',
@@ -80,7 +80,7 @@ export class StatsPageComponent implements OnInit {
       return groups;
     }, {});
     const labels = Object.keys(groupedPets);
-    const lengths = labels.map(key => groupedPets[key][0].total);
+    const lengths = labels.map((key) => groupedPets[key][0].total);
 
     this.chartPetBreed = new Chart('chartPetBreed', {
       type: 'line',
@@ -131,7 +131,7 @@ export class StatsPageComponent implements OnInit {
       return groups;
     }, {});
     const labels = Object.keys(groupedPets);
-    const lengths = labels.map(key => groupedPets[key][0].total);
+    const lengths = labels.map((key) => groupedPets[key][0].total);
 
     this.chartPetSex = new Chart('chartPetSex', {
       type: 'doughnut',
@@ -161,7 +161,7 @@ export class StatsPageComponent implements OnInit {
   };
 
   loadStats() {
-    this.statsService.get({ tipo: 1 }).subscribe(response => {
+    this.statsService.get({ tipo: 1 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { totalPetTypes, totalBreeds, totalGenders } = JSON.parse(response.payload as string);
         this.totalPetTypes.set(totalPetTypes);

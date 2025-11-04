@@ -1,34 +1,22 @@
 import { Route } from '@angular/router';
-
-import { CategoryPageComponent } from '@inventory/ui/category-page/category-page.component';
-import { LotPricePageComponent } from '@inventory/ui/lot-price-page/lot-price-page.component';
-import { MassiveTaxPageComponent } from '@inventory/ui/massive-tax-page/massive-tax-page.component';
-import { MeasurePageComponent } from '@inventory/ui/measure-page/measure-page.component';
-import { SubCategoryComponent } from '@inventory/ui/sub-category/sub-category.component';
-import { InventoryReportComponent } from '@inventory/ui/inventory-report/inventory-report.component';
-import { BrandPageComponent } from '@inventory/ui/brand-page/brand-page.component';
-import { InvModelPageComponent } from '@inventory/ui/inv-model-page/inv-model-page.component';
-import { TarifaPageComponent } from '@inventory/ui/tarifa-page/tarifa-page.component';
-import { TagsComponent } from '@inventory/ui/tags/tags.component';
-import { FraccProductPageComponent } from '@inventory/ui/fracc-product-page/fracc-product-page.component';
-import { Product } from '@inventory/product/presentation/product/product';
-import { InventoryAdjustmentComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component';
-import { InventoryHomeComponent } from './ui/inventory-home.component';
-import { WarehouseTransfer } from '@inventory/ui/warehouse-transfer/warehouse-transfer';
-import {permissionGuard} from "@core/guards/permission.guard";
-import {INVENTORY_MODULES_CODE, INVENTORY_ROUTES} from "@inventory/domain/enums/inventory.enum";
-import {ACTION_ALIASES} from "@core/constants/permission-actions";
+import { permissionGuard } from '@core/guards/permission.guard';
+import { INVENTORY_MODULES_CODE, INVENTORY_ROUTES } from '@inventory/domain/enums/inventory.enum';
+import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 export const routes: Route[] = [
   {
     path: '',
-    component: InventoryHomeComponent,
+    loadComponent: () =>
+      import('./ui/inventory-home.component').then((m) => m.InventoryHomeComponent),
     data: { breadcrumb: 'Inventario' },
   },
   {
     path: 'category',
     title: 'Categoria',
-    component: CategoryPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/category-page/category-page.component').then(
+        (m) => m.CategoryPageComponent,
+      ),
     data: {
       breadcrumb: 'Reporte Compras',
     },
@@ -36,7 +24,10 @@ export const routes: Route[] = [
   {
     path: 'subcategories',
     title: 'SubCategoria',
-    component: SubCategoryComponent,
+    loadComponent: () =>
+      import('@inventory/ui/sub-category/sub-category.component').then(
+        (m) => m.SubCategoryComponent,
+      ),
     data: {
       breadcrumb: 'Sub Categorias',
     },
@@ -45,18 +36,24 @@ export const routes: Route[] = [
   {
     path: INVENTORY_ROUTES.products,
     title: 'Productos',
-    component: Product,
+    loadComponent: () =>
+      import('@inventory/ui/fracc-product-page/fracc-product-page.component').then(
+        (m) => m.FraccProductPageComponent,
+      ),
     canActivate: [permissionGuard],
     data: {
       breadcrumb: 'Productos',
       context: INVENTORY_MODULES_CODE.PRODUCT,
-      requiredActions: [ACTION_ALIASES.READ]
+      requiredActions: [ACTION_ALIASES.READ],
     },
   },
   {
     path: 'fracc-product',
     title: 'Productos Fraccionados',
-    component: FraccProductPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/fracc-product-page/fracc-product-page.component').then(
+        (m) => m.FraccProductPageComponent,
+      ),
     data: {
       breadcrumb: 'Productos Fraccionados',
     },
@@ -64,7 +61,10 @@ export const routes: Route[] = [
   {
     path: 'massive-tax-page',
     title: 'Cambio Masivo de IVA',
-    component: MassiveTaxPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/massive-tax-page/massive-tax-page.component').then(
+        (m) => m.MassiveTaxPageComponent,
+      ),
     data: {
       breadcrumb: 'Cambio Masivo de IVA',
     },
@@ -72,7 +72,10 @@ export const routes: Route[] = [
   {
     path: 'lot-price-page',
     title: 'Precio por Lote',
-    component: LotPricePageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/lot-price-page/lot-price-page.component').then(
+        (m) => m.LotPricePageComponent,
+      ),
     data: {
       breadcrumb: 'Precio por Lote',
     },
@@ -81,7 +84,10 @@ export const routes: Route[] = [
   {
     path: 'measure',
     title: 'Medida',
-    component: MeasurePageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/measure-page/measure-page.component').then(
+        (m) => m.MeasurePageComponent,
+      ),
     data: {
       breadcrumb: 'Medida',
     },
@@ -89,7 +95,8 @@ export const routes: Route[] = [
   {
     path: 'brand',
     title: 'Marca',
-    component: BrandPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/brand-page/brand-page.component').then((m) => m.BrandPageComponent),
     data: {
       breadcrumb: 'Marca',
     },
@@ -97,7 +104,10 @@ export const routes: Route[] = [
   {
     path: 'model',
     title: 'Modelo',
-    component: InvModelPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/inv-model-page/inv-model-page.component').then(
+        (m) => m.InvModelPageComponent,
+      ),
     data: {
       breadcrumb: 'Modelo',
     },
@@ -105,7 +115,8 @@ export const routes: Route[] = [
   {
     path: 'tarifa',
     title: 'Tarifa',
-    component: TarifaPageComponent,
+    loadComponent: () =>
+      import('@inventory/ui/tarifa-page/tarifa-page.component').then((m) => m.TarifaPageComponent),
     data: {
       breadcrumb: 'Tarifa',
     },
@@ -113,7 +124,7 @@ export const routes: Route[] = [
   {
     path: 'tags',
     title: 'Etiquetas',
-    component: TagsComponent,
+    loadComponent: () => import('@inventory/ui/tags/tags.component').then((m) => m.TagsComponent),
     data: {
       breadcrumb: 'Etiquetas',
     },
@@ -121,26 +132,35 @@ export const routes: Route[] = [
   {
     path: 'report',
     title: 'Reporte Inventario',
-    component: InventoryReportComponent,
+    loadComponent: () =>
+      import('@inventory/ui/inventory-report/inventory-report.component').then(
+        (m) => m.InventoryReportComponent,
+      ),
     data: {
       breadcrumb: 'Reporte Inventario',
     },
   },
   {
     path: 'inventory-adjustments',
-    component: InventoryAdjustmentComponent,
+    loadComponent: () =>
+      import(
+        '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component'
+      ).then((m) => m.InventoryAdjustmentComponent),
     data: {
       breadcrumb: 'Ajuste Inventario',
     },
   },
   {
     path: 'warehouse-transfer',
-    component: WarehouseTransfer,
+    loadComponent: () =>
+      import('@inventory/ui/warehouse-transfer/warehouse-transfer').then(
+        (m) => m.WarehouseTransfer,
+      ),
     canActivate: [permissionGuard],
     data: {
       breadcrumb: 'Transferencia de Mercaderia',
       context: INVENTORY_MODULES_CODE.WAREHOUSE_TRANSFER,
-      requiredActions: [ACTION_ALIASES.READ]
+      requiredActions: [ACTION_ALIASES.READ],
     },
   },
 ];

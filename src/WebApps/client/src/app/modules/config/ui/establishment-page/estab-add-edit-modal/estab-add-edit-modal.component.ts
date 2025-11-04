@@ -105,7 +105,7 @@ export class EstabAddEditModalComponent implements OnInit {
 
   ngOnInit() {
     try {
-      this.getOnLoadData().subscribe(response => {
+      this.getOnLoadData().subscribe((response) => {
         let mainDataForm = {} as any;
         let data = {} as any;
 
@@ -144,7 +144,7 @@ export class EstabAddEditModalComponent implements OnInit {
   }
 
   showInfoTipoContribuyente() {
-    const dataInfo = this.contribuyentes().find(item => item.codigo === this.data.contribuyente);
+    const dataInfo = this.contribuyentes().find((item) => item.codigo === this.data.contribuyente);
     if (!this.data.contribuyente || !dataInfo.contribuyenteRimpe) return;
 
     Swal.fire({
@@ -156,7 +156,7 @@ export class EstabAddEditModalComponent implements OnInit {
   showInfoActividadEconomica() {
     if (!this.data.actividad) return;
     const groupActEconomica = this.actividadesEconomica().find(
-      item => item.codigo === this.data.actividad,
+      (item) => item.codigo === this.data.actividad,
     ).grupo;
     Swal.fire({
       icon: 'info',
@@ -235,7 +235,7 @@ export class EstabAddEditModalComponent implements OnInit {
       }
 
       if (this.emails.length > 0) {
-        if (!this.emails().every(item => isValidEmail(item))) {
+        if (!this.emails().every((item) => isValidEmail(item))) {
           this.tS.show({
             type: 'warning',
             message: 'Verifique que los correos  esten ingresado correctamente',
@@ -261,7 +261,7 @@ export class EstabAddEditModalComponent implements OnInit {
       }
 
       this.data.contribuyenteRimpe = this.contribuyentes().find(
-        item => item.codigo === this.data.contribuyente,
+        (item) => item.codigo === this.data.contribuyente,
       ).contribuyenteRimpe;
 
       this.data.telefono =

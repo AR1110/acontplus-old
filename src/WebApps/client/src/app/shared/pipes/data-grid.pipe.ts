@@ -1,7 +1,11 @@
 import { KeyValueChangeRecord, Pipe, PipeTransform, inject } from '@angular/core';
 import { isObservable } from 'rxjs';
-import {DataGridColumn, DataGridColumnButton, DataGridRowClassFormatter} from "@shared/components/data-grid/types";
-import {DataGridUtils} from "@shared/utils/data-grid.util";
+import {
+  DataGridColumn,
+  DataGridColumnButton,
+  DataGridRowClassFormatter,
+} from '@shared/components/data-grid/types';
+import { DataGridUtils } from '@shared/utils/data-grid.util';
 
 @Pipe({ name: 'colClass' })
 export class DataGridColClassPipe implements PipeTransform {
@@ -9,7 +13,7 @@ export class DataGridColClassPipe implements PipeTransform {
     colDef: DataGridColumn,
     rowData?: Record<string, any>,
     rowChangeRecord?: KeyValueChangeRecord<string, any>,
-    currentValue?: any
+    currentValue?: any,
   ) {
     if (typeof colDef.class === 'string') {
       return colDef.class;
@@ -26,7 +30,7 @@ export class DataGridRowClassPipe implements PipeTransform {
     rowData: Record<string, any>,
     index: number | undefined,
     dataIndex: number,
-    rowClassFormatter?: DataGridRowClassFormatter
+    rowClassFormatter?: DataGridRowClassFormatter,
   ) {
     const rowIndex = index === undefined ? dataIndex : index;
     const classList: string[] = rowIndex % 2 === 1 ? ['mat-row-odd'] : [];
@@ -47,7 +51,7 @@ export class DataGridCellActionsPipe implements PipeTransform {
     btns?: DataGridColumnButton[] | ((rowData: any) => DataGridColumnButton[]),
     rowData?: Record<string, any>,
     rowChangeRecord?: KeyValueChangeRecord<string, any>,
-    currentValue?: any
+    currentValue?: any,
   ) {
     if (typeof btns === 'function') {
       return btns(rowData);
@@ -86,7 +90,7 @@ export class DataGridCellActionDisablePipe implements PipeTransform {
     btn: DataGridColumnButton,
     rowData: Record<string, any>,
     rowChangeRecord?: KeyValueChangeRecord<string, any>,
-    currentValue?: any
+    currentValue?: any,
   ) {
     if (typeof btn.disabled === 'boolean') {
       return btn.disabled;
@@ -108,7 +112,7 @@ export class DataGridCellSummaryPipe implements PipeTransform {
     } else if (typeof colDef.summary === 'function') {
       return (colDef.summary as (data: any[], colDef?: DataGridColumn) => any)(
         this.utils.getColData(data, colDef),
-        colDef
+        colDef,
       );
     }
   }

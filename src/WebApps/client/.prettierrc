@@ -10,6 +10,10 @@
   "printWidth": 100,
   "bracketSameLine": false,
   "htmlWhitespaceSensitivity": "css",
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": true,
+  "proseWrap": "preserve",
+  "embeddedLanguageFormatting": "auto",
   "overrides": [
     {
       "files": "*.html",

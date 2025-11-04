@@ -17,7 +17,7 @@ import {
 } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { DatePipe } from '@angular/common';
+
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -29,7 +29,6 @@ import { DialogService } from '@core/services/dialog.service';
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
   imports: [
-    DatePipe,
     MatTableModule,
     MatIconModule,
     MatCard,
@@ -137,23 +136,25 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
       if (selectedDocumentos !== null && Array.isArray(selectedDocumentos)) {
         idCliente = selectedDocumentos[0].idCliente;
       }
-      this._cuentaPorCobrarUseCase.getDataForm(idCuentaPorCobrar, idCliente).subscribe(response => {
-        this.dataFormaCobro = response;
+      this._cuentaPorCobrarUseCase
+        .getDataForm(idCuentaPorCobrar, idCliente)
+        .subscribe((response) => {
+          this.dataFormaCobro = response;
 
-        if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
-          this.tipoDocumentos = structuredClone(selectedDocumentos);
-          this.selectedDocumentos = selectedDocumentos;
+          if (selectedDocumentos && Array.isArray(selectedDocumentos)) {
+            this.tipoDocumentos = structuredClone(selectedDocumentos);
+            this.selectedDocumentos = selectedDocumentos;
 
-          const dataSelectedDoc = selectedDocumentos[0];
-          this.comprobante = {
-            idCliente: dataSelectedDoc.idCliente,
-            razonSocialComprador: dataSelectedDoc.razonSocialComprador,
-            codEstab: dataSelectedDoc.codEstab,
-            identificacionComprador: dataSelectedDoc.identificacionComprador,
-          };
-        }
-        this.getTotalesCuota();
-      });
+            const dataSelectedDoc = selectedDocumentos[0];
+            this.comprobante = {
+              idCliente: dataSelectedDoc.idCliente,
+              razonSocialComprador: dataSelectedDoc.razonSocialComprador,
+              codEstab: dataSelectedDoc.codEstab,
+              identificacionComprador: dataSelectedDoc.identificacionComprador,
+            };
+          }
+          this.getTotalesCuota();
+        });
     } catch (error) {
       console.log(error);
     }
@@ -199,7 +200,7 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
           const resultPaymentDetails = comprobanteIngresoUtil.paymentDetails;
 
           const payingAmount = resultPaymentDetails
-            .filter(item => item.secuencial === sequential)
+            .filter((item) => item.secuencial === sequential)
             .reduce((prev, curr) => prev + curr.abono, 0);
 
           ((dataPaymentTypeForm.abonoCuota = roundNumber(payingAmount, 2)),
@@ -244,7 +245,7 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
 
   showCobroDetalle(data: any) {
     const tempDetails = this.paymentDetails.filter(
-      item =>
+      (item) =>
         item.idCuotaPorCobrar === data.idCuotaPorCobrar &&
         item.idCuentaPorCobrar === data.idCuentaPorCobrar,
     );
@@ -252,7 +253,9 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
 
     for (const pd of tempDetails) {
       if (pd.abono > 0) {
-        const datoCobro = this.multiplesPaymentType.find(item => item.secuencial === pd.secuencial);
+        const datoCobro = this.multiplesPaymentType.find(
+          (item) => item.secuencial === pd.secuencial,
+        );
         infoCobrosDetalle.push({
           ...pd,
           subEntidadFinanciera: datoCobro?.paymentSubTypeName,
@@ -332,17 +335,17 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si, eliminar',
         cancelButtonText: 'No, cancelar',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           let paymentDetails: PaymentDetail[] = [];
           let historialCuentas: PaymentHistory[] = [];
 
           const tempMultiplesPaymentType = this.multiplesPaymentType.filter(
-            mp => mp.secuencial !== secuencial,
+            (mp) => mp.secuencial !== secuencial,
           );
 
           //Todas las cuotas en su estado original
-          let tempCuentasPorCobrar = this.selectedDocumentos.map(vc => ({
+          let tempCuentasPorCobrar = this.selectedDocumentos.map((vc) => ({
             ...vc,
             cuotas: structuredClone(vc.cuotasOriginal),
           }));
@@ -424,7 +427,7 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Si, guardar!',
         cancelButtonText: 'No, cancelar!',
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
           const comprobante = {
             idCliente: this.comprobante.idCliente,
@@ -435,7 +438,7 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
             nombreFiscal: this.comprobante.razonSocialComprador,
           };
 
-          const cobros = this.multiplesPaymentType.map(item => {
+          const cobros = this.multiplesPaymentType.map((item) => {
             const obj = {
               idSubEntidadFinanciera: item.idSubEntidadFinanciera,
               idEntidadFinanciera: item.idEntidadFinanciera,
@@ -457,13 +460,13 @@ export class ComprobanteIngresoLoteModalComponent implements OnInit {
           const data = {
             comprobante,
             cobros,
-            cobroDetalle: this.paymentDetails.filter(item => item.abono > 0),
+            cobroDetalle: this.paymentDetails.filter((item) => item.abono > 0),
             historialCobros: this.historialCuentas,
           };
 
           // let params = comprobanteIngresoAdapter.to(infrastructure);
 
-          this._comprobanteIngresoUseCase.create(data).subscribe(response => {
+          this._comprobanteIngresoUseCase.create(data).subscribe((response) => {
             if (response.code === '0') {
               this.tS.show({
                 type: 'warning',

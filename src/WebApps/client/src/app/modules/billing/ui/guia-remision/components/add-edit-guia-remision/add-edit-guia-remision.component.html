@@ -1,4 +1,9 @@
-<app-mat-custom-dialog (close)="close()" [title]="title" [containerTemplate]="body" [actionsTemplate]="footer" />
+<app-mat-custom-dialog
+  (close)="close()"
+  [title]="title"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+/>
 
 <ng-template #body>
   <form [formGroup]="dataForm" (ngSubmit)="onSubmit()">
@@ -244,8 +249,15 @@
         </div>
         @let destinatarioId = dataForm.get('destinatario.id')?.value || 0;
         @if (destinatarioId > 0) {
-          <div class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex justify-content-center align-items-center">
-            <app-theme-button [variant]="'info'" [icon]="'info'" [text]="'Documentos'" (handleClick)="openDocs()" />
+          <div
+            class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex justify-content-center align-items-center"
+          >
+            <app-theme-button
+              [variant]="'info'"
+              [icon]="'info'"
+              [text]="'Documentos'"
+              (handleClick)="openDocs()"
+            />
           </div>
         }
       </div>

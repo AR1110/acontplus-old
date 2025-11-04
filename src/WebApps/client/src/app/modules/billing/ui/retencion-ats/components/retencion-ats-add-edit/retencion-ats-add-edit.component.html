@@ -57,8 +57,8 @@
                 required
               />
               <mat-hint>DD/MM/YYYY</mat-hint>
-              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
+              <mat-datepicker-toggle matIconSuffix [for]="picker" />
+              <mat-datepicker #picker />
             </mat-form-field>
           </div>
         </div>
@@ -70,7 +70,7 @@
               (supplierSelected)="onSupplierSelected($event)"
               (clearSearch)="clearSupplierSearch()"
               [textSearch]="supplierSelected"
-            ></app-supplier-search>
+            />
           </div>
           <div class="col-xl-3 col-lg-3 col-md-4 col-sm-4 col-12">
             <mat-form-field class="w-100">
@@ -89,7 +89,10 @@
           <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
             <mat-form-field class="w-100">
               <mat-label>Tipo Identificación Sujeto Retenido:</mat-label>
-              <mat-select id="tipoIdentificacionSujetoRetenido" formControlName="tipoIdentificacionSujetoRetenido">
+              <mat-select
+                id="tipoIdentificacionSujetoRetenido"
+                formControlName="tipoIdentificacionSujetoRetenido"
+              >
                 @for (item of tiposIdentificacion; track $index) {
                   <mat-option [value]="item.codigoSri">
                     {{ item.codigoSri }} -
@@ -135,7 +138,13 @@
           <div class="col-xl-3 col-lg-3 col-md-2 col-sm-2 col-12">
             <mat-form-field class="w-100">
               <mat-label>Periodo Fiscal:</mat-label>
-              <input matInput type="text" id="periodoFiscal" formControlName="periodoFiscal" readonly />
+              <input
+                matInput
+                type="text"
+                id="periodoFiscal"
+                formControlName="periodoFiscal"
+                readonly
+              />
             </mat-form-field>
           </div>
         </div>
@@ -159,7 +168,7 @@
               text="Buscar Documentos"
               title="Click para buscar los documentos a retener"
               (handleClick)="searchDocs()"
-            ></app-theme-button>
+            />
           </mat-card-actions>
         </mat-card-footer>
       }
@@ -198,7 +207,7 @@
           text="Añadir Información Adicional"
           icon="add"
           (handleClick)="addInfoAdicional()"
-        ></app-theme-button>
+        />
       </div>
     </div>
     <div class="row mb-3">
@@ -208,7 +217,7 @@
             [indexInfoAdicional]="$index"
             [infoAdicionalGroup]="ia"
             [infoAdicionalArray]="infoAdicionalArray"
-          ></app-retencion-ats-info-adicional-add-edit>
+          />
         }
       </div>
     </div>
@@ -221,6 +230,6 @@
       type="submit"
       form="retencionAtsForm"
       [disabled]="retencionAtsForm.invalid"
-    ></app-theme-button>
+    />
   </ng-template>
 </form>

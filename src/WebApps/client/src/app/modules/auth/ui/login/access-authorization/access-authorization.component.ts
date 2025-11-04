@@ -70,7 +70,7 @@ export class AccessAuthorizationComponent {
       code: Number(code),
     };
 
-    this.authUseCase.authenticate(dataSend).subscribe(response => {
+    this.authUseCase.authenticate(dataSend).subscribe((response) => {
       if (response.code === '0') {
         this.tS.warning({
           message: response.message,

@@ -1,23 +1,23 @@
-import {ProformaInvoiceListResult} from "@sale/domain/models/proforma-invoice";
-import {ApiResponse} from "@core/models/api-response";
+import { ProformaInvoiceListResult } from '@sale/domain/models/proforma-invoice';
+import { ApiResponse } from '@core/models/api-response';
 
 export class ProformaInvoiceListMapper {
-  static toJson(obj:any){
+  static toJson(obj: any) {
     return JSON.stringify({
       tipo: 1,
-      ...obj
-    })
+      ...obj,
+    });
   }
 
-  static fromJson(response:ApiResponse){
+  static fromJson(response: ApiResponse) {
     const result = new ProformaInvoiceListResult();
-    if(response.code !== '1') return result;
+    if (response.code !== '1') return result;
 
-    const {proformaInvoices} = JSON.parse(response.payload as string);
+    const { proformaInvoices } = JSON.parse(response.payload as string);
 
-    result.data = proformaInvoices.map((item:any, index:number) => {
+    result.data = proformaInvoices.map((item: any, index: number) => {
       return {
-        index: index+1,
+        index: index + 1,
         id: item.idProforma,
         issuedDate: item.fechaEmision,
         customerName: item.nombreFiscal,
@@ -40,9 +40,9 @@ export class ProformaInvoiceListMapper {
         // "telefono": "063700260",
         // "totalRecords": 25,
         // "totalDocument": 15739.62
-      }
-    })
-    result.totalRecords = proformaInvoices.length>0? proformaInvoices[0].totalRecords : 0;
+      };
+    });
+    result.totalRecords = proformaInvoices.length > 0 ? proformaInvoices[0].totalRecords : 0;
 
     return result;
   }

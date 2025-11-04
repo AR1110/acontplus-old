@@ -19,7 +19,7 @@ export class WarehouseRepositoryImpl implements WarehouseRepository {
     });
     return this._http
       .get<ApiResponse>(`${this._url}?json=${json}`)
-      .pipe(map(response => ListWarehouseMapper.fromJson(response)));
+      .pipe(map((response) => ListWarehouseMapper.fromJson(response)));
   }
   create(data: WarehouseList) {
     return this._http.post<ApiResponse>(`${this._url}?json=${JSON.stringify(data)}`, { data });

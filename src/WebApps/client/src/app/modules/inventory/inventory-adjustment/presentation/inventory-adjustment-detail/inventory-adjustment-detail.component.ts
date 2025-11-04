@@ -29,7 +29,7 @@ export class InventoryAdjustmentDetailComponent implements OnInit {
   items = signal<any[]>([]);
 
   ngOnInit() {
-    this.inventoryAdjustmentSvc.viewDetail(this.params.id).subscribe(response => {
+    this.inventoryAdjustmentSvc.viewDetail(this.params.id).subscribe((response) => {
       console.log(response);
       this.header = response.header;
       this.items.set(response.items);

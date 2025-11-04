@@ -80,7 +80,7 @@ export class AnticipoComponent implements OnInit {
     { key: 'estadoDoc', label: 'Estado', type: 'string' },
     { key: 'nomUsuario', label: 'Usuario', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -101,9 +101,9 @@ export class AnticipoComponent implements OnInit {
     this._anticipoUseCase
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe(response => {
+      .subscribe((response) => {
         this.dataSource.set(response);
-        this.pagination.update(e => {
+        this.pagination.update((e) => {
           return {
             ...e,
             totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
@@ -113,10 +113,10 @@ export class AnticipoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._anticipoUseCase.getDataFilter().subscribe(response => {
+    this._anticipoUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos.set(response.establecimientos);
       if (this.establecimientos().length > 0) {
-        const dataEstab = this.establecimientos().find(item => item.predeterminado);
+        const dataEstab = this.establecimientos().find((item) => item.predeterminado);
 
         if (dataEstab) {
           this.dataSearch.codEstab = dataEstab.codEstab;
@@ -149,7 +149,7 @@ export class AnticipoComponent implements OnInit {
       size: 'lg',
       data: structuredClone(data) || {},
     });
-    modalRef.subscribe(result => {
+    modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getAnticipos();
       }
@@ -203,9 +203,9 @@ export class AnticipoComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (!result.isConfirmed) return;
-        this._anticipoUseCase.delete(data.idAnticipo).subscribe(response => {
+        this._anticipoUseCase.delete(data.idAnticipo).subscribe((response) => {
           if (response.code === '0') {
             this.tS.show({
               type: 'warning',
@@ -227,7 +227,7 @@ export class AnticipoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

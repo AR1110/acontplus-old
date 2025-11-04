@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SupportRepository } from '@mechanical/domain/repositories/support.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupportUseCase {
-  constructor(private repo: SupportRepository) {}
+  private repo = inject(SupportRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     return this.repo.getAll(obj);

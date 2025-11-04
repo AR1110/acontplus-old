@@ -45,11 +45,11 @@ export class ResumenContableComponent implements OnInit {
     idSubcategoria: 0,
   };
   getDataFilter() {
-    this._resumenContableCaseUse.getDataFilter().subscribe(response => {
+    this._resumenContableCaseUse.getDataFilter().subscribe((response) => {
       this.subcategories.set(response.subCategories);
       this.transactionTypes.set(response.transactionTypes);
       const dataTipoTransaccion = this.transactionTypes().find(
-        tt => tt.codigo === TIPO_TRANSACCION.V,
+        (tt) => tt.codigo === TIPO_TRANSACCION.V,
       );
       this.dataSearch.idTipoTransaccion = dataTipoTransaccion?.idTipoTransaccion ?? 0;
     });
@@ -61,7 +61,7 @@ export class ResumenContableComponent implements OnInit {
 
   public onChangeTypeTransaccion() {
     this.isPurchase = this.transactionTypes().some(
-      tt =>
+      (tt) =>
         tt.idTipoTransaccion === this.dataSearch.idTipoTransaccion &&
         tt.codigo === TIPO_TRANSACCION.C,
     );

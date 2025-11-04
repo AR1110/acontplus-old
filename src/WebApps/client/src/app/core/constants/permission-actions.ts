@@ -1,4 +1,3 @@
-
 export const PERMISSION_ACTIONS = {
   // Acciones principales (usando 'name' de la API)
   leer: 'leer',
@@ -22,10 +21,10 @@ export const PERMISSION_ACTIONS = {
   cerrarCaja: 'cerrarCaja',
   generarDocumento: 'generarDocumento',
   movimiento: 'movimiento',
-  anularComprobanteIngresoDoc: 'anularComprobanteIngresoDoc'
+  anularComprobanteIngresoDoc: 'anularComprobanteIngresoDoc',
 } as const;
 
-export type PermissionAction = typeof PERMISSION_ACTIONS[keyof typeof PERMISSION_ACTIONS];
+export type PermissionAction = (typeof PERMISSION_ACTIONS)[keyof typeof PERMISSION_ACTIONS];
 
 // Alias comunes para mejor legibilidad en el código
 export const ACTION_ALIASES = {
@@ -41,5 +40,5 @@ export const ACTION_ALIASES = {
   FINANCIAL_HISTORY: PERMISSION_ACTIONS.historialFinanciero,
   OPEN_CASHBOX: PERMISSION_ACTIONS.aperturarCaja,
   CLOSE_CASHBOX: PERMISSION_ACTIONS.cerrarCaja,
-  KARDEX: PERMISSION_ACTIONS.kardex
+  KARDEX: PERMISSION_ACTIONS.kardex,
 } as const;

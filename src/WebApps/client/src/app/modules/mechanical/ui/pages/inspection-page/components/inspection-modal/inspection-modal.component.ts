@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { VEHICLE_PART_TYPE_CODE } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
@@ -37,7 +36,6 @@ type VehiclePartTypeNode = VehiclePartType & {
 @Component({
   selector: 'app-inspection-modal',
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonToggleModule,
     MatChipsModule,
@@ -114,7 +112,7 @@ export class InspectionModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadInspectionData().catch(error =>
+    this.loadInspectionData().catch((error) =>
       console.error('Error al cargar datos de inspección:', error),
     );
   }
@@ -146,12 +144,12 @@ export class InspectionModalComponent implements OnInit {
   }
 
   private buildVehiclePartTypeNodes(vehicleParts: any[], checkStatus = false): any[] {
-    return this.vehiclePartTypes.map(item => {
+    return this.vehiclePartTypes.map((item) => {
       const nodes = vehicleParts.filter(
-        vp => vp.vehiclePartTypeId === item.id,
+        (vp) => vp.vehiclePartTypeId === item.id,
       ) as VehiclePartNode[];
 
-      const isCollapsed = checkStatus ? !nodes.some(n => [1, 2, 3].includes(n.status)) : true;
+      const isCollapsed = checkStatus ? !nodes.some((n) => [1, 2, 3].includes(n.status)) : true;
 
       return {
         ...item,
@@ -204,8 +202,8 @@ export class InspectionModalComponent implements OnInit {
       return;
     }
 
-    const isSelectedStatus = this.vehiclePartTypeNodes().some(vtn =>
-      vtn.nodes.some(n => n.status == 1 || n.status == 2 || n.status == 3),
+    const isSelectedStatus = this.vehiclePartTypeNodes().some((vtn) =>
+      vtn.nodes.some((n) => n.status == 1 || n.status == 2 || n.status == 3),
     );
     if (!isSelectedStatus) {
       this.tS.show({
@@ -233,42 +231,42 @@ export class InspectionModalComponent implements OnInit {
 
       //motor
       const engine = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.MT)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.MT)
         ?.nodes.map(this.mapVehiclePart);
 
       //cabina
       const cabin = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.CB)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.CB)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Transmisión
       const transmission = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.ST)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.ST)
         ?.nodes.map(this.mapVehiclePart);
 
       // Rodamiento
       const bearing = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.RD)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.RD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Frenos
       const brake = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SF)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SF)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Dirección
       const steering = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SD)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SD)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de Suspensión
       const suspension = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SS)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SS)
         ?.nodes.map(this.mapVehiclePart);
 
       // Sistema de luces
       const lighting = this.vehiclePartTypeNodes()
-        .find(item => item.code === VEHICLE_PART_TYPE_CODE.SL)
+        .find((item) => item.code === VEHICLE_PART_TYPE_CODE.SL)
         ?.nodes.map(this.mapVehiclePart);
       const data = {
         engine: JSON.stringify(engine),

@@ -15,7 +15,7 @@ export class InventoryAdjustmentListProductsMapper {
         const { principal, fraccionado, ...restItem } = item;
         const medidas = mergeMeasureUtil(principal, fraccionado);
 
-        const dataMedida = medidas.find(m => m.idMedida === restItem.idMedida);
+        const dataMedida = medidas.find((m) => m.idMedida === restItem.idMedida);
 
         return {
           idArticulo: restItem.idArticulo,

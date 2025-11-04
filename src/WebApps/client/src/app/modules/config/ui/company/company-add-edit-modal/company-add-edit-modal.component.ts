@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+
 import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -18,7 +18,6 @@ import Swal from 'sweetalert2';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    ToUpperCaseDirective,
     ThemeButtonComponent,
     MatCustomDialogComponent,
     MatInputChipComponent,
@@ -76,7 +75,7 @@ export class CompanyAddEditModalComponent implements OnInit {
       return;
     }
 
-    if (this.emails().length > 0 && this.emails().some(c => !isValidEmail(c))) {
+    if (this.emails().length > 0 && this.emails().some((c) => !isValidEmail(c))) {
       this.showSwal('warning', 'Correo inválido!');
       return;
     }
@@ -94,7 +93,7 @@ export class CompanyAddEditModalComponent implements OnInit {
       //  idCiudad: 111
     } as any;
 
-    this.$updateUseCase.execute(params).subscribe(response => {
+    this.$updateUseCase.execute(params).subscribe((response) => {
       if (response.code === '0') {
         this.showSwal('warning', response.message);
       }

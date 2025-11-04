@@ -1,4 +1,3 @@
-
 export const enum INVENTORY_PATHS {
   PRODUCT_OLD = 'Articulo/',
   PRODUCT = 'Product/',
@@ -33,7 +32,7 @@ export const enum INVENTORY_CODE_REPORT {
   RCAA = 'RCAA', //REPORTE DE CADUCIDAD DE ARTICULOS
   RASR = 'RASR', //Reporte de Articulo Stock Valoración
   RCD = 'RCD', //Reporte Consolidacion Detalle
-  RTB='RTB' //Reporte Transferencia Bodega
+  RTB = 'RTB', //Reporte Transferencia Bodega
 }
 
 export enum InventoryDocumentType {
@@ -48,11 +47,10 @@ export enum InventoryTransactionType {
   ADJUSTMENT = 'A',
 }
 
-
 export const enum INVENTORY_ROUTES {
   products = 'products',
 }
 export const INVENTORY_MODULES_CODE = {
   PRODUCT: 'ART', //artpiculos
-  WAREHOUSE_TRANSFER: 'TI' //Transferencia de Bodega
-} as const
+  WAREHOUSE_TRANSFER: 'TI', //Transferencia de Bodega
+} as const;

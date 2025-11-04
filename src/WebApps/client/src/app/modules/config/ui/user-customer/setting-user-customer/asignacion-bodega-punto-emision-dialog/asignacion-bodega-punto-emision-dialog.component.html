@@ -13,8 +13,7 @@
         [columnDefinitions]="columnsDefsPuntoEmision"
         [visibleColumns]="columnsPuntoEmision"
         [templateOp]="templateOpPuntoEmision"
-      >
-      </app-mat-dynamic-table>
+      />
 
       <ng-template #templateOpPuntoEmision let-item="item">
         @if (item.idPtoEmi_Asig > 0) {
@@ -33,7 +32,7 @@
           <mat-slide-toggle
             [(ngModel)]="item.defaultPtoEmi"
             (change)="onChangePuntoEmisionDefault(item)"
-          ></mat-slide-toggle>
+          />
         }
       </ng-template>
     </app-mat-dynamic-card>
@@ -44,8 +43,7 @@
         [columnDefinitions]="columnsDefsBodega"
         [visibleColumns]="columnsBodega"
         [templateOp]="templateOpBodega"
-      >
-      </app-mat-dynamic-table>
+      />
 
       <ng-template #templateOpBodega let-item="item">
         @if (item.idBodeg_Asig > 0) {
@@ -60,13 +58,16 @@
       </ng-template>
       <ng-template #templateDefaultBodega let-item>
         @if (item.estado) {
-          <mat-slide-toggle [(ngModel)]="item.defaultBodga" (change)="onChangeBodegaDefault(item)"></mat-slide-toggle>
+          <mat-slide-toggle
+            [(ngModel)]="item.defaultBodga"
+            (change)="onChangeBodegaDefault(item)"
+          />
         }
       </ng-template>
     </app-mat-dynamic-card>
   </div>
 </ng-template>
-<ng-template #footer></ng-template>
+<ng-template #footer />
 
 <!--<div class="modal-header">-->
 <!--  <h4 class="modal-title" id="modal-basic-title">-->

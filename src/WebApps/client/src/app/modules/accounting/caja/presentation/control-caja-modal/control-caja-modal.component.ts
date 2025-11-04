@@ -113,7 +113,7 @@ export class ControlCajaModalComponent implements OnInit {
     { key: 'totalArqueo', label: 'Total', type: 'string' },
     { key: 'statusName', label: 'Estado', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new MatPagination());
 
@@ -129,9 +129,9 @@ export class ControlCajaModalComponent implements OnInit {
         ? null
         : this.dataSearch.statusMovement,
     };
-    this._controlCajaUseCase.getAll(dataSearch).subscribe(response => {
+    this._controlCajaUseCase.getAll(dataSearch).subscribe((response) => {
       this.movimientosCaja.set(response.data);
-      this.pagination.update(item => {
+      this.pagination.update((item) => {
         return {
           ...item,
           totalRecords: response.totalRecords,
@@ -144,11 +144,11 @@ export class ControlCajaModalComponent implements OnInit {
     try {
       this.getMovimientosCaja();
 
-      this.pS.select('permission').subscribe(response => {
+      this.pS.select('permission').subscribe((response) => {
         this.dataPermisosCaja = response.cashAccounting;
       });
 
-      this._controlCajaUseCase.getDataFilter().subscribe(response => {
+      this._controlCajaUseCase.getDataFilter().subscribe((response) => {
         const estados = response.estados;
         const dataEstado = estados.find((estado: any) => estado.codEstado === CODE_ESTADO.NCBR);
         if (dataEstado) {
@@ -218,7 +218,7 @@ export class ControlCajaModalComponent implements OnInit {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async clave => {
+          preConfirm: async (clave) => {
             try {
               const obj = {
                 typeCheck: 1,
@@ -255,7 +255,7 @@ export class ControlCajaModalComponent implements OnInit {
         const modalRef = this.dialogSvc.open(CierreCajaModalComponent, {
           data: params || {},
         });
-        modalRef.subscribe(result => {
+        modalRef.subscribe((result) => {
           if (result && typeof result === 'object') {
             this.isReloadCaja = true;
             this.getMovimientosCaja();
@@ -282,7 +282,7 @@ export class ControlCajaModalComponent implements OnInit {
           showLoaderOnConfirm: true,
           allowEscapeKey: false,
           backdrop: true,
-          preConfirm: async clave => {
+          preConfirm: async (clave) => {
             const obj = {
               typeCheck: 1,
               clave,
@@ -302,7 +302,7 @@ export class ControlCajaModalComponent implements OnInit {
             return true;
           },
           allowOutsideClick: () => Swal.isLoading(),
-        }).then(result => {
+        }).then((result) => {
           if (result.isConfirmed) {
             this.generateReport(idControlCaja, this.format);
           }
@@ -364,7 +364,7 @@ export class ControlCajaModalComponent implements OnInit {
       confirmButtonText: `Continuar&nbsp;<i class="fa fa-arrow-right"></i>`,
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
-      inputValidator: value => {
+      inputValidator: (value) => {
         if (!value) {
           return 'Seleccione el formato de reporte!';
         }
@@ -409,8 +409,8 @@ export class ControlCajaModalComponent implements OnInit {
       }
 
       const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
-      const dateParts: number[] = parts[0].split('/').map(part => parseInt(part, 10));
-      const timeParts: number[] = parts[1].split(':').map(part => parseInt(part, 10));
+      const dateParts: number[] = parts[0].split('/').map((part) => parseInt(part, 10));
+      const timeParts: number[] = parts[1].split(':').map((part) => parseInt(part, 10));
 
       const convertedFromDate: Date = new Date(
         dateParts[2],
@@ -474,7 +474,7 @@ export class ControlCajaModalComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

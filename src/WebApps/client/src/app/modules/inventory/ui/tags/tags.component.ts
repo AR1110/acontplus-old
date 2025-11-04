@@ -47,11 +47,11 @@ export class TagsComponent implements OnInit {
     };
     this.isLoadingResults = true;
     this._tagUseCase.getAll(params).subscribe({
-      next: response => {
+      next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tags);
         if (this.dataSource().length > 0) {
-          this.pagination.update(e => {
+          this.pagination.update((e) => {
             return {
               ...e,
               totalRecords: this.dataSource()[0].totalRecords,
@@ -73,7 +73,7 @@ export class TagsComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,
@@ -94,9 +94,9 @@ export class TagsComponent implements OnInit {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe(response => {
+          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { UserCustomerPermissionResponse } from '@modules/config/domain/models/user-customer/user-customer-permission.model';
 import { UserCustomerPermissionRepository } from '@modules/config/domain/repositories/user-customer-permission.repository';
@@ -9,7 +9,12 @@ import { UserCustomerPermissionRepository } from '@modules/config/domain/reposit
 export class ListUserCustomerPermissionUseCase
   implements BaseUseCase<UserCustomerPermissionResponse, any>
 {
-  constructor(private repo: UserCustomerPermissionRepository) {}
+  private repo = inject(UserCustomerPermissionRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: any) {
     return this.repo.list(params);

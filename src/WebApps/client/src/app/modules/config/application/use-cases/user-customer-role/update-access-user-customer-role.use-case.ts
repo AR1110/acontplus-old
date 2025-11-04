@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { UserCustomerRoleRepository } from '@modules/config/domain/repositories/user-customer-role.repository';
 
@@ -8,7 +8,12 @@ import { ApiResponse } from '@core/models/api-response';
   providedIn: 'root',
 })
 export class UpdateAccessUserCustomerRoleUseCase implements BaseUseCase<ApiResponse, any> {
-  constructor(private repo: UserCustomerRoleRepository) {}
+  private repo = inject(UserCustomerRoleRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   execute(params: any) {
     return this.repo.updateAccess(params);

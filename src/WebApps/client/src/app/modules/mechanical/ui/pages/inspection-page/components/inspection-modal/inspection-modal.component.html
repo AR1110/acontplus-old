@@ -1,8 +1,15 @@
-<app-mat-custom-dialog [containerTemplate]="body" [actionsTemplate]="footer" [title]="titleModal" (close)="close()" />
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="titleModal"
+  (close)="close()"
+/>
 
 <ng-template #body>
   <div class="d-grid gap-3 mb-3">
-    <div class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-3 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Serie Documento</mat-label>
@@ -35,7 +42,9 @@
       </div>
     </div>
 
-    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1"
+    >
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Motor</mat-label>
@@ -56,7 +65,7 @@
           <mat-datepicker-toggle matIconSuffix [for]="picker">
             <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
           </mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <mat-datepicker #picker />
         </mat-form-field>
       </div>
       <div class="col">

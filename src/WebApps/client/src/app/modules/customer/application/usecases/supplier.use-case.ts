@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SupplierRepository } from '@customer/domain/repositories/supplier.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupplierUseCase {
-  constructor(private repo: SupplierRepository) {}
+  private repo = inject(SupplierRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   search<T extends { textSearch: string }>(obj: T) {
     return this.repo.search(obj);

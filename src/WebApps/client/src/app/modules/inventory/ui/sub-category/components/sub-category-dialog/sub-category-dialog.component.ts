@@ -70,7 +70,7 @@ export class SubCategoryDialogComponent implements OnInit {
   }
 
   private getDataForm() {
-    this._productUseCase.getDataForm().subscribe(response => {
+    this._productUseCase.getDataForm().subscribe((response) => {
       this.categorias.set(response.categorias);
     });
   }
@@ -176,7 +176,7 @@ export class SubCategoryDialogComponent implements OnInit {
       };
       this.subCategoryPhotoSvc
         .put(obj, this.data.subcategoryPhotoId, this.selectedFile())
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',
@@ -195,7 +195,7 @@ export class SubCategoryDialogComponent implements OnInit {
     if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
       this.subCategoryPhotoSvc
         .post(this.params.idSubFamilia, this.selectedFile())
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',

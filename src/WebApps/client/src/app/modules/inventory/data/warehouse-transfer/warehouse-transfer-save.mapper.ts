@@ -1,35 +1,45 @@
-import {formatDateToString} from "@core/utils/date.util";
-import DecimalUtil from "@core/utils/decimal.util";
-import {InventoryTransactionType} from "@inventory/domain/enums/inventory.enum";
-import {DOC_TYPE} from "@core/constants/global.constants";
+import { formatDateToString } from '@core/utils/date.util';
+import DecimalUtil from '@core/utils/decimal.util';
+import { InventoryTransactionType } from '@inventory/domain/enums/inventory.enum';
+import { DOC_TYPE } from '@core/constants/global.constants';
 
 export class WarehouseTransferSaveMapper {
+  static toJson(obj: any) {
+    const { data, details, transactionTypes, documentTypes, detailsDeleted } = obj;
 
-  static toJson(obj:any) {
-    const {
-      data,
-      details,
+    const getIdByCode = (
+      arr: any,
+      code: InventoryTransactionType.INBOUND | InventoryTransactionType.OUTBOUND | DOC_TYPE.TB,
+    ) => arr.find((item: any) => item.code === code)?.['id'] ?? null;
+
+    console.log(transactionTypes);
+    const idTipoTransaccionOrigen = getIdByCode(
       transactionTypes,
-      documentTypes,
-      detailsDeleted ,
-    } = obj;
-
-
-    const getIdByCode = (arr:any, code: InventoryTransactionType.INBOUND | InventoryTransactionType.OUTBOUND | DOC_TYPE.TB) =>
-      arr.find((item:any) => item.code === code)?.["id"] ?? null;
-
-    console.log(transactionTypes)
-    const idTipoTransaccionOrigen = getIdByCode(transactionTypes, InventoryTransactionType.OUTBOUND);
-    console.log(idTipoTransaccionOrigen)
-    const idTipoTransaccionDestino = getIdByCode(transactionTypes, InventoryTransactionType.INBOUND);
+      InventoryTransactionType.OUTBOUND,
+    );
+    console.log(idTipoTransaccionOrigen);
+    const idTipoTransaccionDestino = getIdByCode(
+      transactionTypes,
+      InventoryTransactionType.INBOUND,
+    );
     const idTipoDocumento = getIdByCode(documentTypes, DOC_TYPE.TB);
 
     // --- Total general ---
     const comprobante = this.mapHeaderToDto({ ...data });
 
     // --- Detalles ---
-    const origen = this.mapDetailToDto(details, idTipoTransaccionOrigen, idTipoDocumento, data.sourceWarehouseId);
-    const destino = this.mapDetailToDto(details, idTipoTransaccionDestino, idTipoDocumento, data.destinationWarehouseId);
+    const origen = this.mapDetailToDto(
+      details,
+      idTipoTransaccionOrigen,
+      idTipoDocumento,
+      data.sourceWarehouseId,
+    );
+    const destino = this.mapDetailToDto(
+      details,
+      idTipoTransaccionDestino,
+      idTipoDocumento,
+      data.destinationWarehouseId,
+    );
 
     // Combinar detalles
     const transaccionDetalles = [...origen, ...destino].map((item, i) => ({
@@ -39,9 +49,9 @@ export class WarehouseTransferSaveMapper {
 
     const detallesCompletos = [
       ...origen,
-      ...detailsDeleted.map((item:any, i: number) => ({ ...item, orderIndex: i + 1 })),
+      ...detailsDeleted.map((item: any, i: number) => ({ ...item, orderIndex: i + 1 })),
     ];
-    console.log(comprobante)
+    console.log(comprobante);
 
     // --- Resultado final ---
     return {
@@ -72,7 +82,7 @@ export class WarehouseTransferSaveMapper {
       idPuntoEmision: header.puntoEmisionId,
       idBodegaOrigen: header.sourceWarehouseId,
       idBodegaDestino: header.destinationWarehouseId,
-      fechaEmision:  formatDateToString(header.issueDate),
+      fechaEmision: formatDateToString(header.issueDate),
       observacion: header.obs,
       total: header.total,
     };
@@ -84,8 +94,9 @@ export class WarehouseTransferSaveMapper {
   private static mapDetailToDto(
     detalles: any[],
     idTipoTransaccion: number,
-    idTipoDocumento:number,
-    idBodega:number) {
+    idTipoDocumento: number,
+    idBodega: number,
+  ) {
     return detalles.map((item, index) => ({
       orderIndex: index + 1,
       idTransferenciaBodegaDetalle: item.id,
@@ -106,8 +117,5 @@ export class WarehouseTransferSaveMapper {
     }));
   }
 
-  static fromJson(response: any) {
-
-  }
-
+  static fromJson(response: any) {}
 }

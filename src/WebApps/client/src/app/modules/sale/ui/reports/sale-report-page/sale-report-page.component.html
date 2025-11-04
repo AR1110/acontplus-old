@@ -11,8 +11,10 @@
         }
       </div>
 
-      <mat-divider></mat-divider>
-      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+      <mat-divider />
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Tipo Documento</mat-label>
@@ -28,7 +30,10 @@
         <div class="col">
           <mat-form-field class="w-100">
             <mat-label>Establecimiento: </mat-label>
-            <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.idEstablecimiento">
+            <mat-select
+              (selectionChange)="onChangeEstab()"
+              [(ngModel)]="dataSearch.idEstablecimiento"
+            >
               @for (item of establecimientos(); track $index) {
                 <mat-option [value]="item.idEstablecimiento">
                   {{ item.nombreComercial }}
@@ -66,16 +71,21 @@
         </div>
       </div>
 
-      <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2">
+      <div
+        class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+      >
         <div class="col">
-          <app-date-range-selection [showInputMaterial]="true" (onChangeDateRange)="onDateRangeSelection($event)" />
+          <app-date-range-selection
+            [showInputMaterial]="true"
+            (onChangeDateRange)="onDateRangeSelection($event)"
+          />
         </div>
         <div class="col">
           <app-company-customer-search
             [isSimpleMode]="true"
             (customerSelected)="onCustomerSelected($event)"
             (clearSearch)="clearSearchCustomer()"
-          ></app-company-customer-search>
+          />
         </div>
         <div class="col">
           <mat-form-field class="w-100">
@@ -92,7 +102,10 @@
         </div>
 
         <div class="col">
-          <app-user-search (selectedChange)="onUserSelected($event)" (clearSearch)="emptyInputUser()" />
+          <app-user-search
+            (selectedChange)="onUserSelected($event)"
+            (clearSearch)="emptyInputUser()"
+          />
         </div>
       </div>
     </div>

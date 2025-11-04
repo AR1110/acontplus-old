@@ -82,7 +82,7 @@ export class SupplierSearchComponent implements OnChanges {
       debounceTime(300),
       distinctUntilChanged(),
 
-      switchMap(term => {
+      switchMap((term) => {
         if (term && typeof term !== 'string') return of([]);
         // Return empty array for short search terms
         if (!term || term.length < 2) {
@@ -99,7 +99,7 @@ export class SupplierSearchComponent implements OnChanges {
             error: () => (this.searchFailed = true),
           }),
           finalize(() => (this.isLoading = false)),
-          catchError(error => {
+          catchError((error) => {
             console.error('Supplier search error:', error);
             return of([]);
           }),

@@ -1,8 +1,5 @@
 import { Observable } from 'rxjs';
-import {
-  DocElectListResult,
-  FilterData,
-} from '@billing/domain/models/documento-electronico.model';
+import { DocElectListResult, FilterData } from '@billing/domain/models/documento-electronico.model';
 import { ApiResponse } from '@core/models/api-response';
 
 export abstract class DocumentoElectronicoRepository {

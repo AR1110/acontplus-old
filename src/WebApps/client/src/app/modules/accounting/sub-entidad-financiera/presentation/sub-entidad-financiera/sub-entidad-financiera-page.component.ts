@@ -48,10 +48,10 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
     { key: 'codigo', label: 'Código', type: 'string' },
     { key: 'descripcion', label: 'Descripción', type: 'string' },
   ];
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   getData() {
-    this._sfUseCase.getAll().subscribe(data => {
+    this._sfUseCase.getAll().subscribe((data) => {
       this.entidadesFinanciera = structuredClone(data.entidadesFinancieras);
 
       this.cloneSubEntidadesFinanciera = structuredClone(data.subEntidadesFinancieras);
@@ -68,7 +68,7 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
     this.subEntidadesFinanciera.data = [];
 
     const subEntidadFiltered = this.cloneSubEntidadesFinanciera.filter(
-      e => e.idEntidadFinanciera === dataEntidadFinanciera.idEntidadFinanciera,
+      (e) => e.idEntidadFinanciera === dataEntidadFinanciera.idEntidadFinanciera,
     );
 
     this.subEntidadesFinanciera = new MatTableDataSource(structuredClone(subEntidadFiltered));
@@ -92,7 +92,7 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
       data: params,
     });
 
-    dialogRef.subscribe(result => {
+    dialogRef.subscribe((result) => {
       if (result !== null && typeof result === 'object') {
         this.getData();
       }
@@ -108,9 +108,9 @@ export class SubEntidadFinancieraPageComponent implements OnInit {
         confirmButtonText: `Si, eliminar`,
         denyButtonText: `No, cancelar`,
         allowOutsideClick: false,
-      }).then(result => {
+      }).then((result) => {
         if (result.isConfirmed) {
-          this._sfUseCase.delete(data.idSubEntidadFinanciera).subscribe(value => {
+          this._sfUseCase.delete(data.idSubEntidadFinanciera).subscribe((value) => {
             this._tS.show({
               type: value.code === '1' ? 'success' : 'warning',
               message: value.message,

@@ -45,6 +45,7 @@
           "builder": "@angular/build:application",
           "options": {
             "allowedCommonJsDependencies": ["sweetalert2", "file-saver", "quill-delta", "moment"],
+            "browser": "src/main.ts",
             "outputPath": {
               "base": "dist",
               "browser": ""
@@ -53,16 +54,10 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/ngx-extended-pdf-viewer/assets/",
+                "input": "public",
                 "output": "/assets/"
-              },
-              {
-                "glob": "**/*",
-                "input": "public"
               }
             ],
             "styles": [
@@ -72,16 +67,13 @@
               "node_modules/sweetalert2/src/sweetalert2.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
+              "public/lib/vanilla-daterange/vanilla-datetimerange-picker.css"
             ],
             "scripts": [
-              "src/assets/lib/vanilla-daterange/moment.min.js",
-              "src/assets/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
-              "src/assets/lib/luxon/luxon.js"
-            ],
-            "browser": "src/main.ts",
-            "ssr": false,
-            "prerender": false
+              "public/lib/vanilla-daterange/moment.min.js",
+              "public/lib/vanilla-daterange/vanilla-datetimerange-picker.js",
+              "public/lib/luxon/luxon.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -100,7 +92,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
+                  "with": "src/environments/environment.production.ts"
                 }
               ],
               "outputHashing": "all",
@@ -179,32 +171,6 @@
     "schematicCollections": ["angular-eslint"],
     "cache": {
       "enabled": true
-    }
-  },
-  "schematics": {
-    "@schematics/angular:component": {
-      "type": "component"
-    },
-    "@schematics/angular:directive": {
-      "type": "directive"
-    },
-    "@schematics/angular:service": {
-      "type": "service"
-    },
-    "@schematics/angular:guard": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:interceptor": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:module": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:pipe": {
-      "typeSeparator": "."
-    },
-    "@schematics/angular:resolver": {
-      "typeSeparator": "."
     }
   }
 }

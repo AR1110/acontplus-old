@@ -75,7 +75,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   private readonly tS = inject(ToastrNotificationService);
 
   addBehavior(behaviorId: number, behaviorStatusId: number) {
-    this.behaviorTests.update(r => [
+    this.behaviorTests.update((r) => [
       ...r,
       {
         id: 0,
@@ -87,7 +87,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   addBehaviorStatus(behaviorId: number, behaviorStatusId: number, dbUp: boolean) {
-    if (this.behaviorTests().some(test => test.behaviorId === behaviorId)) {
+    if (this.behaviorTests().some((test) => test.behaviorId === behaviorId)) {
       const behaviorTest = this.behaviorTests().find(
         (check: BehaviorTest) => check.behaviorId === behaviorId,
       );
@@ -105,7 +105,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   addDisease(diseaseId: number, diseaseStatusId: number) {
-    this.healthChecks.update(r => [
+    this.healthChecks.update((r) => [
       ...r,
       {
         id: 0,
@@ -135,7 +135,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   getById() {
-    this.medicalHistoryService.getById(this.data.id).subscribe(response => {
+    this.medicalHistoryService.getById(this.data.id).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { medicalHistory, healthChecks, behaviors } = JSON.parse(response.payload as string);
         const objData = medicalHistory[0];
@@ -185,7 +185,7 @@ export class MedicalHistoryModalComponent implements OnInit {
   }
 
   initialLoad() {
-    this.medicalHistoryService.get({ tipo: 2 }).subscribe(response => {
+    this.medicalHistoryService.get({ tipo: 2 }).subscribe((response) => {
       if (isApiResponse(response) && response.code == '1') {
         const { behaviors, behaviorsStatuses, diseases, diseasesStatuses, estabs } = JSON.parse(
           response.payload as string,
@@ -195,7 +195,7 @@ export class MedicalHistoryModalComponent implements OnInit {
         this.diseases.set(diseases);
         this.diseasesStatuses.set(diseasesStatuses);
         this.establecimientos.set(estabs);
-        const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+        const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
 
         if (dataEstab) {
           this.medicalHistoryForm.patchValue({
@@ -244,7 +244,7 @@ export class MedicalHistoryModalComponent implements OnInit {
       healthChecks: this.healthChecks(),
     };
     if (!(this.data.id > 0)) {
-      this.medicalHistoryService.post(dataToSave).subscribe(response => {
+      this.medicalHistoryService.post(dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -256,7 +256,7 @@ export class MedicalHistoryModalComponent implements OnInit {
         }
       });
     } else {
-      this.medicalHistoryService.put(this.data.id, dataToSave).subscribe(response => {
+      this.medicalHistoryService.put(this.data.id, dataToSave).subscribe((response) => {
         if (isApiResponse(response)) {
           this.tS.show({
             type: response.code == '1' ? 'success' : 'warning',
@@ -286,7 +286,7 @@ export class MedicalHistoryModalComponent implements OnInit {
       behaviorId,
       behaviorStatusId,
     };
-    this.behaviorTestService.put(behaviorTest.id, dataToSave).subscribe(response => {
+    this.behaviorTestService.put(behaviorTest.id, dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',
@@ -312,7 +312,7 @@ export class MedicalHistoryModalComponent implements OnInit {
       diseaseId,
       diseaseStatusId,
     };
-    this.healthCheckService.put(healthCheck.id, dataToSave).subscribe(response => {
+    this.healthCheckService.put(healthCheck.id, dataToSave).subscribe((response) => {
       if (isApiResponse(response)) {
         this.tS.show({
           type: response.code == '1' ? 'success' : 'warning',

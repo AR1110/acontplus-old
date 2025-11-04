@@ -7,7 +7,7 @@ import {
   Input,
   output,
   Output,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +19,7 @@ import { TranslateButton } from '../widgets/translate-button';
 import { GithubButton } from '../widgets/github-button';
 import { UserButton } from '../widgets/user-button';
 import { Branding } from '../widgets/branding';
-import {AdminLayoutService} from "@core/services/admin-layout.service";
+import { AdminLayoutService } from '@core/services/admin-layout.service';
 
 @Component({
   selector: 'app-header',
@@ -40,13 +40,12 @@ import {AdminLayoutService} from "@core/services/admin-layout.service";
   ],
 })
 export class Header {
-  adminLayoutSvc = inject(AdminLayoutService)
+  adminLayoutSvc = inject(AdminLayoutService);
   showToggle = input(false);
-   showBranding = input(false);
+  showBranding = input(false);
 
-   toggleSidenav = output<void>();
-    toggleSidenavNotice = output<void>();
-
+  toggleSidenav = output<void>();
+  toggleSidenavNotice = output<void>();
 
   toggleFullscreen() {
     if (screenfull.isEnabled) {

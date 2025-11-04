@@ -18,7 +18,7 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule } from '@angular/material/select';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+
 import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
@@ -36,7 +36,6 @@ import { MatInputModule } from '@angular/material/input';
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     MatSelectModule,
-    UserSearchComponent,
     MatTabsModule,
     ReportButtonsComponent,
     MatDynamicCardComponent,
@@ -86,7 +85,7 @@ export class CarteraClienteComponent implements OnInit {
   format: any;
 
   getDataFilter() {
-    this._cuentaPorCobrarUseCase.getDataFilter().subscribe(response => {
+    this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
       const { estabs, estadosDoc, tiposDoc, empresas, ciudades, users } = response;
 
       this.establecimientos.set(estabs);
@@ -109,9 +108,9 @@ export class CarteraClienteComponent implements OnInit {
       }, []);
       this.provinciasAgrupadas.set(provinciasAgrupadas);
 
-      const dataEstab = this.establecimientos().find(estab => estab.defaultEstab);
+      const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
-      const dataPuntoEmision = this.puntosEmision().find(ptoEmi => ptoEmi.defaultPtoEmi);
+      const dataPuntoEmision = this.puntosEmision().find((ptoEmi) => ptoEmi.defaultPtoEmi);
       this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
       this.dataSearch.idPuntoEmision = dataPuntoEmision?.idPuntoEmision ?? 0;
 
@@ -129,12 +128,12 @@ export class CarteraClienteComponent implements OnInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      estab => estab.codEstab === this.dataSearch.codEstab,
+      (estab) => estab.codEstab === this.dataSearch.codEstab,
     );
     this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
     if (this.puntosEmision().length > 0) {
       this.dataSearch.idPuntoEmision =
-        this.puntosEmision().find(pto => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
+        this.puntosEmision().find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
     } else {
       this.tS.show({
         type: 'warning',

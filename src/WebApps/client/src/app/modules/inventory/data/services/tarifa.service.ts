@@ -23,7 +23,7 @@ export class TarifaService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           const result = {
             tarifas: [] as any[],
           };

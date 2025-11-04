@@ -17,7 +17,7 @@ export class ActionComprobanteEgresoAnularDirective {
   cantDocs = input(0);
   handleResult = output();
 
-  @HostListener('click', ['$event']) async onClick() {
+  @HostListener('click') async onClick() {
     if (!getValidId(this.id())) {
       Swal.fire({
         icon: 'warning',
@@ -34,7 +34,7 @@ export class ActionComprobanteEgresoAnularDirective {
 
     if (!isContinue) return;
 
-    this.$getDataForDeletionUseCase.execute(this.id()).subscribe(async response => {
+    this.$getDataForDeletionUseCase.execute(this.id()).subscribe(async (response) => {
       const { cuentas, cuotas, estadosPago } = response;
       if (cuentas.length === 0 || cuotas.length === 0) {
         console.log('cuentasPorPagar', cuentas);
@@ -52,7 +52,7 @@ export class ActionComprobanteEgresoAnularDirective {
         showCancelButton: true,
         cancelButtonText: 'No, cancelar!',
         allowOutsideClick: false,
-        inputValidator: value => {
+        inputValidator: (value) => {
           if (!value) {
             return 'Ingrese la Observación!';
           }
@@ -76,7 +76,7 @@ export class ActionComprobanteEgresoAnularDirective {
           data,
           id: this.id(),
         })
-        .subscribe(response => {
+        .subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',
@@ -112,7 +112,7 @@ export class ActionComprobanteEgresoAnularDirective {
    * @returns
    */
   getDataIdEstadoPago(codigoEstadoPago: string, estadosPago: any[]) {
-    const dataEstadoPago = estadosPago.find(ep => ep.codigo === codigoEstadoPago);
+    const dataEstadoPago = estadosPago.find((ep) => ep.codigo === codigoEstadoPago);
     return dataEstadoPago ? dataEstadoPago.idEstadoPago : 0;
   }
 

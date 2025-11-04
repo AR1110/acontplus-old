@@ -2,7 +2,7 @@ export function stringToDate(_date: string, _format: string, _delimiter: string)
   const [dateValues, timeValues] = _date.split(' ');
 
   const [hours, minutes] = timeValues
-    ? timeValues.split(':').map(part => parseInt(part, 10))
+    ? timeValues.split(':').map((part) => parseInt(part, 10))
     : [0, 0];
 
   const normalizedDate = dateValues.replace(/[^a-zA-Z0-9]/g, _delimiter);

@@ -19,7 +19,7 @@ export class FloorWebService implements FloorRepository {
       .get<ApiResponse>(`${this.#url}GetByEstab/${establishmentId}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => GetFloorsByEstabIdMapper.fromJson(response)));
+      .pipe(map((response) => GetFloorsByEstabIdMapper.fromJson(response)));
   }
   deleteById(id: number): Observable<ApiResponse> {
     throw new Error('Method not implemented.');
@@ -38,7 +38,7 @@ export class FloorWebService implements FloorRepository {
       .get<ApiResponse>(`${this.#url}GetByEstab/${establecimientoId}`, {
         context: getNoLoader(),
       })
-      .pipe(map(response => FloorMapper.fromApiGetByEstab(response)));
+      .pipe(map((response) => FloorMapper.fromApiGetByEstab(response)));
   }
 
   post<T>(data: T) {

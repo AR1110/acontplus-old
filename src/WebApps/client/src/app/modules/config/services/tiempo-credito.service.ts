@@ -12,6 +12,6 @@ export class TiempoCreditoService {
   #url = `${PATHS_API.CONFIG}${CONFIG_PATHS.TIEMPO_CREDITO}`;
 
   get<T>(params: T) {
-    this.#http.get(`${this.#url}?json=${JSON.stringify(params)}`).pipe(map(response => response));
+    this.#http.get(`${this.#url}?json=${JSON.stringify(params)}`).pipe(map((response) => response));
   }
 }

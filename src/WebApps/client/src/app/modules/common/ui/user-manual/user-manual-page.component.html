@@ -1,6 +1,8 @@
 <app-breadcrumb />
 <app-mat-dynamic-card>
-  <div class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2">
+  <div
+    class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
+  >
     <div class="col">
       <mat-form-field class="w-100">
         <mat-select (selectionChange)="onMenuChange($event)" id="menuId">
@@ -30,14 +32,26 @@
       <mat-tree [dataSource]="manualTree()" [childrenAccessor]="childrenAccessor" class="tree-menu">
         <mat-tree-node *matTreeNodeDef="let node">
           <button mat-icon-button [style.visibility]="'hidden'"></button>
-          <button mat-button class="menu-item" [class.selected]="selectedNode === node" (click)="selectNode(node)">
+          <button
+            mat-button
+            class="menu-item"
+            [class.selected]="selectedNode === node"
+            (click)="selectNode(node)"
+          >
             <mat-icon>play_circle_outline</mat-icon>
-            <span style="font-size: 10px; width: fit-content; padding-left: 5px">{{ node.title }}</span>
+            <span style="font-size: 10px; width: fit-content; padding-left: 5px">{{
+              node.title
+            }}</span>
           </button>
         </mat-tree-node>
 
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.name" class="toggle-button">
+          <button
+            mat-icon-button
+            matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.name"
+            class="toggle-button"
+          >
             <mat-icon class="mat-icon-rtl-mirror">
               {{ isExpanded(node) ? 'expand_more' : 'chevron_right' }}
             </mat-icon>
@@ -58,7 +72,7 @@
             <mat-card-title>{{ selectedNode?.title }}</mat-card-title>
           </mat-card-header>
           <mat-card-content>
-            <quill-view [content]="selectedNode.safeEmbedCode" theme="snow" [sanitize]="true"></quill-view>
+            <quill-view [content]="selectedNode.safeEmbedCode" theme="snow" [sanitize]="true" />
           </mat-card-content>
         </mat-card>
       }

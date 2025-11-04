@@ -1,11 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CuentaPorPagarRepository } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CuentaPorPagarUseCase {
-  constructor(private repo: CuentaPorPagarRepository) {}
+  private repo = inject(CuentaPorPagarRepository);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   getDataFilter() {
     return this.repo.getDataFilter();

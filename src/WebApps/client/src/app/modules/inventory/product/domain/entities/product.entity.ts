@@ -117,7 +117,6 @@ export interface ValidateProductStockParams {
   idMedida: number;
 }
 
-
 export interface GetProductEstabStockResult {
   establishments: any[];
 }

@@ -25,7 +25,7 @@ export class SubCategoryWebRepository extends SubCategoryRepository {
     });
 
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         let data = [] as any[];
 
         if (response.code === '1') {
@@ -51,7 +51,7 @@ export class SubCategoryWebRepository extends SubCategoryRepository {
       tipo: 2,
     });
     return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
-      map(response => {
+      map((response) => {
         const result = {
           categories: [],
         };

@@ -12,7 +12,7 @@ export class ActionEnviarCorreoDirective implements OnInit {
   private pS = inject(UserRoleStateService);
   ngOnInit() {
     this.pS.select('accion').subscribe({
-      next: value => {
+      next: (value) => {
         if (value && value.enviarCorreo) return;
         this.renderer.removeChild(this.el.nativeElement.parentNode, this.el.nativeElement);
       },

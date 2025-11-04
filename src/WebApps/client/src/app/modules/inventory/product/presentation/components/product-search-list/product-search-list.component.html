@@ -1,17 +1,25 @@
 <ng-template #popContent>Hello, <b>Mundo</b>!</ng-template>
 <div class="acp-grid">
   <div class="acp-grid-layout">
-
     <div class="acp-grid-content">
-
       <div class="mat-table-container mat-table-with-data">
-        <table mat-table [dataSource]="dataSource()" tabindex="0" matSort (matSortChange)="sortData($event)">
+        <table
+          mat-table
+          [dataSource]="dataSource()"
+          tabindex="0"
+          matSort
+          (matSortChange)="sortData($event)"
+        >
           @for (column of columns; track $index) {
             <ng-container [matColumnDef]="column.columnDef">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>
                 {{ column.header }}
               </th>
-              <td mat-cell *matCellDef="let element; let i = index" [ngClass]="{ highlighted: highlightRowIndex === i }">
+              <td
+                mat-cell
+                *matCellDef="let element; let i = index"
+                [ngClass]="{ highlighted: highlightRowIndex === i }"
+              >
                 @if (column.columnDef === 'code') {
                   {{ element.code.length > 12 ? element.code.slice(0, 12) + '...' : element.code }}
                 } @else if (column.columnDef === 'imageUrl') {
@@ -68,8 +76,7 @@
           [showFirstLastButtons]="true"
           [pageIndex]="pagination.pageIndex"
           aria-label="Select page"
-        >
-        </mat-paginator>
+        />
       }
     </div>
   </div>

@@ -16,7 +16,7 @@ export class IngredientService {
 
   get<T>(params: T) {
     return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
-      map(response => {
+      map((response) => {
         if (response.code !== '1') {
           return { ingredients: [], extents: [] };
         }
@@ -32,7 +32,7 @@ export class IngredientService {
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map(response => response));
+    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map((response) => response));
   }
 
   search<T extends { textSearch: string }>(data: T): Observable<Ingredient[]> {
@@ -45,7 +45,7 @@ export class IngredientService {
         context: getNoLoader(),
       })
       .pipe(
-        map(response => {
+        map((response) => {
           if (response.code === '1') {
             const { ingredients } =
               (response.payload && JSON.parse(response.payload as string)) || [];

@@ -18,7 +18,9 @@
           [isGetId]="true"
         />
 
-        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Identificación:</mat-label>
@@ -43,7 +45,9 @@
 
     <app-mat-dynamic-card [showHeader]="true" [title]="'Vehículo'">
       <div class="d-grid gap-2">
-        <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+        <div
+          class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>
@@ -60,7 +64,11 @@
                 (input)="filterCountry()"
                 (focus)="filterCountry()"
               />
-              <mat-autocomplete requireSelection #auto="matAutocomplete" [displayWith]="getCountryTitle.bind(this)">
+              <mat-autocomplete
+                requireSelection
+                #auto="matAutocomplete"
+                [displayWith]="getCountryTitle.bind(this)"
+              >
                 @for (option of filteredCountryOptions(); track $index) {
                   <mat-option [value]="option.countryId">
                     {{ option.description }}
@@ -101,7 +109,12 @@
                 Placa
                 <span class="text-danger">*</span>
               </mat-label>
-              <input matInput placeholder="..." [(ngModel)]="dataForm.licensePlate" appToUpperCase />
+              <input
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.licensePlate"
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
 
@@ -116,7 +129,9 @@
           </div>
         </div>
 
-        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>Modelo</mat-label>
@@ -138,19 +153,33 @@
                 Color
                 <span class="text-danger">*</span>
               </mat-label>
-              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.color" appToUpperCase />
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.color"
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
         </div>
 
-        <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+        >
           <div class="col">
             <mat-form-field class="w-100">
               <mat-label>
                 Motor
                 <span class="text-danger">*</span>
               </mat-label>
-              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.engine" appToUpperCase />
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.engine"
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
 
@@ -160,7 +189,13 @@
                 Chasis
                 <span class="text-danger">*</span>
               </mat-label>
-              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.chassis" appToUpperCase />
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.chassis"
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
 
@@ -170,7 +205,13 @@
                 Cilindraje
                 <span class="text-danger">*</span>
               </mat-label>
-              <input type="text" matInput placeholder="..." [(ngModel)]="dataForm.cylindraje" appToUpperCase />
+              <input
+                type="text"
+                matInput
+                placeholder="..."
+                [(ngModel)]="dataForm.cylindraje"
+                appToUpperCase
+              />
             </mat-form-field>
           </div>
         </div>

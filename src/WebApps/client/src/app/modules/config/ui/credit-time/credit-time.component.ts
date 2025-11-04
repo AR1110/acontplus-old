@@ -7,7 +7,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
-import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component';
+
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatPagination } from '@shared/models/pagination.model';
@@ -25,7 +25,6 @@ import Swal from 'sweetalert2';
     MatIcon,
     MatIconButton,
     MatDynamicTableComponent,
-    SvgIconComponent,
     ThemeButtonComponent,
   ],
   templateUrl: './credit-time.component.html',
@@ -50,16 +49,16 @@ export class CreditTimeComponent implements OnInit {
     { key: 'nombreEstado', label: 'Estado', type: 'string' },
   ];
 
-  columns: string[] = this.columnsDefs.map(colDef => colDef.key);
+  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   pagination = signal(new MatPagination());
   private getList() {
     const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
     };
-    this.$listUseCase.execute(params).subscribe(response => {
+    this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update(p => ({
+      this.pagination.update((p) => ({
         ...p,
         totalRecords: response.totalRecords,
       }));
@@ -74,7 +73,7 @@ export class CreditTimeComponent implements OnInit {
     const ref = this._dialogSvc.open(AddEditCreditTimeComponent, {
       data: structuredClone(item) || {},
     });
-    ref.subscribe(result => {
+    ref.subscribe((result) => {
       if (result && typeof result === 'object') {
         this.refresh();
       }
@@ -93,11 +92,11 @@ export class CreditTimeComponent implements OnInit {
       showCancelButton: true,
       cancelButtonText: 'No, cancelar',
       allowOutsideClick: false,
-    }).then(result => {
+    }).then((result) => {
       if (result.isConfirmed) {
         this.$deleteUseCase
           .execute({ idTiempoCredito: item.idTiempoCredito })
-          .subscribe(response => {
+          .subscribe((response) => {
             if (response.code === '0') {
               Swal.fire({
                 icon: 'warning',
@@ -120,7 +119,7 @@ export class CreditTimeComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update(pag => {
+    this.pagination.update((pag) => {
       return {
         ...pag,
         totalRecords: e.length,

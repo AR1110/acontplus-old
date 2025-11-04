@@ -26,7 +26,7 @@ export const obtenerCuotasPorPagarEstadoUtil = function ({
 }: Props): CuotaPorPagarEstado[] {
   const cuotasPorPagarAgrupado = pagosDetalle.reduce((acc, curr) => {
     const existeDato = acc.find(
-      item =>
+      (item) =>
         item.idCuentaPorPagar === curr.idCuentaPorPagar &&
         item.idCuotaPorPagar === curr.idCuotaPorPagar,
     );
@@ -48,8 +48,8 @@ export const obtenerCuotasPorPagarEstadoUtil = function ({
 
   for (const item of cuotasPorPagarAgrupado) {
     const totalNoPosfechado = pagosDetalle
-      .filter(cd => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
-      .map(item => item.abono)
+      .filter((cd) => cd.idCuotaPorPagar === item.idCuotaPorPagar && !cd.esPosfechado)
+      .map((item) => item.abono)
       .reduce((acc, curr) => acc + curr, 0);
 
     const valorSaldoLectura = roundNumber(item.saldo, DECIMALS.DOS);
