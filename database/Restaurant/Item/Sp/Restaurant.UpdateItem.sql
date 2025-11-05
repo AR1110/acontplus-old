@@ -74,58 +74,58 @@ BEGIN
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
         --> DataJson
-        SELECT @Item            = itemJson
-              ,@ItemComposition = recipeJson
+        SELECT @Item            = item
+              ,@ItemComposition = itemComposition
         FROM OPENJSON(@json)  WITH
         (
-            itemJson         NVARCHAR(MAX) '$.item'             AS JSON 
-           ,item_composition NVARCHAR(MAX) '$.item_composition' AS JSON
+            item            NVARCHAR(MAX) AS JSON 
+           ,itemComposition NVARCHAR(MAX) AS JSON
         )
 
         INSERT INTO @tbItem
               ( id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title)
         SELECT @id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title
-        FROM OPENJSON(@itemJson) WITH
+        FROM OPENJSON(@Item) WITH
         (
-            [Summary]      VARCHAR(500) '$.summary'
-           ,[Cooking]      BIT          '$.cooking'
-           ,[Recipe]       VARCHAR(MAX) '$.recipe'
-           ,[Instructions] VARCHAR(MAX) '$.instructions'
-           ,[Content]      VARCHAR(500) '$.content'
-           ,[Unit]         INT          '$.unit'
-           ,[ForPromotion] BIT          '$.forPromotion'
-           ,[Quantity]     INT          '$.quantity'
-           ,[Title]        VARCHAR(500) '$.title'
+            summary      VARCHAR(500)
+           ,cooking      BIT
+           ,recipe       VARCHAR(MAX)
+           ,instructions VARCHAR(MAX)
+           ,content      VARCHAR(500)
+           ,unit         INT
+           ,forPromotion BIT
+           ,quantity     INT
+           ,title        VARCHAR(500)
         )
 
         INSERT INTO @TbItemComposition
               (Id,ItemId,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage, IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted)
         SELECT Id,ItemId,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage, IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted
-        FROM OPENJSON(@recipeJson) WITH
+        FROM OPENJSON(@ItemComposition) WITH
         (
-            [Id]                INT                '$.id'
-           ,[ItemId]            INT                '$.itemid'
-           ,[ChildItemId]       INT                '$.childitemid'
-           ,[ItemCompositionId] INT                '$.itemcompositionid'
-           ,[FeeId]             INT                '$.feeid'
-           ,[TaxId]             INT                '$.taxid'
-           ,[MeasureId]         INT                '$.measureid'
-           ,[ExtentId]          INT                '$.extentid'
-           ,[Quantity]          NUMERIC(18,5)      '$.quantity'
-           ,[Price]             NUMERIC(18,5)      '$.price'
-           ,[Instructions]      VARCHAR(MAX)       '$.instructions'
-           ,[Weight]            NUMERIC(18,5)      '$.weight'
-           ,[NetWeight]         NUMERIC(18,5)      '$.netweight'
-           ,[CostPrice]         NUMERIC(18,5)      '$.costprice'
-           ,[DiscountPercent]   NUMERIC(18,5)      '$.discountpercent'
-           ,[Discount]          NUMERIC(18,5)      '$.discount'
-           ,[Subtotal]          NUMERIC(18,5)      '$.subtotal'
-           ,[WastePercentage]   NUMERIC(18,5)      '$.wastepercentage'
-           ,[IsOptional]        BIT                '$.isoptional'
-           ,[ExtraCharge]       NUMERIC(18,5)      '$.extracharge'
-           ,[UniqueId]          VARCHAR(MAX)       '$.uniqueid'
-           ,[IsActive]          BIT                '$.isactive'
-           ,[IsDeleted]         BIT                '$.isdeleted'
+            [id]                INT
+           ,[itemid]            INT
+           ,[childitemid]       INT
+           ,[itemcompositionid] INT
+           ,[feeid]             INT
+           ,[taxid]             INT
+           ,[measureid]         INT
+           ,[extentid]          INT
+           ,[quantity]          NUMERIC(18,5)
+           ,[price]             NUMERIC(18,5)
+           ,[instructions]      VARCHAR(MAX)
+           ,[weight]            NUMERIC(18,5)
+           ,[netweight]         NUMERIC(18,5)
+           ,[costprice]         NUMERIC(18,5)
+           ,[discountpercent]   NUMERIC(18,5)
+           ,[discount]          NUMERIC(18,5)
+           ,[subtotal]          NUMERIC(18,5)
+           ,[wastepercentage]   NUMERIC(18,5)
+           ,[isoptional]        BIT
+           ,[extracharge]       NUMERIC(18,5)
+           ,[uniqueid]          VARCHAR(MAX)
+           ,[isactive]          BIT
+           ,[isdeleted]         BIT
         )
 
         --> Validation
@@ -199,8 +199,8 @@ BEGIN
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
         INSERT INTO ErroresSistema
-        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario)
-        VALUES(NEWID(), 'Item/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @UserId)
+        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario ,errorDetails)
+        VALUES(NEWID(), 'Item/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @UserId ,@Json)
 
         SELECT '0' code, 'Error al actualizar el ingrediente' as 'message'
      END CATCH

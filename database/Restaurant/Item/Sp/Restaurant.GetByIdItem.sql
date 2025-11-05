@@ -21,7 +21,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-    SET @TableNames = 'item,recipes'
+    SET @TableNames = 'item,ItemCompositions'
 
     SELECT it.Id
           ,it.Summary
@@ -31,7 +31,15 @@ BEGIN
     WHERE it.Id =  @id
 
     SELECT ic.Id
+          ,ic.FeeId
+          ,ic.TaxId
+          ,ic.MeasureId
           ,ic.Quantity
+          ,ic.Price
+          ,ic.CostPrice
+          ,ic.Discount
+          ,ic.DiscountPercent
+          ,ic.Subtotal
 	      ,ic.Instructions
 	      ,ic.[Weight]
 	      ,ic.[NetWeight]
@@ -64,7 +72,7 @@ BEGIN
 			WHERE af.idArticulo = ar.idArticulo 
             FOR JSON PATH
                 
-         ),'[]') as fraccionado
+         ),'[]') as fractional
 
         ,ISNULL
          ((
@@ -93,9 +101,18 @@ BEGIN
                 FOR JSON PATH
 
         ),'[]') as principal
+        ,ar.descripcion as [description]
+        ,ar.codigo      as code
+        ,ta.descripcion as fee
+        ,ti.descripcion as tax
+        ,ti.codigo      as codePercentaje
+        ,me.descripcion as measure
     FROM Restaurant.ItemComposition  ic WITH (NOLOCK)
-    INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id         = ic.ChildItemId
-    INNER JOIN dbo.Articulo          ar WITH (NOLOCK) ON ar.idArticulo = it.ProductId
+    INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id               = ic.ChildItemId
+     LEFT JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa         = ic.FeeId
+     LEFT JOIN Sri.TarifaImpuesto    ti WITH (NOLOCK) ON ti.idTarifaImpuesto = ic.TaxId
+     LEFT JOIN dbo.Medida            me WITH (NOLOCK) ON me.idMedida         = ic.MeasureId
+    INNER JOIN dbo.Articulo          ar WITH (NOLOCK) ON ar.idArticulo       = it.ProductId
     WHERE ic.IsActive = 1
       AND ic.ItemId = @id
 
