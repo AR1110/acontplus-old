@@ -8,9 +8,8 @@ describe('MealScheduleSettingDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MealScheduleSettingDialog]
-    })
-    .compileComponents();
+      imports: [MealScheduleSettingDialog],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MealScheduleSettingDialog);
     component = fixture.componentInstance;

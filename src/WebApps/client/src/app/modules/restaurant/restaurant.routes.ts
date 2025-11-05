@@ -45,13 +45,13 @@ export const routes: Route[] = [
   },
   {
     path: 'meal-schedule-setting',
-    title: 'Administrar Horarios de Comidas',
+    title: 'Configuración de Horarios TPV',
     loadComponent: () =>
       import(
         '@restaurant/ui/meal-schedule-setting/meal-schedule-setting-list/meal-schedule-setting-list'
       ).then((m) => m.MealScheduleSettingList),
     data: {
-      breadcrumb: 'Administrar Horarios de Comida',
+      breadcrumb: 'Configuración de Horarios TPV',
     },
   },
   {
