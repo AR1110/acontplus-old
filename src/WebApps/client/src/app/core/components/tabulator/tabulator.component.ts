@@ -1,7 +1,7 @@
 import {
   AfterViewInit,
-  Component,
-  EventEmitter,
+  Component, computed, effect,
+  EventEmitter, input,
   Input,
   OnChanges,
   OnDestroy,
@@ -21,16 +21,17 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
+export class TabulatorComponent implements   AfterViewInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @Input() tableData: any[] = [];
+  tableData = input<any[]>([])
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() columnNames: any[] = [];
   @Input() height: string | number | false | undefined = '311px';
   @Input() dataTree = false;
   @Input() dataTreeChildField = 'childRows';
   @Input() dataTreeStartExpanded = false;
-  @Input() options: Record<string, unknown> = {};
+  options = input<Record<string, unknown>>({});
   /**
    * theme: 'default' | 'semantic-ui' | 'bootstrap5' | ...
    * Controls which Tabulator CSS theme to use.
@@ -51,10 +52,15 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   constructor() {
     this.tabContainer = document.createElement('div');
+
+
   }
 
+
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes, 'changes');
     if (changes['tableData'] && !changes['tableData'].isFirstChange()) {
+      console.log(this.tableData(), 'isff');
       this.updateTableData();
     }
   }
@@ -119,11 +125,12 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
       // Append the tab container to the target element
       tableElement.appendChild(this.tabContainer);
+      console.log(this.options())
 
       this._refTabulator = new Tabulator(this.tabContainer, {
         renderVerticalBuffer: 300,
         columns: this.columnNames,
-        data: this.tableData,
+        data: this.tableData(),
         dataTree: this.dataTree,
         dataTreeChildField: this.dataTreeChildField,
         renderVertical: 'virtual',
@@ -135,7 +142,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
         autoResize: true,
         placeholder: 'Sin registro',
         selectableRows: true,
-        ...this.options,
+        ...this.options(),
       });
 
       this.registerEvents();
@@ -175,7 +182,7 @@ export class TabulatorComponent implements OnChanges, AfterViewInit, OnDestroy {
 
   private updateTableData(): void {
     if (this._refTabulator) {
-      this._refTabulator.replaceData(this.tableData);
+      this._refTabulator.replaceData(this.tableData());
     }
   }
 }
