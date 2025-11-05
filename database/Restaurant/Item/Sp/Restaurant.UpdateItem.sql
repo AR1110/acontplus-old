@@ -22,7 +22,7 @@ BEGIN
     DECLARE @UserId INT
 
     --> Data Json
-    DECLARE @ItemJson NVARCHAR(MAX) ,@RecipeJson NVARCHAR(MAX)
+    DECLARE @Item NVARCHAR(MAX) ,@ItemComposition NVARCHAR(MAX)
             
     --> Tablas temporales
     DECLARE @TbItem AS TABLE
@@ -74,12 +74,12 @@ BEGIN
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
         --> DataJson
-        SELECT @itemJson   = itemJson
-              ,@recipeJson = recipeJson
+        SELECT @Item            = itemJson
+              ,@ItemComposition = recipeJson
         FROM OPENJSON(@json)  WITH
         (
-            itemJson   NVARCHAR(MAX) '$.itemJson'   AS JSON 
-           ,recipeJson NVARCHAR(MAX) '$.recipeJson' AS JSON
+            itemJson         NVARCHAR(MAX) '$.item'             AS JSON 
+           ,item_composition NVARCHAR(MAX) '$.item_composition' AS JSON
         )
 
         INSERT INTO @tbItem
