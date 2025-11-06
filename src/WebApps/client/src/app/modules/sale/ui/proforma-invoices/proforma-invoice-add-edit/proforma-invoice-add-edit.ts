@@ -402,7 +402,7 @@ export class ProformaInvoiceAddEdit {
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
 
-    
+
 
   }
 
