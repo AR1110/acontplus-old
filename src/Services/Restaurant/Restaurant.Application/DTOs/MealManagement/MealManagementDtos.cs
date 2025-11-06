@@ -1,4 +1,4 @@
-namespace Restaurant.Application.DTOs.MealManagement;
+namespace Restaurant.Application.Dtos.MealManagement;
 
 // Employee Meal Plan DTOs
 public record CreateEmployeeMealPlanRequest(

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Restaurant.Application.DTOs;
+namespace Restaurant.Application.Dtos;
 
 public record CreateMenuDto
 {
@@ -27,7 +27,7 @@ public record CreateMenuDto
 
     public bool ForPromotion { get; init; }
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public string? S3ObjectUrl { get; init; }
 
@@ -59,7 +59,7 @@ public record UpdateMenuDto
 
     public bool ForPromotion { get; init; }
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public string? S3ObjectUrl { get; init; }
 

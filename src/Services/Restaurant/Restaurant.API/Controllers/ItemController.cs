@@ -1,19 +1,32 @@
+using Acontplus.Core.Enums;
+using Acontplus.Core.Extensions;
 using Microsoft.AspNetCore.Mvc;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Restaurant.API.Controllers;
 
 public class ItemController(IItemService itemService) : BaseApiController
 {
     [HttpGet]
-    public async Task<IActionResult> Get(string json)
+    public async Task<IActionResult> Get(PaginationQuery paginationQuery)
     {
-        var parameters = new Dictionary<string, object>
-        { 
-            { "UserRoleId", User.GetClaimValue<int>("userRoleId") }, 
-            { "Json", SqlStringParam.Sanitize(json) } 
+        var userRoleId = User.GetClaimValue<int>("userRoleId");
+
+        var pagination = new PaginationDto
+        {
+            PageIndex = paginationQuery.PageIndex,
+            PageSize = paginationQuery.PageSize,
+            SortBy = paginationQuery.SortBy,
+            SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc,
+            SearchTerm = paginationQuery.SearchTerm,
+            Filters = paginationQuery.Filters
         };
-        return Ok(await itemService.GetAsync(parameters));
+
+        if (userRoleId != 0)
+        {
+            pagination = pagination.WithFilter("userRoleId", userRoleId);
+        }
+
+        return Ok(await itemService.GetAsync(pagination));
     }
 
     [HttpGet("{id}")]

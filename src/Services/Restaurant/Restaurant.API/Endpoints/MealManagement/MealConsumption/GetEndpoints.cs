@@ -21,7 +21,7 @@ public static class GetEndpoints
                 SortDirection = paginationQuery.SortDirection ?? default,
                 Filters = paginationQuery.Filters
             };
-            return await mealConsumptionService.GetAsync(paginationDto).ToMinimalApiResultAsync();
+            return await mealConsumptionService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
         })
             .WithName("GetMealConsumptionById")
             .WithSummary("Get a meal consumption by ID")
