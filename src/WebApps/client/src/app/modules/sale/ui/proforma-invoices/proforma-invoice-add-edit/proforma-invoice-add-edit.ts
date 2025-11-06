@@ -21,6 +21,7 @@ import {TabulatorComponent} from "@core/components/tabulator/tabulator.component
 import {DataGrid} from "@shared/components/data-grid/data-grid";
 import {DataGridColumn} from "@shared/components/data-grid/types";
 import {TotalizadorUtil} from "@core/utils/totalizador.util";
+import {GetProductSaleUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-proforma-invoice-add-edit',
@@ -50,6 +51,9 @@ export class ProformaInvoiceAddEdit {
 
   //services
   private searchService = inject(SearchDialogService);
+
+  //use cases
+  private _productSaleUseCase = inject(GetProductSaleUseCase)
   dataForm = {
     issueDate: new Date(),
   }
@@ -398,6 +402,7 @@ export class ProformaInvoiceAddEdit {
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
 
+    
 
   }
 

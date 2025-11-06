@@ -355,7 +355,7 @@ export class ItemAddEdit implements OnInit {
   }
 
   onSelectItem(rowData:any){
-    this.itemGetByIdUseCase.execute(rowData.id).subscribe((response) => {
+    this.productGetIdUseCase.execute(rowData.productId).subscribe((response) => {
       console.log(response);
     })
     console.log(rowData);

@@ -47,6 +47,8 @@ export class ProductGetIdUseCase implements BaseUseCase<ProductGetIdResult, numb
   }
 }
 
+
+//para compras
 @Injectable({
   providedIn: 'root',
 })
@@ -57,6 +59,19 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
     return this.repo.getForPurchase(id);
   }
 }
+
+//para ventas
+@Injectable({
+  providedIn: 'root',
+})
+export class GetProductSaleUseCase implements BaseUseCase<GetProductPurchaseResult, number> {
+  private repo = inject(ProductRepository);
+
+  execute(id: number) {
+    return this.repo.getForSale(id);
+  }
+}
+
 
 //Validación Stock
 
