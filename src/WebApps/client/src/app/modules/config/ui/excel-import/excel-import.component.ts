@@ -19,7 +19,7 @@ import { SaveExcelImportUseCase } from '@modules/config/application/use-cases/ex
 import { NgClass } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 @Component({
   selector: 'app-excel-import',
   imports: [
@@ -35,7 +35,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     FormsModule,
     MatTableModule,
     NgClass,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './excel-import.component.html',
   styles: `

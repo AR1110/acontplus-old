@@ -4,13 +4,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Category } from '@technical-support/models/category';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CategoryUseCase } from '@accounting/category/application/category.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })

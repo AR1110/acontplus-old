@@ -10,7 +10,7 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
 import Swal from 'sweetalert2';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -19,7 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   imports: [
     ReactiveFormsModule,
     TabulatorComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './brand-modal.component.html',

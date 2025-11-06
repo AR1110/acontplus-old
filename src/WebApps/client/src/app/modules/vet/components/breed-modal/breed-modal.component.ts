@@ -6,13 +6,13 @@ import { BreedService } from '@modules/vet/services/breed.service';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-breed-modal',
-  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './breed-modal.component.html',
   styles: ``,
 })

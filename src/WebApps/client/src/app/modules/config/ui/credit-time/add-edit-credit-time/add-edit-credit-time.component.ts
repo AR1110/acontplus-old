@@ -10,7 +10,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
@@ -26,7 +26,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
     MatRadioModule,
     MatButtonToggleModule,
     MatSlideToggle,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './add-edit-credit-time.component.html',
   styles: ``,

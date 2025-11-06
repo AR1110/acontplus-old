@@ -13,7 +13,7 @@ import {
   MatExpansionPanelHeader,
   MatExpansionPanelTitle,
 } from '@angular/material/expansion';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { TipoComprobante } from '@sri/domain/models/tipo-comprobante';
 import { TipoPago } from '@sri/domain/models/tipo-pago';
@@ -59,7 +59,7 @@ import Swal from 'sweetalert2';
     MatExpansionPanelHeader,
     MatExpansionPanelTitle,
     ReactiveFormsModule,
-    ThemeButtonComponent,
+    Button,
     DocSustentoTaxComponent,
     DocSustentoRetencionComponent,
     MatFormField,

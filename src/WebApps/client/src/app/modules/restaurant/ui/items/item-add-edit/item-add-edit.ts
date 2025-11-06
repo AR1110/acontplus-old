@@ -6,7 +6,7 @@ import { Recipe } from '@restaurant/domain/models/recipe.model';
 
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
@@ -26,7 +26,7 @@ import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/pr
     ReactiveFormsModule,
     TabulatorComponent,
     IngredientSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,

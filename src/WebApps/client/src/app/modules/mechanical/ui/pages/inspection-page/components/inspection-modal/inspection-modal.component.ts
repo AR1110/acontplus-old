@@ -14,7 +14,7 @@ import {
 import { isValidField } from '@core/utils/utils';
 import { MatChipsModule } from '@angular/material/chips';
 import { InspectionUseCase } from '@mechanical/application/use-cases/inspection.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,7 +39,7 @@ type VehiclePartTypeNode = VehiclePartType & {
     FormsModule,
     MatButtonToggleModule,
     MatChipsModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatInputModule,

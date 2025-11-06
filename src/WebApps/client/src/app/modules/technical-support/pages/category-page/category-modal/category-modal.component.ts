@@ -5,13 +5,13 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { Category } from '@modules/technical-support/models/category';
 import { CategoryService } from '@modules/technical-support/services/category.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-category-modal',
-  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })

@@ -163,7 +163,7 @@
       @if (retencionAtsForm.get('identificacionSujetoRetenido')?.value) {
         <mat-card-footer>
           <mat-card-actions>
-            <app-theme-button
+            <acp-button
               icon="search"
               text="Buscar Documentos"
               title="Click para buscar los documentos a retener"
@@ -203,7 +203,7 @@
     </mat-accordion>
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button
+        <acp-button
           text="Añadir Información Adicional"
           icon="add"
           (handleClick)="addInfoAdicional()"
@@ -223,7 +223,7 @@
     </div>
   </ng-template>
   <ng-template #actionsTemplate>
-    <app-theme-button
+    <acp-button
       variant="success"
       icon="save"
       text="Guardar"

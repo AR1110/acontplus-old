@@ -19,7 +19,7 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { formatDateToString } from '@core/utils/date.util';
@@ -39,7 +39,7 @@ import { MatDivider } from '@angular/material/divider';
     ProductSearchComponent,
     UserSearchComponent,
     DateRangeSelectionComponent,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatCheckbox,
     MatDivider,

@@ -9,7 +9,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RoomService } from '@restaurant/data/services/room.service';
 import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +21,7 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule,
     TabulatorComponent,
     MatSlideToggle,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatInputModule,

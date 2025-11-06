@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,7 +25,7 @@ import { InventoryAdjustmentListProductsDto } from '@inventory/inventory-adjustm
   selector: 'app-inventory-adjustment-search-advanced',
   imports: [
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,

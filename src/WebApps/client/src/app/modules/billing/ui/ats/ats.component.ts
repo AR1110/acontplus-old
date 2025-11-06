@@ -8,7 +8,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { formatDateToString } from '@core/utils/date.util';
 import { addDay, monthStart } from '@formkit/tempo';
 import { MatCardModule } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-ats',
@@ -17,7 +17,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatCardModule,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './ats.component.html',
   styles: ``,

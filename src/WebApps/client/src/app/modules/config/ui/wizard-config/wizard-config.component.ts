@@ -81,7 +81,7 @@ import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/n
 import { SelectOption } from '@shared/models/select-option';
 
 // Utilities
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
@@ -164,7 +164,7 @@ interface EstabFormControls {
     BreadcrumbComponent,
     TabulatorComponent,
     MatInputChipComponent,
-    ThemeButtonComponent,
+    Button,
     NgDynamicSelectComponent,
   ],
 })

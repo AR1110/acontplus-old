@@ -8,13 +8,13 @@ import { Serie } from '@modules/technical-support/models/serie';
 import { BrandService } from '@modules/technical-support/services/brand.service';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-modelo-modal',
-  imports: [ReactiveFormsModule, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './modelo-modal.component.html',
   styles: ``,
 })

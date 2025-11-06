@@ -24,7 +24,7 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,7 +40,7 @@ import { MatSelectModule } from '@angular/material/select';
     PetSearchComponent,
     MatCard,
     MatCardContent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './medical-history-modal.component.html',

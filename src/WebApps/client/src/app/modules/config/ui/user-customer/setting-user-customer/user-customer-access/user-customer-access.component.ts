@@ -4,7 +4,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SelectionModel } from '@angular/cdk/collections';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ListAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case';
 import { UpdateAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
@@ -19,7 +19,7 @@ interface TreeNode {
 }
 @Component({
   selector: 'app-user-customer-access',
-  imports: [MatTreeModule, MatCheckboxModule, MatIcon, MatButtonModule, ThemeButtonComponent],
+  imports: [MatTreeModule, MatCheckboxModule, MatIcon, MatButtonModule, Button],
   templateUrl: './user-customer-access.component.html',
   styleUrls: ['./user-customer-access.component.scss'],
 })

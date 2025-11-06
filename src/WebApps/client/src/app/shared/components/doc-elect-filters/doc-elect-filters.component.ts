@@ -20,7 +20,7 @@ import {
 } from '@billing/domain/models/documento-electronico.model';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -42,7 +42,7 @@ import { SupplierSearch } from '@customer/domain/models/supplier.interface';
     MatNativeDateModule,
     CompanyCustomerSearchComponent,
     DateRangeSelectionComponent,
-    ThemeButtonComponent,
+    Button,
     UserSearchComponent,
     SupplierSearchComponent,
   ],

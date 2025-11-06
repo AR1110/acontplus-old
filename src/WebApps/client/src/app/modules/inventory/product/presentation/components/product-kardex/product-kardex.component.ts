@@ -17,7 +17,7 @@ import { SharedService } from '@core/services/shared.service';
 import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatInputModule } from '@angular/material/input';
@@ -36,7 +36,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     ProductSearchComponent,
     DateRangeSelectionComponent,
     TabulatorComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './product-kardex.component.html',

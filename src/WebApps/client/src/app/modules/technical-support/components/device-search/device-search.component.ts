@@ -10,7 +10,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { finalize } from 'rxjs/operators';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-device-search',
@@ -21,7 +21,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatInputModule,
     MatAutocompleteModule,
     AsyncPipe,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './device-search.component.html',
   styles: ``,

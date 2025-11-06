@@ -14,7 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { InventoryAdjustmentAddEditComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-add-edit.component';
 import { MatIconButton } from '@angular/material/button';
@@ -40,7 +40,7 @@ import {
     MatDynamicTableComponent,
     FormsModule,
     DateRangeSelectionComponent,
-    ThemeButtonComponent,
+    Button,
     MatIconButton,
     MatIcon,
     MatMenuModule,

@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
@@ -24,7 +24,7 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
     FormsModule,
     MatIconButton,
     MatIcon,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',

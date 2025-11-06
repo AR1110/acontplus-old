@@ -1,7 +1,7 @@
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Component, inject, model, signal, OnInit } from '@angular/core';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-promotion-list',
   imports: [
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

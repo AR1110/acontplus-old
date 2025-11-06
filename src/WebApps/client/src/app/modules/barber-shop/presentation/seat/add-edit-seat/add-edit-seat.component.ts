@@ -3,7 +3,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -19,7 +19,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
     MatFormFieldModule,
     MatInputModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     ReactiveFormsModule,
     ToUpperCaseDirective,
   ],

@@ -7,7 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { OverlayContainer, OverlayModule } from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 export interface MatCustomDialogOptions {
   showButtonClose?: boolean | true | false;
@@ -23,7 +23,7 @@ export interface MatCustomDialogOptions {
     MatProgressSpinnerModule,
     OverlayModule,
     DragDropModule,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './mat-custom-dialog.component.html',
   styleUrl: './mat-custom-dialog.component.scss',

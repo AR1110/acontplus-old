@@ -2,7 +2,7 @@ import { UpdateElectronicSignatureUseCase } from '@modules/config/application/us
 import { CreateElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/create-electronic-signature.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ElectronicSignatureList } from '@modules/config/domain/models/electronic-signature.model';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
     MatInputModule,
     MatDatepickerModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MatIconModule,
     MatButtonModule,
     FormsModule,

@@ -34,12 +34,12 @@
   <ng-content select="actions" />
 
   @if (this.options().showButtonClose) {
-    <app-theme-button
+    <acp-button
       variant="dark"
       icon="close"
       ariaLabel="Close Dialog Button"
       text="Cerrar"
-      matStyle="basic"
+
       (handleClick)="close.emit()"
     />
   }

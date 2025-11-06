@@ -14,7 +14,7 @@ import { DocumentReceivedWebRepository } from '@purchase/data/document-received/
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-doc-manual-upload',
@@ -30,7 +30,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatRadioButton,
     MatIcon,
     MatIconButton,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './doc-manual-upload.component.html',
   styles: ``,

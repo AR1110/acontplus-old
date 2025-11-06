@@ -24,7 +24,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
@@ -41,7 +41,7 @@ import { DialogService } from '@core/services/dialog.service';
     TabulatorComponent,
     MatIcon,
     MatButton,
-    ThemeButtonComponent,
+    Button,
     DatePipe,
     MatCustomDialogComponent,
   ],

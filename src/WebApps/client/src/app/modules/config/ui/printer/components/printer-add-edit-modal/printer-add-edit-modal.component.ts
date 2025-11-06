@@ -12,13 +12,13 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-printer-add-edit-modal',
-  imports: [FormsModule, MatSlideToggleModule, ThemeButtonComponent, MatCustomDialogComponent],
+  imports: [FormsModule, MatSlideToggleModule, Button, MatCustomDialogComponent],
   templateUrl: './printer-add-edit-modal.component.html',
   styles: ``,
 })

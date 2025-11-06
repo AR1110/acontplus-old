@@ -11,11 +11,11 @@ import { SharedService } from '@core/services/shared.service';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-production-area-add-edit-modal',
-  imports: [ReactiveFormsModule, MatSlideToggle, MatCustomDialogComponent, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, MatSlideToggle, MatCustomDialogComponent, Button],
   templateUrl: './production-area-add-edit-modal.component.html',
   styles: ``,
 })

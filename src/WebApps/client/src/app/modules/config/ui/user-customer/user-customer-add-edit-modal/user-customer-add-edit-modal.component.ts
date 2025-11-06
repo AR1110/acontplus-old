@@ -11,7 +11,7 @@ import { GetUserCustomerFormDataUseCase } from '@modules/config/application/use-
 import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
 import { CreateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/create-user-customer.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,7 +32,7 @@ import { MatInputModule } from '@angular/material/input';
     MatRadioModule,
 
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './user-customer-add-edit-modal.component.html',
 })

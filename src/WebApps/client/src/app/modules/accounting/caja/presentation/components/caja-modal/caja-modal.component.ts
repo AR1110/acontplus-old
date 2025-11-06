@@ -2,9 +2,8 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { User } from '@core/models/user.model';
-
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,12 +22,12 @@ import Swal from 'sweetalert2';
     MatInputModule,
     MatSelectModule,
     MatRadioModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './caja-modal.component.html',
 })
-export class CajaModalComponent implements OnInit {
+class CajaModalComponent implements OnInit {
   private _dialogRef = inject(MatDialogRef<CajaModalComponent>);
   private _cajaUseCase = inject(CajaUseCase);
 
@@ -136,3 +135,5 @@ export class CajaModalComponent implements OnInit {
     this._dialogRef.close();
   }
 }
+
+export default CajaModalComponent;

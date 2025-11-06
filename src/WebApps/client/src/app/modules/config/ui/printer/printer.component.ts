@@ -10,7 +10,7 @@ import Swal from 'sweetalert2';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { DialogService } from '@core/services/dialog.service';
 
@@ -23,7 +23,7 @@ import { DialogService } from '@core/services/dialog.service';
     MatButton,
     MatIconButton,
     MatIcon,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
   ],
   templateUrl: './printer.component.html',

@@ -460,7 +460,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { ToastService } from '@core/services/toast.service';
 
 // Shared Components
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 // Module Services & Use Cases
 import { CreateUserUseCase } from '@modules/auth/application/use-cases/create-user.use-case';

@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FractionalProductGetAllUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-all.use-case';
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-product/components/add-edit-fractional-product/add-edit-fractional-product.component';
 
@@ -26,7 +26,7 @@ import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-prod
     MatInputModule,
     MatDynamicTableComponent,
     MatDynamicCardComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './fracc-product-list.component.html',
   styles: ``,

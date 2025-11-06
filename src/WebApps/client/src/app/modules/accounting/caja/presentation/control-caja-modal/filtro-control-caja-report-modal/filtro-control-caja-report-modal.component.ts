@@ -5,7 +5,7 @@ import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,7 +15,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   selector: 'app-filtro-caja-modal-report-modal',
   imports: [
     FormsModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatSelectModule,

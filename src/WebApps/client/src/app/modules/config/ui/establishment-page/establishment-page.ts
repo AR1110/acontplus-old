@@ -16,7 +16,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { DialogService } from '@core/services/dialog.service';
 import { SendMaxEstablishmentsUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
@@ -36,7 +36,7 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
     MatCardHeader,
     MatRadioGroup,
     MatRadioButton,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     DataGrid,
   ],

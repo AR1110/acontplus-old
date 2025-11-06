@@ -11,7 +11,7 @@ import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { forkJoin, Observable } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -26,7 +26,7 @@ import { MatIcon } from '@angular/material/icon';
     FormsModule,
     MatRadioModule,
     ToUpperCaseDirective,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatInputModule,

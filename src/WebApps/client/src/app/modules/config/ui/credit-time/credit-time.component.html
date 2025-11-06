@@ -28,14 +28,14 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button
+    <acp-button
       variant="info"
       [icon]="'edit'"
       [matStyle]="'icon'"
       (handleClick)="openModalAddUpdate(item)"
     />
     @if (item.estado) {
-      <app-theme-button
+      <acp-button
         variant="danger"
         [icon]="'delete'"
         [matStyle]="'icon'"

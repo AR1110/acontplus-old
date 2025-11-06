@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 import { MatSelectModule } from '@angular/material/select';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
@@ -42,7 +42,7 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
     BreadcrumbComponent,
     MatDynamicCardComponent,
     MatInputChipComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './general-config.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
