@@ -2,7 +2,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { FormsModule } from '@angular/forms';
 
 import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';

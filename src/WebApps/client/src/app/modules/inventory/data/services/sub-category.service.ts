@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
@@ -57,15 +57,15 @@ export class SubCategoryService {
     const json = JSON.stringify(obj);
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData);
+    return this.http.post<ApiResponseLegacy>(`${this.url}?json=${json}`, formData);
   }
 
   put<T>(id: number, obj: T) {
     const json = JSON.stringify(obj);
-    return this.http.put<ApiResponse>(`${this.url}${id}?json=${json}`, null);
+    return this.http.put<ApiResponseLegacy>(`${this.url}${id}?json=${json}`, null);
   }
 
   updateStatus(id: number) {
-    return this.http.delete<ApiResponse>(`${this.url}${id}`);
+    return this.http.delete<ApiResponseLegacy>(`${this.url}${id}`);
   }
 }

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
 import {
   MealScheduleSettingResponse,
@@ -31,13 +31,13 @@ export class MealScheduleSettingWebService implements MealScheduleSettingReposit
           throw new Error('Failed to create meal schedule setting');
         }
         return result;
-      })
+      }),
     );
   }
 
   update(
     id: number,
-    data: UpdateMealScheduleSettingRequest
+    data: UpdateMealScheduleSettingRequest,
   ): Observable<MealScheduleSettingResponse> {
     return this.#service.update(id, data).pipe(
       map((response) => {
@@ -46,11 +46,11 @@ export class MealScheduleSettingWebService implements MealScheduleSettingReposit
           throw new Error('Failed to update meal schedule setting');
         }
         return result;
-      })
+      }),
     );
   }
 
-  delete(id: number): Observable<ApiResponse> {
+  delete(id: number): Observable<ApiResponseLegacy> {
     return this.#service.delete(id);
   }
 }

@@ -4,7 +4,7 @@ import { PrinterRead } from '@modules/config/domain/models/printing/printer.mode
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/components/printer-add-edit-modal/printer-add-edit-modal.component';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
@@ -62,7 +62,7 @@ export class PrinterComponent implements OnInit {
     this.getPrinters();
   }
 
-  commonResponse = (response: ApiResponse) => {
+  commonResponse = (response: ApiResponseLegacy) => {
     this.getPrinters();
     this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',

@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { SubCategoryMapper } from '@accounting/sub-category/infrastructure/sub-category.mapper';
 import { SubCategoryRepository } from '@accounting/sub-category/domain/sub-category.repository';
@@ -24,7 +24,7 @@ export class SubCategoryWebRepository extends SubCategoryRepository {
       ...obj,
     });
 
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         let data = [] as any[];
 
@@ -50,7 +50,7 @@ export class SubCategoryWebRepository extends SubCategoryRepository {
     const json = JSON.stringify({
       tipo: 2,
     });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         const result = {
           categories: [],
@@ -65,14 +65,14 @@ export class SubCategoryWebRepository extends SubCategoryRepository {
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
   create(data: any) {
-    return this._http.post<ApiResponse>(`${this._url}`, data);
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, data);
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data);
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, data);
   }
 }

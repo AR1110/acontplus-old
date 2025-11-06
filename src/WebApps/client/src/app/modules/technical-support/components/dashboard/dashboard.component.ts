@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 import { OrderListComponent } from '@modules/technical-support/pages/order-page/order-list/order-list.component';
 import { StatsService } from '@modules/technical-support/services/stats.service';

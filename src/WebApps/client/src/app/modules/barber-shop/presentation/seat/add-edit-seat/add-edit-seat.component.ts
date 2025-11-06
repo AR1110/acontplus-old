@@ -11,7 +11,7 @@ import { CreateSeatUseCase } from '@barber-shop/application/use-cases/seat/creat
 import { UpdateSeatUseCase } from '@barber-shop/application/use-cases/seat/update-seat.use-case';
 import { SeatList } from '@barber-shop/domain/models/seat.model';
 import { getValidId } from '@core/utils/utils';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
   selector: 'app-add-edit-seat',
@@ -59,7 +59,7 @@ export class AddEditSeatComponent implements OnInit {
     }
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

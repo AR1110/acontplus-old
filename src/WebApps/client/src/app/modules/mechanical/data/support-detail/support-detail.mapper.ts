@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GroupedEstab } from '@core/models/estab.model';
 import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
 import { formatDate } from '@core/utils/date.util';
@@ -11,7 +11,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
 export class SupportDetailMapper {
-  static fromApiGetId(response: ApiResponse) {
+  static fromApiGetId(response: ApiResponseLegacy) {
     const result = {
       data: {
         establecimientoId: 0,

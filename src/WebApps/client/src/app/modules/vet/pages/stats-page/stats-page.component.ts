@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { StatsService } from '@modules/vet/services/stats.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Chart } from 'chart.js';
 import { MatCard, MatCardContent } from '@angular/material/card';
 

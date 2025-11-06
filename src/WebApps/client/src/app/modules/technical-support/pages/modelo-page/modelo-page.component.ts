@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';

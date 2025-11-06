@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -101,7 +101,7 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
     }
   }
 
-  successResponse(response: ApiResponse) {
+  successResponse(response: ApiResponseLegacy) {
     this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,

@@ -8,9 +8,8 @@ describe('MealPlanDialog', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MealPlanDialog]
-    })
-    .compileComponents();
+      imports: [MealPlanDialog],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MealPlanDialog);
     component = fixture.componentInstance;

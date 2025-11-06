@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { CreateInventoryAdjustmentCommand } from '@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   InventoryAdjustmentDetailDto,
   InventoryAdjustmentFormDataDto,
@@ -13,5 +13,5 @@ export abstract class InventoryAdjustmentRepository {
   abstract formData(): Observable<InventoryAdjustmentFormDataDto>;
   abstract detail(id: number): Observable<InventoryAdjustmentDetailDto>;
   abstract listProducts(params: any): Observable<InventoryAdjustmentListProductsDto>;
-  abstract create(params: CreateInventoryAdjustmentCommand): Observable<ApiResponse>;
+  abstract create(params: CreateInventoryAdjustmentCommand): Observable<ApiResponseLegacy>;
 }

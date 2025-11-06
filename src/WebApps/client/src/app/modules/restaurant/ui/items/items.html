@@ -10,7 +10,7 @@
         (change)="refresh()"
       >
         @for (item of categoryAbbreviations(); track $index) {
-        <mat-button-toggle [value]="item.code">{{ item.name }}</mat-button-toggle>
+          <mat-button-toggle [value]="item.code">{{ item.name }}</mat-button-toggle>
         }
       </mat-button-toggle-group>
     </section>
@@ -26,7 +26,7 @@
   [data]="list()"
   [columns]="columns"
   [cellTemplate]="{
-  op: opTpl,
+    op: opTpl,
     productData: productDataTpl,
   }"
   [length]="pagination().totalRecords"

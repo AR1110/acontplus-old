@@ -10,7 +10,7 @@ import { InventoryAdjustmentListMapper } from '@inventory/inventory-adjustment/i
 import { InventoryAdjustmentDetailMapper } from '@inventory/inventory-adjustment/infrastructure/mappers/inventory-adjustment-detail.mapper';
 import { InventoryAdjustmentListProductsMapper } from '@inventory/inventory-adjustment/infrastructure/mappers/inventory-adjustment-list-products.mapper';
 import { CreateInventoryAdjustmentCommand } from '@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SaveInventoryAdjustmentMapper } from '@inventory/inventory-adjustment/infrastructure/mappers/save-inventory-adjustment.mapper';
 
 @Injectable({
@@ -47,8 +47,8 @@ export class InventoryAdjustmentRepositoryImpl implements InventoryAdjustmentRep
       .pipe(map((response) => InventoryAdjustmentListProductsMapper.fromJson(response)));
   }
 
-  create(params: CreateInventoryAdjustmentCommand): Observable<ApiResponse> {
+  create(params: CreateInventoryAdjustmentCommand): Observable<ApiResponseLegacy> {
     const data = SaveInventoryAdjustmentMapper.toJson(params);
-    return this.#http.post<ApiResponse>(this.#url, data);
+    return this.#http.post<ApiResponseLegacy>(this.#url, data);
   }
 }

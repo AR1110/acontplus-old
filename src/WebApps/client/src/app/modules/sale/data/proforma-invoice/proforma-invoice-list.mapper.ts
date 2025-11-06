@@ -1,5 +1,5 @@
 import { ProformaInvoiceListResult } from '@sale/domain/models/proforma-invoice';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ProformaInvoiceListMapper {
   static toJson(obj: any) {
@@ -9,7 +9,7 @@ export class ProformaInvoiceListMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const result = new ProformaInvoiceListResult();
     if (response.code !== '1') return result;
 

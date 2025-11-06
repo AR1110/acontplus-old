@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 import { DeviceCustomerService } from '@modules/technical-support/services/device.customer.service';
 

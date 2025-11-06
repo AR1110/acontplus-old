@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { ResumenContableRepository } from '@accounting/resumen-contable/domain/resumen-contable.repository';
 import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
@@ -22,7 +22,7 @@ export class ResumenContableWebRepository extends ResumenContableRepository {
     const json = JSON.stringify({
       tipo: 2,
     });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         const results = {
           transactionTypes: [] as any[],

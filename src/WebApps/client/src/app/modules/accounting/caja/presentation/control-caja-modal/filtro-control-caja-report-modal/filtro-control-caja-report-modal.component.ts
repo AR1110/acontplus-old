@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
 import Swal from 'sweetalert2';

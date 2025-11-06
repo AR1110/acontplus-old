@@ -17,7 +17,7 @@ import {
   MedicalHistory,
 } from '@modules/vet/models/medical-history.model';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { PetSearchComponent } from '@modules/vet/components/pet-search/pet-search.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { GroupedEstab } from '@core/models/estab.model';

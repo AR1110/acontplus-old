@@ -8,7 +8,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { isValidEmail, isValidField } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { forkJoin, Observable } from 'rxjs';
 import { MatIconButton } from '@angular/material/button';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
@@ -76,7 +76,7 @@ export class EstabAddEditModalComponent implements OnInit {
   emails = signal<string[]>([]);
   telephones = signal<string[]>([]);
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code == '0') {
       this.tS.show({
         type: 'warning',

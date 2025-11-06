@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GeneralConfigResponse } from '@modules/config/domain/models/general-config.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 
@@ -9,7 +9,7 @@ export class ListGeneralConfigMapper {
     });
   }
 
-  static fromJson(response: ApiResponse, code: string): GeneralConfigResponse {
+  static fromJson(response: ApiResponseLegacy, code: string): GeneralConfigResponse {
     const mainDataForm = new GeneralConfigResponse();
     if (response.code !== '1') {
       return mainDataForm;

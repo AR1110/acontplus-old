@@ -6,6 +6,7 @@ AcontPlus is a modern, modular business management platform built with Angular 2
 
 - [Features](#features)
 - [Getting Started](#getting-started)
+- [Hybrid Authentication (Legacy Migration)](#-hybrid-authentication-legacy-migration)
 - [Running Tests](#running-tests-jest--angular-20)
 - [Project Structure](#project-structure)
 - [Architecture](#architecture)
@@ -66,6 +67,81 @@ npm run production
 
 ---
 
+## 🔐 Hybrid Authentication (Legacy Migration)
+
+This application implements a **hybrid authentication system** that allows coexistence of legacy Razor Pages and modern Angular during the migration process.
+
+### Key Features
+
+- **Legacy Routes (No Layout)**: Routes from Razor Pages load without Angular layout (`/legacy/...`)
+- **Modern Routes (With Layout)**: Native Angular routes load with full layout (header, sidebar, footer)
+- **Seamless Migration**: Both systems work simultaneously without conflicts
+
+### Quick Overview
+
+| Access Method    | URL Example                                                | Layout | Purpose                   |
+| ---------------- | ---------------------------------------------------------- | ------ | ------------------------- |
+| Legacy (Razor)   | `/?token=xxx&route=Articulo` → `/legacy/inventory/product` | ❌ No  | Production legacy system  |
+| Modern (Angular) | `/inventory/product`                                       | ✅ Yes | Modern Angular navigation |
+
+### How It Works
+
+**Legacy Flow:**
+
+```
+Razor Page → Query Params (token, route, permissions)
+  → app.ts processes auth
+  → Redirects to /legacy/{route}
+  → LegacyLayout (empty, no UI)
+  → Component renders alone
+```
+
+**Modern Flow:**
+
+```
+Direct Angular navigation → /inventory/product
+  → HybridAuthGuard validates token
+  → AdminLayout loads (header, sidebar, footer)
+  → Component renders inside layout
+```
+
+### Documentation
+
+For detailed information about the hybrid authentication system:
+
+- **📘 Complete Guide**: `docs/HYBRID-AUTH-GUIDE.md` - Guía completa consolidada con toda la información sobre el sistema de autenticación híbrida
+
+### Key Components
+
+- **`LegacyLayoutComponent`**: Empty layout for legacy routes (no header/sidebar)
+- **`hybridAuthGuard`**: Guard handling both legacy and modern authentication
+- **`RouteMigrationService`**: Tracks migration progress
+- **`GlobalRoutes`**: Enum mapping legacy routes to Angular routes
+
+### Testing Legacy Auth
+
+```bash
+# Test legacy authentication flow
+http://localhost:4200/?token=YOUR_TOKEN&route=Articulo&permission={...}
+
+# Verify:
+# ✅ Token saved to localStorage
+# ✅ Redirects to /legacy/inventory/product
+# ✅ Component loads WITHOUT layout
+# ✅ No header, sidebar, or footer visible
+```
+
+### Migration Progress
+
+Routes can be progressively migrated from legacy to modern. Each route exists in both systems:
+
+- `/legacy/inventory/product` - Legacy access (no layout)
+- `/inventory/product` - Modern access (with layout)
+
+This allows gradual migration without breaking existing Razor Pages integration.
+
+---
+
 ## 🧪 Running Tests (Jest + Angular 20+)
 
 This project uses **Jest** for fast, modern unit testing with full ESM and Angular 20+ support.
@@ -107,14 +183,14 @@ src/
       interceptors/      # HTTP interceptors
       models/            # Core domain models
       utils/             # Utility functions
-    
+
     shared/              # Shared components, pipes, directives, utilities
       components/        # Shared UI components
       directives/        # Custom directives
       services/          # Shared services
       models/            # Shared models
       store/             # Shared state management
-    
+
     modules/             # Feature modules
       auth/              # Authentication module
       accounting/        # Accounting module
@@ -126,11 +202,11 @@ src/
         data/            # Data layer (repository implementations)
         ui/              # Presentation layer (components)
       [other modules...]
-    
+
     layouts/             # App shell, main layout, auth layout, etc.
       admin-layout/
       auth-layout/
-    
+
   assets/                # Static assets (images, icons, etc.)
   environments/          # Environment configurations
   styles/                # Global SCSS, variables, mixins
@@ -145,20 +221,24 @@ src/
 Complex modules in this application follow DDD principles with clear separation of concerns:
 
 #### **Domain Layer**
+
 - **Models & Aggregates**: Core business entities with validation logic
 - **Value Objects**: Immutable objects with business validation
 - **Repository Interfaces**: Contracts for data access
 
 #### **Application Layer**
+
 - **Use Cases**: Business logic and orchestration
 - **State Management**: Modern stores using Angular Signals
 - **DTOs**: Data transfer objects
 
 #### **Data Layer**
+
 - **Repository Implementations**: HTTP client integration and data mapping
 - **Data Models**: API response/request models
 
 #### **Presentation Layer**
+
 - **Components**: UI components with modern Angular patterns
 - **Templates**: Modern template syntax (@if, @for)
 - **Forms**: Typed reactive forms
@@ -166,6 +246,7 @@ Complex modules in this application follow DDD principles with clear separation 
 ### Core Services (Bootstrap)
 
 The services in `src/app/core/bootstrap/` are singleton services used for:
+
 - Application initialization
 - Sharing data and functionality across the application
 - Core infrastructure setup
@@ -212,7 +293,7 @@ This project leverages the latest Angular 20+ features for optimal performance a
 export class MyComponent {
   private readonly _service = inject(MyService);
   private readonly _fb = inject(FormBuilder);
-  
+
   // No constructor needed!
 }
 
@@ -220,7 +301,7 @@ export class MyComponent {
 export class MyComponent {
   constructor(
     private service: MyService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 }
 ```
@@ -233,14 +314,14 @@ export class MyComponent {
   // Data signals
   readonly users = signal<User[]>([]);
   readonly isLoading = signal(false);
-  
+
   // Computed signals for derived state
   readonly hasUsers = computed(() => this.users().length > 0);
   readonly userCount = computed(() => this.users().length);
-  
+
   // Signal updates
   addUser(user: User): void {
-    this.users.update(users => [...users, user]);
+    this.users.update((users) => [...users, user]);
   }
 }
 ```
@@ -254,20 +335,19 @@ export class UserStore {
   readonly users = signal<User[]>([]);
   readonly isLoading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
-  
+
   // Computed signals
-  readonly activeUsers = computed(() => 
-    this.users().filter(u => u.isActive)
-  );
-  
+  readonly activeUsers = computed(() => this.users().filter((u) => u.isActive));
+
   // Dependencies
   private readonly _service = inject(UserService);
   private readonly _destroyRef = inject(DestroyRef);
-  
+
   // Methods
   loadUsers(): void {
     this.isLoading.set(true);
-    this._service.getUsers()
+    this._service
+      .getUsers()
       .pipe(takeUntilDestroyed(this._destroyRef))
       .subscribe({
         next: (users) => {
@@ -277,13 +357,14 @@ export class UserStore {
         error: (error) => {
           this.error.set(error.message);
           this.isLoading.set(false);
-        }
+        },
       });
   }
 }
 ```
 
 **Why Native Signals over NgRx?**
+
 - ✅ No external dependencies - built into Angular core
 - ✅ Better performance - optimized by Angular team
 - ✅ Smaller bundle size - no NgRx overhead
@@ -315,13 +396,13 @@ interface UserFormControls {
 
 export class UserFormComponent {
   private readonly _fb = inject(FormBuilder);
-  
+
   readonly form = this._fb.group<UserFormControls>({
     firstName: this._fb.control('', [Validators.required]),
     lastName: this._fb.control('', [Validators.required]),
-    email: this._fb.control('', [Validators.required, Validators.email])
+    email: this._fb.control('', [Validators.required, Validators.email]),
   });
-  
+
   // ✅ Type-safe form access
   get firstName(): string | null {
     return this.form.controls.firstName.value;
@@ -335,11 +416,12 @@ export class UserFormComponent {
 export class MyComponent {
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _service = inject(MyService);
-  
+
   loadData(): void {
-    this._service.getData()
+    this._service
+      .getData()
       .pipe(takeUntilDestroyed(this._destroyRef)) // ✅ Auto cleanup
-      .subscribe(data => {
+      .subscribe((data) => {
         // Handle data
       });
   }
@@ -492,25 +574,32 @@ export class MyComponent implements OnInit {
 This project implements several optimizations for the fastest possible development and build experience:
 
 ### 1. **Persistent Build Cache**
+
 - Angular CLI persistent cache is enabled in `angular.json` for faster rebuilds
 
 ### 2. **Incremental TypeScript Builds**
+
 - `tsconfig.json` uses `"incremental": true` for faster TypeScript compilation
 
 ### 3. **Modern JavaScript Output**
+
 - Target and module set to `ES2022` for smaller bundles and less polyfill overhead
 
 ### 4. **Hot Module Replacement (HMR)**
+
 - HMR enabled by default for instant updates without full reloads
 
 ### 5. **Standalone Components & Signals**
+
 - Components default to `standalone: true` with Angular signals for reduced overhead
 
 ### 6. **Angular Compiler Optimizations**
+
 - `enableResourceInlining` enabled for better tree-shaking
 - Strict compiler options enforced
 
 ### 7. **Modern Module Resolution**
+
 - Uses `moduleResolution: "bundler"` for optimal Angular 20+ compatibility
 
 ### Performance Tips
@@ -576,12 +665,12 @@ ngOnInit(): void {
 ```typescript
 // ❌ Bad
 function processData(data: User[], index: number) {
-  return data.map(user => user.name);
+  return data.map((user) => user.name);
 }
 
 // ✅ Good - Use underscore prefix for intentionally unused parameters
 function processData(data: User[], _index: number) {
-  return data.map(user => user.name);
+  return data.map((user) => user.name);
 }
 ```
 
@@ -652,6 +741,7 @@ The project is configured to generate components with modern best practices by d
 ```
 
 Features:
+
 - Standalone components by default
 - OnPush change detection
 - Separate files for templates and styles

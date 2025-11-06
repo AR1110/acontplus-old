@@ -12,7 +12,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { DocumentReceivedWebRepository } from '@purchase/data/document-received/document-received-web.repository';
 
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 

@@ -8,7 +8,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PrinterDocService } from '@modules/config/services/printer-doc.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { PrinterUseCase } from '@modules/config/application/use-cases/printer.use-case';
@@ -53,7 +53,7 @@ export class PrinterAddEditModalComponent implements OnInit {
     domain: '',
   };
 
-  successResponsePrinterDoc = (response: ApiResponse) => {
+  successResponsePrinterDoc = (response: ApiResponseLegacy) => {
     this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,
@@ -63,7 +63,7 @@ export class PrinterAddEditModalComponent implements OnInit {
     }
   };
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,

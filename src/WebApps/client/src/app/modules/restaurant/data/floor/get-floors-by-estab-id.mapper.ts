@@ -1,8 +1,8 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.model';
 
 export class GetFloorsByEstabIdMapper {
-  static fromJson(response: ApiResponse): GetFloorsByEstabIdResponse {
+  static fromJson(response: ApiResponseLegacy): GetFloorsByEstabIdResponse {
     const result = new GetFloorsByEstabIdResponse();
     if (response.code === '1') {
       function tablesMapper(tables: any[], roomName: string) {

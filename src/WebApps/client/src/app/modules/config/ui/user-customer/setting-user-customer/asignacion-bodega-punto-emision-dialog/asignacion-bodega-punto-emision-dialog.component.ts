@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { AsignacionBodegaList } from '@modules/config/domain/models/user-customer/asignacion-bodega.model';
@@ -94,7 +94,7 @@ export class AsignacionBodegaPuntoEmisionDialogComponent implements OnInit, Afte
     });
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

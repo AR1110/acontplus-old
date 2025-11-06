@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,7 @@ export class SubcategoryPhotoService {
   post(subcategoryId: number, file: Blob) {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}${subcategoryId}`, formData);
+    return this.http.post<ApiResponseLegacy>(`${this.url}${subcategoryId}`, formData);
   }
 
   put<T>(obj: T, id: number, file: Blob) {
@@ -22,6 +22,6 @@ export class SubcategoryPhotoService {
 
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}Put/${id}?json=${json}`, formData);
+    return this.http.post<ApiResponseLegacy>(`${this.url}Put/${id}?json=${json}`, formData);
   }
 }

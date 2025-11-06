@@ -14,7 +14,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { UpdateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/update-warehouse.use-case';
 import { CreateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/create-warehouse.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
   selector: 'app-add-edit-warehouse',
@@ -89,7 +89,7 @@ export class AddEditWarehouseComponent implements OnInit {
     this.$createUseCase.execute(this.data).subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this._tS.show({
         type: 'warning',

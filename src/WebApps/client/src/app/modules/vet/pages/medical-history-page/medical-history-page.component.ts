@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
 import { PageEvent } from '@angular/material/paginator';
 

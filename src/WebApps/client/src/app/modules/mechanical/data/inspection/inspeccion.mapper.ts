@@ -1,11 +1,11 @@
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { formatDate } from '@core/utils/date.util';
 import { isValidJSON } from '@core/utils/utils';
 
 export class InspeccionMapper {
-  static getAll(response: ApiResponse) {
+  static getAll(response: ApiResponseLegacy) {
     let results: any = [];
     if (response.code === '1') {
       const { inspection } = JSON.parse(response.payload as string);
@@ -28,7 +28,7 @@ export class InspeccionMapper {
     return results;
   }
 
-  static getDataForm(response: ApiResponse) {
+  static getDataForm(response: ApiResponseLegacy) {
     const result = {
       support: {} as any,
       data: {},
@@ -46,7 +46,7 @@ export class InspeccionMapper {
     return result;
   }
 
-  static getId(response: ApiResponse) {
+  static getId(response: ApiResponseLegacy) {
     const result = {
       data: {} as any,
       vehicleParts: [] as VehiclePart[],

@@ -1,5 +1,5 @@
 import { SolicitudAutorizacionResponse } from '@modules/config/domain/models/solicitud-autorizacion.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListSolicitudAutorizacionMapper {
   static toJson<T>(parameters: T) {
@@ -9,7 +9,7 @@ export class ListSolicitudAutorizacionMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): SolicitudAutorizacionResponse {
+  static fromJson(response: ApiResponseLegacy): SolicitudAutorizacionResponse {
     const { requests = [] } = JSON.parse(response.payload as any);
 
     const data = requests.map((item: any, index: number) => {

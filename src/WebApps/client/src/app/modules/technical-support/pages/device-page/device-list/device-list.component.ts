@@ -4,7 +4,7 @@ import { DeviceModalComponent } from '../device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { DialogService } from '@core/services/dialog.service';
 

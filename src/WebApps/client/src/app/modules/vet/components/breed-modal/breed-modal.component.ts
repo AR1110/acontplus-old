@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Breed } from '@modules/vet/models/breed.model';
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { BreedService } from '@modules/vet/services/breed.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PetTypeService } from '@modules/vet/services/pet-type.service';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';

@@ -9,11 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
-import {DialogService} from "@core/services/dialog.service";
-import {ItemAddEdit} from "@restaurant/ui/items/item-add-edit/item-add-edit";
-import {finalize} from "rxjs/operators";
-import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { DialogService } from '@core/services/dialog.service';
+import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
+import { finalize } from 'rxjs/operators';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 
 @Component({
   selector: 'app-items',
@@ -32,7 +32,7 @@ import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
 })
 export class Items {
   private _listUseCase = inject(ItemListUseCase);
-  private _dgSvc = inject(DialogService)
+  private _dgSvc = inject(DialogService);
 
   columns: DataGridColumn[] = [
     { header: 'Op.', field: 'op' },
@@ -52,14 +52,12 @@ export class Items {
     },
   ];
 
-
-
-  categoryAbbreviationsSelected  = [];
+  categoryAbbreviationsSelected = [];
   categoryAbbreviations = signal([
-    {code: CATEGORY_ABBREVIATIONS.RESTAURANT, name: 'Productos'},
-    {code: CATEGORY_ABBREVIATIONS.COMBO, name: 'Menus'},
-    {code: CATEGORY_ABBREVIATIONS.INGREDIENT, name: 'Ingredientes'},
-  ])
+    { code: CATEGORY_ABBREVIATIONS.RESTAURANT, name: 'Productos' },
+    { code: CATEGORY_ABBREVIATIONS.COMBO, name: 'Menus' },
+    { code: CATEGORY_ABBREVIATIONS.INGREDIENT, name: 'Ingredientes' },
+  ]);
 
   list = signal<any[]>([]);
   isLoading = signal(false);
@@ -73,29 +71,30 @@ export class Items {
     const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      categoryAbbreviations : this.categoryAbbreviationsSelected .length > 0 ? this.categoryAbbreviationsSelected .toString() : null,
+      categoryAbbreviations:
+        this.categoryAbbreviationsSelected.length > 0
+          ? this.categoryAbbreviationsSelected.toString()
+          : null,
     };
     this.isLoading.set(true);
-    this._listUseCase.execute(params)
-      .pipe(
-        finalize(()=>this.isLoading.set(false))
-      ).subscribe((response) => {
-      this.list.set(response.data);
-      this.pagination.update((res) => ({
-        ...res,
-        totalRecords: response.totalRecords,
-      }));
-
-    })
+    this._listUseCase
+      .execute(params)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe((response) => {
+        this.list.set(response.data);
+        this.pagination.update((res) => ({
+          ...res,
+          totalRecords: response.totalRecords,
+        }));
+      });
   }
 
-
-  onEdit(rowData:any){
+  onEdit(rowData: any) {
     this._dgSvc.open(ItemAddEdit, {
       size: 'xl',
       data: {
         id: rowData.id,
-      }
+      },
     });
   }
 

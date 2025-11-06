@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { OrderService } from '@modules/technical-support/services/order.service';

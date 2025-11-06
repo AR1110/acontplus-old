@@ -49,7 +49,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 // Shared Components & Models
 import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';

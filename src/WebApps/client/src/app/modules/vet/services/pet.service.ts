@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { API_ENDPOINTS } from '@modules/vet/constants/vet.constants';
 import { map, Observable } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Pet } from '@modules/vet/models/pet.model';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
 import { UserCustomer } from '@modules/config/domain/models/user-customer/user-customer.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
@@ -8,9 +8,9 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateUserCustomerUseCase implements BaseUseCase<ApiResponse, UserCustomer> {
+export class UpdateUserCustomerUseCase implements BaseUseCase<ApiResponseLegacy, UserCustomer> {
   private repo = inject(UserCustomerRepository);
-  execute(params: UserCustomer): Observable<ApiResponse> {
+  execute(params: UserCustomer): Observable<ApiResponseLegacy> {
     return this.repo.update(params);
   }
 }

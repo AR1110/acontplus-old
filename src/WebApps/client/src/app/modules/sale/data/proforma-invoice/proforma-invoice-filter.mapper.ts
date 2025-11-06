@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
 
@@ -9,7 +9,7 @@ export class ProformaInvoiceFilterMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const result = {
       estabs: [] as GroupedEstab[],
     };

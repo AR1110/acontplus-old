@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { NotaEntregaRepository } from '@sale/domain/repositories/nota-entrega.repository';
 import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
@@ -23,7 +23,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       tipo: 3,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => NotaEntregaMapper.fromApiDataFilter(response)));
@@ -35,7 +35,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       ...obj,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => NotaEntregaMapper.fromApiGetAll(response)));
@@ -47,17 +47,17 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       id,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => NotaEntregaMapper.fromApiDetalleCompleto(response)));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}Insert`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}Insert`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
+    return this.#http.put<ApiResponseLegacy>(`${this.#url}${id}`, { data });
   }
 }

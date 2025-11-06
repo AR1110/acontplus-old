@@ -10,7 +10,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { CreateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/create-user-customer-permission.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import Swal from 'sweetalert2';
 import { UserCustomerPermission } from '@modules/config/domain/models/user-customer/user-customer-permission.model';
 import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';
@@ -115,7 +115,7 @@ export class UserCustomerPermissionComponent implements OnInit {
     this.getList();
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

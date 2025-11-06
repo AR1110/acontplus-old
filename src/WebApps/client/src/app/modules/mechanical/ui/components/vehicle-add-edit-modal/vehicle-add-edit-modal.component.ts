@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-type.model';
@@ -84,7 +84,7 @@ export class VehicleAddEditModalComponent implements OnInit {
   filteredCountryOptions = signal<any[]>([]);
 
   successResponse = {
-    next: (response: ApiResponse) => {
+    next: (response: ApiResponseLegacy) => {
       if (response.code === '0') {
         this.tS.show({
           type: 'warning',

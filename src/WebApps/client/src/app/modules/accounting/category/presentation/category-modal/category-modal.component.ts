@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Category } from '@technical-support/models/category';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CategoryUseCase } from '@accounting/category/application/category.use-case';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -72,7 +72,7 @@ export class CategoryModalComponent implements OnInit {
     }
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     this.tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,

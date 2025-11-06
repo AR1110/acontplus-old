@@ -10,7 +10,7 @@ import {
 
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Pet } from '@modules/vet/models/pet.model';
 import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';

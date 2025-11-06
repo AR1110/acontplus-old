@@ -1,7 +1,7 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class VehicleMapper {
-  static fromApiGetAll(response: ApiResponse) {
+  static fromApiGetAll(response: ApiResponseLegacy) {
     let data = [] as any[];
     if (response.code === '1') {
       const { vehicles } = JSON.parse(response.payload as string);
@@ -16,7 +16,7 @@ export class VehicleMapper {
     return data;
   }
 
-  static fromApiDataForm(response: ApiResponse) {
+  static fromApiDataForm(response: ApiResponseLegacy) {
     const data = {
       countries: [],
       vehicleTypes: [],
@@ -29,7 +29,7 @@ export class VehicleMapper {
     return data;
   }
 
-  static fromApiGetId(response: ApiResponse) {
+  static fromApiGetId(response: ApiResponseLegacy) {
     const data = {
       customer: {
         businessName: null,

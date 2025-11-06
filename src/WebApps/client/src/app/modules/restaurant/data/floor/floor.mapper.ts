@@ -1,7 +1,7 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class FloorMapper {
-  static fromApiGetByEstab(response: ApiResponse) {
+  static fromApiGetByEstab(response: ApiResponseLegacy) {
     let data = [] as any[];
     if (response.code === '1') {
       const mainData = (response.payload as any[]) || [];

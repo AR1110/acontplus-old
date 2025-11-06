@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   AsignacionBodegaList,
   AsignacionBodegaResponse,
@@ -7,6 +7,6 @@ import {
 
 export abstract class AsignacionBodegaRepository {
   abstract list(parameters: Partial<AsignacionBodegaList>): Observable<AsignacionBodegaResponse>;
-  abstract create(parameters: Partial<AsignacionBodegaList>): Observable<ApiResponse>;
-  abstract update(parameters: Partial<AsignacionBodegaList>): Observable<ApiResponse>;
+  abstract create(parameters: Partial<AsignacionBodegaList>): Observable<ApiResponseLegacy>;
+  abstract update(parameters: Partial<AsignacionBodegaList>): Observable<ApiResponseLegacy>;
 }

@@ -12,7 +12,7 @@ import { Turno } from '@accounting/shared/models/turno.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatInputModule } from '@angular/material/input';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -86,7 +86,7 @@ export class CajaModalComponent implements OnInit {
     });
   }
 
-  commonResponse = (response: ApiResponse) => {
+  commonResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

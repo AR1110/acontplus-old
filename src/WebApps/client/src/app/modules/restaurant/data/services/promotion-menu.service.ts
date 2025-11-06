@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class PromotionMenuService {
       ...obj,
     });
 
-    return this.http.get<ApiResponse>(`${this.url}GetById/${id}?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}GetById/${id}?json=${json}`).pipe(
       map((response) => {
         const result = {
           promotionMenus: [],

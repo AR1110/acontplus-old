@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { imgDefault } from '@core/utils/utils';
 
 export class ListProductWithPricesUseCaseMapper {
@@ -24,7 +24,7 @@ export class ListProductWithPricesUseCaseMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     let data = [] as any[];
     if (response.code === '1') {
       console.log('init');

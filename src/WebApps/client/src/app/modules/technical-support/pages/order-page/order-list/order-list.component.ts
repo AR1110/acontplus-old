@@ -1,6 +1,6 @@
 import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 

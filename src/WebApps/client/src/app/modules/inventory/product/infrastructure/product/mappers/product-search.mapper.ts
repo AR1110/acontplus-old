@@ -1,5 +1,5 @@
 import { imgDefault } from '@core/utils/utils';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ProductSearchMapper {
   static toJson(obj: any): any {
@@ -11,7 +11,7 @@ export class ProductSearchMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const result = {
       items: [],
       total: 0,

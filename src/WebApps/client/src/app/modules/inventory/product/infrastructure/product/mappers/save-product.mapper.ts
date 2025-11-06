@@ -1,6 +1,6 @@
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class SaveProductMapper {
   static toJson(obj: any): any {
@@ -69,9 +69,9 @@ export class SaveProductMapper {
     };
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const data = JSON.parse(response.payload as string);
-    const resultResponse = new ApiResponse();
+    const resultResponse = new ApiResponseLegacy();
 
     resultResponse.code = response.code;
     resultResponse.message = response.message;

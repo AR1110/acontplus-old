@@ -1,6 +1,6 @@
 import { Component, inject, ViewChild, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { PetService } from '@modules/vet/services/pet.service';
 import { PetModalComponent } from '@modules/vet/components/pet-modal/pet-modal.component';
 import { Pagination } from '@shared/models/pagination.model';

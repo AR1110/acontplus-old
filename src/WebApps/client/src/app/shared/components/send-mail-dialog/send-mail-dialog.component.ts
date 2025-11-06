@@ -4,7 +4,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { SendMailParams } from '@shared/models/send-mail.model';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { NotificacionTributariaService } from '@billing/services/notificacion-tributaria.service';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';

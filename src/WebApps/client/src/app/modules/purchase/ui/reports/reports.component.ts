@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { REPORT_CODE, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';

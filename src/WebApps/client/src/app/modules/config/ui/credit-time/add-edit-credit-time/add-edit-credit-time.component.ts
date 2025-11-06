@@ -13,7 +13,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import Swal from 'sweetalert2';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
   selector: 'app-add-edit-credit-time',
@@ -159,7 +159,7 @@ export class AddEditCreditTimeComponent implements OnInit {
       .subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

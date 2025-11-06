@@ -2,7 +2,7 @@ import { ListShiftResponse, ShiftList } from '@modules/config/domain/models/shif
 import { ShiftRepository } from '@modules/config/domain/repositories/shift.repository';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListShiftMapper } from './list-shift.mapper';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -23,21 +23,21 @@ export class ShiftRepositoryImpl implements ShiftRepository {
     console.log('JSON', JSON);
 
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${JSON}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${JSON}`)
       .pipe(map((response) => ListShiftMapper.fromJson(response)));
   }
 
-  create(params: ShiftList): Observable<ApiResponse> {
-    return this._http.post<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`, '');
+  create(params: ShiftList): Observable<ApiResponseLegacy> {
+    return this._http.post<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(params)}`, '');
   }
-  update(params: ShiftList): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(
+  update(params: ShiftList): Observable<ApiResponseLegacy> {
+    return this._http.put<ApiResponseLegacy>(
       `${this._url}${params.idTurno}?json=${JSON.stringify(params)}`,
       '',
     );
   }
 
-  delete(params: Partial<ShiftList>): Observable<ApiResponse> {
-    return this._http.delete<ApiResponse>(`${this._url}${params.idTurno}`);
+  delete(params: Partial<ShiftList>): Observable<ApiResponseLegacy> {
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${params.idTurno}`);
   }
 }

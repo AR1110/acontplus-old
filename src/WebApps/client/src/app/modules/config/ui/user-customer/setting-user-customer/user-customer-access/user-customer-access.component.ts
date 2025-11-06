@@ -8,7 +8,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
 import { ListAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case';
 import { UpdateAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import Swal from 'sweetalert2';
 
 interface TreeNode {
@@ -226,7 +226,7 @@ export class UserCustomerAccessComponent implements OnInit {
     return findParent(this.dataSource(), node);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

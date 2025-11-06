@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ComprobanteIngresoRepository } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso.repository';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { ComprobanteIngresoMapper } from '@accounting/comprobante-ingreso/infrastructure/comprobante-ingreso.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
@@ -27,7 +27,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
       ...obj,
     });
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -48,7 +48,7 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 4 });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         const result = {
           establecimientos: [] as GroupedEstab[],
@@ -81,6 +81,6 @@ export class ComprobanteIngresoWebRepository extends ComprobanteIngresoRepositor
 
   create<T>(obj: T) {
     const data = ComprobanteIngresoMapper.toApiCreate(obj as any);
-    return this._http.post<ApiResponse>(`${this._url}Insert`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}Insert`, { data });
   }
 }

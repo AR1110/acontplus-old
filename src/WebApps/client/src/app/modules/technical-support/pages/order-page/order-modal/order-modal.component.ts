@@ -2,7 +2,7 @@ import { Component, inject, signal, ViewChild, ViewEncapsulation, OnInit } from 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { groupEstabUtil } from '@core/utils/group-estab.util';

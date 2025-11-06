@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 import { FractionalProductRepository } from '@inventory/product/domain/repositories/fractional-product.repository';
 
@@ -12,7 +12,9 @@ interface Params {
 @Injectable({
   providedIn: 'root',
 })
-export class FractionalProductGetAllUseCase<T> implements BaseUseCase<ApiResponse<Params>, T> {
+export class FractionalProductGetAllUseCase<T>
+  implements BaseUseCase<ApiResponseLegacy<Params>, T>
+{
   private repo = inject(FractionalProductRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -20,7 +22,7 @@ export class FractionalProductGetAllUseCase<T> implements BaseUseCase<ApiRespons
 
   constructor() {}
 
-  execute(params: T): Observable<ApiResponse<Params>> {
+  execute(params: T): Observable<ApiResponseLegacy<Params>> {
     return this.repo.getAll(params);
   }
 }

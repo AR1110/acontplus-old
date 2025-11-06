@@ -1,11 +1,13 @@
-﻿@page
-@model             IndexModel
+@page
+@model IndexModel
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 
-<div ng-controller="consumoTpvCtrl">
+<div id="iframeApp" ng-controller="iframeAngularCtrl"></div>
+
+<!--<div ng-controller="consumoTpvCtrl">
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
             <h5 class="text-themecolor">Consumo TPV</h5>
@@ -260,16 +262,16 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
 
     <!--Utils-->
-    <audio id="audioNotify">
+    <!--<audio id="audioNotify">
         <source src="~/assets/audio/consumotpv.mp3" type="audio/mpeg" />
-    </audio>
+    </audio>-->
     <!--End Utils-->
-</div>
+<!--</div>
 
 
 @section Scripts{
     <script src="~/js/controllers/restaurant/consumoTpvCtrl.js" asp-append-version="true"></script>
-}
+}-->

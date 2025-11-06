@@ -2,12 +2,12 @@ import { BaseUseCase } from '@core/base-use-case';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CreateDocConfigUseCase implements BaseUseCase<ApiResponse, number> {
+export class CreateDocConfigUseCase implements BaseUseCase<ApiResponseLegacy, number> {
   private repo = inject(DocConfigRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -15,7 +15,7 @@ export class CreateDocConfigUseCase implements BaseUseCase<ApiResponse, number> 
 
   constructor() {}
 
-  execute(params: any): Observable<ApiResponse> {
+  execute(params: any): Observable<ApiResponseLegacy> {
     return this.repo.create(params);
   }
 }

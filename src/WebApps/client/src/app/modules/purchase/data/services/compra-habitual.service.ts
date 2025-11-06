@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
 import { CompraHabitual } from '@purchase/domain/compra-habitual.model';
 import { map } from 'rxjs';
@@ -16,12 +16,12 @@ export class CompraHabitualService {
 
   delete<T>(obj: T) {
     const json = JSON.stringify(obj);
-    return this.#http.delete<ApiResponse>(`${this.#url}Delete?json=${json}`);
+    return this.#http.delete<ApiResponseLegacy>(`${this.#url}Delete?json=${json}`);
   }
 
   get<T>(params: T) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${JSON.stringify(params)}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${JSON.stringify(params)}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -38,6 +38,6 @@ export class CompraHabitualService {
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data);
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, data);
   }
 }

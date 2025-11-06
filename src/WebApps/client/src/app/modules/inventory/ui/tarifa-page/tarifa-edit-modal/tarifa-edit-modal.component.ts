@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
@@ -49,7 +49,7 @@ export class TarifaEditModalComponent implements OnInit {
     ventaPorMayor: false,
   };
 
-  successReponse = (response: ApiResponse) => {
+  successReponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';

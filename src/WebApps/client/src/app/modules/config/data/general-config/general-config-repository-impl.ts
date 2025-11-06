@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, Observable, throwError } from 'rxjs';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GeneralConfigRepository } from '@modules/config/domain/repositories/general-config.repository';
 import { ListGeneralConfigMapper } from '@modules/config/data/general-config/list-general-config.mapper';
 import { APP_POLICIES } from '@core/constants/policies.constants';
@@ -14,17 +14,17 @@ import { catchError } from 'rxjs/operators';
   providedIn: 'root',
 })
 export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
-  update<T>(parameters: T): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(this._url, { data: parameters });
+  update<T>(parameters: T): Observable<ApiResponseLegacy> {
+    return this._http.put<ApiResponseLegacy>(this._url, { data: parameters });
   }
 
   list(parameters: string) {
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${ListGeneralConfigMapper.toJson(parameters)}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${ListGeneralConfigMapper.toJson(parameters)}`)
       .pipe(map((response) => ListGeneralConfigMapper.fromJson(response, parameters)));
   }
 
-  sendPolicy(codePolicy: string): Observable<ApiResponse> {
+  sendPolicy(codePolicy: string): Observable<ApiResponseLegacy> {
     const payload = {
       codeApp: APP_POLICIES.CODE_APP,
       codePolicy,
@@ -33,12 +33,14 @@ export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
 
     const params = new HttpParams().set('json', JSON.stringify(payload));
 
-    return this._http.get<ApiResponse>(this._url, { params }).pipe(
+    return this._http.get<ApiResponseLegacy>(this._url, { params }).pipe(
       map((response) => {
         if (response.code === '1') {
           const parsedPayload = JSON.parse(response.payload as string);
 
-          const table: ApiResponse[] = Array.isArray(parsedPayload.data) ? parsedPayload.data : [];
+          const table: ApiResponseLegacy[] = Array.isArray(parsedPayload.data)
+            ? parsedPayload.data
+            : [];
 
           for (const row of table) {
             if (row.code === '0') {
@@ -60,23 +62,23 @@ export class GeneralConfigRepositoryImpl implements GeneralConfigRepository {
     );
   }
 
-  sendMaxUsers(): Observable<ApiResponse | null> {
+  sendMaxUsers(): Observable<ApiResponseLegacy | null> {
     return this.sendPolicy(APP_POLICIES.POLICIES.MAX_USERS);
   }
 
-  sendMaxDocuments(): Observable<ApiResponse | null> {
+  sendMaxDocuments(): Observable<ApiResponseLegacy | null> {
     return this.sendPolicy(APP_POLICIES.POLICIES.MAX_DOCUMENTS);
   }
 
-  sendMaxInventoryItems(): Observable<ApiResponse | null> {
+  sendMaxInventoryItems(): Observable<ApiResponseLegacy | null> {
     return this.sendPolicy(APP_POLICIES.POLICIES.MAX_INVENTORY_ITEMS);
   }
 
-  sendMaxWarehouses(): Observable<ApiResponse | null> {
+  sendMaxWarehouses(): Observable<ApiResponseLegacy | null> {
     return this.sendPolicy(APP_POLICIES.POLICIES.MAX_WAREHOUSES);
   }
 
-  sendMaxEstablishments(): Observable<ApiResponse | null> {
+  sendMaxEstablishments(): Observable<ApiResponseLegacy | null> {
     return this.sendPolicy(APP_POLICIES.POLICIES.MAX_ESTABLISHMENTS);
   }
 

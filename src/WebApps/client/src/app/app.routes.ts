@@ -133,16 +133,88 @@
 // ];
 
 import { Routes } from '@angular/router';
-
-import { authGuard } from '@core/guards/auth.guard';
+import { hybridAuthGuard } from '@core/guards/hybrid-auth.guard';
 
 export const routes: Routes = [
+  // ========================================
+  // RUTAS LEGACY (Sin Layout)
+  // ========================================
+  // Estas rutas se cargan directamente sin layout cuando vienen desde Razor Pages
+  // NO tienen guard porque app.ts ya validó la autenticación con los query params
+  {
+    path: 'legacy',
+    loadComponent: () =>
+      import('./layouts/legacy-layout/legacy-layout.component').then(
+        (m) => m.LegacyLayoutComponent,
+      ),
+    // SIN canActivate - la autenticación ya fue validada en app.ts
+    children: [
+      // Las rutas legacy se cargarán dinámicamente según los lazy loaded modules
+      {
+        path: 'purchase',
+        loadChildren: () => import('@modules/purchase/purchase.routes').then((r) => r.routes),
+      },
+      {
+        path: 'config',
+        loadChildren: () => import('@modules/config/config.routes').then((r) => r.routes),
+      },
+      {
+        path: 'technical-support',
+        loadChildren: () =>
+          import('@modules/technical-support/technical-support.routes').then((r) => r.routes),
+      },
+      {
+        path: 'accounting',
+        loadChildren: () => import('@modules/accounting/accounting.routes').then((r) => r.routes),
+      },
+      {
+        path: 'inventory',
+        loadChildren: () => import('@modules/inventory/inventory.routes').then((r) => r.routes),
+      },
+      {
+        path: 'sales',
+        loadChildren: () => import('@sale/sale.routes').then((r) => r.routes),
+      },
+      {
+        path: 'restaurant',
+        loadChildren: () => import('@restaurant/restaurant.routes').then((r) => r.routes),
+      },
+      {
+        path: 'billing',
+        loadChildren: () => import('@billing/billing.routes').then((r) => r.routes),
+      },
+      {
+        path: 'mechanical',
+        loadChildren: () => import('@mechanical/mechanical.routes').then((r) => r.routes),
+      },
+      {
+        path: 'customer',
+        loadChildren: () => import('@customer/customer.routes').then((r) => r.routes),
+      },
+      {
+        path: 'vet',
+        loadChildren: () => import('@modules/vet/vet.routes').then((r) => r.routes),
+      },
+      {
+        path: 'common',
+        loadChildren: () => import('@modules/common/common.routes').then((r) => r.routes),
+      },
+      {
+        path: 'barber-shop',
+        loadChildren: () => import('@modules/barber-shop/barber-shop.routes').then((r) => r.routes),
+      },
+    ],
+  },
+
+  // ========================================
+  // RUTAS MODERNAS (Con Layout Admin)
+  // ========================================
   {
     path: '',
     loadComponent: () =>
       import('./layouts/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
-    canActivate: [authGuard],
-    canActivateChild: [authGuard],
+    canActivate: [hybridAuthGuard],
+    canActivateChild: [hybridAuthGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {

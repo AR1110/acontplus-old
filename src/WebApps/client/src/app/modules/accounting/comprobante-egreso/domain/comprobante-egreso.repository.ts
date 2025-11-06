@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   ComprobanteEgresoDeleteParams,
   ComprobanteEgresoDeleteResponse,
@@ -44,9 +44,9 @@ export abstract class ComprobanteEgresoRepository {
    * Crea un nuevo comprobante de egreso
    * @param comprobante Datos del comprobante a crear
    */
-  abstract create<T>(comprobante: T): Observable<ApiResponse>;
+  abstract create<T>(comprobante: T): Observable<ApiResponseLegacy>;
 
-  abstract anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponse>;
+  abstract anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponseLegacy>;
 }
 
 /**

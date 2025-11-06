@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionBodegaList } from '@modules/config/domain/models/user-customer/asignacion-bodega.model';
 import { AsignacionBodegaRepository } from '@modules/config/domain/repositories/asignacion-bodega.repository';
 
@@ -9,7 +9,7 @@ import { AsignacionBodegaRepository } from '@modules/config/domain/repositories/
   providedIn: 'root',
 })
 export class UpdateAsignacionBodegaUseCase
-  implements BaseUseCase<ApiResponse, Partial<AsignacionBodegaList>>
+  implements BaseUseCase<ApiResponseLegacy, Partial<AsignacionBodegaList>>
 {
   private repo = inject(AsignacionBodegaRepository);
 
@@ -18,7 +18,7 @@ export class UpdateAsignacionBodegaUseCase
 
   constructor() {}
 
-  execute(params: Partial<AsignacionBodegaList>): Observable<ApiResponse<unknown>> {
+  execute(params: Partial<AsignacionBodegaList>): Observable<ApiResponseLegacy<unknown>> {
     return this.repo.update(params);
   }
 }

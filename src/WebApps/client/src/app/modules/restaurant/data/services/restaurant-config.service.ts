@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { map } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
@@ -20,7 +20,7 @@ export class RestaurantConfigService {
       tipo: 1,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(

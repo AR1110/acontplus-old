@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
@@ -122,7 +122,7 @@ export class EstablishmentPage implements OnInit {
     }
   }
 
-  commonResponse = (response: ApiResponse) => {
+  commonResponse = (response: ApiResponseLegacy) => {
     this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,

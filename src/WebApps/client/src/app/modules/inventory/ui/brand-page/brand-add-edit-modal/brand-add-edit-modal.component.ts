@@ -1,6 +1,6 @@
 import { Component, inject, Input, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -42,7 +42,7 @@ export class BrandAddEditModalComponent implements OnInit {
   loading = signal(false);
 
   successReponse = {
-    next: (response: ApiResponse) => {
+    next: (response: ApiResponseLegacy) => {
       if (response.code === '0') {
         this.tS.show({
           type: 'warning',

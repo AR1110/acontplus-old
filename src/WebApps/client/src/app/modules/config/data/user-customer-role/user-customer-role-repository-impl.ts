@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { UserCustomerRoleRepository } from '@modules/config/domain/repositories/user-customer-role.repository';
 import { ListUserCustomerRoleMapper } from './list-user-customer-role.mapper';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
@@ -19,8 +19,8 @@ export class UserCustomerRoleRepositoryImpl implements UserCustomerRoleRepositor
       .get(`${this._url}?json=${json}`)
       .pipe(map((response) => ListAccessUserCustomerRoleMapper.fromJson(response)));
   }
-  updateAccess(parameters: any): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${parameters.userRoleId}`, {
+  updateAccess(parameters: any): Observable<ApiResponseLegacy> {
+    return this._http.put<ApiResponseLegacy>(`${this._url}${parameters.userRoleId}`, {
       data: parameters.data,
     });
   }

@@ -1,7 +1,7 @@
 import { Component, inject, signal, ViewEncapsulation, OnInit } from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_ESTADO, REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';

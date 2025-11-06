@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { Category } from '@accounting/category/domain/category';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
@@ -99,7 +99,7 @@ export class SubcategoryModalComponent implements OnInit {
     this.subcategoryForm.get('code')?.setValue(code);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     this.toastService.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import {
   GroupedEstab,
   GroupedEstabBodega,

@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListMovimientoCajaResponse } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
 
 export class ListMovimientoCajaMapper {
@@ -6,7 +6,7 @@ export class ListMovimientoCajaMapper {
     return JSON.stringify({ ...obj, tipo: 1 });
   }
 
-  static fromJson(response: ApiResponse): ListMovimientoCajaResponse {
+  static fromJson(response: ApiResponseLegacy): ListMovimientoCajaResponse {
     const result = new ListMovimientoCajaResponse();
     if (response.code === '1') {
       const { movimientos = [] } = JSON.parse(response.payload as string);

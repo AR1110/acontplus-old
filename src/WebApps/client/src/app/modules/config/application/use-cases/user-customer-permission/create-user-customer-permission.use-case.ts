@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { UserCustomerPermissionRepository } from '@modules/config/domain/repositories/user-customer-permission.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CreateUserCustomerPermissionUseCase implements BaseUseCase<ApiResponse, any> {
+export class CreateUserCustomerPermissionUseCase implements BaseUseCase<ApiResponseLegacy, any> {
   constructor(private repo: UserCustomerPermissionRepository) {}
 
   execute(params: any) {

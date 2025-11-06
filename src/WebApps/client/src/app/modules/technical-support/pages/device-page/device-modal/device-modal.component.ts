@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { IForm } from '@core/models/form-types';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';

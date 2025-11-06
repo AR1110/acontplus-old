@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Printer, PrinterRead } from '@modules/config/domain/models/printing/printer.model';
 
 export abstract class PrinterRepository {
@@ -18,8 +18,8 @@ export abstract class PrinterRepository {
     documents: any[];
     printer: any;
   }>;
-  abstract updateStatus<T>(id: number, printer: T): Observable<ApiResponse>;
-  abstract removePrinter(id: number): Observable<ApiResponse>;
-  abstract create<T>(printer: T): Observable<ApiResponse>;
-  abstract update<T>(id: number, printer: T): Observable<ApiResponse>;
+  abstract updateStatus<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
+  abstract removePrinter(id: number): Observable<ApiResponseLegacy>;
+  abstract create<T>(printer: T): Observable<ApiResponseLegacy>;
+  abstract update<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
 }

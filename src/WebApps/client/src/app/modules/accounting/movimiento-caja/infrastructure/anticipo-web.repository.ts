@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
@@ -18,7 +18,7 @@ export class AnticipoWebRepository implements AnticipoRepository {
   getAll<T>(obj: T) {
     const json = ListAnticipoMapper.toJson(obj);
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => ListAnticipoMapper.fromJson(response)));
@@ -26,7 +26,7 @@ export class AnticipoWebRepository implements AnticipoRepository {
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 3 });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         if (response.code === '1') {
           const mainData = JSON.parse(response.payload as string);
@@ -44,7 +44,7 @@ export class AnticipoWebRepository implements AnticipoRepository {
 
   getDataForm() {
     const json = JSON.stringify({ tipo: 2 });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         let entidadesFinanciera = [],
           establecimientos = [],
@@ -67,14 +67,14 @@ export class AnticipoWebRepository implements AnticipoRepository {
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
   create(data: any) {
-    return this._http.post<ApiResponse>(`${this._url}`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, { data });
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data);
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, data);
   }
 }

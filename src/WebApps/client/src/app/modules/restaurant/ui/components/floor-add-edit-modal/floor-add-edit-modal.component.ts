@@ -4,7 +4,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { Room } from '@restaurant/domain/models/room.model';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RoomService } from '@restaurant/data/services/room.service';
@@ -185,7 +185,7 @@ export class FloorAddEditModalComponent implements OnInit {
     }
   }
 
-  successResponse(response: ApiResponse) {
+  successResponse(response: ApiResponseLegacy) {
     this._tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,

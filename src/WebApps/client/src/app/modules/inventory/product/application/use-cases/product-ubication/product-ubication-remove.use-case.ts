@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 import { ProductUbicationRepository } from '@inventory/product/domain/repositories/product-ubication.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProductUbicationRemoveUseCase<T> implements BaseUseCase<ApiResponse, number> {
+export class ProductUbicationRemoveUseCase<T> implements BaseUseCase<ApiResponseLegacy, number> {
   private repo = inject(ProductUbicationRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -15,7 +15,7 @@ export class ProductUbicationRemoveUseCase<T> implements BaseUseCase<ApiResponse
 
   constructor() {}
 
-  execute(id: number): Observable<ApiResponse> {
+  execute(id: number): Observable<ApiResponseLegacy> {
     return this.repo.remove(id);
   }
 }

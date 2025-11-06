@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { formatDateToString } from '@core/utils/date.util';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -100,7 +100,7 @@ export class AddEditElectronicSignatureComponent implements OnInit {
       .subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

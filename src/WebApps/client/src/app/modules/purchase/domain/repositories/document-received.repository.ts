@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
@@ -15,9 +15,9 @@ export abstract class DocumentReceivedRepository {
     documents: DocumentReceived[];
   }>;
   abstract getById(id: number): Observable<unknown>;
-  abstract create<T>(data: T): Observable<ApiResponse>;
-  abstract update<T>(id: number, data: T): Observable<ApiResponse>;
-  abstract delete<T>(id: number): Observable<ApiResponse>;
-  abstract uploadXml<T>(parameters: T, file: any): Observable<ApiResponse>;
-  abstract previewXml(id: number): Observable<ApiResponse>;
+  abstract create<T>(data: T): Observable<ApiResponseLegacy>;
+  abstract update<T>(id: number, data: T): Observable<ApiResponseLegacy>;
+  abstract delete<T>(id: number): Observable<ApiResponseLegacy>;
+  abstract uploadXml<T>(parameters: T, file: any): Observable<ApiResponseLegacy>;
+  abstract previewXml(id: number): Observable<ApiResponseLegacy>;
 }
