@@ -17,6 +17,8 @@ import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
 import {ItemSearch} from "@restaurant/ui/items/item-search/item-search";
+import {ItemGetBydIdUseCase} from "@restaurant/application/use-cases/item.use-case";
+import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
 
 @Component({
   selector: 'app-item-add-edit',
@@ -33,6 +35,8 @@ import {ItemSearch} from "@restaurant/ui/items/item-search/item-search";
   styles: ``,
 })
 export class ItemAddEdit implements OnInit {
+  private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
+  private productGetIdUseCase = inject(ProductGetIdUseCase)
   data = inject<{id: number}>(MAT_DIALOG_DATA);
   itemForm = new FormGroup({
     id: new FormControl(0),
@@ -43,7 +47,6 @@ export class ItemAddEdit implements OnInit {
     productId: new FormControl(0),
   });
   recipes = signal<Recipe[]>([]);
-  ingredientSearch = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
@@ -209,7 +212,7 @@ export class ItemAddEdit implements OnInit {
     {
       title: 'Ingrediente',
       field: 'summary',
-      width: 300,
+      width: 450,
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
@@ -254,8 +257,7 @@ export class ItemAddEdit implements OnInit {
     {
       title: 'Cant.',
       field: 'quantity',
-      width: 100,
-      widthGrow: 1,
+      width: 120,
       editor: true,
       editorParams: {
         selectContents: true,
@@ -353,6 +355,9 @@ export class ItemAddEdit implements OnInit {
   }
 
   onSelectItem(rowData:any){
+    this.itemGetByIdUseCase.execute(rowData.id).subscribe((response) => {
+      console.log(response);
+    })
     console.log(rowData);
     const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
 

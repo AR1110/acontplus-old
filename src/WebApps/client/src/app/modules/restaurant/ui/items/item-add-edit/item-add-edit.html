@@ -14,17 +14,13 @@
          (selectedItem)="onSelectItem($event)"
         />
 
-        <h1>{{140 + (this.recipes().length>2? this.recipes().length * 140: 1)}}</h1>
-
         <app-tabulator
           [columnNames]="columns"
           [tableData]="recipes()"
           [theme]="'semantic-ui'"
           [options]="{
-          headerSort: false,
-          resizableColumnFit: true,
-          layout: 'fitColumns',
-          height: 140 + (this.recipes().length>2? this.recipes().length * 140: 1),
+          height: 'auto',
+           rowHeader:{formatter:'rownum', headerSort:false, hozAlign:'center', resizable:false, frozen:true},
         }"
           (rowDeleted)="rowDeleted($event)"
         />

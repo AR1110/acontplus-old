@@ -1,12 +1,9 @@
 import {
   AfterViewInit,
-  Component, computed, effect,
-  EventEmitter, input,
+  Component , input,
   Input,
-  OnChanges,
   OnDestroy,
   output,
-  Output,
   SimpleChanges,
   ViewEncapsulation,
 } from '@angular/core';
@@ -31,6 +28,8 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
   @Input() dataTree = false;
   @Input() dataTreeChildField = 'childRows';
   @Input() dataTreeStartExpanded = false;
+
+  selectableRows = input(false);
   options = input<Record<string, unknown>>({});
   /**
    * theme: 'default' | 'semantic-ui' | 'bootstrap5' | ...
@@ -63,6 +62,7 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
       console.log(this.tableData(), 'isff');
       this.updateTableData();
     }
+
   }
 
   ngAfterViewInit(): void {
@@ -141,7 +141,7 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
         reactiveData: true,
         autoResize: true,
         placeholder: 'Sin registro',
-        selectableRows: true,
+        selectableRows: this.selectableRows() ?? true,
         ...this.options(),
       });
 

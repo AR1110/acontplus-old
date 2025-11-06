@@ -33,9 +33,20 @@ export class ItemSearchUseCase implements BaseUseCase<any, any> {
     if(!params.q){
       throw new Error('q is required');
     }
-
-    console.log(params);
     return this.repo.search(params);
   }
 }
 
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ItemGetBydIdUseCase implements BaseUseCase<any, number> {
+  private repo = inject(ItemRepository);
+  execute(id: number): Observable<any> {
+    if (!id)
+      throw new Error('id is required');
+    return this.repo.getById(id);
+  }
+}

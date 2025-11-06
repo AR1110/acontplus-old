@@ -27,4 +27,12 @@ export class ItemHttpRepository implements ItemRepository {
       .get<ApiResponse>(`${this.#url}?json=${json}`)
       .pipe(map((response) => ItemListMapper.fromJson(response)));
   }
+
+   getById(id: number): Observable<any> {
+    return this.#http.get(`${this.#url}${id}`).pipe(
+      map((response) => {
+        return response;
+      })
+    )
+  }
 }

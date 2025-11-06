@@ -3,4 +3,5 @@ import { Observable } from 'rxjs';
 export abstract class ItemRepository {
   abstract list(params: any): Observable<any>;
   abstract search(params: any): Observable<any>;
+  abstract getById(id: number): Observable<any>;
 }
