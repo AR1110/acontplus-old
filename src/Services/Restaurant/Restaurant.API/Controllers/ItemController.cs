@@ -21,6 +21,7 @@ public class ItemController(IItemService itemService) : BaseApiController
     {
         var parameters = new Dictionary<string, object>
         {
+             { "UserRoleId", User.GetClaimValue<int>("userRoleId") },
             { "Id", id }
         };
         return Ok(await itemService.GetByIdAsync(parameters));

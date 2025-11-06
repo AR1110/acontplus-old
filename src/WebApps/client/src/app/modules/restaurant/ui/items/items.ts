@@ -9,6 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { MatPagination } from '@shared/models/pagination.model';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import {ThemeButtonComponent} from "@shared/components/theme-button/theme-button.component";
+import {DialogService} from "@core/services/dialog.service";
+import {ItemAddEdit} from "@restaurant/ui/items/item-add-edit/item-add-edit";
+import {finalize} from "rxjs/operators";
+import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
 
 @Component({
   selector: 'app-items',
@@ -19,6 +24,7 @@ import { MatIcon } from '@angular/material/icon';
     FormsModule,
     MatIconButton,
     MatIcon,
+    ThemeButtonComponent,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',
@@ -26,6 +32,7 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class Items {
   private _listUseCase = inject(ItemListUseCase);
+  private _dgSvc = inject(DialogService)
 
   columns: DataGridColumn[] = [
     { header: 'Op.', field: 'op' },
@@ -45,10 +52,17 @@ export class Items {
     },
   ];
 
-  subCategories = [];
+
+
+  categoryAbbreviationsSelected  = [];
+  categoryAbbreviations = signal([
+    {code: CATEGORY_ABBREVIATIONS.RESTAURANT, name: 'Productos'},
+    {code: CATEGORY_ABBREVIATIONS.COMBO, name: 'Menus'},
+    {code: CATEGORY_ABBREVIATIONS.INGREDIENT, name: 'Ingredientes'},
+  ])
 
   list = signal<any[]>([]);
-  isLoading = true;
+  isLoading = signal(false);
   pagination = signal(new MatPagination());
 
   ngOnInit() {
@@ -56,20 +70,32 @@ export class Items {
   }
 
   getList() {
-    this.isLoading = true;
     const params = {
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      categoriesSigla: this.subCategories.length > 0 ? this.subCategories.toString() : null,
+      categoryAbbreviations : this.categoryAbbreviationsSelected .length > 0 ? this.categoryAbbreviationsSelected .toString() : null,
     };
-    this._listUseCase.execute(params).subscribe((response) => {
-      console.log(response);
+    this.isLoading.set(true);
+    this._listUseCase.execute(params)
+      .pipe(
+        finalize(()=>this.isLoading.set(false))
+      ).subscribe((response) => {
       this.list.set(response.data);
       this.pagination.update((res) => ({
         ...res,
         totalRecords: response.totalRecords,
       }));
-      this.isLoading = false;
+
+    })
+  }
+
+
+  onEdit(rowData:any){
+    this._dgSvc.open(ItemAddEdit, {
+      size: 'xl',
+      data: {
+        id: rowData.id,
+      }
     });
   }
 

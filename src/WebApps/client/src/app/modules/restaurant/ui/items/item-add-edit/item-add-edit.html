@@ -1,0 +1,60 @@
+<app-mat-custom-dialog
+  (close)="onModalClose()"
+  title="Editar Datos del Producto"
+>
+  <div ngProjectAs="content">
+    <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
+      <div class="vstack">
+        <mat-form-field>
+          <mat-label>Resumen</mat-label>
+          <input type="text" matInput placeholder="..." required="" formControlName="summary" />
+        </mat-form-field>
+        <app-item-search
+        label="Buscar Ingredientes"
+         (selectedItem)="onSelectItem($event)"
+        />
+
+        <app-tabulator
+          [columnNames]="columns"
+          [tableData]="recipes()"
+          [theme]="'semantic-ui'"
+          [options]="{
+          height: 'auto',
+           rowHeader:{formatter:'rownum', headerSort:false, hozAlign:'center', resizable:false, frozen:true},
+        }"
+          (rowDeleted)="rowDeleted($event)"
+        />
+
+        <div
+          class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Receta</mat-label>
+              <textarea matInput placeholder="..." formControlName="recipe"></textarea>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Instrucciones</mat-label>
+              <textarea matInput placeholder="..." formControlName="instructions"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div ngProjectAs="actions"></div>
+</app-mat-custom-dialog>
+
+
+<ng-template #footer>
+  <app-theme-button
+    type="submit"
+    icon="save"
+    variant="success"
+    text="Guardar"
+    form="itemForm"
+    [disabled]="itemForm.invalid"
+  />
+</ng-template>
