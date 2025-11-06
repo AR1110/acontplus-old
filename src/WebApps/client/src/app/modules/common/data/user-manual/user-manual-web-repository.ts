@@ -1,5 +1,5 @@
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { API_ENDPOINTS } from '@modules/common/core/enums/common.constants';
 import { inject } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
@@ -11,14 +11,16 @@ export class UserManualWebRepository extends UserManualRepository {
   private readonly _url = `${PATHS_API.COMMON}${API_ENDPOINTS.USER_MANUAL}`;
 
   get<T>(parameters: T) {
-    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(parameters)}`).pipe(
-      map((response) => {
-        if (response.code !== '1') {
-          return { modules: [], userManuals: [] };
-        }
-        const { modules, userManuals } = JSON.parse(response.payload as string);
-        return { modules: modules || [], userManuals: userManuals || [] };
-      }),
-    );
+    return this._http
+      .get<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(parameters)}`)
+      .pipe(
+        map((response) => {
+          if (response.code !== '1') {
+            return { modules: [], userManuals: [] };
+          }
+          const { modules, userManuals } = JSON.parse(response.payload as string);
+          return { modules: modules || [], userManuals: userManuals || [] };
+        }),
+      );
   }
 }

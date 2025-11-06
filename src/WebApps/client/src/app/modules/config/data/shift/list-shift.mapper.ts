@@ -1,5 +1,5 @@
 import { ListShiftResponse } from '@modules/config/domain/models/shift.models';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListShiftMapper {
   static toJson(params: any) {
@@ -9,7 +9,7 @@ export class ListShiftMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): ListShiftResponse {
+  static fromJson(response: ApiResponseLegacy): ListShiftResponse {
     const result = new ListShiftResponse();
     if (response.code === '1') {
       const shifts = JSON.parse(response.payload as any);

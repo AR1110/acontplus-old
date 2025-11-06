@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   GuiaRemisionDataForm,
   GuiaRemisionFilterData,

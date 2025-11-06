@@ -7,10 +7,10 @@
 
 <ng-template #body>
   <div class="my-2">
-    <app-theme-button
+    <acp-button
       variant="info"
       icon="add"
-      matStyle="raised"
+
       (handleClick)="addRow()"
       text="Agregar Fila"
     />
@@ -23,7 +23,7 @@
   />
 </ng-template>
 <ng-template #templateOp let-item="item">
-  <app-theme-button
+  <acp-button
     variant="danger"
     icon="delete_outline"
     matStyle="icon"
@@ -48,10 +48,10 @@
 </ng-template>
 
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     variant="success"
     icon="save"
-    matStyle="raised"
+
     text="Guardar"
     (handleClick)="save()"
   />

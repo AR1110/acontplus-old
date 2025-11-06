@@ -1,5 +1,5 @@
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { PATHS_API } from '@core/constants/global.constants';
 import { UserSearch } from '@core/models/user.model';

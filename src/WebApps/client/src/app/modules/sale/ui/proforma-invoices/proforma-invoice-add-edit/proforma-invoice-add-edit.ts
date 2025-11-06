@@ -1,27 +1,27 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MatDialogRef} from "@angular/material/dialog";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {MatInputModule} from "@angular/material/input";
-import {MatSelectModule} from "@angular/material/select";
-import {FormsModule} from "@angular/forms";
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
-import {provideNativeDateAdapter} from "@angular/material/core";
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
 import {
-  CompanyCustomerSearchComponent
-} from "@company-customer/presentation/components/company-customer-search/company-customer-search.component";
-import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
-import {MatIconButton} from "@angular/material/button";
-import {
-  ProductSearchDialog
-} from "@inventory/product/presentation/components/product-search-dialog/product-search-dialog";
-import {SearchDialogService} from "@shared/services/search-dialog";
-import {MatIcon} from "@angular/material/icon";
-import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
-import {DataGrid} from "@shared/components/data-grid/data-grid";
-import {DataGridColumn} from "@shared/components/data-grid/types";
-import {TotalizadorUtil} from "@core/utils/totalizador.util";
-import {GetProductSaleUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
+  MatDatepicker,
+  MatDatepickerInput,
+  MatDatepickerToggle,
+} from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { MatIconButton } from '@angular/material/button';
+import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
+import { SearchDialogService } from '@shared/services/search-dialog';
+import { MatIcon } from '@angular/material/icon';
+import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { DataGrid } from '@shared/components/data-grid/data-grid';
+import { DataGridColumn } from '@shared/components/data-grid/types';
+import { TotalizadorUtil } from '@core/utils/totalizador.util';
+import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
   selector: 'app-proforma-invoice-add-edit',
@@ -39,12 +39,12 @@ import {GetProductSaleUseCase} from "@inventory/product/application/use-cases/pr
     MatIcon,
     MatIconButton,
     TabulatorComponent,
-    DataGrid
+    DataGrid,
   ],
   templateUrl: './proforma-invoice-add-edit.html',
   styleUrl: './proforma-invoice-add-edit.scss',
   providers: [provideNativeDateAdapter()],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProformaInvoiceAddEdit {
   private dgRef = inject(MatDialogRef<ProformaInvoiceAddEdit>);
@@ -53,10 +53,10 @@ export class ProformaInvoiceAddEdit {
   private searchService = inject(SearchDialogService);
 
   //use cases
-  private _productSaleUseCase = inject(GetProductSaleUseCase)
+  private _productSaleUseCase = inject(GetProductSaleUseCase);
   dataForm = {
     issueDate: new Date(),
-  }
+  };
 
   uuidRow = signal('');
 
@@ -131,7 +131,7 @@ export class ProformaInvoiceAddEdit {
     `;
         delBtn.classList.add('small-button', 'btn-remove');
         delBtn.addEventListener('click', () => {
-         // this.deleteRow(rowData);
+          // this.deleteRow(rowData);
         });
 
         // Botón Editar
@@ -339,22 +339,17 @@ export class ProformaInvoiceAddEdit {
   displayedTotalsColumns: DataGridColumn[] = [
     { header: '', field: 'label' },
     { header: '', field: 'value' },
-
-  ]
+  ];
   totalRows: any[] = [];
 
-  additionalInfo =signal<any>([
-    {},
-    {},
-  ])
-  columnsAdditionalInfo:DataGridColumn[]=[
-    {header: 'Op.', field: 'op'},
-    {header: 'Nombre', field: 'name'},
-    {header: 'Valor', field: 'value'},
-  ]
+  additionalInfo = signal<any>([{}, {}]);
+  columnsAdditionalInfo: DataGridColumn[] = [
+    { header: 'Op.', field: 'op' },
+    { header: 'Nombre', field: 'name' },
+    { header: 'Valor', field: 'value' },
+  ];
 
   ngOnInit() {
-
     const items: any[] = [
       {
         cantidad: 2,
@@ -362,7 +357,7 @@ export class ProformaInvoiceAddEdit {
         precioTotalSinImpuesto: 200,
         valorDescuento: 0,
         codigoPorcentaje: '2',
-        ice: 0
+        ice: 0,
       },
       {
         cantidad: 1,
@@ -370,48 +365,42 @@ export class ProformaInvoiceAddEdit {
         precioTotalSinImpuesto: 50,
         valorDescuento: 5,
         codigoPorcentaje: '0',
-        ice: 0
-      }
+        ice: 0,
+      },
     ];
 
     const tarifasImpuesto: any[] = [
       { codigoPorcentaje: '0', descripcion: 'IVA 0%', tarifa: 0 },
-      { codigoPorcentaje: '2', descripcion: 'IVA 12%', tarifa: 12 }
+      { codigoPorcentaje: '2', descripcion: 'IVA 12%', tarifa: 12 },
     ];
 
     const totalizador = new TotalizadorUtil();
 
     const resultado = totalizador.calcular({
       items,
-      tarifasImpuesto
+      tarifasImpuesto,
     });
 
     this.totalRows = resultado.totalRows;
 
-    this.searchService.onResult().subscribe(result => {
+    this.searchService.onResult().subscribe((result) => {
       this.handleSearchResult(result);
     });
   }
 
   openSearch(): void {
-    this.searchService.open(ProductSearchDialog)?.subscribe(result => {
+    this.searchService.open(ProductSearchDialog)?.subscribe((result) => {
       this.handleSearchResult(result);
     });
   }
 
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
-
-
-
   }
 
-  async cellEdited(cell: any): Promise<void> {
+  async cellEdited(cell: any): Promise<void> {}
 
-  }
-
-  closeDg(){
+  closeDg() {
     this.dgRef.close();
   }
-
 }

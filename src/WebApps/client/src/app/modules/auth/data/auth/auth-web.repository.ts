@@ -1,7 +1,7 @@
 import { PATHS_AUTH } from '@modules/auth/domain/constants/auth.constants';
 import { AuthRepository } from '../../domain/repositories/auth.repository';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { User } from '../../domain/models/user.model';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +21,7 @@ export class AuthWebRepository implements AuthRepository {
     userRoles: any[];
     userRolesOriginal: any[];
   }> {
-    return this.http.post<ApiResponse>(`${this._url}login`, credentials).pipe(
+    return this.http.post<ApiResponseLegacy>(`${this._url}login`, credentials).pipe(
       map((response) => {
         const result = {
           success: false,
@@ -48,15 +48,15 @@ export class AuthWebRepository implements AuthRepository {
   }
 
   requestAccess(params: any) {
-    return this.http.post<ApiResponse>(`${this._url}requestaccess`, params);
+    return this.http.post<ApiResponseLegacy>(`${this._url}requestaccess`, params);
   }
 
   authenticate(params: any) {
-    return this.http.post<ApiResponse>(`${this._url}authenticate`, params);
+    return this.http.post<ApiResponseLegacy>(`${this._url}authenticate`, params);
   }
 
   createToken(params: any) {
-    return this.http.post<ApiResponse>(`${this._url}createtoken`, params).pipe(
+    return this.http.post<ApiResponseLegacy>(`${this._url}createtoken`, params).pipe(
       map((response) => {
         const result = {
           success: false,
@@ -82,7 +82,7 @@ export class AuthWebRepository implements AuthRepository {
     );
   }
 
-  register(user: User): Observable<ApiResponse> {
-    return this.http.post<ApiResponse>(`${this._url}register`, user);
+  register(user: User): Observable<ApiResponseLegacy> {
+    return this.http.post<ApiResponseLegacy>(`${this._url}register`, user);
   }
 }

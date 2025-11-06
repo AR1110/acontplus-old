@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
@@ -56,7 +56,7 @@ export class TagsAddEditModalComponent implements OnInit {
   marcas = signal<any[]>([]);
 
   successReponse = {
-    next: (response: ApiResponse) => {
+    next: (response: ApiResponseLegacy) => {
       if (response.code === '0') {
         this.tS.show({
           type: 'warning',

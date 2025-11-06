@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FilterDataSupportResponse } from '@mechanical/domain/models/support.model';
 
 export abstract class SupportRepository {
@@ -21,11 +21,11 @@ export abstract class SupportRepository {
 
   abstract search<T extends { textSearch: string }>(obj: T): Observable<any>;
 
-  abstract post<T>(data: T): Observable<ApiResponse>;
+  abstract post<T>(data: T): Observable<ApiResponseLegacy>;
 
-  abstract put<T>(id: number, data: T): Observable<ApiResponse>;
+  abstract put<T>(id: number, data: T): Observable<ApiResponseLegacy>;
 
-  abstract remove(id: number): Observable<ApiResponse>;
+  abstract remove(id: number): Observable<ApiResponseLegacy>;
 
-  abstract putState(id: number, supportStatusId: number): Observable<ApiResponse>;
+  abstract putState(id: number, supportStatusId: number): Observable<ApiResponseLegacy>;
 }

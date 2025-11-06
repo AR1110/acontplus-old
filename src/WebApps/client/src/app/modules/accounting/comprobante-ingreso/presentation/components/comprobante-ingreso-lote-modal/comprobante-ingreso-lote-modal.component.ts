@@ -22,7 +22,7 @@ import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/appli
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
 
@@ -34,7 +34,7 @@ import { DialogService } from '@core/services/dialog.service';
     MatCard,
     MatCardContent,
     MatButton,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './comprobante-ingreso-lote-modal.component.html',
   styleUrl: './comprobante-ingreso-lote-modal.component.scss',

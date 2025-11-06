@@ -1,7 +1,4 @@
-<app-mat-custom-dialog
-  (close)="onModalClose()"
-  title="Editar Datos del Producto"
->
+<app-mat-custom-dialog (close)="onModalClose()" title="Editar Datos del Producto">
   <div ngProjectAs="content">
     <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
       <div class="vstack">
@@ -9,19 +6,22 @@
           <mat-label>Resumen</mat-label>
           <input type="text" matInput placeholder="..." required="" formControlName="summary" />
         </mat-form-field>
-        <app-item-search
-        label="Buscar Ingredientes"
-         (selectedItem)="onSelectItem($event)"
-        />
+        <app-item-search label="Buscar Ingredientes" (selectedItem)="onSelectItem($event)" />
 
         <app-tabulator
           [columnNames]="columns"
           [tableData]="recipes()"
           [theme]="'semantic-ui'"
           [options]="{
-          height: 'auto',
-           rowHeader:{formatter:'rownum', headerSort:false, hozAlign:'center', resizable:false, frozen:true},
-        }"
+            height: 'auto',
+            rowHeader: {
+              formatter: 'rownum',
+              headerSort: false,
+              hozAlign: 'center',
+              resizable: false,
+              frozen: true,
+            },
+          }"
           (rowDeleted)="rowDeleted($event)"
         />
 
@@ -47,9 +47,8 @@
   <div ngProjectAs="actions"></div>
 </app-mat-custom-dialog>
 
-
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     type="submit"
     icon="save"
     variant="success"

@@ -14,7 +14,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
@@ -37,7 +37,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     MatFormFieldModule,
     MatSlideToggleModule,
     MatInput,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatDynamicTableComponent,
   ],

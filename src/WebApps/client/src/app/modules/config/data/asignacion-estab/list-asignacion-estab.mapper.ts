@@ -1,5 +1,5 @@
 import { AsignacionEstabResponse } from '@modules/config/domain/models/user-customer/asignacion-estab.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListAsignacionEstabMapper {
   static toJson(parameters: any) {
@@ -9,7 +9,7 @@ export class ListAsignacionEstabMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): AsignacionEstabResponse {
+  static fromJson(response: ApiResponseLegacy): AsignacionEstabResponse {
     const estabs = JSON.parse(response.payload as string) || [];
     const data = estabs.map((item: any, index: any) => {
       return {

@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 import {
   ArqueoControlCajaResponse,
@@ -11,8 +11,8 @@ export abstract class ControlCajaRepository {
   abstract getDataForm(): Observable<any>;
 
   abstract getDataFilter(): Observable<FilterDataControlCajaResponse>;
-  abstract post<T>(data: T): Observable<ApiResponse>;
+  abstract post<T>(data: T): Observable<ApiResponseLegacy>;
   abstract getArqueoCaja(id: number): Observable<ArqueoControlCajaResponse>;
   abstract getDataFormCashboxClose(): Observable<any>;
-  abstract put<T>(id: number, data: T): Observable<ApiResponse>;
+  abstract put<T>(id: number, data: T): Observable<ApiResponseLegacy>;
 }

@@ -3,13 +3,13 @@ import { ComprobanteEgresoRepository } from '@accounting/comprobante-egreso/doma
 import { BaseUseCase } from '@core/base-use-case';
 import { ComprobanteEgresoDeleteParams } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AnularComprobanteEgresoUseCase
-  implements BaseUseCase<ApiResponse, ComprobanteEgresoDeleteParams>
+  implements BaseUseCase<ApiResponseLegacy, ComprobanteEgresoDeleteParams>
 {
   private repo = inject(ComprobanteEgresoRepository);
 
@@ -18,7 +18,7 @@ export class AnularComprobanteEgresoUseCase
 
   constructor() {}
 
-  execute(params: ComprobanteEgresoDeleteParams): Observable<ApiResponse> {
+  execute(params: ComprobanteEgresoDeleteParams): Observable<ApiResponseLegacy> {
     return this.repo.anular(params);
   }
 }

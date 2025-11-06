@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -9,7 +9,7 @@ import { SharedService } from '@core/services/shared.service';
 
 @Component({
   selector: 'app-detalle-arqueo-caja-modal-modal',
-  imports: [ThemeButtonComponent, MatCustomDialogComponent, MatDynamicTableComponent],
+  imports: [Button, MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './detalle-arqueo-control-caja.component.html',
 })
 export class DetalleArqueoControlCajaComponent implements OnInit {

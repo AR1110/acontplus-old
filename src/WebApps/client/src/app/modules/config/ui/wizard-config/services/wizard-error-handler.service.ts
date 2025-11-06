@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export interface ErrorContext {
   operation: string;
@@ -63,7 +63,7 @@ export class WizardErrorHandlerService {
     });
   }
 
-  private isApiResponse(obj: unknown): obj is ApiResponse {
+  private isApiResponse(obj: unknown): obj is ApiResponseLegacy {
     return obj !== null && typeof obj === 'object' && 'code' in obj && 'message' in obj;
   }
 }

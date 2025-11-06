@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { REPORT_CODE, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -15,7 +15,7 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDivider } from '@angular/material/divider';
@@ -32,7 +32,7 @@ import { MatSelectModule } from '@angular/material/select';
     BreadcrumbComponent,
     SupplierSearchComponent,
     DateRangeSelectionComponent,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatDivider,
   ],

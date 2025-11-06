@@ -33,7 +33,7 @@ import { ProductPostUseCase } from '@inventory/product/application/use-cases/pro
 import { ProductPutUseCase } from '@inventory/product/application/use-cases/product/product-put.use-case';
 import { forkJoin } from 'rxjs';
 import { ProductUbicationComponent } from '@inventory/product/presentation/components/product-ubication/product-ubication.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ProductBarcodeComponent } from '@inventory/product/presentation/components/product-barcode/product-barcode.component';
 import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
 import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
@@ -70,7 +70,7 @@ interface ProductTarifa {
     TabulatorComponent,
     MatCustomDialogComponent,
     ProductUbicationComponent,
-    ThemeButtonComponent,
+    Button,
     ProductBarcodeComponent,
     FraccProductListComponent,
     UploadImageComponent,

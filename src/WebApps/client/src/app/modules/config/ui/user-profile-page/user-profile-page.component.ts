@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -20,7 +20,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     BreadcrumbComponent,
     MatCardContent,
     MatCard,
-    ThemeButtonComponent,
+    Button,
   ],
 })
 export class UserProfilePageComponent implements OnInit {

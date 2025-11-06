@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListAnticipoMapper {
   static toJson(params: any) {
@@ -8,7 +8,7 @@ export class ListAnticipoMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     let data = [];
     if (response.code === '1') {
       const { anticipos = [] } = JSON.parse(response.payload as string);

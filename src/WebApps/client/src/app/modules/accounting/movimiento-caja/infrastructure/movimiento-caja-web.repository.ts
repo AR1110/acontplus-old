@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ListMovimientoCajaMapper } from '@accounting/movimiento-caja/infrastructure/mappers/list-movimiento-caja.mapper';
@@ -22,7 +22,7 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
   getAll<T>(obj: T) {
     const json = ListMovimientoCajaMapper.toJson(obj);
     return this._http
-      .get<ApiResponse>(`${this._url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => ListMovimientoCajaMapper.fromJson(response)));
@@ -30,7 +30,7 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
 
   getDataFilter() {
     const json = JSON.stringify({ tipo: 3 });
-    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}Get?json=${json}`).pipe(
       map((response) => {
         if (response.code === '1') {
           const { establecimiento = [] } = JSON.parse(response.payload as string);
@@ -47,7 +47,7 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
 
   getDataForm() {
     const json = JSON.stringify({ tipo: 2 });
-    return this._http.get<ApiResponse>(`${this._url}Get?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}Get?json=${json}`).pipe(
       map((response) => {
         const result = {
           cajas: [],
@@ -82,14 +82,14 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
   }
 
   create<T>(data: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, { data });
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, { data });
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, { data });
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 }

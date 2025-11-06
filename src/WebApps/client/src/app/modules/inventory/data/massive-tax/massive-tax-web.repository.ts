@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { MassiveTaxRepository } from '@inventory/domain/repositories/massive-tax.repository';
@@ -85,6 +85,6 @@ export class MassiveTaxWebRepository implements MassiveTaxRepository {
   }
 
   put<T>(data: T) {
-    return this._http.put<ApiResponse>(`${this._url}`, { data });
+    return this._http.put<ApiResponseLegacy>(`${this._url}`, { data });
   }
 }

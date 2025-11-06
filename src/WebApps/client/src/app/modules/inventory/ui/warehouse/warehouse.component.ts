@@ -8,7 +8,7 @@ import { ListWarehouseUseCase } from '@inventory/domain/usecases/warehouse/list-
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { AddEditWarehouseComponent } from '@inventory/ui/warehouse/add-edit-warehouse/add-edit-warehouse.component';
 import Swal from 'sweetalert2';
@@ -26,7 +26,7 @@ import { firstValueFrom } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     MatDynamicTableComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './warehouse.component.html',
   styles: ``,

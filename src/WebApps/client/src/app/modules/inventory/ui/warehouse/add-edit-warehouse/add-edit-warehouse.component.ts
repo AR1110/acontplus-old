@@ -10,11 +10,11 @@ import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { UpdateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/update-warehouse.use-case';
 import { CreateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/create-warehouse.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
   selector: 'app-add-edit-warehouse',
@@ -25,7 +25,7 @@ import { ApiResponse } from '@core/models/api-response';
     FormsModule,
     MatCustomDialogComponent,
     ToUpperCaseDirective,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './add-edit-warehouse.component.html',
   styles: ``,
@@ -89,7 +89,7 @@ export class AddEditWarehouseComponent implements OnInit {
     this.$createUseCase.execute(this.data).subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this._tS.show({
         type: 'warning',

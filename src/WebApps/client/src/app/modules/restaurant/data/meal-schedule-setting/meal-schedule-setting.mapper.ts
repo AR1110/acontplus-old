@@ -1,9 +1,9 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MealScheduleSettingResponse } from '@restaurant/domain/models/meal-schedule-setting.model';
 
 export class MealScheduleSettingMapper {
   static fromApiResponse(
-    response: ApiResponse<MealScheduleSettingResponse[]>
+    response: ApiResponseLegacy<MealScheduleSettingResponse[]>,
   ): MealScheduleSettingResponse[] {
     if (!response.payload) {
       return [];
@@ -12,7 +12,7 @@ export class MealScheduleSettingMapper {
   }
 
   static fromApiSingleResponse(
-    response: ApiResponse<MealScheduleSettingResponse>
+    response: ApiResponseLegacy<MealScheduleSettingResponse>,
   ): MealScheduleSettingResponse | null {
     return response.payload ?? null;
   }

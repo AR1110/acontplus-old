@@ -13,7 +13,7 @@ import { map, Observable, startWith } from 'rxjs';
 
 import Swal from 'sweetalert2';
 
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
@@ -31,7 +31,7 @@ export const _filter = (opt: any[], value: string): string[] => {
     FormsModule,
     MatAutocompleteModule,
     MatInputModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './forma-cobro-modal.component.html',

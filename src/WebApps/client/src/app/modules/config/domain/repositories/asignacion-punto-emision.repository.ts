@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionEstabList } from '@modules/config/domain/models/user-customer/asignacion-estab.model';
 import {
   AsignacionPuntoEmisionList,
@@ -10,6 +10,6 @@ export abstract class AsignacionPuntoEmisionRepository {
   abstract list(
     parameters: Partial<AsignacionPuntoEmisionList>,
   ): Observable<AsignacionPuntoEmisionResponse>;
-  abstract create<T>(parameters: T): Observable<ApiResponse>;
-  abstract update(parameters: Partial<AsignacionEstabList>): Observable<ApiResponse>;
+  abstract create<T>(parameters: T): Observable<ApiResponseLegacy>;
+  abstract update(parameters: Partial<AsignacionEstabList>): Observable<ApiResponseLegacy>;
 }

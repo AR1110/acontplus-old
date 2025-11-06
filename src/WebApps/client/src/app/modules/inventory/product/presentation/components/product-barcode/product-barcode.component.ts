@@ -25,7 +25,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { finalize } from 'rxjs/operators';
 import { getValidId, isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { NgxColorsModule } from 'ngx-colors';
 import { ProductBarcodePostUseCase } from '@inventory/product/application/use-cases/product-barcode/product-barcode-post.use-case';
@@ -232,7 +232,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
         .subscribe(this.successResponse);
     }
   }
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this._tS.show({
         type: 'warning',

@@ -1,7 +1,7 @@
 import { Contribuyente } from '../models/wizard-config/contribuyente.model';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export abstract class ContribuyenteRepository {
-  abstract save(contribuyente: Contribuyente): Observable<ApiResponse>;
+  abstract save(contribuyente: Contribuyente): Observable<ApiResponseLegacy>;
 }

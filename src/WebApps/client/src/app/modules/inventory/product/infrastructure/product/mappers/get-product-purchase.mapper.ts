@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GetProductPurchaseResult } from '@inventory/product/domain/entities/product.entity';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
 
@@ -7,7 +7,7 @@ export class GetProductPurchaseMapper {
     return JSON.stringify({ idArticulo: id, tipo: 9 });
   }
 
-  static fromJson(response: ApiResponse): GetProductPurchaseResult {
+  static fromJson(response: ApiResponseLegacy): GetProductPurchaseResult {
     const result = new GetProductPurchaseResult();
     const { product, measures, fractionedMeasures, tags } = JSON.parse(response.payload as string);
     const data = product[0];

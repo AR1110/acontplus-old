@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   MealScheduleSettingResponse,
   CreateMealScheduleSettingRequest,
@@ -17,33 +17,33 @@ export class MealScheduleSettingService {
   #http = inject(HttpClient);
 
   getByEstablishmentId(
-    establishmentId: number
-  ): Observable<ApiResponse<MealScheduleSettingResponse[]>> {
+    establishmentId: number,
+  ): Observable<ApiResponseLegacy<MealScheduleSettingResponse[]>> {
     return this.#http
-      .get<ApiResponse<MealScheduleSettingResponse[]>>(`${this.#url}/${establishmentId}`)
+      .get<ApiResponseLegacy<MealScheduleSettingResponse[]>>(`${this.#url}/${establishmentId}`)
       .pipe(map((response) => response));
   }
 
   create(
-    data: CreateMealScheduleSettingRequest
-  ): Observable<ApiResponse<MealScheduleSettingResponse>> {
+    data: CreateMealScheduleSettingRequest,
+  ): Observable<ApiResponseLegacy<MealScheduleSettingResponse>> {
     return this.#http
-      .post<ApiResponse<MealScheduleSettingResponse>>(`${this.#url}`, data)
+      .post<ApiResponseLegacy<MealScheduleSettingResponse>>(`${this.#url}`, data)
       .pipe(map((response) => response));
   }
 
   update(
     id: number,
-    data: UpdateMealScheduleSettingRequest
-  ): Observable<ApiResponse<MealScheduleSettingResponse>> {
+    data: UpdateMealScheduleSettingRequest,
+  ): Observable<ApiResponseLegacy<MealScheduleSettingResponse>> {
     return this.#http
-      .put<ApiResponse<MealScheduleSettingResponse>>(`${this.#url}/${id}`, data)
+      .put<ApiResponseLegacy<MealScheduleSettingResponse>>(`${this.#url}/${id}`, data)
       .pipe(map((response) => response));
   }
 
-  delete(id: number): Observable<ApiResponse> {
+  delete(id: number): Observable<ApiResponseLegacy> {
     return this.#http
-      .delete<ApiResponse>(`${this.#url}/${id}`)
+      .delete<ApiResponseLegacy>(`${this.#url}/${id}`)
       .pipe(map((response) => response));
   }
 }

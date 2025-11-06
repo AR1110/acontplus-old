@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -6,7 +6,7 @@ import { Recipe } from '@restaurant/domain/models/recipe.model';
 
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
@@ -16,9 +16,9 @@ import { ItemService } from '@restaurant/data/services/item.service';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
-import {ItemSearch} from "@restaurant/ui/items/item-search/item-search";
-import {ItemGetBydIdUseCase} from "@restaurant/application/use-cases/item.use-case";
-import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
+import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
+import { ItemGetBydIdUseCase } from '@restaurant/application/use-cases/item.use-case';
+import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
   selector: 'app-item-add-edit',
@@ -26,7 +26,7 @@ import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/prod
     ReactiveFormsModule,
     TabulatorComponent,
     IngredientSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,
@@ -36,8 +36,8 @@ import {ProductGetIdUseCase} from "@inventory/product/application/use-cases/prod
 })
 export class ItemAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
-  private productGetIdUseCase = inject(ProductGetIdUseCase)
-  data = inject<{id: number}>(MAT_DIALOG_DATA);
+  private productGetIdUseCase = inject(ProductGetIdUseCase);
+  data = inject<{ id: number }>(MAT_DIALOG_DATA);
   itemForm = new FormGroup({
     id: new FormControl(0),
     summary: new FormControl('', [Validators.required]),
@@ -52,7 +52,6 @@ export class ItemAddEdit implements OnInit {
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #recipeService = inject(RecipeService);
   #tS = inject(ToastrNotificationService);
-
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
     let medidas = [];
@@ -178,7 +177,7 @@ export class ItemAddEdit implements OnInit {
     const editor: any = document.createElement('select');
 
     if (column === 'measureId') {
-      for (const m of (data.measures || [])) {
+      for (const m of data.measures || []) {
         const opt = document.createElement('option');
         opt.value = m.idMedida.toString();
         opt.innerHTML = m.descripcion;
@@ -207,7 +206,6 @@ export class ItemAddEdit implements OnInit {
     return editor;
   };
 
-
   columns = [
     {
       title: 'Ingrediente',
@@ -226,7 +224,7 @@ export class ItemAddEdit implements OnInit {
       editor: this.comboEditor,
       formatter: function (cell: any) {
         const data = cell.getData();
-        for (const m of (data.measures ?? [])) {
+        for (const m of data.measures ?? []) {
           if (m.idMedida == cell.getValue()) {
             return m.descripcion;
           }
@@ -264,7 +262,7 @@ export class ItemAddEdit implements OnInit {
         verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
       },
       cellEdited: this.priceUpdate,
-        hozAlign: 'center',
+      hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
     },
@@ -273,7 +271,7 @@ export class ItemAddEdit implements OnInit {
       field: 'precioCosto',
       width: 120,
       editor: false,
-        hozAlign: 'center',
+      hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
     },
@@ -290,7 +288,7 @@ export class ItemAddEdit implements OnInit {
         });
         return total.toFixed(2);
       },
-        hozAlign: 'center',
+      hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
     },
@@ -323,7 +321,7 @@ export class ItemAddEdit implements OnInit {
 
   ngOnInit() {
     if (this.data.id > 0) {
-     // this.getRecipes();
+      // this.getRecipes();
       this.itemForm.patchValue(this.data);
     }
   }
@@ -354,15 +352,15 @@ export class ItemAddEdit implements OnInit {
     });
   }
 
-  onSelectItem(rowData:any){
+  onSelectItem(rowData: any) {
     this.productGetIdUseCase.execute(rowData.productId).subscribe((response) => {
       console.log(response);
-    })
+    });
     console.log(rowData);
     const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
 
-    cloneRecipes.push(rowData)
-    this.recipes.set(cloneRecipes)
+    cloneRecipes.push(rowData);
+    this.recipes.set(cloneRecipes);
   }
 
   onIngredientSelected($event: Ingredient) {

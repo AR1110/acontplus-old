@@ -1,6 +1,6 @@
 import { SolicitudAutorizacionFilterResponse } from '@modules/config/domain/models/solicitud-autorizacion.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class FilterSolicitudAutorizacionMapper {
   static toJson() {
@@ -8,7 +8,7 @@ export class FilterSolicitudAutorizacionMapper {
       tipo: 3,
     });
   }
-  static fromJson(response: ApiResponse): SolicitudAutorizacionFilterResponse {
+  static fromJson(response: ApiResponseLegacy): SolicitudAutorizacionFilterResponse {
     const payload = JSON.parse(response.payload as any);
 
     const estabs = groupEstabUtil({

@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
-  Component , input,
+  Component,
+  input,
   Input,
   OnDestroy,
   output,
@@ -18,9 +19,9 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorComponent implements   AfterViewInit, OnDestroy {
+export class TabulatorComponent implements AfterViewInit, OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  tableData = input<any[]>([])
+  tableData = input<any[]>([]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() columnNames: any[] = [];
@@ -51,10 +52,7 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
 
   constructor() {
     this.tabContainer = document.createElement('div');
-
-
   }
-
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes, 'changes');
@@ -62,7 +60,6 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
       console.log(this.tableData(), 'isff');
       this.updateTableData();
     }
-
   }
 
   ngAfterViewInit(): void {
@@ -125,7 +122,7 @@ export class TabulatorComponent implements   AfterViewInit, OnDestroy {
 
       // Append the tab container to the target element
       tableElement.appendChild(this.tabContainer);
-      console.log(this.options())
+      console.log(this.options());
 
       this._refTabulator = new Tabulator(this.tabContainer, {
         renderVerticalBuffer: 300,

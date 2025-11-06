@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FormDataCajaResponse } from '@accounting/caja/domain/caja.entity';
 
 export class FormDataCajaMapper {
@@ -6,7 +6,7 @@ export class FormDataCajaMapper {
     return JSON.stringify({ tipo: 2 });
   }
 
-  static fromJson(response: ApiResponse): FormDataCajaResponse {
+  static fromJson(response: ApiResponseLegacy): FormDataCajaResponse {
     const result = new FormDataCajaResponse();
     const data = JSON.parse(response.payload as string);
     result.usuarios = data.usuarios || [];

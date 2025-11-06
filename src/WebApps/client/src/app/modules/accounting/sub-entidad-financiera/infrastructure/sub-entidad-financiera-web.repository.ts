@@ -4,7 +4,7 @@ import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants'
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { SubEntidadFinancieraRepository } from '@accounting/sub-entidad-financiera/domain/sub-entidad-financiera.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class SubEntidadFinancieraWebRepository extends SubEntidadFinancieraRepos
 
   getAll() {
     const json = JSON.stringify({ tipo: 1 });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         const result = {
           entidadesFinancieras: [],
@@ -36,14 +36,14 @@ export class SubEntidadFinancieraWebRepository extends SubEntidadFinancieraRepos
   }
 
   create<T>(data: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, { data });
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, { data });
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, { data });
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 }

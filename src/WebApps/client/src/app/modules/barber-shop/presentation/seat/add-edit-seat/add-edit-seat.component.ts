@@ -3,7 +3,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -11,7 +11,7 @@ import { CreateSeatUseCase } from '@barber-shop/application/use-cases/seat/creat
 import { UpdateSeatUseCase } from '@barber-shop/application/use-cases/seat/update-seat.use-case';
 import { SeatList } from '@barber-shop/domain/models/seat.model';
 import { getValidId } from '@core/utils/utils';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
   selector: 'app-add-edit-seat',
@@ -19,7 +19,7 @@ import { ApiResponse } from '@core/models/api-response';
     MatFormFieldModule,
     MatInputModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     ReactiveFormsModule,
     ToUpperCaseDirective,
   ],
@@ -59,7 +59,7 @@ export class AddEditSeatComponent implements OnInit {
     }
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

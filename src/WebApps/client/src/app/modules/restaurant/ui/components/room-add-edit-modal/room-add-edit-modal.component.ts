@@ -8,10 +8,10 @@ import {
   Validators,
 } from '@angular/forms';
 
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { RoomService } from '@restaurant/data/services/room.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -22,7 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   imports: [
     FormsModule,
     ReactiveFormsModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
 
     MatFormFieldModule,
@@ -103,7 +103,7 @@ export class RoomAddEditModalComponent implements OnInit {
     }
   }
 
-  successResponse(response: ApiResponse) {
+  successResponse(response: ApiResponseLegacy) {
     this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,

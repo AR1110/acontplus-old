@@ -11,7 +11,7 @@ import { Item } from '@restaurant/domain/models/item.model';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -21,7 +21,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     MatSlideToggle,
     ItemSearchComponent,
     TabulatorComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './menu-add-edit-modal.component.html',

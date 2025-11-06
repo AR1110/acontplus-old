@@ -5,7 +5,7 @@ import { MatPagination } from '@shared/models/pagination.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IngredientAddEditModalComponent } from '@restaurant/ui/ingredient/ingredient-add-edit-modal/ingredient-add-edit-modal.component';
 
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
@@ -13,7 +13,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-ingredient-list',
-  imports: [ReactiveFormsModule, FormsModule, ThemeButtonComponent, MatDynamicTableComponent],
+  imports: [ReactiveFormsModule, FormsModule, Button, MatDynamicTableComponent],
   templateUrl: './ingredient-list.component.html',
   styles: ``,
 })

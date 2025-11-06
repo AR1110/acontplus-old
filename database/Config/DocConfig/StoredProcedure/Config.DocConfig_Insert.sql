@@ -8,7 +8,7 @@ GO
 
 CREATE OR ALTER PROCEDURE [Config].[DocConfig_Insert] @userRoleId INT ,@json VARCHAR(MAX) ,@fromMobile BIT
 AS
-BEGIN 
+BEGIN
 	SET NOCOUNT ON;
     SET XACT_ABORT ON;
 
@@ -28,7 +28,7 @@ BEGIN
            ,@idPuntoEmision INT
            ,@codDoc VARCHAR(5)
 
-    DECLARE @tblDocs AS TABLE( 
+    DECLARE @tblDocs AS TABLE(
         id INT
        ,idPuntoEmision INT NOT NULL
        ,idTipoDocumento INT NOT NULL
@@ -43,24 +43,17 @@ BEGIN
         --> Variables Globales
         SELECT TOP 1 @userId = idUsuario, @username = nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
+        SELECT @docs = docs, @demoStepId = demoStepId
+        FROM OPENJSON(@json)
+        WITH (docs NVARCHAR(MAX) '$.docs', demoStepId INT '$.demoStepId')
 
         -- Extraer el valor de $.docs (puede ser array JSON o texto que contiene JSON)
-        SET @docsValue = JSON_VALUE(@json, '$.docs');
+        SET @docsValue = JSON_VALUE(@docs, '$.docs');
 
-        IF JSON_QUERY(@json, '$.docs') IS NOT NULL
+        IF @docsValue IS NOT NULL
             BEGIN
-                SET @docs = JSON_QUERY(@json, '$.docs');
-                SET @demoStepId = ISNULL(TRY_CAST(JSON_VALUE(@json, '$.demoStepId') AS INT), 0);
-            END
-        ELSE IF @docsValue IS NOT NULL AND ISJSON(@docsValue) = 1
-            BEGIN
-                SET @docs = JSON_QUERY(@docsValue, '$.docs');
-                SET @demoStepId = ISNULL(TRY_CAST(JSON_VALUE(@docsValue, '$.demoStepId') AS INT), 0);
-            END
-        ELSE
-            BEGIN
-                SELECT '0' code,'No se encontró un campo "docs" válido o no es JSON.' as 'message'
-                RETURN;
+                SET @docs = @docsValue;
+                SET @demoStepId = ISNULL(TRY_CAST(JSON_VALUE(@docs, '$.demoStepId') AS INT), 0);
             END
 
         --> Data Doc
@@ -78,7 +71,7 @@ BEGIN
            ,estado          BIT
 	    )
 
-        --> Variables 
+        --> Variables
         SELECT @idPuntoEmision  = idPuntoEmision
               ,@idTipoDocumento = idTipoDocumento
 	    FROM @tblDocs
@@ -89,54 +82,54 @@ BEGIN
         IF NOT EXISTS (SELECT 1 FROM @tblDocs WHERE editInfo = 1)
             BEGIN
                 IF NOT EXISTS (SELECT 1 FROM @tblDocs)
-                    BEGIN 
+                    BEGIN
                         SELECT '0' code,'Error en el información' as 'message'
-			            RETURN 
+			            RETURN
 			        END
 
                 IF @codDoc IN ('FV','NC','LC','GR','RC')
 		            BEGIN
 			            IF EXISTS (SELECT 1 FROM dbo.DocumentoElectronico WHERE idPuntoEmision = @idPuntoEmision AND idTipoDocumento = @idTipoDocumento)
-					        BEGIN 
+					        BEGIN
                                 SELECT '0' code,'No puedes actualizar el secuencial se encuentra en uso' as 'message'
-						        RETURN 
+						        RETURN
 					        END
 				        END
-		        ELSE 
+		        ELSE
 			        BEGIN
 				        IF @codDoc = 'PR'
 					        BEGIN
 						        IF EXISTS (SELECT 1 FROM dbo.Proforma WHERE idPuntoEmision = @idPuntoEmision)
-							        BEGIN 
+							        BEGIN
                                         SELECT '0' code,'No puedes actualizar el secuencial se encuentra en uso' as 'message'
-								        RETURN 
+								        RETURN
 							        END
-					        END 
-					
+					        END
+
 				        IF @codDoc = 'NE'
-					        BEGIN 
+					        BEGIN
 						        IF EXISTS (SELECT 1 FROM dbo.NotaEntrega WHERE idPuntoEmision = @idPuntoEmision)
-							        BEGIN 
+							        BEGIN
                                         SELECT '0','No puedes actualizar el secuencial se encuentra en uso' as 'message'
-								        RETURN 
+								        RETURN
 							        END
-					        END 
+					        END
 
 				        IF @codDoc = 'CI'
 					        BEGIN
 						        IF EXISTS (SELECT 1 FROM dbo.ConsolidacionInventario WHERE idPuntoEmision = @idPuntoEmision)
-							        BEGIN 
+							        BEGIN
                                         SELECT '0' code,'No puedes actualizar el secuencial se encuentra en uso' as 'message'
-								        RETURN 
+								        RETURN
 							        END
-					        END 
-					
+					        END
+
 				        IF @codDoc = 'TB'
 					        BEGIN
 						        IF EXISTS (SELECT 1 FROM dbo.TransferenciaBodega WHERE idPuntoEmision = @idPuntoEmision)
-							        BEGIN 
+							        BEGIN
                                         SELECT '0' code,'No puedes actualizar el secuencial se encuentra en uso' as 'message'
-								        RETURN 
+								        RETURN
 							        END
 					        END
 
@@ -146,14 +139,14 @@ BEGIN
                                 INNER JOIN @tblDocs d ON o.PuntoEmisionId = d.idPuntoEmision)
                                     BEGIN
                                         SELECT '0' code,'No puedes actualizar el secuencial se encuentra en uso' as 'message'
-								        RETURN 
+								        RETURN
                                     END
                             END
-					
-			        END 
-                END 
 
-		BEGIN TRAN 
+			        END
+                END
+
+		BEGIN TRAN
       IF (@demoStepId > 0)
                 BEGIN
                     DECLARE @uuid UNIQUEIDENTIFIER ,@companyId INT
@@ -162,7 +155,7 @@ BEGIN
 
                     SELECT TOP 1 @companyId = Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid
 
-                    IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
+                    IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK)
                         WHERE Uuid        = @uuid
                         AND DemoStepId    = @demoStepId
                     )
@@ -175,7 +168,7 @@ BEGIN
 
 			IF EXISTS (SELECT 1 FROM @tblDocs WHERE id > 0)
 				BEGIN
-                    UPDATE cd SET 
+                    UPDATE cd SET
                            cd.ultimaSecuencia    = IIF(td.editInfo = 1,cd.ultimaSecuencia,td.ultimaSecuencia)
                           ,cd.infoAdicional      = td.infoAdicional
                           ,cd.UsuarioEditId      = @userId
@@ -185,23 +178,23 @@ BEGIN
                     INNER JOIN @tblDocs td ON td.id = cd.idConfiguracionDocumento
 				END
 
-			ELSE 
-				BEGIN 
+			ELSE
+				BEGIN
 					INSERT INTO dbo.ConfiguracionDocumento
                         (idPuntoEmision,idTipoDocumento,ultimaSecuencia,estado,idUsuario ,fromMobile)
                     SELECT idPuntoEmision,idTipoDocumento,ultimaSecuencia,estado,@userId  ,@fromMobile FROM @tblDocs
                     WHERE ISNULL(id,0) = 0
 				END
 
-		COMMIT TRAN 
+		COMMIT TRAN
         SELECT '1' code, 'Registrado correctamente' as 'message'
 	END TRY
 
 	BEGIN CATCH
         IF (@@TRANCOUNT > 0)
-            BEGIN 
-		        ROLLBACK TRAN;  
-            END 
+            BEGIN
+		        ROLLBACK TRAN;
+            END
 
         INSERT INTO dbo.ErroresSistema
              (method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,idUsuario)

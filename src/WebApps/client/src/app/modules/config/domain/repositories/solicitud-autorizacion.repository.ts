@@ -6,7 +6,7 @@ import {
   SolicitudAutorizacionResponse,
   SolicitudAutorizacionUpdateParams,
 } from '@modules/config/domain/models/solicitud-autorizacion.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export abstract class SolicitudAutorizacionRepository {
   abstract filter(): Observable<SolicitudAutorizacionFilterResponse>;
@@ -14,5 +14,5 @@ export abstract class SolicitudAutorizacionRepository {
   abstract listDetalle(
     parameters: Partial<SolicitudAutorizacionList>,
   ): Observable<SolicitudAutorizacionDetalle[]>;
-  abstract update(parameters: SolicitudAutorizacionUpdateParams): Observable<ApiResponse>;
+  abstract update(parameters: SolicitudAutorizacionUpdateParams): Observable<ApiResponseLegacy>;
 }

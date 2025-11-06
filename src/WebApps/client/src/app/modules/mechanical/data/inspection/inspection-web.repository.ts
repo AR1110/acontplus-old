@@ -4,7 +4,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { formatDate } from '@core/utils/date.util';
 import { isValidJSON } from '@core/utils/utils';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
 import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
@@ -25,7 +25,7 @@ export class InspectionWebRepository implements InspectionRepository {
       tipo: 1,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => InspeccionMapper.getAll(response)));
@@ -37,7 +37,7 @@ export class InspectionWebRepository implements InspectionRepository {
       tipo: 2,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => InspeccionMapper.getDataForm(response)));
   }
 
@@ -47,19 +47,19 @@ export class InspectionWebRepository implements InspectionRepository {
       tipo: 3,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => InspeccionMapper.getId(response)));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
+    return this.#http.put<ApiResponseLegacy>(`${this.#url}${id}`, { data });
   }
 
   remove(id: number) {
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`);
+    return this.#http.delete<ApiResponseLegacy>(`${this.#url}${id}`);
   }
 }

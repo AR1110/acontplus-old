@@ -5,7 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { GroupedEstabBodega } from '@core/models/estab.model';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { GetMassTransferProductsUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
@@ -30,7 +30,7 @@ interface Category {
     MatInput,
     MatCustomDialogComponent,
     ReactiveFormsModule,
-    ThemeButtonComponent,
+    Button,
     DataGrid,
   ],
   templateUrl: './warehouse-transfer-filter-advanced.html',

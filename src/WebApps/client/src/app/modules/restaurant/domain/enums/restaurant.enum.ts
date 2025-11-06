@@ -11,6 +11,8 @@ export enum RESTAURANT_PATHS {
   ROOM = 'Room/',
   TABLE = 'Table/',
   CONFIG = 'Configuration/',
+  MEAL_SCHEDULE_SETTING = 'MealScheduleSetting/',
+  MEAL_CONSUMPTION = 'MealConsumption/',
 }
 
 export const enum RESTAURANT_CODE_REPORT {
@@ -20,7 +22,6 @@ export const enum RESTAURANT_CODE_REPORT {
    */
   RII = 'RII',
 }
-
 
 export const enum CATEGORY_ABBREVIATIONS {
   INGREDIENT = 'ING',
@@ -40,6 +41,4 @@ export const enum CATEGORY_ABBREVIATIONS {
   // PROMOTION_MENU_ITEM_RECIPE = 'PMNIR',
   // PROMOTION_MENU_ITEM_RECIPE_INGREDIENT = 'PMNIRI',
   // PROMOTION_MENU_ITEM_RECIPE_INGREDIENT_ITEM = 'PMNIRII',
-
-
 }

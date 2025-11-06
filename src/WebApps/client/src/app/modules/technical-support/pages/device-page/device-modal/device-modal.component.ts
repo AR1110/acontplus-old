@@ -7,7 +7,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { IForm } from '@core/models/form-types';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
@@ -27,7 +27,7 @@ import { CategoryModalComponent } from '../../category-page/category-modal/categ
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
@@ -43,7 +43,7 @@ import { generateUuidv4 } from '@core/utils/generate-uuidv4';
     MatCardContent,
     MatIcon,
     MatButton,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatTabsModule,
   ],

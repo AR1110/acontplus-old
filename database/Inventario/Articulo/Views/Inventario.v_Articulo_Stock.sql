@@ -9,6 +9,7 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Stock WITH SCHEMABINDING AS (
 		  ,ar.idSubFamilia
           ,ar.idMedida
           ,ar.idMarca
+          ,ar.idTipoIva
 		  ,ar.descripcion
 		  ,ar.codigo
 		  ,ar.estado
@@ -22,13 +23,13 @@ CREATE OR ALTER VIEW Inventario.v_Articulo_Stock WITH SCHEMABINDING AS (
 	      ,me.descripcion as medida
           ,bo.codEstab
           ,bo.descripcion as bodega
-          ,es.idEstablecimiento 
+          ,es.idEstablecimiento
           ,es.nombreComercial
           ,marca = m.descripcion
           ,ar.stockMinimo
 	FROM dbo.Articulo              ar WITH (NOLOCK)
 	INNER JOIN dbo.SubFamilia      sf WITH (NOLOCK) ON sf.idSubFamilia = ar.idSubFamilia
-    LEFT JOIN dbo.Marca            m  WITH (NOLOCK) ON m.idMarca       = ar.idMarca 
+    LEFT JOIN dbo.Marca            m  WITH (NOLOCK) ON m.idMarca       = ar.idMarca
 	INNER JOIN dbo.Medida          me WITH (NOLOCK) ON me.idMedida     = ar.idMedida
 	INNER JOIN Inventario.Stock    st WITH (NOLOCK) ON st.idArticulo   = ar.idArticulo
 	INNER JOIN dbo.Bodega          bo WITH (NOLOCK) ON bo.idBodega     = st.idBodega

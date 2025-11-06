@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,7 +17,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { DECIMALS } from '@core/constants/global.constants';
 import { getValidId } from '@core/utils/utils';
 import { FractionalProductPostUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-post.use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FractionalProductPutUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-put.use-case';
 import { FractionalProductGetIdUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-id.use-case';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -41,7 +41,7 @@ import {
     MatTooltipModule,
     MatListModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MeasureAddEditDirective,
     TabulatorComponent,
   ],
@@ -486,7 +486,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     }
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

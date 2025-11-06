@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 
 // Define una interfaz para los parámetros
@@ -16,7 +16,7 @@ interface Params {
 @Injectable({
   providedIn: 'root',
 })
-export class ProductPostUseCase implements BaseUseCase<ApiResponse, Params> {
+export class ProductPostUseCase implements BaseUseCase<ApiResponseLegacy, Params> {
   private repo = inject(ProductRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -24,7 +24,7 @@ export class ProductPostUseCase implements BaseUseCase<ApiResponse, Params> {
 
   constructor() {}
 
-  execute(params: Params): Observable<ApiResponse> {
+  execute(params: Params): Observable<ApiResponseLegacy> {
     return this.repo.post(params, params.file);
   }
 }

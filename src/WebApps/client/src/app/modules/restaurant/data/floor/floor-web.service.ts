@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FloorRepository } from '@restaurant/domain/repositories/floor.repository';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { FloorMapper } from '@restaurant/data/floor/floor.mapper';
@@ -16,18 +16,18 @@ import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.mode
 export class FloorWebService implements FloorRepository {
   getByEstablishmentId(establishmentId: number): Observable<GetFloorsByEstabIdResponse> {
     return this.#http
-      .get<ApiResponse>(`${this.#url}GetByEstab/${establishmentId}`, {
+      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establishmentId}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => GetFloorsByEstabIdMapper.fromJson(response)));
   }
-  deleteById(id: number): Observable<ApiResponse> {
+  deleteById(id: number): Observable<ApiResponseLegacy> {
     throw new Error('Method not implemented.');
   }
-  create<T>(data: T): Observable<ApiResponse> {
+  create<T>(data: T): Observable<ApiResponseLegacy> {
     throw new Error('Method not implemented.');
   }
-  update<T>(id: number, data: T): Observable<ApiResponse> {
+  update<T>(id: number, data: T): Observable<ApiResponseLegacy> {
     throw new Error('Method not implemented.');
   }
   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.FLOOR}`;
@@ -35,21 +35,21 @@ export class FloorWebService implements FloorRepository {
 
   getByEstab(establecimientoId: number) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}GetByEstab/${establecimientoId}`, {
+      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establecimientoId}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => FloorMapper.fromApiGetByEstab(response)));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data);
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, data);
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data);
+    return this.#http.put<ApiResponseLegacy>(`${this.#url}${id}`, data);
   }
 
-  remove(id: number): Observable<ApiResponse> {
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`);
+  remove(id: number): Observable<ApiResponseLegacy> {
+    return this.#http.delete<ApiResponseLegacy>(`${this.#url}${id}`);
   }
 }

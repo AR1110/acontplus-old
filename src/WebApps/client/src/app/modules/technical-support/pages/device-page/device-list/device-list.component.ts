@@ -4,13 +4,13 @@ import { DeviceModalComponent } from '../device-modal/device-modal.component';
 import { DeviceService } from '@modules/technical-support/services/device.service';
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { isApiResponse } from '@core/models/api-response';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { isApiResponse } from '@core/models/api-response-legacy';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-device-list',
-  imports: [ThemeButtonComponent],
+  imports: [Button],
   templateUrl: './device-list.component.html',
   styles: ``,
 })

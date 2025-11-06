@@ -17,7 +17,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/product/presentation/components/product-photo/product-photo.component';
@@ -305,7 +305,7 @@ export class Product implements OnInit {
       });
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

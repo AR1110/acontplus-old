@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { map, Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
 import { SolicitudUsuarioRepository } from '@modules/config/domain/repositories/solicitud-usuario.repository';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -68,6 +68,6 @@ export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository
   }
 
   put<T>(data: T) {
-    return this.http.put<ApiResponse>(`${this.url}`, { data });
+    return this.http.put<ApiResponseLegacy>(`${this.url}`, { data });
   }
 }

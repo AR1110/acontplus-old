@@ -8,7 +8,7 @@ import {
   ProductGetIdResult,
   ValidateProductStockParams,
 } from '@inventory/product/domain/entities/product.entity';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 //Listado general
 
@@ -47,7 +47,6 @@ export class ProductGetIdUseCase implements BaseUseCase<ProductGetIdResult, numb
   }
 }
 
-
 //para compras
 @Injectable({
   providedIn: 'root',
@@ -72,14 +71,13 @@ export class GetProductSaleUseCase implements BaseUseCase<GetProductPurchaseResu
   }
 }
 
-
 //Validación Stock
 
 @Injectable({
   providedIn: 'root',
 })
 export class ValidateProductStockUseCase
-  implements BaseUseCase<ApiResponse, ValidateProductStockParams>
+  implements BaseUseCase<ApiResponseLegacy, ValidateProductStockParams>
 {
   private repo = inject(ProductRepository);
 

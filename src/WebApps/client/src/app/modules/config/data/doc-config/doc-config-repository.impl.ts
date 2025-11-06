@@ -12,7 +12,7 @@ import {
 import { map, Observable } from 'rxjs';
 import { DocConfigListMapper } from '@modules/config/data/doc-config/doc-config-list.mapper';
 import { DocConfigInfoAdicionalesMapper } from '@modules/config/data/doc-config/doc-config-info-adicionales.mapper';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 @Injectable({
@@ -35,18 +35,18 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
     );
   }
 
-  create(params: any): Observable<ApiResponse> {
+  create(params: any): Observable<ApiResponseLegacy> {
     const data = {
       docs: JSON.stringify(params),
     };
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
 
-  save(docConfig: DocConfig): Observable<ApiResponse> {
+  save(docConfig: DocConfig): Observable<ApiResponseLegacy> {
     const data = {
       docs: JSON.stringify(docConfig),
     };
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
   getInfoAdicionales(id: number): Observable<DocConfigInfoAdicional[]> {
     const json = DocConfigInfoAdicionalesMapper.toJson(id);

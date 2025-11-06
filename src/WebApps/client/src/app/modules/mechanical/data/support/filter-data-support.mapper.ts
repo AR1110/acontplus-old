@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FilterDataSupportResponse } from '@mechanical/domain/models/support.model';
 
 export class FilterDataSupportMapper {
@@ -8,7 +8,7 @@ export class FilterDataSupportMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): FilterDataSupportResponse {
+  static fromJson(response: ApiResponseLegacy): FilterDataSupportResponse {
     const data = new FilterDataSupportResponse();
     if (response.code === '1') {
       const { supportStatus = [] } = JSON.parse(response.payload as string);

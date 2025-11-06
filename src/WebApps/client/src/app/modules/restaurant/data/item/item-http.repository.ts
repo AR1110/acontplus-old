@@ -4,7 +4,7 @@ import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
 import { map, Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ItemListMapper } from '@restaurant/data/item/item-list.mapper';
 
 @Injectable({
@@ -17,22 +17,22 @@ export class ItemHttpRepository implements ItemRepository {
   list(params: any): Observable<any> {
     const json = ItemListMapper.toJson(params);
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => ItemListMapper.fromJson(response)));
   }
 
   search(params: any): Observable<any> {
     const json = ItemListMapper.toJson(params);
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => ItemListMapper.fromJson(response)));
   }
 
-   getById(id: number): Observable<any> {
+  getById(id: number): Observable<any> {
     return this.#http.get(`${this.#url}${id}`).pipe(
       map((response) => {
         return response;
-      })
-    )
+      }),
+    );
   }
 }

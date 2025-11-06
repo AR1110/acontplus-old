@@ -8,7 +8,7 @@ import {
 import { PATHS_API } from '@core/constants/global.constants';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab } from '@core/models/estab.model';
 import { RetAtsDocSustento } from '@billing/domain/models/retencion-ats/ret-ats-doc-sustento.model';
 
@@ -19,7 +19,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
 
   cancel(id: number) {
     return this._http
-      .put<ApiResponse>(`${this._url}Cancel/${id}`, {})
+      .put<ApiResponseLegacy>(`${this._url}Cancel/${id}`, {})
       .pipe(map((response) => response));
   }
 
@@ -29,7 +29,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       tipo: 1,
     };
 
-    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { retenciones: [] };
@@ -85,7 +85,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
     };
   }
   getById(id: number): Observable<RetencionAts> {
-    return this._http.get<ApiResponse>(`${this._url} ${id}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url} ${id}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return {} as RetencionAts;
@@ -95,12 +95,16 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       }),
     );
   }
-  create<T>(data: T): Observable<ApiResponse> {
+  create<T>(data: T): Observable<ApiResponseLegacy> {
     console.log(data);
-    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map((response) => response));
+    return this._http
+      .post<ApiResponseLegacy>(`${this._url}`, data)
+      .pipe(map((response) => response));
   }
-  update<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map((response) => response));
+  update<T>(id: number, data: T): Observable<ApiResponseLegacy> {
+    return this._http
+      .put<ApiResponseLegacy>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
 
   getDocs<T extends { idCard: string }>(parameters: T) {
@@ -109,7 +113,7 @@ export class RetencionAtsWebRepository implements RetencionAtsRepository {
       tipo: 4,
     };
 
-    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(obj)}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { documents: [] };

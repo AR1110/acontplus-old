@@ -4,9 +4,9 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { SendMailParams } from '@shared/models/send-mail.model';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { NotificacionTributariaService } from '@billing/services/notificacion-tributaria.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
@@ -15,7 +15,7 @@ import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-inp
   selector: 'app-send-mail-dialog',
   imports: [
     FormsModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     ReactiveFormsModule,
     MatInputChipComponent,

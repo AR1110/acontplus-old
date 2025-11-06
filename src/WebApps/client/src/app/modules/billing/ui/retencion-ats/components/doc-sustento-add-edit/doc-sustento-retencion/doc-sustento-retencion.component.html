@@ -78,7 +78,7 @@
 
     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-2 col-6">
       @if (formGroup.get('idRetAtsDocSustento')?.value) {
-        <app-theme-button
+        <acp-button
           variant="success"
           icon="save"
           matStyle="icon"
@@ -87,7 +87,7 @@
           (handleClick)="onSave()"
         />
       }
-      <app-theme-button
+      <acp-button
         variant="danger"
         icon="delete"
         matStyle="icon"

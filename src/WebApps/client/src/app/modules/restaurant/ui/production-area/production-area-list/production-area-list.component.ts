@@ -7,7 +7,7 @@ import { ProductionAreaService } from '@restaurant/data/services/production-area
 import { ProductionAreaAddEditModalComponent } from '@restaurant/ui/production-area/production-area-add-edit-modal/production-area-add-edit-modal.component';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
@@ -23,7 +23,7 @@ import { ProductionArea } from '@modules/restaurant/domain/models/production-are
     NgClass,
     MatIcon,
     MatTabsModule,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
   ],
   templateUrl: './production-area-list.component.html',

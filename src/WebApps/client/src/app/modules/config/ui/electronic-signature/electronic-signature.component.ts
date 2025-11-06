@@ -11,7 +11,7 @@ import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { getValidId } from '@core/utils/utils';
@@ -135,7 +135,7 @@ export class ElectronicSignatureComponent implements OnInit {
       .subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

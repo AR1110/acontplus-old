@@ -2,7 +2,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { FormsModule } from '@angular/forms';
 
 import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
@@ -16,7 +16,7 @@ import { SupportMaintenanceAdapter } from '@mechanical/data/adapters/support-mai
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
 import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { getCantidadStock, mergeProductStock } from '@inventory/domain/utils/product-stock.util';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -44,7 +44,7 @@ import Swal from 'sweetalert2';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './support-maintenance-modal.component.html',
 })

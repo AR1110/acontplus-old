@@ -5,7 +5,7 @@ export class ItemListMapper {
       pageIndex: obj.pageIndex || 1,
       pageSize: obj.pageSize || 15,
       sigla: obj.categoryAbbreviations || obj.categoryAbbreviation || null,
-      textSearch: obj.q||null,
+      textSearch: obj.q || null,
     });
   }
 
@@ -15,7 +15,7 @@ export class ItemListMapper {
       totalRecords: 0,
     };
     if (response.code === '1') {
-      const { items=[], pagination=[] } = JSON.parse(response.payload as string);
+      const { items = [], pagination = [] } = JSON.parse(response.payload as string);
       console.log(items, pagination);
       results.data = items.map((item: any, index: number) => {
         return {

@@ -1,8 +1,8 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class FractionalProductGetAllMapper {
   static fromJson(responseApi: any) {
-    const resultResponse = new ApiResponse();
+    const resultResponse = new ApiResponseLegacy();
 
     let articulosFraccionado = [];
 

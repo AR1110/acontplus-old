@@ -10,12 +10,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { FormsModule } from '@angular/forms';
 import { ListAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-access-user-customer-role.use-case';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
 import { UpdateAccessUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/update-access-user-customer-role.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 interface MenuNode {
   name: string;
@@ -48,7 +48,7 @@ interface MenuFlatNode {
     MatCheckboxModule,
     FormsModule,
     MatSlideToggleModule,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './user-customer-role-access.component.html',
   styles: ``,

@@ -5,7 +5,7 @@ import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ListWarehouseResponse, WarehouseList } from '@inventory/domain/models/warehouse.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListWarehouseMapper } from '@inventory/data/warehouse/list-warehouse.mapper';
 
 @Injectable({
@@ -18,20 +18,22 @@ export class WarehouseRepositoryImpl implements WarehouseRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => ListWarehouseMapper.fromJson(response)));
   }
   create(data: WarehouseList) {
-    return this._http.post<ApiResponse>(`${this._url}?json=${JSON.stringify(data)}`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(data)}`, {
+      data,
+    });
   }
   update(data: WarehouseList) {
-    return this._http.put<ApiResponse>(
+    return this._http.put<ApiResponseLegacy>(
       `${this._url}/${data.idBodega}?json=${JSON.stringify(data)}`,
       { data },
     );
   }
   delete(data: WarehouseList) {
-    return this._http.delete<ApiResponse>(`${this._url}/${data.idBodega}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}/${data.idBodega}`);
   }
   private _url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.WAREHOUSE}`;
   private _http = inject(HttpClient);

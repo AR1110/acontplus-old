@@ -230,11 +230,11 @@
             </div>
           </ng-template>
 
-          <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
+          <button type="button" acp-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit (resultModalHandler)="resultModalVehicle($event)">
             <mat-icon>add</mat-icon>
           </button>
           @if (infrastructure.vehicleCompanyId>0) {
-            <button type="button" app-theme-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: infrastructure.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
+            <button type="button" acp-button variant="secondary" icon="" matStyle="icon" (handleClick)="" appVehicleAddEdit [params]="{id: infrastructure.vehicleCompanyId}" (resultModalHandler)="resultModalVehicle($event)">
               <mat-icon>edit</mat-icon>
             </button>
           }
@@ -279,7 +279,7 @@
   <button type="button" mat-raised-button (click)="save()">
     {{btnText}}
   </button>
-  <app-theme-button variant="dark" icon="close" text="Cancelar" (handleClick)="" (click)="modal.close()">
+  <acp-button variant="dark" icon="close" text="Cancelar" (handleClick)="" (click)="modal.close()">
     &times; Cerrar
   </button>
 </div> -->

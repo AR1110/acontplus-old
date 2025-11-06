@@ -1,8 +1,8 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListWarehouseResponse } from '@inventory/domain/models/warehouse.model';
 
 export class ListWarehouseMapper {
-  static fromJson(response: ApiResponse): ListWarehouseResponse {
+  static fromJson(response: ApiResponseLegacy): ListWarehouseResponse {
     const result = new ListWarehouseResponse();
     if (response.code === '1') {
       const warehouses = JSON.parse(response.payload as any);

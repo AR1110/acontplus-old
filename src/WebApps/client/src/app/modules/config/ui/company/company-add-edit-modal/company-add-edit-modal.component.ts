@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { isValidEmail, isValidField } from '@core/utils/utils';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatInputChipComponent,
   ],

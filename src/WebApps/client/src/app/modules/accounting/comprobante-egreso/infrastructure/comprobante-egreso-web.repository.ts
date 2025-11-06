@@ -12,7 +12,7 @@ import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-fina
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
 import { ProvinciaCiudad } from '@shared/models/ciudad.interface';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ComprobanteEgresoMapper } from '@accounting/comprobante-egreso/infrastructure/mappers/comprobante-egreso.mapper';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -29,20 +29,22 @@ import { GetComprobanteEgresoForDeletionMapper } from '@accounting/comprobante-e
   providedIn: 'root',
 })
 export class ComprobanteEgresoWebRepository implements ComprobanteEgresoRepository {
-  anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this._url}${comprobante.id}`, { data: comprobante.data });
+  anular(comprobante: ComprobanteEgresoDeleteParams): Observable<ApiResponseLegacy> {
+    return this.http.put<ApiResponseLegacy>(`${this._url}${comprobante.id}`, {
+      data: comprobante.data,
+    });
   }
   getDataForDeletion(id: number) {
     const json = GetComprobanteEgresoForDeletionMapper.toJson({ id });
     return this.http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => GetComprobanteEgresoForDeletionMapper.fromJson(response)));
   }
 
   getFilterData(): Observable<ComprobanteEgresoFilterResponse> {
     const json = DataFilterComprobanteEgresoMapper.toJson();
     return this.http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => DataFilterComprobanteEgresoMapper.fromJson(response)));
   }
   list(params: any): Observable<ComprobanteEgresoResponse> {
@@ -103,7 +105,7 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   getDataFilter() {
     const PARAMS = JSON.stringify({ tipo: 2 });
 
-    return this.http.get<ApiResponse>(`${this._url}?json=${PARAMS}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this._url}?json=${PARAMS}`).pipe(
       map((response) => {
         const result = {
           establecimientos: [] as GroupedEstab[],
@@ -134,6 +136,6 @@ export class ComprobanteEgresoWebRepository implements ComprobanteEgresoReposito
   create(obj: any) {
     const params = ComprobanteEgresoMapper.toApiPost(obj);
 
-    return this.http.post<ApiResponse>(`${this._url}`, params);
+    return this.http.post<ApiResponseLegacy>(`${this._url}`, params);
   }
 }

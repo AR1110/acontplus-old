@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ArqueoControlCajaResponse } from '@accounting/caja/domain/control-caja.entity';
 
 export class ArqueoControlCajaMapper {
@@ -6,7 +6,7 @@ export class ArqueoControlCajaMapper {
     return JSON.stringify({ id, tipo: 8 });
   }
 
-  static fromJson(response: ApiResponse): ArqueoControlCajaResponse {
+  static fromJson(response: ApiResponseLegacy): ArqueoControlCajaResponse {
     const result = new ArqueoControlCajaResponse();
     if (response.code === '1') {
       const data = JSON.parse(response.payload as string);

@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ProductionArea } from '@restaurant/domain/models/production-area';
 import { ProductionAreaService } from '@restaurant/data/services/production-area.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -11,11 +11,11 @@ import { SharedService } from '@core/services/shared.service';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-production-area-add-edit-modal',
-  imports: [ReactiveFormsModule, MatSlideToggle, MatCustomDialogComponent, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, MatSlideToggle, MatCustomDialogComponent, Button],
   templateUrl: './production-area-add-edit-modal.component.html',
   styles: ``,
 })
@@ -101,7 +101,7 @@ export class ProductionAreaAddEditModalComponent implements OnInit {
     }
   }
 
-  successResponse(response: ApiResponse) {
+  successResponse(response: ApiResponseLegacy) {
     this.#tS.show({
       type: response.code == '1' ? 'success' : 'warning',
       message: response.message,

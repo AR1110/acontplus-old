@@ -54,7 +54,7 @@
     (pageEvent)="handlePageEvent($event)"
   />
   <ng-template #templateOp let-item="item">
-    <app-theme-button
+    <acp-button
       (companyCustomerSaved)="refresh()"
       appCompanyCustomerAddEdit
       [id]="item.idCliente"
@@ -63,7 +63,7 @@
       matStyle="icon"
     />
     @if (!item.esConsumidorFinal) {
-      <app-theme-button
+      <acp-button
         (handleClick)="askToDelete(item)"
         variant="danger"
         icon="delete"
