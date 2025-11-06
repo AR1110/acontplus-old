@@ -1,4 +1,5 @@
 using Acontplus.Core.DTOs.Responses;
+using Mapster;
 
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
 
@@ -13,13 +14,9 @@ public static class GetEndpoints
             .WithTags("Meal Consumptions");
         group.MapGet("/", async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService, CancellationToken cancellationToken) =>
         {
-            var paginationDto = new PaginationDto
+            var paginationDto = paginationQuery.Adapt<PaginationDto>() with
             {
-                PageIndex = paginationQuery.PageIndex,
-                PageSize = paginationQuery.PageSize,
-                SortBy = paginationQuery.SortBy,
-                SortDirection = paginationQuery.SortDirection ?? default,
-                Filters = paginationQuery.Filters
+                SortDirection = paginationQuery.SortDirection ?? default
             };
             return await mealConsumptionService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
         })
