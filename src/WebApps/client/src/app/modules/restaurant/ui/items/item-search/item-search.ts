@@ -10,6 +10,7 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { ItemSearchUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { catchError, debounceTime, finalize, tap } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import {PaginationParams} from "@acontplus/core";
 
 @Component({
   selector: 'app-item-search',
@@ -52,10 +53,12 @@ export class ItemSearch implements OnInit {
           this.loading.set(true);
 
           return this.searchUseCase
-            .execute({
+            .execute(new PaginationParams({
+              searchTerm: value,
+              filters: {
               categoryAbbreviation: CATEGORY_ABBREVIATIONS.RESTAURANT,
-              q: value,
-            })
+              }
+            }))
             .pipe(
               catchError(() => of([])),
               finalize(() => this.loading.set(false)),

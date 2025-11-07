@@ -8,7 +8,7 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
     {
         try
         {
-            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemListResponse>("Restaurant.GetItems", paginationDto);
+            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemListResponse>("Restaurant.GetItem", paginationDto);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
