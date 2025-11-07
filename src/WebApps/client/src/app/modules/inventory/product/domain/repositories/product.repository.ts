@@ -16,7 +16,7 @@ export abstract class ProductRepository {
   abstract search<T extends { textSearch: string; pageIndex?: number; pageSize?: number }>(
     obj: T,
   ): Observable<any>;
-  abstract getForSale(id: number): Observable<any>;
+  abstract getForSale(obj: { id?: number; search?: string }): Observable<any>;
   abstract getForPurchase(id: number): Observable<GetProductPurchaseResult>;
   abstract checkNotificationStock(params: ValidateProductStockParams): Observable<any>;
   abstract getDataReport(): Observable<any>;
