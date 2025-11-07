@@ -18,13 +18,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 
 @Component({
   selector: 'app-order-delivery-modal',
-  imports: [
-    FormsModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    Button,
-    MatCustomDialogComponent,
-  ],
+  imports: [FormsModule, MatCheckboxModule, ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './order-delivery-modal.component.html',
   styles: ``,
 })

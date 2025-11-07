@@ -1,10 +1,5 @@
 <div class="d-flex flex-row gap-1">
-  <acp-button
-    [variant]="'success'"
-    [icon]="'save'"
-    [text]="'Guardar'"
-    (handleClick)="onSave()"
-  />
+  <acp-button [variant]="'success'" [icon]="'save'" [text]="'Guardar'" (handleClick)="onSave()" />
   <acp-button
     [variant]="'danger'"
     [icon]="'delete'"
@@ -26,8 +21,7 @@
         (change)="todoItemSelectionToggle(node)"
         [checked]="checklistSelection.isSelected(node)"
         [indeterminate]="isNodeIndeterminate(node)"
-      >
-      </mat-checkbox>
+      />
       <span class="flex-grow-1">{{ node.name }}</span>
       <!--@if (checklistSelection.isSelected(node)){
         <button type="button"
@@ -63,8 +57,7 @@
         (change)="todoItemSelectionToggle(node)"
         [checked]="checklistSelection.isSelected(node)"
         [indeterminate]="isNodeIndeterminate(node)"
-      >
-      </mat-checkbox>
+      />
       <span>{{ node.name }}</span>
     </div>
   </mat-tree-node>

@@ -42,7 +42,7 @@ export class FacturaFisicaRepository {
           data: [] as FacturaFisicaLista[],
           totalRecords: 0,
         };
-        if (response && response.code === '1') {
+        if (response?.code === '1') {
           const { facturas } = JSON.parse(response.payload as string);
 
           resultData.data = FacturaFisicaRepositoryMapper.fromApiGetAll(facturas);
@@ -65,7 +65,7 @@ export class FacturaFisicaRepository {
     return this.http.get<ApiResponseLegacy>(`${this.url}Get?json=${json}`).pipe(
       map((response) => {
         let resultData = {} as any;
-        if (response && response.code === '1') {
+        if (response?.code === '1') {
           const mainData = JSON.parse(response.payload as string);
           resultData = FacturaFisicaRepositoryMapper.fromApiDetalleCompleto(mainData);
         }

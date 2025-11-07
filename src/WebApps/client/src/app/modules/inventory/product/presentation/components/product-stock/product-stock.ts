@@ -5,6 +5,7 @@ import {
   inject,
   input,
   signal,
+  OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { GetEstabStockUseCase } from '@inventory/product/application/use-cases/product.use-case';
@@ -16,7 +17,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
   styleUrl: './product-stock.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProductStock {
+export class ProductStock implements OnInit {
   id = input.required<number>();
   private $useCase = inject(GetEstabStockUseCase);
   private destroyRef = inject(DestroyRef);

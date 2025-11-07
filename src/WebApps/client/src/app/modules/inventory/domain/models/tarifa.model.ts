@@ -18,11 +18,11 @@ export interface TarifaProducto {
 }
 
 export interface ProductFee {
-  id: number
-  salePrice: number
-  priceWithTax: number
-  name: string
-  isDefault: boolean
+  id: number;
+  salePrice: number;
+  priceWithTax: number;
+  name: string;
+  isDefault: boolean;
 }
 
 export interface TarifaSelectHtmlOnly

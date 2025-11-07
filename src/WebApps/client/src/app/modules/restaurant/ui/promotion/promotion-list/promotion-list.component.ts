@@ -81,7 +81,9 @@ export class PromotionListComponent implements OnInit {
       );
       this.days.set(response.days);
       if (this.dataSource().length > 0) {
-        this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords));
+        this.pagination.update(
+          (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords),
+        );
       }
     });
   }
@@ -105,7 +107,11 @@ export class PromotionListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

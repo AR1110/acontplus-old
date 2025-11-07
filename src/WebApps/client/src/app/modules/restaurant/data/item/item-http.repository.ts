@@ -6,7 +6,7 @@ import { ItemRepository } from '@restaurant/domain/repositories/item.repository'
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ItemListMapper } from '@restaurant/data/item/item-list.mapper';
-import {PagedResult, PaginationParams} from "@acontplus/core";
+import { PagedResult, PaginationParams } from '@acontplus/core';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class ItemHttpRepository implements ItemRepository {
       .pipe(map((response) => ItemListMapper.fromJson(response)));
   }
 
-  search(params: any): Observable<PagedResult<any>>{
+  search(params: any): Observable<PagedResult<any>> {
     const json = ItemListMapper.toJson(params);
     return this.#http
       .get<PagedResult<any>>(`${this.#url}?json=${json}`)

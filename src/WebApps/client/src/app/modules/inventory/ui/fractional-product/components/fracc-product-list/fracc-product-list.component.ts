@@ -77,7 +77,10 @@ export class FraccProductListComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource.set(response.payload?.data ?? []);
-        this.pagination.update((item) => new Pagination(item.pageIndex, item.pageSize, response.payload?.totalRecords ?? 0));
+        this.pagination.update(
+          (item) =>
+            new Pagination(item.pageIndex, item.pageSize, response.payload?.totalRecords ?? 0),
+        );
       });
   }
 
@@ -112,7 +115,11 @@ export class FraccProductListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

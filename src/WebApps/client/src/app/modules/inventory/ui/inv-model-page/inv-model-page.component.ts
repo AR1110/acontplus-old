@@ -66,7 +66,9 @@ export class InvModelPageComponent implements OnInit {
       .subscribe((response) => {
         this.dataSource = new MatTableDataSource(response.data);
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords));
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords),
+          );
         }
       });
   }
@@ -81,7 +83,11 @@ export class InvModelPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.getMeasures();
   }
 

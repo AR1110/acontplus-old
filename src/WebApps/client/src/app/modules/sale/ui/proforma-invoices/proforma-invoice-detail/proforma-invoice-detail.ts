@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-totales/tabla-resumen-totales.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -15,7 +15,7 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
   styleUrl: './proforma-invoice-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProformaInvoiceDetail {
+export class ProformaInvoiceDetail implements OnInit {
   readonly dialogRef = inject(MatDialogRef<ProformaInvoiceDetail>);
   readonly data = inject<{ id: number }>(MAT_DIALOG_DATA);
   private notaEntregaSvc = inject(NotaEntregaService);

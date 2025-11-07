@@ -107,7 +107,9 @@ export class EgresoIngresoCajaComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource = response.data;
-        this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, response.totalRecords));
+        this.pagination.update(
+          (e) => new Pagination(e.pageIndex, e.pageSize, response.totalRecords),
+        );
       });
   }
 
@@ -230,7 +232,11 @@ export class EgresoIngresoCajaComponent implements OnInit {
     }
   }
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

@@ -2,7 +2,10 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
 import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import { MealConsumption, CreateMealConsumptionRequest } from '@restaurant/domain/models/meal-consumption';
+import {
+  MealConsumption,
+  CreateMealConsumptionRequest,
+} from '@restaurant/domain/models/meal-consumption';
 
 @Injectable({
   providedIn: 'root',

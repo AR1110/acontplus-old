@@ -51,7 +51,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
     MatProgressSpinner,
     MatPaginator,
     DatePipe,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
   templateUrl: './meal-consumption-list.html',
   styleUrl: './meal-consumption-list.scss',

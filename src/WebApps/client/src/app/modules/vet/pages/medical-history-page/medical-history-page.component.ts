@@ -127,8 +127,15 @@ export class MedicalHistoryPageComponent implements OnInit {
           index: index + 1,
         }));
         this.dataSource.set(historiesModified);
-        this.pagination
-        this.pagination.update((r) => new Pagination(r.pageIndex, r.pageSize, this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0));
+        this.pagination;
+        this.pagination.update(
+          (r) =>
+            new Pagination(
+              r.pageIndex,
+              r.pageSize,
+              this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0,
+            ),
+        );
       }
     });
   }
@@ -211,7 +218,11 @@ export class MedicalHistoryPageComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

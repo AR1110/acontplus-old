@@ -1,8 +1,7 @@
-import {PagedResult, PaginationParams} from "@acontplus/core";
+import { PagedResult, PaginationParams } from '@acontplus/core';
 
 export class ItemListMapper {
   static toJson(params: PaginationParams) {
-
     const queryParams = new URLSearchParams({
       pageIndex: params.pageIndex.toString(),
       pageSize: params.pageSize.toString(),
@@ -19,8 +18,8 @@ export class ItemListMapper {
     // }
     if (params.filters) {
       const objToJsonFilters: Record<string, string> = {
-        "categoryAbbreviations": "sigla"
-      }
+        categoryAbbreviations: 'sigla',
+      };
       Object.entries(params.filters).forEach(([key, value]) => {
         const filterKey = objToJsonFilters[key] || key;
         queryParams.append(`filters[${filterKey}]`, String(value));
@@ -29,28 +28,27 @@ export class ItemListMapper {
     return queryParams.toString();
   }
 
-  static fromJson(response: PagedResult<any>) :PagedResult<any>{
-
+  static fromJson(response: PagedResult<any>): PagedResult<any> {
     const results: PagedResult<any> = {
       ...response,
       items: [],
-    }
-      results.items = response.items.map((item: any, index: number) => {
-        return {
-          index: index + 1,
-          id: item.id,
-          productId: item.productId,
-          title: item.title,
-          summary: item.summary,
-          imageUrl: item.s3ObjectUrl,
-          description: item.description,
-          code: item.code,
-          measure: item.measure,
-          auxiliaryCode: item.auxiliary_code,
-          costPrice: item.costPrice,
-          category: item.category,
-        };
-      });
+    };
+    results.items = response.items.map((item: any, index: number) => {
+      return {
+        index: index + 1,
+        id: item.id,
+        productId: item.productId,
+        title: item.title,
+        summary: item.summary,
+        imageUrl: item.s3ObjectUrl,
+        description: item.description,
+        code: item.code,
+        measure: item.measure,
+        auxiliaryCode: item.auxiliary_code,
+        costPrice: item.costPrice,
+        category: item.category,
+      };
+    });
 
     return results;
   }

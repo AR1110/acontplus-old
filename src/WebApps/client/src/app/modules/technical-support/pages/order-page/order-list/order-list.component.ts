@@ -141,7 +141,9 @@ export class OrderListComponent implements OnInit {
       this.orders.set(orders);
       this.users = response.users;
       if (this.orders().length > 0) {
-        this.pagination.update((prev) => new Pagination(prev.pageIndex, prev.pageSize, response.orders[0].totalRecords));
+        this.pagination.update(
+          (prev) => new Pagination(prev.pageIndex, prev.pageSize, response.orders[0].totalRecords),
+        );
       }
     });
   }
@@ -236,7 +238,11 @@ export class OrderListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

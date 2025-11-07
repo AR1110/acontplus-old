@@ -54,7 +54,9 @@ export class MeasurePageComponent implements OnInit {
         this.isLoadingResults = false;
         this.dataSource.set(response);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords));
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords),
+          );
         }
       },
       error: () => (this.isLoadingResults = false),
@@ -71,7 +73,11 @@ export class MeasurePageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.getMeasures();
   }
 

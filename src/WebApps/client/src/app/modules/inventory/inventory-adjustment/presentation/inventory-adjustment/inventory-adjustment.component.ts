@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -48,7 +48,7 @@ import {
   templateUrl: './inventory-adjustment.component.html',
   styles: ``,
 })
-export class InventoryAdjustmentComponent {
+export class InventoryAdjustmentComponent implements OnInit {
   private inventorySvc = inject(InventoryAdjustmentService);
 
   private _tS = inject(ToastrNotificationService);
@@ -126,7 +126,9 @@ export class InventoryAdjustmentComponent {
     if (!params) return;
     this.inventorySvc.getAll(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update((pag) => new Pagination(pag.pageIndex, pag.pageSize, response.totalRecords));
+      this.pagination.update(
+        (pag) => new Pagination(pag.pageIndex, pag.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -165,7 +167,11 @@ export class InventoryAdjustmentComponent {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

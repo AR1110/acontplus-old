@@ -63,7 +63,7 @@ export class NotaEntregaService {
             data: [] as any[],
             totalRecords: 0,
           };
-          if (response && response.code === '1') {
+          if (response?.code === '1') {
             let [notasEntrega] = JSON.parse(response.payload as string);
 
             notasEntrega = notasEntrega || [];

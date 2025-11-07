@@ -77,7 +77,9 @@ export class UserCustomerComponent implements OnInit {
 
       .subscribe((response) => {
         this.dataSource.set(response.data);
-        this.pagination.update((item) => new Pagination(item.pageIndex, item.pageSize, response.totalRecords));
+        this.pagination.update(
+          (item) => new Pagination(item.pageIndex, item.pageSize, response.totalRecords),
+        );
       });
   }
 
@@ -110,7 +112,11 @@ export class UserCustomerComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

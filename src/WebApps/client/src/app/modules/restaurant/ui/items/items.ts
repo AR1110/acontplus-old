@@ -14,7 +14,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import {PaginationParams} from "@acontplus/core";
+import { PaginationParams } from '@acontplus/core';
 
 @Component({
   selector: 'app-items',
@@ -64,14 +64,14 @@ export class Items implements OnInit {
   isLoading = signal(false);
   pagination = signal(new Pagination());
 
-  params = new PaginationParams()
+  params = new PaginationParams();
 
   ngOnInit() {
     this.getList();
   }
 
   getList() {
-    console.log(this.params)
+    console.log(this.params);
 
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
@@ -81,9 +81,8 @@ export class Items implements OnInit {
           this.categoryAbbreviationsSelected.length > 0
             ? this.categoryAbbreviationsSelected.toString()
             : null,
-      }
-
-    })
+      },
+    });
 
     this.isLoading.set(true);
     this._listUseCase

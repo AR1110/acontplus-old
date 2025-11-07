@@ -3,7 +3,7 @@ import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import {PagedResult, PaginationParams} from "@acontplus/core";
+import { PagedResult, PaginationParams } from '@acontplus/core';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +21,8 @@ export class ItemListUseCase implements BaseUseCase<PagedResult<any>, Pagination
 export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, PaginationParams> {
   private repo = inject(ItemRepository);
   execute(params: PaginationParams): Observable<any> {
-    const categoryAbbreviation = params.filters?.["categoryAbbreviation"];
-    const searchTerm = params.filters?.["searchTerm"];
+    const categoryAbbreviation = params.filters?.['categoryAbbreviation'];
+    const searchTerm = params.filters?.['searchTerm'];
     if (!categoryAbbreviation) {
       throw new Error('categoryAbbreviation is required');
     }

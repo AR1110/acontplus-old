@@ -96,7 +96,9 @@ export class CompanyCustomerComponent implements OnInit {
 
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update((re) => new Pagination(re.pageIndex, re.pageSize, response.totalRecords));
+      this.pagination.update(
+        (re) => new Pagination(re.pageIndex, re.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -162,7 +164,11 @@ export class CompanyCustomerComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

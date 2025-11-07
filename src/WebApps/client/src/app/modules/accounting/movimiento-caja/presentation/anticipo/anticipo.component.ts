@@ -103,7 +103,14 @@ export class AnticipoComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource.set(response);
-        this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0));
+        this.pagination.update(
+          (e) =>
+            new Pagination(
+              e.pageIndex,
+              e.pageSize,
+              this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
+            ),
+        );
       });
   }
 
@@ -222,7 +229,11 @@ export class AnticipoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

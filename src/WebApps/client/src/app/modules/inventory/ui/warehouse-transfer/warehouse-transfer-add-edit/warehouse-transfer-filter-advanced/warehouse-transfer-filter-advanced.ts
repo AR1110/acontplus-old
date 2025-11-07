@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
@@ -37,7 +37,7 @@ interface Category {
   styleUrl: './warehouse-transfer-filter-advanced.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WarehouseTransferFilterAdvanced {
+export class WarehouseTransferFilterAdvanced implements OnInit {
   private getMassTransferProductsUseCase = inject(GetMassTransferProductsUseCase);
   private dgRef = inject(MatDialogRef<WarehouseTransferFilterAdvanced>);
   private notiSvc = inject(ToastrNotificationService);
@@ -188,7 +188,7 @@ export class WarehouseTransferFilterAdvanced {
     const selected = this.checkedCategories.value || [];
 
     // Filtrar solo los IDs numéricos (subfamilias reales)
-    const subfamiliaIds = selected.filter((val) => typeof val === 'number') as number[];
+    const subfamiliaIds = selected.filter((val) => typeof val === 'number');
 
     if (subfamiliaIds.length === 0) {
       return '';
@@ -218,7 +218,7 @@ export class WarehouseTransferFilterAdvanced {
     const subCategories = this.checkedCategories.value?.filter(Number).join(',');
     //  let selectedSubfamilias = $scope.selectedSubfamilias().map(sub => sub.idSubFamilia).join(",");
 
-    let params = {
+    const params = {
       sourceWarehouseId: this.params.sourceWarehouseId,
       subCategories: ValidatorUtils.isValidField(subCategories),
     };

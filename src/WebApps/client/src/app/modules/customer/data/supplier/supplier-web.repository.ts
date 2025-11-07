@@ -34,7 +34,7 @@ export class SupplierWebRepository extends SupplierRepository {
         map((response) => {
           let suppliers: SupplierSearch[] = [];
 
-          if (response && response.code === '1') {
+          if (response?.code === '1') {
             const { proveedores } = JSON.parse(response.payload as string);
             suppliers = SupplierMapper.fromApiSearch(proveedores);
           }

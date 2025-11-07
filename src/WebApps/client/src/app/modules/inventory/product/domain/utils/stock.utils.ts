@@ -1,4 +1,4 @@
-import { isDateValid } from "@core/utils/date.util";
+import { isDateValid } from '@core/utils/date.util';
 
 interface MergeOptions {
   rowUUID?: string; // UUID del StockItem a buscar
@@ -30,12 +30,7 @@ interface MergedResult {
   inventoryAdjustment?: ConsolidacionBodega;
 }
 
-
-export function mergeStockItems(
-  items: StockItem[],
-  options?: MergeOptions
-): MergedResult {
-
+export function mergeStockItems(items: StockItem[], options?: MergeOptions): MergedResult {
   // 1. Agrupación usando Map para mayor seguridad y claridad
   const grouped = items.reduce((acc, item) => {
     const key = `${item.productId}_${item.warehouseId}_${item.measureId}`;
@@ -47,7 +42,14 @@ export function mergeStockItems(
   }, new Map<string, StockItem[]>());
 
   if (items.length === 0) {
-    return { quantity: 0, stockQuantity: 0, warehouseId:  0, measureId: 0, productId: 0, inventoryAdjustment: undefined };
+    return {
+      quantity: 0,
+      stockQuantity: 0,
+      warehouseId: 0,
+      measureId: 0,
+      productId: 0,
+      inventoryAdjustment: undefined,
+    };
   }
 
   let totalQuantity = 0;
@@ -61,8 +63,12 @@ export function mergeStockItems(
     const totals = group.reduce(
       (acc, item) => {
         // Lógica de cálculo
-        const fractional = item.measures.find((m: any) => m.idMedida === item.measureId && m.tipo === 'FRACCIONADO');
-        const principal = item.measures.find((m: any) => m.idMedida === item.measureId && m.tipo === 'PRINCIPAL');
+        const fractional = item.measures.find(
+          (m: any) => m.idMedida === item.measureId && m.tipo === 'FRACCIONADO',
+        );
+        const principal = item.measures.find(
+          (m: any) => m.idMedida === item.measureId && m.tipo === 'PRINCIPAL',
+        );
         if (fractional) acc.fractional += item.quantity * fractional.conversion;
         if (principal) acc.principal += item.quantity * principal.conversion;
         acc.quantity += item.quantity;
@@ -74,11 +80,9 @@ export function mergeStockItems(
     totalQuantity += totals.quantity;
     totalStock += totals.fractional + totals.principal;
 
-
-      warehouseId = group[0].warehouseId;
-      measureId = group[0].measureId;
-      productId = group[0].productId;
-
+    warehouseId = group[0].warehouseId;
+    measureId = group[0].measureId;
+    productId = group[0].productId;
   }
 
   let adjustment: ConsolidacionBodega | undefined;
@@ -87,11 +91,13 @@ export function mergeStockItems(
   let finalWarehouseId = warehouseId;
   // A. Prioridad: Buscar el StockItem por UUID
   if (options?.rowUUID) {
-    const itemByUuid = items.find(item => item.uuid === options.rowUUID);
+    const itemByUuid = items.find((item) => item.uuid === options.rowUUID);
 
     if (itemByUuid) {
       // 3.1: Buscar el ajuste DENTRO del array inventoryAdjustments del ítem encontrado
-      adjustment = itemByUuid.inventoryAdjustments?.find(ia => ia.idBodega === itemByUuid.warehouseId);
+      adjustment = itemByUuid.inventoryAdjustments?.find(
+        (ia) => ia.idBodega === itemByUuid.warehouseId,
+      );
 
       // 3.2: Si se encontró el ítem, usar sus IDs para el resultado final,
       //      ya que el UUID apunta a una fila específica.
@@ -100,7 +106,6 @@ export function mergeStockItems(
       finalWarehouseId = itemByUuid.warehouseId;
     }
   }
-
 
   return {
     quantity: totalQuantity,
@@ -112,16 +117,16 @@ export function mergeStockItems(
   };
 }
 
-interface GetStockQuantityProps  {
+interface GetStockQuantityProps {
   issueDate: Date;
   stockQuantity: number;
   adjustment?: ConsolidacionBodega;
 }
 export function getStockQuantity({
-                                   issueDate,
-                                   stockQuantity,
-                                   adjustment,
-                                 }: GetStockQuantityProps ): number {
+  issueDate,
+  stockQuantity,
+  adjustment,
+}: GetStockQuantityProps): number {
   if (!adjustment) return stockQuantity;
 
   const consolidationDate = new Date(adjustment.fechaConsolidacion);
@@ -129,4 +134,3 @@ export function getStockQuantity({
 
   return isAfterOrEqual ? 0 : stockQuantity;
 }
-

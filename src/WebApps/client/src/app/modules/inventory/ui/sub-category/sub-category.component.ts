@@ -71,7 +71,9 @@ export class SubCategoryComponent implements OnInit {
         this.dataSource.sort = this.sort;
 
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords));
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords),
+          );
         }
       },
       error: (err) => {
@@ -90,7 +92,11 @@ export class SubCategoryComponent implements OnInit {
   }
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.getSubcategories();
   }
 

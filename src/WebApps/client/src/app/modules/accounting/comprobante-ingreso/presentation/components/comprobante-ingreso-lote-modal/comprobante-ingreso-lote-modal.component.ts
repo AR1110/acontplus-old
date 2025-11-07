@@ -28,14 +28,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
-  imports: [
-    MatTableModule,
-    MatIconModule,
-    MatCard,
-    MatCardContent,
-    MatButton,
-    Button,
-  ],
+  imports: [MatTableModule, MatIconModule, MatCard, MatCardContent, MatButton, Button],
   templateUrl: './comprobante-ingreso-lote-modal.component.html',
   styleUrl: './comprobante-ingreso-lote-modal.component.scss',
   animations: [

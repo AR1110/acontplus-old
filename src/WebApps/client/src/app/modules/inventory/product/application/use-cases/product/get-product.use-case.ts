@@ -63,10 +63,12 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
 @Injectable({
   providedIn: 'root',
 })
-export class GetProductSaleUseCase implements BaseUseCase<GetProductPurchaseResult, { id?: number; search?: string }> {
+export class GetProductSaleUseCase
+  implements BaseUseCase<GetProductPurchaseResult, { id?: number; search?: string }>
+{
   private repo = inject(ProductRepository);
 
-  execute(obj:{ id?: number; search?: string }) {
+  execute(obj: { id?: number; search?: string }) {
     if (!obj.id || !obj.search) {
       throw new Error('El id y el search son requeridos');
     }

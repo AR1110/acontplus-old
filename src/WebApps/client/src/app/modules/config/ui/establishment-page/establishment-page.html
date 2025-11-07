@@ -18,12 +18,7 @@
 />
 
 <ng-template #toolbarTpl>
-  <acp-button
-    [icon]="'add'"
-
-    [text]="'Nuevo'"
-    (handleClick)="openAddEstablishment()"
-  />
+  <acp-button [icon]="'add'" [text]="'Nuevo'" (handleClick)="openAddEstablishment()" />
 </ng-template>
 
 <ng-template #opTpl let-row>
@@ -157,7 +152,6 @@
       <ng-template #toolbarPuntoEmisionTpl>
         <acp-button
           [icon]="'add'"
-
           [text]="'Nuevo'"
           (handleClick)="modalAddEditPuntoEmision(estabTemp)"
         />

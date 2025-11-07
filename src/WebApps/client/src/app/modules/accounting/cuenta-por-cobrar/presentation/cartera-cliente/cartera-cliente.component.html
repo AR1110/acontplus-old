@@ -142,17 +142,18 @@
           }
         </div>
         <div class="hstack gap-1">
-          <!-- In your parent component template -->
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.PDF"
+          <acp-button
+            variant="danger"
+            icon="picture_as_pdf"
             text="Ver PDF"
-            (exportReport)="handleFileDownload($event, 1)"
+            (handleClick)="getReportPdf(1)"
           />
 
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.EXCEL"
+          <acp-button
+            variant="success"
+            icon="download"
             text="Descargar Excel"
-            (exportReport)="handleFileDownload($event, 1)"
+            (handleClick)="getReportExcel(1)"
           />
         </div>
       </div>
@@ -223,17 +224,18 @@
           </div>
         </div>
         <div class="hstack gap-2">
-          <!-- In your parent component template -->
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.PDF"
+          <acp-button
+            variant="danger"
+            icon="picture_as_pdf"
             text="Ver PDF"
-            (exportReport)="handleFileDownload($event, 2)"
+            (handleClick)="getReportPdf(2)"
           />
 
-          <app-report-buttons
-            [fileType]="REPORT_FORMAT.EXCEL"
+          <acp-button
+            variant="success"
+            icon="download"
             text="Descargar Excel"
-            (exportReport)="handleFileDownload($event, 2)"
+            (handleClick)="getReportExcel(2)"
           />
         </div>
       </div>

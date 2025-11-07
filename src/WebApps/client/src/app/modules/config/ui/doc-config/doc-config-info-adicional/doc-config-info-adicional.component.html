@@ -7,13 +7,7 @@
 
 <ng-template #body>
   <div class="my-2">
-    <acp-button
-      variant="info"
-      icon="add"
-
-      (handleClick)="addRow()"
-      text="Agregar Fila"
-    />
+    <acp-button variant="info" icon="add" (handleClick)="addRow()" text="Agregar Fila" />
   </div>
   <app-mat-dynamic-table
     [tableData]="dataSource()"
@@ -48,11 +42,5 @@
 </ng-template>
 
 <ng-template #footer>
-  <acp-button
-    variant="success"
-    icon="save"
-
-    text="Guardar"
-    (handleClick)="save()"
-  />
+  <acp-button variant="success" icon="save" text="Guardar" (handleClick)="save()" />
 </ng-template>

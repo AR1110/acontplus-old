@@ -38,8 +38,8 @@ export class WarehouseTransferDataFormMapper {
         };
       });
       data.categories = response.subFamilias.reduce((acc: any, obj: any) => {
-        let key = obj.idFamilia;
-        let existingGroup = acc.find(function (group: any) {
+        const key = obj.idFamilia;
+        const existingGroup = acc.find(function (group: any) {
           return group.id === key;
         });
 

@@ -1,5 +1,5 @@
 import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
-import { Component, OnDestroy, ViewChild, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnDestroy, ViewChild, ViewEncapsulation, inject, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgProgressRouter } from 'ngx-progressbar/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
@@ -42,7 +42,7 @@ const MONITOR_MEDIAQUERY = 'screen and (min-width: 960px)';
     '[class.acontplus-sidenav-collapsed-fix]': 'collapsedWidthFix',
   },
 })
-export class AdminLayoutComponent implements OnDestroy {
+export class AdminLayoutComponent implements OnDestroy, OnInit {
   @ViewChild('sidenav', { static: true }) sidenav!: MatSidenav;
   @ViewChild('content', { static: true }) content!: MatSidenavContent;
 

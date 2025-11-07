@@ -92,7 +92,9 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe((response) => {
           this.dataSource.set(response.data);
-          this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
+          this.pagination.update(
+            (p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords),
+          );
         });
     } catch (error) {
       // hideLoader();
@@ -172,7 +174,11 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.refresh();
   }
 }

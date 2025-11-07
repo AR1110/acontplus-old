@@ -11,19 +11,9 @@
   <ng-container matSuffix>
     @if (device.id > 0 && !clearSearch) {
       -->
-      <acp-button
-        variant="secondary"
-        icon="edit"
-        matStyle="icon"
-        (handleClick)="openModal()"
-      />
+      <acp-button variant="secondary" icon="edit" matStyle="icon" (handleClick)="openModal()" />
     } @else {
-      <acp-button
-        variant="secondary"
-        icon="add"
-        matStyle="icon"
-        (handleClick)="openModal()"
-      />
+      <acp-button variant="secondary" icon="add" matStyle="icon" (handleClick)="openModal()" />
     }
   </ng-container>
 </mat-form-field>

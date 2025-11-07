@@ -62,8 +62,8 @@ export class InvoiceService {
             data: [] as any[],
             totalRecords: 0,
           };
-          if (response && response.code === '1') {
-            let { invoices } = JSON.parse(response.payload as string);
+          if (response?.code === '1') {
+            const { invoices } = JSON.parse(response.payload as string);
             result.data = InvoiceAdapter.fromApiAll(invoices ?? []);
             result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
           }
