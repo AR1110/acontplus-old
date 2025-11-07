@@ -1,6 +1,6 @@
 USE [Acontplus]
 GO
-/****** Object:  StoredProcedure [Restaurant].[Item_Get]    Script Date: 6/10/2025 18:01:16 ******/
+/****** Object:  StoredProcedure [Restaurant].[GetItem]    Script Date: 7/11/2025 11:08:51 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -9,289 +9,212 @@ GO
 -- Author:		IGNACIO MANCHU
 -- Create date: 2023-08-14
 -- Description:	Get Item
-CREATE OR ALTER PROCEDURE Restaurant.GetItem
-    @UserRoleId INT
-   ,@Json NVARCHAR(MAX)
-   ,@TableNames NVARCHAR(MAX) OUTPUT
+ALTER   PROCEDURE [Restaurant].[GetItem]
+   @Filters NVARCHAR(MAX) 
+   ,@PageIndex INT = 1
+   ,@PageSize INT = 10
+   ,@SortBy NVARCHAR(50) = 'Id'
+   ,@SortDirection NVARCHAR(4) = 'DESC'
+   ,@SearchTerm NVARCHAR(100) = NULL
+   ,@TotalCount INT OUTPUT 
 AS
 BEGIN
     SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
-    --> Variables Globales
-    DECLARE @idEntidad INT ,@tipo INT ,@textSearch VARCHAR(20) ,@pageIndex INT ,@pageSize INT ,@sigla VARCHAR(50) ,@siglaFormatted VARCHAR(500)
+    DECLARE @UserRoleId INT
 
-    --> Data json
-    SELECT @tipo = tipo FROM OPENJSON(@json) WITH(tipo INT )
+    --> Sql
+    DECLARE @DataSQL NVARCHAR(MAX) ,@Params NVARCHAR(MAX)
 
-    --> 
-    SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+    --> Calculate offset
+    DECLARE @Offset INT ;
 
-    --> GET 
-    IF @tipo = 1
+    --> condicion 
+    DECLARE @WhereClause NVARCHAR(MAX)
+
+    --> Order
+    DECLARE @OrderByClause NVARCHAR(200);
+    
+
+    --> Parse JSON filters
+    DECLARE @idEntidad INT
+           ,@sigla VARCHAR(50)
+           ,@siglaFormatted VARCHAR(500)
+           ,@idSubFamilia INT
+           ,@UserId INT
+           ,@IncludeDeleted BIT = 0
+
+    --> Data Global
+     --   SELECT top 1 @userRoleId     = ISNULL(TRY_CAST(JSON_VALUE(@Filters ,'$.userRoleId') AS BIT), 0)
+     SELECT TOP 1 
+            @userRoleId =userRoleId
+            ,@sigla = sigla
+        FROM OPENJSON(@Filters)
+        WITH (
+            userRoleId INT,
+            sigla VARCHAR(40)
+        );
+    SELECT TOP 1 @idEntidad = idEntidad, @UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+
+    --> Variables
+    SET @WhereClause = N'WHERE ar.idEntidad = @idEntidad '
+
+    SET @Offset = (@PageIndex - 1) * @PageSize
+
+    IF @SortDirection NOT IN ('ASC', 'DESC')
         BEGIN
-            SET @tableNames = 'items'
-
-            DECLARE @idSubFamilia INT
-	               ,@sql NVARCHAR(MAX)
-	               ,@params NVARCHAR(MAX)
-
-            SELECT @idSubFamilia  = idSubFamilia
-		          ,@pageIndex	  = pageIndex
-		          ,@pageSize	  = pageSize
-                  ,@textSearch    = textSearch
-                  ,@sigla         = sigla
-            FROM OPENJSON(@json)WITH
-            (
-                 idSubFamilia INT         '$.idSubFamilia'
-		        ,pageIndex	  INT         '$.pageIndex'
-		        ,pageSize	  INT         '$.pageSize'
-                ,textSearch   VARCHAR(50) '$.textSearch'
-                ,sigla        VARCHAR(50) 
-	        )
-
-            SET @params = '@idEntidad    INT
-                          ,@idSubFamilia INT
-                          ,@pageIndex    INT
-                          ,@pageSize     INT
-                          ,@textSearch   VARCHAR(50)'
-
-            SET @sql = 'WITH cte_item AS
-                        (
-                            SELECT ri.Id                                  
-                                  ,ri.ProductId
-                                  ,ISNULL(ri.title, '''')   as title
-                                  ,ISNULL(ri.Summary, '''') as summary
-                                  ,ar.s3ObjectUrl           as s3ObjectUrl
-                                  ,ar.descripcion           as description
-                                  ,ar.codigo                as code                 
-                                  ,ar.medida                as measure                              
-                                  ,ar.codigoAuxiliar        as auxiliary_code            
-                                  ,ar.precioCosto           as costPrice
-                                  ,ar.categoria             as category
-                            FROM Restaurant.Item             ri
-                            INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId
-                            WHERE ar.estado = 1
-                              AND ar.idEntidad = @idEntidad '
-
-            IF @textSearch IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND
-                                       (
-                                               ar.descripcion LIKE ''%''+@textSearch+''%''
-                                            OR ri.Summary     LIKE ''%''+@textSearch+''%''
-                                            OR ri.Content     LIKE ''%''+@textSearch+''%''
-                                       ) '
-                END
-
-            IF @idSubFamilia > 0
-		        BEGIN
-                    SET @sql = @sql + 'AND ar.idSubFamilia = @idSubFamilia '
-                END
-            ELSE
-                BEGIN
-                    IF @sigla IS NOT NULL
-                        BEGIN
-                            SET @siglaFormatted = '''' + REPLACE(@sigla, ',', ''',''') + ''''
-
-                            SET @sql = @sql + 'AND ar.siglaFamilia IN (' + @siglaFormatted + ') '
-                        END
-                    ELSE
-                        BEGIN 
-                            SET @sql = @sql + 'AND ar.siglaFamilia NOT IN (''COM'') '
-                        END 
-                END
-
-            SET @sql = @sql + ') SELECT *, COUNT(*) OVER() as total_records FROM cte_item ORDER BY Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY'
-
-            EXEC sp_executesql @sql
-                              ,@params
-                              ,@idEntidad
-                              ,@idSubFamilia
-                              ,@pageIndex
-                              ,@pageSize
-                              ,@textSearch
-
-            RETURN
+            SET @SortDirection = 'DESC';
         END
 
-    --> Search de menus y combos
-    IF @tipo = 2
+    IF @SortBy NOT IN ('code', 'description', 'measure', 'category')
         BEGIN
-            SET @tableNames = 'items'
-
-            DECLARE @siglaFamilia VARCHAR(20)
-
-            SELECT @textSearch = textSearch ,@siglaFamilia = siglaFamilia FROM OPENJSON(@json) WITH (textSearch VARCHAR(20), siglaFamilia VARCHAR(20))
-
-            SELECT idArticulo as productId
-                  ,descripcion
-	              ,codigo
-	              ,subFamilia
-            FROM Inventario.v_Articulo ar
-            WHERE siglaFamilia = @siglaFamilia
-              AND idEntidad = @idEntidad
-              AND
-              (
-                   descripcion LIKE '%'+@textSearch+'%'
-                OR codigo      LIKE '%'+@textSearch+'%'
-              )
-            RETURN 
-              
+            SET @SortBy = 'Id';
         END
 
-    -->
-    IF @tipo = 3
-         BEGIN
-            SET @tableNames = 'items'
+     SET @OrderByClause = CASE @SortBy WHEN 'code'        THEN N' ORDER BY ' + QUOTENAME('code')        + N' ' + @SortDirection
+                                       WHEN 'description' THEN N' ORDER BY ' + QUOTENAME('description') + N' ' + @SortDirection
+                                       WHEN 'measure'     THEN N' ORDER BY ' + QUOTENAME('measure')     + N' ' + @SortDirection
+                                       WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
+                                                          ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
+                          END;
 
-            SELECT @pageSize = pageSize ,@pageIndex = pageIndex FROM OPENJSON(@json)WITH (pageSize INT ,pageIndex INT)
+    BEGIN TRY 
 
-            SELECT m.*
-                    , s3ObjectUrl		= a.s3ObjectUrl
-				    , stock				= a.stock
-				    , codigo				= a.codigo
-                    , summary            = m.Summary
-                    , descripcion		= a.descripcion
-                    , pvp				= (SELECT idArticuloPvP = ap.idArticuloPvP
-										           , idTarifa = ap.idTarifa
-										           , precioVenta = ap.precioVenta
-										           , precioConIva = ap.precioConIva
-										           , porcentajeUtilidad = ap.porcentajeUtilidad
-										           , precioPredeterminado = ta.predeterminada
-										           , tarifa = ta.descripcion
-										           , porcentajeIva = ti.porcentaje
-                FROM ArticuloPvP ap
-                    INNER JOIN Tarifa ta ON ta.idTarifa = ap.idTarifa
-                    LEFT JOIN TipoIva ti ON ti.idTipoIva = a.idTipoIva
-                WHERE ap.idArticulo = a.idArticulo AND ta.predeterminada = 1
-                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
-                   , totalRecords       = COUNT(*) OVER()
-                   , itemTypeCode = 'MENU'
-            FROM Restaurant.Menu m WITH(NOLOCK)
-                INNER JOIN Inventario.v_Articulo a ON m.ProductId = a.idArticulo
-            WHERE a.idEntidad = @idEntidad AND a.estado = 1 AND a.siglaFamilia = 'COM'
-                AND ISNULL(m.ForPromotion, 0) = 0
-            ORDER BY m.Id DESC OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
-            RETURN
-        END
+        --> Validate input parameters
+        IF @PageIndex < 1
+            BEGIN
+                THROW 50001, 'PageIndex must be greater than or equal to 1', 1;
+            END
 
-    --> Get id para la carga en orden de produccion
-    IF @tipo = 4
-        BEGIN
-            SET @tableNames = 'menu,components'
+        IF @PageSize < 1 OR @PageSize > 1000
+            BEGIN
+                THROW 50002, 'PageSize must be between 1 and 1000', 1;
+            END
 
-            DECLARE @ProductId INT
+        IF @Filters IS NOT NULL AND ISJSON(@Filters) = 1
+            BEGIN
+            SELECT ''
+                --SELECT 
+                --      @IncludeDeleted = ISNULL(TRY_CAST(JSON_VALUE(@Filters ,'$.IncludeDeleted') AS BIT), 0)
+                --      ,@idSubFamilia   = ISNULL(TRY_CAST(JSON_VALUE(@Filters ,'$.idSubFamilia')   AS INT), 0)
+                --      ,@sigla          = TRY_CAST(JSON_VALUE(@Filters ,'$.sigla')          AS VARCHAR(50));
+            END
 
-            DECLARE @uniquedId VARCHAR(100) = NEWID()
+        IF @IncludeDeleted = 0
+            BEGIN
+                SET @WhereClause = @WhereClause + N'AND ar.estado = 1 ';
+            END
 
-            SELECT @ProductId = productId FROM OPENJSON(@json) WITH (productId INT)
+        IF @SearchTerm IS NOT NULL AND LEN(@SearchTerm) > 0
+            BEGIN
+                 SET @WhereClause = @WhereClause + N'AND (
+                                                               ar.descripcion LIKE ''%'' + @SearchTerm + ''%''
+                                                            OR ri.Summary     LIKE ''%'' + @SearchTerm + ''%''
+                                                            OR ri.Content     LIKE ''%'' + @SearchTerm + ''%''
+                                                         ) '
+            END
 
-            SELECT a.idArticulo
-				  ,a.codigo
-				  ,a.codigoAuxiliar
-				  ,a.codigoBarra
-				  ,a.descripcion
-				  ,a.stock
-				  ,a.precioCosto
-				  ,a.estado
-				  ,a.iva
-				  ,llevaInventario
-				  ,a.idMedida
-				  ,a.medida
-                  ,ISNULL
-                   ((
-                        SELECT me.idMedida
-                              ,me.descripcion            as medida
-                              ,ar.precioCosto
-                              ,af.precioCostoFraccionado as precioUnitario
-                              ,af.precioCostoFraccionado as precioCostoFraccionado
-                              ,af.conversion
-                        FROM ArticuloFraccionado af WITH (NOLOCK) 
-                        INNER JOIN dbo.Articulo  ar WITH (NOLOCK) ON ar.idArticulo = af.idArticulo
-                        INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
-                        WHERE af.idArticulo = a.idArticulo 
-                        FOR JSON PATH
+        IF @idSubFamilia > 0
+            BEGIN
+                SET @WhereClause = @WhereClause + N'AND ar.idSubFamilia = @idSubFamilia '
+            END
+        ELSE
+            BEGIN
+                IF @sigla IS NOT NULL
+                    BEGIN
+                        SET @WhereClause = @WhereClause + N'AND ar.siglaFamilia '
+                    END
+                ELSE
+                    BEGIN
+                        SET @WhereClause = @WhereClause + N'AND ar.siglaFamilia NOT IN (''COM'') '
+                    END 
+                
+            END
 
-                   ),'[]') as fraccionado 
 
-                  ,ISNULL
-                   ((
-                        SELECT me.idMedida 
-                              ,me.descripcion  as medida
-                              ,ar.precioCosto 
-                              ,ar.precioCosto  as precioUnitario
-                              ,ar.precioCosto  as precioCostoFraccionado
-                              ,1               as conversion
-                        FROM Articulo     ar WITH (NOLOCK) 
-                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = ar.idMedida 
-                        WHERE ar.idArticulo = a.idArticulo 
-                        FOR JSON PATH
+        SET @Params = '@idEntidad    INT
+                      ,@idSubFamilia INT
+                      ,@sigla        VARCHAR(50)
+                      ,@SearchTerm   VARCHAR(100)
+                      ,@Offset       INT
+                      ,@PageSize     INT
+                      ,@TotalCount   INT OUTPUT '
 
-                    ),'[]') as principal
-                    ,@uniquedId as uniqueId
-			FROM Inventario.v_Articulo a 
-			WHERE a.idArticulo = @productId
-			AND a.llevaInventario = 1
+        SET @DataSQL = N'
+                        IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems;
 
-            IF EXISTS (SELECT 1 FROM Restaurant.Item WHERE productId = @productId)
-                BEGIN
-                    DECLARE @itemId INT
+                        WITH FilteredItems AS
+                            
+                             (
+                                SELECT ri.Id                   
+                                      ,ri.ProductId
+                                      ,ISNULL(ri.title, '''')   AS title
+                                      ,ISNULL(ri.Summary, '''') AS summary
+                                      ,ar.s3ObjectUrl           AS s3ObjectUrl
+                                      ,ar.descripcion           AS description
+                                      ,ar.codigo                AS code
+                                      ,ar.medida                AS measure
+                                      ,ar.codigoAuxiliar        AS auxiliary_code
+                                      ,ar.precioCosto           AS costPrice
+                                      ,ar.categoria             AS category
+                                      ,COUNT(*) OVER()          AS TotalCount
+                                FROM Restaurant.Item             ri
+                                INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
+                                + @WhereClause
 
-                    SELECT TOP 1 @itemId = id FROM Restaurant.Item WHERE productId = @productId
+                         + N')
 
-                    SELECT ar.idArticulo
-				          ,ar.codigo
-				          ,ar.codigoAuxiliar
-				          ,ar.codigoBarra
-				          ,ar.descripcion
-				          ,ar.stock
-				          ,ar.precioCosto
-				          ,ar.estado
-				          ,ar.iva
-				          ,ar.llevaInventario
-				          ,ar.idMedida
-				          ,ar.medida
-                          ,re.Quantity as conversion
-                          ,ISNULL
-                           ((
-                                SELECT me.idMedida
-                                      ,me.descripcion            as medida
-                                      ,ar.precioCosto
-                                      ,af.precioCostoFraccionado as precioUnitario
-                                      ,af.precioCostoFraccionado as precioCostoFraccionado
-                                      ,af.conversion
-                                FROM ArticuloFraccionado af WITH (NOLOCK) 
-                                INNER JOIN Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida 
-                                WHERE af.idArticulo = ar.idArticulo 
-                                FOR JSON PATH
+                     SELECT * INTO #FilteredItems FROM FilteredItems OPTION (RECOMPILE);
 
-                           ),'[]') as fraccionado 
+                     SELECT TOP 1 @TotalCount = TotalCount FROM #FilteredItems;
 
-                          ,ISNULL
-                           ((
-                                SELECT me.idMedida 
-                                      ,me.descripcion  as medida
-                                      ,sa.precioCosto 
-                                      ,sa.precioCosto  as precioUnitario
-                                      ,sa.precioCosto  as precioCostoFraccionado
-                                      ,1               as conversion
-                                FROM Articulo     sa WITH (NOLOCK) 
-                                INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = sa.idMedida 
-                                WHERE sa.idArticulo = ar.idArticulo 
-                                FOR JSON PATH
+                     SELECT * FROM #FilteredItems ' + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
 
-                            ),'[]') as principal
-                            ,@uniquedId as uniqueId
-			        FROM Restaurant.Recipe           re
-                    INNER JOIN Restaurant.Ingredient ig ON ig.Id         = re.IngredientId 
-			        INNER JOIN Inventario.v_Articulo ar on ar.idArticulo = ig.ProductId 
-			        WHERE re.IsActive = 1
-			          AND re.ItemId = @itemId
-                      AND re.IsDeleted = 0
-			          AND ar.llevaInventario = 1
-                END
+                     IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems ' ;
 
-            RETURN
-        END
+
+        EXEC sp_executesql
+            @DataSQL
+           ,@Params
+           ,@idEntidad
+           ,@idSubFamilia
+           ,@sigla
+           ,@SearchTerm
+           ,@Offset
+           ,@PageSize
+           ,@TotalCount = @TotalCount OUTPUT
+    END TRY
+
+    BEGIN CATCH
+        --> Variables locales para el error
+        DECLARE @ErrorNumber    INT            = ERROR_NUMBER()
+               ,@ErrorSeverity  INT            = ERROR_SEVERITY()
+               ,@ErrorState     INT            = ERROR_STATE()
+               ,@ErrorProcedure NVARCHAR(128)  = 'Restaurant.GetItem'
+               ,@ErrorLine      INT            = ERROR_LINE()
+               ,@ErrorMessage   NVARCHAR(4000) = ERROR_MESSAGE()
+               ,@ErrorDetails   NVARCHAR(MAX)
+               ,@Token          VARCHAR(300)   = NEWID()
+               ,@Method         VARCHAR(200)   = 'Restaurant/item/Get'
+
+        SELECT @ErrorDetails = (
+            SELECT @UserRoleId          AS UserRoleId
+                  ,@PageIndex           AS PageIndex
+                  ,@PageSize            AS PageSize
+                  ,@SortBy              AS SortBy
+                  ,@SortDirection       AS SortDirection
+                  ,@SearchTerm          AS SearchTerm
+                  ,JSON_QUERY(@Filters) AS Filters 
+                  ,@Offset              AS Offset
+            FOR JSON PATH
+        );
+ 
+        --> Limpiar tabla temporal en caso de error
+        IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
+
+        INSERT INTO ErroresSistema
+               (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
+        SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
+    END CATCH 
 END

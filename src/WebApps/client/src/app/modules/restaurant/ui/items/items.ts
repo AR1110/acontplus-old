@@ -14,6 +14,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import {PaginationParams} from "@acontplus/core";
 
 @Component({
   selector: 'app-items',
@@ -63,27 +64,35 @@ export class Items implements OnInit {
   isLoading = signal(false);
   pagination = signal(new Pagination());
 
+  params = new PaginationParams()
+
   ngOnInit() {
     this.getList();
   }
 
   getList() {
-    const params = {
+    console.log(this.params)
+
+    const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      categoryAbbreviations:
-        this.categoryAbbreviationsSelected.length > 0
-          ? this.categoryAbbreviationsSelected.toString()
-          : null,
-    };
+      filters: {
+        categoryAbbreviations:
+          this.categoryAbbreviationsSelected.length > 0
+            ? this.categoryAbbreviationsSelected.toString()
+            : null,
+      }
+
+    })
+
     this.isLoading.set(true);
     this._listUseCase
       .execute(params)
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((response) => {
-        this.list.set(response.data);
+        this.list.set(response.items);
         this.pagination.update(
-          (res) => new Pagination(res.pageIndex, res.pageSize, response.totalRecords),
+          (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount),
         );
       });
   }
