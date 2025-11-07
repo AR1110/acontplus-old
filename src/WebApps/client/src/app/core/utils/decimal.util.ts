@@ -294,7 +294,7 @@ class DecimalChain {
   }
 
   valueOf(options?: DecimalOptions): DecimalOutput {
-    return DecimalUtils.processResult(this.value, options);
+    return DecimalUtils['processResult'](this.value, options);
   }
 }
 
