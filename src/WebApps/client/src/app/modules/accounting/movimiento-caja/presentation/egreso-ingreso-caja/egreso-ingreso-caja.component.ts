@@ -17,7 +17,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs/operators';
 import { MatMenuModule } from '@angular/material/menu';
@@ -84,7 +84,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   getMovimientosCaja() {
     const params = {
@@ -107,12 +107,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource = response.data;
-        this.pagination.update((e) => {
-          return {
-            ...e,
-            totalRecords: response.totalRecords,
-          };
-        });
+        this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, response.totalRecords));
       });
   }
 
@@ -235,14 +230,7 @@ export class EgresoIngresoCajaComponent implements OnInit {
     }
   }
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

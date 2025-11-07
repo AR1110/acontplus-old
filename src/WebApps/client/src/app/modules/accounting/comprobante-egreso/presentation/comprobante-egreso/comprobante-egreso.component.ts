@@ -11,7 +11,7 @@ import {
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { ListComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/list-comprobante-egreso.use-case';
 import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -77,7 +77,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -149,10 +149,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
     this.$listUseCase.execute(params).subscribe((response) => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update((i) => ({
-        ...i,
-        totalRecords: response.totalRecords,
-      }));
+      this.pagination.update((i) => new Pagination(i.pageIndex, i.pageSize, response.totalRecords));
     });
   }
 
@@ -207,14 +204,7 @@ export class ComprobanteEgresoComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

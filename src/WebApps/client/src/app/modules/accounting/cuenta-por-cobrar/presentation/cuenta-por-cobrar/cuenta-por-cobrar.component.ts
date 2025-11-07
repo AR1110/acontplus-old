@@ -11,7 +11,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { isValidField } from '@core/utils/utils';
 
 import { ComprobanteIngresoOpenModalService } from '@accounting/comprobante-ingreso/application/services/comprobante-ingreso-open-modal.service';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';

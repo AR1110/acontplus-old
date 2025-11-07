@@ -18,7 +18,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatRow, MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-menu-search-list',

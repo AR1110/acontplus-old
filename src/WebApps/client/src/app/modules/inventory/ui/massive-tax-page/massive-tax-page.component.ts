@@ -5,7 +5,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { DialogService } from '@core/services/dialog.service';
 import { MassiveTaxDialogComponent } from '@inventory/ui/massive-tax-page/massive-tax-dialog/massive-tax-dialog.component';
@@ -42,7 +42,7 @@ export class MassiveTaxPageComponent implements OnInit {
 
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   refresh() {
     this.getAll();

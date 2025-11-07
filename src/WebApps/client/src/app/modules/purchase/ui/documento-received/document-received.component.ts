@@ -15,7 +15,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -84,7 +84,7 @@ export class DocumentReceivedComponent implements OnInit {
   moreOptionsFilter = false;
   subcategories: Subcategory[] = [];
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   private readonly _documentReceivedUseCase = inject(DocumentReceivedUseCase);
   private readonly _dialogService = inject(DialogService);
   private readonly _sharedService = inject(SharedService);

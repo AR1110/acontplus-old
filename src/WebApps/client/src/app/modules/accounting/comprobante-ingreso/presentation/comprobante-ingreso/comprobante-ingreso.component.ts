@@ -6,7 +6,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -32,7 +32,7 @@ export class ComprobanteIngresoComponent implements OnInit {
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
 
   loading = signal(false);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -188,14 +188,7 @@ export class ComprobanteIngresoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

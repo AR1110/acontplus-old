@@ -9,7 +9,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -32,7 +32,7 @@ import { finalize } from 'rxjs/operators';
 })
 export class InvModelPageComponent implements OnInit {
   private _modeloUseCase = inject(InventarioModeloUseCase);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   isLoadingResults = signal(false);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -66,12 +66,7 @@ export class InvModelPageComponent implements OnInit {
       .subscribe((response) => {
         this.dataSource = new MatTableDataSource(response.data);
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => {
-            return {
-              ...e,
-              totalRecords: this.dataSource.data[0].totalRecords,
-            };
-          });
+          this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords));
         }
       });
   }
@@ -86,14 +81,7 @@ export class InvModelPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.getMeasures();
   }
 

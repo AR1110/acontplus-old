@@ -15,7 +15,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { VehicleList } from '@mechanical/domain/models/vehicle.model';
 import { ConfigInspectionAddEditDirective } from '@mechanical/ui/directives/config-inspection-add-edit.directive';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -61,7 +61,7 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   isLoading = signal(false);
 
@@ -88,12 +88,7 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe((response) => {
           this.dataSource.set(response.data);
-          this.pagination.update((p) => {
-            return {
-              ...p,
-              totalRecords: response.totalRecords,
-            };
-          });
+          this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
         });
     } catch (error) {
       // hideLoader();
@@ -173,14 +168,7 @@ export class ConfigInspectionComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

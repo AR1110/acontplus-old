@@ -11,7 +11,7 @@ import {
   RetencionAtsList,
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { DialogService } from '@core/services/dialog.service';
 import { RetencionAtsAddEditComponent } from './components/retencion-ats-add-edit/retencion-ats-add-edit.component';
@@ -81,7 +81,7 @@ export class RetencionAtsComponent implements OnInit {
   private readonly _sharedService = inject(SharedService);
   private readonly _tS = inject(ToastrNotificationService);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   loadData() {
     this.pagination().pageIndex = 1;

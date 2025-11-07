@@ -5,7 +5,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -54,7 +54,7 @@ export class FraccProductListComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   isLoadingResults = signal(false);
   dataSource = signal<any[]>([]);
 
@@ -77,12 +77,7 @@ export class FraccProductListComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource.set(response.payload?.data ?? []);
-        this.pagination.update((item) => {
-          return {
-            ...item,
-            totalRecords: response.payload?.totalRecords ?? 0,
-          };
-        });
+        this.pagination.update((item) => new Pagination(item.pageIndex, item.pageSize, response.payload?.totalRecords ?? 0));
       });
   }
 
@@ -117,14 +112,7 @@ export class FraccProductListComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

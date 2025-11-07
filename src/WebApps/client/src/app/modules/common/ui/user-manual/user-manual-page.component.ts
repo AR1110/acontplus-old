@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Menu } from '@core/models/menu.model';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { QuillViewComponent } from 'ngx-quill';
 import { FormsModule } from '@angular/forms';
@@ -156,7 +156,7 @@ export class UserManualPageComponent implements OnInit {
 
   manualTree = signal<MenuNode[]>([]);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   pageEvent!: PageEvent;
 
   private readonly _sanitizer = inject(DomSanitizer);
@@ -200,12 +200,9 @@ export class UserManualPageComponent implements OnInit {
         }
       });
 
-      this.pagination.update((e) => {
-        return {
-          ...e,
-          totalRecords: this.manuals()[0]?.totalRecords || 0,
-        };
-      });
+      this.pagination.update(
+        (e) => new Pagination(e.pageIndex, e.pageSize, this.manuals()[0]?.totalRecords || 0),
+      );
     });
   }
 
@@ -260,12 +257,9 @@ export class UserManualPageComponent implements OnInit {
   onPageChanged($event: PageEvent) {
     this.pageEvent = $event;
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: $event.length,
-        pageSize: $event.pageSize,
-        pageIndex: $event.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent($event);
+      return updated;
     });
 
     this.loadData();

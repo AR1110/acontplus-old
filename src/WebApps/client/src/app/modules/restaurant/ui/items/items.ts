@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { PageEvent } from '@angular/material/paginator';
 import { DataGridColumn } from '@shared/components/data-grid/types';
@@ -6,7 +6,7 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ItemListUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { FormsModule } from '@angular/forms';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Button } from '@acontplus/ng-components';
@@ -30,7 +30,7 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
   styleUrl: './items.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Items {
+export class Items implements OnInit {
   private _listUseCase = inject(ItemListUseCase);
   private _dgSvc = inject(DialogService);
 
@@ -61,7 +61,7 @@ export class Items {
 
   list = signal<any[]>([]);
   isLoading = signal(false);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   ngOnInit() {
     this.getList();
@@ -82,10 +82,9 @@ export class Items {
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe((response) => {
         this.list.set(response.data);
-        this.pagination.update((res) => ({
-          ...res,
-          totalRecords: response.totalRecords,
-        }));
+        this.pagination.update(
+          (res) => new Pagination(res.pageIndex, res.pageSize, response.totalRecords),
+        );
       });
   }
 
@@ -100,11 +99,9 @@ export class Items {
 
   getNextPage(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.getList();
   }

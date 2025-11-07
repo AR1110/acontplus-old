@@ -21,7 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { finalize } from 'rxjs/operators';
@@ -82,7 +82,7 @@ export class AnticipoComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   getAnticipos() {
     const params = {
@@ -103,12 +103,7 @@ export class AnticipoComponent implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource.set(response);
-        this.pagination.update((e) => {
-          return {
-            ...e,
-            totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0,
-          };
-        });
+        this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource().length > 0 ? this.dataSource()[0].totalRecords : 0));
       });
   }
 
@@ -227,14 +222,7 @@ export class AnticipoComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

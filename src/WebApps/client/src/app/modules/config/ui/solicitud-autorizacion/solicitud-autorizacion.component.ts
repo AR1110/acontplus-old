@@ -17,7 +17,7 @@ import { formatDateToString } from '@core/utils/date.util';
 
 import { isValidField } from '@core/utils/utils';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { SolicitudUsuarioUseCase } from '@modules/config/application/use-cases/solicitud-usuario.use-case';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -103,7 +103,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   loading = false;
 
@@ -136,12 +136,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource = response.data;
 
-      this.pagination.update((e) => {
-        return {
-          ...e,
-          totalRecords: response.totalRecords,
-        };
-      });
+      this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, response.totalRecords));
     });
   }
   refresh() {
@@ -249,14 +244,7 @@ export class SolicitudAutorizacionComponent implements OnInit, AfterViewInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }

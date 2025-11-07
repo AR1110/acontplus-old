@@ -10,7 +10,7 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
@@ -31,7 +31,7 @@ import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
 })
 export class BrandPageComponent implements OnInit {
   private _brandUseCase = inject(BrandUseCase);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<any[]>([]);
   isLoadingResults = false;
@@ -52,12 +52,7 @@ export class BrandPageComponent implements OnInit {
         this.isLoadingResults = false;
         this.dataSource.set(response.brands);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => {
-            return {
-              ...e,
-              totalRecords: this.dataSource()[0].totalRecords,
-            };
-          });
+          this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords));
         }
       },
       error: () => (this.isLoadingResults = false),
@@ -74,14 +69,7 @@ export class BrandPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.getMeasures();
   }
 

@@ -1,7 +1,7 @@
 import { MenuAddEditModalComponent } from '@restaurant/ui/menu/menu-add-edit-modal/menu-add-edit-modal.component';
 import { MenuService } from '@restaurant/data/services/menu.service';
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { Menu } from '@restaurant/domain/models/menu.model';
 
 import { DialogService } from '@core/services/dialog.service';

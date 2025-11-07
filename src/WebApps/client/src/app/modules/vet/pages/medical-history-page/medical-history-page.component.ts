@@ -6,7 +6,7 @@ import { isApiResponse } from '@core/models/api-response-legacy';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
 import { PageEvent } from '@angular/material/paginator';
 
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
@@ -79,7 +79,7 @@ export class MedicalHistoryPageComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   // applyFilter(event: Event) {
   //   this.searching = true;
@@ -127,10 +127,8 @@ export class MedicalHistoryPageComponent implements OnInit {
           index: index + 1,
         }));
         this.dataSource.set(historiesModified);
-        this.pagination.update((r) => ({
-          ...r,
-          totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0,
-        }));
+        this.pagination
+        this.pagination.update((r) => new Pagination(r.pageIndex, r.pageSize, this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0));
       }
     });
   }
@@ -213,14 +211,7 @@ export class MedicalHistoryPageComponent implements OnInit {
   }
 
   handlePageEvent(e: PageEvent) {
-    this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
-    });
+    this.pagination.update((pag) => { const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords); updated.handlePageEvent(e); return updated; });
     this.refresh();
   }
 }
