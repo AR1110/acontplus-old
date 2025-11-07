@@ -620,6 +620,8 @@ export class WarehouseTransferAddEdit implements OnInit {
           }
 
           this.details.set(tempDetails);
+
+
         },
         error: (err) => {
           console.error('Error getting product:', err);

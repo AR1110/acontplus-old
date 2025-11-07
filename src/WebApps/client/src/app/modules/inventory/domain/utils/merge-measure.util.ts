@@ -72,6 +72,13 @@ export const mergeMeasureUtil = function (
       precioConIva: t.precioConIva,
       descripcion: t.tarifa,
       defaultTarifa: t.predeterminada,
+
+      //nuevos naming estandar
+      id: t.idTarifa,
+      salePrice: t.precioVenta,
+      priceWithTax: t.precioConIva,
+      name: t.tarifa,
+      isDefault: t.predeterminada,
     }));
     return {
       idMedida: item.idMedida,
@@ -83,6 +90,7 @@ export const mergeMeasureUtil = function (
       precioCosto: item.precioCosto,
       precioCostoFraccionado: item.precioCostoFraccionado,
       tarifas,
+      fees: tarifas,
     };
   });
 
