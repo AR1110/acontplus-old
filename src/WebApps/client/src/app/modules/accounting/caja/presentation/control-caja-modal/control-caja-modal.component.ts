@@ -1,7 +1,7 @@
 import { Component, inject, signal, ViewEncapsulation, OnInit } from '@angular/core';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { CODE_ESTADO, REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
@@ -23,7 +23,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatMenuModule } from '@angular/material/menu';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -43,7 +43,7 @@ import { MatButtonModule } from '@angular/material/button';
     DateRangeSelectionComponent,
     SendMailDialogDirective,
     MatMenuModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatSelectModule,

@@ -6,16 +6,16 @@
         name="ingredients"
         aria-label="Ingredients"
         multiple
-        [(ngModel)]="subCategories"
+        [(ngModel)]="categoryAbbreviationsSelected"
         (change)="refresh()"
       >
-        <mat-button-toggle value="RES">Items</mat-button-toggle>
-        <mat-button-toggle value="COM">Combos</mat-button-toggle>
-        <mat-button-toggle value="ING">Ingredientes</mat-button-toggle>
+        @for (item of categoryAbbreviations(); track $index) {
+          <mat-button-toggle [value]="item.code">{{ item.name }}</mat-button-toggle>
+        }
       </mat-button-toggle-group>
     </section>
     <button mat-icon-button (click)="refresh()">
-      <mat-icon>search</mat-icon>
+      <mat-icon>refresh</mat-icon>
     </button>
   </div>
 </ng-template>
@@ -26,10 +26,11 @@
   [data]="list()"
   [columns]="columns"
   [cellTemplate]="{
+    op: opTpl,
     productData: productDataTpl,
   }"
   [length]="pagination().totalRecords"
-  [loading]="isLoading"
+  [loading]="isLoading()"
   [pageOnFront]="false"
   [pageIndex]="pagination().pageIndex"
   [pageSize]="pagination().pageSize"
@@ -43,4 +44,13 @@
     <small class="code">{{ row.code }}</small>
     <small class="auxiliary_code">{{ row.auxiliaryCode }}</small>
   </div>
+</ng-template>
+<ng-template #opTpl let-row>
+  <acp-button
+    variant="success"
+    icon="build"
+    matStyle="icon"
+    title="Editar"
+    (handleClick)="onEdit(row)"
+  />
 </ng-template>

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 import { FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-retencion-ats-info-adicional-add-edit',
@@ -12,7 +12,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatInput,
     MatLabel,
     MatFormField,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './retencion-ats-info-adicional-add-edit.component.html',
   styles: ``,

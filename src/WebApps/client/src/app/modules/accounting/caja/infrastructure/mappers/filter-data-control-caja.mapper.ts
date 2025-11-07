@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FilterDataControlCajaResponse } from '@accounting/caja/domain/control-caja.entity';
 
 export class FilterDataControlCajaMapper {
@@ -6,7 +6,7 @@ export class FilterDataControlCajaMapper {
     return JSON.stringify({ tipo: 5 });
   }
 
-  static fromJson(response: ApiResponse): FilterDataControlCajaResponse {
+  static fromJson(response: ApiResponseLegacy): FilterDataControlCajaResponse {
     const result = new FilterDataControlCajaResponse();
     const data = JSON.parse(response.payload as string);
     result.estados = data.estadoPago || [];

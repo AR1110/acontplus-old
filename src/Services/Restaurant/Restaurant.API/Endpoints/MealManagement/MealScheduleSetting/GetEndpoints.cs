@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
+namespace Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
 
 public static class GetEndpoints
 {
@@ -11,7 +11,7 @@ public static class GetEndpoints
             .WithTags("Meal Schedule Settings");
         group.MapGet("/{establishmentId:int}", async (int establishmentId, IMealScheduleSettingService mealScheduleSettingService, CancellationToken cancellationToken) =>
         {
-            return await mealScheduleSettingService.GetAsync(establishmentId, cancellationToken).ToMinimalApiResultAsync();
+            return await mealScheduleSettingService.GetAsync(establishmentId, cancellationToken).ToGetMinimalApiResultAsync();
         })
             .WithName("GetAllMealScheduleSettings")
             .WithSummary("Get all meal schedule settings")

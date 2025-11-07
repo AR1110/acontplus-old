@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { map } from 'rxjs';
 
@@ -19,7 +19,7 @@ export class TarifaService {
       ...obj,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -47,6 +47,6 @@ export class TarifaService {
   }
 
   put<T>(id: number, data: T) {
-    return this.http.put<ApiResponse>(`${this.url}${id}`, { data });
+    return this.http.put<ApiResponseLegacy>(`${this.url}${id}`, { data });
   }
 }

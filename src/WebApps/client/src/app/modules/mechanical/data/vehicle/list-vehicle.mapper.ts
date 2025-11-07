@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListVehicleParams, ListVehicleResponse } from '@mechanical/domain/models/vehicle.model';
 
 export class ListVehicleMapper {
@@ -9,7 +9,7 @@ export class ListVehicleMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): ListVehicleResponse {
+  static fromJson(response: ApiResponseLegacy): ListVehicleResponse {
     let data = [] as any[];
     if (response.code === '1') {
       const { vehicles = [] } = JSON.parse(response.payload as string);

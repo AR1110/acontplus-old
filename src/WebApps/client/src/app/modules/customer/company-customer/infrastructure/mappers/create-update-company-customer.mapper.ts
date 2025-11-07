@@ -2,7 +2,7 @@ import { CompanyCustomerPayloadDto } from '@company-customer/domain/dtos/create-
 import { getValidId, isValidField } from '@core/utils/utils';
 import { formatDateToString } from '@core/utils/date.util';
 import { isValidDate } from 'rxjs/internal/util/isDate';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class CreateUpdateCompanyCustomerMapper {
   static toJson(param: any): CompanyCustomerPayloadDto {
@@ -35,7 +35,7 @@ export class CreateUpdateCompanyCustomerMapper {
     };
   }
 
-  static fromJson(response: ApiResponse): ApiResponse {
+  static fromJson(response: ApiResponseLegacy): ApiResponseLegacy {
     if (response.code === '1') {
       const [data] = JSON.parse(response.payload as string);
       response.payload = {

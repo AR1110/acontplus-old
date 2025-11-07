@@ -11,7 +11,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -29,7 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     UserSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatCheckbox,
     MatDivider,

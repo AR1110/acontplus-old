@@ -11,7 +11,7 @@ import { isValidField } from '@core/utils/utils';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +30,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatSelectModule,
     MatInputModule,
     MatTimepickerModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatSlideToggle,
   ],

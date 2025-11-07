@@ -1,6 +1,6 @@
 using Restaurant.Domain.Enums;
 
-namespace Restaurant.Application.DTOs.MealManagement;
+namespace Restaurant.Application.Dtos.MealManagement;
 
 public record CreateMealConsumptionRequest(int MealScheduleSettingId,
     int CompanyCustomerMealPlanId,

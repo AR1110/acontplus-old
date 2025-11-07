@@ -13,7 +13,7 @@ import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov
 import Swal from 'sweetalert2';
 
 import { AperturaCajaModalComponent } from '@accounting/caja/presentation/components/apertura-caja-modal/apertura-caja-modal.component';
-import { CajaModalComponent } from '@accounting/caja/presentation/components/caja-modal/caja-modal.component';
+import CajaModalComponent from '@accounting/caja/presentation/components/caja-modal/caja-modal.component';
 import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 import { ProductBarcodeRepository } from '@inventory/product/domain/repositories/product-barcode.repository';
 
@@ -11,7 +11,7 @@ interface Params<T> {
 @Injectable({
   providedIn: 'root',
 })
-export class ProductBarcodePutUseCase<T> implements BaseUseCase<ApiResponse, Params<T>> {
+export class ProductBarcodePutUseCase<T> implements BaseUseCase<ApiResponseLegacy, Params<T>> {
   private repo = inject(ProductBarcodeRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -19,7 +19,7 @@ export class ProductBarcodePutUseCase<T> implements BaseUseCase<ApiResponse, Par
 
   constructor() {}
 
-  execute(params: Params<T>): Observable<ApiResponse> {
+  execute(params: Params<T>): Observable<ApiResponseLegacy> {
     return this.repo.put(params.id, params.data);
   }
 }

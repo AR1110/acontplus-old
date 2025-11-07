@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
@@ -14,11 +14,13 @@ export class MenuService {
   #http = inject(HttpClient);
 
   delete(id: number) {
-    return this.#http.delete<ApiResponse>(`${this.#url}${id}`).pipe(map((response) => response));
+    return this.#http
+      .delete<ApiResponseLegacy>(`${this.#url}${id}`)
+      .pipe(map((response) => response));
   }
 
   get<T>(params: T) {
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
+    return this.#http.get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { menus: [], menuTypes: [] };
@@ -39,7 +41,7 @@ export class MenuService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -57,10 +59,14 @@ export class MenuService {
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, data).pipe(map((response) => response));
+    return this.#http
+      .post<ApiResponseLegacy>(`${this.#url}`, data)
+      .pipe(map((response) => response));
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map((response) => response));
+    return this.#http
+      .put<ApiResponseLegacy>(`${this.#url}${id}`, data)
+      .pipe(map((response) => response));
   }
 }

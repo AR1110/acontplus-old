@@ -8,7 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   ajustarFechaEmisionModificada,
@@ -108,7 +108,7 @@ export class SupportAddEditModalComponent implements OnInit {
   filteredCustomerVehicleFormControl = new FormControl<null | string>(null);
   filteredCustomerVehicles!: Observable<any[]>;
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

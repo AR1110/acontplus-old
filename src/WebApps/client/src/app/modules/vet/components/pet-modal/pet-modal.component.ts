@@ -10,14 +10,14 @@ import {
 
 import { PetType } from '@modules/vet/models/pet-type.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Pet } from '@modules/vet/models/pet.model';
 import { PetService } from '@modules/vet/services/pet.service';
 import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -30,7 +30,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     CompanyCustomerSearchComponent,
     MatCard,
     MatCardContent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './pet-modal.component.html',

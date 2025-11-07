@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionPuntoEmisionList } from '@modules/config/domain/models/user-customer/asignacion-punto-emision.model';
 import { AsignacionPuntoEmisionRepository } from '@modules/config/domain/repositories/asignacion-punto-emision.repository';
 
@@ -9,7 +9,7 @@ import { AsignacionPuntoEmisionRepository } from '@modules/config/domain/reposit
   providedIn: 'root',
 })
 export class UpdateAsignacionPuntoEmisionUseCase
-  implements BaseUseCase<ApiResponse, Partial<AsignacionPuntoEmisionList>>
+  implements BaseUseCase<ApiResponseLegacy, Partial<AsignacionPuntoEmisionList>>
 {
   private repo = inject(AsignacionPuntoEmisionRepository);
 
@@ -18,7 +18,7 @@ export class UpdateAsignacionPuntoEmisionUseCase
 
   constructor() {}
 
-  execute(params: Partial<AsignacionPuntoEmisionList>): Observable<ApiResponse<unknown>> {
+  execute(params: Partial<AsignacionPuntoEmisionList>): Observable<ApiResponseLegacy<unknown>> {
     return this.repo.update(params);
   }
 }

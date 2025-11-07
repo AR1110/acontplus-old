@@ -17,7 +17,7 @@ import Swal from 'sweetalert2';
 
 //components
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { InventoryAdjustmentSearchAdvancedComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component';
 
 import { ProductAutocompleteAdvancedComponent } from '@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
@@ -41,7 +41,7 @@ import { MatTooltip } from '@angular/material/tooltip';
   selector: 'app-inventory-adjustment-add-edit',
   imports: [
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

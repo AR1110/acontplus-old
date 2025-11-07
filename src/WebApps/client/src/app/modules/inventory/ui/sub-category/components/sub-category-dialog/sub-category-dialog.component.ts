@@ -11,7 +11,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -98,7 +98,7 @@ export class SubCategoryDialogComponent implements OnInit {
     }
   }
 
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

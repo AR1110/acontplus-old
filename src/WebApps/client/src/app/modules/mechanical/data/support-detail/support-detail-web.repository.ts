@@ -10,7 +10,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { SupportMaintenanceDetail } from '@mechanical/domain/models/support-maintenance.model';
 import { SupportDetailRepository } from '@mechanical/domain/repositories/support-detail.repository';
@@ -30,11 +30,11 @@ export class SupportDetailWebRepository extends SupportDetailRepository {
       id,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => SupportDetailMapper.fromApiGetId(response)));
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
 }

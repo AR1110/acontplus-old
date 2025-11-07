@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
 import { BARBER_SHOP_PATHS } from '@barber-shop/domain/enums/barber-shop.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SeatCreateDto, SeatUpdateParams } from '@modules/barber-shop/domain/models/seat.model';
 import { ListSeatMapper } from '@barber-shop/data/seat/list-seat.mapper';
 
@@ -12,26 +12,26 @@ import { ListSeatMapper } from '@barber-shop/data/seat/list-seat.mapper';
   providedIn: 'root',
 })
 export class SeatRepositoryImpl implements SeatRepository {
-  create(params: SeatCreateDto): Observable<ApiResponse> {
+  create(params: SeatCreateDto): Observable<ApiResponseLegacy> {
     console.log(params);
-    return this.http.post<ApiResponse>(`${this.url}`, params);
+    return this.http.post<ApiResponseLegacy>(`${this.url}`, params);
   }
 
-  update(params: SeatUpdateParams): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.url}${params.id}`, params);
+  update(params: SeatUpdateParams): Observable<ApiResponseLegacy> {
+    return this.http.put<ApiResponseLegacy>(`${this.url}${params.id}`, params);
   }
-  // override create(): Observable<ApiResponse> {
+  // override create(): Observable<ApiResponseLegacy> {
   //     throw new Error("Method not implemented.");
   // }
-  // override update(): Observable<ApiResponse> {
+  // override update(): Observable<ApiResponseLegacy> {
   //     throw new Error("Method not implemented.");
   // }
-  // override remove(): Observable<ApiResponse> {
+  // override remove(): Observable<ApiResponseLegacy> {
   //     throw new Error("Method not implemented.");
   // }
   list() {
     return this.http
-      .get<ApiResponse>(`${this.url}`)
+      .get<ApiResponseLegacy>(`${this.url}`)
       .pipe(map((res) => ListSeatMapper.fromJson(res)));
   }
 

@@ -2,7 +2,7 @@ import { UpdateElectronicSignatureUseCase } from '@modules/config/application/us
 import { CreateElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/create-electronic-signature.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ElectronicSignatureList } from '@modules/config/domain/models/electronic-signature.model';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { formatDateToString } from '@core/utils/date.util';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
     MatInputModule,
     MatDatepickerModule,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MatIconModule,
     MatButtonModule,
     FormsModule,
@@ -100,7 +100,7 @@ export class AddEditElectronicSignatureComponent implements OnInit {
       .subscribe(this.successResponse);
   }
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       Swal.fire({
         icon: 'warning',

@@ -1,11 +1,11 @@
 import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 
 @Component({
   selector: 'app-report-buttons',
   template: `
-    <app-theme-button
+    <acp-button
       [variant]="getButtonColor()"
       [text]="text()"
       [icon]="getFileIcon()"
@@ -13,7 +13,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
     />
   `,
   styles: [``],
-  imports: [ThemeButtonComponent],
+  imports: [Button],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportButtonsComponent {

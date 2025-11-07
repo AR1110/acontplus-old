@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab } from '@core/models/estab.model';
 import { formatDate } from '@core/utils/date.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';

@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { DOC_TYPE } from '@core/constants/global.constants';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import {
   GroupedEstab,
   GroupedEstabBodega,
@@ -37,7 +37,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -52,7 +52,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     ProductSearchOverlayComponent,
     InputDateComponent,
     MatIcon,
-    ThemeButtonComponent,
+    Button,
     MatButton,
     MatCustomDialogComponent,
   ],

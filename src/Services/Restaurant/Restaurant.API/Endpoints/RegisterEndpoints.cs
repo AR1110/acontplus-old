@@ -1,4 +1,5 @@
-﻿using Restaurant.API.Endpoints.MealManagement;
+﻿using Restaurant.API.Endpoints.Item;
+using Restaurant.API.Endpoints.MealManagement;
 
 namespace Restaurant.API.Endpoints;
 
@@ -7,6 +8,7 @@ public static class RegisterEndpoints
     public static void MapAllEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapMealManagementEndpoints();
+        app.MapItemEndpoints();
     }
 }
 

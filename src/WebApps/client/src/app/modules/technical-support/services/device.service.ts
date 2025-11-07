@@ -4,7 +4,7 @@ import { TECH_SUPPORT_PATHS } from '../constants/tech-support.constants';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Device, DeviceSearch } from '../models/device.model';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',

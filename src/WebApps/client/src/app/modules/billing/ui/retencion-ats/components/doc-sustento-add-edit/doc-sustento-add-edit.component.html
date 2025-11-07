@@ -222,14 +222,14 @@
   </div>
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
+      <acp-button
         text="Añadir Impuestos Automaticamente"
         icon="add"
         (handleClick)="addTaxes(indexDoc())"
       />
     </div>
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
+      <acp-button
         text="Añadir Impuestos Manualmente"
         icon="add"
         (handleClick)="addTaxesManual(indexDoc())"
@@ -252,7 +252,7 @@
   @if (docSustentoArray().length > 0) {
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button
+        <acp-button
           text="Añadir Retenciones"
           icon="add"
           (handleClick)="addRetencion(indexDoc())"
@@ -277,7 +277,7 @@
   @if (docSustentoArray().length > 0) {
     <div class="row mb-3">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-        <app-theme-button text="Añadir Pagos" icon="add" (handleClick)="addPayment(indexDoc())" />
+        <acp-button text="Añadir Pagos" icon="add" (handleClick)="addPayment(indexDoc())" />
       </div>
     </div>
   }
@@ -296,7 +296,7 @@
 
   <div class="row mb-3">
     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-4 col-12">
-      <app-theme-button
+      <acp-button
         text="Guardar"
         variant="success"
         icon="save"
@@ -308,13 +308,13 @@
         "
         (handleClick)="onSave(indexDoc())"
       />
-      <app-theme-button
+      <acp-button
         text="Ver Doc."
         variant="info"
         icon="picture_as_pdf"
         (handleClick)="docPreview(indexDoc())"
       />
-      <app-theme-button
+      <acp-button
         text="Eliminar"
         variant="danger"
         icon="delete"

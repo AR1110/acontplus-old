@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class MenuItemService {
 
   getByMenu<T>(id: number, params: T) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}GetById/${id}/?json=${JSON.stringify(params)}`)
+      .get<ApiResponseLegacy>(`${this.#url}GetById/${id}/?json=${JSON.stringify(params)}`)
       .pipe(
         map((response) => {
           if (response.code !== '1') {

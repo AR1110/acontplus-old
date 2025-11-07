@@ -1,11 +1,11 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 import { TarifaService } from '@inventory/data/services/tarifa.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,7 +17,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   imports: [
     FormsModule,
     ToUpperCaseDirective,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatInputModule,
@@ -49,7 +49,7 @@ export class TarifaEditModalComponent implements OnInit {
     ventaPorMayor: false,
   };
 
-  successReponse = (response: ApiResponse) => {
+  successReponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

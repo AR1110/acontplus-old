@@ -7,6 +7,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './meal-plan-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealPlanDialog {
-
-}
+export class MealPlanDialog {}

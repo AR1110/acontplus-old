@@ -2,7 +2,7 @@ import {
   SolicitudAutorizacionDetalle,
   SolicitudAutorizacionList,
 } from '@modules/config/domain/models/solicitud-autorizacion.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListSolicitudAutorizacionDetalleMapper {
   static toJson<T>(parameters: Partial<SolicitudAutorizacionList>) {
@@ -12,7 +12,7 @@ export class ListSolicitudAutorizacionDetalleMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): SolicitudAutorizacionDetalle[] {
+  static fromJson(response: ApiResponseLegacy): SolicitudAutorizacionDetalle[] {
     const { list = [] } = JSON.parse(response.payload as any);
 
     const data = list.map((item: any, index: number) => {

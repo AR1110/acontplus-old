@@ -15,7 +15,7 @@ import { ProductUbicationPostUseCase } from '@inventory/product/application/use-
 import { ProductUbicationPutUseCase } from '@inventory/product/application/use-cases/product-ubication/product-ubication-put.use-case';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { ProductUbicationRemoveUseCase } from '@inventory/product/application/use-cases/product-ubication/product-ubication-remove.use-case';
@@ -180,7 +180,7 @@ export class ProductUbicationComponent implements OnInit {
         .subscribe(this.successResponse);
     }
   }
-  private successResponse = (response: ApiResponse) => {
+  private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this._tS.show({
         type: 'warning',

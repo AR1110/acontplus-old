@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { formatDate } from '@core/utils/date.util';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
@@ -9,7 +9,7 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
 export class SupportMapper {
-  static fromApiGetAll(response: ApiResponse) {
+  static fromApiGetAll(response: ApiResponseLegacy) {
     let results = [];
     if (response.code === '1') {
       const { supports } = JSON.parse(response.payload as string);
@@ -37,7 +37,7 @@ export class SupportMapper {
     return results;
   }
 
-  static fromApiFilter(response: ApiResponse) {
+  static fromApiFilter(response: ApiResponseLegacy) {
     const data = {
       supportStatus: [] as any[],
     };
@@ -49,7 +49,7 @@ export class SupportMapper {
     return data;
   }
 
-  static fromApiDashboard(response: ApiResponse) {
+  static fromApiDashboard(response: ApiResponseLegacy) {
     const result = {
       data: {
         quantitySupport: 0,
@@ -72,7 +72,7 @@ export class SupportMapper {
     return result;
   }
 
-  static fromApiGetId(response: ApiResponse) {
+  static fromApiGetId(response: ApiResponseLegacy) {
     const result = {
       data: {},
       vehicle: {},
@@ -105,7 +105,7 @@ export class SupportMapper {
     return result;
   }
 
-  static fromApiDataForm(response: ApiResponse) {
+  static fromApiDataForm(response: ApiResponseLegacy) {
     const result = {
       establishments: [],
       emissionPoints: [],
@@ -121,7 +121,7 @@ export class SupportMapper {
     return result;
   }
 
-  static fromApiSearch(response: ApiResponse) {
+  static fromApiSearch(response: ApiResponseLegacy) {
     let results = [];
     if (response.code === '1') {
       const { dataSearch } = JSON.parse(response.payload as string);
@@ -138,7 +138,7 @@ export class SupportMapper {
     return results;
   }
 
-  static fromApiGetAprobacion(response: ApiResponse) {
+  static fromApiGetAprobacion(response: ApiResponseLegacy) {
     const {
       comprobante: tempComprobante,
 
@@ -234,7 +234,7 @@ export class SupportMapper {
     };
   }
 
-  static fromApiDocView(response: ApiResponse) {
+  static fromApiDocView(response: ApiResponseLegacy) {
     let result = {} as any;
     if (response.code === '1') {
       const { comprobante } = JSON.parse(response.payload as string);

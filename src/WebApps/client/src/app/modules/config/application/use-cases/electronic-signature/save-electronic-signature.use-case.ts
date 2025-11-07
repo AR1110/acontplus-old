@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
 import { Observable } from 'rxjs';
 import { ElectronicSignatureRepository } from '@modules/config/domain/repositories/electronic-signature.repository';
@@ -9,7 +9,7 @@ import { ElectronicSignatureRepository } from '@modules/config/domain/repositori
   providedIn: 'root',
 })
 export class SaveElectronicSignatureUseCase
-  implements BaseUseCase<ApiResponse, ElectronicSignatureParam>
+  implements BaseUseCase<ApiResponseLegacy, ElectronicSignatureParam>
 {
   private repo = inject<ElectronicSignatureRepository>(ElectronicSignatureRepository);
 
@@ -18,7 +18,7 @@ export class SaveElectronicSignatureUseCase
 
   constructor() {}
 
-  execute(signature: ElectronicSignatureParam): Observable<ApiResponse> {
+  execute(signature: ElectronicSignatureParam): Observable<ApiResponseLegacy> {
     return this.repo.save(signature);
   }
 }

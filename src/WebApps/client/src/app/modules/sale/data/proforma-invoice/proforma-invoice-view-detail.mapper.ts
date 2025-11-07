@@ -2,7 +2,7 @@ import {
   ProformaInvoiceDetail,
   ProformaInvoiceListResult,
 } from '@sale/domain/models/proforma-invoice';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ProformaInvoiceViewDetailMapper {
   static toJson(id: number) {
@@ -12,7 +12,7 @@ export class ProformaInvoiceViewDetailMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const { header, customer, details, taxes, additionalsInfo } = JSON.parse(
       response.payload as string,
     );

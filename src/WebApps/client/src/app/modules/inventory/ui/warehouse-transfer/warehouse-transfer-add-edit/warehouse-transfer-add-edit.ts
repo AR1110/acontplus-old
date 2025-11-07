@@ -9,7 +9,7 @@ import {
 import { DialogRef } from '@angular/cdk/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import {
@@ -66,7 +66,7 @@ interface CommonType {
     MatSelectModule,
     MatInput,
     MatCustomDialogComponent,
-    ThemeButtonComponent,
+    Button,
     MatDatepicker,
     MatDatepickerInput,
     MatDatepickerToggle,
@@ -620,6 +620,8 @@ export class WarehouseTransferAddEdit implements OnInit {
           }
 
           this.details.set(tempDetails);
+
+
         },
         error: (err) => {
           console.error('Error getting product:', err);

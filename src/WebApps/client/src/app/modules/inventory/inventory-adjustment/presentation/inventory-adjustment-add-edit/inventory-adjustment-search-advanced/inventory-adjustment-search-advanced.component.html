@@ -99,9 +99,9 @@
 </ng-template>
 <ng-template #footer>
   @if (selectedRows().length > 0) {
-    <app-theme-button
+    <acp-button
       variant="success"
-      matStyle="basic"
+
       icon="save_alt"
       text="Cargar"
       (handleClick)="applySelected()"

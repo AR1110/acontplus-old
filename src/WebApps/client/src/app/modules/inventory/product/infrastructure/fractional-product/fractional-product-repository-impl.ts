@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { FractionalProductRepository } from '@inventory/product/domain/repositories/fractional-product.repository';
@@ -40,10 +40,10 @@ export class FractionalProductRepositoryImpl implements FractionalProductReposit
 
   post(obj: FractionalProductDataSave) {
     const data = FractionalProductPostMapper.toJson(obj);
-    return this._http.post<ApiResponse>(`${this._url}`, { data });
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, { data });
   }
-  put(obj: FractionalProductDataSave): Observable<ApiResponse> {
+  put(obj: FractionalProductDataSave): Observable<ApiResponseLegacy> {
     const data = FractionalProductPostMapper.toJson(obj);
-    return this._http.put<ApiResponse>(`${this._url}${obj.id}`, { data });
+    return this._http.put<ApiResponseLegacy>(`${this._url}${obj.id}`, { data });
   }
 }

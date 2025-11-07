@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 
 import { Brand } from '@modules/technical-support/models/brand';
 import { BrandService } from '@modules/technical-support/services/brand.service';
@@ -8,13 +8,13 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'app-brand-page',
-  imports: [BreadcrumbComponent, MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
+  imports: [BreadcrumbComponent, MatButton, MatIcon, Button, MatDynamicCardComponent],
   templateUrl: './brand-page.component.html',
   styles: ``,
 })

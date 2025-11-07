@@ -176,12 +176,12 @@
               <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>
-                  <app-theme-button
+                  <acp-button
                     variant="danger"
                     icon="delete"
                     matStyle="icon"
                     (handleClick)="onRemove(item.menuId)"
-                  ></app-theme-button>
+                  ></acp-button>
                 </td>
                 <td>
                   <img
@@ -206,5 +206,5 @@
   </mat-tab-group>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button variant="success" icon="save" [text]="titleBtnSave()" (handleClick)="save()" />
+  <acp-button variant="success" icon="save" [text]="titleBtnSave()" (handleClick)="save()" />
 </ng-template>

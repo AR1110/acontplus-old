@@ -17,21 +17,21 @@
         <tr>
           <td>{{ $index + 1 }}</td>
           <td>
-            <app-theme-button
+            <acp-button
               variant="warning"
               icon="edit"
               title="Editar"
               matStyle="icon"
               (click)="onEdit(item)"
             />
-            <app-theme-button
+            <acp-button
               variant="danger"
               icon="delete"
               title="Eliminar"
               matStyle="icon"
               (handleClick)="askToDelete(item)"
             />
-            <app-theme-button
+            <acp-button
               icon="group"
               matStyle="icon"
               title="Clientes"

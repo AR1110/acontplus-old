@@ -3,7 +3,7 @@ import { CompanyRepository } from '@modules/config/domain/repositories/company.r
 import { HttpClient } from '@angular/common/http';
 import { PATHS_API, SEPARADORES_REGEX } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListCompanyResponse, CompanyList } from '@modules/config/domain/models/company.model';
 import { map, Observable } from 'rxjs';
 
@@ -33,8 +33,8 @@ export class CompanyRepositoryImpl implements CompanyRepository {
       }),
     );
   }
-  update(params: Partial<CompanyList>): Observable<ApiResponse> {
-    return this.http.put<ApiResponse>(`${this.url}${params.idEntidad}`, { data: params });
+  update(params: Partial<CompanyList>): Observable<ApiResponseLegacy> {
+    return this.http.put<ApiResponseLegacy>(`${this.url}${params.idEntidad}`, { data: params });
   }
   private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.COMPANY}`;
   private http = inject(HttpClient);

@@ -7,6 +7,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './meal-plan-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MealPlanList {
-
-}
+export class MealPlanList {}

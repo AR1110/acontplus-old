@@ -8,7 +8,7 @@ import {
   ProductGetIdResult,
   ValidateProductStockParams,
 } from '@inventory/product/domain/entities/product.entity';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 //Listado general
 
@@ -47,6 +47,7 @@ export class ProductGetIdUseCase implements BaseUseCase<ProductGetIdResult, numb
   }
 }
 
+//para compras
 @Injectable({
   providedIn: 'root',
 })
@@ -58,13 +59,28 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
   }
 }
 
+//para ventas
+@Injectable({
+  providedIn: 'root',
+})
+export class GetProductSaleUseCase implements BaseUseCase<GetProductPurchaseResult, { id?: number; search?: string }> {
+  private repo = inject(ProductRepository);
+
+  execute(obj:{ id?: number; search?: string }) {
+    if (!obj.id || !obj.search) {
+      throw new Error('El id y el search son requeridos');
+    }
+    return this.repo.getForSale(obj);
+  }
+}
+
 //Validación Stock
 
 @Injectable({
   providedIn: 'root',
 })
 export class ValidateProductStockUseCase
-  implements BaseUseCase<ApiResponse, ValidateProductStockParams>
+  implements BaseUseCase<ApiResponseLegacy, ValidateProductStockParams>
 {
   private repo = inject(ProductRepository);
 

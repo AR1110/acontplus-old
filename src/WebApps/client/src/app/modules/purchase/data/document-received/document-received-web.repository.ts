@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { ApiResponse, isApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
 import { DocumentReceivedRepository } from '@purchase/domain/repositories/document-received.repository';
 import { TipoDoc } from '@core/models/tipo-doc.model';
@@ -47,7 +47,7 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
   }
 
   get<T>(params: T) {
-    return this._http.get<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(params)}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { documents: [] as DocumentReceived[] };
@@ -61,28 +61,28 @@ export class DocumentReceivedWebRepository extends DocumentReceivedRepository {
   }
 
   getById(id: number) {
-    return this._http.get<ApiResponse>(`${this._url}${id}`);
+    return this._http.get<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
   create(data: any) {
-    return this._http.post<ApiResponse>(`${this._url}`, data);
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, data);
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
-  previewXml(id: number): Observable<ApiResponse> {
+  previewXml(id: number): Observable<ApiResponseLegacy> {
     return this._http
-      .get<ApiResponse>(`${this._url}Preview/${id}`)
-      .pipe(map((response: ApiResponse) => response));
+      .get<ApiResponseLegacy>(`${this._url}Preview/${id}`)
+      .pipe(map((response: ApiResponseLegacy) => response));
   }
   update(id: number, data: any) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data);
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, data);
   }
 
   uploadXml(parameters: any, file: any) {
-    return this._http.post<ApiResponse>(
+    return this._http.post<ApiResponseLegacy>(
       `${this._url}uploadxml/?json=${JSON.stringify(parameters)}`,
       file,
     );

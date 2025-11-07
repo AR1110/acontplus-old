@@ -2,10 +2,10 @@ export class ItemListMapper {
   static toJson(obj: any) {
     return JSON.stringify({
       tipo: 1,
-      ...obj,
       pageIndex: obj.pageIndex || 1,
       pageSize: obj.pageSize || 15,
-      sigla: obj.categoriesSigla ?? null,
+      sigla: obj.categoryAbbreviations || obj.categoryAbbreviation || null,
+      textSearch: obj.q || null,
     });
   }
 
@@ -15,8 +15,8 @@ export class ItemListMapper {
       totalRecords: 0,
     };
     if (response.code === '1') {
-      const { items } = JSON.parse(response.payload as string);
-      console.log(items);
+      const { items = [], pagination = [] } = JSON.parse(response.payload as string);
+      console.log(items, pagination);
       results.data = items.map((item: any, index: number) => {
         return {
           index: index + 1,
@@ -33,7 +33,7 @@ export class ItemListMapper {
           category: item.category,
         };
       });
-      results.totalRecords = items.length > 0 ? items[0].total_records : 0;
+      results.totalRecords = pagination.length > 0 ? pagination[0].total_records : 0;
     }
 
     return results;

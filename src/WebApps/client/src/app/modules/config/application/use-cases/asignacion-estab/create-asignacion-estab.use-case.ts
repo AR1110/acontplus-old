@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionEstabRepository } from '@modules/config/domain/repositories/asignacion-estab.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CreateAsignacionEstabUseCase implements BaseUseCase<ApiResponse, any> {
+export class CreateAsignacionEstabUseCase implements BaseUseCase<ApiResponseLegacy, any> {
   private repo = inject(AsignacionEstabRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */

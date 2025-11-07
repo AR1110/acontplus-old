@@ -28,7 +28,7 @@ import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-cat
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-documento-received',
@@ -48,7 +48,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatMenuItem,
     MatMenuTrigger,
     MatButton,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './document-received.component.html',
   styles: ``,

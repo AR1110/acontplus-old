@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { NotaEntregaRepository } from '@sale/domain/repositories/nota-entrega.repository';
 import { Observable } from 'rxjs';
 import { Injectable, inject } from '@angular/core';
@@ -23,10 +23,10 @@ export class NotaEntregaUseCase {
   getDetalleCompleto(id: number): Observable<any> {
     return this.repo.getDetalleCompleto(id);
   }
-  post<T>(obj: T): Observable<ApiResponse> {
+  post<T>(obj: T): Observable<ApiResponseLegacy> {
     return this.repo.post<T>(obj);
   }
-  put<T>(id: number, obj: T): Observable<ApiResponse> {
+  put<T>(id: number, obj: T): Observable<ApiResponseLegacy> {
     return this.repo.put(id, obj);
   }
 }

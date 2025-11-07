@@ -570,14 +570,14 @@
   </mat-tab-group>
 </ng-template>
 <ng-template #actionsTemplate>
-  <app-theme-button
+  <acp-button
     [type]="'submit'"
     [variant]="'success'"
     [icon]="isUpdate() ? 'edit' : 'save'"
     [text]="btnText"
     (handleClick)="save()"
   />
-  <app-theme-button
+  <acp-button
     [type]="'button'"
     [variant]="'dark'"
     [icon]="'clear'"

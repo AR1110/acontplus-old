@@ -114,7 +114,7 @@
           <mat-label>Precio Costo</mat-label>
           <input matInput [value]="data.precioCosto" disabled />
         </mat-form-field>
-        <!--          <app-theme-button-->
+        <!--          <acp-button-->
         <!--            [type]="'button'"-->
         <!--            [variant]="'info'"-->
         <!--            [icon]="'refresh'"-->
@@ -137,14 +137,14 @@
   </div>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     [type]="'button'"
     [variant]="'success'"
     [icon]="isUpdate() ? 'edit' : 'save'"
     [text]="btnText()"
     (handleClick)="save()"
   />
-  <app-theme-button
+  <acp-button
     [type]="'button'"
     [variant]="'dark'"
     [icon]="'clear'"

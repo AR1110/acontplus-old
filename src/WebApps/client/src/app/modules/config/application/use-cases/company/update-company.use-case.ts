@@ -3,12 +3,12 @@ import { BaseUseCase } from '@core/base-use-case';
 import { CompanyList } from '@modules/config/domain/models/company.model';
 import { CompanyRepository } from '@modules/config/domain/repositories/company.repository';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UpdateCompanyUseCase implements BaseUseCase<ApiResponse, Partial<CompanyList>> {
+export class UpdateCompanyUseCase implements BaseUseCase<ApiResponseLegacy, Partial<CompanyList>> {
   private repo = inject(CompanyRepository);
 
   /** Inserted by Angular inject() migration for backwards compatibility */
@@ -16,7 +16,7 @@ export class UpdateCompanyUseCase implements BaseUseCase<ApiResponse, Partial<Co
 
   constructor() {}
 
-  execute(params: Partial<CompanyList>): Observable<ApiResponse<unknown>> {
+  execute(params: Partial<CompanyList>): Observable<ApiResponseLegacy<unknown>> {
     return this.repo.update(params);
   }
 }

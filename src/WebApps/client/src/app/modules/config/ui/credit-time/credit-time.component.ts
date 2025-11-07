@@ -3,7 +3,7 @@ import { DeleteCreditTimeUseCase } from '@modules/config/application/use-cases/c
 import { ListCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/list-credit-time.use-case';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
@@ -25,7 +25,7 @@ import Swal from 'sweetalert2';
     MatIcon,
     MatIconButton,
     MatDynamicTableComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './credit-time.component.html',
   styles: ``,

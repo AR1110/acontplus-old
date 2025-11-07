@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { Breed } from '@modules/vet/models/breed.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { BreedService } from '@modules/vet/services/breed.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { BreedModalComponent } from '@modules/vet/components/breed-modal/breed-modal.component';
 import swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';

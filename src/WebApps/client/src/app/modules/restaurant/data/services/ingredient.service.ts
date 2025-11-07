@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { Ingredient } from '@restaurant/domain/models/ingredient.model';
@@ -15,7 +15,7 @@ export class IngredientService {
   #http = inject(HttpClient);
 
   get<T>(params: T) {
-    return this.#http.get<ApiResponse>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
+    return this.#http.get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify(params)}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { ingredients: [], extents: [] };
@@ -32,7 +32,9 @@ export class IngredientService {
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, data).pipe(map((response) => response));
+    return this.#http
+      .put<ApiResponseLegacy>(`${this.#url}${id}`, data)
+      .pipe(map((response) => response));
   }
 
   search<T extends { textSearch: string }>(data: T): Observable<Ingredient[]> {
@@ -41,7 +43,7 @@ export class IngredientService {
       tipo: 2,
     };
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${JSON.stringify(query)}`, {
+      .get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify(query)}`, {
         context: getNoLoader(),
       })
       .pipe(

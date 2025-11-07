@@ -25,7 +25,7 @@ import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.dir
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { DocElectFiltersComponent } from '@shared/components/doc-elect-filters/doc-elect-filters.component';
 import {
   FilterOptions,

@@ -3,7 +3,7 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { imgDefault } from '@core/utils/utils';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class PromotionService {
       ...obj,
     });
 
-    return this.http.get<ApiResponse>(`${this.url}?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}?json=${json}`).pipe(
       map((response) => {
         const result = {
           days: [] as any[],
@@ -46,7 +46,7 @@ export class PromotionService {
     const json = JSON.stringify(obj);
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<ApiResponse>(`${this.url}?json=${json}`, formData);
+    return this.http.post<ApiResponseLegacy>(`${this.url}?json=${json}`, formData);
   }
 
   put<T>(id: number, obj: T, file: any) {
@@ -54,6 +54,6 @@ export class PromotionService {
 
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.put<ApiResponse>(`${this.url}${id}?json=${json}`, formData);
+    return this.http.put<ApiResponseLegacy>(`${this.url}${id}?json=${json}`, formData);
   }
 }

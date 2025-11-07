@@ -151,14 +151,14 @@
     </div>
     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
       <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-        <app-theme-button
+        <acp-button
           variant="dark"
           icon="receipt_long"
           text="Cancelar"
           (handleClick)="saveOptions(factura)"
         />
         @if (!detailCustom) {
-          <app-theme-button
+          <acp-button
             variant="info"
             icon="check_circle"
             text="Nota de Entrega"

@@ -9,7 +9,7 @@ import { Component, inject, OnInit } from '@angular/core';
 
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
@@ -27,7 +27,7 @@ import Swal from 'sweetalert2';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './apertura-caja-modal.component.html',

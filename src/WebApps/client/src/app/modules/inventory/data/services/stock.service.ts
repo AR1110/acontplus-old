@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 
@@ -13,6 +13,6 @@ export class StockService {
   private http = inject(HttpClient);
 
   put(productId: number) {
-    return this.http.put<ApiResponse>(`${this.url}${productId}`, null);
+    return this.http.put<ApiResponseLegacy>(`${this.url}${productId}`, null);
   }
 }

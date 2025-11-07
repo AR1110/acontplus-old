@@ -1,9 +1,9 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SEPARADORES_REGEX } from '@core/constants/global.constants';
 import { isValidField, isValidJSON } from '@core/utils/utils';
 
 export class GetIdCompanyCustomerMapper {
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     let result = {} as any;
     if (response.code === '0') {
       console.log(response);

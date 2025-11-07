@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     let userData = {};
 
     angular.module("acontPlusApp").controller("layoutCtrl", layoutCtrl);
@@ -183,7 +183,7 @@
                         $rootScope.accion = structuredClone(namesObject)
                         $rootScope.articlePermission = dataAccionesSubMenu.accionesProduct;
                     } else {
-                        location.href = "/Index";
+                        //location.href = "/Index";
                     }
                 }
             }

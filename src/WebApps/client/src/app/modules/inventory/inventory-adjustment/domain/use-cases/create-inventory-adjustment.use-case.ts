@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { InventoryAdjustmentRepository } from '@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { BaseUseCase } from '@core/base-use-case';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export interface CreateInventoryAdjustmentCommand {
   documentTypeId: number;
@@ -39,7 +39,7 @@ export interface CreateInventoryAdjustmentDetailCommand {
   providedIn: 'root',
 })
 export class CreateInventoryAdjustmentUseCase
-  implements BaseUseCase<ApiResponse, CreateInventoryAdjustmentCommand>
+  implements BaseUseCase<ApiResponseLegacy, CreateInventoryAdjustmentCommand>
 {
   private repository = inject(InventoryAdjustmentRepository);
 

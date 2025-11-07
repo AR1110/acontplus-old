@@ -1,4 +1,4 @@
-namespace Restaurant.Application.DTOs;
+namespace Restaurant.Application.Dtos;
 
 public record CreateOrderDto(
     Guid Uuid,

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
@@ -10,7 +10,6 @@ import { GroupedEstab } from '@core/models/estab.model';
 import {
   ProductDataForm,
   ProductSale,
-  ProductSearch,
 } from '@inventory/product/domain/entities/product.entity';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { ProductMapper } from '@inventory/product/infrastructure/product/mappers/product.mapper';
@@ -21,11 +20,12 @@ import { SaveProductMapper } from '@inventory/product/infrastructure/product/map
 import { GetProductPurchaseMapper } from '@inventory/product/infrastructure/product/mappers/get-product-purchase.mapper';
 import { GetProductEstabsStockMapper } from '@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper';
 import { ProductSearchMapper } from '@inventory/product/infrastructure/product/mappers/product-search.mapper';
+import {GetProductForSaleMapper} from "@inventory/product/infrastructure/product/mappers/get-product-for-sale-mapper";
 
 @Injectable({
   providedIn: 'root',
 })
-export class ProductRepositoryImpl implements ProductRepository {
+export class ProductHttpRepository implements ProductRepository {
   private _url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.PRODUCT_OLD}`;
   private _http = inject(HttpClient);
 
@@ -34,7 +34,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       json: JSON.stringify({ ...obj, tipo: 1 }),
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
         context: getNoLoader(),
       })
@@ -58,7 +58,7 @@ export class ProductRepositoryImpl implements ProductRepository {
   getDataFilter() {
     const params = JSON.stringify({ tipo: 11 });
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${params}`, {
+      .get<ApiResponseLegacy>(`${this._url}?json=${params}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -83,7 +83,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       json: JSON.stringify({ tipo: 5 }),
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
       .pipe(
@@ -103,44 +103,31 @@ export class ProductRepositoryImpl implements ProductRepository {
   ): Observable<any> {
     const json = ProductSearchMapper.toJson(data);
     return this._http
-      .get<ApiResponse>(`${this._url}Search?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => ProductSearchMapper.fromJson(response)));
   }
 
-  getForSale(id: number) {
+  getForSale(obj: { id?: number; search?: string }) {
     const params = {
-      json: JSON.stringify({ idArticulo: id, tipo: 6 }),
+      json: GetProductForSaleMapper.toJson(obj)
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
       .pipe(
-        map((response) => {
-          let data = {
-            product: {} as ProductSale,
-            medidas: [] as MedidaProducto[],
-            consolidacionesFecha: [] as any[],
-          };
-
-          if (response.code === '1') {
-            data = ProductMapper.fromApiSale(response);
-          }
-
-          return data;
-        }),
+        map((response) => GetProductForSaleMapper.fromJson(response)),
       );
   }
 
   getForPurchase(id: number) {
-    console.log(id);
     const params = {
       json: GetProductPurchaseMapper.toJson(id),
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
       .pipe(map((response) => GetProductPurchaseMapper.fromJson(response)));
@@ -158,7 +145,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       json: JSON.stringify({ ...obj, tipo: 7 }),
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
       .pipe(map((response) => ProductMapper.fromApiCheckStockNotificacion(response)));
@@ -169,7 +156,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       json: JSON.stringify({ tipo: 13 }),
     };
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
       .pipe(
@@ -192,12 +179,12 @@ export class ProductRepositoryImpl implements ProductRepository {
   }
 
   updateStatus(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
   getId(id: number) {
     return this._http
-      .get<ApiResponse>(`${this._url}${id}`)
+      .get<ApiResponseLegacy>(`${this._url}${id}`)
       .pipe(map((response) => ProductGetIdMapper.fromJson(response)));
   }
 
@@ -209,10 +196,10 @@ export class ProductRepositoryImpl implements ProductRepository {
       formData.append('file', file);
     }
     return this._http
-      .post<ApiResponse>(`${this._url}?json=${paramsJson}`, formData)
+      .post<ApiResponseLegacy>(`${this._url}?json=${paramsJson}`, formData)
       .pipe(map((response) => SaveProductMapper.fromJson(response)));
   }
-  put<T>(id: number, obj: T): Observable<ApiResponse> {
+  put<T>(id: number, obj: T): Observable<ApiResponseLegacy> {
     throw new Error('Method not implemented.');
   }
 
@@ -220,7 +207,7 @@ export class ProductRepositoryImpl implements ProductRepository {
     const json = ListProductWithPricesUseCaseMapper.toJson(params);
 
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params: {
           json,
         },
@@ -234,7 +221,7 @@ export class ProductRepositoryImpl implements ProductRepository {
       tipo: 10,
     });
     return this._http
-      .get<ApiResponse>(`${this._url}`, {
+      .get<ApiResponseLegacy>(`${this._url}`, {
         params: {
           json,
         },

@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListCompanyCustomerResponse } from '@company-customer/domain/entities/company-customer.entity';
 
 export class ListCompanyCustomerMapper {
@@ -11,7 +11,7 @@ export class ListCompanyCustomerMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): ListCompanyCustomerResponse {
+  static fromJson(response: ApiResponseLegacy): ListCompanyCustomerResponse {
     const result = new ListCompanyCustomerResponse();
     const [data] = JSON.parse(response.payload as string);
     result.data = data.map((item: any, index: number) => {

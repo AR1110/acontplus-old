@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { ProductSearch } from '@inventory/product/domain/entities/product.entity';

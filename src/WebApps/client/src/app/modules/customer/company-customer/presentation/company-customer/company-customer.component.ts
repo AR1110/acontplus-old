@@ -8,7 +8,7 @@ import { isValidField } from '@core/utils/utils';
 import { MatPagination } from '@shared/models/pagination.model';
 import Swal from 'sweetalert2';
 import { MatIconModule } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -31,7 +31,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
   imports: [
     BreadcrumbComponent,
     CompanyCustomerAddEditDirective,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatDynamicTableComponent,
     FormsModule,

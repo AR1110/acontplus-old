@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { DashboardRepository } from '@modules/common/core/repositories/dashboard.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { API_ENDPOINTS } from '@modules/common/core/enums/common.constants';
 
 @Injectable({
@@ -18,7 +18,7 @@ export class DashboardHttpRepository implements DashboardRepository {
       tipo: 1,
       ...params,
     });
-    return this.http.get<ApiResponse>(`${this.url}/?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}/?json=${json}`).pipe(
       map((response) => {
         const resultStatistics = {
           itemCount: 0,

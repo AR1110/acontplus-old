@@ -1,10 +1,10 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FractionalProductDataGetId } from '@inventory/product/domain/entities/fractional-product.model';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 
 export class FractionalProductGetIdMapper {
   static fromJson(responseApi: any) {
-    const resultResponse = new ApiResponse<FractionalProductDataGetId>();
+    const resultResponse = new ApiResponseLegacy<FractionalProductDataGetId>();
 
     const dataApi = responseApi.data[0];
     const data = {

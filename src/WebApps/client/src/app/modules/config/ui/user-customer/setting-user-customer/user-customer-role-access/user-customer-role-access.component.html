@@ -1,11 +1,11 @@
 <div class="d-flex flex-row gap-1">
-  <app-theme-button
+  <acp-button
     [variant]="'success'"
     [icon]="'save'"
     [text]="'Guardar'"
     (handleClick)="onSave()"
   />
-  <app-theme-button
+  <acp-button
     [variant]="'danger'"
     [icon]="'delete'"
     [text]="'Eliminar'"
@@ -31,7 +31,7 @@
       <span class="flex-grow-1">{{ node.name }}</span>
       <!--@if (checklistSelection.isSelected(node)){
         <button type="button"
-                app-theme-button variant="success" icon="" text="" (handleClick)="" btn-sm justify-content-end"
+                acp-button variant="success" icon="" text="" (handleClick)="" btn-sm justify-content-end"
                 (click)="onClickActions(node)"
                 [ngbPopover]="popContentActions"
                 [autoClose]="'outside'"

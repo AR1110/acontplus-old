@@ -1,4 +1,4 @@
-export class ApiResponse<T = unknown> {
+export class ApiResponseLegacy<T = unknown> {
   code: '0' | '1' | '2';
   message: string;
   payload: T | null;
@@ -11,7 +11,7 @@ export class ApiResponse<T = unknown> {
   }
 }
 
-export function isApiResponse(object: unknown | object): object is ApiResponse {
+export function isApiResponse(object: unknown | object): object is ApiResponseLegacy {
   if (object !== null && typeof object === 'object') {
     return 'code' in object;
   }

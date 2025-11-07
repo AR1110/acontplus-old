@@ -1,5 +1,5 @@
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
     MatIconButton,
     MatIcon,
     MatDynamicCardComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './shift.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

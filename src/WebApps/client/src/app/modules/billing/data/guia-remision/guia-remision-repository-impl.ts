@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { GuiaRemisionRepository } from '@billing/domain/repositories/guia-remision.repository';
 import { GuiaRemisionDataForm } from '@billing/domain/models/guia-remision/guia-remision.model';
