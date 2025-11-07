@@ -11,113 +11,199 @@ GO
 -- Description:	Get Item
 CREATE OR ALTER PROCEDURE Restaurant.GetItem
     @UserRoleId INT
-   ,@Json NVARCHAR(MAX)
+   ,@Filters NVARCHAR(MAX) = NULL
    ,@TableNames NVARCHAR(MAX) OUTPUT
+   ,@PageIndex INT = 1
+   ,@PageSize INT = 10
+   ,@SortBy NVARCHAR(50) = 'Id'
+   ,@SortDirection NVARCHAR(4) = 'DESC'
+   ,@SearchTerm NVARCHAR(100) = NULL
+   ,@TotalCount INT OUTPUT 
 AS
 BEGIN
     SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
-    --> Variables Globales
+    --> Sql
+    DECLARE @DataSQL NVARCHAR(MAX) ,@Params NVARCHAR(MAX)
+
+    --> Calculate offset
+    DECLARE @Offset INT ;
+
+    --> condicion 
+    DECLARE @WhereClause NVARCHAR(MAX)
+
+    --> Order
+    DECLARE @OrderByClause NVARCHAR(200);
+
+    --> Parse JSON filters
     DECLARE @idEntidad INT
-           ,@tipo INT
-           ,@SearchTerm VARCHAR(50)
-           ,@pageIndex INT
-           ,@pageSize INT
            ,@sigla VARCHAR(50)
            ,@siglaFormatted VARCHAR(500)
            ,@idSubFamilia INT
-           ,@Skip INT
-           ,@Take INT
-           ,@TotalRecords INT
            ,@UserId INT
+           ,@IncludeDeleted BIT = 0
 
     --> Data Global
     SELECT TOP 1 @idEntidad = idEntidad, @UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
+    --> Variables
+    SET @WhereClause = N'WHERE ar.idEntidad = @idEntidad '
+
+    SET @Offset = (@PageIndex - 1) * @PageSize
+
+    IF @SortDirection NOT IN ('ASC', 'DESC')
+        BEGIN
+            SET @SortDirection = 'DESC';
+        END
+
+    IF @SortBy NOT IN ('code', 'description', 'measure', 'category')
+        BEGIN
+            SET @SortBy = 'Id';
+        END
+
+     SET @OrderByClause = CASE @SortBy WHEN 'code'        THEN N' ORDER BY ' + QUOTENAME('code')        + N' ' + @SortDirection
+                                       WHEN 'description' THEN N' ORDER BY ' + QUOTENAME('description') + N' ' + @SortDirection
+                                       WHEN 'measure'     THEN N' ORDER BY ' + QUOTENAME('measure')     + N' ' + @SortDirection
+                                       WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
+                                                          ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
+                          END;
+
     BEGIN TRY
         SET @TableNames = 'items,pagination'
 
-        --> CREAR TABLA TEMPORAL CON DATOS FILTRADOS Y ORDENADOS
-        IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
+        --> Validate input parameters
+        IF @PageIndex < 1
+            BEGIN
+                THROW 50001, 'PageIndex must be greater than or equal to 1', 1;
+            END
 
-        --> Extraer parámetros del JSON
-        SELECT @idSubFamilia = idSubFamilia
-              ,@pageIndex    = pageIndex
-              ,@pageSize     = pageSize
-              ,@SearchTerm   = textSearch
-              ,@sigla        = sigla
-        FROM OPENJSON(@json) WITH
-        (
-             idSubFamilia INT
-            ,pageIndex    INT
-            ,pageSize     INT
-            ,textSearch   VARCHAR(50)
-            ,sigla        VARCHAR(50)
-        );
+        IF @PageSize < 1 OR @PageSize > 1000
+            BEGIN
+                THROW 50002, 'PageSize must be between 1 and 1000', 1;
+            END
 
-        -- Query principal con ordenamiento dinámico y paginación
-        WITH FilteredItems AS
-        (
-            SELECT ri.Id
-                  ,ri.ProductId
-                  ,ISNULL(ri.title, '')   AS title
-                  ,ISNULL(ri.Summary, '') AS summary
-                  ,ar.s3ObjectUrl         AS s3ObjectUrl
-                  ,ar.descripcion         AS description
-                  ,ar.codigo              AS code
-                  ,ar.medida              AS measure
-                  ,ar.codigoAuxiliar      AS auxiliary_code
-                  ,ar.precioCosto         AS costPrice
-                  ,ar.categoria           AS category
-                  ,COUNT(*) OVER()        AS TotalRecords
-            FROM Restaurant.Item ri
-            INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId
-            WHERE ar.estado = 1
-              AND ar.idEntidad = @idEntidad
-              AND (@SearchTerm IS NULL
-                OR @SearchTerm = ''
-                OR ar.descripcion LIKE '%' + @SearchTerm + '%'
-                OR ri.Summary     LIKE '%' + @SearchTerm + '%'
-                OR ri.Content     LIKE '%' + @SearchTerm + '%'
-              )
-              AND (@idSubFamilia IS NULL
-                OR @idSubFamilia = 0
-                OR ar.idSubFamilia = @idSubFamilia)
+        IF @Filters IS NOT NULL AND ISJSON(@Filters) = 1
+            BEGIN
+                SELECT @IncludeDeleted = ISNULL(TRY_CAST(JSON_VALUE(@Filters ,'$.IncludeDeleted') AS BIT), 0)
+                      ,@idSubFamilia   = ISNULL(TRY_CAST(JSON_VALUE(@Filters ,'$.idSubFamilia')   AS INT), 0)
+                      ,@sigla          = TRY_CAST(JSON_VALUE(@Filters ,'$.sigla')          AS VARCHAR(50));
+            END
 
-              AND (@idSubFamilia > 0
-                OR @sigla IS NULL
-                OR ar.siglaFamilia IN (SELECT value FROM STRING_SPLIT(@sigla, ',')))
+        IF @IncludeDeleted = 0
+            BEGIN
+                SET @WhereClause = @WhereClause + N'AND ar.estado = 1 ';
+            END
 
-              AND (@idSubFamilia > 0
-                OR @sigla IS NOT NULL
-                OR ar.siglaFamilia NOT IN ('COM'))
-        )
-        SELECT * INTO #FilteredItems FROM FilteredItems OPTION (RECOMPILE);
+        IF @SearchTerm IS NOT NULL AND LEN(@SearchTerm) > 0
+            BEGIN
+                 SET @WhereClause = @WhereClause + N'AND (
+                                                               ar.descripcion LIKE ''%'' + @SearchTerm + ''%''
+                                                            OR ri.Summary     LIKE ''%'' + @SearchTerm + ''%''
+                                                            OR ri.Content     LIKE ''%'' + @SearchTerm + ''%''
+                                                         ) '
+            END
 
-        --> Crear índice para mejorar el ORDER BY paginado
-        CREATE CLUSTERED INDEX IX_FilteredItems_Id ON #FilteredItems(Id);
+        IF @idSubFamilia > 0
+            BEGIN
+                SET @WhereClause = @WhereClause + N'AND ar.idSubFamilia = @idSubFamilia '
+            END
+        ELSE
+            BEGIN
+                IF @sigla IS NOT NULL
+                    BEGIN
+                        SET @WhereClause = @WhereClause + N'AND ar.siglaFamilia '
+                    END
+                ELSE
+                    BEGIN
+                        SET @WhereClause = @WhereClause + N'AND ar.siglaFamilia NOT IN (''COM'') '
+                    END 
+                
+            END
 
-        --> Obtener total de registros
-        SELECT TOP 1 @TotalRecords = TotalRecords FROM #FilteredItems;
 
-        --> Obtener la página solicitada
-        SELECT * FROM #FilteredItems ORDER BY Id OFFSET @pageSize * (@pageIndex - 1) ROWS FETCH NEXT @pageSize ROWS ONLY;
+        SET @Params = '@idEntidad    INT
+                      ,@idSubFamilia INT
+                      ,@sigla        VARCHAR(50)
+                      ,@SearchTerm   VARCHAR(100)
+                      ,@Offset       INT
+                      ,@PageSize     INT
+                      ,@TotalCount   INT OUTPUT '
 
-        --> Retornar total de registros
-        SELECT @TotalRecords as total_records
+        SET @DataSQL = N'
+                        IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems;
 
-        --> LIMPIAR RECURSOS
-        IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
+                        WITH FilteredItems AS
+                            
+                             (
+                                SELECT ri.Id                   
+                                      ,ri.ProductId
+                                      ,ISNULL(ri.title, '''')   AS title
+                                      ,ISNULL(ri.Summary, '''') AS summary
+                                      ,ar.s3ObjectUrl           AS s3ObjectUrl
+                                      ,ar.descripcion           AS description
+                                      ,ar.codigo                AS code
+                                      ,ar.medida                AS measure
+                                      ,ar.codigoAuxiliar        AS auxiliary_code
+                                      ,ar.precioCosto           AS costPrice
+                                      ,ar.categoria             AS category
+                                      ,COUNT(*) OVER()          AS TotalCount
+                                FROM Restaurant.Item             ri
+                                INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
+                                + @WhereClause
+
+                         + N')
+
+                     SELECT * INTO #FilteredItems FROM FilteredItems OPTION (RECOMPILE);
+
+                     SELECT TOP 1 @TotalCount = TotalCount FROM #FilteredItems;
+
+                     SELECT * FROM #FilteredItems ' + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+
+                     IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems ' ;
+
+
+        EXEC sp_executesql
+            @DataSQL
+           ,@Params
+           ,@idEntidad
+           ,@idSubFamilia
+           ,@sigla
+           ,@SearchTerm
+           ,@Offset
+           ,@PageSize
+           ,@TotalCount = @TotalCount OUTPUT
     END TRY
 
     BEGIN CATCH
+        --> Variables locales para el error
+        DECLARE @ErrorNumber    INT            = ERROR_NUMBER()
+               ,@ErrorSeverity  INT            = ERROR_SEVERITY()
+               ,@ErrorState     INT            = ERROR_STATE()
+               ,@ErrorProcedure NVARCHAR(128)  = 'Restaurant.GetItem'
+               ,@ErrorLine      INT            = ERROR_LINE()
+               ,@ErrorMessage   NVARCHAR(4000) = ERROR_MESSAGE()
+               ,@ErrorDetails   NVARCHAR(MAX)
+               ,@Token          VARCHAR(300)   = NEWID()
+               ,@Method         VARCHAR(200)   = 'Restaurant/item/Get'
 
+        SELECT @ErrorDetails = (
+            SELECT @UserRoleId          AS UserRoleId
+                  ,@PageIndex           AS PageIndex
+                  ,@PageSize            AS PageSize
+                  ,@SortBy              AS SortBy
+                  ,@SortDirection       AS SortDirection
+                  ,@SearchTerm          AS SearchTerm
+                  ,JSON_QUERY(@Filters) AS Filters 
+                  ,@Offset              AS Offset
+            FOR JSON PATH
+        );
+ 
         --> Limpiar tabla temporal en caso de error
         IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
 
         INSERT INTO ErroresSistema
-              (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario ,errorDetails)
-        VALUES(NEWID(), 'Item/Get', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(),'Restaurant.GetItem', ERROR_LINE(), ERROR_MESSAGE(),GETDATE(), @UserId,@Json)
+               (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
+        SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
     END CATCH 
 END
