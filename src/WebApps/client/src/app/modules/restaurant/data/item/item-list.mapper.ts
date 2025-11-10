@@ -21,9 +21,11 @@ export class ItemListMapper {
         categoryAbbreviations: 'sigla',
       };
       Object.entries(params.filters).forEach(([key, value]) => {
+        if (value == null) return; // 🔹 salta este item, pero sigue con los demás
         const filterKey = objToJsonFilters[key] || key;
         queryParams.append(`filters[${filterKey}]`, String(value));
       });
+
     }
     return queryParams.toString();
   }

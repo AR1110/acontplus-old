@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PagedResult, PaginationParams } from '@acontplus/core';
@@ -22,9 +22,10 @@ export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, Paginati
   private repo = inject(ItemRepository);
   execute(params: PaginationParams): Observable<any> {
     const categoryAbbreviation = params.filters?.['categoryAbbreviation'];
-    const searchTerm = params.filters?.['searchTerm'];
+    const searchTerm = params.searchTerm;
+
     if (!categoryAbbreviation) {
-      throw new Error('categoryAbbreviation is required');
+      return throwError(() => new Error('categoryAbbreviation is required'));
     }
 
     if (
@@ -34,11 +35,11 @@ export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, Paginati
         CATEGORY_ABBREVIATIONS.INGREDIENT,
       ].includes(categoryAbbreviation)
     ) {
-      throw new Error('categoryAbbreviation is invalid');
+      return throwError(() => new Error('categoryAbbreviation is invalid'));
     }
 
     if (!searchTerm) {
-      throw new Error('q is required');
+      return throwError(() => new Error('q is required'));
     }
     return this.repo.search(params);
   }
@@ -53,4 +54,16 @@ export class ItemGetBydIdUseCase implements BaseUseCase<any, number> {
     if (!id) throw new Error('id is required');
     return this.repo.getById(id);
   }
+}
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ItemUpdateUseCase implements BaseUseCase<any, {id: number, data: any}> {
+  execute(params: { id: number; data: any; }): Observable<any> {
+      return this.repo.update(params.id, params.data);
+  }
+  private repo = inject(ItemRepository);
+
 }

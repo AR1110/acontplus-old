@@ -7,11 +7,14 @@ import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ItemListMapper } from '@restaurant/data/item/item-list.mapper';
 import { PagedResult, PaginationParams } from '@acontplus/core';
+import {ItemUpdateMapper} from "@restaurant/data/item/item-update-mapper";
+import {ItemGetByIdMapper} from "@restaurant/data/item/item-get-by-id-mapper";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemHttpRepository implements ItemRepository {
+
   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.ITEM}`;
   #http = inject(HttpClient);
 
@@ -30,10 +33,13 @@ export class ItemHttpRepository implements ItemRepository {
   }
 
   getById(id: number): Observable<any> {
-    return this.#http.get(`${this.#url}${id}`).pipe(
-      map((response) => {
-        return response;
-      }),
+    return this.#http.get(`${this.#url}/${id}`).pipe(
+      map((response) => ItemGetByIdMapper.fromJson(response)),
     );
+  }
+
+  update(id: number, data: any): Observable<any> {
+    const params = ItemUpdateMapper.toJson(data);
+    return this.#http.put(`${this.#url}/${id}`, params)
   }
 }
