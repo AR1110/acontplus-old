@@ -26,7 +26,7 @@ public static class GetEndpoints
             .WithName("GetMealConsumptionById")
             .WithSummary("Get a meal consumption by ID")
             .WithDescription("Retrieve a meal consumption record by its ID.")
-            .Produces<IReadOnlyList<PagedResult<MealConsumptionResponse>>>(StatusCodes.Status200OK)
+            .Produces<IReadOnlyList<PagedResult<MealConsumptionItem>>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
