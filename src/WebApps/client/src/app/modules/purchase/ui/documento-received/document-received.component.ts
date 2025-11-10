@@ -15,7 +15,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -28,7 +28,7 @@ import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-cat
 import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-documento-received',
@@ -48,7 +48,7 @@ import { ThemeButtonComponent } from '@shared/components/theme-button/theme-butt
     MatMenuItem,
     MatMenuTrigger,
     MatButton,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './document-received.component.html',
   styles: ``,
@@ -84,7 +84,7 @@ export class DocumentReceivedComponent implements OnInit {
   moreOptionsFilter = false;
   subcategories: Subcategory[] = [];
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   private readonly _documentReceivedUseCase = inject(DocumentReceivedUseCase);
   private readonly _dialogService = inject(DialogService);
   private readonly _sharedService = inject(SharedService);

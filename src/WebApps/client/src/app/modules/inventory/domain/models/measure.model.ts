@@ -1,4 +1,4 @@
-import { TarifaProducto } from './tarifa.model';
+import { ProductFee, TarifaProducto } from './tarifa.model';
 
 export interface Measure {
   idMedida: number;
@@ -30,6 +30,7 @@ export interface MedidaProducto {
   precioCostoFraccionado: number;
   tipo: MeasureType;
   tarifas: TarifaProducto[];
+  fees: ProductFee[];
 }
 
 // Alternativa a MeasureSelectHtmlOnly

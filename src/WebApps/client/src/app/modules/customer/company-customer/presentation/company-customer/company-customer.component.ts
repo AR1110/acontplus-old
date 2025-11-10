@@ -5,10 +5,10 @@ import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isValidField } from '@core/utils/utils';
 
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { MatIconModule } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -31,7 +31,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
   imports: [
     BreadcrumbComponent,
     CompanyCustomerAddEditDirective,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatDynamicTableComponent,
     FormsModule,
@@ -80,7 +80,7 @@ export class CompanyCustomerComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   refresh() {
     this.getList();
@@ -96,10 +96,9 @@ export class CompanyCustomerComponent implements OnInit {
 
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update((re) => ({
-        ...re,
-        totalRecords: response.totalRecords,
-      }));
+      this.pagination.update(
+        (re) => new Pagination(re.pageIndex, re.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -166,12 +165,9 @@ export class CompanyCustomerComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

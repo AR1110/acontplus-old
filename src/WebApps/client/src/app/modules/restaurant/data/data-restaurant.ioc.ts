@@ -9,6 +9,8 @@ import { ItemRepository } from '@restaurant/domain/repositories/item.repository'
 import { ItemHttpRepository } from '@restaurant/data/item/item-http.repository';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
 import { MealScheduleSettingWebService } from '@restaurant/data/meal-schedule-setting/meal-schedule-setting-web.service';
+import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
+import { MealConsumptionHttpRepository } from '@restaurant/data/meal-consumption/meal-consumption-http-repository';
 
 export const DATA_RESTAURANT_IOC: Provider[] = [
   {
@@ -30,5 +32,9 @@ export const DATA_RESTAURANT_IOC: Provider[] = [
   {
     provide: MealScheduleSettingRepository,
     useClass: MealScheduleSettingWebService,
+  },
+  {
+    provide: MealConsumptionRepository,
+    useClass: MealConsumptionHttpRepository,
   },
 ];

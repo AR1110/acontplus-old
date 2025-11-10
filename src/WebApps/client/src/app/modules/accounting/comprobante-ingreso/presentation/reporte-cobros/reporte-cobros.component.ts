@@ -14,7 +14,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { formatDateToString } from '@core/utils/date.util';
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -34,7 +34,7 @@ type TipoDocSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     MatCheckbox,
     MatRadioModule,

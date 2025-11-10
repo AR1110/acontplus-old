@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 
 export abstract class InspectionRepository {
@@ -8,9 +8,9 @@ export abstract class InspectionRepository {
 
   abstract getId(id: number, loader?: boolean): Observable<any>;
 
-  abstract post<T>(data: T): Observable<ApiResponse>;
+  abstract post<T>(data: T): Observable<ApiResponseLegacy>;
 
-  abstract put<T>(id: number, data: T): Observable<ApiResponse>;
+  abstract put<T>(id: number, data: T): Observable<ApiResponseLegacy>;
 
-  abstract remove(id: number): Observable<ApiResponse>;
+  abstract remove(id: number): Observable<ApiResponseLegacy>;
 }

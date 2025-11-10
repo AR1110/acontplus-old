@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { map, Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class PrinterWebRepository implements PrinterRepository {
     const json = JSON.stringify({
       tipo: 1,
     });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { printers: [] };
@@ -42,7 +42,7 @@ export class PrinterWebRepository implements PrinterRepository {
     const json = JSON.stringify({
       tipo: 2,
     });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         if (response.code !== '1') {
           return { estabs: [], documents: [], printerTypes: [] };
@@ -63,7 +63,7 @@ export class PrinterWebRepository implements PrinterRepository {
       withCredentials: true, // This is equivalent to privateCredentials: 'include'
       context: customUrl(),
     };
-    return this._http.get<ApiResponse>(this._urlPrinter, requestOptions).pipe(
+    return this._http.get<ApiResponseLegacy>(this._urlPrinter, requestOptions).pipe(
       map((response) => {
         const mainData = response.payload;
         return {
@@ -78,7 +78,7 @@ export class PrinterWebRepository implements PrinterRepository {
       tipo: 3,
       id,
     });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         const { documents, printer } = JSON.parse(response.payload as string);
         return {
@@ -89,19 +89,27 @@ export class PrinterWebRepository implements PrinterRepository {
     );
   }
 
-  updateStatus<T>(id: number, data: T): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map((response) => response));
+  updateStatus<T>(id: number, data: T): Observable<ApiResponseLegacy> {
+    return this._http
+      .put<ApiResponseLegacy>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
 
-  removePrinter(id: number): Observable<ApiResponse> {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`).pipe(map((response) => response));
+  removePrinter(id: number): Observable<ApiResponseLegacy> {
+    return this._http
+      .delete<ApiResponseLegacy>(`${this._url}${id}`)
+      .pipe(map((response) => response));
   }
 
   create<T>(data: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, data).pipe(map((response) => response));
+    return this._http
+      .post<ApiResponseLegacy>(`${this._url}`, data)
+      .pipe(map((response) => response));
   }
 
   update<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data).pipe(map((response) => response));
+    return this._http
+      .put<ApiResponseLegacy>(`${this._url}${id}`, data)
+      .pipe(map((response) => response));
   }
 }

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GroupedEstab } from '@core/models/estab.model';
 import { WarehouseTransferDataFormResult } from '@inventory/domain/models/warehouse-transfer';
 
@@ -7,8 +7,8 @@ export abstract class WarehouseTransferRepository {
   abstract getAll<T>(obj: T): Observable<{ data: any[]; totalRecords: number }>;
   abstract getDataFilter(): Observable<{ estabs: GroupedEstab[] }>;
   abstract getDataForm(): Observable<WarehouseTransferDataFormResult>;
-  abstract post<T>(obj: T): Observable<ApiResponse>;
-  abstract put<T>(id: number, obj: T): Observable<ApiResponse>;
+  abstract post<T>(obj: T): Observable<ApiResponseLegacy>;
+  abstract put<T>(id: number, obj: T): Observable<ApiResponseLegacy>;
   abstract updateStatus(id: number): Observable<any>;
   abstract getMassTransferProducts(obj: any): Observable<any>;
   abstract generateSerie(obj: { puntoEmisionId: number }): Observable<any>;

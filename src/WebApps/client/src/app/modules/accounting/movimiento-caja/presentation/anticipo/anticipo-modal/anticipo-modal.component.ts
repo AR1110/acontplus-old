@@ -13,7 +13,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -24,7 +24,7 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
   imports: [
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     ToUpperCaseDirective,
   ],

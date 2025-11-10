@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { fechaString, formatDate, formatDateToString } from '@core/utils/date.util';
@@ -20,7 +20,7 @@ interface ToApiSaveParams {
 }
 
 export class NotaEntregaMapper {
-  static fromApiDataFilter(response: ApiResponse) {
+  static fromApiDataFilter(response: ApiResponseLegacy) {
     const resultData = {
       estabs: [] as GroupedEstab[],
       estadosDoc: [] as any[],
@@ -40,12 +40,12 @@ export class NotaEntregaMapper {
     return resultData;
   }
 
-  static fromApiGetAll(response: ApiResponse) {
+  static fromApiGetAll(response: ApiResponseLegacy) {
     const result = {
       data: [] as any[],
       totalRecords: 0,
     };
-    if (response && response.code === '1') {
+    if (response?.code === '1') {
       let [notasEntrega] = JSON.parse(response.payload as string);
 
       notasEntrega = notasEntrega || [];
@@ -76,7 +76,7 @@ export class NotaEntregaMapper {
     return result;
   }
 
-  static fromApiDetalleCompleto(response: ApiResponse) {
+  static fromApiDetalleCompleto(response: ApiResponseLegacy) {
     const result = {} as any;
     if (response.code === '1') {
       const mainData = JSON.parse(response.payload as string);

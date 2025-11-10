@@ -1,12 +1,12 @@
 import { PromotionAddEditModalComponent } from '../promotion-add-edit-modal/promotion-add-edit-modal.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -16,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-promotion-list',
   imports: [
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -46,7 +46,7 @@ export class PromotionListComponent implements OnInit {
     { key: 'endDate', label: 'Fecha Fin', type: 'string' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   dataSource = signal<any>([]);
 
@@ -81,12 +81,9 @@ export class PromotionListComponent implements OnInit {
       );
       this.days.set(response.days);
       if (this.dataSource().length > 0) {
-        this.pagination.update((e) => {
-          return {
-            ...e,
-            totalRecords: this.dataSource()[0].totalRecords,
-          };
-        });
+        this.pagination.update(
+          (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords),
+        );
       }
     });
   }
@@ -111,12 +108,9 @@ export class PromotionListComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

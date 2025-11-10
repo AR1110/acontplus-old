@@ -36,12 +36,12 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button
+    <acp-button
       [variant]="'success'"
       [icon]="'edit'"
       [matStyle]="'icon'"
       (handleClick)="openAddEdit(item)"
     />
-    <app-theme-button [variant]="'danger'" [icon]="'delete'" [matStyle]="'icon'" />
+    <acp-button [variant]="'danger'" [icon]="'delete'" [matStyle]="'icon'" />
   </ng-template>
 </app-mat-dynamic-card>

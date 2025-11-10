@@ -22,7 +22,7 @@ export function RequirePermission(actionCode: string, context?: string) {
         permissionsService = target.permissionsService;
       } else {
         try {
-          permissionsService = (target as any).injector?.get(PermissionsService);
+          permissionsService = target.injector?.get(PermissionsService);
         } catch (e) {
           console.error(
             `RequirePermission: No se pudo inyectar PermissionsService en el método ${propertyKey}. Asegúrate de que el componente tenga el injector disponible.`,

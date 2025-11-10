@@ -6,6 +6,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
 {
     public DbSet<ItemType> ItemTypes { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<ItemComposition> ItemCompositions { get; set; }
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<IngredientType> IngredientTypes { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
@@ -58,6 +59,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
             typeof(AppTable),
             typeof(Ingredient),
             typeof(Item),
+            typeof(ItemComposition),
             typeof(MenuItem),
             typeof(OrderDocument),
             typeof(OrderItem),

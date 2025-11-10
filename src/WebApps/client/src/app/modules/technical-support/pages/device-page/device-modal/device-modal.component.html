@@ -168,7 +168,7 @@
                       <ng-template matTabContent>
                         <div class="row mb-2">
                           <div class="col-12">
-                            <app-theme-button
+                            <acp-button
                               variant="danger"
                               icon="delete"
                               text="Eliminar Categoría"
@@ -230,7 +230,7 @@
                                         <td>{{ spec.name }}</td>
                                         <td>{{ spec.value }}</td>
                                         <th>
-                                          <app-theme-button
+                                          <acp-button
                                             variant="danger"
                                             icon="delete"
                                             matStyle="icon"
@@ -258,7 +258,7 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     [disabled]="deviceForm.invalid"
     variant="success"
     icon="save"

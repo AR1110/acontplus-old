@@ -3,11 +3,11 @@ import { FormsModule } from '@angular/forms';
 import { AmbienteSriPipe } from '@shared/pipes/ambiente-sri.pipe';
 import { DatePipe } from '@angular/common';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-retencion-html',
-  imports: [FormsModule, AmbienteSriPipe, DatePipe, MatCard, MatCardContent, ThemeButtonComponent],
+  imports: [FormsModule, AmbienteSriPipe, DatePipe, MatCard, MatCardContent, Button],
   templateUrl: './retencion-html.component.html',
   styles: ``,
 })

@@ -79,7 +79,7 @@
   </div>
   <div class="col-auto">
     @if (taxGroup().get('idRetAtsDocSustento')?.value) {
-      <app-theme-button
+      <acp-button
         variant="success"
         icon="save"
         matStyle="icon"
@@ -88,7 +88,7 @@
         (handleClick)="onSave()"
       />
     }
-    <app-theme-button
+    <acp-button
       variant="danger"
       icon="delete"
       matStyle="icon"
@@ -100,9 +100,9 @@
 </div>
 
 <!--  <div class="col-auto mt-3">-->
-<!--    <app-theme-button-->
+<!--    <acp-button-->
 <!--      text="Añadir Impuestos Manualmente"-->
 <!--      icon="add"-->
 <!--      (handleClick)="createTax(indexDoc(), {})"-->
-<!--    ></app-theme-button>-->
+<!--    ></acp-button>-->
 <!--  </div>-->

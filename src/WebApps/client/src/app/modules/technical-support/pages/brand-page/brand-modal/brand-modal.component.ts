@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Brand } from '@modules/technical-support/models/brand';
 import { Category } from '@modules/technical-support/models/category';
@@ -10,18 +10,13 @@ import { BrandService } from '@modules/technical-support/services/brand.service'
 import { CategoryService } from '@modules/technical-support/services/category.service';
 import { SerieService } from '@modules/technical-support/services/serie.service';
 import Swal from 'sweetalert2';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-brand-modal',
-  imports: [
-    ReactiveFormsModule,
-    TabulatorComponent,
-    ThemeButtonComponent,
-    MatCustomDialogComponent,
-  ],
+  imports: [ReactiveFormsModule, TabulatorComponent, Button, MatCustomDialogComponent],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })

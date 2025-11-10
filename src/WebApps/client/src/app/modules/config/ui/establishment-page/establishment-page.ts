@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
@@ -16,7 +16,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { DialogService } from '@core/services/dialog.service';
 import { SendMaxEstablishmentsUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
@@ -36,7 +36,7 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
     MatCardHeader,
     MatRadioGroup,
     MatRadioButton,
-    ThemeButtonComponent,
+    Button,
     MatDynamicCardComponent,
     DataGrid,
   ],
@@ -122,7 +122,7 @@ export class EstablishmentPage implements OnInit {
     }
   }
 
-  commonResponse = (response: ApiResponse) => {
+  commonResponse = (response: ApiResponseLegacy) => {
     this._tS.show({
       type: response.code === '1' ? 'success' : 'warning',
       message: response.message,

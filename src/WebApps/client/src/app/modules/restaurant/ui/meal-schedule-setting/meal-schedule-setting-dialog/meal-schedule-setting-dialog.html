@@ -1,78 +1,78 @@
 <div class="dialog-container">
-    <h2 mat-dialog-title>{{ dialogTitle }}</h2>
+  <h2 mat-dialog-title>{{ dialogTitle }}</h2>
 
-    <mat-dialog-content>
-        <form [formGroup]="form" class="form-container">
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Código</mat-label>
-                <input matInput formControlName="mealCode" placeholder="Ej: BREAKFAST" maxlength="50" />
-                @if (form.get('mealCode')?.hasError('required') && form.get('mealCode')?.touched) {
-                    <mat-error>El código es requerido</mat-error>
-                }
-            </mat-form-field>
+  <mat-dialog-content>
+    <form [formGroup]="form" class="form-container">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="mealCode" placeholder="Ej: BREAKFAST" maxlength="50" />
+        @if (form.get('mealCode')?.hasError('required') && form.get('mealCode')?.touched) {
+          <mat-error>El código es requerido</mat-error>
+        }
+      </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Descripción</mat-label>
-                <input matInput formControlName="description" placeholder="Ej: Desayuno" maxlength="200" />
-                @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
-                    <mat-error>La descripción es requerida</mat-error>
-                }
-            </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="description" placeholder="Ej: Desayuno" maxlength="200" />
+        @if (form.get('description')?.hasError('required') && form.get('description')?.touched) {
+          <mat-error>La descripción es requerida</mat-error>
+        }
+      </mat-form-field>
 
-            <div class="time-row">
-                <mat-form-field appearance="outline">
-                    <mat-label>Hora Inicio</mat-label>
-                    <input matInput type="time" formControlName="startTime" min="04:00" max="23:00" />
-                    @if (form.get('startTime')?.hasError('required') && form.get('startTime')?.touched) {
-                        <mat-error>La hora de inicio es requerida</mat-error>
-                    }
-                </mat-form-field>
+      <div class="time-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Hora Inicio</mat-label>
+          <input matInput type="time" formControlName="startTime" min="04:00" max="23:00" />
+          @if (form.get('startTime')?.hasError('required') && form.get('startTime')?.touched) {
+            <mat-error>La hora de inicio es requerida</mat-error>
+          }
+        </mat-form-field>
 
-                <mat-form-field appearance="outline">
-                    <mat-label>Hora Fin</mat-label>
-                    <input matInput type="time" formControlName="endTime" min="04:00" max="23:00" />
-                    @if (form.get('endTime')?.hasError('required') && form.get('endTime')?.touched) {
-                        <mat-error>La hora de fin es requerida</mat-error>
-                    }
-                </mat-form-field>
-            </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Hora Fin</mat-label>
+          <input matInput type="time" formControlName="endTime" min="04:00" max="23:00" />
+          @if (form.get('endTime')?.hasError('required') && form.get('endTime')?.touched) {
+            <mat-error>La hora de fin es requerida</mat-error>
+          }
+        </mat-form-field>
+      </div>
 
-            @if (form.hasError('invalidTimeRange') && form.touched) {
-                <div class="error-message">La hora de inicio debe ser menor que la hora de fin</div>
-            }
+      @if (form.hasError('invalidTimeRange') && form.touched) {
+        <div class="error-message">La hora de inicio debe ser menor que la hora de fin</div>
+      }
 
-            <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Orden de visualización</mat-label>
-                <input matInput type="number" formControlName="displayOrder" min="1" placeholder="1" />
-                @if (form.get('displayOrder')?.hasError('required') && form.get('displayOrder')?.touched) {
-                    <mat-error>El orden es requerido</mat-error>
-                }
-                @if (form.get('displayOrder')?.hasError('min')) {
-                    <mat-error>El orden debe ser mayor a 0</mat-error>
-                }
-            </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Orden de visualización</mat-label>
+        <input matInput type="number" formControlName="displayOrder" min="1" placeholder="1" />
+        @if (form.get('displayOrder')?.hasError('required') && form.get('displayOrder')?.touched) {
+          <mat-error>El orden es requerido</mat-error>
+        }
+        @if (form.get('displayOrder')?.hasError('min')) {
+          <mat-error>El orden debe ser mayor a 0</mat-error>
+        }
+      </mat-form-field>
 
-            @if (isEditMode()) {
-                <div class="toggle-container">
-                    <mat-slide-toggle formControlName="isActive" color="primary"> Activo </mat-slide-toggle>
-                </div>
-            }
-        </form>
-    </mat-dialog-content>
+      @if (isEditMode()) {
+        <div class="toggle-container">
+          <mat-slide-toggle formControlName="isActive" color="primary"> Activo </mat-slide-toggle>
+        </div>
+      }
+    </form>
+  </mat-dialog-content>
 
-    <mat-dialog-actions align="end">
-        <button mat-button (click)="onCancel()" [disabled]="isLoading()">Cancelar</button>
-        <button
-                mat-raised-button
-                color="primary"
-                (click)="onSubmit()"
-                [disabled]="isLoading() || form.invalid"
-        >
-            @if (isLoading()) {
-                <mat-spinner diameter="20" />
-            } @else {
-                {{ isEditMode() ? 'Actualizar' : 'Guardar' }}
-            }
-        </button>
-    </mat-dialog-actions>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading()">Cancelar</button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="isLoading() || form.invalid"
+    >
+      @if (isLoading()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        {{ isEditMode() ? 'Actualizar' : 'Guardar' }}
+      }
+    </button>
+  </mat-dialog-actions>
 </div>

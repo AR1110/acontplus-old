@@ -50,13 +50,7 @@
       </div>
 
       <div class="col text-end">
-        <app-theme-button
-          variant="info"
-          icon="search"
-          text="Buscar"
-          matStyle="basic"
-          (handleClick)="search()"
-        />
+        <acp-button variant="info" icon="search" text="Buscar" (handleClick)="search()" />
       </div>
     </div>
 
@@ -78,11 +72,10 @@
   </section>
   <div ngProjectAs="footer">
     @if (rowSelected().length > 0) {
-      <app-theme-button
+      <acp-button
         variant="success"
         icon="move_to_inbox"
         text="Buscar"
-        matStyle="basic"
         (handleClick)="addToDetail()"
       />
     }

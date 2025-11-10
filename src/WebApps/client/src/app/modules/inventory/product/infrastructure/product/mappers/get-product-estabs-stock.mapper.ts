@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GetProductEstabStockResult } from '@inventory/product/domain/entities/product.entity';
 
 export class GetProductEstabsStockMapper {
@@ -6,7 +6,7 @@ export class GetProductEstabsStockMapper {
     return JSON.stringify({ idArticulo: id, tipo: 10 });
   }
 
-  static fromJson(response: ApiResponse): GetProductEstabStockResult {
+  static fromJson(response: ApiResponseLegacy): GetProductEstabStockResult {
     const result = {
       establishments: [] as any[],
     };

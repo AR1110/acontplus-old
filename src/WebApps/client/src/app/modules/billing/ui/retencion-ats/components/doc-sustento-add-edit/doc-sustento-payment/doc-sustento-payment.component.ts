@@ -3,14 +3,14 @@ import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatInput } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormaPago } from '@sri/domain/models/forma-pago';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DocSustentoPaymentUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-payment.use-case';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-doc-sustento-payment',
-  imports: [ReactiveFormsModule, MatInput, MatFormField, MatSelectModule, ThemeButtonComponent],
+  imports: [ReactiveFormsModule, MatInput, MatFormField, MatSelectModule, Button],
   templateUrl: './doc-sustento-payment.component.html',
   styles: ``,
 })

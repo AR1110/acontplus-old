@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
@@ -6,7 +6,7 @@ import { Recipe } from '@restaurant/domain/models/recipe.model';
 
 import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { IngredientService } from '@restaurant/data/services/ingredient.service';
 import { RecipeService } from '@restaurant/data/services/recipe.service';
@@ -16,24 +16,28 @@ import { ItemService } from '@restaurant/data/services/item.service';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
+import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
+import { ItemGetBydIdUseCase } from '@restaurant/application/use-cases/item.use-case';
+import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
 
 @Component({
-  selector: 'app-item-add-edit-modal',
+  selector: 'app-item-add-edit',
   imports: [
     ReactiveFormsModule,
     TabulatorComponent,
     IngredientSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatInputModule,
+    ItemSearch,
   ],
-  templateUrl: './item-add-edit-modal.component.html',
+  templateUrl: './item-add-edit.html',
   styles: ``,
 })
-export class ItemAddEditModalComponent implements OnInit {
-  data = inject(MAT_DIALOG_DATA);
-  modalIcon = 'add';
-  modalTitle = 'Registrar Item';
+export class ItemAddEdit implements OnInit {
+  private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
+  private productGetIdUseCase = inject(ProductGetIdUseCase);
+  data = inject<{ id: number }>(MAT_DIALOG_DATA);
   itemForm = new FormGroup({
     id: new FormControl(0),
     summary: new FormControl('', [Validators.required]),
@@ -43,10 +47,9 @@ export class ItemAddEditModalComponent implements OnInit {
     productId: new FormControl(0),
   });
   recipes = signal<Recipe[]>([]);
-  ingredientSearch = '';
   #ingredientService = inject(IngredientService);
   #itemService = inject(ItemService);
-  #modalRef = inject(MatDialogRef<ItemAddEditModalComponent>);
+  #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #recipeService = inject(RecipeService);
   #tS = inject(ToastrNotificationService);
 
@@ -165,20 +168,70 @@ export class ItemAddEditModalComponent implements OnInit {
     }
   };
 
+  comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
+    const column: any = cell.getColumn().getField();
+    const data: any = cell.getData();
+    // const oldValue = cell.getOldValue();
+    // const value = cell.getValue();
+
+    const editor: any = document.createElement('select');
+
+    if (column === 'measureId') {
+      for (const m of data.measures || []) {
+        const opt = document.createElement('option');
+        opt.value = m.idMedida.toString();
+        opt.innerHTML = m.descripcion;
+        editor.appendChild(opt);
+      }
+    }
+
+    editor.style.padding = '3px';
+    editor.style.width = '100%';
+    editor.style.boxSizing = 'border-box';
+
+    editor.value = Number(cell.getValue());
+
+    onRendered(function () {
+      editor.focus();
+      editor.style.css = '100%';
+    });
+
+    function successFunc() {
+      success(editor.value);
+    }
+
+    editor.addEventListener('change', successFunc);
+    editor.addEventListener('blur', successFunc);
+
+    return editor;
+  };
+
   columns = [
     {
       title: 'Ingrediente',
       field: 'summary',
-      widthGrow: 1,
-      width: 300,
+      width: 450,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
     },
     {
       title: 'Medida',
-      field: 'extentId',
-      width: 150,
-      editor: this.selectExtend,
-      formatter: this.formatterMedida,
-      cellEdited: this.priceUpdate,
+      field: 'measureId',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editor: this.comboEditor,
+      formatter: function (cell: any) {
+        const data = cell.getData();
+        for (const m of data.measures ?? []) {
+          if (m.idMedida == cell.getValue()) {
+            return m.descripcion;
+          }
+        }
+      },
+      validator: 'required',
+      width: '9px',
     },
     {
       title: 'Peso',
@@ -188,6 +241,9 @@ export class ItemAddEditModalComponent implements OnInit {
       widthGrow: 1,
       validator: ['numeric'],
       value: '0',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
     },
     // {
     //   title: 'Instrucciones',
@@ -199,20 +255,25 @@ export class ItemAddEditModalComponent implements OnInit {
     {
       title: 'Cant.',
       field: 'quantity',
-      width: 100,
-      widthGrow: 1,
+      width: 120,
       editor: true,
       editorParams: {
         selectContents: true,
         verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
       },
       cellEdited: this.priceUpdate,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
     },
     {
       title: 'Precio costo',
       field: 'precioCosto',
       width: 120,
       editor: false,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
     },
     {
       title: 'Total',
@@ -227,6 +288,9 @@ export class ItemAddEditModalComponent implements OnInit {
         });
         return total.toFixed(2);
       },
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
     },
     {
       title: 'Acciones',
@@ -234,17 +298,13 @@ export class ItemAddEditModalComponent implements OnInit {
       hozAlign: 'center',
       formatter: 'buttonCross',
       width: 100,
-      align: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
       cellClick: function (e: any, cell: any) {
         cell.getRow().delete();
       },
     },
   ];
-
-  removeFromList(id: number) {
-    const newArray = this.recipes().filter((x: Recipe) => x.id !== id);
-  }
-
   rowDeleted(row: any) {
     const closeRecipes = JSON.parse(JSON.stringify(this.recipes()));
     const data = row.getData();
@@ -261,9 +321,7 @@ export class ItemAddEditModalComponent implements OnInit {
 
   ngOnInit() {
     if (this.data.id > 0) {
-      this.getRecipes();
-      this.modalIcon = 'edit';
-      this.modalTitle = 'Editar Item';
+      // this.getRecipes();
       this.itemForm.patchValue(this.data);
     }
   }
@@ -292,6 +350,17 @@ export class ItemAddEditModalComponent implements OnInit {
         this.#modalRef.close(response);
       }
     });
+  }
+
+  onSelectItem(rowData: any) {
+    this.productGetIdUseCase.execute(rowData.productId).subscribe((response) => {
+      console.log(response);
+    });
+    console.log(rowData);
+    const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
+
+    cloneRecipes.push(rowData);
+    this.recipes.set(cloneRecipes);
   }
 
   onIngredientSelected($event: Ingredient) {

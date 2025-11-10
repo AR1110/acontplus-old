@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   CreditTimeList,
   ListCreditTimeResponse,
@@ -7,7 +7,7 @@ import {
 
 export abstract class CreditTimeRepository {
   abstract list(params: any): Observable<ListCreditTimeResponse>;
-  abstract create(params: any): Observable<ApiResponse>;
-  abstract update(params: any): Observable<ApiResponse>;
-  abstract delete(params: Partial<CreditTimeList>): Observable<ApiResponse>;
+  abstract create(params: any): Observable<ApiResponseLegacy>;
+  abstract update(params: any): Observable<ApiResponseLegacy>;
+  abstract delete(params: Partial<CreditTimeList>): Observable<ApiResponseLegacy>;
 }

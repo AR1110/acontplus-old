@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { GetGuiaRemisionFilterDataUseCase } from '@modules/billing/domain/use-cases/guia-remision/get-guia-remision-filter-data.use-case';
 import { ListGuiasRemisionUseCase } from '@modules/billing/domain/use-cases/guia-remision/list-guias-remision.use-case';
@@ -94,7 +94,7 @@ export class GuiaRemisionComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   private getParams() {
     if (!isValidField(this.dataSearch.codEstab)) {
@@ -160,12 +160,7 @@ export class GuiaRemisionComponent implements OnInit {
     this.$listGuiasRemisionUseCase.execute(params).subscribe((response) => {
       console.log(response);
       this.dataSource.set(response.data);
-      this.pagination.update((e) => {
-        return {
-          ...e,
-          totalRecords: response.totalRecords,
-        };
-      });
+      this.pagination.update((e) => new Pagination(e.pageIndex, e.pageSize, response.totalRecords));
     });
   }
 
@@ -212,12 +207,9 @@ export class GuiaRemisionComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

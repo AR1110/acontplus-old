@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { map } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
@@ -21,7 +21,7 @@ export class InvoiceService {
       tipo: 4,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -53,7 +53,7 @@ export class InvoiceService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -62,8 +62,8 @@ export class InvoiceService {
             data: [] as any[],
             totalRecords: 0,
           };
-          if (response && response.code === '1') {
-            let { invoices } = JSON.parse(response.payload as string);
+          if (response?.code === '1') {
+            const { invoices } = JSON.parse(response.payload as string);
             result.data = InvoiceAdapter.fromApiAll(invoices ?? []);
             result.totalRecords = result.data.length > 0 ? result.data[0].totalRecords : 0;
           }
@@ -78,7 +78,7 @@ export class InvoiceService {
       id,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -95,10 +95,10 @@ export class InvoiceService {
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
+    return this.#http.put<ApiResponseLegacy>(`${this.#url}${id}`, { data });
   }
 }

@@ -8,7 +8,7 @@ import {
   WarehouseTransferUpdateStatusUseCase,
   WarehouseTransferUseCase,
 } from '@inventory/domain/usecases/warehouse-transfer.use-case';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
@@ -121,7 +121,7 @@ export class WarehouseTransfer implements OnInit {
               return;
             }
 
-            let { isConfirmed } = await Swal.fire({
+            const { isConfirmed } = await Swal.fire({
               title: '<small>Anular Transferencia?</small>',
               html: `<small>Esta Ud. seguro de anular esta Transferencia <b>N° ${item.nroDoc}</b></small>?`,
               icon: 'warning',
@@ -195,7 +195,7 @@ export class WarehouseTransfer implements OnInit {
     { header: 'Observación', field: 'obs' },
     { header: 'Estado', field: 'nomEstado' },
   ];
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   isLoadingResults = signal(false);
 
@@ -297,10 +297,13 @@ export class WarehouseTransfer implements OnInit {
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.list.set(response.data);
-        this.pagination.set({
-          ...this.pagination(),
-          totalRecords: response.totalRecords,
-        });
+        this.pagination.set(
+          new Pagination(
+            this.pagination().pageIndex,
+            this.pagination().pageSize,
+            response.totalRecords,
+          ),
+        );
       });
   }
 
@@ -355,12 +358,9 @@ export class WarehouseTransfer implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

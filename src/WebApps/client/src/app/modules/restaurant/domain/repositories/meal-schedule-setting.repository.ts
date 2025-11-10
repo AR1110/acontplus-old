@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   MealScheduleSettingResponse,
   CreateMealScheduleSettingRequest,
@@ -7,18 +7,14 @@ import {
 } from '@restaurant/domain/models/meal-schedule-setting.model';
 
 export abstract class MealScheduleSettingRepository {
-  abstract getByEstablishmentId(
-    establishmentId: number
-  ): Observable<MealScheduleSettingResponse[]>;
+  abstract getByEstablishmentId(establishmentId: number): Observable<MealScheduleSettingResponse[]>;
 
-  abstract create(
-    data: CreateMealScheduleSettingRequest
-  ): Observable<MealScheduleSettingResponse>;
+  abstract create(data: CreateMealScheduleSettingRequest): Observable<MealScheduleSettingResponse>;
 
   abstract update(
     id: number,
-    data: UpdateMealScheduleSettingRequest
+    data: UpdateMealScheduleSettingRequest,
   ): Observable<MealScheduleSettingResponse>;
 
-  abstract delete(id: number): Observable<ApiResponse>;
+  abstract delete(id: number): Observable<ApiResponseLegacy>;
 }

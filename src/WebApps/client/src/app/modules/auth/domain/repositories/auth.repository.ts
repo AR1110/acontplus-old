@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { User } from '../models/user.model';
 
 export abstract class AuthRepository {
@@ -9,8 +9,8 @@ export abstract class AuthRepository {
     userRoles: any[];
     userRolesOriginal: any[];
   }>;
-  abstract register(user: User): Observable<ApiResponse>;
-  abstract requestAccess(user: any): Observable<ApiResponse>;
-  abstract authenticate(user: any): Observable<ApiResponse>;
+  abstract register(user: User): Observable<ApiResponseLegacy>;
+  abstract requestAccess(user: any): Observable<ApiResponseLegacy>;
+  abstract authenticate(user: any): Observable<ApiResponseLegacy>;
   abstract createToken(user: any): Observable<any>;
 }

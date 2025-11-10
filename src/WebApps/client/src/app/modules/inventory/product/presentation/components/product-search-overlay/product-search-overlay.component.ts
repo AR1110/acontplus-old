@@ -15,7 +15,7 @@ import {
 import { ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { isValidField } from '@core/utils/utils';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { debounceTime, distinctUntilChanged, finalize, map, of, Subject, switchMap } from 'rxjs';
 
 import { ProductSearchListComponent } from '@inventory/product/presentation/components/product-search-list/product-search-list.component';

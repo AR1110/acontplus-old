@@ -1,6 +1,6 @@
 import { DocSustentoRetencionUseCase } from '@billing/domain/use-cases/retencion-ats/doc-sustento-retencion.use-case';
 import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { AbstractControl, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
@@ -21,7 +21,7 @@ import Swal from 'sweetalert2';
     MatFormField,
     MatSelectModule,
     MatInput,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './doc-sustento-retencion.component.html',
   styles: ``,

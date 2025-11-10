@@ -1,7 +1,7 @@
 <app-breadcrumb />
 
 <div class="d-grid gap-2">
-  <app-theme-button
+  <acp-button
     [type]="'button'"
     [variant]="'success'"
     [text]="'Nuevo asiento'"
@@ -14,19 +14,14 @@
   @for (item of dataSource(); track $index) {
     <app-mat-dynamic-card class="seat-card">
       <div class="seat-card__header hstack justify-content-between">
-        <app-theme-button
+        <acp-button
           [type]="'button'"
           [variant]="'info'"
           [icon]="'edit'"
           [matStyle]="'icon'"
           (handleClick)="openAddEdit(item)"
         />
-        <app-theme-button
-          [type]="'button'"
-          [variant]="'danger'"
-          [icon]="'clear'"
-          [matStyle]="'icon'"
-        />
+        <acp-button [type]="'button'" [variant]="'danger'" [icon]="'clear'" [matStyle]="'icon'" />
 
         <!--          <button mat-icon-button>-->
         <!--            <mat-icon>edit</mat-icon>-->

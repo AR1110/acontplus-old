@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Restaurant.Application.DTOs;
+namespace Restaurant.Application.Dtos;
 
 public record CreateIngredientDto
 {

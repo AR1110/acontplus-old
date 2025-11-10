@@ -1,7 +1,7 @@
 import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
 import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/historial-pago.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDate } from '@core/utils/date.util';
 import {
@@ -10,7 +10,7 @@ import {
 } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
 
 export class CuentaPorPagarMapper {
-  static fromApiDataFilter(response: ApiResponse) {
+  static fromApiDataFilter(response: ApiResponseLegacy) {
     const [tempEstabs, tempEstadosDoc, tempTiposDoc, tempCategorias] = JSON.parse(
       response.payload as string,
     );

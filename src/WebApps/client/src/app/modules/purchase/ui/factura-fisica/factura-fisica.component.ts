@@ -7,7 +7,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { finalize, switchMap, throwError } from 'rxjs';
@@ -80,7 +80,7 @@ export class FacturaFisicaComponent implements OnInit {
 
   dataSource = new MatTableDataSource<FacturaFisicaLista>();
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   dataSearch = model({
     codEstab: null as string | null | undefined,
@@ -120,10 +120,7 @@ export class FacturaFisicaComponent implements OnInit {
 
   private successResponseNotaEntregaAll(response: any) {
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
-      ...p,
-      totalRecords: response.totalRecords,
-    }));
+    this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
   }
 
   private getNotasEntrega() {
@@ -234,12 +231,9 @@ export class FacturaFisicaComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

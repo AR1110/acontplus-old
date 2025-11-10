@@ -1,10 +1,10 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { formatDate } from '@core/utils/date.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { ProductGetIdResult } from '@inventory/product/domain/entities/product.entity';
 
 export class ProductGetIdMapper {
-  static fromJson(responseApi: ApiResponse) {
+  static fromJson(responseApi: ApiResponseLegacy) {
     const resultResponse = new ProductGetIdResult();
     const {
       products,

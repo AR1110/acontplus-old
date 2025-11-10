@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { TagRepository } from '@inventory/domain/repositories/tag.repository';
@@ -22,7 +22,7 @@ export class BrandWebRepository implements BrandRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -48,7 +48,7 @@ export class BrandWebRepository implements BrandRepository {
       );
   }
   post<T>(data: T) {
-    return this._http.post<ApiResponse>(
+    return this._http.post<ApiResponseLegacy>(
       `${this._url}`,
       { data },
       {
@@ -57,7 +57,7 @@ export class BrandWebRepository implements BrandRepository {
     );
   }
   put<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(
+    return this._http.put<ApiResponseLegacy>(
       `${this._url}${id}`,
       { data },
       {
@@ -67,6 +67,6 @@ export class BrandWebRepository implements BrandRepository {
   }
 
   updateStatus(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 }

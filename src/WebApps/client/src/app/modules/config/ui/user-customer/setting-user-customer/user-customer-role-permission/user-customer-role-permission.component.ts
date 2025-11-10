@@ -9,7 +9,7 @@ import { UserCustomerStore } from '@modules/config/application/store/user-custom
 import { ListUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case';
 import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';
 import Swal from 'sweetalert2';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 
@@ -21,7 +21,7 @@ import { MatIcon } from '@angular/material/icon';
     MatFormFieldModule,
     MatSelectModule,
     ReactiveFormsModule,
-    ThemeButtonComponent,
+    Button,
     MatCard,
     MatCardContent,
     MatCardHeader,

@@ -1,11 +1,11 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListCajaResponse } from '@accounting/caja/domain/caja.entity';
 
 export class ListCajaMapper {
   static toJson(params: any) {
     return JSON.stringify({ ...params, tipo: 1 });
   }
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const result = new ListCajaResponse();
     if (response.code === '1') {
       const cajas = JSON.parse(response.payload as string).cajas;

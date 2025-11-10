@@ -14,7 +14,7 @@ import { NgClass } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { SharedService } from '@core/services/shared.service';
 import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
 import { GetFloorsByEstabIdUseCase } from '@restaurant/application/use-cases/floor/get-floors-by-estab-id.use-case';
@@ -42,7 +42,7 @@ import { TableUseCase } from '@restaurant/application/use-cases/table.use-case';
     NgClass,
     MatTooltipModule,
     MatToolbarModule,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './infrastructure-page.component.html',
   styleUrl: './infrastructure-page.component.scss',

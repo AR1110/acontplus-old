@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, throwError } from 'rxjs';
 import { FacturaFisicaLista } from '@purchase/domain/factura-fisica.interface';
 import { FacturaFisicaRepositoryMapper } from './factura-fisica.repository.mapper';
@@ -19,7 +19,7 @@ export class FacturaFisicaRepository {
     const json = JSON.stringify({
       tipo: 3,
     });
-    return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}Get?json=${json}`).pipe(
       map((response) => {
         if (response.code === '1') {
           const dataApi = JSON.parse(response.payload as string);
@@ -36,13 +36,13 @@ export class FacturaFisicaRepository {
       tipo: 1,
       ...obj,
     });
-    return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}Get?json=${json}`).pipe(
       map((response) => {
         const resultData = {
           data: [] as FacturaFisicaLista[],
           totalRecords: 0,
         };
-        if (response && response.code === '1') {
+        if (response?.code === '1') {
           const { facturas } = JSON.parse(response.payload as string);
 
           resultData.data = FacturaFisicaRepositoryMapper.fromApiGetAll(facturas);
@@ -62,10 +62,10 @@ export class FacturaFisicaRepository {
       tipo: 5,
       id,
     });
-    return this.http.get<ApiResponse>(`${this.url}Get?json=${json}`).pipe(
+    return this.http.get<ApiResponseLegacy>(`${this.url}Get?json=${json}`).pipe(
       map((response) => {
         let resultData = {} as any;
-        if (response && response.code === '1') {
+        if (response?.code === '1') {
           const mainData = JSON.parse(response.payload as string);
           resultData = FacturaFisicaRepositoryMapper.fromApiDetalleCompleto(mainData);
         }
@@ -81,7 +81,7 @@ export class FacturaFisicaRepository {
     });
 
     return this.http
-      .get<ApiResponse>(`${this.url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(

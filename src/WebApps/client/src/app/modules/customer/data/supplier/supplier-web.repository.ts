@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { SupplierRepository } from '@customer/domain/repositories/supplier.repository';
 import { CUSTOMER_PATHS } from '@customer/shared/enums/customer.enum';
@@ -27,14 +27,14 @@ export class SupplierWebRepository extends SupplierRepository {
     });
 
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
         map((response) => {
           let suppliers: SupplierSearch[] = [];
 
-          if (response && response.code === '1') {
+          if (response?.code === '1') {
             const { proveedores } = JSON.parse(response.payload as string);
             suppliers = SupplierMapper.fromApiSearch(proveedores);
           }

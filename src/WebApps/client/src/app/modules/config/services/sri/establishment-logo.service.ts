@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -18,16 +18,16 @@ export class EstablishmentLogoService {
   post<T>(establecimientoId: number, file: File) {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.#http.post<ApiResponse>(`${this.#url}${establecimientoId}`, formData);
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}${establecimientoId}`, formData);
   }
 
   put(logoId: number, file: File) {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    return this.#http.post<ApiResponse>(`${this.#url}Put/${logoId}`, formData);
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}Put/${logoId}`, formData);
   }
 
   removeImage(establecimientoId: number) {
-    return this.#http.delete<ApiResponse>(`${this.#url}${establecimientoId}`);
+    return this.#http.delete<ApiResponseLegacy>(`${this.#url}${establecimientoId}`);
   }
 }

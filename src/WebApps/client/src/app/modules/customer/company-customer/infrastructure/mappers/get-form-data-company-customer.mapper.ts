@@ -1,5 +1,5 @@
 import { FormDataCompanyCustomerResponse } from '@company-customer/domain/entities/company-customer.entity';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class GetFormDataCompanyCustomerMapper {
   static toJson() {
@@ -8,7 +8,7 @@ export class GetFormDataCompanyCustomerMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): FormDataCompanyCustomerResponse {
+  static fromJson(response: ApiResponseLegacy): FormDataCompanyCustomerResponse {
     const result = new FormDataCompanyCustomerResponse();
     if (response.code === '1') {
       const mainData = JSON.parse(response.payload as string);

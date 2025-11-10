@@ -6,7 +6,7 @@ import { map } from 'rxjs';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -128,6 +128,6 @@ export class LotPriceService {
   }
 
   put<T>(data: T) {
-    return this.http.put<ApiResponse>(`${this.url}`, { data });
+    return this.http.put<ApiResponseLegacy>(`${this.url}`, { data });
   }
 }

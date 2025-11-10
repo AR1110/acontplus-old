@@ -3,7 +3,7 @@ import { CreditTimeRepository } from '@modules/config/domain/repositories/credit
 import { PATHS_API } from '@core/constants/global.constants';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { ListCreditTimeMapper } from '@modules/config/data/credit-time/list-credit-time.mapper';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
@@ -12,20 +12,20 @@ import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.mod
   providedIn: 'root',
 })
 export class CreditTimeRepositoryImpl implements CreditTimeRepository {
-  delete(params: Partial<CreditTimeList>): Observable<ApiResponse> {
-    return this._http.delete<ApiResponse>(`${this._url}${params.idTiempoCredito}`);
+  delete(params: Partial<CreditTimeList>): Observable<ApiResponseLegacy> {
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${params.idTiempoCredito}`);
   }
   list(params: any): Observable<any> {
     const json = ListCreditTimeMapper.toJson(params);
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => ListCreditTimeMapper.fromJson(response)));
   }
-  create(params: any): Observable<ApiResponse> {
-    return this._http.post<ApiResponse>(`${this._url}?json=${JSON.stringify(params)}`, '');
+  create(params: any): Observable<ApiResponseLegacy> {
+    return this._http.post<ApiResponseLegacy>(`${this._url}?json=${JSON.stringify(params)}`, '');
   }
-  update(params: any): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(
+  update(params: any): Observable<ApiResponseLegacy> {
+    return this._http.put<ApiResponseLegacy>(
       `${this._url}${params.id}?json=${JSON.stringify(params)}`,
       '',
     );

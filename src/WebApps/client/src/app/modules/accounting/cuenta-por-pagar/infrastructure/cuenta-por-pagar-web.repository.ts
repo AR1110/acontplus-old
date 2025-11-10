@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CuentaPorPagarMapper } from './cuenta-por-pagar.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
@@ -27,7 +27,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
   getDataFilter() {
     const json = GetFilterDataCuentaPorPagarMapper.toJson();
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => GetFilterDataCuentaPorPagarMapper.fromJson(response)));
@@ -39,7 +39,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
       ...obj,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -63,7 +63,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
       tipo: 5,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -87,7 +87,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
       idCuentaPorPagar,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -110,7 +110,7 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
       idCuentaPorPagar,
     });
     return this.http
-      .get<ApiResponse>(`${this.url}?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -134,13 +134,13 @@ export class CuentaPorPagarWebRepository implements CuentaPorPagarRepository {
   generarCuotas<T>(obj: T) {
     const params = CuentaPorPagarMapper.toApiGenerarCuota(obj);
     const json = JSON.stringify(params);
-    return this.http.post<ApiResponse>(`${this.url}${json}`, null, {
+    return this.http.post<ApiResponseLegacy>(`${this.url}${json}`, null, {
       context: getNoLoader(),
     });
   }
 
   actualizarCuotas<T>(id: number, obj: T) {
-    return this.http.post<ApiResponse>(`${this.url}${id}`, obj, {
+    return this.http.post<ApiResponseLegacy>(`${this.url}${id}`, obj, {
       context: getNoLoader(),
     });
   }

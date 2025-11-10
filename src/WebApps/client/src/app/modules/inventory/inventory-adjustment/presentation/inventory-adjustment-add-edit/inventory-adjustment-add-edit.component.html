@@ -89,19 +89,17 @@
         </div>
         <div class="col d-flex justify-content-end">
           <div class="hstack gap-2">
-            <app-theme-button
+            <acp-button
               variant="info"
               icon="search"
               text="Búsqueda avanzada"
-              matStyle="basic"
               (handleClick)="openSearchAdvanced()"
             />
-            <app-theme-button
+            <acp-button
               variant="danger"
               icon="refresh"
               text="Cantidad a 0"
               matTooltip="Cambiar cantida de los productos de detalle a 0"
-              matStyle="basic"
               (handleClick)="askToChangeQuantityZero()"
             />
           </div>
@@ -137,12 +135,11 @@
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     type="submit"
     variant="success"
     [icon]="icon()"
     [text]="btnText()"
-    matStyle="basic"
     form="adjustmentForm"
   />
 </ng-template>

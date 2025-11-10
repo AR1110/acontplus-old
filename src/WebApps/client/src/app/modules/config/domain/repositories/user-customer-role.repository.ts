@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   UserCustomerRole,
   UserCustomerRoleAccessResponse,
@@ -8,7 +8,7 @@ import {
 
 export abstract class UserCustomerRoleRepository {
   abstract list<T>(parameters: T): Observable<UserCustomerRoleResponse>;
-  abstract updateAccess(parameters: any): Observable<ApiResponse>;
+  abstract updateAccess(parameters: any): Observable<ApiResponseLegacy>;
   abstract listAccess(
     params: Partial<UserCustomerRole>,
   ): Observable<UserCustomerRoleAccessResponse>;

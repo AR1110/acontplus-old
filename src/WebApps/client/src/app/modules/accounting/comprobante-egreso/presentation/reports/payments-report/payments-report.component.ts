@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 
 import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
 import { Subscription } from 'rxjs';
@@ -41,7 +41,7 @@ enum ReportTypeEnum {
     DateRangeSelectionComponent,
     MatCheckbox,
     MatDivider,
-    ThemeButtonComponent,
+    Button,
     FormsModule,
   ],
   templateUrl: './payments-report.component.html',

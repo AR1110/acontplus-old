@@ -35,7 +35,7 @@ import { CuentaPorPagarCuotaModalComponent } from '@accounting/cuenta-por-pagar/
 
 // Shared Components, Models, and Pipes
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 
 // Core Models
@@ -116,7 +116,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   selection = new SelectionModel<CuentaPorPagarLista>(true, []);
   dataSource = new MatTableDataSource<CuentaPorPagarLista>();
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   dataSearch = model({
     codEstab: null as string | null | undefined,
@@ -156,10 +156,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
   private setResponseGetAll(response: any) {
     this.dataSource = new MatTableDataSource(response.data);
-    this.pagination.update((p) => ({
-      ...p,
-      totalRecords: response.totalRecords,
-    }));
+    this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
   }
   private getAll() {
     // Evitar múltiples llamadas si ya está cargando
@@ -438,12 +435,9 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

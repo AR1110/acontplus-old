@@ -1,5 +1,5 @@
 using Acontplus.Core.Domain.Common.Results;
-using Restaurant.Application.DTOs.MealManagement;
+using Restaurant.Application.Dtos.MealManagement;
 
 namespace Restaurant.Application.Interfaces.MealManagement;
 public interface IMealConsumptionService

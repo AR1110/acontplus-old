@@ -18,17 +18,12 @@
 />
 
 <ng-template #toolbarTpl>
-  <app-theme-button
-    [icon]="'add'"
-    matStyle="basic"
-    [text]="'Nuevo'"
-    (handleClick)="openAddEstablishment()"
-  />
+  <acp-button [icon]="'add'" [text]="'Nuevo'" (handleClick)="openAddEstablishment()" />
 </ng-template>
 
 <ng-template #opTpl let-row>
   <div class="d-hstack gap-2 d-md-flex">
-    <app-theme-button
+    <acp-button
       type="button"
       matStyle="icon"
       icon="edit"
@@ -37,7 +32,7 @@
     />
 
     @if (row.estado) {
-      <app-theme-button
+      <acp-button
         variant="danger"
         type="button"
         matStyle="icon"
@@ -101,7 +96,7 @@
 
                     <div class="d-flex flex-row gap-1 p-1">
                       @if (newEstablishmentImgUploaded()) {
-                        <app-theme-button
+                        <acp-button
                           variant="success"
                           type="button"
                           icon="upload"
@@ -110,7 +105,7 @@
                         />
                       }
 
-                      <app-theme-button
+                      <acp-button
                         variant="danger"
                         type="button"
                         icon="delete"
@@ -155,23 +150,22 @@
         }"
       />
       <ng-template #toolbarPuntoEmisionTpl>
-        <app-theme-button
+        <acp-button
           [icon]="'add'"
-          matStyle="basic"
           [text]="'Nuevo'"
           (handleClick)="modalAddEditPuntoEmision(estabTemp)"
         />
       </ng-template>
       <ng-template #opPuntoEmisionTpl let-row>
         <div class="d-flex flex-row gap-1 justify-content-center">
-          <app-theme-button
+          <acp-button
             variant="warning"
             type="button"
             icon="edit"
             matStyle="icon"
             (handleClick)="modalAddEditPuntoEmision(estabTemp, row)"
           />
-          <app-theme-button
+          <acp-button
             type="button"
             variant="danger"
             icon="delete"

@@ -13,14 +13,14 @@ import { ActionMovCajaDirective } from '@shared/directives/permission/action-mov
 import Swal from 'sweetalert2';
 
 import { AperturaCajaModalComponent } from '@accounting/caja/presentation/components/apertura-caja-modal/apertura-caja-modal.component';
-import { CajaModalComponent } from '@accounting/caja/presentation/components/caja-modal/caja-modal.component';
+import CajaModalComponent from '@accounting/caja/presentation/components/caja-modal/caja-modal.component';
 import { CajaUseCase } from '@accounting/caja/application/use-cases/caja.use-case';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { ControlCajaModalComponent } from '@accounting/caja/presentation/control-caja-modal/control-caja-modal.component';
@@ -63,7 +63,7 @@ export class CajaComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   refresh() {
     this.getCashboxs();
@@ -77,12 +77,9 @@ export class CajaComponent implements OnInit {
 
     this._cajaUseCase.getAll(params).subscribe((response) => {
       this.cashboxs.set(response.data);
-      this.pagination.update((item) => {
-        return {
-          ...item,
-          totalRecords: response.totalRecords,
-        };
-      });
+      this.pagination.update(
+        (item) => new Pagination(item.pageIndex, item.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -166,12 +163,9 @@ export class CajaComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

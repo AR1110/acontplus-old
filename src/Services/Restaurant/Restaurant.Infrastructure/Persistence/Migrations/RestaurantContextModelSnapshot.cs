@@ -548,6 +548,165 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Item", "Restaurant");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.ItemComposition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ChildItemId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CostPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Discount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int?>("ExtentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("ExtraCharge")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int?>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Instructions")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsOptional")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ItemCompositionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MeasureId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("NetWeight")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int?>("TaxId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UniqueId")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("WastePercentage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal?>("Weight")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChildItemId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_ItemComposition_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_ItemComposition_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_ItemComposition_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_ItemComposition_IsDeleted");
+
+                    b.HasIndex("ItemCompositionId");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_ItemComposition_Status");
+
+                    b.ToTable("ItemComposition", "Restaurant");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.ItemType", b =>
                 {
                     b.Property<int>("Id")
@@ -2708,6 +2867,29 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("IngredientType");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.ItemComposition", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "ChildItem")
+                        .WithMany()
+                        .HasForeignKey("ChildItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.ItemComposition", null)
+                        .WithMany("Children")
+                        .HasForeignKey("ItemCompositionId");
+
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChildItem");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.MealManagement.MealPlan", "MealPlan")
@@ -2924,6 +3106,11 @@ namespace Restaurant.Api.Data.Migrations
             modelBuilder.Entity("Restaurant.Domain.Entities.Floor", b =>
                 {
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.ItemComposition", b =>
+                {
+                    b.Navigation("Children");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>

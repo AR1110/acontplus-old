@@ -34,15 +34,15 @@
       </div>
       <div class="col">
         <div class="hstack gap-1">
-          <app-theme-button variant="light" icon="add" matStyle="icon" (handleClick)="addEdit()" />
-          <app-theme-button
-            variant="light"
+          <acp-button variant="secondary" icon="add" matStyle="icon" (handleClick)="addEdit()" />
+          <acp-button
+            variant="secondary"
             icon="refresh"
             matStyle="icon"
             (handleClick)="refresh()"
           />
-          <app-theme-button
-            variant="light"
+          <acp-button
+            variant="secondary"
             icon="filter_list"
             matStyle="icon"
             (handleClick)="isMoreFilter.set(!isMoreFilter())"

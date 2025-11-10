@@ -1,6 +1,6 @@
 import { ListShiftResponse, ShiftList } from '@modules/config/domain/models/shift.models';
 import { ShiftRepository } from '@modules/config/domain/repositories/shift.repository';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
@@ -14,15 +14,15 @@ export class ShiftUseCase {
     return this.shiftRepository.list(params);
   }
 
-  createShift(params: ShiftList): Observable<ApiResponse> {
+  createShift(params: ShiftList): Observable<ApiResponseLegacy> {
     return this.shiftRepository.create(params);
   }
 
-  updateShift(params: ShiftList): Observable<ApiResponse> {
+  updateShift(params: ShiftList): Observable<ApiResponseLegacy> {
     return this.shiftRepository.update(params);
   }
 
-  deleteShift(params: Partial<ShiftList>): Observable<ApiResponse> {
+  deleteShift(params: Partial<ShiftList>): Observable<ApiResponseLegacy> {
     return this.shiftRepository.delete(params);
   }
 }

@@ -13,7 +13,7 @@ import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
@@ -32,7 +32,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
     UserSearchComponent,
     MatCardContent,
     MatCard,
-    ThemeButtonComponent,
+    Button,
     MatCheckbox,
     MatFormField,
     MatSelect,

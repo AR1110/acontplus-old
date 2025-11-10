@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
@@ -50,16 +50,16 @@ export class WarehouseTransferHttpRepository implements WarehouseTransferReposit
 
   post<T>(obj: T) {
     const dto = WarehouseTransferSaveMapper.toJson(obj);
-    return this._http.post<ApiResponse>(`${this._url}`, dto);
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, dto);
   }
   put<T>(id: number, data: T) {
     const dto = WarehouseTransferSaveMapper.toJson(data);
 
-    return this._http.put<ApiResponse>(`${this._url}/${id}`, dto);
+    return this._http.put<ApiResponseLegacy>(`${this._url}/${id}`, dto);
   }
 
   updateStatus(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}/${id}`).pipe(
+    return this._http.delete<ApiResponseLegacy>(`${this._url}/${id}`).pipe(
       map((response) => {
         return {
           success: response.code === '1',

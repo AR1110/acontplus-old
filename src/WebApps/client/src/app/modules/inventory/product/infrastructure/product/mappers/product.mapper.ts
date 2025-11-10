@@ -2,11 +2,11 @@ import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category
 import { ProductSearch } from '@inventory/product/domain/entities/product.entity';
 import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { imgDefault } from '@core/utils/utils';
 
 export class ProductMapper {
-  static fromApiDataFilter(response: ApiResponse) {
+  static fromApiDataFilter(response: ApiResponseLegacy) {
     const { brands, measures, models, subcategories, taxes } = JSON.parse(
       response.payload as string,
     );
@@ -60,7 +60,7 @@ export class ProductMapper {
     return [];
   }
 
-  static fromApiGetAll(response: ApiResponse) {
+  static fromApiGetAll(response: ApiResponseLegacy) {
     const { products } = JSON.parse(response.payload as string);
 
     const data = products || [];
@@ -91,7 +91,7 @@ export class ProductMapper {
     });
   }
 
-  static fromApiDataReport(response: ApiResponse) {
+  static fromApiDataReport(response: ApiResponseLegacy) {
     const {
       brands,
       documentTypes,
@@ -117,7 +117,7 @@ export class ProductMapper {
     };
   }
 
-  static fromApiSale(response: ApiResponse) {
+  static fromApiSale(response: ApiResponseLegacy) {
     let { product, fractionedMeasures, measures, inventoryAdjustment, additionalInfo } = JSON.parse(
       response.payload as string,
     );
@@ -137,7 +137,7 @@ export class ProductMapper {
     };
   }
 
-  static fromApiCheckStockNotificacion(responseApi: ApiResponse) {
+  static fromApiCheckStockNotificacion(responseApi: ApiResponseLegacy) {
     const { stockCheckResponse } = JSON.parse(responseApi.payload as string);
     return stockCheckResponse[0];
   }

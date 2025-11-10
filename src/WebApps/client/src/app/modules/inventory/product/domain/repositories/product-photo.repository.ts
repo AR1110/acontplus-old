@@ -1,15 +1,15 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ProductPhotoSaveParam } from '@inventory/product/domain/entities/product-photo.model';
 
 export abstract class ProductPhotoRepository {
-  abstract post(obj: ProductPhotoSaveParam): Observable<ApiResponse>;
-  abstract put(obj: ProductPhotoSaveParam): Observable<ApiResponse>;
+  abstract post(obj: ProductPhotoSaveParam): Observable<ApiResponseLegacy>;
+  abstract put(obj: ProductPhotoSaveParam): Observable<ApiResponseLegacy>;
   abstract getByProductId(productId: number): Observable<
-    ApiResponse<{
+    ApiResponseLegacy<{
       productPhotos: any[];
     }>
   >;
-  abstract setDefault(id: number, isDefault: boolean): Observable<ApiResponse>;
-  abstract putStatus(id: number): Observable<ApiResponse>;
+  abstract setDefault(id: number, isDefault: boolean): Observable<ApiResponseLegacy>;
+  abstract putStatus(id: number): Observable<ApiResponseLegacy>;
 }

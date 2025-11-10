@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { UserProfileService } from '@modules/config/services/user-profile.service';
@@ -6,7 +6,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { MatCheckbox } from '@angular/material/checkbox';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
@@ -21,12 +21,12 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
     MatTabsModule,
     MatCheckbox,
     ReactiveFormsModule,
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatInputModule,
   ],
 })
-export class ProfileSettings {
+export class ProfileSettings implements OnInit {
   private readonly userProfileService = inject(UserProfileService);
   private tS = inject(ToastrNotificationService);
   private router = inject(Router);

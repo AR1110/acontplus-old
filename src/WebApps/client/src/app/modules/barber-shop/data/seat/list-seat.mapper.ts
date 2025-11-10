@@ -1,9 +1,9 @@
 import { SeatResponse } from '@barber-shop/domain/models/seat.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListSeatMapper {
   static toJson() {}
-  static fromJson(response: ApiResponse): SeatResponse {
+  static fromJson(response: ApiResponseLegacy): SeatResponse {
     const results = (response.payload as any[]) || [];
     const data = results.map((item, index) => {
       return {

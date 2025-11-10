@@ -44,7 +44,7 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <app-theme-button
+    <acp-button
       variant="success"
       icon="save"
       matStyle="icon"
@@ -52,7 +52,7 @@
       (handleClick)="saveConfig(item)"
     />
     @if (item.hasInfoAdicional) {
-      <app-theme-button
+      <acp-button
         icon="sell"
         matStyle="icon"
         [disabled]="!item.ultimaSecuencia"

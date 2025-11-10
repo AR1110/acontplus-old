@@ -27,22 +27,19 @@
                   @for (item of productionAreas; track $index) {
                     <tr>
                       <td class="text-center">
-                        <app-theme-button
+                        <acp-button
                           variant="warning"
                           icon="edit"
                           title="Editar"
                           matStyle="icon"
                           (handleClick)="onEdit(item)"
-                        >
-                        </app-theme-button
-                        ><app-theme-button
+                        /><acp-button
                           variant="danger"
                           icon="delete"
                           title="Eliminar"
                           matStyle="icon"
                           (handleClick)="onDelete(item)"
-                        >
-                        </app-theme-button>
+                        />
                       </td>
                       <td class="text-center">{{ $index + 1 }}</td>
                       <td class="text-center">{{ item.code }}</td>

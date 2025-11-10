@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { ControlCajaUseCase } from '@accounting/caja/application/use-cases/control-caja.use-case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +25,7 @@ interface Modeda {
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     CurrencyPipe,
   ],

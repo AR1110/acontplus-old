@@ -4,9 +4,8 @@ import { ProductSearchComponent } from '@inventory/product/presentation/componen
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -55,14 +54,13 @@ const imports = [
   SupplierSearchComponent,
   UserSearchComponent,
   CompanyCustomerSearchComponent,
-  ReportButtonsComponent,
   //Directives
   ActionEnviarCorreoDirective,
 ];
 
 @Component({
   selector: 'app-inventory-report',
-  imports: [imports, ReportButtonsComponent, ThemeButtonComponent],
+  imports: [imports, Button],
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })
@@ -489,6 +487,7 @@ export class InventoryReportComponent implements OnInit {
             ? null
             : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
+        idTipoIva: getValidId(this.dataSearch.idTipoIva),
       };
 
       const parameters = {
@@ -536,6 +535,7 @@ export class InventoryReportComponent implements OnInit {
             ? null
             : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
+        idTipoIva: getValidId(this.dataSearch.idTipoIva),
       };
 
       const parameters = {

@@ -71,7 +71,7 @@ export class BreadcrumbService {
     }
 
     for (const child of children) {
-      if (!child.snapshot || !child.snapshot.url) {
+      if (!child.snapshot?.url) {
         continue;
       }
       const routeSegments = child.snapshot.url.map((seg) => seg.path).filter(Boolean);

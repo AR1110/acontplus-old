@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient, HttpContext } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { CompanyCustomerRepository } from '@company-customer/domain/company-customer.repository';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
@@ -23,20 +23,20 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {
     const json = ListCompanyCustomerMapper.toJson(obj);
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => ListCompanyCustomerMapper.fromJson(response)));
   }
 
   getDataForm() {
     const json = GetFormDataCompanyCustomerMapper.toJson();
     return this._http
-      .get<ApiResponse>(`${this._url}?json=${json}`)
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(map((response) => GetFormDataCompanyCustomerMapper.fromJson(response)));
   }
 
   getId(id: number, noLoader?: boolean) {
     return this._http
-      .get<ApiResponse>(`${this._url}GetId/${id}`, {
+      .get<ApiResponseLegacy>(`${this._url}GetId/${id}`, {
         context: noLoader ? getNoLoader() : new HttpContext(),
       })
       .pipe(map((response) => GetIdCompanyCustomerMapper.fromJson(response)));
@@ -45,7 +45,7 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
   search(obj: SearchCompanyCustomerParams) {
     const json = SearchCompanyCustomerMapper.toJson(obj);
     return this._http
-      .get<ApiResponse>(`${this._url}Search?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(map((response) => SearchCompanyCustomerMapper.fromJson(response)));
@@ -53,7 +53,7 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
 
   checkExistence<T>(params: T) {
     const json = JSON.stringify({ ...params, tipo: 3 });
-    return this._http.get<ApiResponse>(`${this._url}?json=${json}`).pipe(
+    return this._http.get<ApiResponseLegacy>(`${this._url}?json=${json}`).pipe(
       map((response) => {
         if (response.code === '1') {
           const [mainData] = JSON.parse(response.payload as string);
@@ -70,17 +70,19 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
   }
 
   updateState(idCliente: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${idCliente}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${idCliente}`);
   }
 
   post(params: any) {
     return this._http
-      .post<ApiResponse>(this._url, { data: CreateUpdateCompanyCustomerMapper.toJson(params) })
+      .post<ApiResponseLegacy>(this._url, {
+        data: CreateUpdateCompanyCustomerMapper.toJson(params),
+      })
       .pipe(map((response) => CreateUpdateCompanyCustomerMapper.fromJson(response)));
   }
 
   put(params: UpdateCompanyCustomerParamsDto) {
-    return this._http.put<ApiResponse>(`${this._url}${params.id}`, {
+    return this._http.put<ApiResponseLegacy>(`${this._url}${params.id}`, {
       data: CreateUpdateCompanyCustomerMapper.toJson(params.data),
     });
   }

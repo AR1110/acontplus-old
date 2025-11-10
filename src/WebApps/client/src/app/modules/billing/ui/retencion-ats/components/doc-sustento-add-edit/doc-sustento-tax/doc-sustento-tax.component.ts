@@ -2,7 +2,7 @@ import { AfterViewInit, Component, inject, input, signal } from '@angular/core';
 import { FormArray, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Impuesto } from '@sri/domain/models/impuesto';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
@@ -12,14 +12,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 @Component({
   selector: 'app-doc-sustento-tax',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    ThemeButtonComponent,
-    MatFormField,
-    MatSelectModule,
-    MatInput,
-  ],
+  imports: [FormsModule, ReactiveFormsModule, Button, MatFormField, MatSelectModule, MatInput],
   templateUrl: './doc-sustento-tax.component.html',
   styles: ``,
 })

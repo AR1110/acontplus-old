@@ -12,7 +12,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
 import Swal from 'sweetalert2';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   addDayToDate,
   ajustarFechaEmisionModificada,
@@ -148,7 +148,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
     dataTreeSelectPropagate: false,
   };
 
-  successResponse = (response: ApiResponse) => {
+  successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
       this.tS.show({
         type: 'warning',

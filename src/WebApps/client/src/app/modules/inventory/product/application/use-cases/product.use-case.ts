@@ -26,7 +26,7 @@ export class ProductUseCase {
   }
 
   getForSale(id: number) {
-    return this.repo.getForSale(id);
+    return this.repo.getForSale({ id });
   }
 
   checkNotificationStock<

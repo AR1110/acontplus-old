@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { GetIdCajaResponse } from '@accounting/caja/domain/caja.entity';
 
 export class GetIdCajaMapper {
@@ -6,7 +6,7 @@ export class GetIdCajaMapper {
     return JSON.stringify({ id, tipo: 3 });
   }
 
-  static fromJson(response: ApiResponse): GetIdCajaResponse {
+  static fromJson(response: ApiResponseLegacy): GetIdCajaResponse {
     const result = new GetIdCajaResponse();
     if (response.code === '1') {
       const { caja = [], asignaciones = [] } = JSON.parse(response.payload as string);

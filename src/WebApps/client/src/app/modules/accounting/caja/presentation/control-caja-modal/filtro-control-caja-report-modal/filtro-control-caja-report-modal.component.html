@@ -9,7 +9,7 @@
     <mat-form-field>
       <mat-label>Ordenar por defecto:</mat-label>
       <mat-select [(ngModel)]="dataSearch.sortByDefault">
-        <mat-option></mat-option>
+        <mat-option />
         <option [value]="''">--Todos--</option>
         @for (item of sortByDefaults; track $index) {
           <mat-option [value]="item.id">{{ item.description }}</mat-option>
@@ -20,7 +20,7 @@
     <mat-form-field>
       <mat-label>Criterio de clasificación:</mat-label>
       <mat-select [(ngModel)]="dataSearch.sortOrder">
-        <mat-option></mat-option>
+        <mat-option />
         <option [value]="''">--Todos--</option>
         @for (item of sortOrders; track $index) {
           <mat-option [value]="item.codigo">{{ item.description }}</mat-option>
@@ -29,13 +29,13 @@
     </mat-form-field>
 
     <div class="hstack gap-1">
-      <app-theme-button
+      <acp-button
         variant="danger"
         icon="picture_as_pdf"
         text="Pdf"
         (handleClick)="askToReport('pdf')"
       />
-      <app-theme-button
+      <acp-button
         variant="success"
         icon="download"
         text="Excel"

@@ -11,7 +11,7 @@ import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.s
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { PromotionService } from '@restaurant/data/services/promotion.service';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,7 +28,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     InputDateComponent,
     ToUpperCaseDirective,
     MenuSearchComponent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatSelectModule,

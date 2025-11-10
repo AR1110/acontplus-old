@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
+namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
 
 public static class GetEndpoints
 {
@@ -11,7 +11,7 @@ public static class GetEndpoints
             .WithTags("Meal Plans");
         group.MapGet("/{establishmentId:int}", async (int establishmentId, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
         {
-            return await mealPlanService.GetAsync(establishmentId, cancellationToken).ToMinimalApiResultAsync();
+            return await mealPlanService.GetAsync(establishmentId, cancellationToken).ToGetMinimalApiResultAsync();
         })
             .WithName("GetAllMealPlans")
             .WithSummary("Get all meal plans")

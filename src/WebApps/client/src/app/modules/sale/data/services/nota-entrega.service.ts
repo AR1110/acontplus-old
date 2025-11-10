@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 
 import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
@@ -22,7 +22,7 @@ export class NotaEntregaService {
       tipo: 3,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -54,7 +54,7 @@ export class NotaEntregaService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -63,7 +63,7 @@ export class NotaEntregaService {
             data: [] as any[],
             totalRecords: 0,
           };
-          if (response && response.code === '1') {
+          if (response?.code === '1') {
             let [notasEntrega] = JSON.parse(response.payload as string);
 
             notasEntrega = notasEntrega || [];
@@ -82,7 +82,7 @@ export class NotaEntregaService {
       id,
     });
     return this.#http
-      .get<ApiResponse>(`${this.#url}Get?json=${json}`, {
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
         context: getNoLoader(),
       })
       .pipe(
@@ -99,10 +99,10 @@ export class NotaEntregaService {
   }
 
   post<T>(data: T) {
-    return this.#http.post<ApiResponse>(`${this.#url}Insert`, { data });
+    return this.#http.post<ApiResponseLegacy>(`${this.#url}Insert`, { data });
   }
 
   put<T>(id: number, data: T) {
-    return this.#http.put<ApiResponse>(`${this.#url}${id}`, { data });
+    return this.#http.put<ApiResponseLegacy>(`${this.#url}${id}`, { data });
   }
 }

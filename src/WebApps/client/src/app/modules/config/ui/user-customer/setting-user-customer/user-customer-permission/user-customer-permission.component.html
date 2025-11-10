@@ -1,12 +1,12 @@
 <div class="d-grid gap-2">
   <div class="hstack gap-2">
-    <app-theme-button
+    <acp-button
       [variant]="'success'"
       [icon]="userPermissionData.idUserPermission > 0 ? 'edit' : 'save'"
       [text]="userPermissionData.idUserPermission > 0 ? 'Actualizar' : 'Guardar'"
       (handleClick)="save()"
     />
-    <app-theme-button
+    <acp-button
       [variant]="'info'"
       [matStyle]="'icon'"
       [icon]="'refresh'"
@@ -44,7 +44,7 @@
       <th mat-header-cell *matHeaderCellDef>Estado</th>
       <td mat-cell *matCellDef="let data">
         @if (data.hasStatus) {
-          <mat-slide-toggle [(ngModel)]="data.enabled" [checked]="data.enabled"></mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="data.enabled" [checked]="data.enabled" />
         }
       </td>
     </ng-container>

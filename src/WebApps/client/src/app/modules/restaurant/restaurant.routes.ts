@@ -10,9 +10,9 @@ export const routes: Route[] = [
     data: {
       breadcrumb: 'Productos',
     },
-    resolve: {
-      configData: restaurantConfigDataResolver,
-    },
+    // resolve: {
+    //   configData: restaurantConfigDataResolver,
+    // },
   },
   {
     path: '',

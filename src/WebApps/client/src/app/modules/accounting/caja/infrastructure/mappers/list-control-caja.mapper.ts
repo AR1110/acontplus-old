@@ -1,11 +1,11 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListControlCajaResponse } from '@accounting/caja/domain/control-caja.entity';
 
 export class ListControlCajaMapper {
   static toJson(obj: any) {
     return JSON.stringify({ ...obj, tipo: 1 });
   }
-  static fromJson(response: ApiResponse): ListControlCajaResponse {
+  static fromJson(response: ApiResponseLegacy): ListControlCajaResponse {
     const result = new ListControlCajaResponse();
     if (response.code === '1') {
       const movimientos = JSON.parse(response.payload as string).movimientos || [];

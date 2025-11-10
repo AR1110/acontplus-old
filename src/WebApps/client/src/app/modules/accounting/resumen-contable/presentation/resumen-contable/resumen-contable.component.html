@@ -41,18 +41,8 @@
     </div>
 
     <div class="hstack gap-1">
-      <app-theme-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="Pdf"
-        (handleClick)="reportPdf()"
-      />
-      <app-theme-button
-        variant="success"
-        icon="download"
-        text="Excel"
-        (handleClick)="reportExcel()"
-      />
+      <acp-button variant="danger" icon="picture_as_pdf" text="Pdf" (handleClick)="reportPdf()" />
+      <acp-button variant="success" icon="download" text="Excel" (handleClick)="reportExcel()" />
     </div>
   </div>
 </app-mat-dynamic-card>

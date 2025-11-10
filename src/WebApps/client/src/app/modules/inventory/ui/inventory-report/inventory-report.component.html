@@ -140,6 +140,7 @@
         </ng-template>
       </mat-tab>
 
+      <!-- Report Stock -->
       <mat-tab label="Stock">
         <ng-template matTabContent>
           <div class="d-grid gap-2 p-1">
@@ -259,6 +260,21 @@
                   </mat-form-field>
                 </div>
               }
+
+              <!-- Added by Ignacio Manchu -->
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Tipo Iva:</mat-label>
+                  <mat-select [(ngModel)]="dataSearch.idTipoIva">
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of taxes(); track $index) {
+                      <mat-option [value]="item.idTipoIva">
+                        {{ item.descripcion }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
             </div>
           </div>
         </ng-template>
@@ -270,6 +286,8 @@
           (onChangeDateRange)="onDateRangeSelection($event)"
         />
       </ng-template>
+
+      <!-- Report de PvPs -->
       <mat-tab label="Pvps">
         <ng-template matTabContent>
           <div class="d-grid gap-2 p-1">
@@ -360,6 +378,8 @@
           </div>
         </ng-template>
       </mat-tab>
+
+      <!-- Report Artículos Fraccionados -->
       <mat-tab label="Artículos fraccionados">
         <ng-template matTabContent>
           <div class="d-grid gap-2 p-3">
@@ -417,6 +437,8 @@
           </div>
         </ng-template>
       </mat-tab>
+
+      <!-- Report Caducidad -->
       <mat-tab label="Caducidad">
         <ng-template matTabContent>
           <div class="d-grid gap-2 p-1">
@@ -533,22 +555,24 @@
   <mat-card-actions class="d-flex gap-2">
     <div class="d-flex flex-row gap-1">
       @if (isReporting) {
-        <app-report-buttons
-          [fileType]="FORMAT_REPORT.PDF"
+        <acp-button
+          variant="danger"
+          icon="picture_as_pdf"
           text="Ver PDF"
-          (exportReport)="getReportPDF()"
+          (handleClick)="getReportPDF()"
         />
       }
 
       @if (isReporting) {
-        <app-report-buttons
-          [fileType]="FORMAT_REPORT.EXCEL"
+        <acp-button
+          variant="success"
+          icon="download"
           text="Descargar Excel"
-          (exportReport)="getReportExcel()"
+          (handleClick)="getReportExcel()"
         />
       }
       @if (selected.value === 0) {
-        <app-theme-button
+        <acp-button
           icon="email"
           text="Enviar por correo"
           (handleClick)="askToSendMail()"

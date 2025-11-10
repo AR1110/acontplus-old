@@ -7,24 +7,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { OrderService } from '@modules/technical-support/services/order.service';
 
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 @Component({
   selector: 'app-order-delivery-modal',
-  imports: [
-    FormsModule,
-    MatCheckboxModule,
-    ReactiveFormsModule,
-    ThemeButtonComponent,
-    MatCustomDialogComponent,
-  ],
+  imports: [FormsModule, MatCheckboxModule, ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './order-delivery-modal.component.html',
   styles: ``,
 })

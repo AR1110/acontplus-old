@@ -2,11 +2,11 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
 import { PageEvent } from '@angular/material/paginator';
 
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
@@ -20,7 +20,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -34,7 +34,7 @@ import { MatIconButton } from '@angular/material/button';
     FormsModule,
     MatMenuModule,
     MatDynamicTableComponent,
-    ThemeButtonComponent,
+    Button,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
@@ -79,7 +79,7 @@ export class MedicalHistoryPageComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   // applyFilter(event: Event) {
   //   this.searching = true;
@@ -127,10 +127,15 @@ export class MedicalHistoryPageComponent implements OnInit {
           index: index + 1,
         }));
         this.dataSource.set(historiesModified);
-        this.pagination.update((r) => ({
-          ...r,
-          totalRecords: this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0,
-        }));
+        this.pagination;
+        this.pagination.update(
+          (r) =>
+            new Pagination(
+              r.pageIndex,
+              r.pageSize,
+              this.dataSource().length > 0 ? this.dataSource()[0].totalRecords || 0 : 0,
+            ),
+        );
       }
     });
   }
@@ -214,12 +219,9 @@ export class MedicalHistoryPageComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

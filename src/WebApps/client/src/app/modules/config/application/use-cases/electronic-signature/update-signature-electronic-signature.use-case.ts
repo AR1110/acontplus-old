@@ -3,13 +3,13 @@ import { BaseUseCase } from '@core/base-use-case';
 import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
 import { ElectronicSignatureRepository } from '@modules/config/domain/repositories/electronic-signature.repository';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UpdateSignatureElectronicSignatureUseCase
-  implements BaseUseCase<ApiResponse, Partial<ElectronicSignatureParam>>
+  implements BaseUseCase<ApiResponseLegacy, Partial<ElectronicSignatureParam>>
 {
   private repo = inject(ElectronicSignatureRepository);
 
@@ -18,7 +18,7 @@ export class UpdateSignatureElectronicSignatureUseCase
 
   constructor() {}
 
-  execute(params: Partial<ElectronicSignatureParam>): Observable<ApiResponse> {
+  execute(params: Partial<ElectronicSignatureParam>): Observable<ApiResponseLegacy> {
     return this.repo.updateSignature(params);
   }
 }

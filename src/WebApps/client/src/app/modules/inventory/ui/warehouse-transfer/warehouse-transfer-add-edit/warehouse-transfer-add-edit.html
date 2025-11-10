@@ -99,11 +99,10 @@
         </mat-form-field>
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 d-flex justify-content-end">
-        <app-theme-button
+        <acp-button
           variant="info"
           icon="filter_list"
           text="Filtro Avanzado"
-          matStyle="basic"
           (handleClick)="openFilterAdvanced()"
         />
       </div>
@@ -125,12 +124,6 @@
     </div>
   </section>
   <section ngProjectAs="actions">
-    <app-theme-button
-      variant="success"
-      [icon]="btnIcon()"
-      [text]="btnText()"
-      matStyle="basic"
-      (handleClick)="save()"
-    />
+    <acp-button variant="success" [icon]="btnIcon()" [text]="btnText()" (handleClick)="save()" />
   </section>
 </app-mat-custom-dialog>

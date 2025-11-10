@@ -10,7 +10,7 @@ import { MassiveTaxWebRepository } from '@inventory/data/massive-tax/massive-tax
 import { MeasureRepository } from '@inventory/domain/repositories/measure.repository';
 import { MeasureWebRepository } from '@inventory/data/measure/measure-web.repository';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
-import { ProductRepositoryImpl } from '@inventory/product/infrastructure/product/product-repository-impl';
+import { ProductHttpRepository } from '@inventory/product/infrastructure/product/product-http-repository';
 import { ProductBarcodeRepository } from '@inventory/product/domain/repositories/product-barcode.repository';
 import { ProductBarcodeRepositoryImpl } from '@inventory/product/infrastructure/product-barcode/product-barcode-repository-impl';
 import { ProductPhotoRepository } from '@inventory/product/domain/repositories/product-photo.repository';
@@ -49,7 +49,7 @@ export const DATA_INVENTORY_IOC: Provider[] = [
   },
   {
     provide: ProductRepository,
-    useClass: ProductRepositoryImpl,
+    useClass: ProductHttpRepository,
   },
 
   {

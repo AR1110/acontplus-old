@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Restaurant.Application.DTOs;
+namespace Restaurant.Application.Dtos;
 
 public record CreateItemDto
 {
@@ -19,7 +19,7 @@ public record CreateItemDto
     [MaxLength(500)]
     public string Content { get; init; } = string.Empty;
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public List<CreateRecipeDto> RecipeJson { get; init; } = [];
 
@@ -43,7 +43,7 @@ public record UpdateItemDto
     [MaxLength(500)]
     public string Content { get; init; } = string.Empty;
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public List<UpdateRecipeDto> RecipeJson { get; init; } = [];
 
@@ -68,7 +68,7 @@ public record CreateRecipeDto
 
     public float Quantity { get; init; }
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public int ExtentId { get; init; }
 
@@ -93,7 +93,7 @@ public record UpdateRecipeDto
 
     public float Quantity { get; init; }
 
-    public bool Enabled { get; init; } = true;
+    public bool IsActive { get; init; } = true;
 
     public int ExtentId { get; init; }
 

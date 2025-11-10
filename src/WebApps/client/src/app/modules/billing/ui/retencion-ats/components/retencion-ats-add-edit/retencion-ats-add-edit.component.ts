@@ -23,7 +23,7 @@ import { GenericModel } from '@core/models/generic.model';
 import { TarifaImpuesto } from '@sri/domain/models/tarifa-impuesto';
 import { SustentoTributario } from '@sri/domain/models/sustento-tributario';
 import { DocSustentoAddEditComponent } from '@billing/ui/retencion-ats/components/doc-sustento-add-edit/doc-sustento-add-edit.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { ImpuestoRetencion } from '@sri/domain/models/impuesto-retencion';
 import { ConceptoRetencionAir } from '@sri/domain/models/concepto-retencion-air';
 import { PorcentajeRetencionIva } from '@sri/domain/models/porcentaje-retencion-iva';
@@ -54,7 +54,7 @@ import { formatDate } from '@core/utils/date.util';
     SupplierSearchComponent,
     MatCardActions,
     DocSustentoAddEditComponent,
-    ThemeButtonComponent,
+    Button,
     MatFormField,
     MatSelectModule,
     MatInput,

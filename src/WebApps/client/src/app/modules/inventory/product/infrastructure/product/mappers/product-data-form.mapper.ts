@@ -1,9 +1,9 @@
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ProductDataFormMapper {
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     const {
       brands,
       categories,

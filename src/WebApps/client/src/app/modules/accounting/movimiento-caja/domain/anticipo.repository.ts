@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
 
 export abstract class AnticipoRepository {
@@ -11,7 +11,7 @@ export abstract class AnticipoRepository {
   abstract getDataFilter(): Observable<{
     establecimientos: any[];
   }>;
-  abstract create<T>(data: T): Observable<ApiResponse>;
-  abstract update<T>(id: number, data: T): Observable<ApiResponse>;
-  abstract delete(id: number): Observable<ApiResponse>;
+  abstract create<T>(data: T): Observable<ApiResponseLegacy>;
+  abstract update<T>(id: number, data: T): Observable<ApiResponseLegacy>;
+  abstract delete(id: number): Observable<ApiResponseLegacy>;
 }

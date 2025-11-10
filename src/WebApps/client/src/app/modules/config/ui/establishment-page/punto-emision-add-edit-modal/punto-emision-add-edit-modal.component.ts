@@ -4,7 +4,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { isValidField } from '@core/utils/utils';
 import { PuntoEmisionService } from '@modules/config/services/sri/punto-emision.service';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -17,7 +17,7 @@ import { MatRadioModule } from '@angular/material/radio';
   imports: [
     InputNumberDirective,
     FormsModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
     MatFormFieldModule,
     MatInputModule,

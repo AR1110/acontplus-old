@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { SharedService } from '@core/services/shared.service';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { BILLING_PATHS } from '@billing/domain/enums/billing.enum.ts';
@@ -20,7 +20,7 @@ export class AtsService {
 
   checkValidation<T>(params: T) {
     return this.#http
-      .get<ApiResponse>(`${this.#url}CheckValidation/?json=${JSON.stringify(params)}`)
+      .get<ApiResponseLegacy>(`${this.#url}CheckValidation/?json=${JSON.stringify(params)}`)
       .pipe(map((response) => response));
   }
 

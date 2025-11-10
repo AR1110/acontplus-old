@@ -1,18 +1,18 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { Modelo } from '@modules/technical-support/models/modelo';
 import { ModeloService } from '@modules/technical-support/services/modelo.service';
 import { ModeloModalComponent } from './modelo-modal/modelo-modal.component';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 
 @Component({
   selector: 'app-modelo-page',
-  imports: [BreadcrumbComponent, MatButton, MatIcon, ThemeButtonComponent, MatDynamicCardComponent],
+  imports: [BreadcrumbComponent, MatButton, MatIcon, Button, MatDynamicCardComponent],
   templateUrl: './modelo-page.component.html',
   styles: ``,
 })

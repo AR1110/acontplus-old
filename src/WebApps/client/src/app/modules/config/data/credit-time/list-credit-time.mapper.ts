@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListCreditTimeResponse } from '@modules/config/domain/models/tiempo-credito.model';
 
 export class ListCreditTimeMapper {
@@ -10,7 +10,7 @@ export class ListCreditTimeMapper {
     });
   }
 
-  static fromJson(response: ApiResponse): ListCreditTimeResponse {
+  static fromJson(response: ApiResponseLegacy): ListCreditTimeResponse {
     const result = new ListCreditTimeResponse();
     if (response.code === '1') {
       const creditTimes = JSON.parse(response.payload as any);

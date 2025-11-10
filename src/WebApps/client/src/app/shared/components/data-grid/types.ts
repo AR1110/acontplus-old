@@ -126,18 +126,17 @@ export interface DataGridColumnButtonBadge {
   hidden?: boolean;
 }
 
-export interface DataGridCellTemplate {
-  [key: string]: TemplateRef<any>;
-}
+export type DataGridCellTemplate = Record<string, TemplateRef<any>>;
 
 export interface DataGridRowSelectionFormatter<T = any> {
   disabled?: (rowData: T, index: number) => boolean;
   hideCheckbox?: (rowData: T, index: number) => boolean;
 }
 
-export interface DataGridRowClassFormatter<T = any> {
-  [className: string]: (rowData: T, index: number) => boolean;
-}
+export type DataGridRowClassFormatter<T = any> = Record<
+  string,
+  (rowData: T, index: number) => boolean
+>;
 
 export type DataGridButtonType = MatButtonAppearance | 'icon';
 

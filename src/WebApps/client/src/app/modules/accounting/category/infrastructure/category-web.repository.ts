@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CategoryRepository } from '@accounting/category/domain/category.repository';
 
 @Injectable({
@@ -21,14 +21,14 @@ export class CategoryWebRepository extends CategoryRepository {
   }
 
   delete(id: number) {
-    return this._http.delete<ApiResponse>(`${this._url}${id}`);
+    return this._http.delete<ApiResponseLegacy>(`${this._url}${id}`);
   }
 
   post<T>(data: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, data);
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, data);
   }
 
   put<T>(id: number, data: T) {
-    return this._http.put<ApiResponse>(`${this._url}${id}`, data);
+    return this._http.put<ApiResponseLegacy>(`${this._url}${id}`, data);
   }
 }

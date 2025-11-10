@@ -26,11 +26,11 @@
           <label for="summary">
             Descripción -
             <span>
-              <app-theme-button
+              <acp-button
                 icon="add"
                 text="Generar la descripción para el combo"
                 (handleClick)="generateDescription()"
-              ></app-theme-button>
+              />
             </span>
           </label>
           <textarea class="form-control" formControlName="summary" id="summary"></textarea>
@@ -58,13 +58,13 @@
           [options]="{ reactiveData: true }"
           [tableData]="productsAdded()"
           [theme]="'semantic-ui'"
-        ></app-tabulator>
+        />
       </div>
     </div>
   </form>
 </ng-template>
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     type="submit"
     icon="save"
     variant="success"

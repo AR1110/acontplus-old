@@ -17,5 +17,13 @@ export interface TarifaProducto {
   defaultTarifa: boolean;
 }
 
+export interface ProductFee {
+  id: number;
+  salePrice: number;
+  priceWithTax: number;
+  name: string;
+  isDefault: boolean;
+}
+
 export interface TarifaSelectHtmlOnly
   extends Pick<Tarifa, 'idTarifa' | 'descripcion' | 'predeterminada'> {}

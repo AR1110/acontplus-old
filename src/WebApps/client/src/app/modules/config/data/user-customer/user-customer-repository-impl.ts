@@ -7,7 +7,7 @@ import { UserCustomerRepository } from '@modules/config/domain/repositories/user
 import { ListUserCustomerMapper } from '@modules/config/data/user-customer/list-user-customer.mapper';
 import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { PATHS_API } from '@core/constants/global.constants';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
@@ -22,11 +22,11 @@ export class UserCustomerRepositoryImpl implements UserCustomerRepository {
       .get(`${this._url}?json=${json}`)
       .pipe(map((response) => GetUserCustomerFormDataMapper.fromJson(response)));
   }
-  update(data: UserCustomer): Observable<ApiResponse> {
-    return this._http.put<ApiResponse>(`${this._url}${data.id}`, data);
+  update(data: UserCustomer): Observable<ApiResponseLegacy> {
+    return this._http.put<ApiResponseLegacy>(`${this._url}${data.id}`, data);
   }
   create<T>(parameters: T) {
-    return this._http.post<ApiResponse>(`${this._url}`, parameters);
+    return this._http.post<ApiResponseLegacy>(`${this._url}`, parameters);
   }
 
   list<T>(parameters: T) {

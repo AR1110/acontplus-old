@@ -21,7 +21,7 @@ import { DocConfigInfoAdicionalComponent } from '@modules/config/ui/doc-config/d
 
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ListDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/list-doc-config.use-case';
@@ -40,7 +40,7 @@ import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cas
     MatInputModule,
     MatFormFieldModule,
     MatCheckboxModule,
-    ThemeButtonComponent,
+    Button,
     MatSelectModule,
     MatDynamicCardComponent,
     MatDynamicTableComponent,

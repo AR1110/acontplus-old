@@ -17,14 +17,14 @@ import {
   MedicalHistory,
 } from '@modules/vet/models/medical-history.model';
 import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
-import { isApiResponse } from '@core/models/api-response';
+import { isApiResponse } from '@core/models/api-response-legacy';
 import { PetSearchComponent } from '@modules/vet/components/pet-search/pet-search.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { GroupedEstab } from '@core/models/estab.model';
 import { BehaviorTestService } from '@modules/vet/services/behavior-test.service';
 import { HealthCheckService } from '@modules/vet/services/health-check.service';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,7 +40,7 @@ import { MatSelectModule } from '@angular/material/select';
     PetSearchComponent,
     MatCard,
     MatCardContent,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
   templateUrl: './medical-history-modal.component.html',

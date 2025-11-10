@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export abstract class EmailQueueRepository {
-  abstract send<T>(data: T): Observable<ApiResponse>;
+  abstract send<T>(data: T): Observable<ApiResponseLegacy>;
 }

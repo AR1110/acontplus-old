@@ -11,7 +11,7 @@ import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { MeasureRead } from '@inventory/domain/models/measure.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
@@ -33,7 +33,7 @@ import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
 })
 export class MeasurePageComponent implements OnInit {
   private _measureUseCase = inject(MeasureUseCase);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<MeasureRead[]>([]);
   isLoadingResults = false;
@@ -54,12 +54,9 @@ export class MeasurePageComponent implements OnInit {
         this.isLoadingResults = false;
         this.dataSource.set(response);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => {
-            return {
-              ...e,
-              totalRecords: this.dataSource()[0].totalRecords,
-            };
-          });
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords),
+          );
         }
       },
       error: () => (this.isLoadingResults = false),
@@ -77,12 +74,9 @@ export class MeasurePageComponent implements OnInit {
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.getMeasures();
   }

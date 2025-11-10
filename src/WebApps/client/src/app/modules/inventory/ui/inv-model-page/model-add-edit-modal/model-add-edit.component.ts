@@ -1,6 +1,6 @@
 import { Component, inject, Input, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
@@ -56,7 +56,7 @@ export class ModelAddEditComponent implements OnInit {
   loading = signal(false);
 
   successReponse = {
-    next: (response: ApiResponse) => {
+    next: (response: ApiResponseLegacy) => {
       if (response.code === '0') {
         this.tS.show({
           type: 'warning',

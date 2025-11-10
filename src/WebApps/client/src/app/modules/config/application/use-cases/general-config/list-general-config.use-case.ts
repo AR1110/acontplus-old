@@ -3,7 +3,7 @@ import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { GeneralConfigRepository } from '@modules/config/domain/repositories/general-config.repository';
 import { GeneralConfigResponse } from '@modules/config/domain/models/general-config.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +18,9 @@ export class ListGeneralConfigUseCase implements BaseUseCase<GeneralConfigRespon
 @Injectable({
   providedIn: 'root',
 })
-export class SendMaxEstablishmentsUseCase implements BaseUseCase<ApiResponse | null, any> {
+export class SendMaxEstablishmentsUseCase implements BaseUseCase<ApiResponseLegacy | null, any> {
   private repo = inject(GeneralConfigRepository);
-  execute(): Observable<ApiResponse | null> {
+  execute(): Observable<ApiResponseLegacy | null> {
     return this.repo.sendMaxEstablishments();
   }
 }
@@ -28,9 +28,9 @@ export class SendMaxEstablishmentsUseCase implements BaseUseCase<ApiResponse | n
 @Injectable({
   providedIn: 'root',
 })
-export class SendMaxDocumentsUseCase implements BaseUseCase<ApiResponse | null, any> {
+export class SendMaxDocumentsUseCase implements BaseUseCase<ApiResponseLegacy | null, any> {
   private repo = inject(GeneralConfigRepository);
-  execute(): Observable<ApiResponse | null> {
+  execute(): Observable<ApiResponseLegacy | null> {
     return this.repo.sendMaxDocuments();
   }
 }
@@ -38,9 +38,9 @@ export class SendMaxDocumentsUseCase implements BaseUseCase<ApiResponse | null, 
 @Injectable({
   providedIn: 'root',
 })
-export class SendMaxUsersUseCase implements BaseUseCase<ApiResponse | null, any> {
+export class SendMaxUsersUseCase implements BaseUseCase<ApiResponseLegacy | null, any> {
   private repo = inject(GeneralConfigRepository);
-  execute(): Observable<ApiResponse | null> {
+  execute(): Observable<ApiResponseLegacy | null> {
     return this.repo.sendMaxUsers();
   }
 }
@@ -48,9 +48,9 @@ export class SendMaxUsersUseCase implements BaseUseCase<ApiResponse | null, any>
 @Injectable({
   providedIn: 'root',
 })
-export class SendMaxWarehousesUseCase implements BaseUseCase<ApiResponse | null, any> {
+export class SendMaxWarehousesUseCase implements BaseUseCase<ApiResponseLegacy | null, any> {
   private repo = inject(GeneralConfigRepository);
-  execute(): Observable<ApiResponse | null> {
+  execute(): Observable<ApiResponseLegacy | null> {
     return this.repo.sendMaxWarehouses();
   }
 }
@@ -58,9 +58,9 @@ export class SendMaxWarehousesUseCase implements BaseUseCase<ApiResponse | null,
 @Injectable({
   providedIn: 'root',
 })
-export class SendMaxInventoryItemsUseCase implements BaseUseCase<ApiResponse | null, any> {
+export class SendMaxInventoryItemsUseCase implements BaseUseCase<ApiResponseLegacy | null, any> {
   private repo = inject(GeneralConfigRepository);
-  execute(): Observable<ApiResponse | null> {
+  execute(): Observable<ApiResponseLegacy | null> {
     return this.repo.sendMaxInventoryItems();
   }
 }

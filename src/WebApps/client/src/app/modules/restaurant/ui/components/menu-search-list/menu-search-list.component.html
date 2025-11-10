@@ -5,7 +5,7 @@
     @if (isLoadingResults || isRateLimitReached) {
       <div [ngClass]="{ 'loading-shade': isLoadingResults }">
         @if (isLoadingResults) {
-          <mat-spinner></mat-spinner>
+          <mat-spinner />
         }
       </div>
     }
@@ -62,7 +62,6 @@
       [showFirstLastButtons]="true"
       [pageIndex]="pagination.pageIndex"
       aria-label="Select page"
-    >
-    </mat-paginator>
+    />
   }
 </div>

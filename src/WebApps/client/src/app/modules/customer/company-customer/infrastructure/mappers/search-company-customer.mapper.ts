@@ -1,4 +1,4 @@
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   CompanyCustomerSearch,
   SearchCompanyCustomerParams,
@@ -11,9 +11,9 @@ export class SearchCompanyCustomerMapper {
     });
   }
 
-  static fromJson(response: ApiResponse) {
+  static fromJson(response: ApiResponseLegacy) {
     let customers: CompanyCustomerSearch[] = [];
-    if (response && response.code === '1') {
+    if (response?.code === '1') {
       const results = JSON.parse(response.payload as string) || [];
       customers = results.map((item: any) => ({
         idCliente: item.idCliente,
