@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -48,7 +48,7 @@ import {
   templateUrl: './inventory-adjustment.component.html',
   styles: ``,
 })
-export class InventoryAdjustmentComponent {
+export class InventoryAdjustmentComponent implements OnInit {
   private inventorySvc = inject(InventoryAdjustmentService);
 
   private _tS = inject(ToastrNotificationService);
@@ -71,7 +71,7 @@ export class InventoryAdjustmentComponent {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   tiposDoc = signal<any[]>([]);
   estabs = signal<GroupedEstab[]>([]);
@@ -126,10 +126,9 @@ export class InventoryAdjustmentComponent {
     if (!params) return;
     this.inventorySvc.getAll(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update((pag) => ({
-        ...pag,
-        totalRecords: response.totalRecords,
-      }));
+      this.pagination.update(
+        (pag) => new Pagination(pag.pageIndex, pag.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -169,12 +168,9 @@ export class InventoryAdjustmentComponent {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

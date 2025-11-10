@@ -29,7 +29,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
@@ -115,7 +115,7 @@ export class ControlCajaModalComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   getMovimientosCaja() {
     const dataSearch = {
@@ -131,12 +131,9 @@ export class ControlCajaModalComponent implements OnInit {
     };
     this._controlCajaUseCase.getAll(dataSearch).subscribe((response) => {
       this.movimientosCaja.set(response.data);
-      this.pagination.update((item) => {
-        return {
-          ...item,
-          totalRecords: response.totalRecords,
-        };
-      });
+      this.pagination.update(
+        (item) => new Pagination(item.pageIndex, item.pageSize, response.totalRecords),
+      );
     });
   }
 
@@ -475,12 +472,9 @@ export class ControlCajaModalComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

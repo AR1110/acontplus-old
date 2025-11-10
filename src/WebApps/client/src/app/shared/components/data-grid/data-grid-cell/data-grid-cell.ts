@@ -9,6 +9,8 @@ import {
   KeyValueDiffer,
   KeyValueDiffers,
   output,
+  OnInit,
+  DoCheck,
 } from '@angular/core';
 import { isObservable } from 'rxjs';
 import { DataGridUtils } from '@shared/utils/data-grid.util';
@@ -66,7 +68,7 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './data-grid-cell.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataGridCell {
+export class DataGridCell implements OnInit, DoCheck {
   private _utils = inject(DataGridUtils);
   private _differs = inject(KeyValueDiffers);
   private _changeDetectorRef = inject(ChangeDetectorRef);

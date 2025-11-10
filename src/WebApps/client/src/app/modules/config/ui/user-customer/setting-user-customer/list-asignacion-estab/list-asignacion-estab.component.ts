@@ -10,7 +10,7 @@ import {
 import { ListAsignacionEstabUseCase } from '@modules/config/application/use-cases/asignacion-estab/list-asignacion-estab.use-case';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { AsignacionEstabList } from '@modules/config/domain/models/user-customer/asignacion-estab.model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -52,7 +52,7 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   private getList() {
     this.$listAsignacionEstabUseCase

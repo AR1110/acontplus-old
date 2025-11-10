@@ -10,7 +10,7 @@ export class WarehouseTransferSaveMapper {
     const getIdByCode = (
       arr: any,
       code: InventoryTransactionType.INBOUND | InventoryTransactionType.OUTBOUND | DOC_TYPE.TB,
-    ) => arr.find((item: any) => item.code === code)?.['id'] ?? null;
+    ) => arr.find((item: any) => item.code === code)?.id ?? null;
 
     console.log(transactionTypes);
     const idTipoTransaccionOrigen = getIdByCode(

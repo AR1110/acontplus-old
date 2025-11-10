@@ -18,8 +18,6 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule } from '@angular/material/select';
-
-import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,6 +25,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatDivider } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -37,12 +36,12 @@ import { MatInputModule } from '@angular/material/input';
     CompanyCustomerSearchComponent,
     MatSelectModule,
     MatTabsModule,
-    ReportButtonsComponent,
     MatDynamicCardComponent,
     MatFormFieldModule,
     MatCheckboxModule,
     MatInputModule,
     MatDivider,
+    Button,
   ],
   templateUrl: './cartera-cliente.component.html',
   styles: ``,
@@ -281,15 +280,4 @@ export class CarteraClienteComponent implements OnInit {
       format: this.format,
     });
   }
-
-  handleFileDownload($event: REPORT_FORMAT, tipo: number) {
-    if ($event === 'pdf') {
-      this.getReportPdf(tipo);
-    }
-    if ($event === 'excel') {
-      this.getReportExcel(tipo);
-    }
-  }
-
-  protected readonly REPORT_FORMAT = REPORT_FORMAT;
 }

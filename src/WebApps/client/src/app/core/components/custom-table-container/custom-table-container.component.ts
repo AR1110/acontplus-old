@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-custom-table-container',

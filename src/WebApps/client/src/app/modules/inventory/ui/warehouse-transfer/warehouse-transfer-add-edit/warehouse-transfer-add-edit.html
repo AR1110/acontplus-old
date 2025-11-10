@@ -103,7 +103,6 @@
           variant="info"
           icon="filter_list"
           text="Filtro Avanzado"
-
           (handleClick)="openFilterAdvanced()"
         />
       </div>
@@ -125,12 +124,6 @@
     </div>
   </section>
   <section ngProjectAs="actions">
-    <acp-button
-      variant="success"
-      [icon]="btnIcon()"
-      [text]="btnText()"
-
-      (handleClick)="save()"
-    />
+    <acp-button variant="success" [icon]="btnIcon()" [text]="btnText()" (handleClick)="save()" />
   </section>
 </app-mat-custom-dialog>

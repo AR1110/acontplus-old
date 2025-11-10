@@ -10,7 +10,7 @@ import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.mod
 
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
@@ -50,7 +50,7 @@ export class CreditTimeComponent implements OnInit {
   ];
 
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   private getList() {
     const params = {
       pageIndex: this.pagination().pageIndex + 1,
@@ -58,10 +58,7 @@ export class CreditTimeComponent implements OnInit {
     };
     this.$listUseCase.execute(params).subscribe((response) => {
       this.dataSource.set(response.data);
-      this.pagination.update((p) => ({
-        ...p,
-        totalRecords: response.totalRecords,
-      }));
+      this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
     });
   }
 
@@ -120,12 +117,9 @@ export class CreditTimeComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

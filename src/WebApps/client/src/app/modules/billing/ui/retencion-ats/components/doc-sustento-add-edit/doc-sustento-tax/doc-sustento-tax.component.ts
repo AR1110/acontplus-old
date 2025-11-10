@@ -12,14 +12,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 @Component({
   selector: 'app-doc-sustento-tax',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    Button,
-    MatFormField,
-    MatSelectModule,
-    MatInput,
-  ],
+  imports: [FormsModule, ReactiveFormsModule, Button, MatFormField, MatSelectModule, MatInput],
   templateUrl: './doc-sustento-tax.component.html',
   styles: ``,
 })

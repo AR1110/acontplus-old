@@ -39,7 +39,7 @@ import { GetTotalPipe } from '@shared/pipes/get-total.pipe';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { CustomMatSpinnerComponent } from '@core/components/custom-mat-spinner/custom-mat-spinner.component';
 import { DYNAMIC_INPUT } from '@shared/input/dynamic-input';

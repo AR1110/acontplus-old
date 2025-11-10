@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
@@ -9,7 +9,7 @@ import {
 } from '@sale/domain/use-cases/proforma-invoice.use-case';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { ProformaInvoiceList } from '@sale/domain/models/proforma-invoice';
 import { finalize } from 'rxjs/operators';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -47,7 +47,7 @@ import { ProformaInvoiceAddEdit } from '@sale/ui/proforma-invoices/proforma-invo
   templateUrl: './proforma-invoices.html',
   styles: ``,
 })
-export class ProformaInvoices {
+export class ProformaInvoices implements OnInit {
   sale_modules_code = signal(SALE_MODULES_CODE);
   action_aliases = signal(ACTION_ALIASES);
   private _filterDataUseCase = inject(ProformaInvoiceFilterUseCase);
@@ -74,7 +74,7 @@ export class ProformaInvoices {
     esBuscarPorNro: false,
     esBuscarUsuario: false,
   };
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   columns: DataGridColumn[] = [
     { header: 'Nro.', field: 'index' },
@@ -232,12 +232,11 @@ export class ProformaInvoices {
     });
   }
   getNextPage(e: PageEvent) {
-    this.pagination.update((pag) => ({
-      ...pag,
-      pageIndex: e.pageIndex,
-      pageSize: e.pageSize,
-      totalRecords: e.length,
-    }));
+    this.pagination.update((pag) => {
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
+    });
     this.getList();
   }
 }

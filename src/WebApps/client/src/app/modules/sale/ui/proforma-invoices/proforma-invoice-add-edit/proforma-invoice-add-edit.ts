@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,16 +23,16 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
 import {
   GetProductSaleUseCase,
-  ValidateProductStockUseCase
+  ValidateProductStockUseCase,
 } from '@inventory/product/application/use-cases/product/get-product.use-case';
-import {ProductSale} from "@inventory/product/domain/entities/product.entity";
-import {MedidaProducto} from "@inventory/domain/models/measure.model";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {roundNumber} from "@core/utils/round-number.utils"
-import Swal from "sweetalert2";
-import {getStockQuantity, mergeStockItems} from "@inventory/product/domain/utils/stock.utils";
-import {firstValueFrom} from "rxjs";
-import {ProductFee} from "@inventory/domain/models/tarifa.model";
+import { ProductSale } from '@inventory/product/domain/entities/product.entity';
+import { MedidaProducto } from '@inventory/domain/models/measure.model';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { roundNumber } from '@core/utils/round-number.utils';
+import Swal from 'sweetalert2';
+import { getStockQuantity, mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
+import { firstValueFrom } from 'rxjs';
+import { ProductFee } from '@inventory/domain/models/tarifa.model';
 
 @Component({
   selector: 'app-proforma-invoice-add-edit',
@@ -57,7 +57,7 @@ import {ProductFee} from "@inventory/domain/models/tarifa.model";
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProformaInvoiceAddEdit {
+export class ProformaInvoiceAddEdit implements OnInit {
   private dgRef = inject(MatDialogRef<ProformaInvoiceAddEdit>);
 
   //services
@@ -72,8 +72,8 @@ export class ProformaInvoiceAddEdit {
 
   dataFormGeneral = {
     warehouseId: 0,
-    rateId: 0
-  }
+    rateId: 0,
+  };
 
   dataForm = {
     issueDate: new Date(),
@@ -419,43 +419,42 @@ export class ProformaInvoiceAddEdit {
     });
   }
 
-
   private addRow() {
-     return {
-       uuid: generateUuidv4(),
-       id: 0,
-       code: "",
-       productId: 0,
-       description: "",
-       quantity: 0,
-       stockQuantity: 0,
-       taxCode: "",
+    return {
+      uuid: generateUuidv4(),
+      id: 0,
+      code: '',
+      productId: 0,
+      description: '',
+      quantity: 0,
+      stockQuantity: 0,
+      taxCode: '',
 
-       productFees: [] as ProductFee[],
-       measureId: 0,
-       measures: [] as MedidaProducto[],
-       conversion: 1,
-       feeId: 0,
-       unitPrice: 0,
-       unitCost : 0,
-       fractionalUnitCost : 0,
-       priceWithoutSubsidy: 0,
-       priceWithTax: 0,
-       discountPercentage: 0,
-       discountValue: 0,
-       totalDiscount: 0,
-       iceTax: 0,
-       warehouseId: 0,
-       subTotal: 0,
-       total: 0,
-       minWholesaleQuantity: 0,
-       note: null,
-       hasInventory: false,
-       hasAdditionalData: false,
-       additionalProductInfo: [],
-       inventoryAdjustments: [],
-       status: 1,
-     }
+      productFees: [] as ProductFee[],
+      measureId: 0,
+      measures: [] as MedidaProducto[],
+      conversion: 1,
+      feeId: 0,
+      unitPrice: 0,
+      unitCost: 0,
+      fractionalUnitCost: 0,
+      priceWithoutSubsidy: 0,
+      priceWithTax: 0,
+      discountPercentage: 0,
+      discountValue: 0,
+      totalDiscount: 0,
+      iceTax: 0,
+      warehouseId: 0,
+      subTotal: 0,
+      total: 0,
+      minWholesaleQuantity: 0,
+      note: null,
+      hasInventory: false,
+      hasAdditionalData: false,
+      additionalProductInfo: [],
+      inventoryAdjustments: [],
+      status: 1,
+    };
   }
 
   private handleSearchResult(result: any): void {
@@ -472,12 +471,12 @@ export class ProformaInvoiceAddEdit {
           if (!measures?.length) throw new Error('No se encontraron medidas del producto');
 
           //  Medida por defecto
-          const defaultMeasure = measures.find(m => m.defaultMedida);
+          const defaultMeasure = measures.find((m) => m.defaultMedida);
           if (!defaultMeasure) throw new Error('No se encontró la medida por defecto');
 
           //  Tarifa (fee)
           const rateId = this.dataFormGeneral.rateId;
-          const fee = defaultMeasure.fees.find(f => f.id === rateId);
+          const fee = defaultMeasure.fees.find((f) => f.id === rateId);
           if (!fee) throw new Error('No se encontró la tarifa por defecto');
 
           let rowData: any;
@@ -485,11 +484,9 @@ export class ProformaInvoiceAddEdit {
 
           //  Si el producto lleva inventario → revisar duplicados
           if (product.llevaInventario) {
-            const existingItems = this.details().filter(
-              d => d.productId === product.idArticulo
-            );
+            const existingItems = this.details().filter((d) => d.productId === product.idArticulo);
             const existingIndex = existingItems.findIndex(
-              d => d.productId === product.idArticulo
+              (d) => d.productId === product.idArticulo,
             );
 
             if (this.isDuplicateItem()) {
@@ -561,13 +558,12 @@ export class ProformaInvoiceAddEdit {
 
           //  Agregar o actualizar en details
           if (shouldAddRow) {
-            this.details.update(list => [...list, rowData]); // push
+            this.details.update((list) => [...list, rowData]); // push
           } else {
-            this.details.update(list =>
-              list.map(item => (item.uuid === rowData.uuid ? rowData : item))
+            this.details.update((list) =>
+              list.map((item) => (item.uuid === rowData.uuid ? rowData : item)),
             ); // update
           }
-
         } catch (error: any) {
           console.error('Error al procesar el producto:', error);
           Swal.fire({
@@ -595,18 +591,22 @@ export class ProformaInvoiceAddEdit {
     });
   }
 
-  private async validateStock(details: any[], rowUUID: string, fn: (cont: boolean) => void): Promise<void> {
+  private async validateStock(
+    details: any[],
+    rowUUID: string,
+    fn: (cont: boolean) => void,
+  ): Promise<void> {
     try {
-      const {warehouseId,productId, measureId, stockQuantity, inventoryAdjustment} = mergeStockItems(details, {
-        rowUUID
-      });
+      const { warehouseId, productId, measureId, stockQuantity, inventoryAdjustment } =
+        mergeStockItems(details, {
+          rowUUID,
+        });
 
-
-      const  quantity = getStockQuantity({
+      const quantity = getStockQuantity({
         issueDate: this.dataForm.issueDate,
         stockQuantity,
         adjustment: inventoryAdjustment,
-      })
+      });
 
       const response = await firstValueFrom(
         this.$validateProductStockUseCase.execute({

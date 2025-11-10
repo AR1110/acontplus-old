@@ -22,6 +22,7 @@ import {
   AfterViewInit,
   OnDestroy,
   HostListener,
+  OnChanges,
 } from '@angular/core';
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { fromEvent, Subject, takeUntil, debounceTime, filter } from 'rxjs';
@@ -120,7 +121,7 @@ export const DATA_GRID_DEFAULT_OPTIONS = new InjectionToken<DataGridDefaultOptio
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
+export class DataGrid<T = any> implements AfterViewInit, OnDestroy, OnChanges {
   protected _animationsDisabled =
     inject(ANIMATION_MODULE_TYPE, { optional: true }) === 'NoopAnimations';
   private _utils = inject(DataGridUtils);
@@ -156,7 +157,7 @@ export class DataGrid<T = any> implements AfterViewInit, OnDestroy {
   trackBy = input<TrackByFunction<any>>();
 
   // Templates
-  cellTemplate = input<{ [key: string]: TemplateRef<any> }>({});
+  cellTemplate = input<Record<string, TemplateRef<any>>>({});
   headerTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
   headerExtraTemplate = input<TemplateRef<any> | DataGridCellTemplate>();
   noResultTemplate = input<TemplateRef<any>>();

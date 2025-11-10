@@ -12,13 +12,7 @@ import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-ats',
-  imports: [
-    FormsModule,
-    BreadcrumbComponent,
-    DateRangeSelectionComponent,
-    MatCardModule,
-    Button,
-  ],
+  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent, MatCardModule, Button],
   templateUrl: './ats.component.html',
   styles: ``,
 })

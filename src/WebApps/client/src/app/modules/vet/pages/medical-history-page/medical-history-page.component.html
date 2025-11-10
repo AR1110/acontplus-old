@@ -51,18 +51,8 @@
   />
 
   <ng-template #templateOp let-item="item">
-    <acp-button
-      variant="primary"
-      [icon]="'edit'"
-      matStyle="icon"
-      (handleClick)="onEdit(item)"
-    />
-    <acp-button
-      variant="warning"
-      icon="delete "
-      matStyle="icon"
-      (handleClick)="onDelete(item)"
-    />
+    <acp-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(item)" />
+    <acp-button variant="warning" icon="delete " matStyle="icon" (handleClick)="onDelete(item)" />
     <acp-button
       matStyle="icon"
       variant="secondary"

@@ -51,7 +51,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
     MatProgressSpinner,
     MatPaginator,
     DatePipe,
-    BreadcrumbComponent
+    BreadcrumbComponent,
   ],
   templateUrl: './meal-consumption-list.html',
   styleUrl: './meal-consumption-list.scss',
@@ -64,13 +64,15 @@ export class MealConsumptionList implements OnInit {
   private readonly deleteUseCase = inject(DeleteMealConsumptionUseCase);
   private readonly cancelUseCase = inject(CancelMealConsumptionUseCase);
 
+  mealConsumptionConfig = signal(new Pagination(0, 10, 5, [5, 10, 25, 50]));
+
   paginationParams = signal(
     new PaginationParams({
-      pageIndex: 1,
-      pageSize: 10,
+      pageIndex: this.mealConsumptionConfig().pageIndex,
+      pageSize: this.mealConsumptionConfig().pageSize,
+      searchTerm: '',
     }),
   );
-  mealConsumptionConfig = signal(new Pagination(0, 10, 5, 0, [5, 10, 25, 50]));
   mealConsumptions = signal<MealConsumption[]>([]);
   isLoading = signal<boolean>(false);
 

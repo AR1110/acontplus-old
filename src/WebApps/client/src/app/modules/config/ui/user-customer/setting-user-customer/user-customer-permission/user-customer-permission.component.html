@@ -44,7 +44,7 @@
       <th mat-header-cell *matHeaderCellDef>Estado</th>
       <td mat-cell *matCellDef="let data">
         @if (data.hasStatus) {
-          <mat-slide-toggle [(ngModel)]="data.enabled" [checked]="data.enabled"></mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="data.enabled" [checked]="data.enabled" />
         }
       </td>
     </ng-container>

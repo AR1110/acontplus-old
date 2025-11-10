@@ -7,6 +7,7 @@ import {
   output,
   SimpleChanges,
   ViewEncapsulation,
+  OnChanges,
 } from '@angular/core';
 import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
@@ -19,7 +20,7 @@ Tabulator.registerModule([PageModule, ReactiveDataModule]);
   styleUrls: ['./tabulator.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class TabulatorComponent implements AfterViewInit, OnDestroy {
+export class TabulatorComponent implements AfterViewInit, OnDestroy, OnChanges {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tableData = input<any[]>([]);
 

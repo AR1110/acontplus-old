@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 import { MenuSearchListComponent } from '../menu-search-list/menu-search-list.component';
 import { MenuService } from '@restaurant/data/services/menu.service';
-import { Pagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { ReactiveFormsModule } from '@angular/forms';

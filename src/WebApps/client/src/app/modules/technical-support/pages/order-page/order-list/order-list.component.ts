@@ -11,7 +11,7 @@ import swal from 'sweetalert2';
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
 import { MatTableModule } from '@angular/material/table';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
@@ -89,7 +89,7 @@ export class OrderListComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   async askToCancel(item: any) {
     const result = await swal.fire({
@@ -141,12 +141,9 @@ export class OrderListComponent implements OnInit {
       this.orders.set(orders);
       this.users = response.users;
       if (this.orders().length > 0) {
-        this.pagination.update((prev) => {
-          return {
-            ...prev,
-            totalRecords: response.orders[0].totalRecords,
-          };
-        });
+        this.pagination.update(
+          (prev) => new Pagination(prev.pageIndex, prev.pageSize, response.orders[0].totalRecords),
+        );
       }
     });
   }
@@ -242,12 +239,9 @@ export class OrderListComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

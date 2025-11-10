@@ -7,10 +7,7 @@ import { INVENTORY_PATHS } from '@inventory/domain/enums/inventory.enum';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ProductRepository } from '@inventory/product/domain/repositories/product.repository';
 import { GroupedEstab } from '@core/models/estab.model';
-import {
-  ProductDataForm,
-  ProductSale,
-} from '@inventory/product/domain/entities/product.entity';
+import { ProductDataForm, ProductSale } from '@inventory/product/domain/entities/product.entity';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { ProductMapper } from '@inventory/product/infrastructure/product/mappers/product.mapper';
 import { ProductDataFormMapper } from '@inventory/product/infrastructure/product/mappers/product-data-form.mapper';
@@ -20,7 +17,7 @@ import { SaveProductMapper } from '@inventory/product/infrastructure/product/map
 import { GetProductPurchaseMapper } from '@inventory/product/infrastructure/product/mappers/get-product-purchase.mapper';
 import { GetProductEstabsStockMapper } from '@inventory/product/infrastructure/product/mappers/get-product-estabs-stock.mapper';
 import { ProductSearchMapper } from '@inventory/product/infrastructure/product/mappers/product-search.mapper';
-import {GetProductForSaleMapper} from "@inventory/product/infrastructure/product/mappers/get-product-for-sale-mapper";
+import { GetProductForSaleMapper } from '@inventory/product/infrastructure/product/mappers/get-product-for-sale-mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -111,15 +108,13 @@ export class ProductHttpRepository implements ProductRepository {
 
   getForSale(obj: { id?: number; search?: string }) {
     const params = {
-      json: GetProductForSaleMapper.toJson(obj)
+      json: GetProductForSaleMapper.toJson(obj),
     };
     return this._http
       .get<ApiResponseLegacy>(`${this._url}`, {
         params,
       })
-      .pipe(
-        map((response) => GetProductForSaleMapper.fromJson(response)),
-      );
+      .pipe(map((response) => GetProductForSaleMapper.fromJson(response)));
   }
 
   getForPurchase(id: number) {
@@ -170,7 +165,7 @@ export class ProductHttpRepository implements ProductRepository {
             tarifas: [],
             taxes: [],
           };
-          if (response && response.code === '1') {
+          if (response?.code === '1') {
             data = ProductMapper.fromApiDataReport(response);
           }
           return data;

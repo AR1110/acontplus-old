@@ -12,12 +12,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-company',
-  imports: [
-    BreadcrumbComponent,
-    Button,
-    MatDynamicCardComponent,
-    MatDynamicTableComponent,
-  ],
+  imports: [BreadcrumbComponent, Button, MatDynamicCardComponent, MatDynamicTableComponent],
   templateUrl: './company.component.html',
 })
 export class CompanyComponent implements OnInit {

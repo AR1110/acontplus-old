@@ -18,7 +18,7 @@ import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
 
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { finalize, switchMap } from 'rxjs';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
@@ -55,7 +55,7 @@ export class DocElect implements OnInit {
   isLoadingResults = signal(false);
   isSearchAdvanced = signal(false);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   dataSearch = {
     codEstab: null as string | null | undefined,
@@ -103,10 +103,7 @@ export class DocElect implements OnInit {
 
   private successResponseList(response: any) {
     this.list.set(response.data);
-    this.pagination.update((p) => ({
-      ...p,
-      totalRecords: response.totalRecords,
-    }));
+    this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
   }
 
   private getDocElects() {
@@ -191,12 +188,9 @@ export class DocElect implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

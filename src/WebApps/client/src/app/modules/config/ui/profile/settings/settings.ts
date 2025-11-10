@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { UserProfileService } from '@modules/config/services/user-profile.service';
@@ -26,7 +26,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
     MatInputModule,
   ],
 })
-export class ProfileSettings {
+export class ProfileSettings implements OnInit {
   private readonly userProfileService = inject(UserProfileService);
   private tS = inject(ToastrNotificationService);
   private router = inject(Router);

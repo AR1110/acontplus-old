@@ -1,4 +1,4 @@
-import { Component, inject, output, signal, OnInit, input } from '@angular/core';
+import { Component, inject, output, signal, OnInit, input, OnDestroy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -10,6 +10,7 @@ import { AsyncPipe, JsonPipe } from '@angular/common';
 import { ItemSearchUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { catchError, debounceTime, finalize, tap } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { PaginationParams } from '@acontplus/core';
 
 @Component({
   selector: 'app-item-search',
@@ -27,7 +28,7 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
   templateUrl: './item-search.html',
   styles: ``,
 })
-export class ItemSearch implements OnInit {
+export class ItemSearch implements OnInit, OnDestroy {
   private searchUseCase = inject(ItemSearchUseCase);
   items = signal<any>([]);
   loading = signal(false);
@@ -52,10 +53,14 @@ export class ItemSearch implements OnInit {
           this.loading.set(true);
 
           return this.searchUseCase
-            .execute({
-              categoryAbbreviation: CATEGORY_ABBREVIATIONS.RESTAURANT,
-              q: value,
-            })
+            .execute(
+              new PaginationParams({
+                searchTerm: value,
+                filters: {
+                  categoryAbbreviation: CATEGORY_ABBREVIATIONS.RESTAURANT,
+                },
+              }),
+            )
             .pipe(
               catchError(() => of([])),
               finalize(() => this.loading.set(false)),

@@ -4,7 +4,6 @@ import { ProductSearchComponent } from '@inventory/product/presentation/componen
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ReportButtonsComponent } from '@shared/components/report-buttons/report-buttons.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { Button } from '@acontplus/ng-components';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
@@ -55,14 +54,13 @@ const imports = [
   SupplierSearchComponent,
   UserSearchComponent,
   CompanyCustomerSearchComponent,
-  ReportButtonsComponent,
   //Directives
   ActionEnviarCorreoDirective,
 ];
 
 @Component({
   selector: 'app-inventory-report',
-  imports: [imports, ReportButtonsComponent, Button],
+  imports: [imports, Button],
   templateUrl: './inventory-report.component.html',
   styles: ``,
 })

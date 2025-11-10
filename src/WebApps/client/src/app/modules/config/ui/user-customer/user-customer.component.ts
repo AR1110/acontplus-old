@@ -9,7 +9,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { MatButtonModule } from '@angular/material/button';
 import { PageEvent } from '@angular/material/paginator';
@@ -52,7 +52,7 @@ export class UserCustomerComponent implements OnInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   refresh() {
     this.getList();
@@ -77,10 +77,9 @@ export class UserCustomerComponent implements OnInit {
 
       .subscribe((response) => {
         this.dataSource.set(response.data);
-        this.pagination.update((item) => ({
-          ...item,
-          totalRecords: response.totalRecords,
-        }));
+        this.pagination.update(
+          (item) => new Pagination(item.pageIndex, item.pageSize, response.totalRecords),
+        );
       });
   }
 
@@ -114,12 +113,9 @@ export class UserCustomerComponent implements OnInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

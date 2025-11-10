@@ -6,7 +6,7 @@
     <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>Seleccionar</th>
       <td mat-cell *matCellDef="let node">
-        <mat-checkbox [checked]="node.isSelected" (change)="toggleSelection(node)"> </mat-checkbox>
+        <mat-checkbox [checked]="node.isSelected" (change)="toggleSelection(node)" />
       </td>
     </ng-container>
 

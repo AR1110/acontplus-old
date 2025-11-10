@@ -41,7 +41,7 @@ import { MatDialogRef } from '@angular/material/dialog';
     DataGrid,
   ],
 })
-export class ProductSearchDialog {
+export class ProductSearchDialog implements OnInit, AfterViewInit, OnDestroy {
   private dialogRef = inject(MatDialogRef<ProductSearchDialog>);
 
   private keyboardNav = inject(KeyboardNavigationService);

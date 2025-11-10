@@ -11,7 +11,7 @@ import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 
@@ -30,7 +30,7 @@ import Swal from 'sweetalert2';
   templateUrl: './sub-category.component.html',
 })
 export class SubCategoryComponent implements OnInit {
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   visibleColumns: string[] = [
     'index',
     'op',
@@ -71,12 +71,9 @@ export class SubCategoryComponent implements OnInit {
         this.dataSource.sort = this.sort;
 
         if (this.dataSource.data.length > 0) {
-          this.pagination.update((e) => {
-            return {
-              ...e,
-              totalRecords: this.dataSource.data[0].totalRecords,
-            };
-          });
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords),
+          );
         }
       },
       error: (err) => {
@@ -96,12 +93,9 @@ export class SubCategoryComponent implements OnInit {
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.getSubcategories();
   }

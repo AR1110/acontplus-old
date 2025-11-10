@@ -9,7 +9,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edit-modal.directive';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
 import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
@@ -31,7 +31,7 @@ import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
 })
 export class TagsComponent implements OnInit {
   private _tagUseCase = inject(TagUseCase);
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'description', 'etiquetas', 'estado'];
   dataSource = signal<any[]>([]);
   isLoadingResults = false;
@@ -51,12 +51,9 @@ export class TagsComponent implements OnInit {
         this.isLoadingResults = false;
         this.dataSource.set(response.tags);
         if (this.dataSource().length > 0) {
-          this.pagination.update((e) => {
-            return {
-              ...e,
-              totalRecords: this.dataSource()[0].totalRecords,
-            };
-          });
+          this.pagination.update(
+            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource()[0].totalRecords),
+          );
         }
       },
       error: () => (this.isLoadingResults = false),
@@ -74,12 +71,9 @@ export class TagsComponent implements OnInit {
   handlePageEvent(e: PageEvent) {
     this.pageEvent = e;
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.getTags();
   }

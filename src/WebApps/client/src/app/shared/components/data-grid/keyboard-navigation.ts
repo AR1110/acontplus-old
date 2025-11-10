@@ -78,7 +78,7 @@ export class KeyboardNavigationService {
    * @param element El objeto FocusableElement a registrar.
    */
   registerElement(element: FocusableElement) {
-    if (!element || !element.element) {
+    if (!element?.element) {
       console.error(
         'KeyboardNavigationService: No se puede registrar el elemento. El ElementRef es undefined o nulo. ' +
           'Asegúrate de que el @ViewChild esté correctamente configurado y que el elemento exista en el DOM cuando ngAfterViewInit se ejecute.',

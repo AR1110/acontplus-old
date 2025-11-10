@@ -37,10 +37,5 @@
   (pageEvent)="handlePageEvent($event)"
 />
 <ng-template #templateOp let-item="item">
-  <acp-button
-    icon="edit"
-    matStyle="icon"
-    title="Editar"
-    (handleClick)="openModalAddEdit(item)"
-  />
+  <acp-button icon="edit" matStyle="icon" title="Editar" (handleClick)="openModalAddEdit(item)" />
 </ng-template>

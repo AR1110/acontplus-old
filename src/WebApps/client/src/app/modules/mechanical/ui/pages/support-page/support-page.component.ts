@@ -21,7 +21,7 @@ import {
   MECHANICAL_CODE_REPORT,
   MECHANICAL_STATUS,
 } from '@mechanical/domain/enums/mechanical.enum';
-import { MatPagination } from '@shared/models/pagination.model';
+import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 
 import { InspectionModalComponent } from '../inspection-page/components/inspection-modal/inspection-modal.component';
@@ -105,7 +105,7 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  pagination = signal(new MatPagination());
+  pagination = signal(new Pagination());
 
   isLoadingResults = signal(false);
 
@@ -392,12 +392,9 @@ export class SupportPageComponent implements OnInit, AfterViewInit {
 
   handlePageEvent(e: PageEvent) {
     this.pagination.update((pag) => {
-      return {
-        ...pag,
-        totalRecords: e.length,
-        pageSize: e.pageSize,
-        pageIndex: e.pageIndex,
-      };
+      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
+      updated.handlePageEvent(e);
+      return updated;
     });
     this.refresh();
   }

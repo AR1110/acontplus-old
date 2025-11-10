@@ -16,12 +16,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-brand-modal',
-  imports: [
-    ReactiveFormsModule,
-    TabulatorComponent,
-    Button,
-    MatCustomDialogComponent,
-  ],
+  imports: [ReactiveFormsModule, TabulatorComponent, Button, MatCustomDialogComponent],
   templateUrl: './brand-modal.component.html',
   styles: ``,
 })

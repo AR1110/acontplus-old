@@ -30,7 +30,7 @@
                 icon="add"
                 text="Generar la descripción para el combo"
                 (handleClick)="generateDescription()"
-              ></acp-button>
+              />
             </span>
           </label>
           <textarea class="form-control" formControlName="summary" id="summary"></textarea>
@@ -58,7 +58,7 @@
           [options]="{ reactiveData: true }"
           [tableData]="productsAdded()"
           [theme]="'semantic-ui'"
-        ></app-tabulator>
+        />
       </div>
     </div>
   </form>
