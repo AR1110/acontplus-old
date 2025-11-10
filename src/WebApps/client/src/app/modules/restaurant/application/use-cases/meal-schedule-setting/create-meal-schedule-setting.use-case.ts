@@ -3,19 +3,19 @@ import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
 import {
-  MealScheduleSettingResponse,
-  CreateMealScheduleSettingRequest,
-} from '@restaurant/domain/models/meal-schedule-setting.model';
+  MealScheduleSetting,
+  MealScheduleSettingCreate,
+} from '@restaurant/domain/models/meal-schedule-setting';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CreateMealScheduleSettingUseCase
-  implements BaseUseCase<MealScheduleSettingResponse, CreateMealScheduleSettingRequest>
+  implements BaseUseCase<MealScheduleSetting, MealScheduleSettingCreate>
 {
   private readonly repository = inject(MealScheduleSettingRepository);
 
-  execute(params: CreateMealScheduleSettingRequest): Observable<MealScheduleSettingResponse> {
+  execute(params: MealScheduleSettingCreate): Observable<MealScheduleSetting> {
     return this.repository.create(params);
   }
 }

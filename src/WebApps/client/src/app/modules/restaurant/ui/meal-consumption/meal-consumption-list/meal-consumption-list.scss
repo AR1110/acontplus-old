@@ -1,8 +1,139 @@
 .meal-consumption-container {
   padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
 
   mat-card {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  // Customer Search Section
+  .search-section {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    .search-field {
+      flex: 1;
+      max-width: 400px;
+    }
+  }
+
+  // Customer Details
+  .customer-details-card {
+    .customer-details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+
+      .detail-item {
+        strong {
+          display: block;
+          color: #666;
+          font-size: 0.9rem;
+          margin-bottom: 4px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 1rem;
+          color: #333;
+        }
+      }
+    }
+  }
+
+  // Meal Schedules Table
+  .schedules-card {
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .schedules-table {
+      width: 100%;
+      border-collapse: collapse;
+
+      thead {
+        background-color: #f5f5f5;
+
+        th {
+          padding: 12px;
+          text-align: left;
+          font-weight: 600;
+          border-bottom: 2px solid #ddd;
+
+          &.text-center {
+            text-align: center;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #eee;
+
+          &:hover {
+            background-color: #f9f9f9;
+          }
+
+          td {
+            padding: 12px;
+
+            &.text-center {
+              text-align: center;
+            }
+
+            &.status-cell {
+              min-width: 200px;
+            }
+          }
+        }
+      }
+
+      .time-input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 0.95rem;
+        background-color: #f5f5f5;
+        width: 120px;
+      }
+
+      .status-registered {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #4caf50;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+    }
+  }
+
+  // List Section Filters
+  .filters-section {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .config-filter,
+    .search-filter {
+      flex: 1;
+      max-width: 300px;
+    }
   }
 
   .header-title {

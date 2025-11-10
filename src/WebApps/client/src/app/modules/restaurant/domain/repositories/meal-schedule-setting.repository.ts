@@ -1,20 +1,17 @@
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
-  MealScheduleSettingResponse,
-  CreateMealScheduleSettingRequest,
-  UpdateMealScheduleSettingRequest,
-} from '@restaurant/domain/models/meal-schedule-setting.model';
+  MealScheduleSetting,
+  MealScheduleSettingCreate,
+  MealScheduleSettingUpdate,
+} from '@restaurant/domain/models/meal-schedule-setting';
 
 export abstract class MealScheduleSettingRepository {
-  abstract getByEstablishmentId(establishmentId: number): Observable<MealScheduleSettingResponse[]>;
+  abstract getByEstablishmentId(establishmentId: number): Observable<MealScheduleSetting[]>;
 
-  abstract create(data: CreateMealScheduleSettingRequest): Observable<MealScheduleSettingResponse>;
+  abstract create(data: MealScheduleSettingCreate): Observable<MealScheduleSetting>;
 
-  abstract update(
-    id: number,
-    data: UpdateMealScheduleSettingRequest,
-  ): Observable<MealScheduleSettingResponse>;
+  abstract update(id: number, data: MealScheduleSettingUpdate): Observable<MealScheduleSetting>;
 
   abstract delete(id: number): Observable<ApiResponseLegacy>;
 }

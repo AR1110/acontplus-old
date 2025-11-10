@@ -1,0 +1,57 @@
+<h2 mat-dialog-title>
+  <mat-icon>add</mat-icon>
+  Registro Otras Fechas
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="save()">
+    <div class="form-content">
+      <div class="info-section">
+        <div class="info-item">
+          <label>Cliente:</label>
+          <span>{{ customer.razonSocial }}</span>
+        </div>
+
+        <div class="info-item">
+          <label>Servicio:</label>
+          <span>{{ schedule.description }}</span>
+        </div>
+      </div>
+
+      <div class="form-fields">
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha Consumo</mat-label>
+          <input matInput type="datetime-local" formControlName="fechaConsumo" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cantidad</mat-label>
+          <input matInput type="number" formControlName="cantidad" min="1" required />
+        </mat-form-field>
+      </div>
+
+      @if (isLoading()) {
+        <div class="loading-container">
+          <mat-spinner diameter="40" />
+        </div>
+      }
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-raised-button type="button" (click)="cancel()" [disabled]="isLoading()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    (click)="save()"
+    [disabled]="form.invalid || isLoading()"
+  >
+    <mat-icon>save</mat-icon>
+    Guardar
+  </button>
+</mat-dialog-actions>

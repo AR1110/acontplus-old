@@ -4,10 +4,10 @@ import { map } from 'rxjs/operators';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
 import {
-  MealScheduleSettingResponse,
-  CreateMealScheduleSettingRequest,
-  UpdateMealScheduleSettingRequest,
-} from '@restaurant/domain/models/meal-schedule-setting.model';
+  MealScheduleSetting,
+  MealScheduleSettingCreate,
+  MealScheduleSettingUpdate,
+} from '@restaurant/domain/models/meal-schedule-setting';
 import { MealScheduleSettingService } from '@restaurant/data/services/meal-schedule-setting.service';
 import { MealScheduleSettingMapper } from '@restaurant/data/meal-schedule-setting/meal-schedule-setting.mapper';
 
@@ -17,13 +17,13 @@ import { MealScheduleSettingMapper } from '@restaurant/data/meal-schedule-settin
 export class MealScheduleSettingWebService implements MealScheduleSettingRepository {
   #service = inject(MealScheduleSettingService);
 
-  getByEstablishmentId(establishmentId: number): Observable<MealScheduleSettingResponse[]> {
+  getByEstablishmentId(establishmentId: number): Observable<MealScheduleSetting[]> {
     return this.#service
       .getByEstablishmentId(establishmentId)
       .pipe(map((response) => MealScheduleSettingMapper.fromApiResponse(response)));
   }
 
-  create(data: CreateMealScheduleSettingRequest): Observable<MealScheduleSettingResponse> {
+  create(data: MealScheduleSettingCreate): Observable<MealScheduleSetting> {
     return this.#service.create(data).pipe(
       map((response) => {
         const result = MealScheduleSettingMapper.fromApiSingleResponse(response);
@@ -35,10 +35,7 @@ export class MealScheduleSettingWebService implements MealScheduleSettingReposit
     );
   }
 
-  update(
-    id: number,
-    data: UpdateMealScheduleSettingRequest,
-  ): Observable<MealScheduleSettingResponse> {
+  update(id: number, data: MealScheduleSettingUpdate): Observable<MealScheduleSetting> {
     return this.#service.update(id, data).pipe(
       map((response) => {
         const result = MealScheduleSettingMapper.fromApiSingleResponse(response);

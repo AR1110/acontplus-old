@@ -1,21 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { BaseUseCase } from '@core/base-use-case';
+import { ApiResponse } from '@acontplus/core';
 import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import {
-  MealConsumption,
-  CreateMealConsumptionRequest,
-} from '@restaurant/domain/models/meal-consumption';
+import { MealConsumptionCreate } from '@restaurant/domain/models/meal-consumption';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CreateMealConsumptionUseCase
-  implements BaseUseCase<MealConsumption, CreateMealConsumptionRequest>
-{
+export class CreateMealConsumptionUseCase {
   private readonly repository = inject(MealConsumptionRepository);
 
-  execute(params: CreateMealConsumptionRequest): Observable<MealConsumption> {
+  execute(params: MealConsumptionCreate): Observable<ApiResponse> {
     return this.repository.create(params);
   }
 }
