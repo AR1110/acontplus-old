@@ -1,4 +1,4 @@
-export interface Fee {
+export interface ProductFee {
   /** Unique rate identifier */
   id: number;
 
@@ -51,5 +51,5 @@ export interface ProductMeasure {
   order: number;
 
   /** List of fees or tariffs associated with this measure */
-  fees: Fee[];
+  fees: ProductFee[];
 }

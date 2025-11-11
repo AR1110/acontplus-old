@@ -12,9 +12,9 @@ public record UpdateItem
 {
     public string Summary { get; set; }
     public bool Cooking { get; set; }
-    public string Recipe { get; set; }
-    public string Instructions { get; set; }
-    public string Content { get; set; }
+    public string? Recipe { get; set; }
+    public string? Instructions { get; set; }
+    public string? Content { get; set; }
     public int Unit { get; set; }
     public bool ForPromotion { get; set; }
     public int Quantity { get; set; }
@@ -41,10 +41,10 @@ public record ItemComposition
     public decimal? Weight { get; set; }
     public decimal? NetWeight { get; set; }
     public decimal CostPrice { get; set; }
-    public decimal DiscountPercent { get; set; }
-    public decimal Discount { get; set; }
+    public decimal? DiscountPercent { get; set; }
+    public decimal? Discount { get; set; }
     public decimal Subtotal { get; set; }
-    public decimal WastePercentage { get; set; }
+    public decimal? WastePercentage { get; set; }
     public bool IsOptional { get; set; }
     public decimal ExtraCharge { get; set; }
     public string UniqueId { get; set; }

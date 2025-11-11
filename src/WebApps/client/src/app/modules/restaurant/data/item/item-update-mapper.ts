@@ -8,12 +8,7 @@ export class ItemUpdateMapper {
         summary: item.summary
         ,cooking: item.cooking
         ,recipe: item.recipe
-        ,instructions: item.instructions
-        ,content: item.content
-        ,unit: item.unit
-        ,forPromotion: item.forPromotion
-        ,quantity : item.quantity
-        ,title: item.title,
+        ,instructions: item.instructions,
         isActive: item.isActive,
       },
       itemComposition: itemCompositions.map((item:any, index: number) => ( {
@@ -24,11 +19,12 @@ export class ItemUpdateMapper {
           itemId: item.itemId,
           childItemId: item.childItemId,
           quantity: item.quantity,
-          isActive: item.isActive,
+          price: item.price,
           costPrice: item.costPrice,
-          feeId: item.feeId,
-          taxId: item.taxRateId,
           measureId: item.measureId,
+          subtotal: item.subtotal,
+          isActive: item.isActive,
+          isDeleted: item.isDeleted
         }
       ))
     };

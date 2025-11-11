@@ -7,23 +7,48 @@ export class ItemGetByIdMapper {
   }
 
   static fromJson(response: any) {
-    const {item, itemCompositions} = JSON.parse(response.payload as string);
+    const {item, itemCompositions=[]} = JSON.parse(response.payload as string);
 
+    const {
+      id,
+      title,
+      cooking,
+      forPromotion,
+      summary,
+      recipe,
+      instructions
+    } = item[0];
 
     console.log(item);
     console.log(itemCompositions);
 
     return {
-      item,
+      item: {
+        id,
+        summary,
+        recipe,
+        instructions,
+        title,
+        cooking,
+        forPromotion,
+        isActive: true,
+      },
       itemCompositions: itemCompositions.map((item:any, index: number) => {
         const  mainMeasures = JSON.parse(item.principal)
         const fractionalMeasures = JSON.parse(item.fractional)
-        const measures  = mergeProductMeasures(mainMeasures, fractionalMeasures)
+        const measures  = mergeProductMeasures(mainMeasures, fractionalMeasures);
+
+        const dataMeasure = measures.find((x: any) => x.measureId === item.measureId);
+
+        const fees = dataMeasure?.fees ?? []
 
         return {
           uuid: item.uniqueId ?? generateUuidv4(),
           id: item.id,
+          itemId: item.itemId,
+          childItemId: item.childItemId,
           feeId: item.feeId,
+          fees,
           taxRateId: item.taxId, //id tipo impuesto
           measureId: item.measureId,
           quantity: item.quantity,
@@ -38,6 +63,7 @@ export class ItemGetByIdMapper {
           code: item.code,
           codePercentaje: item.codePercentaje,
           measures,
+          isActive: true,
         }
 
 

@@ -71,7 +71,6 @@ export class Items implements OnInit {
   }
 
   getList() {
-    console.log(this.params);
 
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
@@ -104,10 +103,12 @@ export class Items implements OnInit {
   }
 
   onEdit(rowData: any) {
+    console.log('Editando:', rowData);
     this._dgSvc.open(ItemAddEdit, {
       size: 'xl',
       data: {
         id: rowData.id,
+        acronymCategory: rowData.acronymCategory,
       },
     });
   }

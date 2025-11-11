@@ -1,6 +1,6 @@
 import { DECIMALS } from '@core/constants/global.constants';
 
-import { div, minus, mul, plus } from './decimal.util';
+import DecimalUtils, { div, minus, mul, plus } from './decimal.util';
 
 export const pricingCalculateUtil = {
   calculateVATAmount(price: number, percentage: number) {
@@ -185,14 +185,24 @@ export const pricingCalculateUtil = {
   },
 
   getValueUtility: (priceSale: number, unitPrice: number): number => {
-    const utilidad = minus(priceSale, unitPrice, DECIMALS.GENERAL) as number;
-    return utilidad;
+    return DecimalUtils.subtractAsNumber(priceSale, unitPrice, DECIMALS.GENERAL);
+  },
+
+  /**
+   *Función para calcular el valor total del descuento
+   * @param {*} cantidad
+   * @param {*} valorDescuento
+   * @returns
+   */
+  calcularValorTotalDescuento (cantidad:number, valorDescuento:number) {
+    // Calcular el valor total del descuento
+    return DecimalUtils.multiplyAsNumber(cantidad, valorDescuento, DECIMALS.GENERAL);
+
   },
 
   // Función para calcular el total antes de aplicar descuentos
   calcularTotalAntesDescuento: function (precioUnitario: number, cantidad: number) {
-    const valorTotal = mul(precioUnitario, cantidad, DECIMALS.GENERAL);
-    return valorTotal as number;
+    return DecimalUtils.multiplyAsNumber(precioUnitario, cantidad, DECIMALS.GENERAL);
   },
 
   calcularSubtotalSinImpuesto: function (
@@ -201,8 +211,7 @@ export const pricingCalculateUtil = {
     descuento: number,
   ) {
     const totalAntesDescuento = this.calcularTotalAntesDescuento(precioUnitario, cantidad);
-    const subtotalSinImpuesto = minus(totalAntesDescuento, descuento, DECIMALS.GENERAL);
-    return subtotalSinImpuesto as number;
+    return DecimalUtils.subtractAsNumber(totalAntesDescuento, descuento, DECIMALS.GENERAL);
   },
 
   // Calcular el total con impuesto
