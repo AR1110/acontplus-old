@@ -1,8 +1,8 @@
-﻿namespace BarberShop.Application.WorkSessions.Interfaces;
+namespace BarberShop.Application.WorkSessions.Interfaces;
 
 public interface IWorkSessionService
 {
-    Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationDto paginationDto);
+    Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationRequest paginationRequest);
     Task<SpResponse> GetWorkSessionByIdAsync(int id);
     Task<SpResponse> CreateWorkSessionAsync(WorkSessionDto workSessionDto);
     Task<SpResponse> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto);

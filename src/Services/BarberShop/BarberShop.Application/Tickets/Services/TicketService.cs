@@ -2,7 +2,7 @@ namespace BarberShop.Application.Tickets.Services;
 
 public class TicketService(ITicketRepository ticketRepository) : ITicketService
 {
-    public Task<PagedResult<TicketDto>> GetTicketsAsync(PaginationDto paginationDto)
+    public Task<PagedResult<TicketDto>> GetTicketsAsync(PaginationRequest paginationRequest)
     {
         throw new NotImplementedException();
     }

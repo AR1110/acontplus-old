@@ -1,6 +1,6 @@
 using Acontplus.Core.Abstractions.Persistence;
-using Acontplus.Core.DTOs.Requests;
-using Acontplus.Core.DTOs.Responses;
+using Acontplus.Core.Dtos.Requests;
+using Acontplus.Core.Dtos.Responses;
 using Billing.Domain.Repositories;
 using System.Data;
 

@@ -19,11 +19,14 @@ export class ItemListMapper {
     if (params.filters) {
       const objToJsonFilters: Record<string, string> = {
         categoryAbbreviations: 'sigla',
+        categoryAbbreviation: 'sigla'
       };
       Object.entries(params.filters).forEach(([key, value]) => {
+        if (value == null) return; // 🔹 salta este item, pero sigue con los demás
         const filterKey = objToJsonFilters[key] || key;
         queryParams.append(`filters[${filterKey}]`, String(value));
       });
+
     }
     return queryParams.toString();
   }
@@ -37,6 +40,7 @@ export class ItemListMapper {
       return {
         index: index + 1,
         id: item.id,
+        acronymCategory: item.acronymFamily,
         productId: item.productId,
         title: item.title,
         summary: item.summary,

@@ -1,18 +1,22 @@
 :host ::ng-deep .data-grid {
   height: 400px;
   .success {
-    background-color: #d1e7dd;
+    background-color: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
   }
 
   .danger {
-    background-color: #f8d7da;
+    background-color: var(--mat-sys-error-container);
+    color: var(--mat-sys-on-error-container);
   }
 
   .warning {
-    background-color: #fff3cd;
+    background-color: var(--mat-sys-tertiary-container);
+    color: var(--mat-sys-on-tertiary-container);
   }
 
   .info {
-    background-color: #cff4fc;
+    background-color: var(--mat-sys-primary-container);
+    color: var(--mat-sys-on-primary-container);
   }
 }

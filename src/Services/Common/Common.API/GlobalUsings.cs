@@ -1,4 +1,4 @@
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Logging;
 global using Common.API.Extensions;
 global using Common.Application.DTOs;

@@ -1,6 +1,6 @@
 namespace Restaurant.Application.Dtos.MealManagement;
 
-public record CreateMealScheduleSettingRequest(
+public record MealScheduleSettingCreate(
     int EstablishmentId,
     string MealCode,
     string Description,
@@ -9,7 +9,7 @@ public record CreateMealScheduleSettingRequest(
     int DisplayOrder,
     int CreatedByUserId);
 
-public record UpdateMealScheduleSettingRequest(int Id,
+public record MealScheduleSettingUpdate(int Id,
     int EstablishmentId,
     string MealCode,
     string Description,
@@ -19,7 +19,7 @@ public record UpdateMealScheduleSettingRequest(int Id,
     bool IsActive,
     int UpdatedByUserId);
 
-public record MealScheduleSettingResponse(int Id,
+public record MealScheduleSettingItem(int Id,
     int EstablishmentId,
     string MealCode,
     string Description,

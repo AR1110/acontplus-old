@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
-import { MealScheduleSettingResponse } from '@restaurant/domain/models/meal-schedule-setting.model';
+import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-setting';
 
 export interface GetMealScheduleSettingsParams {
   establishmentId: number;
@@ -12,11 +12,11 @@ export interface GetMealScheduleSettingsParams {
   providedIn: 'root',
 })
 export class GetMealScheduleSettingsUseCase
-  implements BaseUseCase<MealScheduleSettingResponse[], GetMealScheduleSettingsParams>
+  implements BaseUseCase<MealScheduleSetting[], GetMealScheduleSettingsParams>
 {
   private readonly repository = inject(MealScheduleSettingRepository);
 
-  execute(params: GetMealScheduleSettingsParams): Observable<MealScheduleSettingResponse[]> {
+  execute(params: GetMealScheduleSettingsParams): Observable<MealScheduleSetting[]> {
     return this.repository.getByEstablishmentId(params.establishmentId);
   }
 }

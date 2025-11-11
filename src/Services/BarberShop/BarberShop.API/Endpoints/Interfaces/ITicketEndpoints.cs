@@ -2,7 +2,7 @@ namespace BarberShop.API.Endpoints.Interfaces;
 
 public interface ITicketEndpoints
 {
-    Task<IResult> GetTicketsAsync(PaginationDto paginationDto);
+    Task<IResult> GetTicketsAsync(PaginationRequest paginationRequest);
     Task<IResult> GetTicketByIdAsync(int id);
     Task<IResult> CreateTicketAsync(TicketDto ticketDto);
     Task<IResult> UpdateTicketAsync(int id, TicketDto ticketDto);

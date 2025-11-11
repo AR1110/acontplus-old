@@ -9,7 +9,7 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
-        group.MapPut("/{id:int}", async (int id, UpdateMealConsumptionRequest request, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
+        group.MapPut("/{id:int}", async (int id, MealConsumptionUpdate request, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
         {
             request = request with
             {
@@ -21,7 +21,7 @@ public static class UpdateEndpoints
             .WithName("UpdateMealConsumption")
             .WithSummary("Update an existing meal consumption")
             .WithDescription("Update an existing meal consumption record.")
-            .Produces<MealConsumptionResponse>(StatusCodes.Status200OK)
+            .Produces<MealConsumptionItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);

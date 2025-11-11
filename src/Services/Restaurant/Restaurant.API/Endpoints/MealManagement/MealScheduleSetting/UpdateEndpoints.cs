@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
+namespace Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
 
 public static class UpdateEndpoints
 {
@@ -9,7 +9,7 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal schedule setting records.")
             .WithTags("Meal Schedule Settings");
-        group.MapPut("/{id:int}", async (int id, UpdateMealScheduleSettingRequest request, IMealScheduleSettingService mealScheduleSettingService, IUserContext userContext, CancellationToken cancellationToken) =>
+        group.MapPut("/{id:int}", async (int id, MealScheduleSettingUpdate request, IMealScheduleSettingService mealScheduleSettingService, IUserContext userContext, CancellationToken cancellationToken) =>
         {
             request = request with
             {
@@ -20,7 +20,7 @@ public static class UpdateEndpoints
             .WithName("UpdateMealScheduleSetting")
             .WithSummary("Update an existing meal schedule setting")
             .WithDescription("Update an existing meal schedule setting record.")
-            .Produces<MealScheduleSettingResponse>(StatusCodes.Status200OK)
+            .Produces<MealScheduleSettingItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);

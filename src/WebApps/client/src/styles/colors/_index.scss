@@ -1,2 +1,105 @@
-// @use './m2-colors'; // deprecated
-@use './m3-colors';
+@use 'sass:map';
+@use '../theme-colors' as theme;
+
+// Utility classes using Angular Material's theme CSS variables
+// Compatible with both light and dark themes
+
+.bg-success {
+  background-color: var(--mat-sys-tertiary) !important;
+  color: var(--mat-sys-on-tertiary) !important;
+}
+
+.bg-danger {
+  background-color: var(--mat-sys-error) !important;
+  color: var(--mat-sys-on-error) !important;
+}
+
+.bg-warning {
+  background-color: var(--mat-sys-tertiary-container) !important;
+  color: var(--mat-sys-on-tertiary-container) !important;
+}
+
+.bg-info {
+  background-color: var(--mat-sys-primary-container) !important;
+  color: var(--mat-sys-on-primary-container) !important;
+}
+
+.text-muted {
+  color: var(--mat-sys-on-surface-variant) !important;
+}
+
+.text-primary {
+  color: var(--mat-sys-primary) !important;
+}
+
+// Material 3 primary color variants - these work in both light and dark themes
+.bg-primary-container {
+  background-color: var(--mat-sys-primary-container) !important;
+  color: var(--mat-sys-on-primary-container) !important;
+}
+
+// Material 3 secondary color variants
+.bg-secondary-container {
+  background-color: var(--mat-sys-secondary-container) !important;
+  color: var(--mat-sys-on-secondary-container) !important;
+}
+
+// Material 3 tertiary color variants
+.bg-tertiary-container {
+  background-color: var(--mat-sys-tertiary-container) !important;
+  color: var(--mat-sys-on-tertiary-container) !important;
+}
+
+// Material 3 error color variants
+.bg-error-container {
+  background-color: var(--mat-sys-error-container) !important;
+  color: var(--mat-sys-on-error-container) !important;
+}
+
+// Tone 95 - Lighter surface variants for notifications/cards
+// These use palette tone 95 which adapts to light/dark theme
+:root {
+  .bg-primary-95 {
+    background-color: #{map.get(theme.$primary-palette, 95)} !important;
+    color: #{map.get(theme.$primary-palette, 10)} !important;
+  }
+
+  .bg-secondary-95 {
+    background-color: #{map.get(theme.$primary-palette, secondary, 95)} !important;
+    color: #{map.get(theme.$primary-palette, secondary, 10)} !important;
+  }
+
+  .bg-tertiary-95 {
+    background-color: #{map.get(theme.$tertiary-palette, 95)} !important;
+    color: #{map.get(theme.$tertiary-palette, 10)} !important;
+  }
+
+  .bg-error-95 {
+    background-color: #{map.get(theme.$primary-palette, error, 95)} !important;
+    color: #{map.get(theme.$primary-palette, error, 10)} !important;
+  }
+}
+
+// Dark theme overrides for tone 95 colors
+.dark-theme {
+  .bg-primary-95 {
+    background-color: #{map.get(theme.$primary-palette, 30)} !important;
+    color: #{map.get(theme.$primary-palette, 90)} !important;
+  }
+
+  .bg-secondary-95 {
+    background-color: #{map.get(theme.$primary-palette, secondary, 30)} !important;
+    color: #{map.get(theme.$primary-palette, secondary, 90)} !important;
+  }
+
+  .bg-tertiary-95 {
+    background-color: #{map.get(theme.$tertiary-palette, 30)} !important;
+    color: #{map.get(theme.$tertiary-palette, 90)} !important;
+  }
+
+  .bg-error-95 {
+    background-color: #{map.get(theme.$primary-palette, error, 30)} !important;
+    color: #{map.get(theme.$primary-palette, error, 90)} !important;
+  }
+}
+

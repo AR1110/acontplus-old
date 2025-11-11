@@ -1,16 +1,174 @@
 <app-breadcrumb />
 
 <div class="meal-consumption-container">
+  <!-- Customer Search and Registration Section -->
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <h2>Consumo TPV - Registro Diario</h2>
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Número de Identificación</mat-label>
+          <input
+            matInput
+            [formControl]="clientSearchControl"
+            maxlength="13"
+            placeholder="Ingrese número de identificación"
+            (keydown.enter)="searchCustomer()"
+          />
+        </mat-form-field>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="searchCustomer()"
+          [disabled]="isLoading()"
+        >
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Customer Details -->
+  @if (customer()) {
+    <mat-card class="customer-details-card">
+      <mat-card-header>
+        <mat-card-title>
+          <h3>Datos del Cliente</h3>
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="customer-details-grid">
+          <div class="detail-item">
+            <strong>N° Identificación:</strong>
+            <p>{{ customer()?.numeroIdentificacion }}</p>
+          </div>
+          <div class="detail-item">
+            <strong>Razón Social:</strong>
+            <p>{{ customer()?.razonSocial }}</p>
+          </div>
+          <div class="detail-item">
+            <strong>Empresa:</strong>
+            <p>{{ customer()?.empresa }}</p>
+          </div>
+          <div class="detail-item">
+            <strong>Cargo:</strong>
+            <p>{{ customer()?.cargo }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Meal Schedules -->
+    @if (schedules().length > 0) {
+      <mat-card class="schedules-card">
+        <mat-card-content>
+          <div class="table-responsive">
+            <table class="schedules-table">
+              <thead>
+                <tr>
+                  <th>Servicio</th>
+                  <th>Hora Inicio</th>
+                  <th>Hora Fin</th>
+                  <th class="text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (schedule of schedules(); track schedule.mealScheduleSettingId) {
+                  <tr>
+                    <td>{{ schedule.description }}</td>
+                    <td>
+                      <input
+                        type="time"
+                        [value]="formatTime(schedule.startDate)"
+                        class="time-input"
+                        disabled
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="time"
+                        [value]="formatTime(schedule.endDate)"
+                        class="time-input"
+                        disabled
+                      />
+                    </td>
+                    <td class="text-center status-cell">
+                      @if (schedule.isActive) {
+                        <span class="status-registered">
+                          <mat-icon>check_circle</mat-icon>
+                          Registrado
+                        </span>
+                      } @else {
+                        <div class="action-buttons">
+                          <mat-checkbox
+                            [checked]="false"
+                            [disabled]="!schedule.onTime || isLoading()"
+                            (change)="askToSave(schedule)"
+                            title="Marque para guardar"
+                          />
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            (click)="openOtherDatesDialog(schedule)"
+                            [disabled]="isLoading()"
+                            title="Añadir registros de otras fechas"
+                          >
+                            <mat-icon>add</mat-icon>
+                          </button>
+                        </div>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  <!-- Daily Records List Section -->
   <mat-card>
     <mat-card-header>
       <mat-card-title>
         <div class="header-title">
-          <h2>Consumo Diario de Alimentación</h2>
+          <h2>Registros del Día - Consumo de Alimentación</h2>
         </div>
       </mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <mat-form-field appearance="outline" class="config-filter">
+          <mat-label>Servicio</mat-label>
+          <mat-select
+            [value]="selectedConfigId()"
+            (selectionChange)="onConfigurationChange($event.value)"
+          >
+            @for (config of configurations(); track config.id) {
+              <mat-option [value]="config.id">
+                {{ config.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="search-filter">
+          <mat-label>Buscar registro</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Buscar..." />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
       @if (isLoading()) {
         <div class="loading-container">
           <mat-spinner diameter="50" />
@@ -64,12 +222,31 @@
                 @if (consumption.consumptionStatus !== ConsumptionStatus.Cancelled) {
                   <button
                     mat-icon-button
+                    color="primary"
+                    (click)="printConsumption(consumption)"
+                    title="Imprimir"
+                    [disabled]="isLoading()"
+                  >
+                    <mat-icon>print</mat-icon>
+                  </button>
+                  <button
+                    mat-icon-button
                     color="warn"
                     (click)="cancelConsumption(consumption)"
                     title="Anular"
                     [disabled]="isLoading()"
                   >
                     <mat-icon>cancel</mat-icon>
+                  </button>
+                } @else {
+                  <button
+                    mat-icon-button
+                    color="accent"
+                    (click)="getCancellationReason(consumption)"
+                    title="Ver motivo anulación"
+                    [disabled]="isLoading()"
+                  >
+                    <mat-icon>info</mat-icon>
                   </button>
                 }
                 <button

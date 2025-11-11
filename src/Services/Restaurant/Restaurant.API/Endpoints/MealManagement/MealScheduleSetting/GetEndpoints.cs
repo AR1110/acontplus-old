@@ -16,7 +16,7 @@ public static class GetEndpoints
             .WithName("GetAllMealScheduleSettings")
             .WithSummary("Get all meal schedule settings")
             .WithDescription("Retrieve a list of all meal schedule settings.")
-            .Produces<IReadOnlyList<MealScheduleSettingResponse>>(StatusCodes.Status200OK)
+            .Produces<IReadOnlyList<MealScheduleSettingItem>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }

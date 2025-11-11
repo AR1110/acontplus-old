@@ -25,16 +25,16 @@ import { MatIcon } from '@angular/material/icon';
   templateUrl: './warehouse-transfer-detail.html',
   styles: `
     .header-card {
-      background-color: var(--md-sys-color-surface-container);
-      color: var(--md-sys-color-on-surface);
+      background-color: var(--mat-sys-surface-container);
+      color: var(--mat-sys-on-surface);
       border-radius: 1rem;
-      border: 1px solid var(--md-sys-color-outline-variant);
-      box-shadow: 0 2px 6px var(--md-sys-color-shadow);
+      border: 1px solid var(--mat-sys-outline-variant);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       padding: 1rem;
 
       .label {
         font-weight: 600;
-        color: var(--md-sys-color-outline);
+        color: var(--mat-sys-outline);
       }
 
       .fw-semibold {
@@ -42,12 +42,12 @@ import { MatIcon } from '@angular/material/icon';
       }
 
       .total {
-        color: var(--md-sys-color-primary);
+        color: var(--mat-sys-primary);
         font-size: 1.1rem;
       }
 
       .text-primary {
-        color: var(--md-sys-color-primary);
+        color: var(--mat-sys-primary);
       }
 
       mat-icon {

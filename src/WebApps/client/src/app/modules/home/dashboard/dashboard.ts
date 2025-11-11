@@ -175,16 +175,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
         },
       },
     },
-    colors: [
-      '#008FFB',
-      '#00E396',
-      '#FEB019',
-      '#FF4560',
-      '#775DD0',
-      '#546E7A',
-      '#26a69a',
-      '#D10CE8',
-    ],
+    colors: [], // Will be set dynamically based on theme
     plotOptions: {
       bar: {
         columnWidth: '45%',
@@ -204,16 +195,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       categories: [],
       labels: {
         style: {
-          colors: [
-            '#008FFB',
-            '#00E396',
-            '#FEB019',
-            '#FF4560',
-            '#775DD0',
-            '#546E7A',
-            '#26a69a',
-            '#D10CE8',
-          ],
+          colors: [], // Will be set dynamically based on theme
           fontSize: '12px',
         },
       },
@@ -274,7 +256,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
         progress: {
           value: 50,
         },
-        color: 'bg-azure-50',
+        color: 'bg-primary-container',
       },
       {
         title: 'Proveedor',
@@ -282,7 +264,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
         progress: {
           value: 70,
         },
-        color: 'bg-blue-50',
+        color: 'bg-secondary-container',
       },
       {
         title: 'Clientes',
@@ -290,7 +272,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
         progress: {
           value: 80,
         },
-        color: 'bg-green-50',
+        color: 'bg-tertiary-container',
       },
       {
         title: 'Productos',
@@ -298,7 +280,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
         progress: {
           value: 40,
         },
-        color: 'bg-cyan-50',
+        color: 'bg-info',
       },
     ];
   });
@@ -353,15 +335,21 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     const newLabels = this.adminLayoutSvc.receivedDocuments().map((x: any) => x.document);
 
     if (this.chart3) {
+      const chartColors = this.getChartColors();
       const updatedOptions = {
         ...this.chart3Options, // mantiene todo
         series: [{ name: 'Total', data: newData }],
+        colors: chartColors,
         xaxis: {
           ...this.chart3Options.xaxis,
           categories: newLabels,
           labels: {
             rotate: -45,
             rotateAlways: true,
+            style: {
+              colors: chartColors,
+              fontSize: '12px',
+            },
           },
         },
       };
@@ -400,8 +388,6 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateCharts() {
-    const isDark = this.settings.getThemeColor() == 'dark';
-
     // this.chart1?.updateOptions({
     //   chart: {
     //     foreColor: isDark ? '#ccc' : '#333',
@@ -441,5 +427,25 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
 
   getRandom(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  /**
+   * Gets chart colors from Material 3 CSS variables
+   */
+  private getChartColors(): string[] {
+    const root = document.documentElement;
+    const getColor = (varName: string) =>
+      getComputedStyle(root).getPropertyValue(varName).trim();
+
+    return [
+      getColor('--mat-sys-primary'),
+      getColor('--mat-sys-secondary'),
+      getColor('--mat-sys-tertiary'),
+      getColor('--mat-sys-error'),
+      getColor('--mat-sys-primary-container'),
+      getColor('--mat-sys-secondary-container'),
+      getColor('--mat-sys-tertiary-container'),
+      getColor('--mat-sys-error-container'),
+    ];
   }
 }

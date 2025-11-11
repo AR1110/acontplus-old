@@ -5,7 +5,7 @@ global using Acontplus.Billing.Services.Conversion;
 global using Acontplus.Billing.Services.External;
 global using Acontplus.Billing.Services.Validation;
 global using Acontplus.Core.Abstractions.Context;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Enums;
 global using Acontplus.Core.Validation;
 global using Acontplus.Logging;

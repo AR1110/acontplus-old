@@ -1,4 +1,4 @@
-using Acontplus.Core.DTOs.Responses;
+using Acontplus.Core.Dtos.Responses;
 using Mapster;
 
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
@@ -14,7 +14,7 @@ public static class GetEndpoints
             .WithTags("Meal Consumptions");
         group.MapGet("/", async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService, CancellationToken cancellationToken) =>
         {
-            var paginationDto = paginationQuery.Adapt<PaginationDto>() with
+            var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
             {
                 SortDirection = paginationQuery.SortDirection ?? default
             };
@@ -23,7 +23,7 @@ public static class GetEndpoints
             .WithName("GetMealConsumptionById")
             .WithSummary("Get a meal consumption by ID")
             .WithDescription("Retrieve a meal consumption record by its ID.")
-            .Produces<IReadOnlyList<PagedResult<MealConsumptionResponse>>>(StatusCodes.Status200OK)
+            .Produces<IReadOnlyList<PagedResult<MealConsumptionItem>>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }

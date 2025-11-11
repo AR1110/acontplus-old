@@ -1,4 +1,4 @@
-export interface MealScheduleSettingResponse {
+export interface MealScheduleSetting {
   id: number;
   establishmentId: number;
   mealCode: string;
@@ -9,7 +9,7 @@ export interface MealScheduleSettingResponse {
   isActive: boolean;
 }
 
-export interface CreateMealScheduleSettingRequest {
+export interface MealScheduleSettingCreate {
   establishmentId: number;
   mealCode: string;
   description: string;
@@ -19,7 +19,7 @@ export interface CreateMealScheduleSettingRequest {
   createdByUserId?: number; // Set by backend from user context
 }
 
-export interface UpdateMealScheduleSettingRequest {
+export interface MealScheduleSettingUpdate {
   id: number;
   establishmentId: number;
   mealCode: string;
@@ -29,15 +29,4 @@ export interface UpdateMealScheduleSettingRequest {
   displayOrder: number;
   isActive: boolean;
   updatedByUserId?: number; // Set by backend from user context
-}
-
-export interface MealScheduleSettingFormData {
-  id?: number;
-  establishmentId: number;
-  mealCode: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  displayOrder: number;
-  isActive: boolean;
 }

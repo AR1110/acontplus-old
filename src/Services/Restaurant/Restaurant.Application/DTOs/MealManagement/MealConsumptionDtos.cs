@@ -2,14 +2,14 @@ using Restaurant.Domain.Enums;
 
 namespace Restaurant.Application.Dtos.MealManagement;
 
-public record CreateMealConsumptionRequest(int MealScheduleSettingId,
+public record MealConsumptionCreate(int MealScheduleSettingId,
     int CompanyCustomerMealPlanId,
     DateTime ConsumptionDate,
     int Amount,
     ConsumptionStatus ConsumptionStatus,
     int CreatedByUserId);
 
-public record UpdateMealConsumptionRequest(int Id,
+public record MealConsumptionUpdate(int Id,
     int MealScheduleSettingId,
     int CompanyCustomerMealPlanId,
     DateTime ConsumptionDate,
@@ -20,7 +20,7 @@ public record UpdateMealConsumptionRequest(int Id,
     DateTime CancelledAt,
     string CancelledIpAddress);
 
-public record MealConsumptionResponseDto(int Id,
+public record MealConsumptionItem(int Id,
     int MealScheduleSettingId,
     string MealScheduleSettingName,
     int CompanyCustomerMealPlanId,

@@ -1,4 +1,4 @@
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Utilities;

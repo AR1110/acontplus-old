@@ -64,12 +64,12 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
   providedIn: 'root',
 })
 export class GetProductSaleUseCase
-  implements BaseUseCase<GetProductPurchaseResult, { id?: number; search?: string }>
+  implements BaseUseCase<any, { id?: number; search?: string }>
 {
   private repo = inject(ProductRepository);
 
   execute(obj: { id?: number; search?: string }) {
-    if (!obj.id || !obj.search) {
+    if (!(obj.id || obj.search)) {
       throw new Error('El id y el search son requeridos');
     }
     return this.repo.getForSale(obj);

@@ -1,4 +1,4 @@
-using Acontplus.Core.DTOs.Responses;
+using Acontplus.Core.Dtos.Responses;
 using Acontplus.Core.Enums;
 using Acontplus.Core.Extensions;
 using Mapster;
@@ -24,7 +24,7 @@ public static class GetEndpoints
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
 
-            var paginationDto = paginationQuery.Adapt<PaginationDto>() with
+            var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
             {
                 SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
             };

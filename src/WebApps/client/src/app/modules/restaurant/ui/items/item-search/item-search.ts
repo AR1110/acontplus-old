@@ -5,10 +5,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
-import { distinctUntilChanged, of, Subject, Subscription, switchMap } from 'rxjs';
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { distinctUntilChanged, of, Subject, Subscription, switchMap, tap, catchError, debounceTime, finalize } from 'rxjs';
+import {  JsonPipe } from '@angular/common';
 import { ItemSearchUseCase } from '@restaurant/application/use-cases/item.use-case';
-import { catchError, debounceTime, finalize, tap } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
 
@@ -21,7 +20,6 @@ import { PaginationParams } from '@acontplus/core';
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
-    MatInputModule,
     MatProgressSpinnerModule,
     JsonPipe,
   ],
@@ -30,12 +28,15 @@ import { PaginationParams } from '@acontplus/core';
 })
 export class ItemSearch implements OnInit, OnDestroy {
   private searchUseCase = inject(ItemSearchUseCase);
+
   items = signal<any>([]);
   loading = signal(false);
   selectedItem = output<any>();
 
+  categoryAbbraviation = input.required()
   placeholder = input('');
   label = input('');
+
   private search$ = new Subject<string>();
   private sub?: Subscription;
 
@@ -44,39 +45,40 @@ export class ItemSearch implements OnInit, OnDestroy {
       .pipe(
         debounceTime(400),
         distinctUntilChanged(),
-        tap((value) => {
-          if (value.length < 2) this.items.set([]);
-        }),
+        tap(() => this.loading.set(true)), // 🔹 activa loading al iniciar cada búsqueda
         switchMap((value) => {
-          if (value.length < 2) return of([]);
-
-          this.loading.set(true);
+          if (value.length < 2) {
+            this.loading.set(false);
+            return of({ items: [] });
+          }
 
           return this.searchUseCase
             .execute(
               new PaginationParams({
                 searchTerm: value,
                 filters: {
-                  categoryAbbreviation: CATEGORY_ABBREVIATIONS.RESTAURANT,
+                  categoryAbbreviation: this.categoryAbbraviation(),
                 },
               }),
             )
             .pipe(
-              catchError(() => of([])),
-              finalize(() => this.loading.set(false)),
+              catchError((err) => {
+                console.error('Error en búsqueda:', err);
+                return of({ items: [] });
+              })
             );
         }),
+        finalize(() => this.loading.set(false)) // 🔹 se ejecuta en TODOS los casos
       )
-      .subscribe((response) => {
-        console.log(response);
-        console.log(this.items);
-        this.items.set(response.data);
+      .subscribe((res) => {
+        this.items.set(res.items ?? []);
+        this.loading.set(false); // 🔹 seguridad extra por si finalize no alcanza
       });
   }
 
   onSearch(event: Event) {
     const value = (event.target as HTMLInputElement).value.trim();
-    this.search$.next(value); // 🔹 emite el texto actual
+    this.search$.next(value);
   }
 
   onSelect(state: any) {

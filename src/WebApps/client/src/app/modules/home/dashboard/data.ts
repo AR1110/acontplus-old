@@ -20,31 +20,31 @@ export const ELEMENT_DATA: PeriodicElement[] = [
 
 export const MESSAGES = [
   {
-    img: 'images/heros/1.jpg',
+    img: '/assets/images/heros/1.jpg',
     subject: 'Hydrogen',
     content: `Cras sit amet nibh libero, in gravida nulla.
      Nulla vel metus scelerisque ante sollicitudin commodo.`,
   },
   {
-    img: 'images/heros/2.jpg',
+    img: '/assets/images/heros/2.jpg',
     subject: 'Helium',
     content: `Cras sit amet nibh libero, in gravida nulla.
      Nulla vel metus scelerisque ante sollicitudin commodo.`,
   },
   {
-    img: 'images/heros/3.jpg',
+    img: '/assets/images/heros/3.jpg',
     subject: 'Lithium',
     content: `Cras sit amet nibh libero, in gravida nulla.
      Nulla vel metus scelerisque ante sollicitudin commodo.`,
   },
   {
-    img: 'images/heros/4.jpg',
+    img: '/assets/images/heros/4.jpg',
     subject: 'Beryllium',
     content: `Cras sit amet nibh libero, in gravida nulla.
      Nulla vel metus scelerisque ante sollicitudin commodo.`,
   },
   {
-    img: 'images/heros/6.jpg',
+    img: '/assets/images/heros/6.jpg',
     subject: 'Boron',
     content: `Cras sit amet nibh libero, in gravida nulla.
      Nulla vel metus scelerisque ante sollicitudin commodo.`,
@@ -58,7 +58,7 @@ export const STATS = [
     progress: {
       value: 50,
     },
-    color: 'bg-azure-50',
+    color: 'bg-primary-container',
   },
   {
     title: 'Revenue',
@@ -66,7 +66,7 @@ export const STATS = [
     progress: {
       value: 70,
     },
-    color: 'bg-blue-50',
+    color: 'bg-secondary-container',
   },
   {
     title: 'Traffic',
@@ -74,7 +74,7 @@ export const STATS = [
     progress: {
       value: 80,
     },
-    color: 'bg-green-50',
+    color: 'bg-tertiary-container',
   },
   {
     title: 'New User',
@@ -82,7 +82,7 @@ export const STATS = [
     progress: {
       value: 40,
     },
-    color: 'bg-cyan-50',
+    color: 'bg-info',
   },
 ];
 

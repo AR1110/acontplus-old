@@ -3,7 +3,7 @@ namespace BarberShop.API.Endpoints.Implementations;
 public class WorkSessionEndpoints(IUserContext userContext, IWorkSessionService workSessionService)
     : IWorkSessionEndpoints
 {
-    public Task<IResult> GetWorkSessionsAsync(PaginationDto paginationDto)
+    public Task<IResult> GetWorkSessionsAsync(PaginationRequest paginationRequest)
     {
         throw new NotImplementedException();
     }

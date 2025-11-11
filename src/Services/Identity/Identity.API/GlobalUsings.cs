@@ -1,8 +1,8 @@
 global using Acontplus.ApiDocumentation;
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.Domain.Common.Entities;
-global using Acontplus.Core.DTOs.Requests;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Requests;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Enums;
 global using Acontplus.Core.Extensions;
 global using Acontplus.Core.Validation;

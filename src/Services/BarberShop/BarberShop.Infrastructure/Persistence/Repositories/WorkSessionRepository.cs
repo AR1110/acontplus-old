@@ -1,9 +1,9 @@
-﻿namespace BarberShop.Infrastructure.Persistence.Repositories;
+namespace BarberShop.Infrastructure.Persistence.Repositories;
 
 public class WorkSessionRepository(BarberShopContext context, ILogger<BaseRepository<WorkSession>> logger = null)
     : BaseRepository<WorkSession>(context, logger), IWorkSessionRepository
 {
-    public Task<PagedResult<WorkSession>> GetWorkSessionsAsync(PaginationDto paginationDto)
+    public Task<PagedResult<WorkSession>> GetWorkSessionsAsync(PaginationRequest paginationRequest)
     {
         throw new NotImplementedException();
     }

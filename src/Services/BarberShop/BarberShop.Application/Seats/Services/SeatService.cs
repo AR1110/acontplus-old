@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Seats.Services;
+namespace BarberShop.Application.Seats.Services;
 
 public class SeatService(ISeatRepository seatRepository) : ISeatService
 {
@@ -22,9 +22,9 @@ public class SeatService(ISeatRepository seatRepository) : ISeatService
         };
     }
 
-    public async Task<PagedResult<SeatDto>> GetSeatsAsync(PaginationDto paginationDto)
+    public async Task<PagedResult<SeatDto>> GetSeatsAsync(PaginationRequest paginationRequest)
     {
-        var pagedSeats = await seatRepository.GetSeatsAsync(paginationDto);
+        var pagedSeats = await seatRepository.GetSeatsAsync(paginationRequest);
 
         var seats = pagedSeats.Items.Select(ObjectMapper.Map<Seat, SeatDto>).ToList();
 

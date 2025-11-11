@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -38,6 +38,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
     }
   `,
   imports: [RouterLink, MatButtonModule, MatIconModule, MatMenuModule, TranslateModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserButton implements OnInit {
   private readonly router = inject(Router);
@@ -45,7 +46,7 @@ export class UserButton implements OnInit {
   private tokenUseCase = inject(TokenUseCase);
 
   user = {
-    avatar: 'images/user-avatar.jpg',
+    avatar: '/assets/images/user-avatar.jpg',
   } as any;
 
   ngOnInit(): void {}

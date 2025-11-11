@@ -1,6 +1,6 @@
 import { AppDirectionality, LocalStorageService } from '@shared/services';
 import { enUS, Locale, zhCN, zhTW, es } from 'date-fns/locale';
-import { AppSettings, AppTheme, defaults } from '../settings';
+import { AppSettings, defaults } from '../settings';
 import { Injectable, inject, DOCUMENT } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { MediaMatcher } from '@angular/cdk/layout';
@@ -55,31 +55,6 @@ export class SettingsService {
     }
     this.dir.value = this.options.dir;
     this.htmlElement.dir = this.options.dir;
-  }
-
-  getThemeColor() {
-    // Check whether the browser support `prefers-color-scheme`
-    if (
-      this.options.theme === 'auto' &&
-      this.mediaMatcher.matchMedia('(prefers-color-scheme)').media !== 'not all'
-    ) {
-      const isSystemDark = this.mediaMatcher.matchMedia('(prefers-color-scheme: dark)').matches;
-      // Set theme to dark if `prefers-color-scheme` is dark. Otherwise, set it to light.
-      return isSystemDark ? 'dark' : 'light';
-    } else {
-      return this.options.theme as Exclude<AppTheme, 'auto'>;
-    }
-  }
-
-  setTheme(theme?: AppTheme) {
-    if (theme) {
-      this.setOptions({ theme });
-    }
-    if (this.getThemeColor() === 'dark') {
-      this.htmlElement.classList.add('theme-dark');
-    } else {
-      this.htmlElement.classList.remove('theme-dark');
-    }
   }
 
   getTranslateLang() {

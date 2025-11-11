@@ -1,25 +1,15 @@
-import {
-  Component,
-  inject,
-  Renderer2,
-  effect,
-  DOCUMENT,
-  OnInit,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
-import { THEME_OPTIONS } from '@core/theme/theme-options';
 import { PreloaderService, SettingsService } from '@core/bootstrap';
 import { PermissionsService } from '@core/services/permissions';
-import { ThemeClass } from '@core/theme/types';
 import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
-import { ThemeService } from '@core/theme/theme.service';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { GlobalRoutes } from '@core/constants/global-routes';
+import { ThemeSwitcher } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-root',
@@ -29,47 +19,27 @@ import { GlobalRoutes } from '@core/constants/global-routes';
 export class App implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
   private _authUseCase = inject(AuthUseCase);
 
   title = 'Acontplus';
-  //temporalmente
-  themeOptions = THEME_OPTIONS;
-  //end temporalmente
   userRoleState = inject(UserRoleStateService);
   //temporalmente
-  private readonly _themeService = inject(ThemeService);
-  private readonly _document = inject(DOCUMENT);
-  private readonly _renderer = inject(Renderer2);
+  private readonly themeSwitcher = inject(ThemeSwitcher);
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
   private readonly permissionsService = inject(PermissionsService);
-
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
   //end temporalmente
 
   constructor() {
     const library = inject(FaIconLibrary);
-
     library.addIconPacks(fab);
-    effect(() => {
-      this._renderer.setAttribute(
-        this._document.documentElement,
-        'class',
-        this._themeService.theme(),
-      );
-    });
   }
-
-  //temporalmente
-  changeTheme(newTheme: ThemeClass) {
-    this._themeService.changeTheme(newTheme);
-  }
-
-  // end temporalmente
 
   ngOnInit() {
+    this.themeSwitcher.loadMode();
+
     // Limpiar sessionStorage en cada inicio
     Object.keys(sessionStorage).forEach(function (key) {
       sessionStorage.removeItem(key);
@@ -106,12 +76,6 @@ export class App implements OnInit, AfterViewInit {
     // Procesar permisos si existen
     if (dataPermission) {
       this.processPermissions(dataPermission, userRoleData);
-    }
-
-    // Aplicar tema por defecto (temporal durante migración)
-    const themeClass = this.themeOptions.find((x) => x.name === 'azure')?.light.class;
-    if (themeClass) {
-      // this.changeTheme(themeClass);
     }
 
     // Si ya existe un token válido, eliminarlo antes de establecer el nuevo
@@ -182,7 +146,7 @@ export class App implements OnInit, AfterViewInit {
    */
   private handleModernFlow() {
     this.settings.setDirection();
-    this.settings.setTheme();
+    this.themeSwitcher.loadMode();
   }
 
   ngAfterViewInit() {

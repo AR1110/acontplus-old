@@ -1,8 +1,8 @@
-﻿namespace BarberShop.Application.WorkSessions.Services;
+namespace BarberShop.Application.WorkSessions.Services;
 
 public class WorkSessionService(IWorkSessionRepository workSessionRepository) : IWorkSessionService
 {
-    public Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationDto paginationDto)
+    public Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationRequest paginationRequest)
     {
         throw new NotImplementedException();
     }

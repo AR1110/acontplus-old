@@ -1,0 +1,51 @@
+.form-content {
+  padding: 20px 0;
+  min-width: 500px;
+
+  .info-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+
+    .info-item {
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      label {
+        font-weight: 600;
+        color: #666;
+        margin-right: 8px;
+      }
+
+      span {
+        color: #333;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  gap: 12px;
+}

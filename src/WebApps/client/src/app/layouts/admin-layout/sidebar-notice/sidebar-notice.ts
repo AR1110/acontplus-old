@@ -18,19 +18,19 @@ export class SidebarNotice {
       messages: [
         {
           icon: '🔔',
-          color: 'bg-red-95',
+          color: 'bg-error-95',
           title: 'General Meeting for update',
           content: `You can use the Dashboard to explore how many new users download reports daily and monthly.`,
         },
         {
           icon: '📢',
-          color: 'bg-azure-95',
+          color: 'bg-primary-95',
           title: 'Widgets update',
           content: `We've made some updates to the emendable widget which we think you are going to love.`,
         },
         {
           icon: '⏳',
-          color: 'bg-violet-95',
+          color: 'bg-secondary-95',
           title: 'Coming soon new features',
           content: `More new features are coming soon, so stay patient!`,
         },
@@ -41,7 +41,7 @@ export class SidebarNotice {
       messages: [
         {
           icon: '📩',
-          color: 'bg-magenta-95',
+          color: 'bg-tertiary-95',
           title: 'Weekly reports are available',
           content: `Please go to the notification center to check your reports.`,
         },

@@ -21,10 +21,10 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { CreateMealScheduleSettingUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/create-meal-schedule-setting.use-case';
 import { UpdateMealScheduleSettingUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/update-meal-schedule-setting.use-case';
 import {
-  CreateMealScheduleSettingRequest,
-  MealScheduleSettingResponse,
-  UpdateMealScheduleSettingRequest,
-} from '@restaurant/domain/models/meal-schedule-setting.model';
+  MealScheduleSettingCreate,
+  MealScheduleSetting,
+  MealScheduleSettingUpdate,
+} from '@restaurant/domain/models/meal-schedule-setting';
 import Swal from 'sweetalert2';
 import { finalize } from 'rxjs/operators';
 
@@ -49,9 +49,7 @@ import { finalize } from 'rxjs/operators';
 })
 export class MealScheduleSettingDialog implements OnInit {
   #dialogRef = inject(MatDialogRef<MealScheduleSettingDialog>);
-  #data = inject<{ setting?: MealScheduleSettingResponse; establishmentId: number }>(
-    MAT_DIALOG_DATA,
-  );
+  #data = inject<{ setting?: MealScheduleSetting; establishmentId: number }>(MAT_DIALOG_DATA);
   #fb = inject(FormBuilder);
   #createUseCase = inject(CreateMealScheduleSettingUseCase);
   #updateUseCase = inject(UpdateMealScheduleSettingUseCase);
@@ -132,7 +130,7 @@ export class MealScheduleSettingDialog implements OnInit {
   private createSetting(formValue: any): void {
     this.isLoading.set(true);
 
-    const request: CreateMealScheduleSettingRequest = {
+    const request: MealScheduleSettingCreate = {
       establishmentId: this.#data.establishmentId,
       mealCode: formValue.mealCode,
       description: formValue.description,
@@ -170,7 +168,7 @@ export class MealScheduleSettingDialog implements OnInit {
 
     this.isLoading.set(true);
 
-    const request: UpdateMealScheduleSettingRequest = {
+    const request: MealScheduleSettingUpdate = {
       id: this.#data.setting.id,
       establishmentId: this.#data.establishmentId,
       mealCode: formValue.mealCode,

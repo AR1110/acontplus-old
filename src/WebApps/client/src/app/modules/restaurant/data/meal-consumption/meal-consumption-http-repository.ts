@@ -1,16 +1,22 @@
 import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
 import { inject, Injectable } from '@angular/core';
-import { PaginationParams, PagedResult } from '@acontplus/core';
+import { PaginationParams, PagedResult, ApiResponse } from '@acontplus/core';
 import {
   MealConsumption,
-  CreateMealConsumptionRequest,
-  UpdateMealConsumptionRequest,
-  CancelMealConsumptionRequest,
+  MealConsumptionCreate,
+  MealConsumptionUpdate,
+  MealConsumptionCancel,
+  MealConsumptionCreateForOtherDateRequest,
+  MealScheduleConfiguration,
+  PrintConsumptionResponse,
 } from '@modules/restaurant/domain/models/meal-consumption';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
+import { SearchCustomerResponse } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
+import { GetCancellationDetailsResponse } from '@restaurant/application/use-cases/meal-consumption/get-cancellation-details.use-case';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -43,11 +49,29 @@ export class MealConsumptionHttpRepository implements MealConsumptionRepository 
     return this.http.get<PagedResult<MealConsumption>>(`${this.url}?${queryParams.toString()}`);
   }
 
-  create(data: CreateMealConsumptionRequest): Observable<MealConsumption> {
-    return this.http.post<MealConsumption>(this.url, data);
+  create(data: MealConsumptionCreate): Observable<ApiResponse> {
+    const payload = {
+      tipo: 1,
+      mealScheduleSettingId: data.mealScheduleSettingId,
+      idCliente: data.idCliente,
+      onTime: data.onTime,
+      cantidad: data.amount,
+    };
+    return this.http.post<ApiResponse>('/consumoTpv/Post', { json: JSON.stringify(payload) });
   }
 
-  update(id: number, data: UpdateMealConsumptionRequest): Observable<MealConsumption> {
+  createForOtherDate(data: MealConsumptionCreateForOtherDateRequest): Observable<ApiResponse> {
+    const payload = {
+      tipo: 2,
+      mealScheduleSettingId: data.mealScheduleSettingId,
+      idCliente: data.idCliente,
+      fechaConsumo: data.consumptionDate,
+      cantidad: data.amount,
+    };
+    return this.http.post<ApiResponse>('/ConsumoTpv/Post', { json: JSON.stringify(payload) });
+  }
+
+  update(id: number, data: MealConsumptionUpdate): Observable<MealConsumption> {
     return this.http.put<MealConsumption>(`${this.url}${id}`, data);
   }
 
@@ -55,9 +79,104 @@ export class MealConsumptionHttpRepository implements MealConsumptionRepository 
     return this.http.delete<ApiResponseLegacy>(`${this.url}${id}`);
   }
 
-  cancel(data: CancelMealConsumptionRequest): Observable<ApiResponseLegacy> {
+  cancel(data: MealConsumptionCancel): Observable<ApiResponseLegacy> {
     return this.http.post<ApiResponseLegacy>(`ConsumoAnuladoTpv/Post`, {
       json: JSON.stringify(data),
     });
+  }
+
+  searchCustomer(searchTerm: string): Observable<SearchCustomerResponse> {
+    const payload = {
+      tipo: 3,
+      txtSearch: searchTerm,
+    };
+    return this.http
+      .get<ApiResponseLegacy>('/consumoTpv/Get', {
+        params: { json: JSON.stringify(payload) },
+      })
+      .pipe(
+        map((response) => {
+          if (response.code === '1' && response.payload) {
+            const data = JSON.parse(response.payload as string);
+            return {
+              customer: data[0]?.[0] ?? null,
+              schedules: data[1] ?? [],
+            };
+          }
+          return {
+            customer: null,
+            schedules: [],
+          };
+        }),
+      );
+  }
+
+  getConfigurations(): Observable<PagedResult<MealScheduleConfiguration>> {
+    const payload = {
+      tipo: 4,
+    };
+    return this.http
+      .get<ApiResponseLegacy>('/consumoTpv/Get', {
+        params: { json: JSON.stringify(payload) },
+      })
+      .pipe(
+        map((response) => {
+          if (response.code === '1' && response.payload) {
+            const data = JSON.parse(response.payload as string);
+            const items = data[0] || [];
+            return {
+              items,
+              totalCount: items.length,
+              pageIndex: 1,
+              pageSize: items.length,
+              totalPages: 1,
+              hasPreviousPage: false,
+              hasNextPage: false,
+            };
+          }
+          return {
+            items: [],
+            totalCount: 0,
+            pageIndex: 1,
+            pageSize: 0,
+            totalPages: 0,
+            hasPreviousPage: false,
+            hasNextPage: false,
+          };
+        }),
+      );
+  }
+
+  print(id: number): Observable<PrintConsumptionResponse> {
+    return this.http.post<PrintConsumptionResponse>('/ConsumoTpv/Print', null, {
+      params: { id: id.toString() },
+    });
+  }
+
+  getCancellationDetails(id: number): Observable<GetCancellationDetailsResponse> {
+    const payload = {
+      idConsumoTpv: id,
+    };
+    return this.http
+      .get<ApiResponseLegacy>('/ConsumoAnuladoTpv/Get', {
+        params: { json: JSON.stringify(payload) },
+      })
+      .pipe(
+        map((response) => {
+          if (response.code === '1' && response.payload) {
+            const data = JSON.parse(response.payload as string);
+            return {
+              code: response.code,
+              message: response.message,
+              details: data[0] ?? null,
+            };
+          }
+          return {
+            code: response.code,
+            message: response.message,
+            details: null,
+          };
+        }),
+      );
   }
 }

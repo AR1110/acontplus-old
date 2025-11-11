@@ -17,7 +17,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { GetMealScheduleSettingsUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/get-meal-schedule-settings.use-case';
 import { DeleteMealScheduleSettingUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/delete-meal-schedule-setting.use-case';
 import { MatDialog } from '@angular/material/dialog';
-import { MealScheduleSettingResponse } from '@restaurant/domain/models/meal-schedule-setting.model';
+import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-setting';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -57,7 +57,7 @@ export class MealScheduleSettingList implements OnInit {
   #dialog = inject(MatDialog);
 
   // State with signals
-  settings = signal<MealScheduleSettingResponse[]>([]);
+  settings = signal<MealScheduleSetting[]>([]);
   isLoading = signal<boolean>(false);
   establishmentId = signal<number>(1); // TODO: Get from user context/session
 
@@ -88,7 +88,7 @@ export class MealScheduleSettingList implements OnInit {
       });
   }
 
-  openDialog(setting?: MealScheduleSettingResponse) {
+  openDialog(setting?: MealScheduleSetting) {
     const dialogRef = this.#dialog.open(MealScheduleSettingDialog, {
       width: '600px',
       data: {
@@ -105,7 +105,7 @@ export class MealScheduleSettingList implements OnInit {
     });
   }
 
-  async deleteSetting(setting: MealScheduleSettingResponse): Promise<void> {
+  async deleteSetting(setting: MealScheduleSetting): Promise<void> {
     const result = await Swal.fire({
       title: '¿Está seguro/a de eliminar esta configuración?',
       text: `Se eliminará la configuración de ${setting.description}`,

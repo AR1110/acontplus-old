@@ -1,6 +1,6 @@
 global using Acontplus.Core.Abstractions.Context;
-global using Acontplus.Core.DTOs.Common;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Common;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Utilities;
 global using Acontplus.Services.Configuration;

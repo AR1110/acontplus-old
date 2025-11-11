@@ -21,7 +21,7 @@ export class RoleSelectionComponent {
   authSvc = inject(AuthService);
 
   public dialogRef = inject(MatDialogRef<RoleSelectionComponent>);
-  defaultIcon = 'assets/icons/default-user.png';
+  defaultIcon = '/assets/icons/default-user.png';
   roles = signal<any>([]);
   selectedRole: any | null = null;
 

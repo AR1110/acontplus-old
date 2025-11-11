@@ -54,10 +54,6 @@ export class AdminLayoutComponent implements OnDestroy, OnInit {
 
   options = this.settings.options;
 
-  get themeColor() {
-    return this.settings.getThemeColor();
-  }
-
   get isOver() {
     return this.isMobileScreen;
   }
@@ -141,6 +137,5 @@ export class AdminLayoutComponent implements OnDestroy, OnInit {
     this.options = options;
     this.settings.setOptions(options);
     this.settings.setDirection();
-    this.settings.setTheme();
   }
 }

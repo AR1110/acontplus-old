@@ -16,7 +16,7 @@ public static class TicketEndpointsExtensions
         seatGroup.MapGet("/",
             async (ISeatEndpoints seatEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
             {
-                var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
+                var paginationDto = new PaginationRequest { PageIndex = pageIndex, PageSize = pageSize };
                 return await seatEndpoints.GetSeatsAsync(paginationDto);
             })
             .WithDescription("Retrieves a paginated list of all available seats.");
@@ -56,7 +56,7 @@ public static class TicketEndpointsExtensions
         workSessionGroup.MapGet("/",
             async (IWorkSessionEndpoints workSessionEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
             {
-                var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
+                var paginationDto = new PaginationRequest { PageIndex = pageIndex, PageSize = pageSize };
                 return await workSessionEndpoints.GetWorkSessionsAsync(paginationDto);
             })
             .WithDescription("Retrieves a paginated list of all work sessions.");
@@ -95,7 +95,7 @@ public static class TicketEndpointsExtensions
         ticketGroup.MapGet("/",
             async (ITicketEndpoints ticketEndpoints, [FromQuery] int pageIndex, [FromQuery] int pageSize) =>
             {
-                var paginationDto = new PaginationDto { PageIndex = pageIndex, PageSize = pageSize };
+                var paginationDto = new PaginationRequest { PageIndex = pageIndex, PageSize = pageSize };
                 return await ticketEndpoints.GetTicketsAsync(paginationDto);
             })
             .WithDescription("Retrieves a paginated list of all tickets.");

@@ -1,6 +1,6 @@
 global using Acontplus.Core.Abstractions.Persistence;
-global using Acontplus.Core.DTOs.Common;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Common;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Utilities.Data;
 global using Configuration.Application.Interfaces;

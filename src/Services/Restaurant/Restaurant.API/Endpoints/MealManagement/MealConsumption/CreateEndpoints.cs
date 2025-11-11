@@ -10,7 +10,7 @@ public static class CreateEndpoints
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
 
-        group.MapPost("/", async (CreateMealConsumptionRequest request, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
+        group.MapPost("/", async (MealConsumptionCreate request, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
         {
             request = request with
             {
@@ -21,7 +21,7 @@ public static class CreateEndpoints
             .WithName("CreateMealConsumption")
             .WithSummary("Create a new meal consumption")
             .WithDescription("Create a new meal consumption record.")
-            .Produces<MealConsumptionResponse>(StatusCodes.Status201Created)
+            .Produces<MealConsumptionItem>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
