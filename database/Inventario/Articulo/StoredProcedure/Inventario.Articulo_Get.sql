@@ -402,7 +402,7 @@ BEGIN
 	    --> Datos Articulo Venta Web
 	    IF @tipo = 6
 		    BEGIN
-                SET @tableNames = 'product,fractionedMeasures,measures,inventoryAdjustment,additionalInfo'
+                SET @tableNames = 'product,fractionedMeasures,measures,inventoryAdjustment,additionalInfo,taxes'
 
 		        SELECT @idArticulo = idArticulo FROM OPENJSON(@json) WITH (idArticulo INT)
 
@@ -496,6 +496,14 @@ BEGIN
                 SELECT idArticulo,idBodega,fechaConsolidacion FROM Inventario.Stock WHERE idArticulo = @idArticulo 
 
 			    SELECT * FROM Compra.InfoAdicional WITH (NOLOCK) WHERE idArticulo = @idArticulo AND estado = 1
+
+                SELECT ti.codigo as codigoPorcentaje
+                      ,ti.idTarifaImpuesto 
+                FROM Sri.TarifaImpuesto ti
+                INNER JOIN Sri.Impuesto          im ON im.idImpuesto = ti.idImpuesto
+                WHERE im.codigo = '2'
+                  AND ti.estado = 1 
+
 
 			    RETURN 
 		    END

@@ -21,7 +21,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-    SET @TableNames = 'item,ItemCompositions'
+    SET @TableNames = 'item,itemCompositions'
 
     SELECT it.Id
           ,it.Summary

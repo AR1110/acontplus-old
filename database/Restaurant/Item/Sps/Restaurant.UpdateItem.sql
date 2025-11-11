@@ -42,29 +42,29 @@ BEGIN
    
     DECLARE @TbItemComposition AS TABLE
     (
-        [Id]                INT
-       ,[ItemId]            INT
-       ,[ChildItemId]       INT
-       ,[ItemCompositionId] INT
-       ,[FeeId]             INT
-       ,[TaxId]             INT
-       ,[MeasureId]         INT
-       ,[ExtentId]          INT
-       ,[Quantity]          NUMERIC(18,5)
-       ,[Price]             NUMERIC(18,5)
-       ,[Instructions]      VARCHAR(MAX)
-       ,[Weight]            NUMERIC(18,5)
-       ,[NetWeight]         NUMERIC(18,5)
-       ,[CostPrice]         NUMERIC(18,5)
-       ,[DiscountPercent]   NUMERIC(18,5)
-       ,[Discount]          NUMERIC(18,5)
-       ,[Subtotal]          NUMERIC(18,5)
-       ,[WastePercentage]   NUMERIC(18,5)
-       ,[IsOptional]        BIT 
-       ,[ExtraCharge]       NUMERIC(18,5)
-       ,[UniqueId]          VARCHAR(MAX)
-       ,[IsActive]          BIT
-       ,[IsDeleted]         BIT
+        [Id]                INT NOT NULL
+       ,[ItemId]            INT NOT NULL
+       ,[ChildItemId]       INT NOT NULL
+       ,[ItemCompositionId] INT NULL
+       ,[FeeId]             INT NULL
+       ,[TaxId]             INT NULL
+       ,[MeasureId]         INT NULL
+       ,[ExtentId]          INT NULL
+       ,[Quantity]          NUMERIC(18,5) NOT NULL
+       ,[Price]             NUMERIC(18,5) NOT NULL
+       ,[Instructions]      VARCHAR(MAX) NULL
+       ,[Weight]            NUMERIC(18,5) NULL
+       ,[NetWeight]         NUMERIC(18,5) NULL
+       ,[CostPrice]         NUMERIC(18,5) NOT NULL
+       ,[DiscountPercent]   NUMERIC(18,5) NULL
+       ,[Discount]          NUMERIC(18,5) NULL
+       ,[Subtotal]          NUMERIC(18,5) NOT NULL
+       ,[WastePercentage]   NUMERIC(18,5) NULL
+       ,[IsOptional]        BIT NOT NULL
+       ,[ExtraCharge]       NUMERIC(18,5) NULL
+       ,[UniqueId]          VARCHAR(MAX) NULL
+       ,[IsActive]          BIT NOT NULL
+       ,[IsDeleted]         BIT NOT NULL
        ,[CreatedAt]         DATETIME2 DEFAULT GETDATE()
        ,[UpdatedAt]         DATETIME2 DEFAULT GETDATE()
     )
@@ -83,8 +83,8 @@ BEGIN
         )
 
         INSERT INTO @tbItem
-              ( id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title)
-        SELECT @id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title
+              ( id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title ,IsActive)
+        SELECT @id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title ,IsActive
         FROM OPENJSON(@Item) WITH
         (
             summary      VARCHAR(500)
@@ -96,6 +96,7 @@ BEGIN
            ,forPromotion BIT
            ,quantity     INT
            ,title        VARCHAR(500)
+           ,isActive     BIT
         )
 
         INSERT INTO @TbItemComposition
@@ -104,28 +105,28 @@ BEGIN
         FROM OPENJSON(@ItemComposition) WITH
         (
             [id]                INT
-           ,[itemid]            INT
-           ,[childitemid]       INT
-           ,[itemcompositionid] INT
-           ,[feeid]             INT
-           ,[taxid]             INT
-           ,[measureid]         INT
-           ,[extentid]          INT
+           ,[itemId]            INT
+           ,[childItemId]       INT
+           ,[itemCompositionId] INT
+           ,[feeId]             INT
+           ,[taxId]             INT
+           ,[measureId]         INT
+           ,[extentId]          INT
            ,[quantity]          NUMERIC(18,5)
            ,[price]             NUMERIC(18,5)
            ,[instructions]      VARCHAR(MAX)
            ,[weight]            NUMERIC(18,5)
            ,[netweight]         NUMERIC(18,5)
-           ,[costprice]         NUMERIC(18,5)
-           ,[discountpercent]   NUMERIC(18,5)
+           ,[costPrice]         NUMERIC(18,5)
+           ,[discountPercent]   NUMERIC(18,5)
            ,[discount]          NUMERIC(18,5)
            ,[subtotal]          NUMERIC(18,5)
-           ,[wastepercentage]   NUMERIC(18,5)
-           ,[isoptional]        BIT
-           ,[extracharge]       NUMERIC(18,5)
-           ,[uniqueid]          VARCHAR(MAX)
-           ,[isactive]          BIT
-           ,[isdeleted]         BIT
+           ,[wastePercentage]   NUMERIC(18,5)
+           ,[isOptional]        BIT
+           ,[extraCharge]       NUMERIC(18,5)
+           ,[uniqueId]          VARCHAR(MAX)
+           ,[isActive]          BIT
+           ,[isDeleted]        BIT
         )
 
         --> Validation
