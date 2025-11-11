@@ -1,31 +1,25 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
-
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
-import { Recipe } from '@restaurant/domain/models/recipe.model';
-
-import { IngredientSearchComponent } from '@restaurant/ui/ingredient/ingredient-search/ingredient-search.component';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { IngredientService } from '@restaurant/data/services/ingredient.service';
-import { RecipeService } from '@restaurant/data/services/recipe.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Ingredient } from '@restaurant/domain/models/ingredient.model';
-import { ItemService } from '@restaurant/data/services/item.service';
-import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
-import { ItemGetBydIdUseCase } from '@restaurant/application/use-cases/item.use-case';
-import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import {ItemGetBydIdUseCase, ItemUpdateUseCase} from '@restaurant/application/use-cases/item.use-case';
+import {
+  GetProductSaleUseCase
+} from '@inventory/product/application/use-cases/product/get-product.use-case';
+import {ProductMeasure} from "@inventory/domain/models/product-measure";
+import {ItemComposition} from "@restaurant/domain/models/item-composition";
 
 @Component({
   selector: 'app-item-add-edit',
   imports: [
     ReactiveFormsModule,
     TabulatorComponent,
-    IngredientSearchComponent,
     Button,
     MatCustomDialogComponent,
     MatInputModule,
@@ -36,8 +30,9 @@ import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/pr
 })
 export class ItemAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
-  private productGetIdUseCase = inject(ProductGetIdUseCase);
-  data = inject<{ id: number }>(MAT_DIALOG_DATA);
+  private productSaleUseCase = inject(GetProductSaleUseCase);
+  private updateUseCase = inject(ItemUpdateUseCase)
+  params = inject<{ id: number }>(MAT_DIALOG_DATA);
   itemForm = new FormGroup({
     id: new FormControl(0),
     summary: new FormControl('', [Validators.required]),
@@ -45,12 +40,10 @@ export class ItemAddEdit implements OnInit {
     instructions: new FormControl(''),
     cooking: new FormControl(false),
     productId: new FormControl(0),
+    isActive: new FormControl(true),
   });
-  recipes = signal<Recipe[]>([]);
-  #ingredientService = inject(IngredientService);
-  #itemService = inject(ItemService);
+  itemCompositions = signal<ItemComposition[]>([]);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
-  #recipeService = inject(RecipeService);
   #tS = inject(ToastrNotificationService);
 
   selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
@@ -179,8 +172,8 @@ export class ItemAddEdit implements OnInit {
     if (column === 'measureId') {
       for (const m of data.measures || []) {
         const opt = document.createElement('option');
-        opt.value = m.idMedida.toString();
-        opt.innerHTML = m.descripcion;
+        opt.value = m.measureId.toString();
+        opt.innerHTML = m.name;
         editor.appendChild(opt);
       }
     }
@@ -209,7 +202,7 @@ export class ItemAddEdit implements OnInit {
   columns = [
     {
       title: 'Ingrediente',
-      field: 'summary',
+      field: 'description',
       width: 450,
       hozAlign: 'center',
       headerSort: false,
@@ -225,8 +218,8 @@ export class ItemAddEdit implements OnInit {
       formatter: function (cell: any) {
         const data = cell.getData();
         for (const m of data.measures ?? []) {
-          if (m.idMedida == cell.getValue()) {
-            return m.descripcion;
+          if (m.measureId == cell.getValue()) {
+            return m.name;
           }
         }
       },
@@ -261,7 +254,7 @@ export class ItemAddEdit implements OnInit {
         selectContents: true,
         verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
       },
-      cellEdited: this.priceUpdate,
+  //    cellEdited: this.priceUpdate,
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
@@ -280,7 +273,7 @@ export class ItemAddEdit implements OnInit {
       field: 'costPrice',
       width: 90,
       editor: true,
-      formatter: this.formatterCostPrice,
+    //  formatter: this.formatterCostPrice,
       bottomCalc: (values: any, data: any, calcParams: any) => {
         let total = 0;
         data.forEach((e: any) => {
@@ -306,28 +299,69 @@ export class ItemAddEdit implements OnInit {
     },
   ];
   rowDeleted(row: any) {
-    const closeRecipes = JSON.parse(JSON.stringify(this.recipes()));
+    const closeItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
     const data = row.getData();
-    console.log(data);
-
-    this.recipes.set(closeRecipes.filter((x: any) => x.uuid !== data.uuid));
-  }
-
-  getRecipes() {
-    this.#recipeService.getByItem(this.data.id).subscribe((response) => {
-      this.recipes.set(response.recipes);
-    });
+    this.itemCompositions.set(closeItemCompositions.filter((x: any) => x.uuid !== data.uuid));
   }
 
   ngOnInit() {
-    if (this.data.id > 0) {
-      // this.getRecipes();
-      this.itemForm.patchValue(this.data);
-    }
+     this.getItemById();
   }
 
-  onModalClose() {
-    this.#modalRef.close();
+
+  private getItemById(){
+    this.itemGetByIdUseCase.execute(  this.params.id).subscribe((response) => {
+      this.itemCompositions.set(response.itemCompositions);
+      //this.itemForm.patchValue(response.item);
+    });
+  }
+
+
+
+  onSelectItem(rowData: any) {
+    this.productSaleUseCase.execute({
+      id: rowData.productId
+    }).subscribe((response) => {
+      const {product, taxRates} = response;
+      const measures:ProductMeasure[] = response.measures;
+      const newRowData = new ItemComposition();
+
+      const index = this.itemCompositions().findIndex(x => x.childItemId === rowData.id);
+      const cloneItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
+
+      if(index == -1){
+        const defaultMeasure = measures.find(x => x.defaultMeasure);
+        const dataTaxRate = taxRates.find((x:any) => x.code===product.codigoPorcentaje);
+        if(!defaultMeasure){
+          throw new Error('No se encontró medidas predeterminadas para el producto');
+        }
+        const defaultFee = defaultMeasure.fees.find(x => x.isDefault);
+
+        if(!defaultFee){
+          throw new Error('No se encontró tarifa predeterminada para el producto');
+        }
+
+        if(!dataTaxRate){
+          throw new Error('No se encontró tipo impuesto para el producto');
+        }
+
+        cloneItemCompositions.push({
+           ...newRowData,
+          itemId: this.params.id,
+          childItemId: rowData.id,
+           productId: product.idArticulo,
+           measures,
+           measureId: defaultMeasure.measureId,
+          feeId: defaultFee.id,
+          description: product.descripcion,
+           quantity: 1,
+           costPrice: defaultMeasure.costPrice,
+           weight: 0,
+          taxRateId: dataTaxRate.id,
+         })
+      }
+    this.itemCompositions.set(cloneItemCompositions);
+    });
   }
 
   onSave() {
@@ -338,10 +372,13 @@ export class ItemAddEdit implements OnInit {
       });
     }
     const dataToSave = {
-      itemJson: this.itemForm.value,
-      recipeJson: this.recipes(),
+      item: this.itemForm.value,
+      itemCompositions: this.itemCompositions(),
     };
-    this.#itemService.put(this.data.id, { data: dataToSave }).subscribe((response) => {
+    this.updateUseCase.execute({
+      id: this.params.id,
+      data: dataToSave,
+    }).subscribe((response) => {
       Swal.fire({
         icon: response.code === '1' ? 'success' : 'warning',
         html: response.message,
@@ -352,66 +389,11 @@ export class ItemAddEdit implements OnInit {
     });
   }
 
-  onSelectItem(rowData: any) {
-    this.productGetIdUseCase.execute(rowData.productId).subscribe((response) => {
-      console.log(response);
-    });
-    console.log(rowData);
-    const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
 
-    cloneRecipes.push(rowData);
-    this.recipes.set(cloneRecipes);
+
+  onModalClose() {
+    this.#modalRef.close();
   }
 
-  onIngredientSelected($event: Ingredient) {
-    const productId = Number($event.productId);
 
-    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
-      const extents = response.extents;
-
-      const cloneRecipes = JSON.parse(JSON.stringify(this.recipes()));
-
-      cloneRecipes.push({
-        costPrice: 0,
-        extentId: 0,
-        id: 0,
-        itemId: this.data.id,
-        summary: $event.summary,
-        instructions: '',
-        netWeight: 0,
-        quantity: 0,
-        ingredientId: $event.id,
-        productId,
-        precioCosto: 0,
-        weight: 0,
-        uuid: generateUuidv4(),
-      });
-
-      const results = cloneRecipes.map((e: Recipe) => {
-        if (e.productId === productId) {
-          e.extentId = extents[0].idMedida;
-          e.precioCosto = extents[0].precioCosto;
-          e.extents = JSON.stringify(extents);
-        }
-        return e;
-      });
-      this.recipes.set(results);
-    });
-  }
-
-  getExtent(productId: number) {
-    this.#ingredientService.get({ productId, tipo: 3 }).subscribe((response) => {
-      const extents = response.extents;
-
-      const results = this.recipes().map((e: Recipe) => {
-        if (e.productId === productId) {
-          e.extentId = extents[0].idMedida;
-          e.precioCosto = extents[0].precioCosto;
-          e.extents = JSON.stringify(extents);
-        }
-        return e;
-      });
-      this.recipes.set(results);
-    });
-  }
 }

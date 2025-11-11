@@ -88,12 +88,19 @@ export class Items implements OnInit {
     this._listUseCase
       .execute(params)
       .pipe(finalize(() => this.isLoading.set(false)))
-      .subscribe((response) => {
-        this.list.set(response.items);
-        this.pagination.update(
-          (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount),
-        );
+      .subscribe({
+        next: (response) => {
+          this.list.set(response.items);
+          this.pagination.update(
+            (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount)
+          );
+        },
+        error: (err) => {
+          this.list.set([]);
+          console.error('Error al cargar la lista:', err);
+        }
       });
+
   }
 
   onEdit(rowData: any) {

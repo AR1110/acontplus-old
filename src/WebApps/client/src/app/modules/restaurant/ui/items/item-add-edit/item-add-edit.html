@@ -1,6 +1,6 @@
 <app-mat-custom-dialog (close)="onModalClose()" title="Editar Datos del Producto">
   <div ngProjectAs="content">
-    <form (ngSubmit)="onSave()" id="itemForm" [formGroup]="itemForm">
+    <form id="itemForm" (ngSubmit)="onSave()"  [formGroup]="itemForm">
       <div class="vstack">
         <mat-form-field>
           <mat-label>Resumen</mat-label>
@@ -10,7 +10,7 @@
 
         <app-tabulator
           [columnNames]="columns"
-          [tableData]="recipes()"
+          [tableData]="itemCompositions()"
           [theme]="'semantic-ui'"
           [options]="{
             height: 'auto',
@@ -44,16 +44,16 @@
       </div>
     </form>
   </div>
-  <div ngProjectAs="actions"></div>
+  <div ngProjectAs="actions">
+    <acp-button
+      form="itemForm"
+      type="submit"
+      icon="save"
+      variant="success"
+      text="Guardar"
+      matStyle="filled"
+      [disabled]="itemForm.invalid"
+    />
+  </div>
 </app-mat-custom-dialog>
 
-<ng-template #footer>
-  <acp-button
-    type="submit"
-    icon="save"
-    variant="success"
-    text="Guardar"
-    form="itemForm"
-    [disabled]="itemForm.invalid"
-  />
-</ng-template>
