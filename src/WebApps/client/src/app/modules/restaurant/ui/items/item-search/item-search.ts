@@ -33,6 +33,7 @@ export class ItemSearch implements OnInit, OnDestroy {
   loading = signal(false);
   selectedItem = output<any>();
 
+  categoryAbbraviation = input.required()
   placeholder = input('');
   label = input('');
 
@@ -56,7 +57,7 @@ export class ItemSearch implements OnInit, OnDestroy {
               new PaginationParams({
                 searchTerm: value,
                 filters: {
-                  categoryAbbreviation: CATEGORY_ABBREVIATIONS.RESTAURANT,
+                  categoryAbbreviation: this.categoryAbbraviation(),
                 },
               }),
             )

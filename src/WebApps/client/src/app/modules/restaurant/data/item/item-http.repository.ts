@@ -3,12 +3,13 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
 import { HttpClient } from '@angular/common/http';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
-import { map, Observable } from 'rxjs';
+import {map, Observable, throwError} from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ItemListMapper } from '@restaurant/data/item/item-list.mapper';
 import { PagedResult, PaginationParams } from '@acontplus/core';
 import {ItemUpdateMapper} from "@restaurant/data/item/item-update-mapper";
 import {ItemGetByIdMapper} from "@restaurant/data/item/item-get-by-id-mapper";
+import {ItemComboUpdateMapper} from "@restaurant/data/item/item-combo-update-mapper";
 
 @Injectable({
   providedIn: 'root',
@@ -39,7 +40,16 @@ export class ItemHttpRepository implements ItemRepository {
   }
 
   update(id: number, data: any): Observable<any> {
-    const params = ItemUpdateMapper.toJson(data);
+    let params;
+    if(data.isProduct){
+       params = ItemUpdateMapper.toJson(data);
+    }
+    if(data.isCombo){
+       params = ItemComboUpdateMapper.toJson(data);
+    }
+    if(!params){
+      throwError(()=>new Error("Invalid data"))
+    }
     return this.#http.put(`${this.#url}/${id}`, params)
   }
 }

@@ -14,6 +14,14 @@ import {
 } from '@inventory/product/application/use-cases/product/get-product.use-case';
 import {ProductMeasure} from "@inventory/domain/models/product-measure";
 import {ItemComposition} from "@restaurant/domain/models/item-composition";
+import DecimalUtil from "@core/utils/decimal.util";
+import {roundNumber} from "@core/utils/round-number.utils";
+import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
+import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {MatIconButton} from "@angular/material/button";
+import {MatIcon} from "@angular/material/icon";
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-item-add-edit',
@@ -24,6 +32,10 @@ import {ItemComposition} from "@restaurant/domain/models/item-composition";
     MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,
+    MatSlideToggle,
+    MatIconButton,
+    MatIcon,
+    MatTooltip,
   ],
   templateUrl: './item-add-edit.html',
   styles: ``,
@@ -32,134 +44,13 @@ export class ItemAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
   private productSaleUseCase = inject(GetProductSaleUseCase);
   private updateUseCase = inject(ItemUpdateUseCase)
-  params = inject<{ id: number }>(MAT_DIALOG_DATA);
-  itemForm = new FormGroup({
-    id: new FormControl(0),
-    summary: new FormControl('', [Validators.required]),
-    recipe: new FormControl(''),
-    instructions: new FormControl(''),
-    cooking: new FormControl(false),
-    productId: new FormControl(0),
-    isActive: new FormControl(true),
-  });
-  itemCompositions = signal<ItemComposition[]>([]);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #tS = inject(ToastrNotificationService);
 
-  selectExtend = (cell: any, onRendered: any, success: any, cancel: any) => {
-    let medidas = [];
-    const rows = cell.getRow().getData();
-
-    if (rows.extents) {
-      medidas = JSON.parse(rows.extents);
-    }
-
-    const selectList = document.createElement('select');
-    selectList.style.width = '100%';
-    selectList.style.boxSizing = 'border-box';
-
-    onRendered(() => {
-      selectList.focus();
-      selectList.style.height = '100%';
-    });
-
-    const onChange = () => {
-      if (selectList.selectedOptions[0].value != rows) {
-        success(selectList.selectedOptions[0].value);
-
-        cell.getElement().dataset.descripcion = selectList.selectedOptions[0].text;
-        cell.getElement().dataset.extentId = selectList.selectedOptions[0].value;
-      } else {
-        cancel();
-      }
-    };
-
-    selectList.addEventListener('blur', onChange);
-    selectList.addEventListener('keydown', (e) => {
-      if (e.keyCode == 13) {
-        onChange();
-      }
-      if (e.keyCode == 27) {
-        cancel();
-      }
-    });
-
-    // Crear y añadir las opciones
-    medidas.forEach((medida: any) => {
-      const option = document.createElement('option');
-
-      option.value = medida.idMedida.toString();
-      option.text = medida.descripcion;
-
-      if (medida.idMedida === rows.extentId) {
-        option.selected = true;
-      }
-      selectList.appendChild(option);
-    });
-
-    return selectList;
-  };
-
-  formatterMedida = (cell: any) => {
-    let medidas = [];
-    const row = cell.getRow().getData();
-    const value = cell.getValue();
-
-    if (row.extents) {
-      medidas = JSON.parse(row.extents);
-    }
-
-    if (medidas.length === 0) return '';
-    return medidas.find((x: any) => x.idMedida == value)?.descripcion;
-  };
-
-  formatterCostPrice = (cell: any) => {
-    let medidas = [];
-    let value = 0;
-    const row = cell.getRow().getData();
-
-    if (row.extents !== undefined) {
-      medidas = JSON.parse(row.extents);
-    }
-
-    medidas.forEach((e: any) => {
-      if (e.idMedida == row.extentId) {
-        value = e.precioCosto * row.quantity;
-      }
-    });
-    return value.toFixed(2);
-  };
-
-  priceUpdate = (cell: any) => {
-    const column = cell.getColumn()._column.field;
-    const row = cell.getRow().getData();
-    let medidas = [];
-
-    if (row.extents !== undefined) {
-      medidas = JSON.parse(row.extents);
-    }
-
-    if (column == 'extentId' && medidas.length > 0) {
-      medidas.forEach((e: any) => {
-        if (e.idMedida == row.extentId) {
-          cell.getRow().update({
-            precioCosto: e.precioCosto,
-            costPrice: (e.precioCosto * row.quantity).toFixed(2),
-          });
-        }
-      });
-    }
-
-    if (column == 'quantity' && medidas.length > 0) {
-      medidas.forEach((e: any) => {
-        if (e.idMedida == row.extentId) {
-          cell.getRow().update({
-            costPrice: (e.precioCosto * row.quantity).toFixed(2),
-          });
-        }
-      });
-    }
-  };
+  params = inject<{ id: number, acronymCategory: string }>(MAT_DIALOG_DATA);
+  itemForm!:FormGroup;
+  itemCompositions = signal<ItemComposition[]>([]);
+  itemCompositionsDeleted = signal<ItemComposition[]>([]);
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     const column: any = cell.getColumn().getField();
@@ -177,6 +68,16 @@ export class ItemAddEdit implements OnInit {
         editor.appendChild(opt);
       }
     }
+
+    if (column === 'feeId') {
+      for (const t of (data.fees || [])) {
+        const opt = document.createElement('option');
+        opt.value = t.id.toString();
+        opt.innerHTML = t.name + ' - $' + t.priceWithTax;
+        editor.appendChild(opt);
+      }
+    }
+
 
     editor.style.padding = '3px';
     editor.style.width = '100%';
@@ -199,170 +100,478 @@ export class ItemAddEdit implements OnInit {
     return editor;
   };
 
-  columns = [
-    {
-      title: 'Ingrediente',
-      field: 'description',
-      width: 450,
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-    },
-    {
-      title: 'Medida',
-      field: 'measureId',
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      editor: this.comboEditor,
-      formatter: function (cell: any) {
-        const data = cell.getData();
-        for (const m of data.measures ?? []) {
-          if (m.measureId == cell.getValue()) {
-            return m.name;
-          }
-        }
-      },
-      validator: 'required',
-      width: '9px',
-    },
-    {
-      title: 'Peso',
-      field: 'weight',
-      editor: true,
-      width: 100,
-      widthGrow: 1,
-      validator: ['numeric'],
-      value: '0',
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-    },
-    // {
-    //   title: 'Instrucciones',
-    //   field: 'instructions',
-    //   widthGrow: 3,
-    //   width: 200,
-    //   editor: true,
-    // },
-    {
-      title: 'Cant.',
-      field: 'quantity',
-      width: 120,
-      editor: true,
-      editorParams: {
-        selectContents: true,
-        verticalNavigation: 'table', //up and down arrow keys navigate away from cell without changing value
-      },
-  //    cellEdited: this.priceUpdate,
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-    },
-    {
-      title: 'Precio costo',
-      field: 'precioCosto',
-      width: 120,
-      editor: false,
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-    },
-    {
-      title: 'Total',
-      field: 'costPrice',
-      width: 90,
-      editor: true,
-    //  formatter: this.formatterCostPrice,
-      bottomCalc: (values: any, data: any, calcParams: any) => {
-        let total = 0;
-        data.forEach((e: any) => {
-          total += Number(e.costPrice);
-        });
-        return total.toFixed(2);
-      },
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-    },
-    {
-      title: 'Acciones',
-      widthGrow: 1,
-      hozAlign: 'center',
-      formatter: 'buttonCross',
-      width: 100,
-      headerSort: false,
-      headerHozAlign: 'center',
-      cellClick: function (e: any, cell: any) {
-        cell.getRow().delete();
-      },
-    },
-  ];
+  columns = this.getColumns()
+
+
+  isProduct(): boolean {
+    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.RESTAURANT;
+  }
+
+  isCombo(): boolean {
+    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.COMBO;
+  }
+
+  isIngredient(): boolean {
+    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.INGREDIENT;
+  }
+
+  getCategoryAbbreviationToSearch(){
+    if(this.isProduct()){
+      return CATEGORY_ABBREVIATIONS.INGREDIENT;
+    }
+    if(this.isCombo()){
+      return CATEGORY_ABBREVIATIONS.RESTAURANT;
+    }
+    return '';
+  }
+
   rowDeleted(row: any) {
     const closeItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
     const data = row.getData();
     this.itemCompositions.set(closeItemCompositions.filter((x: any) => x.uuid !== data.uuid));
   }
 
+  itemSearchLabel = this.isCombo()   ? 'Buscar Producto': 'Buscar Ingrediente';
+
+  getColumns(){
+    return [
+      {
+        title: 'Op.',
+        formatter: (cell: any) => {
+          const rowData = cell.getRow().getData();
+
+          // contenedor de botones
+          const buttonHolder = document.createElement('div');
+          buttonHolder.style.display = 'flex';
+          buttonHolder.style.gap = '4px'; // espacio entre botones
+          buttonHolder.style.justifyContent = 'center';
+          buttonHolder.style.alignItems = 'center';
+
+          // Botón Eliminar
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    `;
+          delBtn.classList.add('small-button', 'btn-remove', 'text-white');
+          delBtn.addEventListener('click', () => {
+            this.deleteRow(rowData);
+          });
+          buttonHolder.appendChild(delBtn);
+
+          return buttonHolder;
+        },
+        width: 100,
+        headerSort: false,
+        hozAlign: 'center',
+        headerHozAlign: 'center',
+      },
+      {
+        title: 'Código',
+        field: 'code',
+        width: 100,
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+      },
+      {
+        title: this.isProduct() ? 'Ingrediente': 'Producto',
+        field: 'description',
+        width: this.isProduct() ? 350: 280,
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+      },
+      {
+        title: 'Medida',
+        field: 'measureId',
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editor: this.comboEditor,
+        formatter: function (cell: any) {
+          const data = cell.getData();
+          for (const m of data.measures ?? []) {
+            if (m.measureId == cell.getValue()) {
+              return m.name;
+            }
+          }
+        },
+        validator: 'required',
+        width: '9px',
+      },
+
+
+      {
+        title: 'Tarifa',
+        field: 'feeId',
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editor: this.comboEditor,
+        formatter: function (cell: any) {
+          const data = cell.getData();
+          for (const m of data.fees ?? []) {
+            if (m.id == cell.getValue()) {
+              return m.name;
+            }
+          }
+        },
+        validator: 'required',
+        width: '9px',
+      },
+
+
+      //start when is product combo
+      {
+        title: 'Precio U.',
+        field: 'price',
+        editor: false,
+        width: 80,
+        widthGrow: 1,
+        validator: ['numeric'],
+        value: '0',
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editorParams: {
+          selectContents: true,
+          verticalNavigation: 'table',
+        },
+        visible: this.isCombo(),
+      },
+      {
+        title: 'Precio Iva',
+        field: 'priceWithTax',
+        editor: false,
+        width: 80,
+        widthGrow: 1,
+        validator: ['numeric'],
+        value: '0',
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        visible: this.isCombo(),
+      },
+      //end when is product combo
+
+      {
+        title: 'Peso',
+        field: 'weight',
+        editor: true,
+        width: 100,
+        widthGrow: 1,
+        validator: ['numeric'],
+        value: '0',
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        visible: this.isProduct(),
+      },
+      {
+        title: 'Cant.',
+        field: 'quantity',
+        width: 80,
+        editor: true,
+        editorParams: {
+          selectContents: true,
+          verticalNavigation: 'table',
+        },
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+      },
+      {
+        title: 'Precio costo',
+        field: 'costPrice',
+        width: 120,
+        editor: false,
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editorParams: {
+          selectContents: true,
+          verticalNavigation: 'table',
+        },
+        visible: this.isProduct(),
+      },
+
+      //start when is product combo
+      {
+        title: '% Dscto.',
+        field: 'discountPercent',
+        width: 80,
+        editor: true,
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editorParams: {
+          selectContents: true,
+          verticalNavigation: 'table',
+        },
+        visible: this.isCombo(),
+      },
+      {
+        title: 'Dscto.',
+        field: 'discount',
+        width: 80,
+        editor: true,
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+        editorParams: {
+          selectContents: true,
+          verticalNavigation: 'table',
+        },
+        visible: this.isCombo(),
+      },
+      //end when is product combo
+      {
+        title: 'SubTotal',
+        field: 'subtotal',
+        width: 90,
+        editor: false,
+        bottomCalc: (values: any, data: any, calcParams: any) => {
+          const total = values.reduce((a: any, b: any) => a + b, 0);
+          return roundNumber(total)
+        },
+        hozAlign: 'center',
+        headerSort: false,
+        headerHozAlign: 'center',
+      },
+    ];
+  }
+
   ngOnInit() {
+
+    if(this.isProduct()){
+      this.itemForm = new FormGroup({
+        id: new FormControl(0),
+        summary: new FormControl('', [Validators.required]),
+        recipe: new FormControl(''),
+        instructions: new FormControl(''),
+        cooking: new FormControl(false),
+        productId: new FormControl(0),
+        isActive: new FormControl(true),
+      });
+    }
+
+    if(this.isCombo()){
+      this.itemForm = new FormGroup({
+        id: new FormControl(0),
+        title: new FormControl(''),
+        forPromotion: new FormControl(false),
+        summary: new FormControl(''),
+      });
+    }
+
      this.getItemById();
   }
 
+  async cellEdited(cell: any): Promise<void> {
+    const column = cell.getColumn().getField();
+    const oldValue = parseFloat(cell.getOldValue());
+    const newValue = parseFloat(cell.getValue());
+    const data = { ...cell.getData() }; // copia superficial
+    const oldData = cell.getRow().getData();
+
+    if (newValue === oldValue || isNaN(newValue) || cell.getValue() === '' || newValue < 0) {
+      cell.setValue(oldValue);
+      return;
+    }
+
+    if(column==="measureId"){
+      const dataMeasure = data.measures.find((x:any) => x.measureId === Number(newValue));
+      if(dataMeasure){
+        data.costPrice = dataMeasure.costPrice;
+      }else{
+        cell.setValue(oldValue);
+      }
+    }
+
+    const calculateDiscountPercent = ()=> {
+      if (data.discountPercent >= 0 && data.discountPercent <= 100) {
+
+        const discount =  pricingCalculateUtil.getValueDiscount(
+          data.price,
+          data.discountPercent,
+        )
+        data.discount = pricingCalculateUtil.calcularValorTotalDescuento(data.quantity, discount);
+      } else {
+        data.discountPercent = oldValue;
+        this.#tS.warning({
+          message: 'El descuento no puede ser mayor al 100%',
+        })
+      }
+    }
+
+    if(column==="quantity" ){
+
+      if(this.isCombo()){
+        calculateDiscountPercent()
+      }
+    }
+
+    if (column == 'feeId') {
+      const dataFee = data.fees.find((x: any) => x.id == data.feeId);
+      if(dataFee){
+        data.price = dataFee.salePrice;
+        data.priceWithTax = dataFee.priceWithTax;
+      }
+    }
+
+
+    if (column === 'discountPercent') {
+      calculateDiscountPercent()
+    }
+
+    if(column==="discount"){
+      let discount = Number(data.discount);
+      let totalAntesDescuento = pricingCalculateUtil.calcularTotalAntesDescuento(data.price, data.quantity);
+
+      if (discount <= totalAntesDescuento) {
+        let porcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(totalAntesDescuento, discount);
+        data.discountPercent = roundNumber(porcentajeDescuento, 2);
+        } else {
+        discount = Number(oldValue);
+        this.#tS.warning({
+          message: 'El descuento no puede ser mayor al subtotal'
+        })
+      }
+
+      data.discount = roundNumber(discount, 5);
+    }
+
+
+    if(this.isProduct()){
+      data.subtotal = DecimalUtil.multiplyAsNumber(data.quantity, data.costPrice);
+    } else{
+      data.subtotal = pricingCalculateUtil.calcularSubtotalSinImpuesto(
+        data.price,
+        data.quantity,
+        data.discount,
+      )
+    }
+      this.itemCompositions.set(this.itemCompositions().map((item) => (item.uuid === data.uuid ? data : item)));
+  }
 
   private getItemById(){
     this.itemGetByIdUseCase.execute(  this.params.id).subscribe((response) => {
+      this.itemForm.patchValue(response.item);
       this.itemCompositions.set(response.itemCompositions);
-      //this.itemForm.patchValue(response.item);
     });
   }
 
 
 
-  onSelectItem(rowData: any) {
-    this.productSaleUseCase.execute({
-      id: rowData.productId
-    }).subscribe((response) => {
-      const {product, taxRates} = response;
-      const measures:ProductMeasure[] = response.measures;
-      const newRowData = new ItemComposition();
+  onSelectItem(rowData: any): void {
+    if (!rowData?.productId) return;
 
-      const index = this.itemCompositions().findIndex(x => x.childItemId === rowData.id);
+    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+      next: (response) => {
+        const { product, taxRates, measures } = response;
+        if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
+
+        const compositions = structuredClone(this.itemCompositions());
+        const existingIndex = compositions.findIndex(x => x.childItemId === rowData.id);
+
+        const getDefaultMeasure = (): ProductMeasure | undefined =>
+          measures.find(m => m.defaultMeasure);
+
+        const getDefaultFee = (measure?: ProductMeasure) =>
+          measure?.fees?.find(f => f.isDefault);
+
+        const getTaxRate = (code: string) =>
+          taxRates.find((t: any) => t.code === code);
+
+        if (existingIndex === -1) {
+          const defaultMeasure = getDefaultMeasure();
+          const defaultFee = getDefaultFee(defaultMeasure);
+          const taxRate = getTaxRate(product.codigoPorcentaje);
+
+          if (!defaultMeasure || !defaultFee || !taxRate) {
+            console.error('Datos incompletos para crear la composición del producto.');
+            return;
+          }
+
+          const newComposition = new ItemComposition();
+          newComposition.code = product.codigo;
+          newComposition.itemId = this.params.id;
+          newComposition.childItemId = rowData.id;
+          newComposition.measures = measures;
+          newComposition.measureId = defaultMeasure.measureId;
+          newComposition.feeId = defaultFee.id;
+          newComposition.price = defaultFee.salePrice;
+          newComposition.priceWithTax = defaultFee.priceWithTax;
+          newComposition.fees = defaultMeasure.fees ?? [];
+          newComposition.description = product.descripcion;
+          newComposition.costPrice = defaultMeasure.costPrice;
+          newComposition.taxRateId = taxRate.id;
+
+          newComposition.subtotal = this.isProduct()
+            ? DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.costPrice)
+            : pricingCalculateUtil.calcularSubtotalSinImpuesto(
+              newComposition.price,
+              newComposition.quantity,
+              newComposition.discount ?? 0
+            );
+
+          compositions.push(newComposition);
+        } else {
+          const existing = compositions[existingIndex];
+          existing.quantity += 1;
+          existing.subtotal = this.isProduct()
+            ? DecimalUtil.multiplyAsNumber(existing.quantity, existing.costPrice)
+            : pricingCalculateUtil.calcularSubtotalSinImpuesto(
+              existing.price,
+              existing.quantity,
+              existing.discount ?? 0
+            );
+        }
+
+        this.itemCompositions.set(compositions);
+      },
+      error: (err) => console.error('Error al obtener el producto:', err)
+    });
+  }
+
+  async deleteRow(rowData: ItemComposition) {
+    const {isConfirmed} = await Swal.fire({
+      title: '¿Está seguro de eliminar este registro?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminar',
+      cancelButtonText: 'Cancelar',
+    })
+
+    if(isConfirmed){
       const cloneItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
+      this.itemCompositions.set(cloneItemCompositions.filter((x: any) => x.uuid !== rowData.uuid));
 
-      if(index == -1){
-        const defaultMeasure = measures.find(x => x.defaultMeasure);
-        const dataTaxRate = taxRates.find((x:any) => x.code===product.codigoPorcentaje);
-        if(!defaultMeasure){
-          throw new Error('No se encontró medidas predeterminadas para el producto');
-        }
-        const defaultFee = defaultMeasure.fees.find(x => x.isDefault);
-
-        if(!defaultFee){
-          throw new Error('No se encontró tarifa predeterminada para el producto');
-        }
-
-        if(!dataTaxRate){
-          throw new Error('No se encontró tipo impuesto para el producto');
-        }
-
-        cloneItemCompositions.push({
-           ...newRowData,
-          itemId: this.params.id,
-          childItemId: rowData.id,
-           productId: product.idArticulo,
-           measures,
-           measureId: defaultMeasure.measureId,
-          feeId: defaultFee.id,
-          description: product.descripcion,
-           quantity: 1,
-           costPrice: defaultMeasure.costPrice,
-           weight: 0,
-          taxRateId: dataTaxRate.id,
-         })
+      if(rowData.id>0){
+        this.itemCompositionsDeleted.update((x:any) => [...x, {
+          ...rowData,
+          isActive: false,
+          isDeleted: true,
+        }]);
       }
-    this.itemCompositions.set(cloneItemCompositions);
-    });
+    }
   }
+
+  generateDescription() {
+    const summary = this.itemCompositions()
+      .map((item) => item.quantity + ' ' + item.description)
+      .join(', ');
+
+    this.itemForm.get('summary')?.setValue(summary);
+  }
+
 
   onSave() {
     if (this.itemForm.invalid) {
@@ -373,7 +582,12 @@ export class ItemAddEdit implements OnInit {
     }
     const dataToSave = {
       item: this.itemForm.value,
-      itemCompositions: this.itemCompositions(),
+      itemCompositions: [
+        ...this.itemCompositions(),
+        ...this.itemCompositionsDeleted(),
+      ],
+      isProduct: this.isProduct(),
+      isCombo: this.isCombo(),
     };
     this.updateUseCase.execute({
       id: this.params.id,

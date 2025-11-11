@@ -4,6 +4,7 @@ public record ItemListResponse
 {
     public int Id { get; set; }
     public int ProductId { get; set; }
+    public string AcronymFamily { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Summary { get; set; } = string.Empty;
     public bool Cooking { get; set; }
