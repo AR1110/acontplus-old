@@ -27,10 +27,14 @@ BEGIN
           ,it.Summary
           ,it.Recipe
           ,it.Instructions
+          ,it.Title
+          ,it.Cooking
     FROM Restaurant.Item it WITH (NOLOCK)
     WHERE it.Id =  @id
 
     SELECT ic.Id
+          ,ic.ItemId
+          ,ic.ChildItemId
           ,ic.FeeId
           ,ic.TaxId
           ,ic.MeasureId

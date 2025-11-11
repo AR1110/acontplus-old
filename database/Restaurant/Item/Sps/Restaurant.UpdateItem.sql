@@ -38,6 +38,7 @@ BEGIN
        ,[Quantity]     INT NULL
        ,[Title]        VARCHAR(500) NULL
        ,IsActive       BIT NOT NULL
+       ,UpdatedAt      DATETIME2 DEFAULT GETDATE()
     )
    
     DECLARE @TbItemComposition AS TABLE
@@ -145,13 +146,14 @@ BEGIN
 		BEGIN TRAN
             --> Item
             UPDATE it SET 
-                   it.summary         = it.summary 
-                  ,it.cooking         = it.cooking 
-                  ,it.recipe          = it.recipe
-                  ,it.instructions    = it.instructions
-                  ,it.content         = it.content 
-                  ,it.IsActive        = it.IsActive
-                  ,it.UpdatedAt       = GETDATE()
+                   it.summary         = ti.summary 
+                  ,it.cooking         = ti.cooking 
+                  ,it.recipe          = ti.recipe
+                  ,it.Title           = ti.Title
+                  ,it.instructions    = ti.instructions
+                  ,it.content         = ti.content 
+                  ,it.IsActive        = ti.IsActive
+                  ,it.UpdatedAt       = ti.UpdatedAt
                   ,it.UpdatedByUserId = @UserId
             FROM Restaurant.Item it
             INNER JOIN @tbItem   ti ON ti.Id = it.Id

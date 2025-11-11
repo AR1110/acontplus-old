@@ -2431,12 +2431,6 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CodEstab")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
@@ -2472,7 +2466,7 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("EstablecimientoId")
+                    b.Property<int>("EstablishmentId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -2537,6 +2531,138 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDatabaseName("IX_Promotion_Status");
 
                     b.ToTable("Promotion", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.PromotionDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("CostPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Discount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MeasureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("TaxId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UniqueId")
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_PromotionDetail_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_PromotionDetail_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_PromotionDetail_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_PromotionDetail_IsDeleted");
+
+                    b.HasIndex("ItemId");
+
+                    b.HasIndex("PromotionId");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_PromotionDetail_Status");
+
+                    b.ToTable("PromotionDetail", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.PromotionMenu", b =>
@@ -3052,6 +3178,25 @@ namespace Restaurant.Api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.PromotionDetail", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.Promotion", "Promotion")
+                        .WithMany()
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Promotion");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.PromotionMenu", b =>

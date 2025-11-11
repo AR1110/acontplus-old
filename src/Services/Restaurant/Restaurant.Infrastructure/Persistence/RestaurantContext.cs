@@ -22,6 +22,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
     public DbSet<OrderKitchen> OrderKitchens { get; set; }
     public DbSet<OrderDocument> OrderDocuments { get; set; }
     public DbSet<Promotion> Promotions { get; set; }
+    public DbSet<PromotionDetail> PromotionDetails { get; set; }
     public DbSet<PromotionMenu> PromotionMenus { get; set; }
 
     // Meal Management
@@ -65,6 +66,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
             typeof(OrderItem),
             typeof(OrderKitchen),
             typeof(Promotion),
+            typeof(PromotionDetail),
             typeof(PromotionMenu),
             typeof(ProductionArea),
             typeof(Recipe),

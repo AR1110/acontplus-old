@@ -9,7 +9,7 @@ GO
 -- Author:		IGNACIO MANCHU
 -- Create date: 2023-08-14
 -- Description:	Get Item
-CREATE OR ALTER PROCEDURE [Restaurant].[GetItem]
+CREATE OR ALTER PROCEDURE Restaurant.GetItem
     @Filters NVARCHAR(MAX) 
    ,@PageIndex INT = 1
    ,@PageSize INT = 10
@@ -158,6 +158,7 @@ BEGIN
                                       ,ar.codigoAuxiliar        AS AuxiliaryCode
                                       ,ar.precioCosto           AS CostPrice
                                       ,ar.categoria             AS Category
+                                      ,ar.siglaFamilia          AS AcronymFamily
                                       ,COUNT(*) OVER()          AS TotalCount
                                 FROM Restaurant.Item             ri
                                 INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '

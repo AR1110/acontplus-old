@@ -1,11 +1,9 @@
-﻿namespace Restaurant.Domain.Entities;
+namespace Restaurant.Domain.Entities;
 
 [Table("Promotion", Schema = "Restaurant")]
 public class Promotion : BaseEntity
 {
-    [Required][MaxLength(50)] public required string CodEstab { get; set; }
-
-    public int EstablecimientoId { get; set; }
+    public int EstablishmentId { get; set; }
 
     [Required][MaxLength(50)] public required string Description { get; set; }
 
