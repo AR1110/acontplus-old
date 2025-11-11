@@ -6,7 +6,7 @@ global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
-global using Acontplus.Utilities.DTOs;
+global using Acontplus.Utilities.Dtos;
 global using Acontplus.Utilities.Extensions;
 global using Restaurant.API.Extensions;
 global using Restaurant.Application.Dtos;
