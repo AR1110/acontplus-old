@@ -30,8 +30,8 @@ public record ItemComposition
     [Range(1, int.MaxValue, ErrorMessage = "ChildItemId must be greater than zero.")]
     public int ChildItemId { get; set; }
     public int? ItemCompositionId { get; set; }
-    public int FeeId { get; set; }
-    public int TaxId { get; set; }
+    public int? FeeId { get; set; }
+    public int? TaxId { get; set; }
     public int MeasureId { get; set; }
     public int? ExtentId { get; set; }
 

@@ -1,22 +1,33 @@
 <app-breadcrumb />
 <ng-template #toolbarTpl>
+
   <div class="d-flex gap-5 justify-content-center align-items-center">
-    <section>
-      <mat-button-toggle-group
-        name="ingredients"
-        aria-label="Ingredients"
-        multiple
-        [(ngModel)]="categoryAbbreviationsSelected"
-        (change)="refresh()"
-      >
-        @for (item of categoryAbbreviations(); track $index) {
-          <mat-button-toggle [value]="item.code">{{ item.name }}</mat-button-toggle>
-        }
-      </mat-button-toggle-group>
-    </section>
-    <button mat-icon-button (click)="refresh()">
-      <mat-icon>refresh</mat-icon>
-    </button>
+      <span>
+        <mat-button-toggle-group
+          name="ingredients"
+          aria-label="Ingredients"
+          multiple
+          [(ngModel)]="categoryAbbreviationsSelected"
+          (change)="refresh()"
+        >
+          @for (item of categoryAbbreviations(); track $index) {
+            <mat-button-toggle [value]="item.code">{{ item.name }}</mat-button-toggle>
+          }
+        </mat-button-toggle-group>
+      </span>
+      <span>
+
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Buscar</mat-label>
+          <input matInput aria-label="State" [(ngModel)]="searchTerm" (keyup.enter)="refresh()" />
+        </mat-form-field>
+
+      </span>
+      <span>
+        <button mat-icon-button (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </span>
   </div>
 </ng-template>
 
@@ -46,11 +57,14 @@
   </div>
 </ng-template>
 <ng-template #opTpl let-row>
-  <acp-button
-    variant="success"
-    icon="build"
-    matStyle="icon"
-    title="Editar"
-    (handleClick)="onEdit(row)"
-  />
+  @if (row.acronymCategory!=='ING') {
+    <acp-button
+      variant="success"
+      icon="build"
+      matStyle="icon"
+      title="Editar"
+      (handleClick)="onEdit(row)"
+    />
+
+  }
 </ng-template>

@@ -4,7 +4,6 @@ import { formatDate, formatDateToString } from '@core/utils/date.util';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MenuSearchComponent } from '@restaurant/ui/components/menu-search/menu-search.component';
 import { RestaurantStoreService } from '@restaurant/application/store/restaurant-store.service';
 import { InputDateComponent } from '@shared/components/input-date/input-date.component';
 import { PromotionMenuService } from '@restaurant/data/services/promotion-menu.service';
@@ -27,7 +26,6 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatIcon,
     InputDateComponent,
     ToUpperCaseDirective,
-    MenuSearchComponent,
     Button,
     MatCustomDialogComponent,
     MatFormFieldModule,

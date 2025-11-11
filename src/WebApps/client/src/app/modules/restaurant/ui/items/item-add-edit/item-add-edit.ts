@@ -206,6 +206,9 @@ export class ItemAddEdit implements OnInit {
       },
 
 
+
+
+      //start when is product combo
       {
         title: 'Tarifa',
         field: 'feeId',
@@ -213,6 +216,7 @@ export class ItemAddEdit implements OnInit {
         headerSort: false,
         headerHozAlign: 'center',
         editor: this.comboEditor,
+        visible: this.isCombo(),
         formatter: function (cell: any) {
           const data = cell.getData();
           for (const m of data.fees ?? []) {
@@ -224,9 +228,6 @@ export class ItemAddEdit implements OnInit {
         validator: 'required',
         width: '9px',
       },
-
-
-      //start when is product combo
       {
         title: 'Precio U.',
         field: 'price',
