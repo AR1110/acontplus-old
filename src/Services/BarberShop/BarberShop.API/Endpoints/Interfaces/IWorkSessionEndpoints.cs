@@ -2,7 +2,7 @@ namespace BarberShop.API.Endpoints.Interfaces;
 
 public interface IWorkSessionEndpoints
 {
-    Task<IResult> GetWorkSessionsAsync(PaginationDto paginationDto);
+    Task<IResult> GetWorkSessionsAsync(PaginationRequest paginationRequest);
     Task<IResult> GetWorkSessionByIdAsync(int id);
     Task<IResult> CreateWorkSessionAsync(WorkSessionDto workSessionDto);
     Task<IResult> UpdateWorkSessionAsync(int id, WorkSessionDto workSessionDto);

@@ -18,9 +18,9 @@ public class TicketEndpoints(IUserContext userContext, ITicketService ticketServ
         return Results.Ok(await ticketService.GetTicketByIdAsync(id));
     }
 
-    public async Task<IResult> GetTicketsAsync(PaginationDto paginationDto)
+    public async Task<IResult> GetTicketsAsync(PaginationRequest paginationRequest)
     {
-        return Results.Ok(await ticketService.GetTicketsAsync(paginationDto));
+        return Results.Ok(await ticketService.GetTicketsAsync(paginationRequest));
     }
 
     public async Task<IResult> UpdateTicketAsync(int id, TicketDto ticketDto)

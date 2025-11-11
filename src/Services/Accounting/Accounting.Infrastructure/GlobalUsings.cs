@@ -1,7 +1,7 @@
 global using Accounting.Domain.Entities;
 global using Accounting.Domain.Repositories;
 global using Acontplus.Core.Abstractions.Persistence;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Context;

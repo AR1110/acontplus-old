@@ -1,5 +1,5 @@
-global using Acontplus.Core.DTOs.Requests;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Requests;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Utilities.Mapping;
 global using BarberShop.Application.Seats.DTOs;
 global using BarberShop.Application.Seats.Interfaces;

@@ -30,11 +30,11 @@ public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionSe
             return Result<bool, DomainError>.Success(true);
         });
     }
-    public async Task<Result<IReadOnlyList<PagedResult<MealConsumptionItem>>, DomainError>> GetAsync(PaginationDto paginationDto, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<PagedResult<MealConsumptionItem>>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken)
     {
         var ds = await _adoRepository.GetDataSetAsync("Restaurant.GetMealConsumptions", new Dictionary<string, object>
         {
-            { "Json", JsonExtensions.SerializeOptimized(paginationDto) },
+            { "Json", JsonExtensions.SerializeOptimized(paginationRequest) },
         });
         return Result<IReadOnlyList<PagedResult<MealConsumptionItem>>, DomainError>.Success(ds.Tables[0].Adapt<IReadOnlyList<PagedResult<MealConsumptionItem>>>());
     }

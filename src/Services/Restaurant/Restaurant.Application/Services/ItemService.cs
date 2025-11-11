@@ -4,11 +4,11 @@ namespace Restaurant.Application.Services;
 
 public class ItemService(IAdoRepository adoRepository) : IItemService
 {
-    public async Task<Result<PagedResult<ItemListResponse>, DomainError>> GetAsync(PaginationDto paginationDto)
+    public async Task<Result<PagedResult<ItemListResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
-            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemListResponse>("Restaurant.GetItem", paginationDto);
+            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemListResponse>("Restaurant.GetItem", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {

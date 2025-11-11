@@ -4,7 +4,7 @@ global using Acontplus.Billing.Services.Conversion;
 global using Acontplus.Billing.Services.Documents;
 global using Acontplus.Billing.Services.External;
 global using Acontplus.Core.Abstractions.Persistence;
-global using Acontplus.Core.DTOs.Responses;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Extensions;
 global using Acontplus.Core.Validation;
 global using Acontplus.Logging;

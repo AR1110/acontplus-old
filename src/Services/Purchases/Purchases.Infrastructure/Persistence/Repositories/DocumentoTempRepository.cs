@@ -1,4 +1,4 @@
-using Acontplus.Core.DTOs.Requests;
+using Acontplus.Core.Dtos.Requests;
 
 namespace Purchases.Infrastructure.Persistence.Repositories;
 

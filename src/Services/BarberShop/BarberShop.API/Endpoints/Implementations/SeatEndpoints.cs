@@ -13,9 +13,9 @@ public class SeatEndpoints(IUserContext userContext, ISeatService seatService) :
         return Results.Ok(await seatService.DeleteSeatAsync(id));
     }
 
-    public async Task<IResult> GetSeatsAsync(PaginationDto paginationDto)
+    public async Task<IResult> GetSeatsAsync(PaginationRequest paginationRequest)
     {
-        var result = await seatService.GetSeatsAsync(paginationDto);
+        var result = await seatService.GetSeatsAsync(paginationRequest);
         return Results.Ok(ApiResponse<PagedResult<SeatDto>>.Success(result));
     }
 

@@ -1,8 +1,8 @@
-﻿namespace BarberShop.Application.Tickets.Interfaces;
+namespace BarberShop.Application.Tickets.Interfaces;
 
 public interface ITicketService
 {
-    Task<PagedResult<TicketDto>> GetTicketsAsync(PaginationDto paginationDto);
+    Task<PagedResult<TicketDto>> GetTicketsAsync(PaginationRequest paginationRequest);
     Task<SpResponse> GetTicketByIdAsync(int id);
     Task<SpResponse> CreateTicketAsync(TicketDto ticketDto);
     Task<SpResponse> UpdateTicketAsync(int id, TicketDto ticketDto);

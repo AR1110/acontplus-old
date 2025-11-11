@@ -1,4 +1,4 @@
-using Acontplus.Core.DTOs.Responses;
+using Acontplus.Core.Dtos.Responses;
 using System.Data;
 
 namespace Billing.Domain.Repositories;
