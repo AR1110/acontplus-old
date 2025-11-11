@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ThemeService } from '@core/theme/theme.service';
 import { RouterOutlet } from '@angular/router';
-import { ThemeClass } from '@core/theme/types';
+import { ThemeSwitcher } from '@acontplus/ng-components';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-fix-temp-layout',
@@ -11,10 +11,14 @@ import { ThemeClass } from '@core/theme/types';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FixTempLayout {
-  #themeService = inject(ThemeService);
-  activeTheme = this.#themeService.theme;
+  private readonly themeSwitcher = inject(ThemeSwitcher);
+  darkMode$: Observable<boolean>;
 
-  changeTheme(newTheme: ThemeClass) {
-    this.#themeService.changeTheme(newTheme);
+  constructor() {
+    this.darkMode$ = this.themeSwitcher.isDarkMode$;
+  }
+
+  changeTheme() {
+    this.themeSwitcher.toggleDarkMode();
   }
 }

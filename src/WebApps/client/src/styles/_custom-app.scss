@@ -20,22 +20,24 @@ button svg {
 
 /* Botón Editar */
 .btn-edit {
-  background-color: #16a34a;
-  color: white;
+  background-color: var(--mat-sys-tertiary);
+  color: var(--mat-sys-on-tertiary);
 }
 
 .btn-edit:hover {
-  background-color: #15803d;
+  background-color: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
 }
 
 /* Botón Eliminar */
 .btn-remove {
-  background-color: #dc2626;
-  color: white;
+  background-color: var(--mat-sys-error);
+  color: var(--mat-sys-on-error);
 }
 
 .btn-remove:hover {
-  background-color: #b91c1c;
+  background-color: var(--mat-sys-error-container);
+  color: var(--mat-sys-on-error-container);
 }
 
 //celdas filas documentos
@@ -66,11 +68,11 @@ button svg {
 .product-cell .name,
 .version-cell div:last-child {
   font-size: 12px;
-  color: gray;
+  color: var(--mat-sys-on-surface-variant);
 }
 .auth-date {
-  background-color: #e8f5e9 !important;
-  color: #2e7d32 !important;
+  background-color: var(--mat-sys-tertiary-container) !important;
+  color: var(--mat-sys-on-tertiary-container) !important;
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 500;
@@ -86,10 +88,10 @@ button svg {
     font-weight: 500;
   }
   .code {
-    color: #666;
+    color: var(--mat-sys-on-surface-variant);
   }
   .auxiliary_code {
     font-style: italic;
-    color: #999;
+    color: var(--mat-sys-outline);
   }
 }

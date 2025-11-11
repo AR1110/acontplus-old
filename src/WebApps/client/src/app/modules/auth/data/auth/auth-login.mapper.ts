@@ -123,7 +123,7 @@ export class AuthLoginMapper {
         companyId,
         codeRole,
         idCard: item.idCardUser,
-        avatar: 'images/user-avatar.jpg',
+        avatar: '/assets/images/user-avatar.jpg',
       };
       const company = {
         id: item.companyId,

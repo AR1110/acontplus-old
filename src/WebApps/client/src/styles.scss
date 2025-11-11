@@ -1,69 +1,80 @@
+@use '@angular/material' as mat;
+@use 'styles/theme-colors' as theme;
 @use 'styles/reboot';
-@use 'styles/themes';
-@use 'styles/colors';
 @use 'styles/grid';
 @use 'styles/helpers';
-@use 'styles/plugins';
+@use 'styles/colors';
 @use 'styles/custom';
 @use 'styles/custom-app';
-//@use "styles/_layout-system.scss";
-// @use '@angular/material' as mat;
-// @use 'sass:map';
+@use 'styles/plugins';
 @use 'ngx-toastr/toastr';
-//@use 'styles/components/forms' as forms;
-//@use 'styles/theme/theme-colors' as acontplus-theme;
 @use 'app/modules/config/styles/shepherd-tour';
 @use '@ng-select/ng-select/themes/material.theme';
-// /* Tabulator Styles */
 @import 'tabulator-tables/dist/css/tabulator.min.css';
 @import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
-// /* Brand-Inspired Color Palette */
+
+$light-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+    ),
+  )
+);
+
+$dark-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: dark,
+      primary: theme.$primary-palette,
+      tertiary: theme.$tertiary-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+    typography: (
+      plain-family: Roboto,
+      brand-family: Open Sans,
+    ),
+  )
+);
+
+$compact-theme: mat.define-theme(
+  (
+    density: (
+      scale: -4,
+    ),
+  )
+);
+
 :root {
-  --primary-color: #d61672;
-  --secondary-color: #f94c8e; /* Slightly lighter pink */
-  --success-color: #18d6a6; /* Fresh teal */
-  --danger-color: #ff4b5c; /* Vivid coral red */
-  --warning-color: #ffc107; /* Vibrant yellow-orange */
-  --info-color: #17a2b8; /* Calming teal blue */
-  --light-color: #f8f9fa; /* Soft light gray */
-  --dark-color: #343a40; /* Classic dark gray */
-  --on-primary-color: #ffffff;
-  --on-secondary-color: #ffffff;
-  --on-success-color: #ffffff;
-  --on-danger-color: #ffffff;
-  --on-warning-color: #212529;
-  --on-info-color: #ffffff;
-  --on-light-color: #212529;
-  --on-dark-color: #ffffff;
-  --app-content: #e9ddffbf;
+  @include mat.all-component-themes($light-theme);
+  @include mat.form-field-density($compact-theme);
+  @include mat.form-field-density($compact-theme);
 }
 
-// html,
-// body {
-//   height: 100%;
-//   @include mat.theme(
-//     (
-//       color: (
-//         primary: acontplus-theme.$primary-palette,
-//         tertiary: acontplus-theme.$tertiary-palette,
-//         theme-type: light,
-//       ),
-//       typography: Roboto,
-//       density: 0,
-//     )
-//   );
-// }
+.dark-theme {
+  @include mat.all-component-colors($dark-theme);
+  @include mat.color-variants-backwards-compatibility($dark-theme);
+  @include mat.elevation-classes();
+  @include mat.app-background();
+  @include mat.button-color($dark-theme);
+  @include theme.high-contrast-overrides(dark);
+}
 
-// button,
-// html,
-// input,
-// select,
-// textarea {
-//   font-family:
-//     Roboto,
-//     Helvetica Neue,
-//     sans-serif !important;
-// }
+@media (prefers-contrast: more) {
+  html:not(.dark-theme) {
+    @include theme.high-contrast-overrides(light);
+  }
+}
 
 table {
   width: 100%;
@@ -74,12 +85,10 @@ table {
   overflow: auto;
 }
 
-//autocomplete search inside boostrap modal
 .cdk-overlay-container {
   z-index: 999999 !important;
 }
 
-//remove z index to material table headers
 .mat-mdc-header-cell {
   z-index: unset !important;
 }
@@ -88,18 +97,20 @@ table {
   z-index: 999999;
 }
 
-.cursor-pointer {
-  cursor: pointer;
-}
 .toast-container {
   z-index: 9999999;
 }
+
 .mat-mdc-icon-button {
   font-size: inherit !important;
 }
 
 .mat-mdc-radio-button ~ .mat-mdc-radio-button {
   margin-left: 16px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 
 .search-dialog-panel {
