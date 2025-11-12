@@ -4,13 +4,13 @@ namespace Restaurant.Application.Dtos.Items;
 
 public record UpdateItemRequest
 {
-    public UpdateItem Item { get; set; }
-    public ItemComposition[] ItemComposition { get; set; }  
+    public UpdateItem? Item { get; set; }
+    public ItemComposition[]? ItemComposition { get; set; }  
 }
 
 public record UpdateItem
 {
-    public string Summary { get; set; }
+    public string? Summary { get; set; }
     public bool Cooking { get; set; }
     public string? Recipe { get; set; }
     public string? Instructions { get; set; }
@@ -18,7 +18,7 @@ public record UpdateItem
     public int Unit { get; set; }
     public bool ForPromotion { get; set; }
     public int Quantity { get; set; }
-    public string Title { get; set; }
+    public string? Title { get; set; }
     public bool IsActive { get; set; }
 }
 
@@ -47,7 +47,7 @@ public record ItemComposition
     public decimal? WastePercentage { get; set; }
     public bool IsOptional { get; set; }
     public decimal ExtraCharge { get; set; }
-    public string UniqueId { get; set; }
+    public string? UniqueId { get; set; }
     public bool IsActive { get; set; }
     public bool IsDeleted { get; set; }
 }
