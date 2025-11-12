@@ -4,24 +4,24 @@ namespace Restaurant.Application.Services;
 
 public class ItemService(IAdoRepository adoRepository) : IItemService
 {
-    public async Task<Result<PagedResult<ItemListResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
+    public async Task<Result<PagedResult<ItemResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
-            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemListResponse>("Restaurant.GetItem", paginationRequest);
+            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemResponse>("Restaurant.GetItem", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
                 var error = DomainError.NotFound("ITEMS_NOT_FOUND", "No items were found.");
-                return Result<PagedResult<ItemListResponse>, DomainError>.Failure(error);
+                return Result<PagedResult<ItemResponse>, DomainError>.Failure(error);
             }
 
-            return Result<PagedResult<ItemListResponse>, DomainError>.Success(response);
+            return Result<PagedResult<ItemResponse>, DomainError>.Success(response);
         }
         catch (Exception ex)
         {
             var error = DomainError.Internal("ITEMS_GET_ERROR", $"An error occurred while retrieving items. {ex.Message}");
-            return Result<PagedResult<ItemListResponse>, DomainError>.Failure(error);
+            return Result<PagedResult<ItemResponse>, DomainError>.Failure(error);
         }
 
     }

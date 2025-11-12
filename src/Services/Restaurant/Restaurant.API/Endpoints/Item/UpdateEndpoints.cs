@@ -14,7 +14,7 @@ public static class UpdateEndpoints
 
         group.MapPut("/{id:int}", async (
             int id,
-            UpdateItemRequest request,
+            ItemUpdate request,
             IItemService itemService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
@@ -23,7 +23,7 @@ public static class UpdateEndpoints
             {
                 { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "Id", id },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UpdateItemRequest>(request)) }
+                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ItemUpdate>(request)) }
             };
             return Results.Ok(await itemService.UpdateAsync(parameters));
         })

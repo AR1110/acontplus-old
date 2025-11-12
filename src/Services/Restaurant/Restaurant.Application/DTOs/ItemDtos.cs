@@ -8,16 +8,16 @@ public record CreateItemDto
     public int ProductId { get; init; }
 
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
 
     public bool Cooking { get; init; }
 
-    public string Recipe { get; init; } = string.Empty;
+    public string Recipe { get; init; }
 
-    public string Instructions { get; init; } = string.Empty;
+    public string Instructions { get; init; }
 
     [MaxLength(500)]
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 
     public bool IsActive { get; init; } = true;
 
@@ -32,16 +32,16 @@ public record UpdateItemDto
     public int ProductId { get; init; }
 
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
 
     public bool Cooking { get; init; }
 
-    public string Recipe { get; init; } = string.Empty;
+    public string Recipe { get; init; }
 
-    public string Instructions { get; init; } = string.Empty;
+    public string Instructions { get; init; }
 
     [MaxLength(500)]
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 
     public bool IsActive { get; init; } = true;
 
@@ -64,7 +64,7 @@ public record CreateRecipeDto
 
     public int IngredientId { get; init; }
 
-    public string Instructions { get; init; } = string.Empty;
+    public string Instructions { get; init; }
 
     public float Quantity { get; init; }
 
@@ -89,7 +89,7 @@ public record UpdateRecipeDto
 
     public int IngredientId { get; init; }
 
-    public string Instructions { get; init; } = string.Empty;
+    public string Instructions { get; init; }
 
     public float Quantity { get; init; }
 

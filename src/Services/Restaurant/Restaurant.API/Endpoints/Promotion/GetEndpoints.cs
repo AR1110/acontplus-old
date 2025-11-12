@@ -41,7 +41,7 @@ public static class GetEndpoints
             .WithName("GetPromotions")
             .WithSummary("Get all promotions")
             .WithDescription("Retrieve a paginated list of promotions.")
-            .Produces<PagedResult<ItemListResponse>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<ItemResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 

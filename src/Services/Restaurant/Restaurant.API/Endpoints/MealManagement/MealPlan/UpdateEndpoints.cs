@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
+namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
 
 public static class UpdateEndpoints
 {
@@ -9,14 +9,14 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapPut("/{id:int}", async (int id, UpdateMealPlanRequest request, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
+        group.MapPut("/{id:int}", async (int id, MealPlanUpdate request, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
         {
             return await mealPlanService.UpdateAsync(id, request, cancellationToken).ToMinimalApiResultAsync();
         })
             .WithName("UpdateMealPlan")
             .WithSummary("Update a meal plan")
             .WithDescription("Update an existing meal plan by its ID.")
-            .Produces<MealPlanResponse>(StatusCodes.Status200OK)
+            .Produces<MealPlanItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }

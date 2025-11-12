@@ -7,11 +7,11 @@ public record CreateIngredientDto
     public int ProductId { get; init; }
     [Required]
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
     public int TypeId { get; init; }
     public int Quantity { get; init; }
     public int Unit { get; init; }
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 }
 
 public record CreateIngredientRequestDto
@@ -32,14 +32,14 @@ public record IngredientJsonDto
 {
     [Required]
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
     [Required]
     public int TypeId { get; init; }
     [Required]
     public int Quantity { get; init; }
     [Required]
     public int Unit { get; init; }
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 }
 
 public record UpdateIngredientDto
@@ -48,9 +48,9 @@ public record UpdateIngredientDto
     public int ProductId { get; init; }
     [Required]
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
     public int? IngredientTypeId { get; init; }
     public int? Quantity { get; init; }
     public int? Unit { get; init; }
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 }

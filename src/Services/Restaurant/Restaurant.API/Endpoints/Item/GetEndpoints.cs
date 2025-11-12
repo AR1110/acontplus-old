@@ -39,7 +39,7 @@ public static class GetEndpoints
             .WithName("GetItems")
             .WithSummary("Get all items")
             .WithDescription("Retrieve a paginated list of items.")
-            .Produces<PagedResult<ItemListResponse>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<ItemResponse>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 

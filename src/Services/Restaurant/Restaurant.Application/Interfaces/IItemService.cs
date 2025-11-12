@@ -4,7 +4,7 @@ namespace Restaurant.Application.Interfaces;
 
 public interface IItemService
 {
-    Task<Result<PagedResult<ItemListResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest);
+    Task<Result<PagedResult<ItemResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest);
     Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters);
     Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
 }

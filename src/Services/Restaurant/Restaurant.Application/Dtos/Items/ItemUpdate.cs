@@ -2,13 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Restaurant.Application.Dtos.Items;
 
-public record UpdateItemRequest
-{
-    public UpdateItem? Item { get; set; }
-    public ItemComposition[]? ItemComposition { get; set; }  
-}
-
-public record UpdateItem
+public record ItemUpdate
 {
     public string? Summary { get; set; }
     public bool Cooking { get; set; }
@@ -20,6 +14,7 @@ public record UpdateItem
     public int Quantity { get; set; }
     public string? Title { get; set; }
     public bool IsActive { get; set; }
+    public ItemComposition[]? ItemComposition { get; set; }
 }
 
 public record ItemComposition

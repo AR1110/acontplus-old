@@ -1,6 +1,6 @@
 namespace Restaurant.Application.Dtos.MealManagement;
 
-public record CreateMealPlanRequest(int EstablishmentId,
+public record MealPlanCreate(int EstablishmentId,
     string Name,
     string? Description,
     int DailyMealLimit,
@@ -9,7 +9,7 @@ public record CreateMealPlanRequest(int EstablishmentId,
     bool IsDefault,
     int CreatedByUserId);
 
-public record UpdateMealPlanRequest(int Id,
+public record MealPlanUpdate(int Id,
     int EstablishmentId,
     string Name,
     string? Description,
@@ -19,7 +19,7 @@ public record UpdateMealPlanRequest(int Id,
     bool IsDefault,
     bool IsActive);
 
-public record MealPlanResponse(int Id,
+public record MealPlanItem(int Id,
     int EstablishmentId,
     string Name,
     string? Description,

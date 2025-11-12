@@ -9,15 +9,15 @@ public record CreateMenuDto
 
     [Required]
     [MaxLength(500)]
-    public string Title { get; init; } = string.Empty;
+    public string Title { get; init; }
 
     [Required]
     public int MenuTypeId { get; init; }
 
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
 
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 
     public DateTime? StartDate { get; init; }
 
@@ -41,15 +41,15 @@ public record UpdateMenuDto
 
     [Required]
     [MaxLength(500)]
-    public string Title { get; init; } = string.Empty;
+    public string Title { get; init; }
 
     [Required]
     public int MenuTypeId { get; init; }
 
     [MaxLength(500)]
-    public string Summary { get; init; } = string.Empty;
+    public string Summary { get; init; }
 
-    public string Content { get; init; } = string.Empty;
+    public string Content { get; init; }
 
     public DateTime? StartDate { get; init; }
 
@@ -77,7 +77,7 @@ public record CreateMenuItemDto
     public decimal CostPrice { get; init; }
 
     [MaxLength(500)]
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
 
     public int MenuId { get; init; }
 
@@ -99,7 +99,7 @@ public record UpdateMenuItemDto
     public decimal CostPrice { get; init; }
 
     [MaxLength(500)]
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
 
     public int MenuId { get; init; }
 

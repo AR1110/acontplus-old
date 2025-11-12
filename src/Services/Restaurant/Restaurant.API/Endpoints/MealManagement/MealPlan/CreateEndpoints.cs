@@ -1,4 +1,4 @@
-﻿namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
+namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
 
 public static class CreateEndpoints
 {
@@ -9,7 +9,7 @@ public static class CreateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapPost("/", async (CreateMealPlanRequest request, IMealPlanService mealPlanService, IUserContext userContext, CancellationToken cancellationToken) =>
+        group.MapPost("/", async (MealPlanCreate request, IMealPlanService mealPlanService, IUserContext userContext, CancellationToken cancellationToken) =>
         {
             request = request with
             {
@@ -20,7 +20,7 @@ public static class CreateEndpoints
             .WithName("CreateMealPlan")
             .WithSummary("Create a new meal plan")
             .WithDescription("Create a new meal plan record.")
-            .Produces<MealPlanResponse>(StatusCodes.Status201Created)
+            .Produces<MealPlanItem>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }

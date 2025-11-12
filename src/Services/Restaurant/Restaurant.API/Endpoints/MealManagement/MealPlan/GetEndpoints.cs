@@ -16,7 +16,7 @@ public static class GetEndpoints
             .WithName("GetAllMealPlans")
             .WithSummary("Get all meal plans")
             .WithDescription("Retrieve a list of all meal plans.")
-            .Produces<IReadOnlyList<MealPlanResponse>>(StatusCodes.Status200OK)
+            .Produces<IReadOnlyList<MealPlanItem>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }
