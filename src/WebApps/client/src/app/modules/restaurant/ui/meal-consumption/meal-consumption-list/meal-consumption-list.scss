@@ -4,7 +4,6 @@
   margin: 0 auto;
 
   mat-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
   }
 
@@ -30,7 +29,7 @@
       .detail-item {
         strong {
           display: block;
-          color: #666;
+          color: var(--mat-sys-on-surface-variant);
           font-size: 0.9rem;
           margin-bottom: 4px;
         }
@@ -38,7 +37,6 @@
         p {
           margin: 0;
           font-size: 1rem;
-          color: #333;
         }
       }
     }
@@ -55,13 +53,13 @@
       border-collapse: collapse;
 
       thead {
-        background-color: #f5f5f5;
+        background-color: var(--mat-sys-surface-container);
 
         th {
           padding: 12px;
           text-align: left;
           font-weight: 600;
-          border-bottom: 2px solid #ddd;
+          border-bottom: 2px solid var(--mat-sys-outline-variant);
 
           &.text-center {
             text-align: center;
@@ -71,10 +69,10 @@
 
       tbody {
         tr {
-          border-bottom: 1px solid #eee;
+          border-bottom: 1px solid var(--mat-sys-outline-variant);
 
           &:hover {
-            background-color: #f9f9f9;
+            background-color: var(--mat-sys-surface-container-low);
           }
 
           td {
@@ -93,10 +91,11 @@
 
       .time-input {
         padding: 8px;
-        border: 1px solid #ddd;
+        border: 1px solid var(--mat-sys-outline-variant);
         border-radius: 4px;
         font-size: 0.95rem;
-        background-color: #f5f5f5;
+        background-color: var(--mat-sys-surface-container);
+        color: var(--mat-sys-on-surface);
         width: 120px;
       }
 
@@ -104,7 +103,7 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        color: #4caf50;
+        color: var(--mat-sys-tertiary);
         font-weight: 500;
 
         mat-icon {
@@ -159,7 +158,7 @@
 
     p {
       margin: 0;
-      color: rgba(0, 0, 0, 0.6);
+      color: var(--mat-sys-on-surface-variant);
     }
   }
 
@@ -172,7 +171,7 @@
 
       th {
         font-weight: 600;
-        background-color: #f5f5f5;
+        background-color: var(--mat-sys-surface-container);
       }
 
       td {
@@ -193,7 +192,7 @@
         align-items: center;
         justify-content: center;
         gap: 12px;
-        color: rgba(0, 0, 0, 0.5);
+        color: var(--mat-sys-on-surface-variant);
 
         mat-icon {
           font-size: 48px;
@@ -210,22 +209,22 @@
 
     mat-paginator {
       margin-top: 16px;
-      border-top: 1px solid #e0e0e0;
+      border-top: 1px solid var(--mat-sys-outline-variant);
     }
   }
 
   .status-completed {
-    color: #4caf50;
+    color: var(--mat-sys-tertiary);
     font-weight: 500;
   }
 
   .status-cancelled {
-    color: #f44336;
+    color: var(--mat-sys-error);
     font-weight: 500;
   }
 
   .status-pending {
-    color: #ff9800;
+    color: var(--mat-sys-primary);
     font-weight: 500;
   }
 }

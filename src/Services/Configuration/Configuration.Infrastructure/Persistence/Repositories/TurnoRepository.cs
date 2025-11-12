@@ -29,7 +29,7 @@ public class TurnoRepository(IAdoRepository repository) : ITurnoRepository
 // public class TurnoRepository : ITurnoRepository
 // {
 //     private readonly IConfiguration _configuration;
-//     private readonly string _connectionStrings = string.Empty;
+//     private readonly string _connectionStrings
 //     private readonly IAdoRepository _repository;
 
 //     public TurnoRepository(IAdoRepository respository, IConfiguration configuration)

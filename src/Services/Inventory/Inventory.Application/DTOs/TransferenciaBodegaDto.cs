@@ -33,7 +33,7 @@ public record TransferenciaBodegaDetalleDto
     public int IdArticulo { get; set; }
     public int IdMedida { get; set; }
     public decimal Cantidad { get; set; }
-    public string Descripcion { get; set; } = string.Empty;
+    public string Descripcion { get; set; }
     public decimal PrecioCosto { get; set; }
     public decimal Total { get; set; }
     public bool Estado { get; set; }

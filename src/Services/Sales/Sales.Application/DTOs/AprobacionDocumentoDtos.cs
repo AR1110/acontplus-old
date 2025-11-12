@@ -65,8 +65,8 @@ public record ComprobanteConvertDto
     public decimal Transporte { get; init; }
     public decimal Total { get; init; }
     public string? Observacion { get; init; }
-    public string DocDestino { get; init; } = string.Empty;
-    public string CodDoc { get; init; } = string.Empty;
+    public string DocDestino { get; init; }
+    public string CodDoc { get; init; }
 }
 
 public record DetalleDto
@@ -78,11 +78,11 @@ public record DetalleDto
     public int IdTipoIva { get; init; }
     public int IdBodega { get; init; }
     public decimal Cantidad { get; init; }
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
     public decimal PrecioUnitario { get; init; }
     public decimal Descuento { get; init; }
     public decimal PrecioTotalSinImpuesto { get; init; }
-    public string CodigoPorcentaje { get; init; } = string.Empty;
+    public string CodigoPorcentaje { get; init; }
     public decimal Tarifa { get; init; }
     public decimal ValorImpuesto { get; init; }
     public DateTime FechaEmision { get; init; }
@@ -104,11 +104,11 @@ public record DetalleConvertDto
     public decimal ValorDescuento { get; init; }
     public decimal PrecioTotalSinImpuesto { get; init; }
     public decimal PorcentajeDescuento { get; init; }
-    public string CodigoPorcentaje { get; init; } = string.Empty;
+    public string CodigoPorcentaje { get; init; }
     public decimal Tarifa { get; init; }
     public decimal ValorImpuesto { get; init; }
     public string? Nota { get; init; }
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
     public int IdTipoIva { get; init; }
     public bool LlevaInventario { get; init; }
     public decimal CantidadTransaccion { get; init; }
@@ -134,8 +134,8 @@ public record HistorialDto
 
 public record InfoAdicionalDto
 {
-    public string Nombre { get; init; } = string.Empty;
-    public string Valor { get; init; } = string.Empty;
+    public string Nombre { get; init; }
+    public string Valor { get; init; }
 }
 
 public record InfoAdicionalArticuloDto

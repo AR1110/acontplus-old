@@ -8,13 +8,13 @@ public record StockFisicoDto
 
 public record StockFisicoHeaderDto
 {
-    public string CodEstab { get; init; } = string.Empty;
+    public string CodEstab { get; init; }
     public int Secuencial { get; init; }
     public DateTime Fecha { get; init; }
-    public string Responsable { get; init; } = string.Empty;
-    public string Obs { get; init; } = string.Empty;
+    public string Responsable { get; init; }
+    public string Obs { get; init; }
     public int PuntoEmisionId { get; init; }
-    public string SerieDocumento { get; init; } = string.Empty;
+    public string SerieDocumento { get; init; }
 }
 
 public record StockFisicoDetalleDto

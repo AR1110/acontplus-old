@@ -29,7 +29,7 @@ public record SupportDetailItemDto
     public int MedidaId { get; init; }
     public int TaxId { get; init; }
     public int TaxPercentId { get; init; }
-    public string Description { get; init; } = string.Empty;
+    public string Description { get; init; }
     public decimal Quantity { get; init; }
     public decimal Price { get; init; }
     public decimal Cost { get; init; }

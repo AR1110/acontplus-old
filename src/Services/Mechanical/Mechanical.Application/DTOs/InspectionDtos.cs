@@ -5,15 +5,15 @@ public record CreateInspectionDto
     public int SupportId { get; init; }
     public DateTime Date { get; init; }
     public int Mileage { get; init; }
-    public string FuelLevel { get; init; } = string.Empty;
-    public string Engine { get; init; } = string.Empty;
-    public string Cabin { get; init; } = string.Empty;
-    public string Bearing { get; init; } = string.Empty;
-    public string Transmission { get; init; } = string.Empty;
-    public string Lighting { get; init; } = string.Empty;
-    public string Brake { get; init; } = string.Empty;
-    public string Steering { get; init; } = string.Empty;
-    public string Suspension { get; init; } = string.Empty;
+    public string FuelLevel { get; init; }
+    public string Engine { get; init; }
+    public string Cabin { get; init; }
+    public string Bearing { get; init; }
+    public string Transmission { get; init; }
+    public string Lighting { get; init; }
+    public string Brake { get; init; }
+    public string Steering { get; init; }
+    public string Suspension { get; init; }
     public string? Obs { get; init; }
 }
 
@@ -21,15 +21,15 @@ public record UpdateInspectionDto
 {
     public DateTime Date { get; init; }
     public int Mileage { get; init; }
-    public string FuelLevel { get; init; } = string.Empty;
-    public string Engine { get; init; } = string.Empty;
-    public string Cabin { get; init; } = string.Empty;
-    public string Bearing { get; init; } = string.Empty;
-    public string Transmission { get; init; } = string.Empty;
-    public string Lighting { get; init; } = string.Empty;
-    public string Brake { get; init; } = string.Empty;
-    public string Steering { get; init; } = string.Empty;
-    public string Suspension { get; init; } = string.Empty;
+    public string FuelLevel { get; init; }
+    public string Engine { get; init; }
+    public string Cabin { get; init; }
+    public string Bearing { get; init; }
+    public string Transmission { get; init; }
+    public string Lighting { get; init; }
+    public string Brake { get; init; }
+    public string Steering { get; init; }
+    public string Suspension { get; init; }
     public string? Obs { get; init; }
 }
 

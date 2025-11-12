@@ -51,11 +51,11 @@ public record ProformaDetalleDto
     public decimal ValorDescuento { get; init; }
     public decimal PorcentajeDescuento { get; init; }
     public decimal PrecioTotalSinImpuesto { get; init; }
-    public string CodigoPorcentaje { get; init; } = string.Empty;
+    public string CodigoPorcentaje { get; init; }
     public decimal Tarifa { get; init; }
     public decimal ValorImpuesto { get; init; }
     public string? Nota { get; init; }
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
 }
 
 public record ProformaImpuestoDto
@@ -70,8 +70,8 @@ public record ProformaImpuestoDto
 
 public record ProformaInfoAdicionalDto
 {
-    public string Nombre { get; init; } = string.Empty;
-    public string Valor { get; init; } = string.Empty;
+    public string Nombre { get; init; }
+    public string Valor { get; init; }
 }
 
 // DTO for ConvertToDoc operation

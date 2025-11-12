@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Helpers;
+namespace Identity.API.Helpers;
 
 public static class UserAgentHelper
 {
@@ -149,8 +149,8 @@ public static class UserAgentHelper
 
 public class UserAgentContainer
 {
-    public string UserAgent { get; set; } = string.Empty;
-    public string IpAddress { get; set; } = string.Empty;
+    public string UserAgent { get; set; }
+    public string IpAddress { get; set; }
 }
 
 public class UserAgentSummary

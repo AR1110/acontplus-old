@@ -48,11 +48,11 @@ public record NotaEntregaDetalleDto
     public decimal ValorDescuento { get; init; }
     public decimal PorcentajeDescuento { get; init; }
     public decimal PrecioTotalSinImpuesto { get; init; }
-    public string CodigoPorcentaje { get; init; } = string.Empty;
+    public string CodigoPorcentaje { get; init; }
     public decimal Tarifa { get; init; }
     public decimal ValorImpuesto { get; init; }
     public string? Nota { get; init; }
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
     public bool LlevaInventario { get; init; }
     public decimal CantidadTransaccion { get; init; }
     public decimal Conversion { get; init; }
@@ -71,8 +71,8 @@ public record NotaEntregaImpuestoDto
 
 public record NotaEntregaInfoAdicionalDto
 {
-    public string Nombre { get; init; } = string.Empty;
-    public string Valor { get; init; } = string.Empty;
+    public string Nombre { get; init; }
+    public string Valor { get; init; }
 }
 
 // DTOs for ConvertToDoc operation
@@ -103,7 +103,7 @@ public record NotaEntregaComprobanteDto
     public decimal Total { get; init; }
     public string? Observacion { get; init; }
     public int IdNotaEntrega { get; init; }
-    public string DocDestino { get; init; } = string.Empty;
+    public string DocDestino { get; init; }
 }
 
 public record NotaEntregaFormaPagoDto

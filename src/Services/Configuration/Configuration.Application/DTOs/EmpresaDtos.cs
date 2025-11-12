@@ -2,22 +2,22 @@ namespace Configuration.Application.DTOs;
 
 public record CreateEmpresaDto
 {
-    public string IdType { get; init; } = string.Empty;
-    public string IdCard { get; init; } = string.Empty;
-    public string BusinessName { get; init; } = string.Empty;
-    public string TradeName { get; init; } = string.Empty;
-    public string Email { get; init; } = string.Empty;
-    public string Telephone { get; init; } = string.Empty;
-    public string Address { get; init; } = string.Empty;
+    public string IdType { get; init; }
+    public string IdCard { get; init; }
+    public string BusinessName { get; init; }
+    public string TradeName { get; init; }
+    public string Email { get; init; }
+    public string Telephone { get; init; }
+    public string Address { get; init; }
     public bool SriValidation { get; init; }
 }
 
 public record UpdateEmpresaDto
 {
-    public string BusinessName { get; init; } = string.Empty;
-    public string TradeName { get; init; } = string.Empty;
-    public string Email { get; init; } = string.Empty;
-    public string Telephone { get; init; } = string.Empty;
-    public string Address { get; init; } = string.Empty;
+    public string BusinessName { get; init; }
+    public string TradeName { get; init; }
+    public string Email { get; init; }
+    public string Telephone { get; init; }
+    public string Address { get; init; }
     public bool Estado { get; init; }
 }

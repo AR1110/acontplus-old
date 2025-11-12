@@ -21,7 +21,7 @@ public record OrderDto
     public int CustomerCompanyId { get; init; }
     public decimal PercentageDiscount { get; init; }
     public decimal SubTotalSinImpuesto { get; init; }
-    public string CodDoc { get; init; } = string.Empty;
+    public string CodDoc { get; init; }
     public decimal Tax { get; init; }
     public decimal Tip { get; init; }
     public decimal Total { get; init; }
@@ -31,13 +31,13 @@ public record OrderDto
 
 public record OrderMaintenanceDetailDto
 {
-    public string RowGuid { get; init; } = string.Empty;
+    public string RowGuid { get; init; }
     public int Id { get; init; }
-    public string Descripcion { get; init; } = string.Empty;
+    public string Descripcion { get; init; }
     public int OrderIndex { get; init; }
     public int BodegaId { get; init; }
     public int OrderDetailId { get; init; }
-    public string Codigo { get; init; } = string.Empty;
+    public string Codigo { get; init; }
     public decimal CostoFraccionado { get; init; }
     public decimal PrecioConIva { get; init; }
     public decimal PrecioTotalSinImpuesto { get; init; }
