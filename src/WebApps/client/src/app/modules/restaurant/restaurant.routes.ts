@@ -65,4 +65,9 @@ export const routes: Route[] = [
       breadcrumb: 'Consumo de Comidas',
     },
   },
+  {
+    path: 'promotions',
+    loadComponent: () => import('@restaurant/ui/promotions/promotions').then((m) => m.Promotions),
+    data: { breadcrumb: 'Promociones' },
+  }
 ];

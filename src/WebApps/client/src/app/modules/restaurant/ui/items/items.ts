@@ -15,6 +15,9 @@ import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
+import {MatInput} from "@angular/material/input";
+import {ValidatorUtils} from "@core/utils/utils";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
 
 @Component({
   selector: 'app-items',
@@ -26,6 +29,9 @@ import { PaginationParams } from '@acontplus/core';
     MatIconButton,
     MatIcon,
     Button,
+    MatFormField,
+    MatLabel,
+    MatInput,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',
@@ -64,7 +70,8 @@ export class Items implements OnInit {
   isLoading = signal(false);
   pagination = signal(new Pagination());
 
-  params = new PaginationParams();
+
+  searchTerm = ''
 
   ngOnInit() {
     this.getList();
@@ -75,6 +82,7 @@ export class Items implements OnInit {
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
+        searchTerm: ValidatorUtils.isValidField(this.searchTerm) ?? undefined ,
       filters: {
         categoryAbbreviations:
           this.categoryAbbreviationsSelected.length > 0
