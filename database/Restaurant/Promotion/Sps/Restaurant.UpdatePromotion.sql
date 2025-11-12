@@ -15,8 +15,8 @@ CREATE OR ALTER PROCEDURE Restaurant.UpdatePromotion
      @UserRoleId INT
     ,@Id INT
     ,@Json VARCHAR(MAX)
-    ,@S3ObjectUrl VARCHAR(800)
-    ,@S3ObjectKey VARCHAR(500)
+    ,@S3ObjectUrl VARCHAR(800) = NULL
+    ,@S3ObjectKey VARCHAR(500) = NULL
 AS
 BEGIN
     SET LANGUAGE SPANISH;

@@ -1,10 +1,11 @@
 using Restaurant.Application.Dtos.Items;
+using Restaurant.Application.DTOs.Promotions;
 
 namespace Restaurant.API.Endpoints.Promotion;
 
 public static class CreateEndpoints
 {
-    public static void MapUpdateEndpoints(this IEndpointRouteBuilder app)
+    public static void MapCreateEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/promotions")
             .RequireAuthorization()
@@ -14,18 +15,17 @@ public static class CreateEndpoints
 
         group.MapPost("/", async (
             int id,
-            ItemUpdate request,
-            IItemService itemService,
+            PromotionCreateUpdate request,
+            IPromotionService promotionService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var parameters = new Dictionary<string, object>
             {
                 { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "Id", id },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ItemUpdate>(request)) }
+                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionCreateUpdate>(request)) }
             };
-            return Results.Ok(await itemService.UpdateAsync(parameters));
+            return Results.Ok(await promotionService.AddAsync(parameters));
         });
     }
 

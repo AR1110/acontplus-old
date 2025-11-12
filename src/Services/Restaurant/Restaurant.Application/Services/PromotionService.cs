@@ -1,28 +1,27 @@
-using Acontplus.Core.Dtos.Requests;
-using Restaurant.Application.Dtos.Items;
+using Restaurant.Application.DTOs.Promotions;
 
 namespace Restaurant.Application.Services;
 
 public class PromotionService(IAdoRepository repository) : IPromotionService
 {
-    public async Task<Result<PagedResult<ItemResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
+    public async Task<Result<PagedResult<PromotionResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
-            var response = await repository.GetPagedFromStoredProcedureAsync<ItemResponse>("Restaurant.GetPromotion", paginationRequest);
+            var response = await repository.GetPagedFromStoredProcedureAsync<PromotionResponse>("Restaurant.GetPromotion", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
-                var error = DomainError.NotFound("ITEMS_NOT_FOUND", "No items were found.");
-                return Result<PagedResult<ItemResponse>, DomainError>.Failure(error);
+                var error = DomainError.NotFound("PROMOTIONS_NOT_FOUND", "No Promotions were found.");
+                return Result<PagedResult<PromotionResponse>, DomainError>.Failure(error);
             }
 
-            return Result<PagedResult<ItemResponse>, DomainError>.Success(response);
+            return Result<PagedResult<PromotionResponse>, DomainError>.Success(response);
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("ITEMS_GET_ERROR", $"An error occurred while retrieving items. {ex.Message}");
-            return Result<PagedResult<ItemResponse>, DomainError>.Failure(error);
+            var error = DomainError.Internal("PROMOTIONS_GET_ERROR", $"An error occurred while retrieving promotions. {ex.Message}");
+            return Result<PagedResult<PromotionResponse>, DomainError>.Failure(error);
         }
     }
 
@@ -36,11 +35,11 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.Promotion_Post", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.InsertPromotion", parameters);
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.Promotion_Update", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdatePromotion", parameters);
     }
 }
