@@ -17,7 +17,7 @@ public class Order : BaseEntity
     [Column(TypeName = "numeric(18,5), null")]
     public decimal? Tax { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "numeric(5,2), null")]
     public decimal? Discount { get; set; }
 
     [Column(TypeName = "numeric(18,5), null")]

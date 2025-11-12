@@ -3,14 +3,38 @@ namespace Restaurant.Domain.Entities;
 [Table("Item", Schema = "Restaurant")]
 public class Item : BaseEntity
 {
+    [Required]
     public int ProductId { get; set; }
-    [MaxLength(500)] public string? Summary { get; set; }
-    public bool Cooking { get; set; }
-    public string? Recipe { get; set; }
-    public string? Instructions { get; set; }
-    [MaxLength(500)] public string? Content { get; set; }
-    public int? Quantity { get; set; }
-    public int? Unit { get; set; }
-    public bool? ForPromotion { get; set; }
-    [MaxLength(500)] public string? Title { get; set; }
+
+    [MaxLength(500)]
+    public string? Summary { get; set; }
+        // Producción
+    [MaxLength(1000)]
+    public string? PreparationInstructions { get; set; }
+    public int MeasureId { get; set; }
+    // Pricing
+    [Column(TypeName = "decimal(18,5)")]
+    public decimal SalePrice { get; set; }
+
+    [Column(TypeName = "decimal(18,5)")]
+    public decimal UnitPrice { get; set; }  // Suma de costos de composiciones
+
+    // Producción
+    public bool RequiresCooking { get; set; }
+    public int? PreparationTimeMinutes { get; set; }
+    public int? ProductionAreaId { get; set; }
+    public ProductionArea? ProductionArea { get; set; }
+
+    // Flags
+    public bool IsAvailableForPromotion { get; set; }
+    public bool IsComposite { get; set; }
+
+    // Navegación multinivel: cuando ESTE item CONTIENE otros
+    public ICollection<ItemComposition> Compositions { get; set; } = [];
+
+    // Navegación multinivel: cuando ESTE item ES USADO EN otros
+    public ICollection<ItemComposition> UsedInCompositions { get; set; } = [];
+
+    public ICollection<OrderItem> OrderItems { get; set; } = [];
+    public ICollection<PromotionDetail> PromotionDetails { get; set; } = [];
 }
