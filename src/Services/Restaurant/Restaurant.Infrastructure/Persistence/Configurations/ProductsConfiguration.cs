@@ -60,17 +60,40 @@ public class OrderConfiguration : BaseEntityTypeConfiguration<Order>
     {
         base.Configure(builder);
 
-        builder
-            .Property(x => x.Finished)
+        builder.HasIndex(x => x.Uuid)
+            .HasDatabaseName("UX_Order_Uuid")
+            .IsUnique();
+
+        builder.HasIndex(x => new { x.EstablecimientoId, x.Finished, x.CreatedAt })
+            .HasDatabaseName("IX_Order_Establishment_Finished_Date")
+            .HasFilter("[Finished] = 0");
+
+        builder.HasIndex(x => x.TableId)
+            .HasDatabaseName("IX_Order_TableId")
+            .HasFilter("[TableId] IS NOT NULL AND [Finished] = 0");
+
+        builder.HasIndex(x => new { x.CustomerCompanyId, x.CreatedAt })
+            .HasDatabaseName("IX_Order_Customer_Date");
+
+        builder.Property(x => x.Finished)
             .HasDefaultValue(false);
 
-        builder
-            .Property(x => x.Divided)
+        builder.Property(x => x.Divided)
             .HasDefaultValue(false);
 
-        builder
-            .HasMany(x => x.OrderItems)
+        builder.HasOne(x => x.AppTable)
+            .WithMany()
+            .HasForeignKey(x => x.TableId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasMany(x => x.OrderItems)
             .WithOne(m => m.Order)
-            .HasForeignKey(m => m.OrderId);
+            .HasForeignKey(m => m.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(x => x.MealConsumptions)
+            .WithOne(x => x.Order)
+            .HasForeignKey(x => x.OrderId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }
