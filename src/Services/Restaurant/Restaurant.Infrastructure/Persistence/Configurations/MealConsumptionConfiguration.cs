@@ -52,5 +52,10 @@ public class MealConsumptionConfiguration : BaseEntityTypeConfiguration<MealCons
             .HasDatabaseName("IX_MealConsumption_Status_Cancelled")
             .HasFilter("CancelledAt IS NOT NULL")
             .IncludeProperties(x => new { x.CancellationReason, x.CancelledByUserId });
+
+        // Decimal precision
+        builder.Property(x => x.Amount).HasPrecision(10, 2);
+        builder.Property(x => x.SubsidyAmount).HasPrecision(10, 2);
+        builder.Property(x => x.CompanyCustomerPayment).HasPrecision(10, 2);
     }
 }

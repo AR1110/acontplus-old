@@ -23,7 +23,7 @@ import { FORMA_PAGO_SRI_CODE } from '@core/constants/global.constants';
 import { isValidField } from '@core/utils/utils';
 import { isValidGeneratorQuota } from '@accounting/shared/utils/calculate-quota.util';
 import { InvoiceAdapter } from '@billing/data/invoice/mappers/invoice.adapter';
-import { NotaEntregaUseCase } from '@sale/domain/use-cases/nota-entrega.use-case';
+import { NotaEntregaUseCase } from '@sale/application/use-cases/nota-entrega.use-case';
 import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
 
 @Component({

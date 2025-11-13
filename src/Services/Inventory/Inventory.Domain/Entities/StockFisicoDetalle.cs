@@ -8,13 +8,13 @@ public class StockFisicoDetalle : BaseEntity
     public int BodegaId { get; set; }
     public int ArticuloId { get; set; }
 
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal CantidadContada { get; set; }
 
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal StockActual { get; set; }
 
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Discrepancia { get; set; }
 
     public MotivoDiscrepancia? MotivoDiscrepancia { get; set; }

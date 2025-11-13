@@ -10,9 +10,9 @@ export class ItemListMapper {
     if (params.searchTerm) {
       queryParams.append('searchTerm', params.searchTerm);
     }
-    // if (params.sortBy) {
-    //   queryParams.append('sortBy', params.sortBy);
-    // }
+    if (params.sortBy) {
+      queryParams.append('sortBy', params.sortBy);
+    }
     // if (params.sortDirection) {
     //   queryParams.append('sortDirection', params.sortDirection);
     // }

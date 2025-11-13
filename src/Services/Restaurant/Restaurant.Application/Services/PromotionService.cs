@@ -4,24 +4,24 @@ namespace Restaurant.Application.Services;
 
 public class PromotionService(IAdoRepository repository) : IPromotionService
 {
-    public async Task<Result<PagedResult<PromotionResponse>, DomainError>> GetAsync(PaginationRequest paginationRequest)
+    public async Task<Result<PagedResult<PromotionItem>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
-            var response = await repository.GetPagedFromStoredProcedureAsync<PromotionResponse>("Restaurant.GetPromotion", paginationRequest);
+            var response = await repository.GetPagedFromStoredProcedureAsync<PromotionItem>("Restaurant.GetPromotion", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
                 var error = DomainError.NotFound("PROMOTIONS_NOT_FOUND", "No Promotions were found.");
-                return Result<PagedResult<PromotionResponse>, DomainError>.Failure(error);
+                return Result<PagedResult<PromotionItem>, DomainError>.Failure(error);
             }
 
-            return Result<PagedResult<PromotionResponse>, DomainError>.Success(response);
+            return Result<PagedResult<PromotionItem>, DomainError>.Success(response);
         }
         catch (Exception ex)
         {
             var error = DomainError.Internal("PROMOTIONS_GET_ERROR", $"An error occurred while retrieving promotions. {ex.Message}");
-            return Result<PagedResult<PromotionResponse>, DomainError>.Failure(error);
+            return Result<PagedResult<PromotionItem>, DomainError>.Failure(error);
         }
     }
 

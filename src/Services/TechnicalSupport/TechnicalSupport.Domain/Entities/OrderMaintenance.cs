@@ -18,22 +18,22 @@ public class OrderMaintenance : BaseEntity
     public int TaxId { get; set; }
     public int TaxPercentId { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Quantity { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Cost { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal TaxValue { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Price { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Discount { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
 
     [MaxLength(300)] public string? Obs { get; set; }

@@ -39,7 +39,7 @@ public static class GetEndpoints
             .WithName("GetItems")
             .WithSummary("Get all items")
             .WithDescription("Retrieve a paginated list of items.")
-            .Produces<PagedResult<ItemResponse>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<ItemItem>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -59,7 +59,7 @@ public static class GetEndpoints
             .WithName("GetItemById")
             .WithSummary("Get an item by ID")
             .WithDescription("Retrieve an item record by its ID.")
-            .Produces<ItemResponse>(StatusCodes.Status200OK)
+            .Produces<ItemItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }

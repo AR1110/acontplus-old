@@ -10,11 +10,11 @@ public class Ticket : BaseEntity
 
     [MaxLength(500)] public string? Obs { get; set; }
 
-    [Column(TypeName = "numeric(18,5)")] public decimal SubTotal { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal SubTotal { get; set; }
 
-    [Column(TypeName = "numeric(18,5)")] public decimal? Discount { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal? Discount { get; set; }
 
-    [Column(TypeName = "numeric(18,5)")] public decimal Total { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal Total { get; set; }
 
     // Para bonificaciones por fidelización
     public bool? BirthdayDiscount { get; set; }

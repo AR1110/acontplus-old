@@ -437,14 +437,6 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<bool>("Cooking")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
@@ -471,17 +463,20 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("ForPromotion")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Instructions")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
+
+                    b.Property<bool>("IsAvailableForPromotion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsComposite")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -493,28 +488,40 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<int>("MeasureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PreparationInstructions")
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<int?>("PreparationTimeMinutes")
+                        .HasColumnType("int");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Quantity")
+                    b.Property<int?>("ProductionAreaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Recipe")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                    b.Property<bool>("RequiresCooking")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("Summary")
                         .HasMaxLength(500)
                         .IsUnicode(false)
                         .HasColumnType("varchar(500)");
 
-                    b.Property<string>("Title")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<int?>("Unit")
-                        .HasColumnType("int");
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -542,8 +549,17 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_Item_IsDeleted");
 
+                    b.HasIndex("ProductId")
+                        .HasDatabaseName("IX_Item_ProductId");
+
+                    b.HasIndex("ProductionAreaId");
+
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_Item_Status");
+
+                    b.HasIndex("ProductId", "IsActive")
+                        .HasDatabaseName("IX_Item_ProductId_IsActive")
+                        .HasFilter("[IsActive] = 1");
 
                     b.ToTable("Item", "Restaurant");
                 });
@@ -559,9 +575,10 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int>("ChildItemId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("CostPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
+                    b.Property<int>("CompositionLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -589,29 +606,21 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int?>("DeletedByUserId")
                         .HasColumnType("int");
 
-                    b.Property<decimal?>("Discount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
-
-                    b.Property<decimal?>("DiscountPercent")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
-
-                    b.Property<int?>("ExtentId")
-                        .HasColumnType("int");
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<decimal?>("ExtraCharge")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
-                    b.Property<int?>("FeeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Instructions")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
                     b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDefault")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
@@ -627,39 +636,40 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<bool>("IsOptional")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
-                    b.Property<int?>("ItemCompositionId")
+                    b.Property<int>("MeasureId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItemId")
+                    b.Property<string>("Notes")
+                        .HasMaxLength(300)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<int>("ParentItemId")
                         .HasColumnType("int");
-
-                    b.Property<int?>("MeasureId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("NetWeight")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
-                    b.Property<decimal>("Subtotal")
-                        .HasPrecision(18, 2)
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
-                    b.Property<int?>("TaxId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
 
-                    b.Property<string>("UniqueId")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -674,16 +684,13 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("WastePercentage")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
-
-                    b.Property<decimal?>("Weight")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChildItemId");
+                    b.HasIndex("ChildItemId")
+                        .HasDatabaseName("IX_ItemComposition_ChildItemId");
 
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("IX_ItemComposition_CreatedAt");
@@ -697,12 +704,18 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_ItemComposition_IsDeleted");
 
-                    b.HasIndex("ItemCompositionId");
-
-                    b.HasIndex("ItemId");
+                    b.HasIndex("ParentItemId")
+                        .HasDatabaseName("IX_ItemComposition_ParentItemId");
 
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_ItemComposition_Status");
+
+                    b.HasIndex("ParentItemId", "ChildItemId")
+                        .IsUnique()
+                        .HasDatabaseName("UX_ItemComposition_Parent_Child");
+
+                    b.HasIndex("ParentItemId", "DisplayOrder")
+                        .HasDatabaseName("IX_ItemComposition_Parent_DisplayOrder");
 
                     b.ToTable("ItemComposition", "Restaurant");
                 });
@@ -1051,7 +1064,7 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("AuditLog")
@@ -1077,7 +1090,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("CompanyCustomerPayment")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("ConsumptionDate")
@@ -1134,7 +1147,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("SubsidyAmount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -1669,11 +1682,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("DiscountPercent")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("DiscountValue")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
@@ -1701,11 +1714,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Quantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("Subtotal")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -1848,9 +1861,6 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppTableId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
@@ -1882,7 +1892,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Discount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<bool>("Divided")
                         .ValueGeneratedOnAdd()
@@ -1934,18 +1944,18 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Tax")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int?>("TaxPercentId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Tip")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("Total")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -1964,8 +1974,6 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppTableId");
-
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("IX_Order_CreatedAt");
 
@@ -1978,10 +1986,304 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_Order_IsDeleted");
 
+                    b.HasIndex("TableId")
+                        .HasDatabaseName("IX_Order_TableId")
+                        .HasFilter("[TableId] IS NOT NULL AND [Finished] = 0");
+
+                    b.HasIndex("Uuid")
+                        .IsUnique()
+                        .HasDatabaseName("UX_Order_Uuid");
+
+                    b.HasIndex("CustomerCompanyId", "CreatedAt")
+                        .HasDatabaseName("IX_Order_Customer_Date");
+
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_Order_Status");
 
+                    b.HasIndex("EstablecimientoId", "Finished", "CreatedAt")
+                        .HasDatabaseName("IX_Order_Establishment_Finished_Date")
+                        .HasFilter("[Finished] = 0");
+
                     b.ToTable("Order", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int?>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MeasureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal?>("RemainingQuantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int?>("TaxPercentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("TaxValue")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_OrderDetail_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_OrderDetail_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_OrderDetail_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_OrderDetail_IsDeleted");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("IX_OrderDetail_ItemId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("IX_OrderDetail_OrderId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_OrderDetail_Status_Only");
+
+                    b.HasIndex("Uuid")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderDetail_Uuid");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_OrderDetail_Status");
+
+                    b.HasIndex("OrderId", "Status")
+                        .HasDatabaseName("IX_OrderDetail_OrderId_Status");
+
+                    b.ToTable("OrderDetail", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ExtraCharge")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("ModifierItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_OrderDetailModifier_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_OrderDetailModifier_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_OrderDetailModifier_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailModifier_IsDeleted");
+
+                    b.HasIndex("ModifierItemId")
+                        .HasDatabaseName("IX_OrderDetailModifier_ModifierItemId");
+
+                    b.HasIndex("OrderDetailId")
+                        .HasDatabaseName("IX_OrderDetailModifier_OrderDetailId");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailModifier_Status");
+
+                    b.ToTable("OrderDetailModifier", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
@@ -2084,13 +2386,6 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BodegaId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Cost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
-
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
@@ -2119,9 +2414,15 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("Discount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(5,2)");
 
-                    b.Property<int>("FeeId")
+                    b.Property<decimal>("DiscountPercent")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(5,2)")
+                        .HasDefaultValue(0m);
+
+                    b.Property<int?>("FeeId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -2139,54 +2440,65 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("ItemId")
+                    b.Property<bool>("IsPaid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("ItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItemTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MedidaId")
+                    b.Property<int>("MeasureId")
                         .HasColumnType("int");
 
                     b.Property<int?>("MenuId")
                         .HasColumnType("int");
 
                     b.Property<string>("Obs")
-                        .HasMaxLength(500)
+                        .HasMaxLength(1000)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Paid")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
-
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("RemainingQuantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
-                    b.Property<int?>("TaxId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int?>("TaxPercentId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("TaxValue")
+                        .ValueGeneratedOnAdd()
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)")
+                        .HasDefaultValue(0m);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2203,6 +2515,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<Guid>("Uuid")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedAt")
@@ -2217,16 +2532,26 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_OrderItem_IsDeleted");
 
-                    b.HasIndex("ItemId");
-
-                    b.HasIndex("ItemTypeId");
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("IX_OrderItem_ItemId");
 
                     b.HasIndex("MenuId");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("IX_OrderItem_OrderId");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("OrderId"), new[] { "ItemId", "Status", "Total" });
 
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_OrderItem_Status");
+
+                    b.HasIndex("OrderId", "Status")
+                        .HasDatabaseName("IX_OrderItem_OrderId_Status")
+                        .HasFilter("[Status] IN (1, 2, 3)");
+
+                    b.HasIndex("Status", "CreatedAt")
+                        .HasDatabaseName("IX_OrderItem_Status_CreatedAt")
+                        .HasFilter("[Status] = 2");
 
                     b.ToTable("OrderItem", "Restaurant");
                 });
@@ -2291,7 +2616,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Progress")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2431,6 +2756,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicableDays")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(7)
@@ -2445,6 +2775,11 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CurrentUses")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasPrecision(7)
                         .HasColumnType("datetime2");
@@ -2458,16 +2793,32 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(50)
+                        .HasMaxLength(500)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<decimal?>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
+
                     b.Property<int>("EstablishmentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImageKey")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(800)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(800)");
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -2484,22 +2835,26 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("PromotionDays")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                    b.Property<int?>("MaxTotalUses")
+                        .HasColumnType("int");
 
-                    b.Property<string>("S3ObjectKey")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
+                    b.Property<int?>("MaxUsesPerCustomer")
+                        .HasColumnType("int");
 
-                    b.Property<string>("S3ObjectUrl")
-                        .HasMaxLength(800)
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(800)");
+                        .HasColumnType("varchar(100)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2521,6 +2876,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("CreatedByUserId")
                         .HasDatabaseName("IX_Promotion_CreatedByUserId");
 
+                    b.HasIndex("EstablishmentId")
+                        .HasDatabaseName("IX_Promotion_EstablishmentId");
+
                     b.HasIndex("IsActive")
                         .HasDatabaseName("IX_Promotion_IsActive");
 
@@ -2529,6 +2887,14 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_Promotion_Status");
+
+                    b.HasIndex("Type", "IsActive")
+                        .HasDatabaseName("IX_Promotion_Type_Active")
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("EstablishmentId", "IsActive", "StartDate", "EndDate")
+                        .HasDatabaseName("IX_Promotion_Establishment_Active_Dates")
+                        .HasFilter("[IsActive] = 1");
 
                     b.ToTable("Promotion", "Restaurant");
                 });
@@ -2541,9 +2907,8 @@ namespace Restaurant.Api.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("CostPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
+                    b.Property<int?>("BuyQuantity")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -2572,14 +2937,22 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Discount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("DiscountPercent")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int>("DisplayOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("GetQuantity")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -2603,31 +2976,39 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<int>("MeasureId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Obs")
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)");
+                        .HasColumnType("varchar(500)");
 
                     b.Property<int>("PromotionId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
+                    b.Property<decimal>("PromotionalPrice")
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
+                    b.Property<decimal>("RequiredQuantity")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)")
+                        .HasDefaultValue(1m);
+
+                    b.Property<int>("Role")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
                     b.Property<decimal>("Subtotal")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("TaxId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UniqueId")
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(max)");
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2655,12 +3036,19 @@ namespace Restaurant.Api.Data.Migrations
                     b.HasIndex("IsDeleted")
                         .HasDatabaseName("IX_PromotionDetail_IsDeleted");
 
-                    b.HasIndex("ItemId");
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("IX_PromotionDetail_ItemId");
 
-                    b.HasIndex("PromotionId");
+                    b.HasIndex("PromotionId")
+                        .HasDatabaseName("IX_PromotionDetail_PromotionId");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("PromotionId"), new[] { "ItemId", "Role", "PromotionalPrice" });
 
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_PromotionDetail_Status");
+
+                    b.HasIndex("PromotionId", "DisplayOrder")
+                        .HasDatabaseName("IX_PromotionDetail_Promotion_DisplayOrder");
 
                     b.ToTable("PromotionDetail", "Restaurant");
                 });
@@ -2766,7 +3154,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("CostPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -2824,7 +3212,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("NetWeight")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
@@ -2846,7 +3234,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Weight")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.HasKey("Id");
 
@@ -2993,27 +3381,33 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("IngredientType");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.Item", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.ProductionArea", "ProductionArea")
+                        .WithMany()
+                        .HasForeignKey("ProductionAreaId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ProductionArea");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.ItemComposition", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.Item", "ChildItem")
-                        .WithMany()
+                        .WithMany("UsedInCompositions")
                         .HasForeignKey("ChildItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Restaurant.Domain.Entities.ItemComposition", null)
-                        .WithMany("Children")
-                        .HasForeignKey("ItemCompositionId");
-
-                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("Restaurant.Domain.Entities.Item", "ParentItem")
+                        .WithMany("Compositions")
+                        .HasForeignKey("ParentItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ChildItem");
 
-                    b.Navigation("Item");
+                    b.Navigation("ParentItem");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
@@ -3122,9 +3516,55 @@ namespace Restaurant.Api.Data.Migrations
                 {
                     b.HasOne("Restaurant.Domain.Entities.AppTable", "AppTable")
                         .WithMany()
-                        .HasForeignKey("AppTableId");
+                        .HasForeignKey("TableId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("AppTable");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Restaurant.Domain.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Menu");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "ModifierItem")
+                        .WithMany()
+                        .HasForeignKey("ModifierItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("Modifiers")
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModifierItem");
+
+                    b.Navigation("OrderDetail");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
@@ -3141,13 +3581,9 @@ namespace Restaurant.Api.Data.Migrations
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.Item", "Item")
-                        .WithMany()
-                        .HasForeignKey("ItemId");
-
-                    b.HasOne("Restaurant.Domain.Entities.ItemType", "ItemType")
-                        .WithMany()
-                        .HasForeignKey("ItemTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("OrderItems")
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
@@ -3161,8 +3597,6 @@ namespace Restaurant.Api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Item");
-
-                    b.Navigation("ItemType");
 
                     b.Navigation("Menu");
 
@@ -3183,13 +3617,13 @@ namespace Restaurant.Api.Data.Migrations
             modelBuilder.Entity("Restaurant.Domain.Entities.PromotionDetail", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.Item", "Item")
-                        .WithMany()
+                        .WithMany("PromotionDetails")
                         .HasForeignKey("ItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Restaurant.Domain.Entities.Promotion", "Promotion")
-                        .WithMany()
+                        .WithMany("PromotionDetails")
                         .HasForeignKey("PromotionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -3253,9 +3687,15 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Rooms");
                 });
 
-            modelBuilder.Entity("Restaurant.Domain.Entities.ItemComposition", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.Item", b =>
                 {
-                    b.Navigation("Children");
+                    b.Navigation("Compositions");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("PromotionDetails");
+
+                    b.Navigation("UsedInCompositions");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.MealManagement.CompanyCustomerMealPlan", b =>
@@ -3290,7 +3730,19 @@ namespace Restaurant.Api.Data.Migrations
                 {
                     b.Navigation("MealConsumptions");
 
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
+                {
+                    b.Navigation("Modifiers");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.Promotion", b =>
+                {
+                    b.Navigation("PromotionDetails");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Room", b =>

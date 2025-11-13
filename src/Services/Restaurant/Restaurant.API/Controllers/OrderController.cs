@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Restaurant.Application.Dtos;
+using CreateOrderDto = Restaurant.Application.Dtos.OrderCreate;
+using UpdateOrderDto = Restaurant.Application.Dtos.OrderUpdate;
 
 namespace Restaurant.API.Controllers;
 

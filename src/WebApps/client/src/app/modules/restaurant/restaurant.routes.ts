@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-import { restaurantConfigDataResolver } from './resolvers/restaurant-config.resolver';
 
 export const routes: Route[] = [
   {

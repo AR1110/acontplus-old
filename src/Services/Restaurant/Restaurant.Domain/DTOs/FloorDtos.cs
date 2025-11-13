@@ -1,16 +1,37 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Restaurant.Domain.DTOs;
 
-public record CreateFloorDto();
-public record UpdateFloorDto();
-public record FloorResponseDto
+public record FloorCreate
 {
-    public int Id { get; set; }
-    public required string CodEstab { get; set; }
-    public int EstablecimientoId { get; set; }
-    public required string Code { get; set; }
-    public required string Description { get; set; }
-    public int Capacity { get; set; }
-    public bool IsActive { get; set; }
-    public ICollection<RoomResponseDto>? Rooms { get; set; } = [];
+    [Required][MaxLength(50)]
+    public required string CodEstab { get; init; }
+    public int EstablecimientoId { get; init; }
+    [Required][MaxLength(5)]
+    public required string Code { get; init; }
+    [Required][MaxLength(50)]
+    public required string Description { get; init; }
+    public int Capacity { get; init; }
+};
+public record FloorUpdate
+{
+    [Required][MaxLength(50)]
+    public required string CodEstab { get; init; }
+    public int EstablecimientoId { get; init; }
+    [Required][MaxLength(5)]
+    public required string Code { get; init; }
+    [Required][MaxLength(50)]
+    public required string Description { get; init; }
+    public int Capacity { get; init; }
+};
+public record FloorItem
+{
+    public int Id { get; init; }
+    public required string CodEstab { get; init; }
+    public int EstablecimientoId { get; init; }
+    public required string Code { get; init; }
+    public required string Description { get; init; }
+    public int Capacity { get; init; }
+    public bool IsActive { get; init; }
 }
 

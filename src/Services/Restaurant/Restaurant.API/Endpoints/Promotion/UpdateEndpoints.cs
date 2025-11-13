@@ -15,7 +15,7 @@ public static class UpdateEndpoints
 
         group.MapPut("/{id:int}", async (
             int id,
-            PromotionCreateUpdate request,
+            PromotionUpdate request,
             IPromotionService promotionService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
@@ -24,14 +24,14 @@ public static class UpdateEndpoints
             {
                 { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "Id", id },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionCreateUpdate>(request)) }
+                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionUpdate>(request)) }
             };
             return Results.Ok(await promotionService.UpdateAsync(parameters));
         })
             .WithName("UpdatePromotion")
             .WithSummary("Update an existing promotion")
             .WithDescription("Update an existing promotion record.")
-            .Produces<PromotionResponse>(StatusCodes.Status200OK)
+            .Produces<PromotionItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);

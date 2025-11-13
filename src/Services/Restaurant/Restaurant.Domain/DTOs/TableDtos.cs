@@ -1,13 +1,36 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Restaurant.Domain.DTOs;
 
-public record CreateTableDto();
-public record UpdateTableDto();
-public record TableResponseDto
+public record TableCreate
 {
-    public int Id { get; set; }
-    public int RoomId { get; set; }
-    public required string Code { get; set; }
-    public required string Description { get; set; }
-    public int Capacity { get; set; }
-    public bool IsActive { get; set; }
+    public int RoomId { get; init; }
+    [Required]
+    public int NumberTable { get; init; }
+    [Required][MaxLength(100)]
+    public required string Description { get; init; }
+    [Required]
+    public int Capacity { get; init; }
+    public bool? Assigned { get; init; }
+};
+public record TableUpdate
+{
+    public int RoomId { get; init; }
+    [Required]
+    public int NumberTable { get; init; }
+    [Required][MaxLength(100)]
+    public required string Description { get; init; }
+    [Required]
+    public int Capacity { get; init; }
+    public bool? Assigned { get; init; }
+};
+public record TableItem
+{
+    public int Id { get; init; }
+    public int RoomId { get; init; }
+    public int NumberTable { get; init; }
+    public required string Description { get; init; }
+    public int Capacity { get; init; }
+    public bool? Assigned { get; init; }
+    public bool IsActive { get; init; }
 }

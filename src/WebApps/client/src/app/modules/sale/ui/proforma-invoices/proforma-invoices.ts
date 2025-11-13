@@ -6,7 +6,7 @@ import { PageEvent } from '@angular/material/paginator';
 import {
   ProformaInvoiceFilterUseCase,
   ProformaInvoiceListUseCase,
-} from '@sale/domain/use-cases/proforma-invoice.use-case';
+} from '@sale/application/use-cases/proforma-invoice.use-case';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Pagination } from '@acontplus/ng-components';

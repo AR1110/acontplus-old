@@ -1,6 +1,6 @@
 using Mapster;
 using MapsterMapper;
-using Restaurant.Domain.DTOs;
+using Restaurant.Application.Dtos;
 
 namespace Restaurant.Application.Services;
 
@@ -81,7 +81,7 @@ public class FloorService : IFloorService
             includeProperties: x => x.Rooms
         );
 
-        var floorDtos = _mapper.Map<List<FloorResponseDto>>(floors);
+        var floorDtos = _mapper.Map<List<FloorItem>>(floors);
         return CreateResponse(floorDtos);
     }
 
@@ -93,28 +93,39 @@ public class FloorService : IFloorService
             includeProperties: x => x.Rooms
         );
 
-        var floorDtos = floors.Select(floor => new FloorResponseDto
+        var floorDtos = floors.Select(floor => new FloorItem
         {
             Id = floor.Id,
-            Code = floor.Code,
+            Name = floor.Description,
             Description = floor.Description,
-            Capacity = floor.Capacity,
             IsActive = floor.IsActive,
-            CodEstab = floor.CodEstab,
-            EstablecimientoId = floor.EstablecimientoId,
+            CreatedAt = floor.CreatedAt,
+            UpdatedAt = floor.UpdatedAt,
             Rooms = floor.Rooms?
                 .Where(r => !r.IsDeleted)
-                .Select(room => new RoomResponseDto
+                .Select(room => new RoomItem
                 {
                     Id = room.Id,
+                    Name = room.Description,
                     Description = room.Description,
                     FloorId = room.FloorId,
-                    Code = room.Code,
-                    Capacity = room.Capacity,
                     IsActive = room.IsActive,
+                    CreatedAt = room.CreatedAt,
+                    UpdatedAt = room.UpdatedAt,
                     Tables = room.Tables?
                         .Where(t => !t.IsDeleted)
-                        .Adapt<List<TableResponseDto>>() ?? []
+                        .Select(t => new TableItem
+                        {
+                            Id = t.Id,
+                            Name = t.NumberTable.ToString(),
+                            Description = t.Description,
+                            Capacity = t.Capacity,
+                            IsActive = t.IsActive,
+                            RoomId = t.RoomId,
+                            CreatedAt = t.CreatedAt,
+                            UpdatedAt = t.UpdatedAt
+                        })
+                        .ToList() ?? []
                 })
                 .ToList() ?? []
         }).ToList();
@@ -140,7 +151,7 @@ public class FloorService : IFloorService
         return await _floorRepository.ExistsAsync(e => e.Code == code && e.CodEstab == codEstab && !e.IsDeleted);
     }
 
-    private SpResponse CreateResponse(List<FloorResponseDto> floorDtos)
+    private SpResponse CreateResponse(List<FloorItem> floorDtos)
     {
         return floorDtos.Count > 0
             ? new SpResponse { Code = "1", Payload = floorDtos }

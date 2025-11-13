@@ -21,11 +21,11 @@ public class Support : BaseEntity
     public int UserAssignedId { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Discount { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
 
     [MaxLength(500)] public string Obs { get; set; }

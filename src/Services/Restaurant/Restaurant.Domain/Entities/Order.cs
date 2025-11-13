@@ -14,16 +14,16 @@ public class Order : BaseEntity
 
     public int CustomerCompanyId { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Tax { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(5,2)")]
     public decimal? Discount { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Tip { get; set; }
 
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
 
     [MaxLength(500)] public string? Obs { get; set; }
@@ -32,5 +32,6 @@ public class Order : BaseEntity
     public bool Finished { get; set; }
     public int? TaxPercentId { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = [];
+    public ICollection<OrderDetail> OrderDetails { get; set; } = [];
     public ICollection<MealManagement.MealConsumption> MealConsumptions { get; set; } = [];
 }

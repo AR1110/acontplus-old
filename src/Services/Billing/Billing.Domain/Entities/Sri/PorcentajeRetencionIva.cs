@@ -7,7 +7,7 @@ public class PorcentajeRetencionIva : BaseEntity
 
     [Required][MaxLength(50)] public required string Descripcion { get; set; }
 
-    [Column(TypeName = "numeric(6,2), null")]
+    [Column(TypeName = "decimal(6,2)")]
     public decimal Porcentaje { get; set; }
 
     public DateOnly? FechaInicio { get; set; }

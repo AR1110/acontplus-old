@@ -11,14 +11,14 @@ public class Recipe : BaseEntity
     public int Unit { get; set; }
     public string? Instructions { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Weight { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal NetWeight { get; set; }
 
     public int ExtentId { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? CostPrice { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Domain.Entities;
+namespace Restaurant.Domain.Entities;
 
 [Table("OrderItem", Schema = "Restaurant")]
 public class OrderItem : BaseEntity
@@ -6,41 +6,45 @@ public class OrderItem : BaseEntity
     public Guid Uuid { get; set; }
     public required Order Order { get; set; }
     public int OrderId { get; set; }
-    public required ItemType ItemType { get; set; }
-    public int ItemTypeId { get; set; }
-    public Item? Item { get; set; }
-    public int? ItemId { get; set; }
     public Menu? Menu { get; set; }
     public int? MenuId { get; set; }
-    public int? TaxId { get; set; }
+    public int ItemId { get; set; }
+    public required Item Item { get; set; }
     public int? TaxPercentId { get; set; }
-
-    [Column(TypeName = "numeric(18,5), not null")]
+    public int? FeeId { get; set; }
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? TaxValue { get; set; }
-
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Quantity { get; set; }
-
-    [Column(TypeName = "numeric(18,5), not null")]
-    public decimal Cost { get; set; }
-
-    [Column(TypeName = "numeric(18,5), not null")]
-    public decimal Price { get; set; }
-
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
+    public decimal UnitPrice { get; set; }
+    [Column(TypeName = "decimal(18,5)")]
+    public decimal SalePrice { get; set; }
+    [Column(TypeName = "decimal(5,2)")]
     public decimal Discount { get; set; }
-
-    [Column(TypeName = "numeric(18,5), not null")]
+    [Column(TypeName = "decimal(5,2)")]
+    public decimal DiscountPercent { get; set; }
+    [Column(TypeName = "decimal(18,5)")]
+    public decimal Subtotal { get; set; }
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
-
-    [MaxLength(500)] public string? Obs { get; set; }
-
-    public int FeeId { get; set; }
-    public int? BodegaId { get; set; }
-    public bool? Paid { get; set; }
-
-    [Column(TypeName = "numeric(18,5), null")]
+    [MaxLength(1000)]
+    public string? Obs { get; set; }
+    public int? WarehouseId { get; set; }
+    public int MeasureId { get; set; }
+    public bool IsPaid { get; set; }
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? RemainingQuantity { get; set; }
+    public OrderItemStatus Status { get; set; } = OrderItemStatus.Pending;
 
-    public int MedidaId { get; set; }
+}
+
+public enum OrderItemStatus
+{
+    Pending = 1,
+    SentToKitchen = 2,
+    InPreparation = 3,
+    Ready = 4,
+    Delivered = 5,
+    Cancelled = 6
 }

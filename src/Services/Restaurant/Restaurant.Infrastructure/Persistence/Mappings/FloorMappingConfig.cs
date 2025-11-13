@@ -7,20 +7,27 @@ public class FloorMappingConfig : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Floor, FloorResponseDto>()
-            .Map(dest => dest.Rooms, src => src.Rooms != null
-                ? src.Rooms.Where(r => !r.IsDeleted)
-                    .Select(r => r.Adapt<RoomResponseDto>())
-                    .ToList()
-                : new List<RoomResponseDto>());
+        config.NewConfig<Floor, FloorItem>()
+            .Map(dest => dest.CodEstab, src => src.CodEstab)
+            .Map(dest => dest.EstablecimientoId, src => src.EstablecimientoId)
+            .Map(dest => dest.Code, src => src.Code)
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.Capacity, src => src.Capacity)
+            .Map(dest => dest.IsActive, src => src.IsActive);
 
-        config.NewConfig<Room, RoomResponseDto>()
-            .Map(dest => dest.Tables, src => src.Tables != null
-                ? src.Tables.Where(t => !t.IsDeleted)
-                    .Select(t => t.Adapt<TableResponseDto>())
-                    .ToList()
-                : new List<TableResponseDto>());
+        config.NewConfig<Room, RoomItem>()
+            .Map(dest => dest.FloorId, src => src.FloorId)
+            .Map(dest => dest.Code, src => src.Code)
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.Capacity, src => src.Capacity)
+            .Map(dest => dest.IsActive, src => src.IsActive);
 
-        config.NewConfig<AppTable, TableResponseDto>();
+        config.NewConfig<AppTable, TableItem>()
+            .Map(dest => dest.RoomId, src => src.RoomId)
+            .Map(dest => dest.NumberTable, src => src.NumberTable)
+            .Map(dest => dest.Description, src => src.Description)
+            .Map(dest => dest.Capacity, src => src.Capacity)
+            .Map(dest => dest.Assigned, src => src.Assigned)
+            .Map(dest => dest.IsActive, src => src.IsActive);
     }
 }

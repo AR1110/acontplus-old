@@ -19,6 +19,8 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
     public DbSet<AppTable> Tables { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<OrderDetail> OrderDetails { get; set; }
+    public DbSet<OrderDetailModifier> OrderDetailModifiers { get; set; }
     public DbSet<OrderKitchen> OrderKitchens { get; set; }
     public DbSet<OrderDocument> OrderDocuments { get; set; }
     public DbSet<Promotion> Promotions { get; set; }
@@ -59,18 +61,13 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
         BaseEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
             typeof(AppTable),
             typeof(Ingredient),
-            typeof(Item),
-            typeof(ItemComposition),
             typeof(MenuItem),
             typeof(OrderDocument),
-            typeof(OrderItem),
             typeof(OrderKitchen),
-            typeof(Promotion),
             typeof(PromotionDetail),
             typeof(PromotionMenu),
             typeof(ProductionArea),
-            typeof(Recipe),
-            typeof(CompanyCustomerMealPlan)
+            typeof(Recipe)
         );
     }
 }
