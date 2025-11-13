@@ -32,6 +32,10 @@ go
 
 --ALTER TABLE Restaurant.ItemComposition ADD CONSTRAINT FK_ItemComposition_Medida_idMedida FOREIGN KEY([MeasureId]) REFERENCES dbo.Medida(idMedida)
 
+--alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_Tarifa_idTarifa
+--alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_TarifaImpuesto_idTarifaImpuesto
+--alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_Medida_idMedida
+
 --INSERT INTO Restaurant.ItemComposition
 --     (
 --       ItemId
