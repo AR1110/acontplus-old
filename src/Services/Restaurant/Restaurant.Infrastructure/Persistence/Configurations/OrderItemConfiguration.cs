@@ -8,9 +8,7 @@ public class OrderItemConfiguration : BaseEntityTypeConfiguration<OrderItem>
     {
         base.Configure(builder);
 
-        builder.HasIndex(x => x.Uuid)
-            .HasDatabaseName("UX_OrderItem_Uuid")
-            .IsUnique();
+
 
         builder.HasIndex(x => x.OrderId)
             .HasDatabaseName("IX_OrderItem_OrderId")
