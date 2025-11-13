@@ -8,15 +8,15 @@ public class MenuItem : BaseEntity
     public required Item Item { get; set; }
     public int ItemId { get; set; }
     public int FeeId { get; set; }
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Quantity { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? DiscountPercent { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? DiscountValue { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Subtotal { get; set; }
 }

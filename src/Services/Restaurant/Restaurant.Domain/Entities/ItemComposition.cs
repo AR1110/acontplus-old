@@ -23,7 +23,7 @@ public class ItemComposition : BaseEntity
     public decimal SalePrice { get; set; }
     [Column(TypeName = "decimal(18,5)")]
     public decimal TotalCost { get; set; }
-    [Column(TypeName = "decimal(18, 5)")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal TotalPrice { get; set; }
 
     [Column(TypeName = "decimal(5,2)")]

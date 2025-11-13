@@ -7,7 +7,7 @@ public class OrderKitchen : BaseEntity
     public int OrderId { get; set; }
     public int? ChefId { get; set; }
 
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal? Progress { get; set; }
 
     public bool Completed { get; set; } = false;

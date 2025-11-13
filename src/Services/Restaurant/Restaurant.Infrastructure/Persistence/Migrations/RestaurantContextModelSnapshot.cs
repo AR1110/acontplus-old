@@ -665,7 +665,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("TotalPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18, 5)");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
@@ -1682,11 +1682,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("DiscountPercent")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("DiscountValue")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("FeeId")
                         .HasColumnType("int");
@@ -1714,11 +1714,11 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Quantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("Subtotal")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -1892,7 +1892,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Discount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(5,2), null");
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<bool>("Divided")
                         .ValueGeneratedOnAdd()
@@ -1944,18 +1944,18 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Tax")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int?>("TaxPercentId")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Tip")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("Total")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2135,12 +2135,12 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("Discount")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(5,2), null");
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<decimal>("DiscountPercent")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(5,2), null")
+                        .HasColumnType("decimal(5,2)")
                         .HasDefaultValue(0m);
 
                     b.Property<int?>("FeeId")
@@ -2185,15 +2185,15 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("RemainingQuantity")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("SalePrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("Status")
                         .ValueGeneratedOnAdd()
@@ -2202,7 +2202,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("Subtotal")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<int?>("TaxPercentId")
                         .HasColumnType("int");
@@ -2210,16 +2210,16 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<decimal?>("TaxValue")
                         .ValueGeneratedOnAdd()
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null")
+                        .HasColumnType("decimal(18,5)")
                         .HasDefaultValue(0m);
 
                     b.Property<decimal>("Total")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), not null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2461,7 +2461,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Progress")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -2999,7 +2999,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("CostPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -3057,7 +3057,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal>("NetWeight")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.Property<double>("Quantity")
                         .HasColumnType("float");
@@ -3079,7 +3079,7 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.Property<decimal?>("Weight")
                         .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,5), null");
+                        .HasColumnType("decimal(18,5)");
 
                     b.HasKey("Id");
 

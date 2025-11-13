@@ -7,7 +7,7 @@ public class PorcentajeRetencionAir : BaseEntity
     public required ConceptoRetencionAir ConceptoRetencionAir { get; set; }
     public int ConceptoRetencionAirId { get; set; }
 
-    [Column(TypeName = "numeric(6,2), null")]
+    [Column(TypeName = "decimal(6,2)")]
     public decimal Porcentaje { get; set; }
 
     public bool IsDefault { get; set; }

@@ -11,9 +11,9 @@ public class MedicalHistory : BaseEntity
     public ICollection<BehaviorTest> BehaviorTests { get; set; } = [];
     public int? EstablecimientoId { get; set; }
 
-    [Column(TypeName = "numeric(4,2), null")]
+    [Column(TypeName = "decimal(4,2)")]
     public decimal? Age { get; set; }
 
-    [Column(TypeName = "numeric(4,2), null")]
+    [Column(TypeName = "decimal(4,2)")]
     public decimal? Weight { get; set; }
 }

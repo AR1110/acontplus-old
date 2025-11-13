@@ -19,27 +19,27 @@ public class SupportDetail : BaseEntity
     [Required][MaxLength(300)] public string Description { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Quantity { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Cost { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal TaxValue { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Price { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Discount { get; set; }
 
     [Required]
-    [Column(TypeName = "numeric(18,5), null")]
+    [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
 
     [MaxLength(300)] public string Obs { get; set; }

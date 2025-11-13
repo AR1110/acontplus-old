@@ -9,9 +9,9 @@ public class WorkSession : BaseEntity
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
-    [Column(TypeName = "numeric(18,5)")] public decimal TotalSales { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal TotalSales { get; set; }
 
-    [Column(TypeName = "numeric(18,5)")] public decimal TotalAdvances { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal TotalAdvances { get; set; }
 
     public ICollection<Ticket>? Tickets { get; set; }
 
