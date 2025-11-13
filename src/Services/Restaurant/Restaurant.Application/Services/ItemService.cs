@@ -34,6 +34,8 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
             : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
     }
 
-    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters) =>
-        await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdateItem", parameters);
+    public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
+    {
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdateItem", parameters);
+    }
 }
