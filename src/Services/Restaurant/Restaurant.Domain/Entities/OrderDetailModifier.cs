@@ -1,11 +1,11 @@
 namespace Restaurant.Domain.Entities;
 
-[Table("OrderItemModifier", Schema = "Restaurant")]
-public class OrderItemModifier : BaseEntity
+[Table("OrderDetailModifier", Schema = "Restaurant")]
+public class OrderDetailModifier : BaseEntity
 {
     [Required]
-    public int OrderItemId { get; set; }
-    public required OrderItem OrderItem { get; set; }
+    public int OrderDetailId { get; set; }
+    public required OrderDetail OrderDetail { get; set; }
     
     [Required]
     public int ModifierItemId { get; set; }

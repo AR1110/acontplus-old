@@ -25,6 +25,9 @@ public class PromotionConfiguration : BaseEntityTypeConfiguration<Promotion>
         builder.Property(x => x.CurrentUses)
             .HasDefaultValue(0);
 
+        // Decimal precision
+        builder.Property(x => x.DiscountPercent).HasPrecision(5, 2);
+
         builder.HasMany(x => x.PromotionDetails)
             .WithOne(x => x.Promotion)
             .HasForeignKey(x => x.PromotionId)
@@ -56,6 +59,14 @@ public class PromotionDetailConfiguration : BaseEntityTypeConfiguration<Promotio
 
         builder.Property(x => x.DisplayOrder)
             .HasDefaultValue(0);
+
+        // Decimal precision
+        builder.Property(x => x.RequiredQuantity).HasPrecision(18, 5);
+        builder.Property(x => x.PromotionalPrice).HasPrecision(18, 5);
+        builder.Property(x => x.UnitPrice).HasPrecision(18, 5);
+        builder.Property(x => x.DiscountPercent).HasPrecision(5, 2);
+        builder.Property(x => x.Discount).HasPrecision(18, 5);
+        builder.Property(x => x.Subtotal).HasPrecision(18, 5);
 
         builder.HasOne(x => x.Promotion)
             .WithMany(x => x.PromotionDetails)

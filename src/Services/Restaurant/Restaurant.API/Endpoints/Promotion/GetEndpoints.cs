@@ -3,6 +3,7 @@ using Acontplus.Core.Enums;
 using Acontplus.Core.Extensions;
 using Mapster;
 using Restaurant.Application.Dtos.Items;
+using Restaurant.Application.DTOs.Promotions;
 using Restaurant.Application.Interfaces;
 using Restaurant.Application.Services;
 
@@ -41,7 +42,7 @@ public static class GetEndpoints
             .WithName("GetPromotions")
             .WithSummary("Get all promotions")
             .WithDescription("Retrieve a paginated list of promotions.")
-            .Produces<PagedResult<ItemResponse>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<PromotionItem>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -61,7 +62,7 @@ public static class GetEndpoints
             .WithName("GetPromotionById")
             .WithSummary("Get an Promotion by ID")
             .WithDescription("Retrieve an Promotion record by its ID.")
-            .Produces<ItemResponse>(StatusCodes.Status200OK)
+            .Produces<PromotionItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 

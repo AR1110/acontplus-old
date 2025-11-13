@@ -15,7 +15,7 @@ public static class CreateEndpoints
 
         group.MapPost("/", async (
             int id,
-            PromotionCreateUpdate request,
+            PromotionCreate request,
             IPromotionService promotionService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
@@ -23,7 +23,7 @@ public static class CreateEndpoints
             var parameters = new Dictionary<string, object>
             {
                 { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionCreateUpdate>(request)) }
+                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionCreate>(request)) }
             };
             return Results.Ok(await promotionService.AddAsync(parameters));
         });

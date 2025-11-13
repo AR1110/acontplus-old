@@ -36,7 +36,7 @@ public class OrderItem : BaseEntity
     [Column(TypeName = "decimal(18,5)")]
     public decimal? RemainingQuantity { get; set; }
     public OrderItemStatus Status { get; set; } = OrderItemStatus.Pending;
-    public ICollection<OrderItemModifier> Modifiers { get; set; } = [];
+
 }
 
 public enum OrderItemStatus

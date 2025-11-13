@@ -63,7 +63,7 @@ public class FloorRepository : IFloorRepository
             .Include(x => x.Rooms.Where(r => !r.IsDeleted))
             .ToListAsync();
 
-        var floorDtos = floors.Adapt<List<FloorResponseDto>>();
+        var floorDtos = floors.Adapt<List<FloorItem>>();
         return CreateResponse(floorDtos);
     }
 
@@ -76,7 +76,7 @@ public class FloorRepository : IFloorRepository
                 .ThenInclude(r => r.Tables.Where(t => !t.IsDeleted))
             .ToListAsync();
 
-        var floorDtos = floors.Adapt<List<FloorResponseDto>>();
+        var floorDtos = floors.Adapt<List<FloorItem>>();
         return CreateResponse(floorDtos);
     }
 
@@ -100,7 +100,7 @@ public class FloorRepository : IFloorRepository
             .AnyAsync(e => e.Code == code && e.CodEstab == codEstab && !e.IsDeleted);
     }
 
-    private SpResponse CreateResponse(List<FloorResponseDto> floorDtos)
+    private SpResponse CreateResponse(List<FloorItem> floorDtos)
     {
         return floorDtos.Count > 0
             ? new SpResponse { Code = "1", Payload = floorDtos }

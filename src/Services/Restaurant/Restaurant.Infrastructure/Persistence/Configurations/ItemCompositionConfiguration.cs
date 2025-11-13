@@ -33,6 +33,15 @@ public class ItemCompositionConfiguration : BaseEntityTypeConfiguration<ItemComp
         builder.Property(x => x.DisplayOrder)
             .HasDefaultValue(0);
 
+        // Decimal precision
+        builder.Property(x => x.Quantity).HasPrecision(18, 5);
+        builder.Property(x => x.UnitPrice).HasPrecision(18, 5);
+        builder.Property(x => x.SalePrice).HasPrecision(18, 5);
+        builder.Property(x => x.TotalCost).HasPrecision(18, 5);
+        builder.Property(x => x.TotalPrice).HasPrecision(18, 5);
+        builder.Property(x => x.WastePercentage).HasPrecision(5, 2);
+        builder.Property(x => x.ExtraCharge).HasPrecision(18, 5);
+
         builder.HasOne(x => x.ParentItem)
             .WithMany(x => x.Compositions)
             .HasForeignKey(x => x.ParentItemId)

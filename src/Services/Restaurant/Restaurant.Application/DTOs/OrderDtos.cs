@@ -1,75 +1,137 @@
 namespace Restaurant.Application.Dtos;
 
-public record CreateOrderDto(
-    Guid Uuid,
-    List<CreateOrderItemDto> Items,
-    int EstablecimientoId,
-    int PuntoEmisionId,
-    int TableId,
-    int CustomerCompanyId,
-    decimal Tax,
-    decimal Discount,
-    decimal Tip,
-    decimal Total,
-    string? Obs,
-    bool QuickSale,
-    int BodegaId,
-    int UserId
-);
+public record OrderCreate
+{
+    public Guid Uuid { get; init; }
+    public int EstablecimientoId { get; init; }
+    public int PuntoEmisionId { get; init; }
+    public int? TableId { get; init; }
+    public int Sequence { get; init; }
+    public string Serie { get; init; }
+    public int CustomerCompanyId { get; init; }
+    public decimal? Tax { get; init; }
+    public decimal? Discount { get; init; }
+    public decimal? Tip { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public bool Divided { get; init; }
+    public bool Finished { get; init; }
+    public int? TaxPercentId { get; init; }
+    public ICollection<OrderDetailCreate>? OrderDetails { get; init; }
+}
 
-public record CreateOrderItemDto(
-    Guid Uuid,
-    string ItemTypeCode,
-    int? MenuId,
-    int? ItemId,
-    int TaxId,
-    int TaxPercentId,
-    int FeeId,
-    decimal TaxValue,
-    decimal Quantity,
-    decimal Cost,
-    decimal Price,
-    decimal Discount,
-    decimal Total,
-    string? Obs,
-    int BodegaId,
-    int MedidaId
-);
+public record OrderItem
+{
+    public int Id { get; init; }
+    public Guid Uuid { get; init; }
+    public int EstablecimientoId { get; init; }
+    public int PuntoEmisionId { get; init; }
+    public int? TableId { get; init; }
+    public int Sequence { get; init; }
+    public string Serie { get; init; }
+    public int CustomerCompanyId { get; init; }
+    public decimal? Tax { get; init; }
+    public decimal? Discount { get; init; }
+    public decimal? Tip { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public bool Divided { get; init; }
+    public bool Finished { get; init; }
+    public int? TaxPercentId { get; init; }
+    public bool IsActive { get; init; }
+    public ICollection<OrderDetailItem>? OrderDetails { get; init; }
+}
 
-public record UpdateOrderDto(
-    Guid Uuid,
-    List<UpdateOrderItemDto> Items,
-    string? Taxes,
-    int EstablecimientoId,
-    int PuntoEmisionId,
-    int TableId,
-    int CustomerCompanyId,
-    decimal Tax,
-    decimal Discount,
-    decimal Total,
-    string? Obs,
-    bool? SaveDoc,
-    bool? UpdateOrder,
-    int UserId,
-    string? CustomDetail
-);
+public record OrderUpdate
+{
+    public Guid Uuid { get; init; }
+    public int EstablecimientoId { get; init; }
+    public int PuntoEmisionId { get; init; }
+    public int? TableId { get; init; }
+    public int Sequence { get; init; }
+    public string Serie { get; init; }
+    public int CustomerCompanyId { get; init; }
+    public decimal? Tax { get; init; }
+    public decimal? Discount { get; init; }
+    public decimal? Tip { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public bool Divided { get; init; }
+    public bool Finished { get; init; }
+    public int? TaxPercentId { get; init; }
+    public ICollection<OrderDetailUpdate>? OrderDetails { get; init; }
+}
 
-public record UpdateOrderItemDto(
-    int OrderItemId,
-    Guid Uuid,
-    int? ItemId,
-    int? MenuId,
-    int TaxId,
-    int TaxPercentId,
-    int FeeId,
-    decimal TaxValue,
-    decimal Quantity,
-    decimal Cost,
-    decimal Price,
-    decimal Discount,
-    decimal Total,
-    string? Obs,
-    int? BodegaId,
-    string ItemTypeCode,
-    int MedidaId
-);
+public record OrderDetailCreate
+{
+    public Guid Uuid { get; init; }
+    public int OrderId { get; init; }
+    public int? MenuId { get; init; }
+    public int ItemId { get; init; }
+    public int? TaxPercentId { get; init; }
+    public int? FeeId { get; init; }
+    public decimal? TaxValue { get; init; }
+    public decimal Quantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal SalePrice { get; init; }
+    public decimal Discount { get; init; }
+    public decimal DiscountPercent { get; init; }
+    public decimal Subtotal { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public int? WarehouseId { get; init; }
+    public int MeasureId { get; init; }
+    public bool IsPaid { get; init; }
+    public decimal? RemainingQuantity { get; init; }
+    public int Status { get; init; }
+}
+
+public record OrderDetailUpdate
+{
+    public Guid Uuid { get; init; }
+    public int OrderId { get; init; }
+    public int? MenuId { get; init; }
+    public int ItemId { get; init; }
+    public int? TaxPercentId { get; init; }
+    public int? FeeId { get; init; }
+    public decimal? TaxValue { get; init; }
+    public decimal Quantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal SalePrice { get; init; }
+    public decimal Discount { get; init; }
+    public decimal DiscountPercent { get; init; }
+    public decimal Subtotal { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public int? WarehouseId { get; init; }
+    public int MeasureId { get; init; }
+    public bool IsPaid { get; init; }
+    public decimal? RemainingQuantity { get; init; }
+    public int Status { get; init; }
+}
+
+public record OrderDetailItem
+{
+    public int Id { get; init; }
+    public Guid Uuid { get; init; }
+    public int OrderId { get; init; }
+    public int? MenuId { get; init; }
+    public int ItemId { get; init; }
+    public int? TaxPercentId { get; init; }
+    public int? FeeId { get; init; }
+    public decimal? TaxValue { get; init; }
+    public decimal Quantity { get; init; }
+    public decimal UnitPrice { get; init; }
+    public decimal SalePrice { get; init; }
+    public decimal Discount { get; init; }
+    public decimal DiscountPercent { get; init; }
+    public decimal Subtotal { get; init; }
+    public decimal Total { get; init; }
+    public string? Obs { get; init; }
+    public int? WarehouseId { get; init; }
+    public int MeasureId { get; init; }
+    public bool IsPaid { get; init; }
+    public decimal? RemainingQuantity { get; init; }
+    public int Status { get; init; }
+    public bool IsActive { get; init; }
+}

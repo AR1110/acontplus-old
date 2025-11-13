@@ -27,6 +27,10 @@ public class ItemConfiguration : BaseEntityTypeConfiguration<Item>
         builder.Property(x => x.RequiresCooking)
             .HasDefaultValue(false);
 
+        // Decimal precision
+        builder.Property(x => x.SalePrice).HasPrecision(18, 5);
+        builder.Property(x => x.UnitPrice).HasPrecision(18, 5);
+
         builder.HasOne(x => x.ProductionArea)
             .WithMany()
             .HasForeignKey(x => x.ProductionAreaId)

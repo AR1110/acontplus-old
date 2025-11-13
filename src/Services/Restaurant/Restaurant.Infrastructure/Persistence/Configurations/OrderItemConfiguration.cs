@@ -46,10 +46,5 @@ public class OrderItemConfiguration : BaseEntityTypeConfiguration<OrderItem>
             .WithMany(x => x.OrderItems)
             .HasForeignKey(x => x.ItemId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasMany(x => x.Modifiers)
-            .WithOne(x => x.OrderItem)
-            .HasForeignKey(x => x.OrderItemId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

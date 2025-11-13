@@ -511,7 +511,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<decimal>("SalePrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("Summary")
@@ -520,7 +520,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -612,7 +612,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<decimal?>("ExtraCharge")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<bool>("IsActive")
@@ -652,23 +652,23 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("SalePrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("TotalCost")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -684,7 +684,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("WastePercentage")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
                     b.HasKey("Id");
@@ -1064,7 +1064,7 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("AuditLog")
@@ -1090,7 +1090,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("CompanyCustomerPayment")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("ConsumptionDate")
@@ -1147,7 +1147,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("SubsidyAmount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -2007,6 +2007,285 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("Order", "Restaurant");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<decimal>("DiscountPercent")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<int?>("FeeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPaid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MeasureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MenuId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Obs")
+                        .HasMaxLength(1000)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal?>("RemainingQuantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("SalePrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<int?>("TaxPercentId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("TaxValue")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("Uuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("WarehouseId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_OrderDetail_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_OrderDetail_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_OrderDetail_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_OrderDetail_IsDeleted");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("IX_OrderDetail_ItemId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("OrderId")
+                        .HasDatabaseName("IX_OrderDetail_OrderId");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_OrderDetail_Status_Only");
+
+                    b.HasIndex("Uuid")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderDetail_Uuid");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_OrderDetail_Status");
+
+                    b.HasIndex("OrderId", "Status")
+                        .HasDatabaseName("IX_OrderDetail_OrderId_Status");
+
+                    b.ToTable("OrderDetail", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Action")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ExtraCharge")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsMobileRequest")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("ModifierItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 5)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_OrderDetailModifier_CreatedAt");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_OrderDetailModifier_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_OrderDetailModifier_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailModifier_IsDeleted");
+
+                    b.HasIndex("ModifierItemId")
+                        .HasDatabaseName("IX_OrderDetailModifier_ModifierItemId");
+
+                    b.HasIndex("OrderDetailId")
+                        .HasDatabaseName("IX_OrderDetailModifier_OrderDetailId");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailModifier_Status");
+
+                    b.ToTable("OrderDetailModifier", "Restaurant");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
                 {
                     b.Property<int>("Id")
@@ -2277,130 +2556,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.ToTable("OrderItem", "Restaurant");
                 });
 
-            modelBuilder.Entity("Restaurant.Domain.Entities.OrderItemModifier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Action")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("SYSUTCDATETIME()");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("CreatedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("DeletedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("ExtraCharge")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<string>("Instructions")
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsMobileRequest")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<int>("ModifierItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderItemId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Quantity")
-                        .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,5)")
-                        .HasDefaultValue(1m);
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasPrecision(7)
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(100)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<int?>("UpdatedByUserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt")
-                        .HasDatabaseName("IX_OrderItemModifier_CreatedAt");
-
-                    b.HasIndex("CreatedByUserId")
-                        .HasDatabaseName("IX_OrderItemModifier_CreatedByUserId");
-
-                    b.HasIndex("IsActive")
-                        .HasDatabaseName("IX_OrderItemModifier_IsActive");
-
-                    b.HasIndex("IsDeleted")
-                        .HasDatabaseName("IX_OrderItemModifier_IsDeleted");
-
-                    b.HasIndex("ModifierItemId")
-                        .HasDatabaseName("IX_OrderItemModifier_ModifierItemId");
-
-                    b.HasIndex("OrderItemId")
-                        .HasDatabaseName("IX_OrderItemModifier_OrderItemId");
-
-                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("OrderItemId"), new[] { "ModifierItemId", "Action", "ExtraCharge" });
-
-                    b.HasIndex("IsActive", "IsDeleted")
-                        .HasDatabaseName("IX_OrderItemModifier_Status");
-
-                    b.HasIndex("ModifierItemId", "Action", "CreatedAt")
-                        .HasDatabaseName("IX_OrderItemModifier_Modifier_Action_Date");
-
-                    b.HasIndex("OrderItemId", "ModifierItemId", "Action")
-                        .IsUnique()
-                        .HasDatabaseName("UX_OrderItemModifier_OrderItem_Modifier_Action");
-
-                    b.ToTable("OrderItemModifier", "Restaurant");
-                });
-
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderKitchen", b =>
                 {
                     b.Property<int>("Id")
@@ -2643,7 +2798,7 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<decimal?>("DiscountPercent")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<DateTime>("EndDate")
@@ -2782,11 +2937,11 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal?>("Discount")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal?>("DiscountPercent")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(5, 2)
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<int>("DisplayOrder")
@@ -2830,12 +2985,12 @@ namespace Restaurant.Api.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("PromotionalPrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<decimal>("RequiredQuantity")
                         .ValueGeneratedOnAdd()
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)")
                         .HasDefaultValue(1m);
 
@@ -2845,14 +3000,14 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDefaultValue(1);
 
                     b.Property<decimal>("Subtotal")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<int>("TaxId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -3367,6 +3522,51 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("AppTable");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.Menu", "Menu")
+                        .WithMany()
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Restaurant.Domain.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Item");
+
+                    b.Navigation("Menu");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.Item", "ModifierItem")
+                        .WithMany()
+                        .HasForeignKey("ModifierItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("Modifiers")
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModifierItem");
+
+                    b.Navigation("OrderDetail");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDocument", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.Order", "Order")
@@ -3401,25 +3601,6 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Menu");
 
                     b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("Restaurant.Domain.Entities.OrderItemModifier", b =>
-                {
-                    b.HasOne("Restaurant.Domain.Entities.Item", "ModifierItem")
-                        .WithMany()
-                        .HasForeignKey("ModifierItemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Restaurant.Domain.Entities.OrderItem", "OrderItem")
-                        .WithMany("Modifiers")
-                        .HasForeignKey("OrderItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ModifierItem");
-
-                    b.Navigation("OrderItem");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderKitchen", b =>
@@ -3549,10 +3730,12 @@ namespace Restaurant.Api.Data.Migrations
                 {
                     b.Navigation("MealConsumptions");
 
+                    b.Navigation("OrderDetails");
+
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Restaurant.Domain.Entities.OrderItem", b =>
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
                 {
                     b.Navigation("Modifiers");
                 });

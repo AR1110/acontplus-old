@@ -30,7 +30,7 @@ public static class UpdateEndpoints
             .WithName("UpdateItem")
             .WithSummary("Update an existing item")
             .WithDescription("Update an existing item record.")
-            .Produces<ItemResponse>(StatusCodes.Status200OK)
+            .Produces<ItemItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
