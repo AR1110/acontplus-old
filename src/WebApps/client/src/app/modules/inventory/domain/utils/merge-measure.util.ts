@@ -124,7 +124,7 @@ export const mergeProductMeasures = function (
   };
 
   const normalizeMeasure = (measure: any, type: 'MAIN' | 'FRACTIONAL') => ({
-    measureId: measure.idMedida ?? measure.measureId ?? 0,
+    id: measure.idMedida ?? measure.measureId ?? 0,
     conversion: measure.conversion ?? 1,
     name: measure.name ?? measure.descripcion ?? measure.medida ?? '',
     unitPrice: measure.unitPrice ?? measure.precioUnitario ?? 0,

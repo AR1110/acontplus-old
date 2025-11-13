@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -25,7 +25,6 @@ import {
   GetProductSaleUseCase,
   ValidateProductStockUseCase,
 } from '@inventory/product/application/use-cases/product/get-product.use-case';
-import { ProductSale } from '@inventory/product/domain/entities/product.entity';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -33,6 +32,14 @@ import Swal from 'sweetalert2';
 import { getStockQuantity, mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
 import { firstValueFrom } from 'rxjs';
 import { ProductFee } from '@inventory/domain/models/tarifa.model';
+import {ProformaInvoiceGetFormDataUseCase} from "@sale/application/use-cases/proforma-invoice.use-case";
+import {GroupedEstablishment} from "@core/models/establishment";
+import {EmissionPointEstablishment} from "@core/models/emission-point";
+import {WarehouseEstablishment} from "@core/models/warehouse";
+import {ToastrNotificationService} from "@core/services/toastr-notification.service";
+import {Fee} from "@inventory/domain/models/fee";
+import {TaxRate} from "@core/models/tax-rate";
+import {ProductMeasure} from "@inventory/domain/models/product-measure";
 
 @Component({
   selector: 'app-proforma-invoice-add-edit',
@@ -59,13 +66,16 @@ import { ProductFee } from '@inventory/domain/models/tarifa.model';
 })
 export class ProformaInvoiceAddEdit implements OnInit {
   private dgRef = inject(MatDialogRef<ProformaInvoiceAddEdit>);
+  private params = inject<{id: number, operation: 'add' | 'edit' | 'duplicate'}>(MAT_DIALOG_DATA);
 
   //services
   private searchService = inject(SearchDialogService);
+  private notiSvc = inject(ToastrNotificationService)
 
   //use cases
   private _productSaleUseCase = inject(GetProductSaleUseCase);
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
+  private $getFormData = inject(ProformaInvoiceGetFormDataUseCase)
 
   //variables form
   vatRates = signal<any[]>([]);
@@ -77,6 +87,8 @@ export class ProformaInvoiceAddEdit implements OnInit {
 
   dataForm = {
     issueDate: new Date(),
+    establishmentId: 0,
+    emissionPointId: 0,
   };
 
   isDuplicateItem = signal(false);
@@ -88,6 +100,13 @@ export class ProformaInvoiceAddEdit implements OnInit {
 
   priceDecimals = signal(2);
 
+
+  estabs = signal<GroupedEstablishment[]>([]);
+  emissionPoints = signal<EmissionPointEstablishment[]>([]);
+  warehouses = signal<WarehouseEstablishment[]>([]);
+  fees = signal<Fee[]>([]);
+  taxRates = signal<TaxRate[]>([]);
+
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     const column: any = cell.getColumn().getField();
     const data: any = cell.getData();
@@ -95,12 +114,17 @@ export class ProformaInvoiceAddEdit implements OnInit {
     // const value = cell.getValue();
 
     const editor: any = document.createElement('select');
+    const options = {
+      "measureId": data.measures,
+      "taxRateId": this.taxRates(),
+      "feeId": data.fees,
+    }
 
-    if (column === 'measureId') {
-      for (const m of data.measures) {
+    if (["measureId", "taxRateId", "feeId"].includes(column)) {
+      for (const m of options[column as keyof typeof options]) {
         const opt = document.createElement('option');
-        opt.value = m.idMedida.toString();
-        opt.innerHTML = m.descripcion;
+        opt.value = m.id.toString();
+        opt.innerHTML = m.name;
         editor.appendChild(opt);
       }
     }
@@ -225,8 +249,8 @@ export class ProformaInvoiceAddEdit implements OnInit {
       formatter: function (cell: any) {
         const data = cell.getData();
         for (const m of data.measures) {
-          if (m.idMedida == cell.getValue()) {
-            return m.descripcion;
+          if (m.id == cell.getValue()) {
+            return m.name;
           }
         }
       },
@@ -236,18 +260,37 @@ export class ProformaInvoiceAddEdit implements OnInit {
 
     {
       title: 'Tipo Iva',
-      field: 'taxId',
+      field: 'taxRateId',
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      formatter: function (cell: any) {
-        const data = cell.getData();
-        for (const m of data.measures) {
-          if (m.idMedida == cell.getValue()) {
-            return m.descripcion;
+      formatter:  (cell: any)=> {
+        for (const m of this.taxRates()) {
+          if (m.id == cell.getValue()) {
+            return m.name;
           }
         }
+        return  ''
+      },
+      validator: 'required',
+      width: '9px',
+    },
+    {
+      title: 'Tarifa',
+      field: 'feeId',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editor: this.comboEditor,
+      formatter:  (cell: any)=> {
+        console.log(cell.getData())
+        for (const m of (cell.getData().fees ?? [])) {
+          if (m.id == cell.getValue()) {
+            return m.name;
+          }
+        }
+        return  ''
       },
       validator: 'required',
       width: '9px',
@@ -374,7 +417,68 @@ export class ProformaInvoiceAddEdit implements OnInit {
     { header: 'Valor', field: 'value' },
   ];
 
+  loadFormData(){
+    this.$getFormData.execute().subscribe(data => {
+      const {estabs} = data;
+      this.estabs.set(estabs);
+      this.fees.set(data.fees);
+      this.taxRates.set(data.taxRates);
+
+      const dataEstab = this.estabs().find(e => e.isDefault);
+      const defaultFee = this.fees().find(e => e.isDefault);
+
+      if(!dataEstab){
+        this.notiSvc.warning({
+          message: 'No se encontró establecimiento por defecto'
+        });
+        return
+      }
+
+      if(!defaultFee){
+        this.notiSvc.warning({
+          message: 'No se encontró tarifa por defecto'
+        });
+        return
+      }
+
+      this.emissionPoints.set(dataEstab?.emissionPoints ?? []);
+      this.warehouses.set(dataEstab?.warehouses ?? []);
+
+      const defaultEmissionPoint = this.emissionPoints().find(e => e.isDefault);
+      const defaultWarehouse = this.warehouses().find(e => e.isDefault);
+
+      if(!defaultEmissionPoint){
+        this.notiSvc.warning({
+          message: 'No se encontró punto de emisión por defecto'
+        });
+        return
+      }
+
+      if(!defaultWarehouse){
+        this.notiSvc.warning({
+          message: 'No se encontró bodega por defecto'
+        });
+        return
+      }
+
+
+      this.dataForm.establishmentId  = dataEstab?.id ?? 0;
+      this.dataForm.emissionPointId = defaultEmissionPoint?.id ?? 0;
+      this.dataFormGeneral.warehouseId = defaultWarehouse?.id ?? 0;
+      this.dataFormGeneral.feeId = defaultFee?.id ?? 0;
+
+
+      if (['edit', 'duplicate'].includes(this.params.operation)) {
+
+      }
+
+
+      console.log(data)
+    })
+  }
+
   ngOnInit() {
+    this.loadFormData();
     const items: any[] = [
       {
         cantidad: 2,
@@ -430,7 +534,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       stockQuantity: 0,
       taxCode: '',
 
-      productFees: [] as ProductFee[],
+      fees: [] as ProductFee[],
       measureId: 0,
       measures: [] as MedidaProducto[],
       conversion: 1,
@@ -440,8 +544,8 @@ export class ProformaInvoiceAddEdit implements OnInit {
       fractionalUnitCost: 0,
       priceWithoutSubsidy: 0,
       priceWithTax: 0,
-      discountPercentage: 0,
-      discountValue: 0,
+      discountPercent: 0,
+      discount: 0,
       totalDiscount: 0,
       iceTax: 0,
       warehouseId: 0,
@@ -453,7 +557,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       hasAdditionalData: false,
       additionalProductInfo: [],
       inventoryAdjustments: [],
-      status: 1,
+      status: true,
     };
   }
 
@@ -465,20 +569,23 @@ export class ProformaInvoiceAddEdit implements OnInit {
     this._productSaleUseCase.execute({ id: result.id }).subscribe({
       next: async (response) => {
         try {
-          const { product, medidas, inventoryAdjustments, additionalInfo } = response;
-          const measures = medidas as MedidaProducto[];
+          const { product, inventoryAdjustments, additionalInfo } = response;
+          const measures = response.measures as ProductMeasure[];
 
           if (!measures?.length) throw new Error('No se encontraron medidas del producto');
 
           //  Medida por defecto
-          const defaultMeasure = measures.find((m) => m.defaultMedida);
+          const defaultMeasure = measures.find((m) => m.defaultMeasure);
           if (!defaultMeasure) throw new Error('No se encontró la medida por defecto');
 
           //  Tarifa (fee)
           const feeId = this.dataFormGeneral.feeId;
           const fee = defaultMeasure.fees.find((f) => (f.id === feeId) || f.isDefault);
+          const dataTaxRate = this.taxRates().find(t => t.code == product.codigoPorcentaje);
           if (!fee) throw new Error('No se encontró la tarifa por defecto');
-
+          if(!dataTaxRate){
+            throw new Error('No se encontró el tipo impuesto');
+          }
           let rowData: any;
           let shouldAddRow = false;
 
@@ -526,22 +633,23 @@ export class ProformaInvoiceAddEdit implements OnInit {
             productId: product.idArticulo,
             code: product.codigoArticulo,
             description: product.descripcion,
+            taxRateId: dataTaxRate.id,
             taxCode: product.codigoPorcentaje,
             iceTax: product.valorIce,
             warehouseId: this.dataFormGeneral.warehouseId,
             hasInventory: product.llevaInventario,
             hasAdditionalData: product.datosAdicionales,
             measures,
-            measureId: defaultMeasure.idMedida,
+            measureId: defaultMeasure.id,
             conversion: defaultMeasure.conversion,
-            unitCost: defaultMeasure.precioCosto,
-            fractionalUnitCost: defaultMeasure.precioCostoFraccionado,
+            unitCost: defaultMeasure.costPrice,
+            fractionalUnitCost: defaultMeasure.fractionalCostPrice,
             additionalProductInfo: (additionalInfo ?? []).map((info: any) => ({
               ...info,
               uniqueDetailRow: rowData.uuid,
             })),
             inventoryAdjustments,
-            productFees: defaultMeasure.fees,
+            fees: defaultMeasure.fees,
             feeId,
             priceWithoutSubsidy: product.precioSinSubsidio ?? 0,
             unitPrice: roundNumber(fee.salePrice, this.priceDecimals()),

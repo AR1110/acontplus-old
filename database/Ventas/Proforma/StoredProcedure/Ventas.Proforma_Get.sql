@@ -174,6 +174,10 @@ BEGIN
     -- Data Form 
     IF @tipo = 2
         BEGIN
+
+            SET @tableNames = 'decimalSettings,taxPercentages,fees,creditTimes,defaultProduct,defaultCustomer,salesConfig,users,estabEmissionPoints,estabWarehouses,documentConfig'
+
+
             DECLARE @existePoliticaVenta BIT = 0
                    ,@codRol VARCHAR(50)
 

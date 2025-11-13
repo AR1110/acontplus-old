@@ -500,7 +500,7 @@ export class ItemAddEdit implements OnInit {
           newComposition.itemId = this.params.id;
           newComposition.childItemId = rowData.id;
           newComposition.measures = measures;
-          newComposition.measureId = defaultMeasure.measureId;
+          newComposition.measureId = defaultMeasure.id;
           newComposition.feeId = defaultFee.id;
           newComposition.price = defaultFee.salePrice;
           newComposition.priceWithTax = defaultFee.priceWithTax;

@@ -24,7 +24,7 @@ export interface ProductFee {
  */
 export interface ProductMeasure {
   /** Unique identifier for the measure */
-  measureId: number;
+  id: number;
 
   /** Conversion rate relative to the main measure */
   conversion: number;

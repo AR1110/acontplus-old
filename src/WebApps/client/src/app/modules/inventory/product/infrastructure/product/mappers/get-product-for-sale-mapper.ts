@@ -67,6 +67,7 @@ export class GetProductForSaleMapper {
         name: item.descripcion,
       }))
     }
+    console.log(results);
 
     return results;
   }

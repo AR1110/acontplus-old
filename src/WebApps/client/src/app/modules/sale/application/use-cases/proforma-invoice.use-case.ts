@@ -32,3 +32,14 @@ export class ProformaInvoiceViewDetailUseCase implements BaseUseCase<number, any
     return this.repo.viewDetail(id);
   }
 }
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ProformaInvoiceGetFormDataUseCase implements BaseUseCase<any, any> {
+  private repo = inject(ProformaInvoiceRepository);
+  execute() {
+    return this.repo.getFormData();
+  }
+}
