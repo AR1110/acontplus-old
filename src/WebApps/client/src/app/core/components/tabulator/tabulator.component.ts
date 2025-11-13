@@ -9,10 +9,29 @@ import {
   ViewEncapsulation,
   OnChanges,
 } from '@angular/core';
-import { PageModule, ReactiveDataModule, TabulatorFull as Tabulator } from 'tabulator-tables';
+import {
+  PageModule,
+  ReactiveDataModule,
+  FormatModule,
+  EditModule,
+  TabulatorFull as Tabulator,
+  ValidateModule,
+  ColumnCalcsModule,
+  SortModule
+} from 'tabulator-tables';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
-Tabulator.registerModule([PageModule, ReactiveDataModule]);
+// 🔹 Registro de módulos requeridos por Tabulator 6
+Tabulator.registerModule([
+  PageModule,
+  ReactiveDataModule,
+  FormatModule,
+  EditModule,
+  ValidateModule,
+  ColumnCalcsModule,
+  SortModule
+]);
+
 
 @Component({
   selector: 'app-tabulator',

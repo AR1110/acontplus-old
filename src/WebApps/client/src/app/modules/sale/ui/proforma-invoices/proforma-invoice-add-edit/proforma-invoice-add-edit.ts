@@ -72,7 +72,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
 
   dataFormGeneral = {
     warehouseId: 0,
-    rateId: 0,
+    feeId: 0,
   };
 
   dataForm = {
@@ -259,7 +259,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       headerSort: false,
       hozAlign: 'center',
       headerHozAlign: 'center',
-      width: '9px',
+      width: '7px',
       validator: ['required'],
       editor: 'number',
       editorParams: {
@@ -285,11 +285,11 @@ export class ProformaInvoiceAddEdit implements OnInit {
     },
     {
       title: '%',
-      field: 'discountPercentage',
+      field: 'discountPercent',
       headerSort: false,
       hozAlign: 'center',
       headerHozAlign: 'center',
-      width: '9px',
+      width: '7px',
       validator: ['required'],
       editor: 'number',
       editorParams: {
@@ -304,7 +304,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       headerSort: false,
       hozAlign: 'center',
       headerHozAlign: 'center',
-      width: '9px',
+      width: '7px',
       validator: ['required'],
       editor: 'number',
       editorParams: {
@@ -319,7 +319,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       headerSort: false,
       hozAlign: 'center',
       headerHozAlign: 'center',
-      width: '9px',
+      width: '7px',
       validator: ['required'],
       editor: 'number',
       editorParams: {
@@ -329,12 +329,12 @@ export class ProformaInvoiceAddEdit implements OnInit {
       formatterParams: { precision: false },
     },
     {
-      title: 'SubTotal',
+      title: 'V. Imp.',
       field: 'taxValue',
       headerSort: false,
       hozAlign: 'center',
       headerHozAlign: 'center',
-      width: '9px',
+      width: '7px',
       validator: ['required'],
       editor: 'number',
       editorParams: {
@@ -475,8 +475,8 @@ export class ProformaInvoiceAddEdit implements OnInit {
           if (!defaultMeasure) throw new Error('No se encontró la medida por defecto');
 
           //  Tarifa (fee)
-          const rateId = this.dataFormGeneral.rateId;
-          const fee = defaultMeasure.fees.find((f) => f.id === rateId);
+          const feeId = this.dataFormGeneral.feeId;
+          const fee = defaultMeasure.fees.find((f) => (f.id === feeId) || f.isDefault);
           if (!fee) throw new Error('No se encontró la tarifa por defecto');
 
           let rowData: any;
@@ -542,7 +542,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
             })),
             inventoryAdjustments,
             productFees: defaultMeasure.fees,
-            feeId: rateId,
+            feeId,
             priceWithoutSubsidy: product.precioSinSubsidio ?? 0,
             unitPrice: roundNumber(fee.salePrice, this.priceDecimals()),
             priceWithTax: roundNumber(fee.priceWithTax, this.priceDecimals()),

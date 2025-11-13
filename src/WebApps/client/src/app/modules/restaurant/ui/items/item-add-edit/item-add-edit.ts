@@ -100,7 +100,213 @@ export class ItemAddEdit implements OnInit {
     return editor;
   };
 
-  columns = this.getColumns()
+  columns = [
+    {
+      title: 'Op.',
+      formatter: (cell: any) => {
+        const rowData = cell.getRow().getData();
+
+        // contenedor de botones
+        const buttonHolder = document.createElement('div');
+        buttonHolder.style.display = 'flex';
+        buttonHolder.style.gap = '4px'; // espacio entre botones
+        buttonHolder.style.justifyContent = 'center';
+        buttonHolder.style.alignItems = 'center';
+
+        // Botón Eliminar
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
+        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2"/>
+        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    `;
+        delBtn.classList.add('small-button', 'btn-remove', 'text-white');
+        delBtn.addEventListener('click', () => {
+          this.deleteRow(rowData);
+        });
+        buttonHolder.appendChild(delBtn);
+        return buttonHolder;
+      },
+      width: 100,
+      headerSort: false,
+      hozAlign: 'center',
+      headerHozAlign: 'center',
+    },
+    {
+      title: 'Código',
+      field: 'code',
+      width: 100,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+    },
+    {
+      title: this.isProduct() ? 'Ingrediente': 'Producto',
+      field: 'description',
+      width: this.isProduct() ? 350: 280,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+    },
+    {
+      title: 'Medida',
+      field: 'measureId',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editor: this.comboEditor,
+      formatter: function (cell: any) {
+        const data = cell.getData();
+        for (const m of data.measures ?? []) {
+          if (m.measureId == cell.getValue()) {
+            return m.name;
+          }
+        }
+      },
+      validator: 'required',
+      width: '9px',
+    },
+
+
+
+
+    //start when is product combo
+    {
+      title: 'Tarifa',
+      field: 'feeId',
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editor: this.comboEditor,
+      visible: this.isCombo(),
+      formatter: function (cell: any) {
+        const data = cell.getData();
+        for (const m of data.fees ?? []) {
+          if (m.id == cell.getValue()) {
+            return m.name;
+          }
+        }
+      },
+      validator: 'required',
+      width: '9px',
+    },
+    {
+      title: 'Precio U.',
+      field: 'price',
+      editor: false,
+      width: 80,
+      widthGrow: 1,
+      validator: ['numeric'],
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      visible: this.isCombo(),
+    },
+    {
+      title: 'Precio Iva',
+      field: 'priceWithTax',
+      editor: false,
+      width: 80,
+      widthGrow: 1,
+      validator: ['numeric'],
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      visible: this.isCombo(),
+    },
+    //end when is product combo
+
+    {
+      title: 'Peso',
+      field: 'weight',
+      editor: true,
+      width: 100,
+      widthGrow: 1,
+      validator: ['numeric'],
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      visible: this.isProduct(),
+    },
+    {
+      title: 'Cant.',
+      field: 'quantity',
+      width: 80,
+      editor: true,
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+    },
+    {
+      title: 'Precio costo',
+      field: 'costPrice',
+      width: 120,
+      editor: false,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      visible: this.isProduct(),
+    },
+
+    //start when is product combo
+    {
+      title: '% Dscto.',
+      field: 'discountPercent',
+      width: 80,
+      editor: true,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      visible: this.isCombo(),
+    },
+    {
+      title: 'Dscto.',
+      field: 'discount',
+      width: 80,
+      editor: true,
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+      visible: this.isCombo(),
+    },
+    //end when is product combo
+    {
+      title: 'SubTotal',
+      field: 'subtotal',
+      width: 90,
+      editor: false,
+      bottomCalc: (values: any, data: any, calcParams: any) => {
+        const total = values.reduce((a: any, b: any) => a + b, 0);
+        return roundNumber(total)
+      },
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+    },
+  ];
 
 
   isProduct(): boolean {
@@ -134,217 +340,7 @@ export class ItemAddEdit implements OnInit {
   itemSearchLabel = this.isCombo()   ? 'Buscar Producto': 'Buscar Ingrediente';
 
   getColumns(){
-    return [
-      {
-        title: 'Op.',
-        formatter: (cell: any) => {
-          const rowData = cell.getRow().getData();
-
-          // contenedor de botones
-          const buttonHolder = document.createElement('div');
-          buttonHolder.style.display = 'flex';
-          buttonHolder.style.gap = '4px'; // espacio entre botones
-          buttonHolder.style.justifyContent = 'center';
-          buttonHolder.style.alignItems = 'center';
-
-          // Botón Eliminar
-          const delBtn = document.createElement('button');
-          delBtn.type = 'button';
-          delBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
-        <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2"/>
-        <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2"/>
-      </svg>
-    `;
-          delBtn.classList.add('small-button', 'btn-remove', 'text-white');
-          delBtn.addEventListener('click', () => {
-            this.deleteRow(rowData);
-          });
-          buttonHolder.appendChild(delBtn);
-
-          return buttonHolder;
-        },
-        width: 100,
-        headerSort: false,
-        hozAlign: 'center',
-        headerHozAlign: 'center',
-      },
-      {
-        title: 'Código',
-        field: 'code',
-        width: 100,
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-      },
-      {
-        title: this.isProduct() ? 'Ingrediente': 'Producto',
-        field: 'description',
-        width: this.isProduct() ? 350: 280,
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-      },
-      {
-        title: 'Medida',
-        field: 'measureId',
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editor: this.comboEditor,
-        formatter: function (cell: any) {
-          const data = cell.getData();
-          for (const m of data.measures ?? []) {
-            if (m.measureId == cell.getValue()) {
-              return m.name;
-            }
-          }
-        },
-        validator: 'required',
-        width: '9px',
-      },
-
-
-
-
-      //start when is product combo
-      {
-        title: 'Tarifa',
-        field: 'feeId',
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editor: this.comboEditor,
-        visible: this.isCombo(),
-        formatter: function (cell: any) {
-          const data = cell.getData();
-          for (const m of data.fees ?? []) {
-            if (m.id == cell.getValue()) {
-              return m.name;
-            }
-          }
-        },
-        validator: 'required',
-        width: '9px',
-      },
-      {
-        title: 'Precio U.',
-        field: 'price',
-        editor: false,
-        width: 80,
-        widthGrow: 1,
-        validator: ['numeric'],
-        value: '0',
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editorParams: {
-          selectContents: true,
-          verticalNavigation: 'table',
-        },
-        visible: this.isCombo(),
-      },
-      {
-        title: 'Precio Iva',
-        field: 'priceWithTax',
-        editor: false,
-        width: 80,
-        widthGrow: 1,
-        validator: ['numeric'],
-        value: '0',
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        visible: this.isCombo(),
-      },
-      //end when is product combo
-
-      {
-        title: 'Peso',
-        field: 'weight',
-        editor: true,
-        width: 100,
-        widthGrow: 1,
-        validator: ['numeric'],
-        value: '0',
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        visible: this.isProduct(),
-      },
-      {
-        title: 'Cant.',
-        field: 'quantity',
-        width: 80,
-        editor: true,
-        editorParams: {
-          selectContents: true,
-          verticalNavigation: 'table',
-        },
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-      },
-      {
-        title: 'Precio costo',
-        field: 'costPrice',
-        width: 120,
-        editor: false,
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editorParams: {
-          selectContents: true,
-          verticalNavigation: 'table',
-        },
-        visible: this.isProduct(),
-      },
-
-      //start when is product combo
-      {
-        title: '% Dscto.',
-        field: 'discountPercent',
-        width: 80,
-        editor: true,
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editorParams: {
-          selectContents: true,
-          verticalNavigation: 'table',
-        },
-        visible: this.isCombo(),
-      },
-      {
-        title: 'Dscto.',
-        field: 'discount',
-        width: 80,
-        editor: true,
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-        editorParams: {
-          selectContents: true,
-          verticalNavigation: 'table',
-        },
-        visible: this.isCombo(),
-      },
-      //end when is product combo
-      {
-        title: 'SubTotal',
-        field: 'subtotal',
-        width: 90,
-        editor: false,
-        bottomCalc: (values: any, data: any, calcParams: any) => {
-          const total = values.reduce((a: any, b: any) => a + b, 0);
-          return roundNumber(total)
-        },
-        hozAlign: 'center',
-        headerSort: false,
-        headerHozAlign: 'center',
-      },
-    ];
+    return
   }
 
   ngOnInit() {
@@ -381,7 +377,7 @@ export class ItemAddEdit implements OnInit {
     const oldData = cell.getRow().getData();
 
     if (newValue === oldValue || isNaN(newValue) || cell.getValue() === '' || newValue < 0) {
-      cell.setValue(oldValue);
+      data[column] = oldValue;
       return;
     }
 
@@ -390,7 +386,7 @@ export class ItemAddEdit implements OnInit {
       if(dataMeasure){
         data.costPrice = dataMeasure.costPrice;
       }else{
-        cell.setValue(oldValue);
+        data.costPrice = oldValue;
       }
     }
 

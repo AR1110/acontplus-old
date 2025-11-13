@@ -42,7 +42,7 @@ export class Items implements OnInit {
   private _dgSvc = inject(DialogService);
 
   columns: DataGridColumn[] = [
-    { header: 'Op.', field: 'op' },
+    { header: 'Op.', field: 'op', pinned: 'left', },
     { header: 'Nro.', field: 'index' },
     { header: 'Categoría', field: 'category' },
     { header: 'Imagen', field: 'imageUrl', type: 'image' },
