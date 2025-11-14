@@ -23,10 +23,6 @@ public class OrderDetailConfiguration : BaseEntityTypeConfiguration<OrderDetail>
         builder.HasIndex(x => x.ItemId)
             .HasDatabaseName("IX_OrderDetail_ItemId");
 
-        builder.HasIndex(x => x.Uuid)
-            .IsUnique()
-            .HasDatabaseName("IX_OrderDetail_Uuid");
-
         // Decimal precision
         builder.Property(x => x.TaxValue).HasPrecision(18, 5);
         builder.Property(x => x.Quantity).HasPrecision(18, 5);
@@ -50,12 +46,6 @@ public class OrderDetailConfiguration : BaseEntityTypeConfiguration<OrderDetail>
             .WithMany()
             .HasForeignKey(x => x.ItemId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder
-            .HasOne(x => x.Menu)
-            .WithMany()
-            .HasForeignKey(x => x.MenuId)
-            .OnDelete(DeleteBehavior.SetNull);
 
         builder
             .HasMany(x => x.Modifiers)

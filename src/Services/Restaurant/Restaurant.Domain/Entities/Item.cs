@@ -22,9 +22,6 @@ public class Item : BaseEntity
     // Producción
     public bool RequiresCooking { get; set; }
     public int? PreparationTimeMinutes { get; set; }
-    public int? ProductionAreaId { get; set; }
-    public ProductionArea? ProductionArea { get; set; }
-
     // Flags
     public bool IsAvailableForPromotion { get; set; }
     public bool IsComposite { get; set; }
@@ -34,7 +31,7 @@ public class Item : BaseEntity
 
     // Navegación multinivel: cuando ESTE item ES USADO EN otros
     public ICollection<ItemComposition> UsedInCompositions { get; set; } = [];
-
     public ICollection<OrderItem> OrderItems { get; set; } = [];
     public ICollection<PromotionDetail> PromotionDetails { get; set; } = [];
+    public ICollection<ItemProductionArea> ItemProductionAreas { get; set; } = [];
 }

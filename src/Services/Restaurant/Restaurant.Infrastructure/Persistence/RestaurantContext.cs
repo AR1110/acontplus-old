@@ -52,18 +52,18 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
         foreach (var property in builder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())
                      .Where(p => p.ClrType == typeof(string) // Entity is a string
-                                 && p.GetColumnType() == null // No column type is set
-                                                              // Next line only required if using ASP.Net Identity:
-                                                              //&& p.DeclaringType.GetTableName().StartsWith("AspNet")
+                                 && p.GetColumnType() == null
                      ))
             property.SetIsUnicode(false);
 
         BaseEntityRegistration.RegisterEntities(builder, typeof(RestaurantContext),
             typeof(AppTable),
             typeof(Ingredient),
+            typeof(ItemProductionArea),
             typeof(MenuItem),
             typeof(OrderDocument),
             typeof(OrderKitchen),
+            typeof(PrinterSetting),
             typeof(PromotionDetail),
             typeof(PromotionMenu),
             typeof(ProductionArea),

@@ -45,11 +45,16 @@ public class ItemCompositionConfiguration : BaseEntityTypeConfiguration<ItemComp
         builder.HasOne(x => x.ParentItem)
             .WithMany(x => x.Compositions)
             .HasForeignKey(x => x.ParentItemId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(x => x.ChildItem)
             .WithMany(x => x.UsedInCompositions)
             .HasForeignKey(x => x.ChildItemId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.ParentComposition)
+            .WithMany(x => x.Children)
+            .HasForeignKey(x => x.ParentCompositionId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -3,11 +3,8 @@ namespace Restaurant.Domain.Entities;
 [Table("OrderDetail", Schema = "Restaurant")]
 public class OrderDetail : BaseEntity
 {
-    public Guid Uuid { get; set; }
     public required Order Order { get; set; }
     public int OrderId { get; set; }
-    public Menu? Menu { get; set; }
-    public int? MenuId { get; set; }
     public int ItemId { get; set; }
     public required Item Item { get; set; }
     public int? TaxPercentId { get; set; }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
 
@@ -60,11 +60,7 @@ public class OrderConfiguration : BaseEntityTypeConfiguration<Order>
     {
         base.Configure(builder);
 
-        builder.HasIndex(x => x.Uuid)
-            .HasDatabaseName("UX_Order_Uuid")
-            .IsUnique();
-
-        builder.HasIndex(x => new { x.EstablecimientoId, x.Finished, x.CreatedAt })
+        builder.HasIndex(x => new { x.Finished, x.CreatedAt })
             .HasDatabaseName("IX_Order_Establishment_Finished_Date")
             .HasFilter("[Finished] = 0");
 

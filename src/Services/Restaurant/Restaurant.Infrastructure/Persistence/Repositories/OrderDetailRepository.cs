@@ -38,7 +38,6 @@ public class OrderDetailRepository(RestaurantContext context) : IOrderDetailRepo
         return await context.OrderDetails
             .Where(od => od.OrderId == orderId)
             .Include(od => od.Item)
-            .Include(od => od.Menu)
             .Include(od => od.Modifiers)
             .ToListAsync();
     }

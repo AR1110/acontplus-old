@@ -45,4 +45,8 @@ public class ItemComposition : BaseEntity
     public int CompositionLevel { get; set; } = 1;
     [MaxLength(300)]
     public string? Notes { get; set; }
+    public Guid? UniqueId { get; set; }
+    public int? ParentCompositionId { get; set; }
+    public ItemComposition? ParentComposition { get; set; }
+    public ICollection<ItemComposition> Children { get; set; } = [];
 }
