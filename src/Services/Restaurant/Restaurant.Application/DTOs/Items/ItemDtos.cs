@@ -12,7 +12,6 @@ public record ItemCreate
     public decimal UnitPrice { get; init; }
     public bool RequiresCooking { get; init; }
     public int? PreparationTimeMinutes { get; init; }
-    public int? ProductionAreaId { get; init; }
     public bool IsAvailableForPromotion { get; init; }
     public bool IsComposite { get; init; }
     public ICollection<ItemCompositionCreate>? Compositions { get; init; }
@@ -27,7 +26,6 @@ public record ItemUpdate
     public decimal UnitPrice { get; init; }
     public bool RequiresCooking { get; init; }
     public int? PreparationTimeMinutes { get; init; }
-    public int? ProductionAreaId { get; init; }
     public bool IsAvailableForPromotion { get; init; }
     public bool IsComposite { get; init; }
     public ICollection<ItemCompositionUpdate>? Compositions { get; init; }
@@ -44,7 +42,6 @@ public record ItemItem
     public decimal UnitPrice { get; init; }
     public bool RequiresCooking { get; init; }
     public int? PreparationTimeMinutes { get; init; }
-    public int? ProductionAreaId { get; init; }
     public bool IsAvailableForPromotion { get; init; }
     public bool IsComposite { get; init; }
     public bool IsActive { get; init; }

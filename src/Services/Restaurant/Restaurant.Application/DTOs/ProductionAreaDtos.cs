@@ -8,7 +8,7 @@ public record ProductionAreaCreate
     public required string Code { get; init; }
     [Required][MaxLength(100)]
     public required string Description { get; init; }
-    public int EstablecimientoId { get; init; }
+    public int EstablishmentId { get; init; }
 }
 
 public record ProductionAreaUpdate
@@ -17,7 +17,7 @@ public record ProductionAreaUpdate
     public required string Code { get; init; }
     [Required][MaxLength(100)]
     public required string Description { get; init; }
-    public int EstablecimientoId { get; init; }
+    public int EstablishmentId { get; init; }
 }
 
 public record ProductionAreaItem
@@ -25,6 +25,6 @@ public record ProductionAreaItem
     public int Id { get; init; }
     public string Code { get; init; }
     public string Description { get; init; }
-    public int EstablecimientoId { get; init; }
+    public int EstablishmentId { get; init; }
     public bool IsActive { get; init; }
 }
