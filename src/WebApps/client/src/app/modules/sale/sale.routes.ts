@@ -12,7 +12,7 @@ export const routes: Route[] = [
   {
     path: 'proforma-invoices',
     loadComponent: () =>
-      import('@sale/ui/proforma-invoices/proforma-invoices').then((m) => m.ProformaInvoices),
+      import('@sale/ui/proformas/proformas').then((m) => m.Proformas),
     data: {
       breadcrumb: 'Proformas',
       context: SALE_MODULES_CODE.PROFORMA_INVOICE,

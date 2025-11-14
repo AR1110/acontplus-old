@@ -36,7 +36,14 @@ export class GetProductForSaleMapper {
         taxes = [],
       } = JSON.parse(response.payload as string);
 
-      results.product = product[0];
+      const productTemp = product[0];
+      results.product = {
+        ...productTemp,
+
+        //nombres estandarizados
+        code: productTemp.codigoArticulo,
+        description: productTemp.descripcion,
+      }
 
       results.medidas = mergeMeasureUtil(measures, fractionedMeasures);
 

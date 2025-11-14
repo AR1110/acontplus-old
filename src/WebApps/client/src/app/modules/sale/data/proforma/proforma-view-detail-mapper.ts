@@ -1,10 +1,10 @@
 import {
   ProformaInvoiceDetail,
   ProformaInvoiceListResult,
-} from '@sale/domain/models/proforma-invoice';
+} from '@sale/domain/models/proforma';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
-export class ProformaInvoiceViewDetailMapper {
+export class ProformaViewDetailMapper {
   static toJson(id: number) {
     return JSON.stringify({
       tipo: 4,

@@ -2,7 +2,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { GroupedEstab } from '@core/models/estab.model';
 
-export class ProformaInvoiceFilterMapper {
+export class ProformaFilterMapper {
   static toJson() {
     return JSON.stringify({
       tipo: 3,

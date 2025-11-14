@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ProformaInvoiceAddEdit } from './proforma-invoice-add-edit';
+import { ProformaAddEdit } from './proforma-add-edit';
 
-describe('ProformaInvoiceAddEdit', () => {
-  let component: ProformaInvoiceAddEdit;
-  let fixture: ComponentFixture<ProformaInvoiceAddEdit>;
+describe('ProformaAddEdit', () => {
+  let component: ProformaAddEdit;
+  let fixture: ComponentFixture<ProformaAddEdit>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ProformaInvoiceAddEdit],
+      imports: [ProformaAddEdit],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProformaInvoiceAddEdit);
+    fixture = TestBed.createComponent(ProformaAddEdit);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -2,24 +2,6 @@
   <div ngProjectAs="content">
     <form id="itemForm" (ngSubmit)="onSave()"  [formGroup]="itemForm">
       <div class="vstack">
-        @if (isCombo()) {
-          <div
-            class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
-          >
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Nombre</mat-label>
-                <input type="text" matInput placeholder="..." required="" formControlName="title" />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-slide-toggle formControlName="forPromotion" id="forPromotion">
-                Usar en promoción
-              </mat-slide-toggle>
-            </div>
-          </div>
-
-        }
         <mat-form-field>
           <mat-label>Resumen</mat-label>
           <input type="text" matInput placeholder="..." required="" formControlName="summary" />
