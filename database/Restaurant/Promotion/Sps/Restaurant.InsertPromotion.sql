@@ -14,8 +14,8 @@ GO
 CREATE OR ALTER PROCEDURE Restaurant.InsertPromotion
      @UserRoleId INT
     ,@Json VARCHAR(MAX)
-    ,@S3ObjectUrl VARCHAR(800) = NULL
-    ,@S3ObjectKey VARCHAR(500) = NULL
+    ,@ImageUrl VARCHAR(800) = NULL
+    ,@ImageKey VARCHAR(500) = NULL
 AS
 BEGIN
     SET LANGUAGE SPANISH;
@@ -31,13 +31,19 @@ BEGIN
     DECLARE @TbPromotion AS TABLE
     (
         [EstablishmentId] INT NOT NULL
+       ,[Name] VARCHAR(100) NOT NULL
        ,[Description] VARCHAR(50) NOT NULL
-       ,[PromotionDays] VARCHAR(MAX) NOT NULL
+       ,[ApplicableDays] VARCHAR(MAX) NOT NULL
+       ,[MaxTotalUses] INT NULL 
+       ,[CurrentUses] INT NOT NULL DEFAULT 0
+       ,[MaxUsesPerCustomer] INT NULL
+       ,[StartTime] TIME(7) NULL
+       ,[Type] INT NOT NULL DEFAULT 1
        ,[StartDate] DATETIME2 NOT NULL
        ,[EndDate] DATETIME2 NOT NULL
        ,[CreatedByUserId] INT NOT NULL
-       ,[S3ObjectUrl] VARCHAR(800) NULL
-       ,[S3ObjectKey] VARCHAR(500) NULL
+       ,[ImageUrl] VARCHAR(800) NULL
+       ,[ImageKey] VARCHAR(500) NULL
     )
 
     DECLARE @TbPromotionDetails AS TABLE
@@ -46,12 +52,16 @@ BEGIN
        ,[FeeId] INT NOT NULL
        ,[TaxId] INT NOT NULL
        ,[MeasureId] INT NOT NULL
-       ,[Quantity] NUMERIC(18,5) NOT NULL
-       ,[Price] NUMERIC(18,5) NOT NULL
-       ,[Obs] VARCHAR(300) NULL
-       ,[CostPrice] NUMERIC(18,5) NOT NULL
+       ,[UnitPrice] NUMERIC(18,5) NOT NULL
+       ,[PromotionalPrice] NUMERIC(18,5) NOT NULL
+       ,[DiscountPercent] NUMERIC(18,5) NOT NULL
+       ,[Discount] NUMERIC(18,5) NOT NULL
        ,[Subtotal] NUMERIC(18,5) NOT NULL
-       ,[UniqueId] VARCHAR(300) NULL
+       ,[BuyQuantity] NUMERIC(18,5) NOT NULL
+       ,[DisplayOrder] INT NOT NULL DEFAULT 0
+       ,[GetQuantity] INT NULL
+       ,[Notes] VARCHAR(500) NULL
+       ,[RequiredQuantity] NUMERIC(18,5) NOT NULL
        ,[CreatedByUserId] INT NOT NULL
     )
 
@@ -69,35 +79,40 @@ BEGIN
         )
 
         INSERT INTO @TbPromotion
-              (EstablishmentId,Description,PromotionDays,StartDate,EndDate ,S3ObjectUrl ,S3ObjectKey,CreatedByUserId)
-        SELECT EstablishmentId,Description,PromotionDays,StartDate,EndDate,@S3ObjectUrl,@S3ObjectKey,@UserId
-        FROM OPENJSON(@Promotion)
-        WITH
+              (EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate, ImageKey ,ImageUrl,CreatedByUserId)
+        SELECT establishmentId,name,description,applicableDays,maxTotalUses,maxUsesPerCustomer,startTime,startDate,endDate,@ImageKey,@ImageUrl,@UserId
+        FROM OPENJSON(@Promotion) WITH
         (
-             establishmentId  INT
-            ,description      VARCHAR(50)
-            ,promotionDays    VARCHAR(MAX)
-            ,startDate        DATETIME2
-            ,endDate          DATETIME2
-        );
+             [establishmentId]       INT
+            ,[name]                  VARCHAR(100)
+            ,[description]           VARCHAR(50)
+            ,[applicableDays]        VARCHAR(MAX)
+            ,[maxTotalUses]          INT
+            ,[maxUsesPerCustomer]    INT
+            ,[startTime]             TIME(7)
+            ,[startDate]             DATETIME2
+            ,[endDate]               DATETIME2
+        )
 
         INSERT INTO @TbPromotionDetails
-              (ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,CreatedByUserId)
-        SELECT ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,@UserId
-        FROM OPENJSON(@PromotionDetails)
-        WITH
+              (ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId)
+        SELECT itemId,feeId,taxId,measureId,unitPrice,PromotionalPrice,discountPercent,discount,subtotal,buyQuantity,getQuantity,notes,requiredQuantity,@UserId
+        FROM OPENJSON(@PromotionDetails) WITH
         (
-             itemId        INT
-            ,feeId         INT
-            ,taxId         INT
-            ,measureId     INT
-            ,quantity      NUMERIC(18,5)
-            ,price         NUMERIC(18,5)
-            ,obs           VARCHAR(300)
-            ,costPrice     NUMERIC(18,5)
-            ,subtotal      NUMERIC(18,5)
-            ,uniqueId      VARCHAR(300)
-        );
+             [itemId]                INT
+            ,[feeId]                 INT
+            ,[taxId]                 INT
+            ,[measureId]             INT
+            ,[unitPrice]             NUMERIC(18,5)
+            ,[PromotionalPrice]      NUMERIC(18,5)
+            ,[discountPercent]       NUMERIC(18,5)
+            ,[discount]              NUMERIC(18,5)
+            ,[subtotal]              NUMERIC(18,5)
+            ,[buyQuantity]           NUMERIC(18,5)
+            ,[getQuantity]           INT
+            ,[notes]                 VARCHAR(500)
+            ,[requiredQuantity]      NUMERIC(18,5)
+        )
 
 
         --> Validation
@@ -113,16 +128,17 @@ BEGIN
 
         BEGIN TRAN
             INSERT INTO Restaurant.Promotion
-                  (EstablishmentId,Description,PromotionDays,StartDate,EndDate,CreatedByUserId,S3ObjectKey,S3ObjectUrl)
-            SELECT EstablishmentId,Description,PromotionDays,StartDate,EndDate,CreatedByUserId,S3ObjectKey,S3ObjectUrl
+                  ([EstablishmentId],[Name],[Type],[CurrentUses],[Description],[ApplicableDays],[StartDate],[EndDate],[CreatedByUserId],[ImageKey],[ImageUrl])
+            SELECT [EstablishmentId],[Name],[Type],[CurrentUses],[Description],[ApplicableDays],[StartDate],[EndDate],[CreatedByUserId],[ImageKey],[ImageUrl]
             FROM @TbPromotion
 
             SET @PromotionId = SCOPE_IDENTITY();
 
             INSERT INTO Restaurant.PromotionDetail
-                   (PromotionId,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,CreatedByUserId)
-            SELECT @PromotionId,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,CreatedByUserId
+                   (PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId)
+            SELECT @PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId
             FROM @TbPromotionDetails
+
         COMMIT TRAN
         SELECT '1' as code, 'Registrado Correctamente' as 'message'
     END TRY

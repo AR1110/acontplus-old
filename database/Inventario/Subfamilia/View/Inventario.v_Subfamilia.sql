@@ -21,6 +21,7 @@ CREATE OR ALTER VIEW Inventario.v_Subfamilia WITH SCHEMABINDING AS (
 		,e.ruc
 		,e.razonSocial as empresa
         ,f.descripcion as familia
+        ,f.siglas      as siglaFamilia
 	FROM dbo.SubFamilia    s WITH(NOLOCK)
     INNER JOIN dbo.Entidad e WITH(NOLOCK) ON s.idEntidad = e.idEntidad
      LEFT JOIN dbo.Familia f WITH(NOLOCK) ON f.idFamilia = s.idFamilia

@@ -15,8 +15,8 @@ CREATE OR ALTER PROCEDURE Restaurant.UpdatePromotion
      @UserRoleId INT
     ,@Id INT
     ,@Json VARCHAR(MAX)
-    ,@S3ObjectUrl VARCHAR(800) = NULL
-    ,@S3ObjectKey VARCHAR(500) = NULL
+    ,@ImageUrl VARCHAR(800) = NULL
+    ,@ImageKey VARCHAR(500) = NULL
 AS
 BEGIN
     SET LANGUAGE SPANISH;
@@ -33,12 +33,16 @@ BEGIN
     (
         [Id] INT NOT NULL
        ,[EstablishmentId] INT NOT NULL
+       ,[Name] VARCHAR(100) NOT NULL
        ,[Description] VARCHAR(50) NOT NULL
-       ,[PromotionDays] VARCHAR(MAX) NOT NULL
+       ,[ApplicableDays] VARCHAR(MAX) NOT NULL
+       ,[MaxTotalUses] INT NULL 
+       ,[MaxUsesPerCustomer] INT NULL
+       ,[StartTime] TIME(7) NULL
        ,[StartDate] DATETIME2 NOT NULL
        ,[EndDate] DATETIME2 NOT NULL
-       ,[S3ObjectUrl] VARCHAR(800) NULL
-       ,[S3ObjectKey] VARCHAR(500) NULL
+       ,[ImageUrl] VARCHAR(800) NULL
+       ,[ImageKey] VARCHAR(500) NULL
        ,[IsActive] BIT NOT NULL
        ,[IsDeleted] BIT NOT NULL
        ,[UpdatedByUserId] INT NOT NULL
@@ -53,12 +57,18 @@ BEGIN
        ,[FeeId] INT NOT NULL
        ,[TaxId] INT NOT NULL
        ,[MeasureId] INT NOT NULL
-       ,[Quantity] NUMERIC(18,5) NOT NULL
-       ,[Price] NUMERIC(18,5) NOT NULL
-       ,[Obs] VARCHAR(300) NULL
-       ,[CostPrice] NUMERIC(18,5) NOT NULL
+       ,[UnitPrice] NUMERIC(18,5) NOT NULL
+       ,[PromotionalPrice] NUMERIC(18,5) NOT NULL
+       ,[DiscountPercent] NUMERIC(18,5) NOT NULL
+       ,[Discount] NUMERIC(18,5) NOT NULL
        ,[Subtotal] NUMERIC(18,5) NOT NULL
-       ,[UniqueId] VARCHAR(300) NULL
+       ,[BuyQuantity] NUMERIC(18,5) NOT NULL
+       ,[GetQuantity] INT NULL
+       ,[Notes] VARCHAR(500) NULL
+       ,[RequiredQuantity] NUMERIC(18,5) NOT NULL
+       ,[CreatedByUserId] INT NOT NULL
+       ,[UpdatedByUserId] INT NOT NULL
+       ,[UpdatedAt] DATETIME2 DEFAULT GETDATE() 
        ,[IsActive] BIT NOT NULL
        ,[IsDeleted] BIT NOT NULL
     )
@@ -77,40 +87,46 @@ BEGIN
         )
 
         INSERT INTO @TbPromotion
-               (Id,EstablishmentId,Description,PromotionDays,StartDate,EndDate,IsActive,IsDeleted ,S3ObjectUrl ,S3ObjectKey)
-        SELECT @Id,EstablishmentId,Description,PromotionDays,StartDate,EndDate,IsActive,IsDeleted,@S3ObjectUrl,@S3ObjectKey
+               (Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted ,ImageUrl  ,ImageKey)
+        SELECT @Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted,@ImageUrl ,@ImageKey
         FROM OPENJSON(@Promotion)
         WITH
         (
-             establishmentId  INT
-            ,description      VARCHAR(50)
-            ,promotionDays    VARCHAR(MAX)
-            ,startDate        DATETIME2
-            ,endDate          DATETIME2
-            ,isActive         BIT
-            ,isDeleted        BIT
+             [establishmentId]       INT
+            ,[name]                  VARCHAR(100)
+            ,[description]           VARCHAR(50)
+            ,[applicableDays]        VARCHAR(MAX)
+            ,[maxTotalUses]          INT
+            ,[maxUsesPerCustomer]    INT
+            ,[startTime]             TIME(7)
+            ,[startDate]             DATETIME2
+            ,[endDate]               DATETIME2
+            ,isActive                BIT
+            ,isDeleted               BIT
         );
 
         INSERT INTO @TbPromotionDetails
-              (PromotionId,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,IsActive,IsDeleted)
-        SELECT @Id        ,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,IsActive,IsDeleted
+              (Id,PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,IsActive,IsDeleted,CreatedByUserId,UpdatedByUserId)
+        SELECT Id,@Id        ,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,IsActive,IsDeleted,@UserId        ,@UserId
         FROM OPENJSON(@PromotionDetails)
         WITH
         (
-             id            INT
-            ,promotionId   INT
-            ,itemId        INT
-            ,feeId         INT
-            ,taxId         INT
-            ,measureId     INT
-            ,quantity      NUMERIC(18,5)
-            ,price         NUMERIC(18,5)
-            ,obs           VARCHAR(300)
-            ,costPrice     NUMERIC(18,5)
-            ,subtotal      NUMERIC(18,5)
-            ,uniqueId      VARCHAR(300)
-            ,isActive      BIT
-            ,isDeleted     BIT
+             id                      INT
+            ,[itemId]                INT
+            ,[feeId]                 INT
+            ,[taxId]                 INT
+            ,[measureId]             INT
+            ,[unitPrice]             NUMERIC(18,5)
+            ,[promotionalPrice]      NUMERIC(18,5)
+            ,[discountPercent]       NUMERIC(18,5)
+            ,[discount]              NUMERIC(18,5)
+            ,[subtotal]              NUMERIC(18,5)
+            ,[buyQuantity]           NUMERIC(18,5)
+            ,[getQuantity]           INT
+            ,[notes]                 VARCHAR(500)
+            ,[requiredQuantity]      NUMERIC(18,5)
+            ,isActive                BIT
+            ,isDeleted               BIT
         );
 
 
@@ -127,43 +143,50 @@ BEGIN
 
         BEGIN TRAN
             UPDATE pr SET
-                   pr.EstablishmentId  = tp.EstablishmentId
-                  ,pr.Description      = tp.Description
-                  ,pr.PromotionDays    = tp.PromotionDays
-                  ,pr.StartDate        = tp.StartDate
-                  ,pr.EndDate          = tp.EndDate
-                  ,pr.S3ObjectKey      = tp.S3ObjectKey
-                  ,pr.S3ObjectUrl      = tp.S3ObjectUrl
-                  ,pr.IsActive         = tp.IsActive
-                  ,pr.IsDeleted        = tp.IsDeleted
-                  ,pr.UpdatedByUserId  = tp.UpdatedByUserId
-                  ,pr.UpdatedAt        = tp.UpdatedAt
+                   pr.EstablishmentId      = tp.EstablishmentId
+                  ,pr.Name                 = tp.Name
+                  ,pr.Description          = tp.Description
+                  ,pr.ApplicableDays       = tp.ApplicableDays
+                  ,pr.MaxTotalUses         = tp.MaxTotalUses
+                  ,pr.MaxUsesPerCustomer   = tp.MaxUsesPerCustomer
+                  ,pr.StartTime            = tp.StartTime
+                  ,pr.StartDate            = tp.StartDate
+                  ,pr.EndDate              = tp.EndDate
+                  ,pr.ImageUrl             = tp.ImageUrl
+                  ,pr.ImageKey             = tp.ImageKey
+                  ,pr.IsActive             = tp.IsActive
+                  ,pr.IsDeleted            = tp.IsDeleted
+                  ,pr.UpdatedByUserId      = tp.UpdatedByUserId
+                  ,pr.UpdatedAt            = tp.UpdatedAt
             FROM Restaurant.Promotion pr
             INNER JOIN @TbPromotion   tp ON pr.Id = tp.Id;
 
             UPDATE pd SET
-                   pd.PromotionId     = tp.PromotionId
-                  ,pd.ItemId          = tp.ItemId
-                  ,pd.FeeId           = tp.FeeId
-                  ,pd.TaxId           = tp.TaxId
-                  ,pd.MeasureId       = tp.MeasureId
-                  ,pd.Quantity        = tp.Quantity
-                  ,pd.Price           = tp.Price
-                  ,pd.Obs             = tp.Obs
-                  ,pd.CostPrice       = tp.CostPrice
-                  ,pd.Subtotal        = tp.Subtotal
-                  ,pd.UniqueId        = tp.UniqueId
-                  ,pd.IsActive        = tp.IsActive
-                  ,pd.IsDeleted       = tp.IsDeleted
-                  ,pd.UpdatedAt       = GETDATE()
-                  ,pd.UpdatedByUserId = @UserId
+                   pd.PromotionId          = tp.PromotionId
+                  ,pd.ItemId               = tp.ItemId
+                  ,pd.FeeId                = tp.FeeId
+                  ,pd.TaxId                = tp.TaxId
+                  ,pd.MeasureId            = tp.MeasureId
+                  ,pd.UnitPrice            = tp.UnitPrice
+                  ,pd.PromotionalPrice     = tp.PromotionalPrice
+                  ,pd.DiscountPercent      = tp.DiscountPercent
+                  ,pd.Discount             = tp.Discount
+                  ,pd.Subtotal             = tp.Subtotal
+                  ,pd.BuyQuantity          = tp.BuyQuantity
+                  ,pd.GetQuantity          = tp.GetQuantity
+                  ,pd.Notes                = tp.Notes
+                  ,pd.RequiredQuantity     = tp.RequiredQuantity
+                  ,pd.IsActive             = tp.IsActive
+                  ,pd.IsDeleted            = tp.IsDeleted
+                  ,pd.UpdatedByUserId      = tp.UpdatedByUserId
+                  ,pd.UpdatedAt            = tp.UpdatedAt
             FROM Restaurant.PromotionDetail pd
             INNER JOIN @TbPromotionDetails  tp ON pd.Id = tp.Id;
 
 
             INSERT INTO Restaurant.PromotionDetail
-                  (PromotionId,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,CreatedByUserId)
-            SELECT PromotionId,ItemId,FeeId,TaxId,MeasureId,Quantity,Price,Obs,CostPrice,Subtotal,UniqueId,@UserId
+                  (PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId)
+            SELECT PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId
             FROM @TbPromotionDetails
             WHERE Id = 0 
 
