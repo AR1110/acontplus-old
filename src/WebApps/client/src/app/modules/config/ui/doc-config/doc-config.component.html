@@ -8,7 +8,7 @@
         <mat-select
           name="establecimiento"
           id="establecimiento"
-          [(ngModel)]="dataSearch().codEstab"
+          [(ngModel)]="dataSearch.codEstab"
           (selectionChange)="onChangeEstab()"
         >
           @for (item of establecimientos(); track $index) {
@@ -25,7 +25,7 @@
         <mat-select
           name="puntoEmision"
           id="puntoEmision"
-          [(ngModel)]="dataSearch().idPuntoEmision"
+          [(ngModel)]="dataSearch.idPuntoEmision"
           (selectionChange)="getDocs()"
         >
           @for (item of puntosEmision(); track $index) {

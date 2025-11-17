@@ -5,7 +5,7 @@ import {FixTempLayout} from "./layouts/fix-temp-layout/fix-temp-layout";
 export const routes: Routes = [
   {
     path: '',
-    canActivate: [authGuard],
+   // canActivate: [authGuard],
     component: FixTempLayout,
     children: [
       {
