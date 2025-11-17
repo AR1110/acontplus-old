@@ -40,6 +40,7 @@ import {ToastrNotificationService} from "@core/services/toastr-notification.serv
 import {Fee} from "@inventory/domain/models/fee";
 import {TaxRate} from "@core/models/tax-rate";
 import {ProductMeasure} from "@inventory/domain/models/product-measure";
+import {ProformaDetail} from "@sale/domain/models/proforma-detail";
 
 @Component({
   selector: 'app-proforma-add-edit',
@@ -493,6 +494,10 @@ export class ProformaAddEdit implements OnInit {
   }
 
   ngOnInit() {
+    console.log(new ProformaDetail({
+      unitPrice: 12,
+      discount: 6
+    }).calculate())
     this.loadFormData();
     const items: any[] = [
       {
@@ -538,44 +543,6 @@ export class ProformaAddEdit implements OnInit {
     });
   }
 
-  private addRow() {
-    return {
-      uuid: generateUuidv4(),
-      id: 0,
-      code: '',
-      productId: 0,
-      description: '',
-      quantity: 0,
-      stockQuantity: 0,
-      taxCode: '',
-
-      fees: [] as ProductFee[],
-      measureId: 0,
-      measures: [] as ProductMeasure[],
-      conversion: 1,
-      feeId: 0,
-      unitPrice: 0,
-      unitCost: 0,
-      fractionalUnitCost: 0,
-      priceWithoutSubsidy: 0,
-      priceWithTax: 0,
-      discountPercent: 0,
-      discount: 0,
-      iceTax: 0,
-      warehouseId: 0,
-      totalPriceWithoutTax: 0,
-      taxValue: 0,
-      total: 0,
-      minWholesaleQuantity: 0,
-      note: null,
-      hasInventory: false,
-      hasAdditionalData: false,
-      additionalProductInfo: [],
-      inventoryAdjustments: [],
-      status: true,
-    };
-  }
-
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object' || this.isLoadingProduct()) return;
 
@@ -601,7 +568,7 @@ export class ProformaAddEdit implements OnInit {
           if(!dataTaxRate){
             throw new Error('No se encontró el tipo impuesto');
           }
-          let rowData: any;
+          let rowData: ProformaDetail;
           let shouldAddRow = false;
 
           //  Si el producto lleva inventario → revisar duplicados
@@ -612,7 +579,7 @@ export class ProformaAddEdit implements OnInit {
             );
 
             if (this.isDuplicateItem()) {
-              rowData = this.addRow();
+              rowData = ProformaDetail.create();
               rowData.quantity = 1;
               shouldAddRow = true;
             } else {
@@ -626,7 +593,7 @@ export class ProformaAddEdit implements OnInit {
 
               if (existingIndex === -1) {
                 // No existe → agregar nuevo
-                rowData = this.addRow();
+                rowData = ProformaDetail.create();
                 rowData.quantity = 1;
                 shouldAddRow = true;
               } else {
@@ -638,7 +605,7 @@ export class ProformaAddEdit implements OnInit {
           }
           //  Si NO lleva inventario → siempre agregar
           else {
-            rowData = this.addRow();
+            rowData = ProformaDetail.create()
             rowData.quantity = 1;
             shouldAddRow = true;
           }
@@ -766,7 +733,17 @@ export class ProformaAddEdit implements OnInit {
     }
   }
 
-  async cellEdited(cell: any): Promise<void> {}
+  async cellEdited(cell: any): Promise<void> {
+    const row = cell.getRow();
+    const raw = row.getData(); // valores crudos de Tabulator
+
+    // 1. Convertir a modelo
+    const detail = new ProformaDetail(raw).calculate();
+
+    console.log(detail)
+
+    this.updateDetailInList(raw.uuid, detail);
+  }
 
   closeDg() {
     this.dgRef.close();

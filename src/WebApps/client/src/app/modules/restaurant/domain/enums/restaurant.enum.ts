@@ -13,6 +13,7 @@ export enum RESTAURANT_PATHS {
   CONFIG = 'Configuration/',
   MEAL_SCHEDULE_SETTING = 'MealScheduleSetting/',
   MEAL_CONSUMPTION = 'MealConsumption/',
+  LOOKUP = 'Lookup',
 }
 
 export const enum RESTAURANT_CODE_REPORT {
