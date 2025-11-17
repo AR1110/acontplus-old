@@ -49,4 +49,6 @@ public class ItemComposition : BaseEntity
     public int? ParentCompositionId { get; set; }
     public ItemComposition? ParentComposition { get; set; }
     public ICollection<ItemComposition> Children { get; set; } = [];
+
+    public int? FeeId { get; set; }
 }

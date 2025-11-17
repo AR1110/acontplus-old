@@ -10,5 +10,7 @@ go
 --inner join Restaurant.Menu me on me.Id = oi.MenuId
 --where ItemId is null
 
-select * from Restaurant.OrderItem where ItemId is null
+--alter table Restaurant.[Order] drop constraint fk_estab_order
+
+select * from Restaurant.ItemComposition
 

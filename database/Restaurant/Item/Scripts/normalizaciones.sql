@@ -28,66 +28,60 @@ go
 
 --ALTER TABLE Restaurant.ItemComposition ADD CONSTRAINT FK_ItemComposition_Tarifa_idTarifa FOREIGN KEY(FeeId) REFERENCES dbo.Tarifa(idTarifa)
 
---ALTER TABLE Restaurant.ItemComposition ADD CONSTRAINT FK_ItemComposition_TarifaImpuesto_idTarifaImpuesto FOREIGN KEY([TaxId]) REFERENCES Sri.TarifaImpuesto(idTarifaImpuesto)
-
 --ALTER TABLE Restaurant.ItemComposition ADD CONSTRAINT FK_ItemComposition_Medida_idMedida FOREIGN KEY([MeasureId]) REFERENCES dbo.Medida(idMedida)
 
 --alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_Tarifa_idTarifa
---alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_TarifaImpuesto_idTarifaImpuesto
 --alter table Restaurant.ItemComposition drop constraint FK_ItemComposition_Medida_idMedida
 
---INSERT INTO Restaurant.ItemComposition
---     (
---       ItemId
---      ,ChildItemId
---      ,Quantity
---      ,Subtotal
---      ,Price
---      ,Instructions
---      ,Weight
---      ,NetWeight
---      ,ExtentId
---      ,CostPrice
---      ,CreatedAt
---      ,UpdatedAt
---      ,CreatedByUserId
---      ,IsActive
---      ,IsOptional
---      ,IsDeleted
---     )
---select re.ItemId
---      ,(SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = ig.ProductId) as [ChildItemId]
---      ,re.Quantity
---      ,0
---      ,0
---      ,re.Instructions
---      ,re.Weight
---      ,re.NetWeight
---      ,re.ExtentId
---      ,re.CostPrice
---      ,re.CreatedAt
---      ,re.UpdatedAt
---      ,re.CreatedByUserId
---      ,re.IsActive
---      ,0
---      ,re.IsDeleted
---from Restaurant.Recipe           re
---INNER JOIN Restaurant.Ingredient ig ON ig.Id = re.IngredientId
+--delete from Restaurant.ItemComposition
+
+    --INSERT INTO Restaurant.ItemComposition
+    --     (
+    --       MeasureId
+    --      ,[ParentItemId]
+    --      ,ChildItemId
+    --      ,Quantity
+    --      ,TotalPrice
+    --      ,TotalCost
+    --      ,SalePrice
+    --      ,UnitPrice
+    --      ,CreatedAt
+    --      ,UpdatedAt
+    --      ,CreatedByUserId
+    --      ,IsActive
+    --      ,IsOptional
+    --      ,IsDeleted
+    --     )
+    --select ar.idMedida
+    --      ,re.ItemId                                                                as [ParentItemId]
+    --      ,(SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = ig.ProductId) as [ChildItemId]
+    --      ,re.Quantity                                                              as Quantity
+    --      ,re.Quantity * 0                                                          as TotalPrice
+    --      ,re.Quantity * CostPrice                                                  as TotalCost
+    --      ,0
+    --      ,re.CostPrice
+    --      ,re.CreatedAt
+    --      ,re.UpdatedAt
+    --      ,re.CreatedByUserId
+    --      ,re.IsActive
+    --      ,0
+    --      ,re.IsDeleted
+    --from Restaurant.Recipe           re
+    --INNER JOIN Restaurant.Ingredient ig ON ig.Id = re.IngredientId
+    --INNER JOIN dbo.Articulo          ar on ar.idArticulo = ig.ProductId
 
 --INSERT INTO Restaurant.ItemComposition
 
 --    (
---       ItemId
+--       ParentItemId
 --      ,ChildItemId
 --      ,FeeId
---      ,TaxId
 --      ,[MeasureId]
 --      ,Quantity
---      ,Discount
---      ,DiscountPercent
---      ,CostPrice
---      ,Price
---      ,Subtotal
+--      ,UnitPrice
+--      ,SalePrice
+--      ,TotalCost
+--      ,TotalPrice
 --      ,CreatedAt
 --      ,UpdatedAt
 --      ,CreatedByUserId
@@ -97,17 +91,15 @@ go
 --      ,IsOptional
 --    )
 
---SELECT (SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = me.ProductId)                       as ItemId
+--SELECT (SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = me.ProductId)                       as ParentItemId
 --      ,mi.ItemId                                                                                      as ChildItemId
 --      ,mi.FeeId
---      ,(SELECT im.idTarifaImpuesto FROM Sri.TarifaImpuesto im WHERE im.codigo =  ti.codigoPorcentaje) as TaxId
 --      ,ar.idMedida                                                                                    as [MeasureId]
 --      ,mi.Quantity
---      ,mi.DiscountValue
---      ,mi.DiscountPercent
---      ,ar.precioCosto                                                                                 as CostPrice
---      ,ar.precioCosto                                                                                 as Price
---      ,mi.Subtotal
+--      ,ar.precioCosto                                                                                 as UnitPrice
+--      ,ar.precioCosto                                                                                 as SalePrice
+--      ,Quantity * 0                                                                                   as TotalCost
+--      ,Quantity * 0                                                                                   as TotalPrice
 --      ,mi.CreatedAt
 --      ,mi.UpdatedAt
 --      ,mi.CreatedByUserId
@@ -119,7 +111,6 @@ go
 --INNER JOIN Restaurant.Menu me ON me.Id         = mi.MenuId
 --INNER JOIN Restaurant.Item it ON it.Id         = mi.ItemId
 --INNER JOIN dbo.Articulo    ar ON ar.idArticulo = it.ProductId
---INNER JOIN dbo.TipoIva     ti ON ti.idTipoiva  = ar.idTipoIva
 
 select * from Restaurant.ItemComposition
 

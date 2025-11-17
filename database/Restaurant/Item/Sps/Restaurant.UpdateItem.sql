@@ -22,52 +22,44 @@ BEGIN
     DECLARE @UserId INT
 
     --> Data Json
-    DECLARE @Item NVARCHAR(MAX) ,@ItemComposition NVARCHAR(MAX)
+    DECLARE @Compositions NVARCHAR(MAX)
             
     --> Tablas temporales
     DECLARE @TbItem AS TABLE
     (
-        Id             INT NOT NULL
-       ,[Summary]      VARCHAR(500) NULL
-       ,[Cooking]      BIT NOT NULL
-       ,[Recipe]       VARCHAR(MAX) NULL
-       ,[Instructions] VARCHAR(MAX) NULL
-       ,[Content]      VARCHAR(500) NULL
-       ,[Unit]         INT NULL
-       ,[ForPromotion] BIT NULL
-       ,[Quantity]     INT NULL
-       ,[Title]        VARCHAR(500) NULL
-       ,IsActive       BIT NOT NULL
-       ,UpdatedAt      DATETIME2 DEFAULT GETDATE()
+        Id                        INT NOT NULL
+       ,[Summary]                 VARCHAR(500) NULL
+       ,[PreparationTimeMinutes]  INT NULL
+       ,[RequiresCooking]         BIT NOT NULL
+       ,[PreparationInstructions] VARCHAR(MAX) NULL
+       ,IsActive                  BIT NOT NULL
+       ,UpdatedAt                 DATETIME2 DEFAULT GETDATE()
+       ,UpdatedByUserId           INT NOT NULL
     )
    
     DECLARE @TbItemComposition AS TABLE
     (
-        [Id]                INT NOT NULL
-       ,[ItemId]            INT NOT NULL
-       ,[ChildItemId]       INT NOT NULL
-       ,[ItemCompositionId] INT NULL
-       ,[FeeId]             INT NULL
-       ,[TaxId]             INT NULL
-       ,[MeasureId]         INT NULL
-       ,[ExtentId]          INT NULL
-       ,[Quantity]          NUMERIC(18,5) NOT NULL
-       ,[Price]             NUMERIC(18,5) NOT NULL
-       ,[Instructions]      VARCHAR(MAX) NULL
-       ,[Weight]            NUMERIC(18,5) NULL
-       ,[NetWeight]         NUMERIC(18,5) NULL
-       ,[CostPrice]         NUMERIC(18,5) NOT NULL
-       ,[DiscountPercent]   NUMERIC(18,5) NULL
-       ,[Discount]          NUMERIC(18,5) NULL
-       ,[Subtotal]          NUMERIC(18,5) NOT NULL
-       ,[WastePercentage]   NUMERIC(18,5) NULL
-       ,[IsOptional]        BIT NOT NULL
-       ,[ExtraCharge]       NUMERIC(18,5) NULL
-       ,[UniqueId]          VARCHAR(MAX) NULL
-       ,[IsActive]          BIT NOT NULL
-       ,[IsDeleted]         BIT NOT NULL
-       ,[CreatedAt]         DATETIME2 DEFAULT GETDATE()
-       ,[UpdatedAt]         DATETIME2 DEFAULT GETDATE()
+        [Id]                  INT NOT NULL
+       ,[ParentItemId]        INT NOT NULL
+       ,[ChildItemId]         INT NOT NULL
+       ,[ParentCompositionId] INT NULL
+       ,[FeeId]               INT NULL
+       ,[MeasureId]           INT NULL
+       ,[Quantity]            NUMERIC(18,5) NOT NULL
+       ,[SalePrice]           NUMERIC(18,5) NOT NULL
+       ,[UnitPrice]           NUMERIC(18,5) NOT NULL
+       ,[TotalPrice]          NUMERIC(18,5) NOT NULL
+       ,[TotalCost]           NUMERIC(18,5) NOT NULL
+       ,[WastePercentage]     NUMERIC(18,5) NULL
+       ,[IsOptional]          BIT NOT NULL
+       ,[ExtraCharge]         NUMERIC(18,5) NULL
+       ,[UniqueId]            VARCHAR(MAX) NULL
+       ,[IsActive]            BIT NOT NULL
+       ,[IsDeleted]           BIT NOT NULL
+       ,[UpdatedAt]           DATETIME2 DEFAULT GETDATE()
+       ,[CompositionLevel]    INT NOT NULL DEFAULT 1
+       ,[CreatedByUserId]     INT NOT NULL
+       ,[UpdatedByUserId]     INT NOT NULL
     )
 
 	BEGIN TRY
@@ -75,59 +67,41 @@ BEGIN
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
         --> DataJson
-        SELECT @Item            = item
-              ,@ItemComposition = itemComposition
-        FROM OPENJSON(@json)  WITH
-        (
-            item            NVARCHAR(MAX) AS JSON 
-           ,itemComposition NVARCHAR(MAX) AS JSON
-        )
+        SELECT @Compositions = compositions FROM OPENJSON(@json) WITH (compositions NVARCHAR(MAX) AS JSON)
 
         INSERT INTO @tbItem
-              ( id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title ,IsActive)
-        SELECT @id, [Summary], Cooking, Recipe, Instructions, Content, Unit, ForPromotion, Quantity, Title ,IsActive
-        FROM OPENJSON(@Item) WITH
+              ( Id, Summary, PreparationTimeMinutes, RequiresCooking, PreparationInstructions, IsActive, UpdatedByUserId)
+        SELECT @Id, Summary, PreparationTimeMinutes, RequiresCooking, PreparationInstructions, IsActive, @UserId
+        FROM OPENJSON(@Json) WITH
         (
-            summary      VARCHAR(500)
-           ,cooking      BIT
-           ,recipe       VARCHAR(MAX)
-           ,instructions VARCHAR(MAX)
-           ,content      VARCHAR(500)
-           ,unit         INT
-           ,forPromotion BIT
-           ,quantity     INT
-           ,title        VARCHAR(500)
-           ,isActive     BIT
+             summary                    VARCHAR(500)
+            ,preparationTimeMinutes     INT
+            ,requiresCooking            BIT
+            ,preparationInstructions    VARCHAR(MAX)
+            ,isActive                   BIT
         )
 
         INSERT INTO @TbItemComposition
-              (Id,ItemId,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage, IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted)
-        SELECT Id,ItemId,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage, IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted
-        FROM OPENJSON(@ItemComposition) WITH
+              (Id,ParentItemId,ChildItemId,ParentCompositionId,FeeId,MeasureId,Quantity,UnitPrice,SalePrice,TotalCost,TotalPrice,WastePercentage,IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted,CreatedByUserId,UpdatedByUserId)
+        SELECT id,@Id         ,childItemId,parentCompositionId,feeId,measureId,quantity,unitPrice,salePrice,totalCost,totalPrice,wastePercentage,isOptional,extraCharge,uniqueId,isActive,isDeleted,@UserId       ,@UserId
+        FROM OPENJSON(@Compositions) WITH
         (
-            [id]                INT
-           ,[itemId]            INT
-           ,[childItemId]       INT
-           ,[itemCompositionId] INT
-           ,[feeId]             INT
-           ,[taxId]             INT
-           ,[measureId]         INT
-           ,[extentId]          INT
-           ,[quantity]          NUMERIC(18,5)
-           ,[price]             NUMERIC(18,5)
-           ,[instructions]      VARCHAR(MAX)
-           ,[weight]            NUMERIC(18,5)
-           ,[netweight]         NUMERIC(18,5)
-           ,[costPrice]         NUMERIC(18,5)
-           ,[discountPercent]   NUMERIC(18,5)
-           ,[discount]          NUMERIC(18,5)
-           ,[subtotal]          NUMERIC(18,5)
-           ,[wastePercentage]   NUMERIC(18,5)
-           ,[isOptional]        BIT
-           ,[extraCharge]       NUMERIC(18,5)
-           ,[uniqueId]          VARCHAR(MAX)
-           ,[isActive]          BIT
-           ,[isDeleted]        BIT
+             [id]                    INT
+            ,[childItemId]           INT
+            ,[parentCompositionId]   INT
+            ,[feeId]                 INT
+            ,[measureId]             INT
+            ,[quantity]              NUMERIC(18,5)
+            ,[unitPrice]             NUMERIC(18,5)
+            ,[salePrice]             NUMERIC(18,5)
+            ,[totalCost]             NUMERIC(18,5)
+            ,[totalPrice]            NUMERIC(18,5)
+            ,[wastePercentage]       NUMERIC(18,5)
+            ,[isOptional]            BIT
+            ,[extraCharge]           NUMERIC(18,5)
+            ,[uniqueId]              VARCHAR(MAX)
+            ,[isActive]              BIT
+            ,[isDeleted]             BIT
         )
 
         --> Validation
@@ -146,52 +120,42 @@ BEGIN
 		BEGIN TRAN
             --> Item
             UPDATE it SET 
-                   it.summary         = ti.summary 
-                  ,it.cooking         = ti.cooking 
-                  ,it.recipe          = ti.recipe
-                  ,it.Title           = ti.Title
-                  ,it.instructions    = ti.instructions
-                  ,it.content         = ti.content 
-                  ,it.IsActive        = ti.IsActive
-                  ,it.UpdatedAt       = ti.UpdatedAt
-                  ,it.UpdatedByUserId = @UserId
+                   it.summary                 = ti.summary 
+                  ,it.PreparationTimeMinutes  = ti.PreparationTimeMinutes 
+                  ,it.RequiresCooking         = ti.RequiresCooking
+                  ,it.PreparationInstructions = ti.PreparationInstructions
+                  ,it.IsActive                = ti.IsActive
+                  ,it.UpdatedAt               = ti.UpdatedAt
+                  ,it.UpdatedByUserId         = ti.UpdatedByUserId
             FROM Restaurant.Item it
             INNER JOIN @tbItem   ti ON ti.Id = it.Id
             
             --> INSERT RECIPE IF NOT EXISTS
             INSERT INTO Restaurant.ItemComposition
-                  (ItemId,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage,IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted,CreatedAt,CreatedByUserId)
-            SELECT @Id   ,ChildItemId,ItemCompositionId,FeeId,TaxId,MeasureId,ExtentId,Quantity,Price,Instructions,Weight,NetWeight,CostPrice,DiscountPercent,Discount,Subtotal,WastePercentage,IsOptional,ExtraCharge,UniqueId,IsActive,IsDeleted,CreatedAt,@UserId
+                  (ParentItemId,ChildItemId,ParentCompositionId,FeeId,MeasureId,Quantity,UnitPrice,SalePrice,TotalCost,TotalPrice,WastePercentage,IsOptional,ExtraCharge,[CompositionLevel],UniqueId,IsActive,IsDeleted,CreatedByUserId)
+            SELECT ParentItemId,ChildItemId,ParentCompositionId,FeeId,MeasureId,Quantity,UnitPrice,SalePrice,TotalCost,TotalPrice,WastePercentage,IsOptional,ExtraCharge,[CompositionLevel],UniqueId,IsActive,IsDeleted,CreatedByUserId
             FROM @TbItemComposition
             WHERE Id = 0
 
             --> UPDATE RECIPE 
             UPDATE rr SET
-                   rr.Weight           = tr.[Weight]
-                  ,rr.NetWeight        = tr.[NetWeight]
-                  ,rr.Instructions     = tr.Instructions
-                  ,rr.Quantity         = tr.Quantity
-                  ,rr.ExtentId         = tr.ExtentId
-                  ,rr.CostPrice        = tr.CostPrice
-                  ,rr.DiscountPercent  = tr.DiscountPercent
-                  ,rr.Discount         = tr.Discount
-                  ,rr.Subtotal         = tr.Subtotal
-                  ,rr.WastePercentage  = tr.WastePercentage
-                  ,rr.IsOptional       = tr.IsOptional
-                  ,rr.ExtraCharge      = tr.ExtraCharge
-                  ,rr.UniqueId         = tr.UniqueId
-                  ,rr.Price            = tr.Price
-                  ,rr.MeasureId        = tr.MeasureId
-                  ,rr.TaxId            = tr.TaxId
-                  ,rr.FeeId            = tr.FeeId
-                  ,rr.ChildItemId      = tr.ChildItemId
-                  ,rr.ItemCompositionId= tr.ItemCompositionId
-                  ,rr.IsActive         = tr.IsActive
-                  ,rr.IsDeleted        = tr.IsDeleted
-                  ,rr.UpdatedAt        = tr.UpdatedAt
-                  ,rr.UpdatedByUserId  = @UserId
+                   rr.ParentItemId        = tr.ParentItemId
+                  ,rr.ChildItemId         = tr.ChildItemId
+                  ,rr.ParentCompositionId = tr.ParentCompositionId
+                  ,rr.FeeId               = tr.FeeId
+                  ,rr.MeasureId           = tr.MeasureId
+                  ,rr.Quantity            = tr.Quantity
+                  ,rr.UnitPrice           = tr.UnitPrice
+                  ,rr.SalePrice           = tr.SalePrice
+                  ,rr.TotalCost           = tr.TotalCost
+                  ,rr.WastePercentage     = tr.WastePercentage
+                  ,rr.IsOptional          = tr.IsOptional
+                  ,rr.ExtraCharge         = tr.ExtraCharge
+                  ,rr.UniqueId            = tr.UniqueId
+                  ,rr.IsActive            = tr.IsActive
+                  ,rr.IsDeleted           = tr.IsDeleted
             FROM Restaurant.ItemComposition rr
-            INNER JOIN @TbItemComposition   tr ON tr.Id = rr.Id;
+            INNER JOIN @TbItemComposition tr ON tr.Id = rr.Id;
 
               
 		COMMIT TRAN
@@ -199,12 +163,30 @@ BEGIN
 	END TRY
 
 	BEGIN CATCH
+        --> Variables locales para el error
+        DECLARE @ErrorNumber    INT            = ERROR_NUMBER()
+               ,@ErrorSeverity  INT            = ERROR_SEVERITY()
+               ,@ErrorState     INT            = ERROR_STATE()
+               ,@ErrorProcedure NVARCHAR(128)  = ERROR_PROCEDURE()
+               ,@ErrorLine      INT            = ERROR_LINE()
+               ,@ErrorMessage   NVARCHAR(4000) = ERROR_MESSAGE()
+               ,@ErrorDetails   NVARCHAR(MAX)
+               ,@Token          VARCHAR(300)   = NEWID()
+               ,@Method         VARCHAR(200)   = 'Restaurant/item/Put'
+
+        SELECT @ErrorDetails = (
+            SELECT @Id                  AS ItemId
+                  ,@UserRoleId          AS PageSize
+                  ,@Json                as dataJson
+            FOR JSON PATH
+        );
+
         IF (@@TRANCOUNT > 0) ROLLBACK TRAN
 
         INSERT INTO ErroresSistema
-        (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage, errorDate, idUsuario ,errorDetails)
-        VALUES(NEWID(), 'Item/Put', ERROR_NUMBER(), ERROR_SEVERITY(), ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE(), dbo.ufnGetDateEcuador(), @UserId ,@Json)
+               (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
+        SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
 
-        SELECT '0' code, 'Error al actualizar el ingrediente' as 'message'
+        SELECT '0' code, 'Error al actualizar el item' as 'message'
      END CATCH
 END 

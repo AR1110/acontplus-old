@@ -24,30 +24,25 @@ BEGIN
     SET @TableNames = 'item,itemCompositions'
 
     SELECT it.Id
+          ,it.PreparationTimeMinutes
           ,it.Summary
-          ,it.Recipe
-          ,it.Instructions
-          ,it.Title
-          ,it.Cooking
+          ,it.PreparationInstructions
+          ,it.RequiresCooking
     FROM Restaurant.Item it WITH (NOLOCK)
     WHERE it.Id =  @id
 
     SELECT ic.Id
-          ,ic.ItemId
+          ,ic.ParentItemId
+          ,ic.ParentCompositionId
           ,ic.ChildItemId
           ,ic.FeeId
-          ,ic.TaxId
           ,ic.MeasureId
           ,ic.Quantity
-          ,ic.Price
-          ,ic.CostPrice
-          ,ic.Discount
-          ,ic.DiscountPercent
-          ,ic.Subtotal
-	      ,ic.Instructions
-	      ,ic.[Weight]
-	      ,ic.[NetWeight]
-	      ,ISNULL(ic.ExtentId, 0) ExtentId 
+          ,ic.SalePrice
+          ,ic.UnitPrice
+          ,ic.TotalCost
+          ,ic.UniqueId
+          ,ic.TotalPrice
 	      ,it.Summary
 	      ,ISNULL
            ((
@@ -108,17 +103,14 @@ BEGIN
         ,ar.descripcion as [description]
         ,ar.codigo      as code
         ,ta.descripcion as fee
-        ,ti.descripcion as tax
-        ,ti.codigo      as codePercentaje
         ,me.descripcion as measure
     FROM Restaurant.ItemComposition  ic WITH (NOLOCK)
     INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id               = ic.ChildItemId
      LEFT JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa         = ic.FeeId
-     LEFT JOIN Sri.TarifaImpuesto    ti WITH (NOLOCK) ON ti.idTarifaImpuesto = ic.TaxId
      LEFT JOIN dbo.Medida            me WITH (NOLOCK) ON me.idMedida         = ic.MeasureId
     INNER JOIN dbo.Articulo          ar WITH (NOLOCK) ON ar.idArticulo       = it.ProductId
-    WHERE ic.IsActive = 1
-      AND ic.ItemId = @id
+    WHERE ic.IsActive     = 1
+      AND ic.ParentItemId = @id
 
 END
 GO

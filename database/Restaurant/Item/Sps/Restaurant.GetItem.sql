@@ -87,16 +87,6 @@ BEGIN
                               END;
 
         --> Validate input parameters
-        IF @PageIndex < 1
-            BEGIN
-                THROW 50001, 'PageIndex must be greater than or equal to 1', 1;
-            END
-
-        IF @PageSize < 1 OR @PageSize > 1000
-            BEGIN
-                THROW 50002, 'PageSize must be between 1 and 1000', 1;
-            END
-
         IF @IncludeDeleted = 0
             BEGIN
                 SET @WhereClause = @WhereClause + N'AND ar.estado = 1 ';
@@ -107,7 +97,6 @@ BEGIN
                  SET @WhereClause = @WhereClause + N'AND (
                                                                ar.descripcion LIKE ''%'' + @SearchTerm + ''%''
                                                             OR ri.Summary     LIKE ''%'' + @SearchTerm + ''%''
-                                                            OR ri.Content     LIKE ''%'' + @SearchTerm + ''%''
                                                          ) '
             END
 
@@ -145,13 +134,10 @@ BEGIN
                              (
                                 SELECT ri.Id                   
                                       ,ri.ProductId
-                                      ,ISNULL(ri.title, '''')   AS Title
                                       ,ISNULL(ri.Summary, '''') AS Summary
-                                      ,ri.Cooking
-                                      ,ri.Recipe
-                                      ,ri.Instructions
-                                      ,ri.Content
-                                      ,ar.s3ObjectUrl           AS s3ObjectUrl
+                                      ,ri.[RequiresCooking]
+                                      ,ri.[PreparationInstructions]
+                                      ,ar.s3ObjectUrl           AS ImagenUrl
                                       ,ar.descripcion           AS Description
                                       ,ar.codigo                AS Code
                                       ,ar.medida                AS Measure
