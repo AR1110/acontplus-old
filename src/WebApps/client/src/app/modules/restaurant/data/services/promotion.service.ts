@@ -10,7 +10,7 @@ import { imgDefault } from '@core/utils/utils';
   providedIn: 'root',
 })
 export class PromotionService {
-  private url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTION}`;
+  private url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTIONS}`;
   private http = inject(HttpClient);
 
   getAll<T>(obj: T) {

@@ -1,0 +1,127 @@
+<!-- ============================================ -->
+<!-- src/app/components/promotion-list/promotion-list.component.html -->
+<!-- ============================================ -->
+
+<div class="list-container">
+  <!-- Header -->
+  <div class="list-header">
+    <h2 class="list-title">
+      <mat-icon class="title-icon">list</mat-icon>
+      Listado de Promociones ({{ promotionCount() }})
+    </h2>
+  </div>
+
+  <!-- Controles de Búsqueda y Filtros -->
+  <div class="controls-container">
+    <!-- Búsqueda -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por nombre</mat-label>
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        [value]="searchTerm()"
+        (input)="onSearchChange($any($event.target).value)"
+        placeholder="Buscar promociones...">
+    </mat-form-field>
+
+    <!-- Filtros -->
+    <div class="filter-buttons">
+      <mat-icon class="filter-icon">filter_list</mat-icon>
+      <button
+        mat-raised-button
+        [color]="filterActive() === 'all' ? 'primary' : ''"
+        (click)="setFilter('all')">
+        Todas
+      </button>
+      <button
+        mat-raised-button
+        [color]="filterActive() === 'active' ? 'primary' : ''"
+        (click)="setFilter('active')">
+        Activas
+      </button>
+      <button
+        mat-raised-button
+        [color]="filterActive() === 'inactive' ? 'primary' : ''"
+        (click)="setFilter('inactive')">
+        Inactivas
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+
+  } @else {
+    <!-- Lista de Promociones -->
+    @if (filteredPromotions().length === 0) {
+      <mat-card class="empty-state">
+        <mat-icon>local_offer</mat-icon>
+        <h3>No hay promociones que coincidan con los criterios</h3>
+        <p>Intente modificar los filtros o crear una nueva promoción.</p>
+      </mat-card>
+    } @else {
+      <div class="promotions-grid">
+        @for (promo of filteredPromotions(); track promo.id) {
+          <mat-card class="promotion-card">
+            <!-- Header de la tarjeta -->
+            <div class="card-header">
+              <h3 class="promo-name">{{ promo.name }}</h3>
+              <mat-chip [class]="promo.isActive ? 'active-chip' : 'inactive-chip'">
+                <mat-icon>{{ promo.isActive ? 'bolt' : 'schedule' }}</mat-icon>
+                {{ promo.isActive ? 'Activa' : 'Inactiva' }}
+              </mat-chip>
+            </div>
+
+            <!-- Información Principal -->
+            <div class="card-content">
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="info-label">Descuento</span>
+                  <span class="info-value highlight">
+                    {{ promo.type === 'percentage' ? promo.value + '%' : '$' + promo.value.toFixed(2) }}
+                  </span>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Vigencia</span>
+                  <span class="info-value">
+                    {{ formatDate(promo.startDate) }} - {{ formatDate(promo.endDate) }}
+                  </span>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Productos</span>
+                  <span class="info-value">{{ promo.selectedProducts.length }} items</span>
+                </div>
+
+                <div class="info-item">
+                  <span class="info-label">Creado por</span>
+                  <span class="info-value mono">{{ promo.createdBy.substring(0, 8) }}...</span>
+                </div>
+              </div>
+
+              <!-- Horario -->
+              <div class="schedule-info">
+                <mat-icon>schedule</mat-icon>
+                <div>
+                  <span class="schedule-label">Horario Activo:</span>
+                  <p class="schedule-text">{{ getActiveSchedule(promo) }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="card-actions">
+              <button
+                mat-raised-button
+                color="warn" >
+                <mat-icon>delete</mat-icon>
+                Eliminar
+              </button>
+            </div>
+          </mat-card>
+        }
+      </div>
+    }
+  }
+</div>

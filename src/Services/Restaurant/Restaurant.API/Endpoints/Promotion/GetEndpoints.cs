@@ -26,7 +26,6 @@ public static class GetEndpoints
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-
             var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
             {
                 SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
