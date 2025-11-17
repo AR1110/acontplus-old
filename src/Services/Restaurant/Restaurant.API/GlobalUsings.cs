@@ -16,3 +16,8 @@ global using Restaurant.Application.Interfaces.MealManagement;
 global using Restaurant.Application.Services;
 global using Restaurant.Domain.Entities;
 global using Restaurant.Domain.Repositories;
+global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Enums;
+global using Acontplus.Core.Extensions;
+global using Mapster;
+global using Restaurant.Application.Dtos.Items;
