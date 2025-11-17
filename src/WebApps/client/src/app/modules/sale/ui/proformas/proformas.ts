@@ -6,11 +6,11 @@ import { PageEvent } from '@angular/material/paginator';
 import {
   ProformaInvoiceFilterUseCase,
   ProformaInvoiceListUseCase,
-} from '@sale/application/use-cases/proforma-invoice.use-case';
+} from '@sale/application/use-cases/proforma-use-case';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { Pagination } from '@acontplus/ng-components';
-import { ProformaInvoiceList } from '@sale/domain/models/proforma-invoice';
+import { ProformaInvoiceList } from '@sale/domain/models/proforma';
 import { finalize } from 'rxjs/operators';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { MatButtonModule } from '@angular/material/button';
@@ -25,8 +25,8 @@ import { SALE_MODULES_CODE } from '@sale/domain/enums/sale.enum';
 import { HasPermissionDirective } from '@core/directives/permission';
 import { MatMenuModule } from '@angular/material/menu';
 import { DialogService } from '@core/services/dialog.service';
-import { ProformaInvoiceDetail } from '@sale/ui/proforma-invoices/proforma-invoice-detail/proforma-invoice-detail';
-import { ProformaInvoiceAddEdit } from '@sale/ui/proforma-invoices/proforma-invoice-add-edit/proforma-invoice-add-edit';
+import { ProformaDetail } from '@sale/ui/proformas/proforma-detail/proforma-detail';
+import { ProformaAddEdit } from '@sale/ui/proformas/proforma-add-edit/proforma-add-edit';
 
 @Component({
   selector: 'app-proforma-invoices',
@@ -44,10 +44,10 @@ import { ProformaInvoiceAddEdit } from '@sale/ui/proforma-invoices/proforma-invo
     HasPermissionDirective,
     MatMenuModule,
   ],
-  templateUrl: './proforma-invoices.html',
+  templateUrl: './proformas.html',
   styles: ``,
 })
-export class ProformaInvoices implements OnInit {
+export class Proformas implements OnInit {
   sale_modules_code = signal(SALE_MODULES_CODE);
   action_aliases = signal(ACTION_ALIASES);
   private _filterDataUseCase = inject(ProformaInvoiceFilterUseCase);
@@ -91,7 +91,7 @@ export class ProformaInvoices implements OnInit {
 
   openAddEditDialog(operation: 'add' | 'edit' | 'duplicate' = 'add', id?: number, data?: any) {
     this.dgSvc
-      .open(ProformaInvoiceAddEdit, {
+      .open(ProformaAddEdit, {
         size: 'xxl',
         data: {
           id: 0,
@@ -224,7 +224,7 @@ export class ProformaInvoices implements OnInit {
   onDateRangeSelection($event: any) {}
 
   openViewDetail(rowData: ProformaInvoiceList) {
-    this.dgSvc.open(ProformaInvoiceDetail, {
+    this.dgSvc.open(ProformaDetail, {
       data: {
         id: rowData.id,
       },

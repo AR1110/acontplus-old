@@ -17,7 +17,7 @@ import {
   TabulatorFull as Tabulator,
   ValidateModule,
   ColumnCalcsModule,
-  SortModule
+  SortModule, TooltipModule
 } from 'tabulator-tables';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
@@ -29,7 +29,8 @@ Tabulator.registerModule([
   EditModule,
   ValidateModule,
   ColumnCalcsModule,
-  SortModule
+  SortModule,
+  TooltipModule
 ]);
 
 

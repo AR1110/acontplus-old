@@ -4,23 +4,20 @@ import {ProductFee, ProductMeasure} from "@inventory/domain/models/product-measu
 export class ItemComposition {
   uuid = generateUuidv4();
   id = 0;
-  itemId = 0;
+  parentItemId = 0;
   childItemId = 0;
   fees:ProductFee[]=[]
   feeId = 0;
-  taxRateId = 0;
   description = '';
   code = '';
-  discountPercent = 0;
-  discount = 0;
 
   measures:ProductMeasure[] = [];
   measureId = 0;
-  price = 0;
-  costPrice = 0;
+  salePrice = 0;
+  unitPrice = 0;
   quantity = 1;
-  subtotal = 0;
-  priceWithTax = 0;
+  totalPrice = 0;
+  totalCost = 0;
   isActive = true;
   isDeleted = false;
 }

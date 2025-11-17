@@ -35,7 +35,7 @@ $files = @(
     "src\app\modules\restaurant\ui\items\items.ts",
     "src\app\modules\restaurant\ui\promotion\promotion-list\promotion-list.component.ts",
     "src\app\modules\sale\ui\delivery-notes\delivery-notes.ts",
-    "src\app\modules\sale\ui\proforma-invoices\proforma-invoices.ts",
+    "src\app\modules\sale\ui\proforma-invoices\proformas.ts",
     "src\app\modules\technical-support\pages\order-page\order-list\order-list.component.ts",
     "src\app\modules\vet\pages\medical-history-page\medical-history-page.component.ts"
 )

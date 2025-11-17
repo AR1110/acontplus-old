@@ -15,9 +15,7 @@ import {
 import {ProductMeasure} from "@inventory/domain/models/product-measure";
 import {ItemComposition} from "@restaurant/domain/models/item-composition";
 import DecimalUtil from "@core/utils/decimal.util";
-import {roundNumber} from "@core/utils/round-number.utils";
 import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
-import {pricingCalculateUtil} from "@core/utils/pricing-calculate.util";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
 import {MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
@@ -32,7 +30,6 @@ import {MatTooltip} from "@angular/material/tooltip";
     MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,
-    MatSlideToggle,
     MatIconButton,
     MatIcon,
     MatTooltip,
@@ -63,7 +60,7 @@ export class ItemAddEdit implements OnInit {
     if (column === 'measureId') {
       for (const m of data.measures || []) {
         const opt = document.createElement('option');
-        opt.value = m.measureId.toString();
+        opt.value = m.id.toString();
         opt.innerHTML = m.name;
         editor.appendChild(opt);
       }
@@ -146,7 +143,7 @@ export class ItemAddEdit implements OnInit {
     {
       title: this.isProduct() ? 'Ingrediente': 'Producto',
       field: 'description',
-      width: this.isProduct() ? 350: 280,
+      width:   280,
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
@@ -161,7 +158,7 @@ export class ItemAddEdit implements OnInit {
       formatter: function (cell: any) {
         const data = cell.getData();
         for (const m of data.measures ?? []) {
-          if (m.measureId == cell.getValue()) {
+          if (m.id == cell.getValue()) {
             return m.name;
           }
         }
@@ -181,7 +178,6 @@ export class ItemAddEdit implements OnInit {
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      visible: this.isCombo(),
       formatter: function (cell: any) {
         const data = cell.getData();
         for (const m of data.fees ?? []) {
@@ -193,48 +189,7 @@ export class ItemAddEdit implements OnInit {
       validator: 'required',
       width: '9px',
     },
-    {
-      title: 'Precio U.',
-      field: 'price',
-      editor: false,
-      width: 80,
-      widthGrow: 1,
-      validator: ['numeric'],
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      editorParams: {
-        selectContents: true,
-        verticalNavigation: 'table',
-      },
-      visible: this.isCombo(),
-    },
-    {
-      title: 'Precio Iva',
-      field: 'priceWithTax',
-      editor: false,
-      width: 80,
-      widthGrow: 1,
-      validator: ['numeric'],
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      visible: this.isCombo(),
-    },
-    //end when is product combo
 
-    {
-      title: 'Peso',
-      field: 'weight',
-      editor: true,
-      width: 100,
-      widthGrow: 1,
-      validator: ['numeric'],
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      visible: this.isProduct(),
-    },
     {
       title: 'Cant.',
       field: 'quantity',
@@ -249,8 +204,37 @@ export class ItemAddEdit implements OnInit {
       headerHozAlign: 'center',
     },
     {
-      title: 'Precio costo',
-      field: 'costPrice',
+      title: 'Precio Venta',
+      field: 'salePrice',
+      editor: false,
+      width: 120,
+      widthGrow: 1,
+      validator: ['numeric'],
+      hozAlign: 'center',
+      headerSort: false,
+      headerHozAlign: 'center',
+      editorParams: {
+        selectContents: true,
+        verticalNavigation: 'table',
+      },
+    },
+    // {
+    //   title: 'Precio costo',
+    //   field: 'unitPrice',
+    //   width: 120,
+    //   editor: false,
+    //   hozAlign: 'center',
+    //   headerSort: false,
+    //   headerHozAlign: 'center',
+    //   editorParams: {
+    //     selectContents: true,
+    //     verticalNavigation: 'table',
+    //   },
+    // },
+
+    {
+      title: 'Total Precio',
+      field: 'totalPrice',
       width: 120,
       editor: false,
       hozAlign: 'center',
@@ -260,51 +244,6 @@ export class ItemAddEdit implements OnInit {
         selectContents: true,
         verticalNavigation: 'table',
       },
-      visible: this.isProduct(),
-    },
-
-    //start when is product combo
-    {
-      title: '% Dscto.',
-      field: 'discountPercent',
-      width: 80,
-      editor: true,
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      editorParams: {
-        selectContents: true,
-        verticalNavigation: 'table',
-      },
-      visible: this.isCombo(),
-    },
-    {
-      title: 'Dscto.',
-      field: 'discount',
-      width: 80,
-      editor: true,
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
-      editorParams: {
-        selectContents: true,
-        verticalNavigation: 'table',
-      },
-      visible: this.isCombo(),
-    },
-    //end when is product combo
-    {
-      title: 'SubTotal',
-      field: 'subtotal',
-      width: 90,
-      editor: false,
-      bottomCalc: (values: any, data: any, calcParams: any) => {
-        const total = values.reduce((a: any, b: any) => a + b, 0);
-        return roundNumber(total)
-      },
-      hozAlign: 'center',
-      headerSort: false,
-      headerHozAlign: 'center',
     },
   ];
 
@@ -360,9 +299,8 @@ export class ItemAddEdit implements OnInit {
     if(this.isCombo()){
       this.itemForm = new FormGroup({
         id: new FormControl(0),
-        title: new FormControl(''),
-        forPromotion: new FormControl(false),
         summary: new FormControl(''),
+        isActive: new FormControl(true),
       });
     }
 
@@ -384,75 +322,20 @@ export class ItemAddEdit implements OnInit {
     if(column==="measureId"){
       const dataMeasure = data.measures.find((x:any) => x.measureId === Number(newValue));
       if(dataMeasure){
-        data.costPrice = dataMeasure.costPrice;
+        data.unitPrice = dataMeasure.costPrice;
       }else{
-        data.costPrice = oldValue;
-      }
-    }
-
-    const calculateDiscountPercent = ()=> {
-      if (data.discountPercent >= 0 && data.discountPercent <= 100) {
-
-        const discount =  pricingCalculateUtil.getValueDiscount(
-          data.price,
-          data.discountPercent,
-        )
-        data.discount = pricingCalculateUtil.calcularValorTotalDescuento(data.quantity, discount);
-      } else {
-        data.discountPercent = oldValue;
-        this.#tS.warning({
-          message: 'El descuento no puede ser mayor al 100%',
-        })
-      }
-    }
-
-    if(column==="quantity" ){
-
-      if(this.isCombo()){
-        calculateDiscountPercent()
+        data.unitPrice = oldValue;
       }
     }
 
     if (column == 'feeId') {
       const dataFee = data.fees.find((x: any) => x.id == data.feeId);
       if(dataFee){
-        data.price = dataFee.salePrice;
-        data.priceWithTax = dataFee.priceWithTax;
+        data.salePrice = dataFee.salePrice;
       }
     }
+    data.totalPrice =   DecimalUtil.multiplyAsNumber(data.quantity, data.salePrice)
 
-
-    if (column === 'discountPercent') {
-      calculateDiscountPercent()
-    }
-
-    if(column==="discount"){
-      let discount = Number(data.discount);
-      let totalAntesDescuento = pricingCalculateUtil.calcularTotalAntesDescuento(data.price, data.quantity);
-
-      if (discount <= totalAntesDescuento) {
-        let porcentajeDescuento = pricingCalculateUtil.getValueDiscountPercentage(totalAntesDescuento, discount);
-        data.discountPercent = roundNumber(porcentajeDescuento, 2);
-        } else {
-        discount = Number(oldValue);
-        this.#tS.warning({
-          message: 'El descuento no puede ser mayor al subtotal'
-        })
-      }
-
-      data.discount = roundNumber(discount, 5);
-    }
-
-
-    if(this.isProduct()){
-      data.subtotal = DecimalUtil.multiplyAsNumber(data.quantity, data.costPrice);
-    } else{
-      data.subtotal = pricingCalculateUtil.calcularSubtotalSinImpuesto(
-        data.price,
-        data.quantity,
-        data.discount,
-      )
-    }
       this.itemCompositions.set(this.itemCompositions().map((item) => (item.uuid === data.uuid ? data : item)));
   }
 
@@ -482,52 +365,35 @@ export class ItemAddEdit implements OnInit {
         const getDefaultFee = (measure?: ProductMeasure) =>
           measure?.fees?.find(f => f.isDefault);
 
-        const getTaxRate = (code: string) =>
-          taxRates.find((t: any) => t.code === code);
-
         if (existingIndex === -1) {
           const defaultMeasure = getDefaultMeasure();
           const defaultFee = getDefaultFee(defaultMeasure);
-          const taxRate = getTaxRate(product.codigoPorcentaje);
 
-          if (!defaultMeasure || !defaultFee || !taxRate) {
+          if (!defaultMeasure || !defaultFee) {
             console.error('Datos incompletos para crear la composición del producto.');
             return;
           }
 
           const newComposition = new ItemComposition();
-          newComposition.code = product.codigo;
-          newComposition.itemId = this.params.id;
+          newComposition.code = product.code;
+          newComposition.parentItemId = this.params.id;
           newComposition.childItemId = rowData.id;
           newComposition.measures = measures;
           newComposition.measureId = defaultMeasure.id;
           newComposition.feeId = defaultFee.id;
-          newComposition.price = defaultFee.salePrice;
-          newComposition.priceWithTax = defaultFee.priceWithTax;
+          newComposition.salePrice = defaultFee.salePrice;
           newComposition.fees = defaultMeasure.fees ?? [];
           newComposition.description = product.descripcion;
-          newComposition.costPrice = defaultMeasure.costPrice;
-          newComposition.taxRateId = taxRate.id;
+          newComposition.unitPrice = defaultMeasure.costPrice;
 
-          newComposition.subtotal = this.isProduct()
-            ? DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.costPrice)
-            : pricingCalculateUtil.calcularSubtotalSinImpuesto(
-              newComposition.price,
-              newComposition.quantity,
-              newComposition.discount ?? 0
-            );
+          newComposition.totalPrice =   DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.salePrice)
 
           compositions.push(newComposition);
         } else {
           const existing = compositions[existingIndex];
           existing.quantity += 1;
-          existing.subtotal = this.isProduct()
-            ? DecimalUtil.multiplyAsNumber(existing.quantity, existing.costPrice)
-            : pricingCalculateUtil.calcularSubtotalSinImpuesto(
-              existing.price,
-              existing.quantity,
-              existing.discount ?? 0
-            );
+          existing.totalPrice =   DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice)
+
         }
 
         this.itemCompositions.set(compositions);

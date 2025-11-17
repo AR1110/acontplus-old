@@ -26,6 +26,8 @@ public record ItemCompositionCreate
 
 public record ItemCompositionUpdate
 {
+
+    public int Id { get; init; }
     public int ParentItemId { get; init; }
     public int ChildItemId { get; init; }
     public decimal Quantity { get; init; }
@@ -34,6 +36,7 @@ public record ItemCompositionUpdate
     public decimal TotalCost { get; init; }
     public decimal TotalPrice { get; init; }
     public decimal? WastePercentage { get; init; }
+    public int FeeId { get; init; }
     public int MeasureId { get; init; }
     public bool IsOptional { get; init; }
     public bool IsDefault { get; init; }
@@ -44,6 +47,8 @@ public record ItemCompositionUpdate
     public string? Notes { get; init; }
     public Guid? UniqueId { get; init; }
     public int? ParentCompositionId { get; init; }
+    public bool IsActive { get; init; }
+    public bool IsDeleted { get; init; } = false;
 }
 
 public record ItemCompositionItem

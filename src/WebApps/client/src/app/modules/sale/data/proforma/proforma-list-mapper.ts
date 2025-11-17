@@ -1,4 +1,4 @@
-import { ProformaInvoiceListResult } from '@sale/domain/models/proforma-invoice';
+import { ProformaInvoiceListResult } from '@sale/domain/models/proforma';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ProformaInvoiceListMapper {

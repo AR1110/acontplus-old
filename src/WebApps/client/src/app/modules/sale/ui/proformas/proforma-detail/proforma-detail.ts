@@ -4,19 +4,19 @@ import { TablaResumenTotalesComponent } from '@shared/components/tabla-resumen-t
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { finalize } from 'rxjs';
-import { ProformaInvoiceViewDetailUseCase } from '@sale/application/use-cases/proforma-invoice.use-case';
+import { ProformaInvoiceViewDetailUseCase } from '@sale/application/use-cases/proforma-use-case';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 
 @Component({
-  selector: 'app-proforma-invoice-detail',
+  selector: 'app-proforma-detail',
   imports: [MatCustomDialogComponent, TablaResumenTotalesComponent, DataGrid],
-  templateUrl: './proforma-invoice-detail.html',
-  styleUrl: './proforma-invoice-detail.scss',
+  templateUrl: './proforma-detail.html',
+  styleUrl: './proforma-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProformaInvoiceDetail implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<ProformaInvoiceDetail>);
+export class ProformaDetail implements OnInit {
+  readonly dialogRef = inject(MatDialogRef<ProformaDetail>);
   readonly data = inject<{ id: number }>(MAT_DIALOG_DATA);
   private notaEntregaSvc = inject(NotaEntregaService);
   private _viewDetailUseCase = inject(ProformaInvoiceViewDetailUseCase);

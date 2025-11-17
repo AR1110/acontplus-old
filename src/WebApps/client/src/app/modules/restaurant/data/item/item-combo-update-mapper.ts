@@ -4,28 +4,22 @@ export class ItemComboUpdateMapper {
     const {item, itemCompositions} = params;
 
     return {
-      item: {
-        title: item.title,
         summary: item.summary
-        ,cooking: item.cooking
-        ,forPromotion: item.forPromotion,
+        ,requiresCooking: item.cooking,
         isActive: item.isActive,
-      },
-      itemComposition: itemCompositions.map((item:any, index: number) => ( {
+      compositions: itemCompositions.map((item:any, index: number) => ( {
           index: index + 1,
           uniqueId: item.uuid,
           id: item.id,
-          itemId: item.itemId,
+          parentItemId: item.parentItemId,
           childItemId: item.childItemId,
           quantity: item.quantity,
-          costPrice: item.costPrice,
+          unitPrice: item.unitPrice,
           feeId: item.feeId,
-          taxId: item.taxRateId,
-          price: item.price,
+          salePrice: item.salePrice,
           measureId: item.measureId,
-          subtotal: item.subtotal,
-          discount: item.discount,
-          discountPercent: item.discountPercent,
+          totalPrice: item.salePrice * item.quantity,
+          totalCost : item.unitPrice * item.quantity,
           isActive: item.isActive,
           isDeleted: item.isDeleted
         }

@@ -1,3 +1,11 @@
+import {DocumentBaseModel} from "@shared/models/document-base";
+
+
+export interface ProformaModel extends DocumentBaseModel {
+
+}
+
+
 export interface ProformaInvoiceList {
   id: number;
   customerName: string;

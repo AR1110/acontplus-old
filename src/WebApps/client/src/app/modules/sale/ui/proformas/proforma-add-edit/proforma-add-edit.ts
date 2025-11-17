@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
 import { getStockQuantity, mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
 import { firstValueFrom } from 'rxjs';
 import { ProductFee } from '@inventory/domain/models/tarifa.model';
-import {ProformaInvoiceGetFormDataUseCase} from "@sale/application/use-cases/proforma-invoice.use-case";
+import {ProformaInvoiceGetFormDataUseCase} from "@sale/application/use-cases/proforma-use-case";
 import {GroupedEstablishment} from "@core/models/establishment";
 import {EmissionPointEstablishment} from "@core/models/emission-point";
 import {WarehouseEstablishment} from "@core/models/warehouse";
@@ -42,7 +42,7 @@ import {TaxRate} from "@core/models/tax-rate";
 import {ProductMeasure} from "@inventory/domain/models/product-measure";
 
 @Component({
-  selector: 'app-proforma-invoice-add-edit',
+  selector: 'app-proforma-add-edit',
   imports: [
     MatFormFieldModule,
     MatInputModule,
@@ -59,13 +59,13 @@ import {ProductMeasure} from "@inventory/domain/models/product-measure";
     TabulatorComponent,
     DataGrid,
   ],
-  templateUrl: './proforma-invoice-add-edit.html',
-  styleUrl: './proforma-invoice-add-edit.scss',
+  templateUrl: './proforma-add-edit.html',
+  styleUrl: './proforma-add-edit.scss',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProformaInvoiceAddEdit implements OnInit {
-  private dgRef = inject(MatDialogRef<ProformaInvoiceAddEdit>);
+export class ProformaAddEdit implements OnInit {
+  private dgRef = inject(MatDialogRef<ProformaAddEdit>);
   private params = inject<{id: number, operation: 'add' | 'edit' | 'duplicate'}>(MAT_DIALOG_DATA);
 
   //services
@@ -118,9 +118,10 @@ export class ProformaInvoiceAddEdit implements OnInit {
       "measureId": data.measures,
       "taxRateId": this.taxRates(),
       "feeId": data.fees,
+      "warehouseId": this.warehouses(),
     }
 
-    if (["measureId", "taxRateId", "feeId"].includes(column)) {
+    if (["measureId", "taxRateId", "feeId", "warehouseId"].includes(column)) {
       for (const m of options[column as keyof typeof options]) {
         const opt = document.createElement('option');
         opt.value = m.id.toString();
@@ -358,18 +359,22 @@ export class ProformaInvoiceAddEdit implements OnInit {
     },
     {
       title: 'SubTotal',
-      field: 'priceWithoutPrice',
+      field: 'totalPriceWithoutTax',
       headerSort: false,
-      hozAlign: 'center',
       headerHozAlign: 'center',
       width: '7px',
-      validator: ['required'],
-      editor: 'number',
+      editor:false,
       editorParams: {
         selectContents: true,
         verticalNavigation: 'table',
       },
       formatterParams: { precision: false },
+      formatter: (cell:any) => {
+        const value = cell.getValue(); // valor interno: ej. 12.34567
+        return Number(value).toFixed(2); // solo vista: 12.35
+      },
+      hozAlign: "right",
+      tooltip: true
     },
     {
       title: 'V. Imp.',
@@ -378,8 +383,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
       hozAlign: 'center',
       headerHozAlign: 'center',
       width: '7px',
-      validator: ['required'],
-      editor: 'number',
+      editor: false,
       editorParams: {
         selectContents: true,
         verticalNavigation: 'table',
@@ -393,16 +397,27 @@ export class ProformaInvoiceAddEdit implements OnInit {
       hozAlign: 'center',
       headerHozAlign: 'center',
       width: '6px',
+      editor: false,
     },
     {
       title: 'Bodega',
       field: 'warehouseId',
-      headerSort: false,
       hozAlign: 'center',
+      headerSort: false,
       headerHozAlign: 'center',
-      width: '6px',
-    },
-  ]);
+      editor: this.comboEditor,
+      formatter:  (cell: any)=> {
+        for (const m of this.warehouses()) {
+          if (m.id == cell.getValue()) {
+            return m.name;
+          }
+        }
+        return  ''
+      },
+      validator: 'required',
+      width: '9px',
+    }
+  ])
 
   displayedTotalsColumns: DataGridColumn[] = [
     { header: '', field: 'label' },
@@ -536,7 +551,7 @@ export class ProformaInvoiceAddEdit implements OnInit {
 
       fees: [] as ProductFee[],
       measureId: 0,
-      measures: [] as MedidaProducto[],
+      measures: [] as ProductMeasure[],
       conversion: 1,
       feeId: 0,
       unitPrice: 0,
@@ -546,10 +561,10 @@ export class ProformaInvoiceAddEdit implements OnInit {
       priceWithTax: 0,
       discountPercent: 0,
       discount: 0,
-      totalDiscount: 0,
       iceTax: 0,
       warehouseId: 0,
-      subTotal: 0,
+      totalPriceWithoutTax: 0,
+      taxValue: 0,
       total: 0,
       minWholesaleQuantity: 0,
       note: null,
