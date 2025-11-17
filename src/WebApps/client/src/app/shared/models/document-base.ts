@@ -56,10 +56,10 @@ export abstract class DocumentBase implements DocumentBaseModel {
     this.details.forEach(detail => detail.calculate());
 
     // Calcular totales del documento
-    this.subtotal = this.details.reduce((sum, d) => sum + d.subtotal, 0);
-    this.totalDiscount = this.details.reduce((sum, d) => sum + d.discount, 0);
-    this.totalTax = this.details.reduce((sum, d) => sum + d.taxValue, 0);
-    this.total = this.details.reduce((sum, d) => sum + d.total, 0);
+    // this.subtotal = this.details.reduce((sum, d) => sum + d.subtotal, 0);
+    // this.totalDiscount = this.details.reduce((sum, d) => sum + d.discount, 0);
+    // this.totalTax = this.details.reduce((sum, d) => sum + d.taxValue, 0);
+    // this.total = this.details.reduce((sum, d) => sum + d.total, 0);
 
     return this;
   }
