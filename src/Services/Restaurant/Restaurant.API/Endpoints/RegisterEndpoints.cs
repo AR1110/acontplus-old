@@ -10,7 +10,7 @@ public static class RegisterEndpoints
     {
         app.MapMealManagementEndpoints();
         app.MapItemEndpoints();
-        app.MapPromotionEndpoints();
+        app.MapLookupEndpoints();
     }
 }
 

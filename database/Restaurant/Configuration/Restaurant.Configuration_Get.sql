@@ -93,8 +93,7 @@ BEGIN
 	        --SELECT i.idImpuesto, ti.idTarifaImpuesto, ti.codImpuesto, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
          --   INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.codigo = ti.codImpuesto
          
-          SELECT i.idImpuesto, ti.idTarifaImpuesto, codImpuesto=i.codigo, ti.codigo, ti.descripcion, ti.porcentaje FROM Sri.TarifaImpuesto ti WITH (NOLOCK)  
-          INNER JOIN Sri.Impuesto i WITH(NOLOCK) ON i.idImpuesto = ti.idImpuesto
+          
           
    
              --CUSTOMER DEFAULT      
@@ -111,28 +110,9 @@ BEGIN
                OR (@customerCompanyId IS NULL AND ti.codigoSri = '07'));
 
 
-             SELECT CAST(searchCode AS BIT)       as searchCode
-	            ,CAST(printerAutomatic AS BIT) as printerAutomatic
-	            ,CAST(payAutomatic AS BIT)     as payAutomatic
-	            ,CAST(multipleVendedor AS BIT) as multipleVendedor
-                ,CAST(detailDuplicate AS BIT) as detailDuplicate
-	        FROM Config.v_Sistema_Ventas gs
-            WHERE gs.idEntidad = @idEntidad
+            
 
-             SELECT 
-                u.idUsuario, 
-                u.nombreUsuario, 
-                u.nombreCompleto, 
-                predeterminado = CAST(IIF(u.idUsuario = @idUsuario, 1, 0) AS bit)
-             FROM v_usuario u WITH(NOLOCK) 
-             WHERE u.idEntidad = @idEntidad AND u.estadoUsuario = 1
-
-             SELECT 
-                idTarifa
-                ,descripcion
-                ,predeterminada as defaultTarifa
-             FROM dbo.Tarifa 
-             WHERE idEntidad = @idEntidad AND estado = 1
+                
 
 
              SELECT count(*) AS pendingOrders
