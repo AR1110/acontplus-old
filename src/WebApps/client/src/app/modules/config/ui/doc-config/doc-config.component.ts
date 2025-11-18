@@ -60,10 +60,10 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfigList[]>([]);
 
-  dataSearch = model({
+  dataSearch =  {
     idPuntoEmision: 0,
     codEstab: '',
-  });
+  };
 
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
@@ -78,7 +78,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   @ViewChild('templateSelect') templateSelect!: TemplateRef<any>;
   getDocs() {
     this.docs.set([]);
-    this.$listUseCase.execute(this.dataSearch().idPuntoEmision).subscribe((response) => {
+    this.$listUseCase.execute(this.dataSearch.idPuntoEmision).subscribe((response) => {
       this.docs.set(response.data);
     });
   }
@@ -91,16 +91,11 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
         this.puntosEmision.set(dataEstab.puntosEmision);
         const dataPuntoEmision = this.puntosEmision().find((p) => p.defaultPtoEmi);
         if (dataPuntoEmision) {
-          this.dataSearch.update((ds) => ({
-            ...ds,
-            idPuntoEmision: dataPuntoEmision.idPuntoEmision,
-          }));
+          this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+
           this.getDocs();
         }
-        this.dataSearch.update((ds) => ({
-          ...ds,
-          codEstab: dataEstab.codEstab,
-        }));
+        this.dataSearch.codEstab = dataEstab.codEstab;
       }
       this._cdr.detectChanges();
     });
@@ -120,28 +115,23 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
   onChangeEstab() {
     const dataEstab = this.establecimientos().find(
-      (e) => e.codEstab === this.dataSearch().codEstab,
+      (e) => e.codEstab === this.dataSearch.codEstab,
     );
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
       const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
       if (dataPuntoEmision) {
-        this.dataSearch.update((ds) => ({
-          ...ds,
-          idPuntoEmision: dataPuntoEmision.idPuntoEmision,
-        }));
+        this.dataSearch.idPuntoEmision = dataPuntoEmision.idPuntoEmision;
+
         this.getDocs();
       } else {
-        this.dataSearch.update((ds) => ({
-          ...ds,
-          idPuntoEmision: 0,
-        }));
+        this.dataSearch. idPuntoEmision = 0;
       }
     }
   }
 
   saveConfig(item: DocConfigList) {
-    if (!(this.dataSearch().idPuntoEmision > 0)) {
+    if (!(this.dataSearch.idPuntoEmision > 0)) {
       this._tS.show({
         type: 'warning',
         message: 'Seleccione el punto de emisión',
@@ -158,7 +148,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
     const data = {
       id: item.idConfiguracionDocumento,
-      idPuntoEmision: this.dataSearch().idPuntoEmision,
+      idPuntoEmision: this.dataSearch.idPuntoEmision,
       idTipoDocumento: item.idTipoDocumento,
       estado: item.estado,
       ultimaSecuencia: item.ultimaSecuencia,
@@ -180,7 +170,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
       size: 'lg',
       data: {
         ...structuredClone(data),
-        idPuntoEmision: this.dataSearch().idPuntoEmision,
+        idPuntoEmision: this.dataSearch.idPuntoEmision,
       },
     });
 

@@ -1,5 +1,4 @@
 import { SeatResponse } from '@barber-shop/domain/models/seat.model';
-import { ApiResponse } from '@core/models/api-response';
 import { buildParams } from '@shared/utils/build-params';
 
 export class ListSeatMapper {
@@ -9,7 +8,7 @@ export class ListSeatMapper {
       pageSize: 10,
     });
   }
-  static fromJson(response: ApiResponse): SeatResponse {
+  static fromJson(response: any): SeatResponse {
     const { items = [], totalCount = 0 } = response.payload as any;
     const data = items.map((item: any, index: number) => {
       return {
