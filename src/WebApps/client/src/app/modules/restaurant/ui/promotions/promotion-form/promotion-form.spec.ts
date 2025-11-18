@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PromotionAddEdit } from './promotion-add-edit';
+import { PromotionForm } from './promotion-form';
 
-describe('PromotionAddEdit', () => {
-  let component: PromotionAddEdit;
-  let fixture: ComponentFixture<PromotionAddEdit>;
+describe('PromotionForm', () => {
+  let component: PromotionForm;
+  let fixture: ComponentFixture<PromotionForm>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PromotionAddEdit]
+      imports: [PromotionForm]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PromotionAddEdit);
+    fixture = TestBed.createComponent(PromotionForm);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -13,7 +13,7 @@ export enum RESTAURANT_PATHS {
   CONFIG = 'Configuration/',
   MEAL_SCHEDULE_SETTING = 'MealScheduleSetting/',
   MEAL_CONSUMPTION = 'MealConsumption/',
-  LOOKUP = 'Lookup',
+  LOOKUPS = 'Lookups',
 }
 
 export const enum RESTAURANT_CODE_REPORT {
@@ -24,7 +24,7 @@ export const enum RESTAURANT_CODE_REPORT {
   RII = 'RII',
 }
 
-export const enum CATEGORY_ABBREVIATIONS {
+export enum CATEGORY_ABBREVIATIONS {
   INGREDIENT = 'ING',
   COMBO = 'COM',
   RESTAURANT = 'RES',

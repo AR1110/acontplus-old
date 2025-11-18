@@ -4,4 +4,5 @@ import {PromotionList} from "@restaurant/domain/models/promotion";
 
 export abstract class PromotionRepository {
   abstract list(params: PaginationParams): Observable<PagedResult<PromotionList>>
+  abstract insert(data: any): Observable<any>;
 }

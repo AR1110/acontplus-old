@@ -18,6 +18,7 @@ import { PaginationParams } from '@acontplus/core';
 import {MatInput} from "@angular/material/input";
 import {ValidatorUtils} from "@core/utils/utils";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {LookupService} from "@restaurant/application/services/lookup-service";
 
 @Component({
   selector: 'app-items',
@@ -38,6 +39,7 @@ import {MatFormField, MatLabel} from "@angular/material/form-field";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Items implements OnInit {
+  private lookupSvc = inject(LookupService)
   private _listUseCase = inject(ItemListUseCase);
   private _dgSvc = inject(DialogService);
 
@@ -74,6 +76,15 @@ export class Items implements OnInit {
   searchTerm = ''
 
   ngOnInit() {
+    // this.lookupSvc.lookupListUseCase.execute({
+    //   type: {
+    //     module: 'Products',
+    //     context: 'Filters'
+    //   },
+    //   keys: 'estabs'
+    // }).subscribe(res => {
+    //   console.log(res, 'responsesss')
+    // })
     this.getList();
   }
 

@@ -18,8 +18,11 @@ export class ItemListUseCase implements BaseUseCase<PagedResult<any>, Pagination
 @Injectable({
   providedIn: 'root',
 })
-export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, PaginationParams> {
+export class ItemSearchUseCase
+  implements BaseUseCase<PagedResult<any>, PaginationParams>
+{
   private repo = inject(ItemRepository);
+
   execute(params: PaginationParams): Observable<any> {
     const categoryAbbreviation = params.filters?.['categoryAbbreviation'];
     const searchTerm = params.searchTerm;
@@ -28,22 +31,32 @@ export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, Paginati
       return throwError(() => new Error('categoryAbbreviation is required'));
     }
 
-    if (
-      ![
-        CATEGORY_ABBREVIATIONS.RESTAURANT,
-        CATEGORY_ABBREVIATIONS.COMBO,
-        CATEGORY_ABBREVIATIONS.INGREDIENT,
-      ].includes(categoryAbbreviation)
-    ) {
-      return throwError(() => new Error('categoryAbbreviation is invalid'));
+    // Convertir "COM,RES" → ["COM", "RES"]
+    const categories = categoryAbbreviation
+      .split(',')
+      .map((c: string) => c.trim())
+      .filter(Boolean);
+
+    const validCategories = Object.values(CATEGORY_ABBREVIATIONS);
+
+    const invalid = categories.filter(
+     ( c:any) => !validCategories.includes(c as CATEGORY_ABBREVIATIONS)
+    );
+
+    if (invalid.length) {
+      return throwError(
+        () => new Error(`Invalid categoryAbbreviation: ${invalid.join(', ')}`)
+      );
     }
 
     if (!searchTerm) {
       return throwError(() => new Error('q is required'));
     }
+
     return this.repo.search(params);
   }
 }
+
 
 @Injectable({
   providedIn: 'root',

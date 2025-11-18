@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
-  selector: 'app-promotion-add-edit-modal',
+  selector: 'app-promotion-form-modal',
   imports: [
     CommonModule,
     FormsModule,
