@@ -13,10 +13,9 @@ try
 
     builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
     {
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration)
+        .ReadFrom.Services(services);
         loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
-
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
     });
 
     const string corsPolicy = "RestaurantCorsPolicy";
@@ -65,8 +64,6 @@ try
     app.UseAuthentication();
 
     app.UseAuthorization();
-
-    app.UseRateLimiter();
 
     app.MapAllEndpoints();
 

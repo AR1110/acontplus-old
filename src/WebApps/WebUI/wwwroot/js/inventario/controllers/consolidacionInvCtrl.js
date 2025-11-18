@@ -83,6 +83,8 @@
         $scope.canCancel = canCancel;
 
         function canCancel(item) {
+            if (item.codDoc === docyType.CI) return false;
+
             return item.codEstado !== 'A'
         }
 

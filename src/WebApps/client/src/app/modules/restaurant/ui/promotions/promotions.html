@@ -4,59 +4,24 @@
 <mat-tab-group dynamicHeight>
   <mat-tab>
     <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">add_circle</mat-icon>
-      Nueva Promoción
+      <mat-icon class="tab-icon">add_circle</mat-icon>
+      <span class="tab-label">Crear Promoción</span>
     </ng-template>
-    <app-promotion-add-edit/>
+
+    <div class="tab-content">
+      <app-promotion-add-edit/>
+    </div>
   </mat-tab>
   <mat-tab>
     <ng-template mat-tab-label>
-      <mat-icon class="example-tab-icon">list</mat-icon>
+      <mat-icon >list</mat-icon>
       Listado de Promociones
     </ng-template>
-    Content 1
+    <div class="tab-content">
+      <app-promotion-list/>
+    </div>
   </mat-tab>
 </mat-tab-group>
 
 
-<ng-template #toolbarTpl>
-  <acp-button icon="add" matStyle="filled" text="Nueva promocón"  />
-</ng-template>
 
-<app-data-grid
-  showToolbar="true"
-  [toolbarTemplate]="toolbarTpl"
-  [data]="list()"
-  [columns]="columns"
-  [cellTemplate]="{
-    op: opTpl,
-    productData: productDataTpl,
-  }"
-  [length]="pagination().totalRecords"
-  [loading]="isLoading()"
-  [pageOnFront]="false"
-  [pageIndex]="pagination().pageIndex"
-  [pageSize]="pagination().pageSize"
-  [pageSizeOptions]="pagination().pageSizeOptions"
-  (page)="getNextPage($event)"
-/>
-
-<ng-template #productDataTpl let-row>
-  <div class="product-info">
-    <div class="main">{{ row.description }}</div>
-    <small class="code">{{ row.code }}</small>
-    <small class="auxiliary_code">{{ row.auxiliaryCode }}</small>
-  </div>
-</ng-template>
-<ng-template #opTpl let-row>
-  @if (row.acronymCategory!=='ING') {
-    <acp-button
-      variant="success"
-      icon="build"
-      matStyle="icon"
-      title="Editar"
-      (handleClick)="onEdit(row)"
-    />
-
-  }
-</ng-template>

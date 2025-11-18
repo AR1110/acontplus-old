@@ -925,11 +925,17 @@ function modalArticuloCtrl(
     $scope.save = function () {
         let titulo = $scope.tipoRegistro === 1 ? "Agregar" : "Actualizar";
 
+        if (!$scope.data.descripcion) {
+            tS.toastr("warning", "Ingrese la Descripción del Articulo", titulo);
+            return;
+        }
+
+        if ($scope.data.descripcion.length > 300) {
+            tS.toastr("warning", "La descripción del artículo no debe exceder los 300 caracteres", titulo);
+            return;
+        }
         if ($scope.tipoRegistro == 1) {
-            if (!$scope.data.descripcion) {
-                tS.toastr("warning", "Ingrese la Descripción del Articulo", titulo);
-                return;
-            }
+
 
             if (!$scope.data.codigoBarra) {
                 tS.toastr("warning", "Ingrese el Código de Barra del Articulo", titulo);
@@ -971,6 +977,16 @@ function modalArticuloCtrl(
 
             if (!$scope.data.codigo) {
                 tS.toastr("warning", "Ingrese el Código del Articulo", titulo);
+                return;
+            }
+
+            if ($scope.data.codigo.length > 25) {
+                tS.toastr("warning", "El código del artículo no debe exceder los 25 caracteres", titulo);
+                return;
+            }
+
+            if ($scope.data.codigoAuxiliar && $scope.data.codigoAuxiliar.length > 25) {
+                tS.toastr("warning", "El código auxiliar del artículo no debe exceder los 25 caracteres", titulo);
                 return;
             }
 

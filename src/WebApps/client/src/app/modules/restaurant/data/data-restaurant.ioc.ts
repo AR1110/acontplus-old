@@ -11,6 +11,8 @@ import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/m
 import { MealScheduleSettingWebService } from '@restaurant/data/meal-schedule-setting/meal-schedule-setting-web.service';
 import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
 import { MealConsumptionHttpRepository } from '@restaurant/data/meal-consumption/meal-consumption-http-repository';
+import {PromotionRepository} from "@restaurant/domain/repositories/promotion-repository";
+import {PromotionHttpRepository} from "@restaurant/data/promotion/promotion-http-repository";
 
 export const DATA_RESTAURANT_IOC: Provider[] = [
   {
@@ -37,4 +39,8 @@ export const DATA_RESTAURANT_IOC: Provider[] = [
     provide: MealConsumptionRepository,
     useClass: MealConsumptionHttpRepository,
   },
+  {
+    provide: PromotionRepository,
+    useClass: PromotionHttpRepository,
+  }
 ];

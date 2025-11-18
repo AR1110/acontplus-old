@@ -33,7 +33,7 @@
 
         $scope.establecimientos = [];
         $scope.puntosEmision = [];
-        //Filtro 
+        //Filtro
 
         $scope.proveedor = {
             nombreProveedor: ''
@@ -46,7 +46,7 @@
 
         $scope.recordsQuantity = [25, 50, 100]
         $scope.dataSearch = {
-            checkBoxFecha: true, 
+            checkBoxFecha: true,
             codEstado: 0,
             pageIndex: 1,
             pageSize: 25,
@@ -55,11 +55,10 @@
             // fechaInicio: new Date(),
             // fechaFin: new Date()
         };
-        $scope.subcategories = []; 
-
+        $scope.subcategories = [];
 
         /**
-         * 
+         *
          * @param {object} {controller, template, params}
          */
         $scope.openModal = ({
@@ -84,7 +83,7 @@
             })
         }
 
-    
+
 
         //Formulario Nuevo
         $scope.openModalNew = async () => {
@@ -93,7 +92,10 @@
                     controller: 'modalCompraNoHabitualCtrl',
                     template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                     size: 'xl',
-                    params: {},
+                    params: {
+                        type: 'new',
+                        data: null
+                    },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
@@ -134,12 +136,12 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate;
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin = item.endDate
             $scope.getComprasNoHabitual();
         }
 
         //====================Cliente===========
-        $scope.onKeyupProveedor = function () { 
+        $scope.onKeyupProveedor = function () {
             $scope.dataSearch.idProveedor = 0;
         }
 
@@ -172,11 +174,11 @@
         }
 
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             $scope.getComprasNoHabitual()
         }
 
-        //Obtenemos Datos 
+        //Obtenemos Datos
         $scope.getComprasNoHabitual = () => {
             try {
                 showLoader();
@@ -190,7 +192,7 @@
                     if (!($scope.dataSearch.idProveedor > 0)) {
                         $scope.dataSearch.checkBoxFecha = false;
                     }
-                } 
+                }
 
                 let dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
@@ -198,7 +200,7 @@
                     idProveedor: fS.isValidField($scope.dataSearch.idProveedor),
                     dateStart: fS.formatDateMoment($scope.dataSearch.fechaInicio),
                     dateEnd: fS.formatDateMoment($scope.dataSearch.fechaFin),
-                    codEstado:  $scope.dataSearch.codEstado? $scope.dataSearch.codEstado : null,
+                    codEstado: $scope.dataSearch.codEstado ? $scope.dataSearch.codEstado : null,
                     secuencial: fS.validAndFormatedRangeSequential($scope.dataSearch.secuencial),
                     ckFecha: $scope.dataSearch.checkBoxFecha,
                     pageIndex: $scope.dataSearch.pageIndex,
@@ -228,9 +230,9 @@
             try {
                 compraNoHabSvc.getDataFilter().then(
                     response => {
-                        const { estabs, estadosDoc, subcategories } = response; 
+                        const { estabs, estadosDoc, subcategories } = response;
                         $scope.establecimientos = estabs;
-                        $scope.estadosDoc = estadosDoc; 
+                        $scope.estadosDoc = estadosDoc;
                         $scope.subcategories = subcategories;
                         if ($scope.establecimientos.length > 0) {
                             let dataEstab = $scope.establecimientos.find(estab => estab.defaultEstab);
@@ -269,7 +271,41 @@
                             controller: 'modalCompraNoHabitualCtrl',
                             template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                             size: 'xl',
-                            params: response,
+                            params: {
+                                type: 'edit',
+                                data: response
+                            },
+                            windowClass: 'uibModalFullScreen',
+                            isRenderRazorPartial: true
+                        }).result.then(result => {
+                            if (typeof result == 'object') {
+                                $scope.getComprasNoHabitual();
+                            }
+                        })
+                    }
+                )
+                    .catch(error => {
+                        console.log(error)
+                    })
+                    .finally(() => hideLoader())
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        $scope.openModalDuplicate = async (item) => {
+            try {
+                showLoader();
+                compraNoHabSvc.getId(item.id).then(
+                    response => {
+                        modalSvc.openModalCustom({
+                            controller: 'modalCompraNoHabitualCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: {
+                                type: 'duplicate',
+                                data: response
+                            },
                             windowClass: 'uibModalFullScreen',
                             isRenderRazorPartial: true
                         }).result.then(result => {
@@ -389,8 +425,8 @@
 
 
     /**
-     * 
-     * 
+     *
+     *
      */
     app.controller('modalCompraNoHabitualCtrl', modalCompraNoHabitualCtrl);
 
@@ -433,6 +469,24 @@
             showGridFooter: false,
             data: [],
         };
+
+
+        $scope.isRegister = isRegister;
+        $scope.isUpdate = isUpdate;
+        $scope.isDuplicate = isDuplicate;
+
+        function isRegister() {
+            return params.type === 'new';
+        }
+
+        function isUpdate() {
+            return params.type === 'edit';
+        }
+        function isDuplicate() {
+            return params.type === 'duplicate';
+        }
+
+
 
         $scope.gridOptions.onRegisterApi = function (gridApi) {
             $scope.gridApi = gridApi;
@@ -509,7 +563,7 @@
                 $scope.tiemposCredito = tiemposCredito;
                 $scope.subcategories = subcategories;
 
-                if (!("comprobante" in params && params.comprobante.idDocumentoIngreso > 0)) {
+                if (isRegister()) {
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(
                             (estab) => estab.defaultEstab
@@ -561,13 +615,13 @@
                     getFechaVencimiento();
                 }
 
-                if (
-                    "comprobante" in params &&
-                    params.comprobante.idDocumentoIngreso > 0
-                ) {
-                    const { comprobante, proveedor, detalles, infoAdicionalDocumento, datosAdicionalesArticulo, cuotas } = params;
+                if (isUpdate() || isDuplicate()) {
+                    const { comprobante, proveedor, detalles, infoAdicionalDocumento, datosAdicionalesArticulo, cuotas } = params.data;
 
-                    $scope.data = comprobante;
+                    $scope.data = {
+                        ...comprobante,
+                        idDocumentoIngreso: isDuplicate() ? 0 : comprobante.idDocumentoIngreso,
+                    };
                     $scope.dataClone.codEstab = $scope.data.codEstab;
                     $scope.dataClone.fechaEmision = $scope.data.fechaEmision;
                     $scope.dataClone.idTiempoCredito = $scope.data.idTiempoCredito;
@@ -575,7 +629,12 @@
 
                     $scope.proveedor = proveedor;
                     $scope.proveedor.nombreProveedor = proveedor.nombreFiscal;
-                    $scope.gridOptions.data = calculateTotalItems(detalles);
+                    const detailsTemp = calculateTotalItems(detalles);
+                    $scope.gridOptions.data = detailsTemp.map((item, index) => ({
+                        ...item,
+                        idDocumentoIngresoDetail: 0,
+                        n: index + 1,
+                    }));
                     $scope.infoAdicionalDocumento = infoAdicionalDocumento;
                     $scope.datosAdicionalesArticulo = infoAdicionalDocumento;
 
@@ -619,7 +678,7 @@
                     cellTemplate: `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.openModalArticle(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >
 
-                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >
                         `
                 },
                 {
@@ -1151,13 +1210,13 @@
                 let dataMedida = medidas.find((medida) => medida.defaultMedida);
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
-                ); 
+                );
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-                entity.precioUnitario = 
-                entity.etiquetas = etiquetas;
+                entity.precioUnitario =
+                    entity.etiquetas = etiquetas;
 
                 //Medidas
                 entity.medidas = medidas;
@@ -1325,8 +1384,7 @@
         };
 
 
-        const isRegister = () => !($scope.data.idDocumentoIngreso > 0);
-        const isUpdate = () => $scope.data.idDocumentoIngreso > 0;
+
 
         const validateCuota = function () {
             let objParamsCuota = {
@@ -1339,14 +1397,14 @@
             let cuotas = [];
             let montoTotalCuota = 0;
 
-            if (isRegister()) {
+            if (isRegister() || isDuplicate()) {
                 let dataCuota = fS.calcularCuotas(objParamsCuota);
                 cuotas = dataCuota.cuotas;
                 montoTotalCuota = dataCuota.montoTotalCuota;
 
             }
 
-            //Cuando el documentp no tiene cuotas generadas al editar 
+            //Cuando el documentp no tiene cuotas generadas al editar
             if (isUpdate() && $scope.dataClone.idTiempoCreditoOriginal === 0) {
                 let dataCuota = fS.calcularCuotas(objParamsCuota);
                 cuotas = dataCuota.cuotas;
@@ -1461,7 +1519,7 @@
                 let html = '';
 
                 let serieComprobante = null;
-                if (isRegister()) {
+                if (isRegister() || isDuplicate()) {
                     showLoader();
                     serieComprobante = await compraNoHabSvc.generateSerieComprobante({
                         idPuntoEmision: $scope.data.idPuntoEmision
@@ -1496,7 +1554,7 @@
                             }
                         )
 
-                        if (isRegister()) {
+                        if (isRegister() || isDuplicate()) {
                             showLoader();
                             compraNoHabSvc.post(params).then(response => {
                                 if (response.code === '0') {

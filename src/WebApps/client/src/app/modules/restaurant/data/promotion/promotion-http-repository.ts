@@ -12,7 +12,7 @@ import {PromotionListMapper} from "@restaurant/data/promotion/promotion-list-map
   providedIn: "root"
 })
 export class PromotionHttpRepository implements PromotionRepository {
-   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTION}`;
+   #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTIONS}`;
    #http = inject(HttpClient);
 
     list(params: PaginationParams): Observable<PagedResult<PromotionList>> {

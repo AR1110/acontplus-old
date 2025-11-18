@@ -493,6 +493,7 @@
 
     function ModalAprobDocEditarCtrl($scope, $uibModalInstance, $timeout, $injector, articuloSvc, params) {
         let pricingUtils = $injector.get('pricingUtils');
+        let clienteSvc = $injector.get('clienteService');
 
         let { docOrigenDesc, docDestinoDesc, data } = params
         let { comprobante, cliente, detalles, datosAdicionalesArticulo } = data;
@@ -705,6 +706,8 @@
 
             })
         }
+
+
 
         initiload();
         function initiload() {
@@ -1009,6 +1012,22 @@
             let indexBodega = $scope.gridOptionsDetalle.columnDefs.findIndex(item => item.field === 'idBodega');
             $scope.gridOptionsDetalle.columnDefs[indexTipoIva].editDropdownOptionsArray = $scope.tarifasImpuesto;
             $scope.gridOptionsDetalle.columnDefs[indexBodega].editDropdownOptionsArray = $scope.bodegas;
+        }
+
+        $scope.onSelectedClienteChange = async function (item) {
+            try {
+
+                let dataCliente = await clienteSvc.findById(item.idCliente);
+                $scope.cliente = dataCliente;
+
+                $scope.$apply();
+
+
+            } catch (error) {
+                $scope.cliente = {};
+                console.log('ERROR AL OBTENER DATOS DEL CLIENTE', error)
+                $scope.$apply();
+            }
         }
 
 

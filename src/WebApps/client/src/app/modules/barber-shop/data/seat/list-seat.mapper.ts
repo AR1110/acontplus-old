@@ -1,11 +1,17 @@
 import { SeatResponse } from '@barber-shop/domain/models/seat.model';
-import { ApiResponseLegacy } from '@core/models/api-response-legacy';
+import { ApiResponse } from '@core/models/api-response';
+import { buildParams } from '@shared/utils/build-params';
 
 export class ListSeatMapper {
-  static toJson() {}
-  static fromJson(response: ApiResponseLegacy): SeatResponse {
-    const results = (response.payload as any[]) || [];
-    const data = results.map((item, index) => {
+  static toJson() {
+    return buildParams({
+      pageIndex: 1,
+      pageSize: 10,
+    });
+  }
+  static fromJson(response: ApiResponse): SeatResponse {
+    const { items = [], totalCount = 0 } = response.payload as any;
+    const data = items.map((item: any, index: number) => {
       return {
         index: index + 1,
         seatNumber: item.seatNumber,
@@ -21,7 +27,7 @@ export class ListSeatMapper {
     });
     return {
       data,
-      totalRecords: 0,
+      totalRecords: totalCount,
     };
   }
 }

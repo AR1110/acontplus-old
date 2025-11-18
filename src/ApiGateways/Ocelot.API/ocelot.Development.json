@@ -371,7 +371,7 @@
           "Port": 7114
         }
       ],
-      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamPathTemplate": "/api{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "Get",
@@ -379,7 +379,7 @@
         "Put",
         "Delete"
       ],
-      "UpstreamPathTemplate": "/gateway/BarberShop/{everything}"
+      "UpstreamPathTemplate": "/gateway/BarberShop{everything}"
     }
   ]
 }

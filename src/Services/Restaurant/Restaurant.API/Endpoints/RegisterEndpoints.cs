@@ -1,5 +1,6 @@
-﻿using Restaurant.API.Endpoints.Item;
+using Restaurant.API.Endpoints.Item;
 using Restaurant.API.Endpoints.MealManagement;
+using Restaurant.API.Endpoints.Promotion;
 
 namespace Restaurant.API.Endpoints;
 
@@ -9,6 +10,7 @@ public static class RegisterEndpoints
     {
         app.MapMealManagementEndpoints();
         app.MapItemEndpoints();
+        app.MapLookupEndpoints();
     }
 }
 

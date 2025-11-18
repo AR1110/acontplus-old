@@ -1,0 +1,326 @@
+// ============================================
+// src/app/components/promotion-list/promotion-list.component.scss
+// ============================================
+
+.list-container {
+  max-width: 100%;
+}
+
+.list-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+
+  .list-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+
+    .title-icon {
+      width: 2rem;
+      height: 2rem;
+      font-size: 2rem;
+      color: #4f46e5;
+    }
+  }
+}
+
+// Controles
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 300px;
+  }
+
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    .filter-icon {
+      color: #6b7280;
+      margin-right: 0.5rem;
+    }
+
+    button {
+      font-weight: 600;
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+// Loading
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: #4b5563;
+  font-weight: 600;
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem !important;
+  background-color: #f9fafb !important;
+  border: 2px dashed #d1d5db !important;
+  border-radius: 0.75rem !important;
+
+  mat-icon {
+    width: 4rem;
+    height: 4rem;
+    font-size: 4rem;
+    color: #9ca3af;
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    color: #374151;
+    margin: 0 0 0.5rem 0;
+  }
+
+  p {
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+// Grid de promociones
+.promotions-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+// Tarjeta de promoción
+.promotion-card {
+  border-radius: 0.75rem !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease;
+  border: 2px solid #e5e7eb;
+
+  &:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-4px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 1rem;
+
+    .promo-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #4338ca;
+      margin: 0;
+      flex: 1;
+    }
+
+    .active-chip {
+      background-color: #10b981 !important;
+      color: white !important;
+      font-weight: 600;
+
+      mat-icon {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+      }
+    }
+
+    .inactive-chip {
+      background-color: #ef4444 !important;
+      color: white !important;
+      font-weight: 600;
+
+      mat-icon {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .card-content {
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        .info-label {
+          font-size: 0.875rem;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .info-value {
+          font-size: 1rem;
+          color: #111827;
+          font-weight: 600;
+
+          &.highlight {
+            color: #4f46e5;
+            font-size: 1.25rem;
+          }
+
+          &.mono {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+          }
+        }
+      }
+    }
+
+    .schedule-info {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem;
+      background-color: #f9fafb;
+      border-radius: 0.5rem;
+      border: 1px solid #e5e7eb;
+      margin-top: 1rem;
+
+      mat-icon {
+        color: #6b7280;
+        flex-shrink: 0;
+      }
+
+      .schedule-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .schedule-text {
+        font-size: 0.875rem;
+        color: #374151;
+        margin: 0;
+        line-height: 1.5;
+      }
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 1rem;
+
+    button {
+      font-weight: 600;
+      box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
+      transition: all 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.4);
+      }
+
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .controls-container {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-field {
+      min-width: 100%;
+    }
+
+    .filter-buttons {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+  }
+
+  .promotions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .promotion-card {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+// Animaciones y transiciones suaves
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promotion-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+// Efectos hover mejorados
+.promotion-card {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+}
