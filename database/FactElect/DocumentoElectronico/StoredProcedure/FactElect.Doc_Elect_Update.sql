@@ -58,7 +58,7 @@ BEGIN
 
                     SELECT TOP 1 @idEstadoServicio = idEstadoServicio FROM FactElect.EstadoServicio WITH (NOLOCK) WHERE codigo = 1;
 
-                    UPDATE DocumentoElectronico  SET idEstadoServicio = @idEstadoServicio WHERE idDocumentoElectronico = @id;
+                    UPDATE DocumentoElectronico  SET idEstadoServicio = @idEstadoServicio, xmlAcontPlus = NULL WHERE idDocumentoElectronico = @id;
 
                     SET @codeResponse = '1';
                     SET @message = 'El XML se está actualizando';

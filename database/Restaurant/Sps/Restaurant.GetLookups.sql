@@ -23,15 +23,15 @@ BEGIN
     --> Tabla Temporal
     CREATE TABLE #LookupResults
     (
-        TableName    NVARCHAR(128) NOT NULL
-       ,Id           BIGINT NULL
-       ,Code         NVARCHAR(100) NULL
-       ,[Value]      NVARCHAR(400) NULL
-       ,DisplayOrder INT NULL
-       ,ParentId     BIGINT NULL
-       ,Metadata     NVARCHAR(MAX) NULL
-       ,ImagenUrl    NVARCHAR(800) NULL
-       ,IsDefault    BIT DEFAULT 0
+        tableName    NVARCHAR(128) NOT NULL
+       ,id           BIGINT NULL
+       ,code         NVARCHAR(100) NULL
+       ,[value]      NVARCHAR(400) NULL
+       ,displayOrder INT NULL
+       ,parentId     BIGINT NULL
+       ,metadata     NVARCHAR(MAX) NULL
+       ,imagenUrl    NVARCHAR(800) NULL
+       ,isDefault    BIT DEFAULT 0
        ,INDEX IX_Temp_TableName CLUSTERED (TableName, Id)
        ,INDEX IX_Temp_TableName_Value NONCLUSTERED (TableName, [Value])
        ,INDEX IX_Temp_TableName_Order NONCLUSTERED (TableName, DisplayOrder)
@@ -160,15 +160,7 @@ BEGIN
                 RETURN;
             END
 
-        SELECT TableName
-              ,Id
-              ,Code
-              ,[Value]
-              ,DisplayOrder
-              ,ParentId
-              ,IsDefault
-              ,Metadata
-              ,ImagenUrl
+        SELECT *
         FROM #LookupResults
         ORDER BY TableName,Id , DisplayOrder, Value
 
