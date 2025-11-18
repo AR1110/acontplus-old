@@ -3,20 +3,20 @@ export enum GlobalRoutes {
   ComprasReportesRecepcion = 'purchase/reception-reports',
 
   //Configuration Start
-  ConfigDocConfig = 'config/doc-config-page',
+  ConfigDocConfig = 'config/doc-config',
   ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config',
   ConfigUserProfile = 'config/user-profile-page',
   ConfigUserCustomer = 'config/user-customer',
-  ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
+  ConfigUserCustomerRequest = 'config/user-request',
   ConfigImportacion = 'config/excel-import',
-  FirmaElectronica='config/electronic-signature',
-  TiempoCredito='config/credit-time',
+  FirmaElectronica = 'config/electronic-signature',
+  TiempoCredito = 'config/credit-time',
   //Configuration End
 
   //Facturación start
   FactElectAts = 'billing/ats',
-  FactElectGuiaRemision='billing/guia-remision',
+  FactElectGuiaRemision = 'billing/guia-remision',
   //Facturacion end
 
   InventarioImpuestoMasivo = 'inventory/massive-tax-page',
@@ -25,18 +25,18 @@ export enum GlobalRoutes {
   MechanicalLayout = 'mechanical/layout',
   MechanicalVehicle = 'mechanical/vehicle-page',
   RestaurantReports = 'restaurant/item-report',
-  RestaurantInfrastructure = 'restaurant/infrastructure-page',
-  RestaurantProducts = 'restaurant/products-page',
+  RestaurantInfrastructure = 'restaurant/infrastructure',
+  RestaurantProducts = 'restaurant/products',
   TechnicalSupport = 'technical-support/technical-support-page',
   TechnicalSupportBrand = 'technical-support/brand-page',
   TechnicalSupportCategory = 'technical-support/category-page',
   TechnicalSupportDevice = 'technical-support/device-page',
   TechnicalSupportModelo = 'technical-support/modelo-page',
   VentasReportRentabilidad = 'sale/reports/rentabilidad-page',
-  VetBreed = 'vet/breed-page',
-  VetPet = 'vet/pet-page',
-  VetMedicalHistory = 'vet/medical-history-page',
-  VetStats = 'vet/stats-page',
+  VetBreed = 'vet/breeds',
+  VetPet = 'vet/pets',
+  VetMedicalHistory = 'vet/medical-history',
+  VetStats = 'vet/stats',
   ConfigCompany = 'config/company',
   ConfigPrinter = 'config/printer',
   ConfigWizardConfig = 'config/wizard-config',
@@ -55,7 +55,7 @@ export enum GlobalRoutes {
   Etiqueta = 'inventory/tags',
   ArticuloFraccionado = 'inventory/fracc-product',
   TransferenciaBodega = 'inventory/transferencia-bodega',
-  Bodega='inventory/warehouse',
+  Bodega = 'config/warehouse',
 
   //**Recepcion**//
   ComprasDocumentoRecibido = 'purchase/documento-recibido',
@@ -87,7 +87,7 @@ export enum GlobalRoutes {
   ContabilidadMovimientoCajaReport = 'accounting/reports/movimiento-caja-report',
   ContabilidadComprobanteEgreso = 'accounting/comprobante-egreso',
   ContabilidadCarteraCliente = 'accounting/reports/cartera-cliente',
-  ContabilidadPaymentsReport='accounting/reports/payments',
+  ContabilidadPaymentsReport = 'accounting/reports/payments',
 
   //COMPRAS
   ComprasFacturaCompra = 'purchase/factura-fisica',

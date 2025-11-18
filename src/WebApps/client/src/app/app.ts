@@ -99,11 +99,11 @@ export class App  {
         //end temporalmente
 
         if (!this._tokenUseCase.isTokenExpired()) {
-          localStorage.removeItem('access_token');
+          localStorage.removeItem('token');
         }
         const route_page = getEnumValueByKey(GlobalRoutes, route);
 
-        localStorage.setItem('access_token', token);
+        localStorage.setItem('token', token);
         self.router.navigate(['/', ...route_page.split('/')]);
       }
     });

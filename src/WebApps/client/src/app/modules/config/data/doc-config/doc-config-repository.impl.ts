@@ -34,12 +34,14 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
       }),
     );
   }
+
   create(params: any): Observable<ApiResponse> {
     const data = {
       docs: JSON.stringify(params),
     };
     return this.#http.post<ApiResponse>(`${this.#url}`, { data });
   }
+
   save(docConfig: DocConfig): Observable<ApiResponse> {
     const data = {
       docs: JSON.stringify(docConfig),

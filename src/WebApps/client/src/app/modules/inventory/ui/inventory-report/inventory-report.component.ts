@@ -489,6 +489,7 @@ export class InventoryReportComponent implements OnInit {
             ? null
             : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
+        idTipoIva: getValidId(this.dataSearch.idTipoIva),
       };
 
       const parameters = {
@@ -536,6 +537,7 @@ export class InventoryReportComponent implements OnInit {
             ? null
             : isValidField(this.dataSearch.stockStatusCode),
         userRoleId: this._tokenUseCase.getUserRoleId(),
+        idTipoIva: getValidId(this.dataSearch.idTipoIva),
       };
 
       const parameters = {
