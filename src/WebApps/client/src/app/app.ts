@@ -1,12 +1,10 @@
-import { Component, inject, OnInit, AfterViewInit } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PreloaderService, SettingsService } from '@core/bootstrap';
 import { PermissionsService } from '@core/services/permissions';
 import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
 import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
-import { fab } from '@fortawesome/free-brands-svg-icons';
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { GlobalRoutes } from '@core/constants/global-routes';
 import { ThemeSwitcher } from '@acontplus/ng-components';
@@ -15,6 +13,7 @@ import { ThemeSwitcher } from '@acontplus/ng-components';
   selector: 'app-root',
   imports: [RouterOutlet],
   template: ` <router-outlet /> `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
@@ -32,13 +31,13 @@ export class App implements OnInit, AfterViewInit {
   private readonly permissionsService = inject(PermissionsService);
   //end temporalmente
 
-  constructor() {
-    const library = inject(FaIconLibrary);
-    library.addIconPacks(fab);
-  }
-
   ngOnInit() {
     this.themeSwitcher.loadMode();
+
+    // for legacy usage
+    if (this.themeSwitcher.isDarkMode$) {
+      this.themeSwitcher.toggleDarkMode();
+    }
 
     // Limpiar sessionStorage en cada inicio
     Object.keys(sessionStorage).forEach(function (key) {

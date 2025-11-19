@@ -41,5 +41,8 @@
   "prettier.requireConfig": true,
   "ngx-translate.lookup.resourcesType": "json",
   "ngx-translate.lookup.resourcesPath": "public/i18n/zh-CN.json",
-  "i18n-ally.localesPaths": ["public/i18n", "src/app/core/i18n"]
+  "i18n-ally.localesPaths": [
+    "public/i18n",
+    "src/app/core/i18n"
+  ]
 }
