@@ -209,7 +209,9 @@ BEGIN
         SELECT @ErrorDetails = (
             SELECT @Json as json FOR JSON PATH
         );
- 
+
+        IF (@@TRANCOUNT > 0) ROLLBACK TRAN
+
         INSERT INTO ErroresSistema
                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
         SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
