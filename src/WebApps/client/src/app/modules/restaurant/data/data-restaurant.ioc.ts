@@ -48,5 +48,5 @@ export const DATA_RESTAURANT_IOC: Provider[] = [
   {
     provide: PromotionRepository,
     useClass: PromotionHttpRepository,
-  }
+  },
 ];
