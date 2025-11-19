@@ -2,12 +2,18 @@ import { Component, inject, OnInit, AfterViewInit, ChangeDetectionStrategy } fro
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { PreloaderService, SettingsService } from '@core/bootstrap';
 import { PermissionsService } from '@core/services/permissions';
-import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
+import {
+  PermissionCashAccounting,
+  ProductPermission,
+  UserPermission,
+  UserRoleStateService,
+} from '@shared/store/user-role-state.service';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { GlobalRoutes } from '@core/constants/global-routes';
 import { ThemeSwitcher } from '@acontplus/ng-components';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -23,13 +29,15 @@ export class App implements OnInit, AfterViewInit {
 
   title = 'Acontplus';
   userRoleState = inject(UserRoleStateService);
-  //temporalmente
+
   private readonly themeSwitcher = inject(ThemeSwitcher);
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
   private readonly permissionsService = inject(PermissionsService);
-  //end temporalmente
+
+  // Add a flag to track if legacy authentication has been processed
+  private legacyAuthProcessed = false;
 
   ngOnInit() {
     this.themeSwitcher.loadMode();
@@ -49,6 +57,7 @@ export class App implements OnInit, AfterViewInit {
       const route = params['route'] as string | undefined;
       const dataPermission = params['permission'] as string | undefined;
       const userRoleData = params['userRoleData'] as string | undefined;
+      console.log('Query Params:', { token, route, dataPermission, userRoleData });
 
       // **FLUJO LEGACY**: Autenticación desde Razor Pages
       // Viene con token, route y permisos como query params
@@ -56,10 +65,67 @@ export class App implements OnInit, AfterViewInit {
         this.handleLegacyAuthentication(token, route, dataPermission, userRoleData);
       }
       // **FLUJO MODERNO**: Autenticación Angular nativa
-      else {
+      // Only handle modern flow if no legacy auth was processed AND no valid token exists
+      else if (!this.legacyAuthProcessed && this.shouldHandleModernFlow()) {
         this.handleModernFlow();
       }
     });
+  }
+
+  /**
+   * Determines if modern flow should be handled
+   */
+  private shouldHandleModernFlow(): boolean {
+    // Check if we have a valid token in localStorage
+    const existingToken = localStorage.getItem(environment.tokenKey);
+
+    if (existingToken && !this._tokenUseCase.isTokenExpired()) {
+      console.log('[Modern Flow] Valid token exists, skipping modern flow initialization');
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Clears all authentication data from storage
+   */
+  private clearAllAuthData(): void {
+    // Clear localStorage auth data
+    localStorage.removeItem(environment.tokenKey);
+    localStorage.removeItem('permisos');
+    localStorage.removeItem('userRoleData');
+
+    // Clear sessionStorage
+    sessionStorage.clear();
+
+    // Reset user role state
+    this.userRoleState.setState({});
+
+    console.log('[Auth] All authentication data cleared from storage');
+  }
+
+  /**
+   * Checks if tokens match and clears data if they don't
+   */
+  private validateAndSyncTokens(newToken: string): boolean {
+    const existingToken = localStorage.getItem(environment.tokenKey);
+
+    // If no existing token, proceed normally
+    if (!existingToken) {
+      return true;
+    }
+
+    // If tokens are different, clear all auth data
+    if (existingToken !== newToken) {
+      console.warn('[Auth] Token mismatch detected. Clearing existing auth data.');
+      this.clearAllAuthData();
+      return true;
+    }
+
+    // Tokens match, no action needed
+    console.log('[Auth] Tokens match, preserving existing session');
+    return false;
   }
 
   /**
@@ -72,18 +138,20 @@ export class App implements OnInit, AfterViewInit {
     dataPermission?: string,
     userRoleData?: string,
   ) {
-    // Procesar permisos si existen
-    if (dataPermission) {
+    // Mark that legacy auth has been processed
+    this.legacyAuthProcessed = true;
+
+    // Validate and sync tokens - clear data if tokens don't match
+    const shouldClearData = this.validateAndSyncTokens(token);
+
+    // If tokens didn't match and data was cleared, we need to process everything fresh
+    // If tokens matched, we might still want to update permissions if they changed
+    if (shouldClearData || dataPermission) {
       this.processPermissions(dataPermission, userRoleData);
     }
 
-    // Si ya existe un token válido, eliminarlo antes de establecer el nuevo
-    if (!this._tokenUseCase.isTokenExpired()) {
-      localStorage.removeItem('access_token');
-    }
-
-    // Guardar el nuevo token
-    localStorage.setItem('access_token', token);
+    // Always set the new token (it might be the same or different)
+    localStorage.setItem(environment.tokenKey, token);
 
     // Convertir la ruta legacy a ruta Angular
     const route_page = getEnumValueByKey(GlobalRoutes, route as keyof typeof GlobalRoutes);
@@ -100,8 +168,13 @@ export class App implements OnInit, AfterViewInit {
   /**
    * Procesa los permisos recibidos desde el sistema legacy
    */
-  private processPermissions(dataPermission: string, userRoleData?: string) {
+  private processPermissions(dataPermission?: string, userRoleData?: string) {
     try {
+      // Only process if we have permission data
+      if (!dataPermission) {
+        return;
+      }
+
       localStorage.setItem('permisos', dataPermission);
 
       if (userRoleData) {
@@ -144,6 +217,7 @@ export class App implements OnInit, AfterViewInit {
    * Sin query params de autenticación legacy
    */
   private handleModernFlow() {
+    console.log('[Modern Flow] Initializing modern Angular flow');
     this.settings.setDirection();
     this.themeSwitcher.loadMode();
   }

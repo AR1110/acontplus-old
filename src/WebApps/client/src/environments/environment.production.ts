@@ -3,4 +3,6 @@ export const environment = {
   production: true,
   API_URL: 'https://acontplus.com/gateway',
   clientId: 'acontplus-web-app',
+  tokenKey: 'access_token',
+  refreshTokenKey: '',
 };

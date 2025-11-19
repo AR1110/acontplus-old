@@ -11,8 +11,8 @@ export enum RESTAURANT_PATHS {
   ROOM = 'Room/',
   TABLE = 'Table/',
   CONFIG = 'Configuration/',
-  MEAL_SCHEDULE_SETTING = 'MealScheduleSetting/',
-  MEAL_CONSUMPTION = 'MealConsumption/',
+  MEAL_SCHEDULE_SETTING = 'meal-schedule-settings/',
+  MEAL_CONSUMPTION = 'meal-consumptions/',
   LOOKUPS = 'Lookups',
 }
 

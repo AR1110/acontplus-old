@@ -15,7 +15,7 @@ import { ElectronicDocListMapper } from '@billing/data/documento-electronico/doc
   providedIn: 'root',
 })
 export class DocElectHttpRepository implements DocumentoElectronicoRepository {
-  private readonly _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.DOC_ELECT}`;
+  private readonly _url = `${PATHS_API.BILLING}${BILLING_PATHS.DOC_ELECT}`;
   private readonly _http = inject(HttpClient);
   private readonly _sharedService = inject(SharedService);
 
