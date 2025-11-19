@@ -7,6 +7,7 @@ export interface MealScheduleSetting {
   endTime: string; // TimeSpan as string (HH:mm:ss)
   displayOrder: number;
   isActive: boolean;
+  onTime: boolean;
 }
 
 export interface MealScheduleSettingCreate {

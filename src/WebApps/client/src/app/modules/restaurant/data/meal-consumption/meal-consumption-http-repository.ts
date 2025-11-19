@@ -7,7 +7,6 @@ import {
   MealConsumptionUpdate,
   MealConsumptionCancel,
   MealConsumptionCreateForOtherDateRequest,
-  MealScheduleConfiguration,
   PrintConsumptionResponse,
 } from '@modules/restaurant/domain/models/meal-consumption';
 import { Observable } from 'rxjs';
@@ -107,42 +106,6 @@ export class MealConsumptionHttpRepository implements MealConsumptionRepository 
           return {
             customer: null,
             schedules: [],
-          };
-        }),
-      );
-  }
-
-  getConfigurations(): Observable<PagedResult<MealScheduleConfiguration>> {
-    const payload = {
-      tipo: 4,
-    };
-    return this.http
-      .get<ApiResponseLegacy>('/consumoTpv/Get', {
-        params: { json: JSON.stringify(payload) },
-      })
-      .pipe(
-        map((response) => {
-          if (response.code === '1' && response.payload) {
-            const data = JSON.parse(response.payload as string);
-            const items = data[0] || [];
-            return {
-              items,
-              totalCount: items.length,
-              pageIndex: 1,
-              pageSize: items.length,
-              totalPages: 1,
-              hasPreviousPage: false,
-              hasNextPage: false,
-            };
-          }
-          return {
-            items: [],
-            totalCount: 0,
-            pageIndex: 1,
-            pageSize: 0,
-            totalPages: 0,
-            hasPreviousPage: false,
-            hasNextPage: false,
           };
         }),
       );
