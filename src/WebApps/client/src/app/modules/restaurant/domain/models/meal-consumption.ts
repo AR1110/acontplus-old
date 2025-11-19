@@ -9,10 +9,10 @@ export interface MealConsumption {
   mealScheduleSettingId: number;
   mealScheduleSettingName: string;
   companyCustomerMealPlanId: number;
-  companyCustomerName: string;
+  customerName: string;
   consumptionDate: Date;
   amount: number;
-  consumptionStatus: ConsumptionStatus;
+  status: ConsumptionStatus;
   createdByUserId: number;
   createdAt: Date;
   createdIpAddress: string;
@@ -44,12 +44,6 @@ export interface MealScheduleForCustomer {
   isActive: boolean; // Already registered for this client
   onTime: boolean; // Currently available based on time
   amount?: number;
-}
-
-export interface MealScheduleConfiguration {
-  id: number;
-  descripcion: string;
-  onTime: boolean;
 }
 
 export interface PrintConsumptionResponse {
