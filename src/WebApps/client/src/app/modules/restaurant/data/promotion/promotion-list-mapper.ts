@@ -1,4 +1,4 @@
-import {PromotionList} from "@restaurant/domain/models/promotion";
+import {PromotionListDto} from "@restaurant/domain/models/promotion";
 import { PaginationParams, PagedResult } from "@acontplus/core";
 export class PromotionListMapper {
   static toJson(params: PaginationParams) {
@@ -31,11 +31,15 @@ export class PromotionListMapper {
     return queryParams.toString();
   }
 
-  static fromJson(response: PagedResult<unknown>): PagedResult<PromotionList> {
-    const results: PagedResult<PromotionList> = {
+  static fromJson(response: PagedResult<unknown>): PagedResult<PromotionListDto> {
+    const results: PagedResult<PromotionListDto> = {
       ...response,
       items: [],
     };
+    console.log(response.items)
+    results.items = response.items.map((item: any) => ({
+      ...item
+    }))
 
 
     return results;

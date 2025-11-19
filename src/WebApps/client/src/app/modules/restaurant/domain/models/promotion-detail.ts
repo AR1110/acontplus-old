@@ -31,6 +31,7 @@ export class PromotionDetail {
   quantity = 1;
   subtotal = 0;
 
+  buyQuantity = 1;
   isActive = true;
   isDeleted = false;
 

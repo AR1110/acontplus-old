@@ -1,27 +1,7 @@
 <app-breadcrumb />
 
 
-<mat-tab-group dynamicHeight>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon class="tab-icon">add_circle</mat-icon>
-      <span class="tab-label">Crear Promoción</span>
-    </ng-template>
-
-    <div class="tab-content">
-      <app-promotion-form/>
-    </div>
-  </mat-tab>
-  <mat-tab>
-    <ng-template mat-tab-label>
-      <mat-icon >list</mat-icon>
-      Listado de Promociones
-    </ng-template>
-    <div class="tab-content">
-      <app-promotion-list/>
-    </div>
-  </mat-tab>
-</mat-tab-group>
+<app-promotion-list/>
 
 
 

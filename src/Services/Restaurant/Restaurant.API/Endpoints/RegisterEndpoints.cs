@@ -11,6 +11,7 @@ public static class RegisterEndpoints
         app.MapMealManagementEndpoints();
         app.MapItemEndpoints();
         app.MapLookupEndpoints();
+        app.MapPromotionEndpoints();
     }
 }
 

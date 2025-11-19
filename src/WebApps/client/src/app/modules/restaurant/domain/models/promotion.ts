@@ -1,4 +1,4 @@
-export interface PromotionList {
+export interface PromotionListDto {
   id: number;
   name: string;
 

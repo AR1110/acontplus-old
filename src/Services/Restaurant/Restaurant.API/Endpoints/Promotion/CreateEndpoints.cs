@@ -13,8 +13,7 @@ public static class CreateEndpoints
             .WithDescription("Endpoints for managing promotions.")
             .WithTags("promotions");
 
-        group.MapPost("/", async (
-            int id,
+        group.MapPost("/", async ( 
             PromotionCreate request,
             IPromotionService promotionService,
             IUserContext userContext,

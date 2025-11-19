@@ -2,13 +2,21 @@ import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@ang
 import { MatInputModule} from "@angular/material/input";
 import {MatIcon} from "@angular/material/icon";
 import {MatFormField} from "@angular/material/form-field";
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatCard} from "@angular/material/card";
 import {MatChip} from "@angular/material/chips";
-import {PromotionListUseCase} from "@restaurant/application/use-cases/promotion-use-case";
+import {PromotionGetByIdUseCase, PromotionListUseCase} from "@restaurant/application/use-cases/promotion-use-case";
 import {PaginationParams} from "@acontplus/core";
 import {ValidatorUtils} from "@core/utils/utils";
-import {Pagination} from "@acontplus/ng-components";
+import {Button, Pagination} from "@acontplus/ng-components";
+import {LookupService} from "@restaurant/application/services/lookup-service";
+import {LookupItem} from "@core/models/lookup-type";
+import {PromotionListDto} from "@restaurant/domain/models/promotion";
+import {AddEditProductDirective} from "@inventory/product/presentation/directives/add-edit-product.directive";
+import {FormsModule} from "@angular/forms";
+import {HasPermissionDirective} from "@core/directives/permission";
+import {DialogService} from "@core/services/dialog.service";
+import {PromotionForm} from "@restaurant/ui/promotions/promotion-form/promotion-form";
 
 @Component({
   selector: 'app-promotion-list',
@@ -18,15 +26,26 @@ import {Pagination} from "@acontplus/ng-components";
     MatInputModule,
     MatButton,
     MatCard,
-    MatChip
+    MatChip,
+    AddEditProductDirective,
+    FormsModule,
+    HasPermissionDirective,
+    MatIconButton,
+    Button,
   ],
   templateUrl: './promotion-list.html',
   styleUrl: './promotion-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromotionList {
+  private lookupSvc = inject(LookupService)
   #listUseCase = inject(PromotionListUseCase);
+
+  dgSvc = inject(DialogService)
+
 // Signals
+  establishments = signal<LookupItem[]>([]);
+
   searchTerm = signal<string>('');
   filterActive = signal<'all' | 'active' | 'inactive'>('all');
 
@@ -40,6 +59,20 @@ export class PromotionList {
 
   promotionCount = computed(() => this.filteredPromotions().length);
   pagination = signal(new Pagination());
+
+  newPromotion(){
+    const ref = this.dgSvc.open(PromotionForm, {
+      size: 'xxl',
+      data: {
+        id: 0,
+      },
+    })
+    ref.subscribe(result => {
+      if(result && typeof result === 'object'){
+        this.list();
+      }
+    })
+  }
   private list(){
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
@@ -48,11 +81,22 @@ export class PromotionList {
 
     });
     this.#listUseCase.execute(params).subscribe(response => {
-
+      console.log(response)
     })
   }
   ngOnInit() {
-    this.list();
+    this.lookupSvc.getLookupList('establishments').subscribe(x => {
+      this.establishments.set(x.establishments);
+
+      const defaultEstablishment = this.establishments()[0];
+      if(defaultEstablishment){
+       // this.promotionForm.patchValue({ establishmentId: defaultEstablishment.id });
+        this.list();
+      }
+    });
+    this.handleEdit({
+      id: 8
+    })
   }
 
   onSearchChange(value: string): void {
@@ -94,4 +138,10 @@ export class PromotionList {
 
     return activeDays || 'Ningún día configurado';
   }
+
+  handleEdit(rowData: any){
+    console.log(rowData)
+
+  }
+
 }

@@ -10,6 +10,7 @@ export interface LookupItem {
   displayOrder: number;
   parentId?: number;
   isActive: boolean;
+  isDefault: boolean;
   metadata?: Record<string, any>;
 }
 

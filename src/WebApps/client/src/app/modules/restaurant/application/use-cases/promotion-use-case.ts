@@ -24,3 +24,14 @@ export class PromotionInsertUseCase implements BaseUseCase<any, any> {
     return this.#repo.insert(params);
   }
 }
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PromotionGetByIdUseCase implements BaseUseCase<any, number> {
+  #repo = inject(PromotionRepository);
+  execute(id: number): Observable<any> {
+    return this.#repo.getById(id);
+  }
+}
