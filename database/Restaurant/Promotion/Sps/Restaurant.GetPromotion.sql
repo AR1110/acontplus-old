@@ -82,7 +82,7 @@ BEGIN
         --> Filters
         IF @IncludeDeleted = 0
             BEGIN
-                SET @WhereClause = @WhereClause + N'AND pr.IsActive = 1 ';
+                SET @WhereClause = @WhereClause + N'AND pr.IsActive = 0 ';
             END
 
         IF @SearchTerm IS NOT NULL AND LEN(@SearchTerm) > 0
@@ -110,8 +110,8 @@ BEGIN
                                       ,pr.Description
                                       ,FORMAT(pr.StartDate, ''yyyy-MM-dd'')   AS StartDate
                                       ,FORMAT(pr.EndDate, ''yyyy-MM-dd'')     AS EndDate
-                                      ,pr.PromotionDays
-                                      ,ISNULL(pr.S3ObjectUrl, '''')           AS S3ObjectUrl
+                                      ,pr.[ApplicableDays]
+                                      ,ISNULL(pr.[ImageUrl], '''')            AS [ImageUrl]
                                       ,pr.IsActive
                                       ,COUNT(*) OVER()                        AS TotalCount
 	                            FROM Restaurant.Promotion      pr 

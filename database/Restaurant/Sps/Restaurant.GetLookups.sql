@@ -23,15 +23,15 @@ BEGIN
     --> Tabla Temporal
     CREATE TABLE #LookupResults
     (
-        tableName    NVARCHAR(128) NOT NULL
-       ,id           BIGINT NULL
+        TableName    NVARCHAR(128) NOT NULL
+       ,id           INT NULL
        ,code         NVARCHAR(100) NULL
        ,[value]      NVARCHAR(400) NULL
-       ,displayOrder INT NULL
-       ,parentId     BIGINT NULL
-       ,metadata     NVARCHAR(MAX) NULL
-       ,imagenUrl    NVARCHAR(800) NULL
-       ,isDefault    BIT DEFAULT 0
+       ,DisplayOrder INT NULL
+       ,ParentId     INT NULL
+       ,Metadata     NVARCHAR(MAX) NULL
+       ,ImagenUrl    NVARCHAR(800) NULL
+       ,isDefault    BIT DEFAULT 0    
        ,INDEX IX_Temp_TableName CLUSTERED (TableName, Id)
        ,INDEX IX_Temp_TableName_Value NONCLUSTERED (TableName, [Value])
        ,INDEX IX_Temp_TableName_Order NONCLUSTERED (TableName, DisplayOrder)
@@ -48,16 +48,20 @@ BEGIN
            ,context    VARCHAR(100)
         )
 
-        SELECT TOP 1 @idEntidad = idEntidad , @UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+        --IF @Module = 'Order'
+            BEGIN 
+                SELECT TOP 1 @idEntidad = idEntidad ,@UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
+            END 
 
+        --> Data Lookups
         INSERT INTO #LookupResults (TableName, Id, Code, [Value], Metadata)
         SELECT 'Establishments'     as TableName
               ,es.idEstablecimiento as Id
               ,es.estab             as Code
               ,es.nombreComercial   as Value
-              ,(SELECT (SELECT pe.idPuntoEmision as Id, pe.ptoEmi FROM dbo.PuntoEmision pe WHERE pe.estado = 1 AND pe.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as IssuingPoints,
+              ,(SELECT (SELECT pe.idPuntoEmision as id, pe.ptoEmi FROM dbo.PuntoEmision pe WHERE pe.estado = 1 AND pe.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as issuingPoints,
 
-                       (SELECT bo.idBodega as Id, bo.descripcion as [Description] FROM dbo.Bodega bo WHERE bo.estado = 1 AND bo.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as warehouses
+                       (SELECT bo.idBodega as id, bo.descripcion as [description] FROM dbo.Bodega bo WHERE bo.estado = 1 AND bo.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as warehouses
                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
         FROM Sri.Establecimiento          es
         INNER JOIN Sri.ActividadEconomica ae ON ae.idActividadEconomica = es.idActividadEconomica
@@ -69,9 +73,9 @@ BEGIN
         SELECT 'Tables'         as TableName
               ,tb.Id            as Id
 			  ,tb.[Description] as [Value]
-              ,(SELECT ISNULL(tb.Assigned,0) as Assigned
-                      ,fl.[Description]      as [Floor]
-                      ,ro.[Description]      as Room
+              ,(SELECT ISNULL(tb.Assigned,0) as assigned
+                      ,fl.[Description]      as [floor]
+                      ,ro.[Description]      as room
                       ,fl.EstablecimientoId  as EstablishmentId
                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
         FROM Restaurant.[Table]       tb 
@@ -82,7 +86,7 @@ BEGIN
 		  AND es.idEntidad = @idEntidad
 
         INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,ImagenUrl)
-        SELECT 'SubCategorys'             as TableName
+        SELECT 'SubCategories'            as TableName
               ,sf.idSubFamilia			  as Id
               ,sf.siglaFamilia            as Code
 		      ,sf.descripcion		      as [Description]
@@ -93,11 +97,12 @@ BEGIN
 		  AND sf.siglaFamilia IN ( 'RES', 'POR') 
         ORDER BY sf.idSubFamilia DESC
 
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value])
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], Metadata)
         SELECT 'Taxes'             as TableName
               ,ti.idTarifaImpuesto as Id  
 			  ,ti.codigo    
 			  ,ti.descripcion
+              ,(SELECT ti.porcentaje FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
 	    FROM Sri.TarifaImpuesto ti 
         INNER JOIN Sri.Impuesto im ON im.idImpuesto = ti.idImpuesto
 	    WHERE ti.estado = 1
@@ -108,9 +113,9 @@ BEGIN
                     ,cl.idCliente      as Id
                     ,cu.IDCard         as Code
                     ,cu.BusinessName   as [Value]
-                    ,(SELECT TradeName 
-                            ,ISNULL(cl.direccion,'') as [Address]
-                            ,ISNULL(cl.correo,'')    as [Email]
+                    ,(SELECT tradeName 
+                            ,ISNULL(cl.direccion,'') as [address]
+                            ,ISNULL(cl.correo,'')    as [email]
                       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
         FROM dbo.Cliente				  cl
         INNER JOIN Customer.Customer      cu ON cu.Id = cl.CustomerId
@@ -124,10 +129,10 @@ BEGIN
               ,gs.idEntidad   as Id 
               ,'CONFIG'       as Code
               ,'Configuración Sistema Ventas' as [Value]
-              ,(SELECT CAST(searchCode AS BIT)       as SearchCode,
-                       CAST(printerAutomatic AS BIT) as PrinterAutomatic,
-                       CAST(payAutomatic AS BIT)     as PayAutomatic,
-                       CAST(multipleVendedor AS BIT) as MultipleVendedor
+              ,(SELECT CAST(searchCode AS BIT)       as searchCode,
+                       CAST(printerAutomatic AS BIT) as printerAutomatic,
+                       CAST(payAutomatic AS BIT)     as payAutomatic,
+                       CAST(multipleVendedor AS BIT) as multipleVendedor
 
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
         FROM Config.v_Sistema_Ventas gs

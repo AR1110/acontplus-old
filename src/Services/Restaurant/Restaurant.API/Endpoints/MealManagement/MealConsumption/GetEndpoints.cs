@@ -12,12 +12,15 @@ public static class GetEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
-        group.MapGet("/", async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService, CancellationToken cancellationToken) =>
+        group.MapGet("/", async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
         {
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
             var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
             {
                 SortDirection = paginationQuery.SortDirection ?? default
             };
+            paginationDto.WithFilter("UserRoleId", userRoleId);
+
             return await mealConsumptionService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
         })
             .WithName("GetMealConsumptionById")

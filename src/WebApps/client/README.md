@@ -451,9 +451,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 // Angular Material
 import { MatButton } from '@angular/material/button';
 import { MatCard } from '@angular/material/card';
-
-// Third-party Libraries
-import { faIcon } from '@fortawesome/free-solid-svg-icons';
+import { MatIcon } from '@angular/material/icon';
 
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';

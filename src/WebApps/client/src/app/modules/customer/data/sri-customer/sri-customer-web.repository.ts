@@ -11,12 +11,8 @@ export class SriCustomerWebRepository implements SriCustomerRepository {
   private http = inject(HttpClient);
 
   //FROM REGISTRO CIVIL DATA
-  url = `${PATHS_API.FACT_ELECT}Consultas/`;
+  url = `${PATHS_API.BILLING}Consultas/`;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   search(codigo: string, id: string) {
     let path;

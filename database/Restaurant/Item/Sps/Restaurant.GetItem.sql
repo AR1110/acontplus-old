@@ -46,7 +46,7 @@ BEGIN
            ,@IncludeDeleted BIT = 0
 
     BEGIN TRY
-        --> Variables
+        --> Data Json
         IF @Filters IS NOT NULL AND ISJSON(@Filters) = 1
             BEGIN
                 SELECT @IncludeDeleted = ISNULL(TRY_CAST(IncludeDeleted AS BIT), 0)
@@ -63,6 +63,7 @@ BEGIN
                 );
             END
 
+        --> Variables
         SELECT TOP 1 @idEntidad = idEntidad, @UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
 
         SET @WhereClause = N'WHERE ar.idEntidad = @idEntidad '
@@ -79,12 +80,12 @@ BEGIN
                 SET @SortBy = 'Id';
             END
 
-         SET @OrderByClause = CASE @SortBy WHEN 'code'        THEN N' ORDER BY ' + QUOTENAME('code')        + N' ' + @SortDirection
-                                           WHEN 'description' THEN N' ORDER BY ' + QUOTENAME('description') + N' ' + @SortDirection
-                                           WHEN 'measure'     THEN N' ORDER BY ' + QUOTENAME('measure')     + N' ' + @SortDirection
-                                           WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
-                                                              ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
-                              END;
+        SET @OrderByClause = CASE @SortBy WHEN 'code'        THEN N' ORDER BY ' + QUOTENAME('code')        + N' ' + @SortDirection
+                                          WHEN 'description' THEN N' ORDER BY ' + QUOTENAME('description') + N' ' + @SortDirection
+                                          WHEN 'measure'     THEN N' ORDER BY ' + QUOTENAME('measure')     + N' ' + @SortDirection
+                                          WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
+                                                             ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
+                             END;
 
         --> Validate input parameters
         IF @IncludeDeleted = 0
@@ -195,11 +196,11 @@ BEGIN
             FOR JSON PATH
         );
  
-        --> Limpiar tabla temporal en caso de error
-        IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
-
         INSERT INTO ErroresSistema
                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
         SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
+
+        --> Limpiar tabla temporal en caso de error
+        IF OBJECT_ID('tempdb..#FilteredItems') IS NOT NULL DROP TABLE #FilteredItems;
     END CATCH 
 END

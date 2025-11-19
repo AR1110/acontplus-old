@@ -46,6 +46,6 @@ export class GuiaRemisionRepositoryImpl implements GuiaRemisionRepository {
   //   throw new Error('Method not implemented.');
   // }
 
-  private _url = `${PATHS_API.FACT_ELECT}${BILLING_PATHS.GUIA_REMISION}`;
+  private _url = `${PATHS_API.BILLING}${BILLING_PATHS.GUIA_REMISION}`;
   private _http = inject(HttpClient);
 }
