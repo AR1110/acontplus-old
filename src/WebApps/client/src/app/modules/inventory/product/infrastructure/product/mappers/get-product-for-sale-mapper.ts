@@ -43,6 +43,7 @@ export class GetProductForSaleMapper {
         //nombres estandarizados
         code: productTemp.codigoArticulo,
         description: productTemp.descripcion,
+        taxCode: productTemp.codigoPorcentaje,
       }
 
       results.medidas = mergeMeasureUtil(measures, fractionedMeasures);

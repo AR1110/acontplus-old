@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { environment } from 'src/environments/environment';
 
 /**
  * Guard híbrido para manejar autenticación durante la migración
@@ -25,7 +26,7 @@ export const hybridAuthGuard: CanActivateFn = (route, state) => {
   // Para rutas legacy (/legacy/...), el token ya fue procesado por app.ts
   // Solo verificar que exista un token válido
   if (state.url.startsWith('/legacy/')) {
-    const hasToken = !!localStorage.getItem('access_token');
+    const hasToken = !!localStorage.getItem(environment.tokenKey);
     if (hasToken) {
       return true; // Permitir acceso, app.ts ya validó la auth
     }

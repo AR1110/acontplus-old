@@ -22,7 +22,7 @@ export default {
     tslib: 'tslib/tslib.es6.js',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(rxjs|tslib|@angular|@ngrx|@ngx|@fortawesome|lodash-es|uuid|date-fns|.*\\.mjs$))',
+    'node_modules/(?!(rxjs|tslib|@angular|@ngrx|@ngx|lodash-es|uuid|date-fns|.*\\.mjs$))',
   ],
   transform: {
     '^.+\\.(ts|js|html|svg)$': [

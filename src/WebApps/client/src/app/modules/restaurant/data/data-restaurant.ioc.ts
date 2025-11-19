@@ -13,8 +13,14 @@ import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-
 import { MealConsumptionHttpRepository } from '@restaurant/data/meal-consumption/meal-consumption-http-repository';
 import {PromotionRepository} from "@restaurant/domain/repositories/promotion-repository";
 import {PromotionHttpRepository} from "@restaurant/data/promotion/promotion-http-repository";
+import {LookupRepository} from "@restaurant/domain/repositories/lookup-repository";
+import { LookupHttpRepository } from './lookup/lookup-http-repository';
 
 export const DATA_RESTAURANT_IOC: Provider[] = [
+  {
+    provide: LookupRepository,
+    useClass: LookupHttpRepository,
+  },
   {
     provide: ItemRepository,
     useClass: ItemHttpRepository,

@@ -12,6 +12,7 @@ import {PromotionListMapper} from "@restaurant/data/promotion/promotion-list-map
   providedIn: "root"
 })
 export class PromotionHttpRepository implements PromotionRepository {
+
    #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.PROMOTIONS}`;
    #http = inject(HttpClient);
 
@@ -21,5 +22,9 @@ export class PromotionHttpRepository implements PromotionRepository {
         .get<PagedResult<unknown>>(`${this.#url}?${queryParams}`)
         .pipe(map((response) => PromotionListMapper.fromJson(response)));
     }
+
+   insert(data: any): Observable<any> {
+    return this.#http.post(`${this.#url}`, data);
+  }
 
 }

@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.Json;
+using Humanizer;
 using Restaurant.Application.Dtos;
 
 namespace Restaurant.Application.Services;
@@ -95,7 +96,7 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
             .SelectMany(dt => dt.AsEnumerable())
             .GroupBy(row => row.Field<string>("TableName")) // Group by the TableName column
             .ToDictionary(
-                group => string.IsNullOrWhiteSpace(group.Key) ? "default" : group.Key,
+                group => (string.IsNullOrWhiteSpace(group.Key) ? "default" : group.Key).Camelize(),
                 group => (IEnumerable<LookupItem>)group
                     .Select(row => new LookupItem(
                         row.Field<int?>("Id"),

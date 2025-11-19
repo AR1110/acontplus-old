@@ -17,7 +17,7 @@ import { CreateUpdateCompanyCustomerMapper } from '@company-customer/infrastruct
   providedIn: 'root',
 })
 export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
-  private _url = `${PATHS_API.FACT_ELECT}CompanyCustomer/`;
+  private _url = `${PATHS_API.BILLING}CompanyCustomer/`;
   private _http = inject(HttpClient);
 
   getAll<T extends { pageIndex: number; pageSize: number }>(obj: T) {

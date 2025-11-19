@@ -13,3 +13,14 @@ export class PromotionListUseCase implements BaseUseCase<any, any> {
     return this.#repo.list(params);
   }
 }
+
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PromotionInsertUseCase implements BaseUseCase<any, any> {
+  #repo = inject(PromotionRepository);
+  execute(params: any): Observable<any> {
+    return this.#repo.insert(params);
+  }
+}

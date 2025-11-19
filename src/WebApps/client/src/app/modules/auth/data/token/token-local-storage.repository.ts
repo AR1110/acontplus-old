@@ -4,18 +4,18 @@ import { TokenModel } from '../../domain/models/token.model';
 import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { SessionCache } from '@modules/auth/domain/models/session';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenLocalStorageRepository implements TokenRepository {
-  private TOKEN_KEY = 'token';
-  private SESSION_KEY = 'session';
   private readonly CACHE_VERSION = '1.0.0';
   private readonly CACHE_DURATION = 3600000; // 1 hora
+  private readonly SESSION_KEY = 'session';
 
   saveSession(session: SessionCache): void {
-    localStorage.setItem(this.TOKEN_KEY, session.token);
+    localStorage.setItem(environment.tokenKey, session.token);
     localStorage.setItem(
       this.SESSION_KEY,
       JSON.stringify({
@@ -39,15 +39,15 @@ export class TokenLocalStorageRepository implements TokenRepository {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    return localStorage.getItem(environment.tokenKey);
   }
 
   setToken(token: string): void {
-    localStorage.setItem(this.TOKEN_KEY, token);
+    localStorage.setItem(environment.tokenKey, token);
   }
 
   removeToken(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(environment.tokenKey);
   }
   parseJwt(): TokenModel['decodedToken'] | null {
     try {
@@ -108,7 +108,7 @@ export class TokenLocalStorageRepository implements TokenRepository {
   }
 
   clear(): void {
-    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(environment.tokenKey);
     localStorage.removeItem(this.SESSION_KEY);
     location.reload();
   }

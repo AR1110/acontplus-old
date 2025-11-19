@@ -17,12 +17,13 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SearchCustomerResponse } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
 import { GetCancellationDetailsResponse } from '@restaurant/application/use-cases/meal-consumption/get-cancellation-details.use-case';
 import { map } from 'rxjs/operators';
+import { PATHS_API } from '@core/constants/global.constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MealConsumptionHttpRepository implements MealConsumptionRepository {
-  private readonly url = `${RESTAURANT_PATHS.MEAL_CONSUMPTION}`;
+  private readonly url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.MEAL_CONSUMPTION}`;
   private readonly http = inject(HttpClient);
 
   get(params: PaginationParams): Observable<PagedResult<MealConsumption>> {
@@ -80,7 +81,7 @@ export class MealConsumptionHttpRepository implements MealConsumptionRepository 
   }
 
   cancel(data: MealConsumptionCancel): Observable<ApiResponseLegacy> {
-    return this.http.post<ApiResponseLegacy>(`ConsumoAnuladoTpv/Post`, {
+    return this.http.post<ApiResponseLegacy>(`${this.url}cancel/${data.id}`, {
       json: JSON.stringify(data),
     });
   }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -16,9 +16,6 @@ import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/ret
 import { DialogService } from '@core/services/dialog.service';
 import { RetencionAtsAddEditComponent } from './components/retencion-ats-add-edit/retencion-ats-add-edit.component';
 import { MatTooltip } from '@angular/material/tooltip';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { faWhatsapp } from '@fortawesome/free-brands-svg-icons';
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
@@ -34,6 +31,7 @@ import {
 import { PersonType } from '@customer/shared/enums/customer.enum';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-retencion-ats',
   imports: [
     BreadcrumbComponent,
@@ -47,7 +45,6 @@ import { PersonType } from '@customer/shared/enums/customer.enum';
     MatDynamicTableComponent,
     MatPaginator,
     MatTooltip,
-    FaIconComponent,
     SendMailDialogDirective,
     DocElectFiltersComponent,
   ],
@@ -72,8 +69,6 @@ export class RetencionAtsComponent implements OnInit {
     { key: 'importeTotal', label: 'Total Retenido', type: 'number' },
   ];
   columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
-
-  faWhatsapp: IconProp = faWhatsapp;
 
   private readonly _dialogService = inject(DialogService);
   private readonly _documentoElectronicoUseCase = inject(DocumentoElectronicoUseCase);

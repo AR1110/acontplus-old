@@ -13,6 +13,7 @@
     <PackageVersion Include="Acontplus.Services" Version="1.6.3" />
     <PackageVersion Include="Acontplus.Utilities" Version="1.4.4" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageVersion Include="Humanizer" Version="2.14.1" />
     <PackageVersion Include="Mapster" Version="7.4.0" />
     <PackageVersion Include="Mapster.DependencyInjection" Version="1.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.10" />

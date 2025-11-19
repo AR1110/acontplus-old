@@ -3,8 +3,9 @@ import {BreadcrumbComponent} from "@core/components/breadcrumb/breadcrumb.compon
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatIcon} from "@angular/material/icon";
 import {MatTabsModule} from "@angular/material/tabs";
-import {PromotionAddEdit} from "@restaurant/ui/promotions/promotion-add-edit/promotion-add-edit";
+import {PromotionForm} from "@restaurant/ui/promotions/promotion-form/promotion-form";
 import {PromotionList} from "@restaurant/ui/promotions/promotion-list/promotion-list";
+import {LookupService} from "@restaurant/application/services/lookup-service";
 @Component({
   selector: 'app-promotions',
   imports: [
@@ -12,7 +13,7 @@ import {PromotionList} from "@restaurant/ui/promotions/promotion-list/promotion-
     MatIcon,
     ReactiveFormsModule,
     MatTabsModule,
-    PromotionAddEdit,
+    PromotionForm,
     PromotionList
   ],
   templateUrl: './promotions.html',
@@ -20,4 +21,11 @@ import {PromotionList} from "@restaurant/ui/promotions/promotion-list/promotion-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Promotions {
+
+  private lookupSvc = inject(LookupService)
+
+  ngOnInit(){
+    this.lookupSvc.getLookupList()
+  }
+
 }

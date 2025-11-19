@@ -9,8 +9,6 @@
   border-bottom: 2px solid #e5e7eb;
 
   .form-title {
-    font-size: 2rem;
-    font-weight: 800;
     color: #111827;
     display: flex;
     align-items: center;
@@ -39,12 +37,16 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 
   ::ng-deep .mat-expansion-panel-header {
-    padding: 1.25rem 1.5rem !important;
+   // padding: 1.25rem 1.5rem !important;
     font-weight: 600;
 
     &.mat-expanded {
-      background-color: #4f46e5;
+      background-color: #e2e0f3;
       color: white;
+
+    &.mat-expansion-panel-header-title{
+      color: white !important;
+    }
 
       .mat-expansion-indicator::after {
         color: white;
@@ -56,8 +58,6 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    font-size: 1.125rem;
-    font-weight: 700;
 
     .section-icon {
       width: 1.5rem;
@@ -212,7 +212,7 @@
 }
 
 .divider {
-  margin: 2rem 0;
+  margin: 1rem 0;
   border-top-color: #d1d5db;
 }
 
