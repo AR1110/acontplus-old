@@ -25,7 +25,7 @@ BEGIN
     DECLARE @idEntidad INT ,@UserId INT ,@PromotionId INT
 
      --> Data Json
-    DECLARE @Promotion NVARCHAR(MAX) ,@PromotionDetails NVARCHAR(MAX)
+    DECLARE @Details NVARCHAR(MAX)
 
 
     DECLARE @TbPromotion AS TABLE
@@ -53,7 +53,7 @@ BEGIN
        ,[TaxId] INT NOT NULL
        ,[MeasureId] INT NOT NULL
        ,[UnitPrice] NUMERIC(18,5) NOT NULL
-       ,[PromotionalPrice] NUMERIC(18,5) NOT NULL
+       ,[PromotionalPrice] NUMERIC(18,5) NOT NULL DEFAULT 0
        ,[DiscountPercent] NUMERIC(18,5) NOT NULL
        ,[Discount] NUMERIC(18,5) NOT NULL
        ,[Subtotal] NUMERIC(18,5) NOT NULL
@@ -70,48 +70,41 @@ BEGIN
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
         --> DataJson
-        SELECT @Promotion        = Promotion
-              ,@PromotionDetails = PromotionDetails
-        FROM OPENJSON(@json)  WITH
-        (
-            promotion        NVARCHAR(MAX) AS JSON 
-           ,promotionDetails NVARCHAR(MAX) AS JSON
-        )
+        SELECT @Details = Details FROM OPENJSON(@json) WITH (details NVARCHAR(MAX) AS JSON)
 
         INSERT INTO @TbPromotion
               (EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate, ImageKey ,ImageUrl,CreatedByUserId)
         SELECT establishmentId,name,description,applicableDays,maxTotalUses,maxUsesPerCustomer,startTime,startDate,endDate,@ImageKey,@ImageUrl,@UserId
-        FROM OPENJSON(@Promotion) WITH
+        FROM OPENJSON(@Json) WITH
         (
-             [establishmentId]       INT
-            ,[name]                  VARCHAR(100)
-            ,[description]           VARCHAR(50)
-            ,[applicableDays]        VARCHAR(MAX)
-            ,[maxTotalUses]          INT
-            ,[maxUsesPerCustomer]    INT
-            ,[startTime]             TIME(7)
-            ,[startDate]             DATETIME2
-            ,[endDate]               DATETIME2
+             [establishmentId]    INT
+            ,[name]               VARCHAR(100)
+            ,[description]        VARCHAR(50)
+            ,[applicableDays]     VARCHAR(MAX)
+            ,[maxTotalUses]       INT
+            ,[maxUsesPerCustomer] INT
+            ,[startTime]          TIME(7)
+            ,[startDate]          DATETIME2
+            ,[endDate]            DATETIME2
         )
 
         INSERT INTO @TbPromotionDetails
-              (ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId)
-        SELECT itemId,feeId,taxId,measureId,unitPrice,PromotionalPrice,discountPercent,discount,subtotal,buyQuantity,getQuantity,notes,requiredQuantity,@UserId
-        FROM OPENJSON(@PromotionDetails) WITH
+              (ItemId,FeeId,TaxId,MeasureId,UnitPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,CreatedByUserId)
+        SELECT itemId,feeId,taxId,measureId,unitPrice,discountPercent,discount,subtotal,buyQuantity,getQuantity,notes,requiredQuantity,@UserId
+        FROM OPENJSON(@Details) WITH
         (
-             [itemId]                INT
-            ,[feeId]                 INT
-            ,[taxId]                 INT
-            ,[measureId]             INT
-            ,[unitPrice]             NUMERIC(18,5)
-            ,[PromotionalPrice]      NUMERIC(18,5)
-            ,[discountPercent]       NUMERIC(18,5)
-            ,[discount]              NUMERIC(18,5)
-            ,[subtotal]              NUMERIC(18,5)
-            ,[buyQuantity]           NUMERIC(18,5)
-            ,[getQuantity]           INT
-            ,[notes]                 VARCHAR(500)
-            ,[requiredQuantity]      NUMERIC(18,5)
+             [itemId]           INT
+            ,[feeId]            INT
+            ,[taxId]            INT
+            ,[measureId]        INT
+            ,[unitPrice]        NUMERIC(18,5)
+            ,[discountPercent]  NUMERIC(18,5)
+            ,[discount]         NUMERIC(18,5)
+            ,[subtotal]         NUMERIC(18,5)
+            ,[buyQuantity]      NUMERIC(18,5)
+            ,[getQuantity]      INT
+            ,[notes]            VARCHAR(500)
+            ,[requiredQuantity] NUMERIC(18,5)
         )
 
 
@@ -158,6 +151,8 @@ BEGIN
         SELECT @ErrorDetails = (
             SELECT @Json as json FOR JSON PATH
         );
+
+        IF (@@TRANCOUNT > 0) ROLLBACK TRAN
  
         INSERT INTO ErroresSistema
                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
