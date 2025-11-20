@@ -40,12 +40,24 @@
 </div>
 
 <app-data-grid
+  [loading]="isLoading()"
   size="medium"
   [data]="list()"
   [columns]="columns"
-  [cellTemplate]="{ op: opTpl }"
+  [cellTemplate]="{ op: opTpl, schedule: scheduleTpl }"
   (page)="getNextPage($event)"
 ></app-data-grid>
+
+<ng-template #scheduleTpl let-row>
+  @for (item of row.schedule; track $index){
+    <div class="hstack justify-content-between ">
+      <span class="font-medium">{{ item.day }}:</span>
+      <span class="text-primary">{{ item.startTime }} - {{ item.endTime }}</span>
+    </div>
+  }
+
+</ng-template>
+
 
 <ng-template #opTpl let-row let-index="index" let-col="colDef">
   <acp-button   type="button" icon="visibility"

@@ -26,6 +26,7 @@ public record PromotionCreate
     [MaxLength(500)]
     public string? ImageKey { get; init; }
     public ICollection<PromotionDetailCreate>? details { get; init; }
+    public bool IsActive { get; init; }
 }
 
 public record PromotionUpdate
@@ -51,6 +52,8 @@ public record PromotionUpdate
     [MaxLength(500)]
     public string? ImageKey { get; init; }
     public ICollection<PromotionDetailUpdate>? details { get; init; }
+    public bool IsActive { get; init; }
+    public bool IsDeleted { get; init; }
 }
 
 public record PromotionItem

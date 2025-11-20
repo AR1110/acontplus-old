@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@ang
 import { MatInputModule} from "@angular/material/input";
 import {MatFormField} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
-import {FormArray, FormBuilder, FormControl, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatSelectModule} from "@angular/material/select";
 import {MatChipsModule} from "@angular/material/chips";
@@ -82,6 +82,7 @@ export class PromotionForm {
   promotionForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     type: ['percentage', Validators.required],
+    description: [null],
     value: 0,
     startDate: ['', Validators.required],
     endDate: ['', Validators.required],
@@ -367,7 +368,9 @@ export class PromotionForm {
       if(this.isEdit()){
 
         this.#getByIdUseCase.execute(this.params.id).subscribe(response => {
-          this.promotionForm.patchValue(response.promotion);
+          const {schedule, ...rest} = response.promotion;
+          this.promotionForm.patchValue(rest);
+          this.patchSavedDays(schedule);
           this.selectedProducts.set(response.details)
         })
       }else{
@@ -378,6 +381,32 @@ export class PromotionForm {
       }
     });
   }
+
+  private patchSavedDays(savedDays: any[]): void {
+    this.scheduleArray.controls.forEach((ctrl) => {
+      const control = ctrl as FormGroup; // 👈 casteo válido
+
+      const dow = control.get('day')?.value;
+
+      const saved = savedDays.find(d => d.day === dow);
+
+      if (saved) {
+        control.patchValue({
+          isActive: true,
+          startTime: saved.startTime,
+          endTime: saved.endTime
+        });
+      } else {
+        control.patchValue({
+          isActive: false,
+          startTime: new Date().setHours(0, 0, 0, 0),
+          endTime: new Date().setHours(23, 30, 0, 0)
+        });
+      }
+    });
+
+  }
+
 
   private initializeScheduleControls(): void {
     const scheduleArray = this.promotionForm.get('schedule') as FormArray;

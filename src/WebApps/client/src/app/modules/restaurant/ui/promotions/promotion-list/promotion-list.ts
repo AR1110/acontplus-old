@@ -31,7 +31,6 @@ import {PageEvent} from "@angular/material/paginator";
     DataGrid
   ],
   templateUrl: './promotion-list.html',
-  styleUrl: './promotion-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromotionList {
@@ -47,7 +46,7 @@ export class PromotionList {
 // Signals
   establishments = signal<LookupItem[]>([]);
   list = signal<PromotionListDto[]>([]);
-  isLoading = false;
+  isLoading = signal(false);
   pagination = signal(new Pagination( ));
 
   columns: DataGridColumn[] = [
@@ -57,7 +56,7 @@ export class PromotionList {
     { header: 'Nombre Promoción', field: 'name' },
     { header: 'Desc. Promoción', field: 'description' },
     { header: 'Vigencia', field: 'validityPeriod' },
-    { header: 'Horario(Días y Horas)', field: 'gender' },
+    { header: 'Horario(Días y Horas)', field: 'schedule' },
     {
       header: 'Estado',
       field: 'isActive',
@@ -93,6 +92,8 @@ export class PromotionList {
 
 
   private getList(){
+    if(this.isLoading()) return;
+    this.isLoading.set(true)
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
@@ -101,6 +102,8 @@ export class PromotionList {
     });
     this.#listUseCase.execute(params).subscribe({
       next: response => {
+        this.isLoading.set(false);
+
         this.list.set(response.items);
         this.pagination.update(pag=>{
           pag.totalRecords = response.totalCount;
@@ -108,6 +111,7 @@ export class PromotionList {
         })
       },
       error: ()=>{
+        this.isLoading.set(false);
       this.list.set([]);
     }
     })
