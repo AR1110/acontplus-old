@@ -12,7 +12,7 @@ public record PromotionCreate
     public string? Description { get; init; }
     public string StartDate { get; init; }
     public string EndDate { get; init; }
-    [MaxLength(50)]
+   
     public string? ApplicableDays { get; init; }
     public TimeSpan? StartTime { get; init; }
     public TimeSpan? EndTime { get; init; }
@@ -35,9 +35,9 @@ public record PromotionUpdate
     public required string Name { get; init; }
     [MaxLength(500)]
     public string? Description { get; init; }
-    public DateTime StartDate { get; init; }
-    public DateTime EndDate { get; init; }
-    [MaxLength(50)]
+    public string StartDate { get; init; }
+    public string EndDate { get; init; }
+    
     public string? ApplicableDays { get; init; }
     public TimeSpan? StartTime { get; init; }
     public TimeSpan? EndTime { get; init; }
@@ -50,6 +50,7 @@ public record PromotionUpdate
     public string? ImageUrl { get; init; }
     [MaxLength(500)]
     public string? ImageKey { get; init; }
+    public ICollection<PromotionDetailUpdate>? details { get; init; }
 }
 
 public record PromotionItem

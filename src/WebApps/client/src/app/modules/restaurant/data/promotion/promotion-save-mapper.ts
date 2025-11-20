@@ -1,6 +1,6 @@
 import {formatDateToString, getTimeString} from "@core/utils/date.util"
 
-export class PromotionInsertMapper {
+export class PromotionSaveMapper {
 
   static toJson(model: any) {
     const applicableDays = model.schedule?[]: model.schedule.map((x:any)=>{
@@ -21,7 +21,7 @@ export class PromotionInsertMapper {
       startTime: model.startTime,
       endTime: model.endTime,
       type: model.type ==='fixed' ? 1 : 2,
-      discountPercent: model.value,
+      discountPercent: model.value ?? 0,
 
       details: model.selectedProducts
     }

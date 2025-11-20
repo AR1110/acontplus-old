@@ -162,3 +162,17 @@ export const getTimeString = function (date: Date | string): string {
   const mm = d.getMinutes().toString().padStart(2, "0");
   return `${hh}:${mm}`;
 }
+
+
+/**
+ * Formatea una fecha a un string legible (solo día, mes, año).
+ * @param {Date} date
+ * @returns {string}
+ */
+export const formatDisplayDate = (date:Date|number) => {
+  return new Intl.DateTimeFormat('es-ES', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+};

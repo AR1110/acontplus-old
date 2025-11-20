@@ -5,8 +5,6 @@
 
 .form-header {
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
 
   .form-title {
    color: var(--mat-tab-active-label-text-color, var(--mat-sys-on-surface));
@@ -42,7 +40,8 @@
 
     &.mat-expanded {
       background-color: #e2e0f3;
-    //  color: var(--mat-tab-active-label-text-color, var(--mat-sys-on-surface));
+
+      color: var(--mat-tab-active-label-text-color, var(--mat-sys-on-surface));
 
 
 
@@ -100,7 +99,6 @@
 .schedule-list {
   display: flex;
   flex-direction: column;
- // gap: 1rem;
 }
 
 .day-card {
@@ -109,7 +107,7 @@
   border: 2px solid #e5e7eb;
 
   &.active {
-    background-color: #eef2ff;
+  //  background-color: #eef2ff;
     border-color: #a5b4fc;
     box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
   }
@@ -125,28 +123,12 @@
     margin-bottom: 0.75rem;
 
     .day-name {
-      font-size: 1.125rem;
-      font-weight: 600;
-      color: #374151;
+      font: var(--mat-sys-label-small);
+      letter-spacing: var(--mat-sys-label-small-tracking);
     }
   }
 
-  .active-chip {
-    --tw-bg-opacity: 1;
-    --tw-text-opacity: 1;
-    font-weight: 500;
-    background-color: rgb(187 247 208 / var(--tw-bg-opacity, 1));
 
-    color: rgb(22 101 52 / var(--tw-text-opacity, 1));
-  }
-
-  .inactive-chip {
-    --tw-text-opacity: 1;
-    --tw-bg-opacity: 1;
-    font-weight: 500;
-    color: rgb(153 27 27 / var(--tw-text-opacity, 1));
-    background-color: rgb(254 202 202 / var(--tw-bg-opacity, 1));
-  }
 
   .time-inputs {
     display: flex;
@@ -175,7 +157,7 @@
     align-items: center;
     justify-content: center;
     padding: 3rem !important;
-    background-color: #f9fafb !important;
+    background-color: var(--mat-sys-surface-container-lowest);
     border: 2px dashed #d1d5db;
     border-radius: 0.75rem !important;
 
@@ -208,7 +190,6 @@
     .status-label {
       font-size: 1rem;
       font-weight: 500;
-      color: #111827;
 
       .active-text {
         color: #10b981;

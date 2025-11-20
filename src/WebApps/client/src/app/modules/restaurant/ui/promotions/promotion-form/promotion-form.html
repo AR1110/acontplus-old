@@ -70,13 +70,13 @@
                   <input matEndDate formControlName="endDate" placeholder="End date">
                 </mat-date-range-input>
                 <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker></mat-date-range-picker>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"/>
+                <mat-date-range-picker #picker/>
 
-                @if (productForm.controls["startDate"]?.hasError('matStartDateInvalid')) {
+                @if (promotionForm.controls["startDate"]?.hasError('matStartDateInvalid')) {
                   <mat-error>Invalid start date</mat-error>
                 }
-                @if (productForm.controls["endDate"]?.hasError('matEndDateInvalid')) {
+                @if (promotionForm.controls["endDate"]?.hasError('matEndDateInvalid')) {
                   <mat-error>Invalid end date</mat-error>
                 }
               </mat-form-field>
@@ -100,8 +100,8 @@
                   matInput
                   type="number"
                   formControlName="value"
-                  [min]="0.01"
-                  [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.01">
+                  [min]="0.0"
+                  [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.0">
                 @if (promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched) {
                   <mat-error>{{ getErrorMessage('value') }}</mat-error>
                 }
