@@ -52,9 +52,9 @@ import { MealScheduleSettingDialog } from '@restaurant/ui/meal-schedule-setting/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MealScheduleSettingList implements OnInit {
-  #getUseCase = inject(GetMealScheduleSettingsUseCase);
-  #deleteUseCase = inject(DeleteMealScheduleSettingUseCase);
-  #dialog = inject(MatDialog);
+  private readonly getMealScheduleSettingsUseCase = inject(GetMealScheduleSettingsUseCase);
+  private readonly deleteMealScheduleSettingUseCase = inject(DeleteMealScheduleSettingUseCase);
+  private readonly matDialog = inject(MatDialog);
 
   // State with signals
   settings = signal<MealScheduleSetting[]>([]);
@@ -70,8 +70,8 @@ export class MealScheduleSettingList implements OnInit {
 
   loadSettings(): void {
     this.isLoading.set(true);
-    this.#getUseCase
-      .execute({ establishmentId: this.establishmentId() })
+    this.getMealScheduleSettingsUseCase
+      .execute(this.establishmentId())
       .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (settings) => {
@@ -89,7 +89,7 @@ export class MealScheduleSettingList implements OnInit {
   }
 
   openDialog(setting?: MealScheduleSetting) {
-    const dialogRef = this.#dialog.open(MealScheduleSettingDialog, {
+    const dialogRef = this.matDialog.open(MealScheduleSettingDialog, {
       width: '600px',
       data: {
         setting,
@@ -120,7 +120,7 @@ export class MealScheduleSettingList implements OnInit {
 
     if (result.isConfirmed) {
       this.isLoading.set(true);
-      this.#deleteUseCase
+      this.deleteMealScheduleSettingUseCase
         .execute({ id: setting.id })
         .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({

@@ -5,17 +5,15 @@ import { CreateMealConsumptionUseCase } from '@restaurant/application/use-cases/
 import { UpdateMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/update-meal-consumption.use-case';
 import { DeleteMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/delete-meal-consumption.use-case';
 import { CancelMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/cancel-meal-consumption.use-case';
-import { GetMealConfigurationsUseCase } from '@restaurant/application/use-cases/meal-consumption/get-meal-configurations.use-case';
 import { PrintMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/print-meal-consumption.use-case';
 import { GetCancellationDetailsUseCase } from '@restaurant/application/use-cases/meal-consumption/get-cancellation-details.use-case';
 import { SearchCustomerUseCase } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
 import { CreateMealConsumptionForOtherDateUseCase } from '@restaurant/application/use-cases/meal-consumption/create-meal-consumption-for-other-date.use-case';
 import { PaginationParams } from '@acontplus/core';
-import { Pagination } from '@acontplus/ng-components';
+import { Button, Pagination } from '@acontplus/ng-components';
 import {
   MealConsumption,
   ConsumptionStatus,
-  MealScheduleConfiguration,
   CustomerSearchResult,
   MealScheduleForCustomer,
 } from '@restaurant/domain/models/meal-consumption';
@@ -47,6 +45,8 @@ import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { GetMealScheduleSettingsUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/get-meal-schedule-settings.use-case';
+import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-setting';
 
 @Component({
   selector: 'app-meal-consumption-list',
@@ -80,6 +80,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
     MatOption,
     DatePipe,
     BreadcrumbComponent,
+    Button,
   ],
   templateUrl: './meal-consumption-list.html',
   styleUrl: './meal-consumption-list.scss',
@@ -91,7 +92,7 @@ export class MealConsumptionList implements OnInit {
   private readonly updateUseCase = inject(UpdateMealConsumptionUseCase);
   private readonly deleteUseCase = inject(DeleteMealConsumptionUseCase);
   private readonly cancelUseCase = inject(CancelMealConsumptionUseCase);
-  private readonly getConfigurationsUseCase = inject(GetMealConfigurationsUseCase);
+  private readonly getMealScheduleSettingsUseCase = inject(GetMealScheduleSettingsUseCase);
   private readonly printUseCase = inject(PrintMealConsumptionUseCase);
   private readonly getCancellationDetailsUseCase = inject(GetCancellationDetailsUseCase);
   private readonly searchCustomerUseCase = inject(SearchCustomerUseCase);
@@ -99,7 +100,7 @@ export class MealConsumptionList implements OnInit {
   private readonly dialog = inject(MatDialog);
 
   mealConsumptionConfig = signal(new Pagination(0, 10, 5, [5, 10, 25, 50]));
-  configurations = signal<MealScheduleConfiguration[]>([]);
+  mealSchedulSettings = signal<MealScheduleSetting[]>([]);
   selectedConfigId = signal<number>(0);
   searchControl = new FormControl<string>('');
 
@@ -123,9 +124,9 @@ export class MealConsumptionList implements OnInit {
   displayedColumns = [
     'consumptionDate',
     'mealScheduleSettingName',
-    'companyCustomerName',
+    'customerName',
     'amount',
-    'consumptionStatus',
+    'status',
     'actions',
   ];
 
@@ -133,27 +134,31 @@ export class MealConsumptionList implements OnInit {
 
   ngOnInit(): void {
     this.loadConfigurations();
-    this.load();
+    // this.load();
     // Initialize audio element for consumption confirmation sound
     this.audioElement = new Audio('/assets/audio/consumotpv.mp3');
   }
 
   loadConfigurations(): void {
-    this.getConfigurationsUseCase.execute().subscribe({
+    const establishmentId = 421;
+    this.getMealScheduleSettingsUseCase.execute(establishmentId).subscribe({
       next: (response) => {
-        const configs = response.items ?? [];
-        // Add "Consolidado" option
-        configs.push({
-          id: 0,
-          descripcion: 'Consolidado',
-          onTime: false,
-        });
-        this.configurations.set(configs);
+        console.log('Meal schedule settings:', response);
+        const configs = response ?? [];
+        // configs.push({
+        //   id: 0,
+        //   descripcion: 'Consolidado',
+        //   onTime: false,
+        // });
+        this.mealSchedulSettings.set(configs);
 
         // Auto-select the current active service
         const activeConfig = configs.find((c) => c.onTime);
         if (activeConfig) {
           this.selectedConfigId.set(activeConfig.id);
+        } else {
+          this.selectedConfigId.set(configs[0]?.id ?? 0);
+          this.load();
         }
       },
       error: (error) => {
@@ -169,6 +174,12 @@ export class MealConsumptionList implements OnInit {
 
   load() {
     this.isLoading.set(true);
+
+    this.paginationParams().filters = {
+      establishmentId: 421,
+      mealScheduleSettingId: this.selectedConfigId(),
+    };
+
     return this.getUseCase
       .execute(this.paginationParams())
       .pipe(finalize(() => this.isLoading.set(false)))
@@ -181,6 +192,7 @@ export class MealConsumptionList implements OnInit {
             current.pageSize = response.pageSize;
             return current;
           });
+          console.log('Meal consumptions loaded:', this.mealConsumptions());
         },
         error: (error) => {
           console.error('Error loading meal consumptions:', error);
@@ -375,6 +387,7 @@ export class MealConsumptionList implements OnInit {
   }
 
   getStatusLabel(status: ConsumptionStatus): string {
+    console.log('getStatusLabel:', status);
     switch (status) {
       case ConsumptionStatus.Completed:
         return 'Completado';

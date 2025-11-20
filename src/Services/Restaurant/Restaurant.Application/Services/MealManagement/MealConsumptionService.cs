@@ -1,5 +1,7 @@
+using Acontplus.Core.Abstractions.Persistence;
 using Acontplus.Core.Extensions;
 using Mapster;
+using Restaurant.Application.Dtos.Items;
 
 namespace Restaurant.Application.Services.MealManagement;
 
@@ -30,13 +32,24 @@ public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionSe
             return Result<bool, DomainError>.Success(true);
         });
     }
-    public async Task<Result<IReadOnlyList<PagedResult<MealConsumptionItem>>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<MealConsumptionItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken)
     {
-        var ds = await _adoRepository.GetDataSetAsync("Restaurant.GetMealConsumptions", new Dictionary<string, object>
+        try
         {
-            { "Json", JsonExtensions.SerializeOptimized(paginationRequest) },
-        });
-        return Result<IReadOnlyList<PagedResult<MealConsumptionItem>>, DomainError>.Success(ds.Tables[0].Adapt<IReadOnlyList<PagedResult<MealConsumptionItem>>>());
+            var response = await _adoRepository.GetPagedFromStoredProcedureAsync<MealConsumptionItem>("Restaurant.GetMealConsumptions", paginationRequest);
+
+            if (response == null || response.Items == null || !response.Items.Any())
+            {
+                var error = DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "No items were found.");
+                return Result<PagedResult<MealConsumptionItem>, DomainError>.Failure(error);
+            }
+            return Result<PagedResult<MealConsumptionItem>, DomainError>.Success(response);
+        }
+        catch (Exception ex)
+        {
+            var error = DomainError.Internal("MEAL_CONSUMPTION_ERROR", $"An error occurred while retrieving items. {ex.Message}");
+            return Result<PagedResult<MealConsumptionItem>, DomainError>.Failure(error);
+        }
     }
     public async Task<Result<MealConsumptionItem, DomainError>> UpdateAsync(int id, MealConsumptionUpdate request, CancellationToken cancellationToken)
     {

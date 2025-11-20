@@ -27,7 +27,7 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
 
     public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Restaurant.GetByIdItem", parameters);
+        var ds = await repository.GetDataSetAsync("Restaurant.GetByIdPromotion", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new SpResponse { Code = "0", Message = "Data not found" }
             : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };

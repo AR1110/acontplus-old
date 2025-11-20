@@ -6,11 +6,7 @@ import {
   MealConsumptionUpdate,
   MealConsumptionCancel,
   MealConsumptionCreateForOtherDateRequest,
-  CustomerSearchResult,
-  MealScheduleForCustomer,
-  MealScheduleConfiguration,
   PrintConsumptionResponse,
-  CancellationDetails,
 } from '../models/meal-consumption';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SearchCustomerResponse } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
@@ -26,7 +22,6 @@ export abstract class MealConsumptionRepository {
   abstract delete(id: number): Observable<ApiResponseLegacy>;
   abstract cancel(data: MealConsumptionCancel): Observable<ApiResponseLegacy>;
   abstract searchCustomer(searchTerm: string): Observable<SearchCustomerResponse>;
-  abstract getConfigurations(): Observable<PagedResult<MealScheduleConfiguration>>;
   abstract print(id: number): Observable<PrintConsumptionResponse>;
   abstract getCancellationDetails(id: number): Observable<GetCancellationDetailsResponse>;
 }

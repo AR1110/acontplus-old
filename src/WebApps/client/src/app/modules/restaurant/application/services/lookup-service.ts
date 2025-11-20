@@ -11,16 +11,13 @@ export class LookupService {
   taxes = signal<LookupItem[]>([]);
 
 
-  getLookupList() {
+  getLookupList(keys: string) {
     return this.lookupListUseCase.execute({
       type: {
         module: 'Promotions',
-        context: 'Formss'
-      },
-      keys: 'establishments,taxes'
-    }).subscribe(response => {
-      this.establishments.set(response.establishments);
-      this.taxes.set(response.taxes);
+        context: 'Forms'
+      } ,
+      keys
     })
   }
 

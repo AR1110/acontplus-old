@@ -155,3 +155,10 @@ export function isDateValid(dateInput: string | Date): boolean {
 export function fechaString(fecha: Date): string {
   return format(fecha, 'DD/MM/YYYY', language);
 }
+
+export const getTimeString = function (date: Date | string): string {
+  const d = new Date(date);
+  const hh = d.getHours().toString().padStart(2, "0");
+  const mm = d.getMinutes().toString().padStart(2, "0");
+  return `${hh}:${mm}`;
+}

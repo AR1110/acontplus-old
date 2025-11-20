@@ -5,7 +5,6 @@ import {MatIcon} from "@angular/material/icon";
 import {MatTabsModule} from "@angular/material/tabs";
 import {PromotionForm} from "@restaurant/ui/promotions/promotion-form/promotion-form";
 import {PromotionList} from "@restaurant/ui/promotions/promotion-list/promotion-list";
-import {LookupService} from "@restaurant/application/services/lookup-service";
 @Component({
   selector: 'app-promotions',
   imports: [
@@ -21,11 +20,5 @@ import {LookupService} from "@restaurant/application/services/lookup-service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Promotions {
-
-  private lookupSvc = inject(LookupService)
-
-  ngOnInit(){
-    this.lookupSvc.getLookupList()
-  }
 
 }

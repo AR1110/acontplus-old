@@ -1,3 +1,4 @@
+using Restaurant.Application.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 namespace Restaurant.Application.DTOs.Promotions;
@@ -9,8 +10,8 @@ public record PromotionCreate
     public required string Name { get; init; }
     [MaxLength(500)]
     public string? Description { get; init; }
-    public DateTime StartDate { get; init; }
-    public DateTime EndDate { get; init; }
+    public string StartDate { get; init; }
+    public string EndDate { get; init; }
     [MaxLength(50)]
     public string? ApplicableDays { get; init; }
     public TimeSpan? StartTime { get; init; }
@@ -24,6 +25,7 @@ public record PromotionCreate
     public string? ImageUrl { get; init; }
     [MaxLength(500)]
     public string? ImageKey { get; init; }
+    public ICollection<PromotionDetailCreate>? details { get; init; }
 }
 
 public record PromotionUpdate
@@ -56,8 +58,8 @@ public record PromotionItem
     public int EstablishmentId { get; init; }
     public string Name { get; init; }
     public string? Description { get; init; }
-    public DateTime StartDate { get; init; }
-    public DateTime EndDate { get; init; }
+    public string StartDate { get; init; }
+    public string EndDate { get; init; }
     public string? ApplicableDays { get; init; }
     public TimeSpan? StartTime { get; init; }
     public TimeSpan? EndTime { get; init; }
@@ -69,6 +71,7 @@ public record PromotionItem
     public string? ImageUrl { get; init; }
     public string? ImageKey { get; init; }
     public bool IsActive { get; init; }
+
 }
 
 
