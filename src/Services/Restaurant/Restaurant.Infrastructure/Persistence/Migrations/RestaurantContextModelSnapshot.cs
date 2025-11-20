@@ -1991,22 +1991,22 @@ namespace Restaurant.Api.Data.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(5,2)");
 
-                    b.Property<bool>("Divided")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("Finished")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDivided")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsFinished")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -2072,17 +2072,17 @@ namespace Restaurant.Api.Data.Migrations
 
                     b.HasIndex("TableId")
                         .HasDatabaseName("IX_Order_TableId")
-                        .HasFilter("[TableId] IS NOT NULL AND [Finished] = 0");
+                        .HasFilter("[TableId] IS NOT NULL AND [IsFinished] = 0");
 
                     b.HasIndex("CustomerCompanyId", "CreatedAt")
                         .HasDatabaseName("IX_Order_Customer_Date");
 
-                    b.HasIndex("Finished", "CreatedAt")
-                        .HasDatabaseName("IX_Order_Establishment_Finished_Date")
-                        .HasFilter("[Finished] = 0");
-
                     b.HasIndex("IsActive", "IsDeleted")
                         .HasDatabaseName("IX_Order_Status");
+
+                    b.HasIndex("IsFinished", "CreatedAt")
+                        .HasDatabaseName("IX_Order_Establishment_IsFinished_Date")
+                        .HasFilter("[IsFinished] = 0");
 
                     b.ToTable("Order", "Restaurant");
                 });
@@ -2917,9 +2917,8 @@ namespace Restaurant.Api.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApplicableDays")
-                        .HasMaxLength(50)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("varchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()

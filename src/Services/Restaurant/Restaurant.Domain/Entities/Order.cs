@@ -16,8 +16,8 @@ public class Order : BaseEntity
     [Column(TypeName = "decimal(18,5)")]
     public decimal Total { get; set; }
     [MaxLength(500)] public string? Obs { get; set; }
-    public bool Divided { get; set; }
-    public bool Finished { get; set; }
+    public bool IsDivided { get; set; }
+    public bool IsFinished { get; set; }
     public ICollection<OrderItem> OrderItems { get; set; } = [];
     public ICollection<OrderDetail> OrderDetails { get; set; } = [];
     public ICollection<MealManagement.MealConsumption> MealConsumptions { get; set; } = [];

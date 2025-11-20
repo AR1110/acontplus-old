@@ -18,7 +18,6 @@ public class Promotion : BaseEntity
     [Required]
     public DateTime EndDate { get; set; }
 
-    [MaxLength(50)]
     public string? ApplicableDays { get; set; }
 
     public TimeSpan? StartTime { get; set; }

@@ -60,21 +60,21 @@ public class OrderConfiguration : BaseEntityTypeConfiguration<Order>
     {
         base.Configure(builder);
 
-        builder.HasIndex(x => new { x.Finished, x.CreatedAt })
-            .HasDatabaseName("IX_Order_Establishment_Finished_Date")
-            .HasFilter("[Finished] = 0");
+        builder.HasIndex(x => new { x.IsFinished, x.CreatedAt })
+            .HasDatabaseName("IX_Order_Establishment_IsFinished_Date")
+            .HasFilter("[IsFinished] = 0");
 
         builder.HasIndex(x => x.TableId)
             .HasDatabaseName("IX_Order_TableId")
-            .HasFilter("[TableId] IS NOT NULL AND [Finished] = 0");
+            .HasFilter("[TableId] IS NOT NULL AND [IsFinished] = 0");
 
         builder.HasIndex(x => new { x.CustomerCompanyId, x.CreatedAt })
             .HasDatabaseName("IX_Order_Customer_Date");
 
-        builder.Property(x => x.Finished)
+        builder.Property(x => x.IsFinished)
             .HasDefaultValue(false);
 
-        builder.Property(x => x.Divided)
+        builder.Property(x => x.IsDivided)
             .HasDefaultValue(false);
 
         builder.HasOne(x => x.AppTable)

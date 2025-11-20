@@ -26,8 +26,8 @@ BEGIN
        ,[Tip] NUMERIC(18,5) NULL
        ,[Total] NUMERIC(18,5) NOT NULL
        ,[Obs] VARCHAR(500) NULL
-       ,[Divided] BIT NOT NULL
-       ,[Finished] BIT NOT NULL
+       ,[IsDivided] BIT NOT NULL
+       ,[IsFinished] BIT NOT NULL
        ,[CreatedByUserId] INT NOT NULL
     )
 
@@ -41,8 +41,8 @@ BEGIN
 
         --> Data json
         INSERT INTO @TbOrder
-              ([puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[divided],[finished],[CreatedByUserId])
-        SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[divided],[finished],[CreatedByUserId]
+              ([puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isdivided],[isfinished],[CreatedByUserId])
+        SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isdivided],[isfinished],[CreatedByUserId]
         FROM OPENJSON(@json)
         WITH
         (
@@ -53,8 +53,8 @@ BEGIN
            ,[tip]               NUMERIC(18,5) 
            ,[total]             NUMERIC(18,5)
            ,[obs]               VARCHAR(500) 
-           ,[divided]           BIT
-           ,[finished]          BIT
+           ,[isDivided]           BIT
+           ,[isFinished]          BIT
         )
 
         --> Variables dependientes
@@ -89,8 +89,8 @@ BEGIN
 
         BEGIN TRAN
             INSERT INTO Restaurant.[Order]
-                  ([puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[divided],[finished],[CreatedByUserId],[Sequence],[Serie])
-            SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[divided],[finished],[CreatedByUserId], @Sequence,@Serie
+                  ([puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isDivided],[isFinished],[CreatedByUserId],[Sequence],[Serie])
+            SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isDivided],[isFinished],[CreatedByUserId], @Sequence,@Serie
             FROM @TbOrder
 
         COMMIT TRAN
