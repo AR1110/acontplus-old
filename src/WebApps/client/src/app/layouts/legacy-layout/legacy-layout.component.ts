@@ -12,7 +12,9 @@ import { RouterOutlet } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <!-- Sin layout, solo el componente -->
-    <router-outlet />
+    <div class="container-fluid">
+      <router-outlet />
+    </div>
   `,
   styles: [
     `

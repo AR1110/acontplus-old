@@ -536,7 +536,7 @@ export class MealConsumptionList implements OnInit {
       companyCustomerMealPlanId: customer.idCliente,
       consumptionDate: new Date(),
       amount: cantidad,
-      consumptionStatus: 1,
+      consumptionStatus: ConsumptionStatus.Pending,
       onTime: schedule.onTime,
       idCliente: customer.idCliente,
     };
