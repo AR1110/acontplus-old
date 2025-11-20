@@ -9,14 +9,16 @@ public static class CreateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapPost("/", async (MealPlanCreate request, IMealPlanService mealPlanService, IUserContext userContext, CancellationToken cancellationToken) =>
-        {
-            request = request with
-            {
-                CreatedByUserId = userContext.GetUserId()
-            };
-            return await mealPlanService.AddAsync(request).ToMinimalApiResultAsync();
-        })
+        group.MapPost("/",
+                async (MealPlanCreate request, IMealPlanService mealPlanService, IUserContext userContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    request = request with
+                    {
+                        CreatedByUserId = userContext.GetUserId()
+                    };
+                    return await mealPlanService.AddAsync(request).ToMinimalApiResultAsync();
+                })
             .WithName("CreateMealPlan")
             .WithSummary("Create a new meal plan")
             .WithDescription("Create a new meal plan record.")

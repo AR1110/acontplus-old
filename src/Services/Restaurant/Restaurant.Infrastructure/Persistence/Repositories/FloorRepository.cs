@@ -73,7 +73,7 @@ public class FloorRepository : IFloorRepository
         var floors = await _context.Floors
             .Where(x => x.EstablecimientoId == establecimientoId && !x.IsDeleted)
             .Include(x => x.Rooms.Where(r => !r.IsDeleted))
-                .ThenInclude(r => r.Tables.Where(t => !t.IsDeleted))
+            .ThenInclude(r => r.Tables.Where(t => !t.IsDeleted))
             .ToListAsync();
 
         var floorDtos = floors.Adapt<List<FloorItem>>();

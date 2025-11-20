@@ -9,10 +9,12 @@ public static class GetEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapGet("/{establishmentId:int}", async (int establishmentId, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
-        {
-            return await mealPlanService.GetAsync(establishmentId, cancellationToken).ToGetMinimalApiResultAsync();
-        })
+        group.MapGet("/{establishmentId:int}",
+                async (int establishmentId, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
+                {
+                    return await mealPlanService.GetAsync(establishmentId, cancellationToken)
+                        .ToGetMinimalApiResultAsync();
+                })
             .WithName("GetAllMealPlans")
             .WithSummary("Get all meal plans")
             .WithDescription("Retrieve a list of all meal plans.")
@@ -20,4 +22,3 @@ public static class GetEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }
-

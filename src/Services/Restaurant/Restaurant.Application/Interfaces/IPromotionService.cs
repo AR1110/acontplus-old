@@ -1,4 +1,4 @@
-using Restaurant.Application.DTOs.Promotions;
+using Restaurant.Application.Dtos.Promotions;
 
 namespace Restaurant.Application.Interfaces;
 

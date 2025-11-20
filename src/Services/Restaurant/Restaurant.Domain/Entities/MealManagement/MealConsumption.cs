@@ -13,20 +13,16 @@ public class MealConsumption : BaseEntity
 
     public DateTime ConsumptionDate { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal Amount { get; set; }
+    [Column(TypeName = "decimal(10,2)")] public decimal Amount { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal? SubsidyAmount { get; set; }
+    [Column(TypeName = "decimal(10,2)")] public decimal? SubsidyAmount { get; set; }
 
-    [Column(TypeName = "decimal(10,2)")]
-    public decimal? CompanyCustomerPayment { get; set; }
+    [Column(TypeName = "decimal(10,2)")] public decimal? CompanyCustomerPayment { get; set; }
 
     public ConsumptionStatus Status { get; set; }
 
     // Updated: Nullable, as it's only relevant for cancelled status
-    [MaxLength(500)]
-    public string? CancellationReason { get; set; }
+    [MaxLength(500)] public string? CancellationReason { get; set; }
 
     // New: Folded from CancelledMealConsumption for cancellation audit
     public int? CancelledByUserId { get; set; }
@@ -35,10 +31,13 @@ public class MealConsumption : BaseEntity
 
     // Navigation Properties
     public required MealScheduleSetting MealScheduleSetting { get; set; }
+
     // New: Direct nav to plan
     public required CompanyCustomerMealPlan CompanyCustomerMealPlan { get; set; }
+
     public Order? Order { get; set; }
+
     // New: Simplified audit as JSON (e.g., for change history)
     [Column(TypeName = "nvarchar(max)")]
-    public string? AuditLog { get; set; }  // JSON string for actions, reasons, dates, IPs
+    public string? AuditLog { get; set; } // JSON string for actions, reasons, dates, IPs
 }

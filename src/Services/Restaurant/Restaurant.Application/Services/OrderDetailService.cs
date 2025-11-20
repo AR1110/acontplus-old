@@ -23,7 +23,7 @@ public class OrderDetailService : IOrderDetailService
             ["UnitPrice"] = request.UnitPrice,
             ["Total"] = request.Total
         };
-        
+
         var result = await _repository.AddAsync(parameters);
         return new OrderDetailItem { Id = 1 }; // Simplified return
     }
@@ -39,7 +39,7 @@ public class OrderDetailService : IOrderDetailService
             ["UnitPrice"] = request.UnitPrice,
             ["Total"] = request.Total
         };
-        
+
         await _repository.PutAsync(parameters);
         return new OrderDetailItem { Id = id }; // Simplified return
     }
@@ -76,7 +76,7 @@ public class OrderDetailService : IOrderDetailService
             ["Id"] = id,
             ["Status"] = status
         };
-        
+
         await _repository.PutAsync(parameters);
         return new OrderDetailItem { Id = id, Status = status };
     }

@@ -9,10 +9,12 @@ public static class DeleteEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal schedule settings records.")
             .WithTags("Meal Schedule Settings");
-        group.MapDelete("/{id:int}", async (int id, IMealScheduleSettingService mealScheduleSettingService, CancellationToken cancellationToken) =>
-        {
-            return await mealScheduleSettingService.DeleteAsync(id).ToMinimalApiResultAsync();
-        })
+        group.MapDelete("/{id:int}",
+                async (int id, IMealScheduleSettingService mealScheduleSettingService,
+                    CancellationToken cancellationToken) =>
+                {
+                    return await mealScheduleSettingService.DeleteAsync(id).ToMinimalApiResultAsync();
+                })
             .WithName("DeleteMealScheduleSetting")
             .WithSummary("Delete a meal schedule setting")
             .WithDescription("Delete a meal schedule setting record by its ID.")

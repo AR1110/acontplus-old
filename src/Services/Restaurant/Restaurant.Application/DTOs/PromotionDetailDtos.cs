@@ -22,7 +22,6 @@ public record PromotionDetailCreate
     public int? GetQuantity { get; init; }
     public int Role { get; init; }
     public bool IsActive { get; init; }
-
 }
 
 public record PromotionDetailUpdate

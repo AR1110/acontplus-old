@@ -1,4 +1,5 @@
 // No changes needed, as entity didn't change.
+
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;

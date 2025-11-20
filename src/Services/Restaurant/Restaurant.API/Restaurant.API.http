@@ -11,8 +11,10 @@ Authorization: {{Token}}
 @establecimientoId=396
 GET {{Restaurant.API_HostAddress}}/api/floor/GetByEstab/{{establecimientoId}}/
 Authorization: {{Token}}
+
 ###
 
 GET {{Restaurant.API_HostAddress}}/api/lookups?filters[module]=order&filters[context]=filters
 Authorization: {{Token}}
+
 ###

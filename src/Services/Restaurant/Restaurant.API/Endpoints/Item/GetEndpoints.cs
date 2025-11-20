@@ -17,25 +17,25 @@ public static class GetEndpoints
             .WithTags("Items");
 
         group.MapGet("/", async (
-            PaginationQuery paginationQuery,
-            IItemService itemService,
-            IUserContext userContext,
-            CancellationToken cancellationToken) =>
-        {
-            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-
-            var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
+                PaginationQuery paginationQuery,
+                IItemService itemService,
+                IUserContext userContext,
+                CancellationToken cancellationToken) =>
             {
-                SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
-            };
+                var userRoleId = userContext.GetClaimValue<int>("userRoleId");
 
-            if (userRoleId != 0)
-            {
-                paginationDto = paginationDto.WithFilter("userRoleId", userRoleId);
-            }
+                var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
+                {
+                    SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
+                };
 
-            return await itemService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
-        })
+                if (userRoleId != 0)
+                {
+                    paginationDto = paginationDto.WithFilter("userRoleId", userRoleId);
+                }
+
+                return await itemService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
+            })
             .WithName("GetItems")
             .WithSummary("Get all items")
             .WithDescription("Retrieve a paginated list of items.")
@@ -44,18 +44,18 @@ public static class GetEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/{id:int}", async (
-            int id,
-            IItemService itemService,
-            IUserContext userContext,
-            CancellationToken cancellationToken) =>
-        {
-            var parameters = new Dictionary<string, object>
+                int id,
+                IItemService itemService,
+                IUserContext userContext,
+                CancellationToken cancellationToken) =>
             {
-                { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "Id", id }
-            };
-            return Results.Ok(await itemService.GetByIdAsync(parameters));
-        })
+                var parameters = new Dictionary<string, object>
+                {
+                    { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                    { "Id", id }
+                };
+                return Results.Ok(await itemService.GetByIdAsync(parameters));
+            })
             .WithName("GetItemById")
             .WithSummary("Get an item by ID")
             .WithDescription("Retrieve an item record by its ID.")

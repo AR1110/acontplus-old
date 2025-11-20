@@ -9,10 +9,11 @@ public static class DeleteEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapDelete("/{id:int}", async (int id, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
-        {
-            return await mealPlanService.DeleteAsync(id).ToMinimalApiResultAsync();
-        })
+        group.MapDelete("/{id:int}",
+                async (int id, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
+                {
+                    return await mealPlanService.DeleteAsync(id).ToMinimalApiResultAsync();
+                })
             .WithName("DeleteMealPlan")
             .WithSummary("Delete a meal plan")
             .WithDescription("Delete a meal plan record by its ID.")

@@ -143,7 +143,8 @@ public class FloorService : IFloorService
         var tables = await _tableRepository.FindAsync(t => roomIds.Contains(t.RoomId) && !t.IsDeleted);
         var tableIds = tables.Select(t => t.Id).ToList();
 
-        return tableIds.Any() && await _orderRepository.ExistsAsync(o => tableIds.Contains(o.TableId ?? 0) && !o.IsDeleted);
+        return tableIds.Any() &&
+               await _orderRepository.ExistsAsync(o => tableIds.Contains(o.TableId ?? 0) && !o.IsDeleted);
     }
 
     private async Task<bool> FloorExistsCodeEstabAsync(string code, string codEstab)

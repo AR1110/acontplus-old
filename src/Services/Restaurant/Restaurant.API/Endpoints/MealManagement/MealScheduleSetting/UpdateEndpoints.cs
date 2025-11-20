@@ -9,14 +9,18 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal schedule setting records.")
             .WithTags("Meal Schedule Settings");
-        group.MapPut("/{id:int}", async (int id, MealScheduleSettingUpdate request, IMealScheduleSettingService mealScheduleSettingService, IUserContext userContext, CancellationToken cancellationToken) =>
-        {
-            request = request with
-            {
-                UpdatedByUserId = userContext.GetUserId()
-            };
-            return await mealScheduleSettingService.UpdateAsync(id, request, cancellationToken).ToMinimalApiResultAsync();
-        })
+        group.MapPut("/{id:int}",
+                async (int id, MealScheduleSettingUpdate request,
+                    IMealScheduleSettingService mealScheduleSettingService, IUserContext userContext,
+                    CancellationToken cancellationToken) =>
+                {
+                    request = request with
+                    {
+                        UpdatedByUserId = userContext.GetUserId()
+                    };
+                    return await mealScheduleSettingService.UpdateAsync(id, request, cancellationToken)
+                        .ToMinimalApiResultAsync();
+                })
             .WithName("UpdateMealScheduleSetting")
             .WithSummary("Update an existing meal schedule setting")
             .WithDescription("Update an existing meal schedule setting record.")

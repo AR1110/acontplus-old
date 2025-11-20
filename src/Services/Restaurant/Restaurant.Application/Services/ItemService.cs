@@ -8,7 +8,8 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
     {
         try
         {
-            var response = await adoRepository.GetPagedFromStoredProcedureAsync<ItemItem>("Restaurant.GetItem", paginationRequest);
+            var response =
+                await adoRepository.GetPagedFromStoredProcedureAsync<ItemItem>("Restaurant.GetItem", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
@@ -20,10 +21,10 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("ITEMS_GET_ERROR", $"An error occurred while retrieving items. {ex.Message}");
+            var error = DomainError.Internal("ITEMS_GET_ERROR",
+                $"An error occurred while retrieving items. {ex.Message}");
             return Result<PagedResult<ItemItem>, DomainError>.Failure(error);
         }
-
     }
 
     public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)

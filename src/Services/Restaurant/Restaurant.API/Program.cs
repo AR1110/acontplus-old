@@ -2,8 +2,8 @@ using Restaurant.API.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-           .WriteTo.Console()
-           .CreateBootstrapLogger();
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 try
 {
@@ -14,7 +14,7 @@ try
     builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
     {
         loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration)
-        .ReadFrom.Services(services);
+            .ReadFrom.Services(services);
         loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
     });
 
