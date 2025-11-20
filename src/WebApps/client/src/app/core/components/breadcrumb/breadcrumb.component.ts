@@ -3,7 +3,7 @@ import { BreadcrumbService } from '@core/services/breadcrumb.service';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
-import {ThemeToggle} from "@acontplus/ng-components";
+import { ThemeToggle } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-breadcrumb',
