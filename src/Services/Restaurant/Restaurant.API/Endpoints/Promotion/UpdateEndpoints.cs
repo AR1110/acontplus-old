@@ -1,5 +1,4 @@
-
-using Restaurant.Application.DTOs.Promotions;
+using Restaurant.Application.Dtos.Promotions;
 
 namespace Restaurant.API.Endpoints.Promotion;
 
@@ -14,20 +13,20 @@ public static class UpdateEndpoints
             .WithTags("promotions");
 
         group.MapPut("/{id:int}", async (
-            int id,
-            PromotionUpdate request,
-            IPromotionService promotionService,
-            IUserContext userContext,
-            CancellationToken cancellationToken) =>
-        {
-            var parameters = new Dictionary<string, object>
+                int id,
+                PromotionUpdate request,
+                IPromotionService promotionService,
+                IUserContext userContext,
+                CancellationToken cancellationToken) =>
             {
-                { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "Id", id },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionUpdate>(request)) }
-            };
-            return Results.Ok(await promotionService.UpdateAsync(parameters));
-        })
+                var parameters = new Dictionary<string, object>
+                {
+                    { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                    { "Id", id },
+                    { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<PromotionUpdate>(request)) }
+                };
+                return Results.Ok(await promotionService.UpdateAsync(parameters));
+            })
             .WithName("UpdatePromotion")
             .WithSummary("Update an existing promotion")
             .WithDescription("Update an existing promotion record.")

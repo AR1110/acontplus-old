@@ -8,4 +8,3 @@ public interface IFloorService
     Task<SpResponse> GetByEstabAsync(int establecimientoId);
     Task<SpResponse> UpdateAsync(int id, Floor floor);
 }
-

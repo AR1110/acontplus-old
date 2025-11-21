@@ -9,10 +9,12 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
-        group.MapPut("/{id:int}", async (int id, MealPlanUpdate request, IMealPlanService mealPlanService, CancellationToken cancellationToken) =>
-        {
-            return await mealPlanService.UpdateAsync(id, request, cancellationToken).ToMinimalApiResultAsync();
-        })
+        group.MapPut("/{id:int}",
+                async (int id, MealPlanUpdate request, IMealPlanService mealPlanService,
+                    CancellationToken cancellationToken) =>
+                {
+                    return await mealPlanService.UpdateAsync(id, request, cancellationToken).ToMinimalApiResultAsync();
+                })
             .WithName("UpdateMealPlan")
             .WithSummary("Update a meal plan")
             .WithDescription("Update an existing meal plan by its ID.")

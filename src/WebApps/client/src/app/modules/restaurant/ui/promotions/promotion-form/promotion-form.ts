@@ -1,9 +1,8 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, output, signal} from '@angular/core';
-import {MatInput, MatInputModule} from "@angular/material/input";
-import {MatFormField, MatLabel} from "@angular/material/form-field";
-import {DateRangeSelectionComponent} from "@core/components/date-range-selection/date-range-selection.component";
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import { MatInputModule} from "@angular/material/input";
+import {MatFormField} from "@angular/material/form-field";
 import {MatIcon} from "@angular/material/icon";
-import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatSelectModule} from "@angular/material/select";
 import {MatChipsModule} from "@angular/material/chips";
@@ -19,14 +18,17 @@ import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
 import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
 import {ItemComposition} from "@restaurant/domain/models/item-composition";
 import Swal from "sweetalert2";
-import DecimalUtil from "@core/utils/decimal.util";
 import {ProductMeasure} from "@inventory/domain/models/product-measure";
 import {GetProductSaleUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
 import {LookupItem} from "@core/models/lookup-type";
 import {LookupService} from "@restaurant/application/services/lookup-service";
 import {PromotionDetail} from "@restaurant/domain/models/promotion-detail";
 import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {PromotionGetByIdUseCase, PromotionInsertUseCase} from "@restaurant/application/use-cases/promotion-use-case";
+import {
+  PromotionGetByIdUseCase,
+  PromotionInsertUseCase,
+  PromotionUpdateUseCase
+} from "@restaurant/application/use-cases/promotion-use-case";
 import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
@@ -63,6 +65,7 @@ export class PromotionForm {
 
    private notiSvc = inject(ToastrNotificationService)
   private insertUseCase = inject(PromotionInsertUseCase)
+  private updateUseCase = inject(PromotionUpdateUseCase)
 
   // Signals
   isSubmitting = signal<boolean>(false);
@@ -76,8 +79,17 @@ export class PromotionForm {
 
   // Forms
     private fb = inject(FormBuilder)
-  promotionForm!: FormGroup;
-  productForm!: FormGroup;
+  promotionForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    type: ['percentage', Validators.required],
+    description: [null],
+    value: 0,
+    startDate: ['', Validators.required],
+    endDate: ['', Validators.required],
+    isActive: [true],
+    schedule: this.fb.array([]),
+    establishmentId: new FormControl<number | null>(null, Validators.required),
+  });
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
     const column: any = cell.getColumn().getField();
@@ -308,10 +320,10 @@ export class PromotionForm {
   isEdit = computed(() => this.params.id > 0);
 
   modalTitle = computed(()=>{
-    return 'Crear Nueva Promoción'
+    return this.isEdit()? 'Editar Promoción': 'Crear Nueva Promoción'
   })
   btnTitle = computed(()=>{
-    return 'Guardar'
+    return this.isEdit()?'Actualizar': 'Guardar'
   })
 
   getCategoryAbbreviationToSearch(){
@@ -346,65 +358,55 @@ export class PromotionForm {
 
   constructor(
   ) {
-    this.promotionForm = this.createPromotionForm();
-    this.productForm = this.createProductForm();
     this.initializeScheduleControls()
-    // Effect para limpiar errores al cambiar valores
-    effect(() => {
-      const openSectionValue = this.openSection();
-      // Lógica adicional si es necesaria
-    });
   }
 
   ngOnInit(): void {
     this.lookupSvc.getLookupList('establishments,taxes').subscribe(x => {
-      console.log('profmotion formmmmmm', x)
       this.establishments.set(x.establishments);
       this.taxes.set(x.taxes);
-
-
       if(this.isEdit()){
 
         this.#getByIdUseCase.execute(this.params.id).subscribe(response => {
-          console.log(response)
-          this.productForm.patchValue(response.promotion);
+          const {schedule, ...rest} = response.promotion;
+          this.promotionForm.patchValue(rest);
+          this.patchSavedDays(schedule);
           this.selectedProducts.set(response.details)
         })
       }else{
         const defaultEstablishment = this.establishments()[0];
         if(defaultEstablishment){
-          this.promotionForm.patchValue({ establishmentId: defaultEstablishment.id });
+          this.promotionForm.patchValue({ establishmentId: defaultEstablishment.id??null });
         }
       }
     });
   }
 
+  private patchSavedDays(savedDays: any[]): void {
+    this.scheduleArray.controls.forEach((ctrl) => {
+      const control = ctrl as FormGroup; // 👈 casteo válido
 
+      const dow = control.get('day')?.value;
 
-  private createPromotionForm(): FormGroup {
-    return this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      type: ['percentage', Validators.required],
-      value: [
-        '',
-        [Validators.required, Validators.min(0.01)]
-      ],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      isActive: [true],
-      schedule: this.fb.array([]),
-      establishmentId: [null, Validators.required],
+      const saved = savedDays.find(d => d.day === dow);
+
+      if (saved) {
+        control.patchValue({
+          isActive: true,
+          startTime: saved.startTime,
+          endTime: saved.endTime
+        });
+      } else {
+        control.patchValue({
+          isActive: false,
+          startTime: new Date().setHours(0, 0, 0, 0),
+          endTime: new Date().setHours(23, 30, 0, 0)
+        });
+      }
     });
+
   }
 
-  private createProductForm(): FormGroup {
-    return this.fb.group({
-      productSelection: ['', Validators.required],
-      promoPrice: ['', [Validators.required, Validators.min(0)]],
-      rate: ['', Validators.min(0)],
-      unit: ['', Validators.required]
-    });
-  }
 
   private initializeScheduleControls(): void {
     const scheduleArray = this.promotionForm.get('schedule') as FormArray;
@@ -422,8 +424,6 @@ export class PromotionForm {
         })
       );
     });
-
-
   }
 
   get scheduleArray(): FormArray {
@@ -451,7 +451,7 @@ export class PromotionForm {
         const getDefaultTax = (): LookupItem | undefined =>
           this.taxes().find(x => x.code === product.taxCode);
 
-        console.log(this.taxes())
+
         if (existingIndex === -1) {
           const defaultMeasure = getDefaultMeasure();
           const defaultFee = getDefaultFee(defaultMeasure);
@@ -565,7 +565,7 @@ export class PromotionForm {
 
   validatePercentage(): boolean {
     const type = this.promotionForm.get('type')?.value;
-    const value = this.promotionForm.get('value')?.value;
+    const value = this.promotionForm.get('value')?.value ?? 0;
 
     if (type === 'percentage' && value > 100) {
       this.promotionForm.get('value')?.setErrors({ maxPercentage: true });
@@ -647,6 +647,7 @@ export class PromotionForm {
     const scheduleData = this.scheduleArray.value;
     //
     const promotion  = {
+      id: this.params.id,
       establishmentId: formValue.establishmentId,
       name: formValue.name,
       description: this.generateDescription(),
@@ -661,26 +662,35 @@ export class PromotionForm {
     console.log(scheduleData)
 
     try {
-      this.insertUseCase.execute(promotion).subscribe(response => {
-        if(response.code==="0"){
-          this.notiSvc.warning({
-            message: response.message
-          })
-          return
-        }
-          this.notiSvc.success({
-            message: 'Promoción guardada exitosamente'
-          })
-          this.dgRef.close(response)
-      })
+      if(this.isEdit()){
+        this.updateUseCase.execute(promotion).subscribe(this.commonResponse)
+      }
+
+      if(this.isAdd()){
+      this.insertUseCase.execute(promotion).subscribe(this.commonResponse)
+      }
 
     } catch (error: any) {
+      console.log(error)
       this.notiSvc.error({
         message: 'Error al guardar la promoción'
       })
     } finally {
       this.isSubmitting.set(false);
     }
+  }
+
+  private commonResponse = (response:any)=>{
+    if(response.code==="0"){
+      this.notiSvc.warning({
+        message: response.message
+      })
+      return
+    }
+    this.notiSvc.success({
+      message: 'Promoción guardada exitosamente'
+    })
+    this.dgRef.close(response)
   }
 
   getErrorMessage(controlName: string): string {

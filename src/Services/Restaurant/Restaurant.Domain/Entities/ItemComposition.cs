@@ -4,30 +4,23 @@ namespace Restaurant.Domain.Entities;
 public class ItemComposition : BaseEntity
 {
     // PADRE: Item que CONTIENE (Menú o Plato elaborado)
-    [Required]
-    public int ParentItemId { get; set; }
+    [Required] public int ParentItemId { get; set; }
     public required Item ParentItem { get; set; }
 
     // HIJO: Item que ES CONTENIDO (Plato, Bebida o Ingrediente)
-    [Required]
-    public int ChildItemId { get; set; }
+    [Required] public int ChildItemId { get; set; }
     public required Item ChildItem { get; set; }
 
     // Cantidad requerida del componente hijo
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal Quantity { get; set; }
-    // Costo unitario al momento de la composición
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal UnitPrice { get; set; }
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal SalePrice { get; set; }
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal TotalCost { get; set; }
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal TotalPrice { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal Quantity { get; set; }
 
-    [Column(TypeName = "decimal(5,2)")]
-    public decimal? WastePercentage { get; set; }
+    // Costo unitario al momento de la composición
+    [Column(TypeName = "decimal(18,5)")] public decimal UnitPrice { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal SalePrice { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal TotalCost { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal TotalPrice { get; set; }
+
+    [Column(TypeName = "decimal(5,2)")] public decimal? WastePercentage { get; set; }
 
     public int MeasureId { get; set; }
 
@@ -35,16 +28,14 @@ public class ItemComposition : BaseEntity
     public bool IsOptional { get; set; }
     public bool IsDefault { get; set; }
 
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal? ExtraCharge { get; set; }
+    [Column(TypeName = "decimal(18,5)")] public decimal? ExtraCharge { get; set; }
 
     // Orden de preparación/visualización
     public int DisplayOrder { get; set; }
 
     // Nivel de composición (1=directo, 2=indirecto)
     public int CompositionLevel { get; set; } = 1;
-    [MaxLength(300)]
-    public string? Notes { get; set; }
+    [MaxLength(300)] public string? Notes { get; set; }
     public Guid? UniqueId { get; set; }
     public int? ParentCompositionId { get; set; }
     public ItemComposition? ParentComposition { get; set; }

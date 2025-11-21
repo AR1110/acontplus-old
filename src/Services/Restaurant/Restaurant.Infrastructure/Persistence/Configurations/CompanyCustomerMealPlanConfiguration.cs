@@ -25,7 +25,7 @@ public class CompanyCustomerMealPlanConfiguration : BaseEntityTypeConfiguration<
             .HasMany(x => x.MealConsumptions)
             .WithOne(x => x.CompanyCustomerMealPlan)
             .HasForeignKey(x => x.CompanyCustomerMealPlanId)
-            .OnDelete(DeleteBehavior.Restrict);  // Prevent deleting plans with consumptions
+            .OnDelete(DeleteBehavior.Restrict); // Prevent deleting plans with consumptions
 
         // ✅ OPTIMIZED INDEXES FOR HIGH WORKLOAD
 
@@ -36,7 +36,7 @@ public class CompanyCustomerMealPlanConfiguration : BaseEntityTypeConfiguration<
 
         // Customer-based active plan lookup (assuming IsActive is computed; include override for limits)
         builder
-            .HasIndex(x => new { x.CompanyCustomerId })  // Simplified from previous (removed IsActive if not stored)
+            .HasIndex(x => new { x.CompanyCustomerId }) // Simplified from previous (removed IsActive if not stored)
             .HasDatabaseName("IX_CompanyCustomerMealPlan_Customer")
             .IncludeProperties(x => new { x.MealPlanId, x.StartDate, x.EndDate, x.MonthlyAllocatedMealsOverride });
 

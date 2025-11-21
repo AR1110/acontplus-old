@@ -40,13 +40,6 @@ export class App implements OnInit, AfterViewInit {
   private legacyAuthProcessed = false;
 
   ngOnInit() {
-    this.themeSwitcher.loadMode();
-
-    // for legacy usage
-    if (this.themeSwitcher.isDarkMode$) {
-      this.themeSwitcher.toggleDarkMode();
-    }
-
     // Limpiar sessionStorage en cada inicio
     Object.keys(sessionStorage).forEach(function (key) {
       sessionStorage.removeItem(key);

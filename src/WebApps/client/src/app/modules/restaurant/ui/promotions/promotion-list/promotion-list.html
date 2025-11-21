@@ -2,11 +2,29 @@
   class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
 >
   <div class="col">
-    <div class="hstack gap-2">
-        <h5 class="list-title">
-          <mat-icon class="title-icon">list</mat-icon>
-          Listado de Promociones ({{ promotionCount() }})
-        </h5>
+    <div class="hstack gap-4">
+      <mat-form-field>
+        <mat-label>Establecimiento</mat-label>
+        <mat-select  [(ngModel)]="dataFilter.establishmentId">
+          @for (item of establishments(); track $index) {
+            <mat-option [value]="item.id">
+              {{ item.value }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+       <mat-form-field>
+         <mat-label>Buscar</mat-label>
+         <ng-container matPrefix>
+           <mat-icon>filter_alt</mat-icon>
+         </ng-container>
+         <input matInput placeholder="Buscar" [(ngModel)]="dataFilter.searchTerm" (keydown.enter)="refresh()" aria-label="State"   />
+         <ng-container matSuffix>
+           <button mat-icon-button (click)="refresh()">
+             <mat-icon>refresh</mat-icon>
+           </button>
+         </ng-container>
+       </mat-form-field>
     </div>
   </div>
   <div class="col">
@@ -20,121 +38,39 @@
     </div>
   </div>
 </div>
-<div class="list-container">
-  <!-- Header -->
 
+<app-data-grid
+  [loading]="isLoading()"
+  size="medium"
+  [data]="list()"
+  [columns]="columns"
+  [cellTemplate]="{ op: opTpl, schedule: scheduleTpl }"
+  (page)="getNextPage($event)"
+></app-data-grid>
 
-  <!-- Controles de Búsqueda y Filtros -->
-  <div class="controls-container">
-    <!-- Búsqueda -->
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar por nombre</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input
-        matInput
-        [value]="searchTerm()"
-        (input)="onSearchChange($any($event.target).value)"
-        placeholder="Buscar promociones...">
-    </mat-form-field>
-
-    <!-- Filtros -->
-    <div class="filter-buttons">
-      <mat-icon class="filter-icon">filter_list</mat-icon>
-      <button
-        mat-raised-button
-        [color]="filterActive() === 'all' ? 'primary' : ''"
-        (click)="setFilter('all')">
-        Todas
-      </button>
-      <button
-        mat-raised-button
-        [color]="filterActive() === 'active' ? 'primary' : ''"
-        (click)="setFilter('active')">
-        Activas
-      </button>
-      <button
-        mat-raised-button
-        [color]="filterActive() === 'inactive' ? 'primary' : ''"
-        (click)="setFilter('inactive')">
-        Inactivas
-      </button>
+<ng-template #scheduleTpl let-row>
+  @for (item of row.schedule; track $index){
+    <div class="hstack justify-content-between ">
+      <span class="font-medium">{{ item.day }}:</span>
+      <span class="text-primary">{{ item.startTime }} - {{ item.endTime }}</span>
     </div>
-  </div>
-
-  <!-- Loading State -->
-  @if (isLoading) {
-
-  } @else {
-    <!-- Lista de Promociones -->
-    @if (filteredPromotions().length === 0) {
-      <mat-card class="empty-state">
-        <mat-icon>local_offer</mat-icon>
-        <h3>No hay promociones que coincidan con los criterios</h3>
-        <p>Intente modificar los filtros o crear una nueva promoción.</p>
-      </mat-card>
-    } @else {
-      <div class="promotions-grid">
-        @for (promo of filteredPromotions(); track promo.id) {
-          <mat-card class="promotion-card">
-            <!-- Header de la tarjeta -->
-            <div class="card-header">
-              <h3 class="promo-name">{{ promo.name }}</h3>
-              <mat-chip [class]="promo.isActive ? 'active-chip' : 'inactive-chip'">
-                <mat-icon>{{ promo.isActive ? 'bolt' : 'schedule' }}</mat-icon>
-                {{ promo.isActive ? 'Activa' : 'Inactiva' }}
-              </mat-chip>
-            </div>
-
-            <!-- Información Principal -->
-            <div class="card-content">
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="info-label">Descuento</span>
-                  <span class="info-value highlight">
-                    {{ promo.type === 'percentage' ? promo.value + '%' : '$' + promo.value.toFixed(2) }}
-                  </span>
-                </div>
-
-                <div class="info-item">
-                  <span class="info-label">Vigencia</span>
-                  <span class="info-value">
-                    {{ formatDate(promo.startDate) }} - {{ formatDate(promo.endDate) }}
-                  </span>
-                </div>
-
-                <div class="info-item">
-                  <span class="info-label">Productos</span>
-                  <span class="info-value">{{ promo.selectedProducts.length }} items</span>
-                </div>
-
-                <div class="info-item">
-                  <span class="info-label">Creado por</span>
-                  <span class="info-value mono">{{ promo.createdBy.substring(0, 8) }}...</span>
-                </div>
-              </div>
-
-              <!-- Horario -->
-              <div class="schedule-info">
-                <mat-icon>schedule</mat-icon>
-                <div>
-                  <span class="schedule-label">Horario Activo:</span>
-                  <p class="schedule-text">{{ getActiveSchedule(promo) }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Acciones -->
-            <div class="card-actions">
-              <button
-                mat-raised-button
-                color="warn" >
-                <mat-icon>delete</mat-icon>
-                Eliminar
-              </button>
-            </div>
-          </mat-card>
-        }
-      </div>
-    }
   }
-</div>
+
+</ng-template>
+
+
+<ng-template #opTpl let-row let-index="index" let-col="colDef">
+  <acp-button   type="button" icon="visibility"
+                matStyle="icon"
+                variant="info"
+  />
+  <acp-button   type="button" icon="edit"
+                matStyle="icon"
+                variant="success"
+                (handleClick)="editPromotion(row)"
+  />
+  <acp-button   type="button" icon="delete"
+                matStyle="icon"
+                variant="danger"
+  />
+</ng-template>

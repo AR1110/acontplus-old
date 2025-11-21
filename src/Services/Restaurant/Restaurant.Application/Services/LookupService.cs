@@ -10,9 +10,12 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
 {
     private const string CacheKeyPrefix = "cache_key";
     private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(30);
-    private static readonly ConcurrentDictionary<string, CacheEntry> LookupCache = new(StringComparer.OrdinalIgnoreCase);
 
-    public async Task<Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>> GetLookupsAsync(FilterRequest filterRequest, CancellationToken cancellationToken = default)
+    private static readonly ConcurrentDictionary<string, CacheEntry>
+        LookupCache = new(StringComparer.OrdinalIgnoreCase);
+
+    public async Task<Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>> GetLookupsAsync(
+        FilterRequest filterRequest, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -27,12 +30,14 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("LOOKUPS_GET_ERROR", $"An error occurred while retrieving lookups. {ex.Message}");
+            var error = DomainError.Internal("LOOKUPS_GET_ERROR",
+                $"An error occurred while retrieving lookups. {ex.Message}");
             return Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>.Failure(error);
         }
     }
 
-    public async Task<Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>> RefreshLookupsAsync(FilterRequest filterRequest, CancellationToken cancellationToken = default)
+    public async Task<Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>> RefreshLookupsAsync(
+        FilterRequest filterRequest, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -44,7 +49,8 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("LOOKUPS_REFRESH_ERROR", $"An error occurred while refreshing lookups. {ex.Message}");
+            var error = DomainError.Internal("LOOKUPS_REFRESH_ERROR",
+                $"An error occurred while refreshing lookups. {ex.Message}");
             return Result<IDictionary<string, IEnumerable<LookupItem>>, DomainError>.Failure(error);
         }
     }
@@ -139,6 +145,7 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
         {
             return string.Empty;
         }
+
         return rawValue switch
         {
             string str => str,
@@ -158,5 +165,4 @@ public class LookupService(IAdoRepository adoRepository) : ILookupService
     private sealed record CacheEntry(
         IDictionary<string, IEnumerable<LookupItem>> Data,
         DateTimeOffset ExpirationUtc);
-
 }

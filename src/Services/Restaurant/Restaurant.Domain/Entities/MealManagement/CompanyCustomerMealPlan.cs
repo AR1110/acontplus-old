@@ -11,8 +11,7 @@ public class CompanyCustomerMealPlan : BaseEntity
 
     public DateTime? EndDate { get; set; }
 
-    [MaxLength(500)]
-    public string? Notes { get; set; }
+    [MaxLength(500)] public string? Notes { get; set; }
 
     // New: Override for monthly allocated meals (falls back to MealPlan.MonthlyMealLimit if null)
     public int? MonthlyAllocatedMealsOverride { get; set; }

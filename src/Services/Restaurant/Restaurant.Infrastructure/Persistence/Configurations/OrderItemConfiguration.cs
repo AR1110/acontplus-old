@@ -9,7 +9,6 @@ public class OrderItemConfiguration : BaseEntityTypeConfiguration<OrderItem>
         base.Configure(builder);
 
 
-
         builder.HasIndex(x => x.OrderId)
             .HasDatabaseName("IX_OrderItem_OrderId")
             .IncludeProperties(x => new { x.ItemId, x.Status, x.Total });

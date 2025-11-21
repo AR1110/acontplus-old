@@ -5,25 +5,21 @@ namespace Restaurant.Domain.DTOs;
 public record TableCreate
 {
     public int RoomId { get; init; }
-    [Required]
-    public int NumberTable { get; init; }
-    [Required][MaxLength(100)]
-    public required string Description { get; init; }
-    [Required]
-    public int Capacity { get; init; }
+    [Required] public int NumberTable { get; init; }
+    [Required] [MaxLength(100)] public required string Description { get; init; }
+    [Required] public int Capacity { get; init; }
     public bool? Assigned { get; init; }
 };
+
 public record TableUpdate
 {
     public int RoomId { get; init; }
-    [Required]
-    public int NumberTable { get; init; }
-    [Required][MaxLength(100)]
-    public required string Description { get; init; }
-    [Required]
-    public int Capacity { get; init; }
+    [Required] public int NumberTable { get; init; }
+    [Required] [MaxLength(100)] public required string Description { get; init; }
+    [Required] public int Capacity { get; init; }
     public bool? Assigned { get; init; }
 };
+
 public record TableItem
 {
     public int Id { get; init; }

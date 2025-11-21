@@ -1,6 +1,3 @@
-using Acontplus.Core.Dtos.Responses;
-using Mapster;
-
 namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
 
 public static class GetEndpoints
@@ -12,23 +9,46 @@ public static class GetEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
-        group.MapGet("/", async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
-        {
-            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-            var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
-            {
-                SortDirection = paginationQuery.SortDirection ?? default
-            };
-            paginationDto.WithFilter("UserRoleId", userRoleId);
+        group.MapGet("/",
+                async (PaginationQuery paginationQuery, IMealConsumptionService mealConsumptionService,
+                    IUserContext userContext, CancellationToken cancellationToken) =>
+                {
+                    var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+                    var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
+                    {
+                        SortDirection = paginationQuery.SortDirection ?? default
+                    };
+                    paginationDto.WithFilter("UserRoleId", userRoleId);
 
-            return await mealConsumptionService.GetAsync(paginationDto).ToGetMinimalApiResultAsync();
-        })
-            .WithName("GetMealConsumptionById")
-            .WithSummary("Get a meal consumption by ID")
-            .WithDescription("Retrieve a meal consumption record by its ID.")
+                    return await mealConsumptionService.GetAsync(paginationDto, cancellationToken)
+                        .ToGetMinimalApiResultAsync();
+                })
+            .WithName("GetMealConsumptions")
+            .WithSummary("Get meal consumptions")
+            .WithDescription("Retrieve meal consumptions")
             .Produces<IReadOnlyList<PagedResult<MealConsumptionItem>>>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapGet("/search-customer", async (PaginationQuery paginationQuery,
+                IMealConsumptionService mealConsumptionService, IUserContext userContext,
+                CancellationToken cancellationToken) =>
+            {
+                var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+                var paginationDto = paginationQuery.Adapt<PaginationRequest>() with
+                {
+                    SortDirection = paginationQuery.SortDirection ?? default
+                };
+                paginationDto.WithFilter("UserRoleId", userRoleId);
+
+                return await mealConsumptionService.SearchCustomerAsync(paginationDto, cancellationToken)
+                    .ToGetMinimalApiResultAsync();
+            })
+            .WithName("SearchCustomer")
+            .WithSummary("Search customer for meal consumption")
+            .WithDescription("Retrieve a customer for meal consumption")
+            .Produces<IReadOnlyList<PagedResult<CustomerMealConsumptionItem>>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
     }
 }
-

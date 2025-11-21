@@ -22,7 +22,26 @@ export class PromotionGetByIdMapper {
       type
     } = parsed.promotions[0]
  //   console.log(res)
-    const schedule = (JSON.parse(applicableDays) ?? []).map((day:any) => ({day}))
+    console.log((JSON.parse(applicableDays)));
+    const toDate = (timeString: string): Date => {
+      const [hours, minutes] = timeString.split(":").map(Number);
+      const date = new Date();
+      date.setHours(hours);
+      date.setMinutes(minutes);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
+      return date;
+    };
+    const schedule = (JSON.parse(applicableDays) ?? []).map((day:any) => {
+
+         return {
+           day: day.day,
+           isActive: day.isActive,
+           startTime: toDate(day.startTime),
+           endTime: toDate(day.endTime)
+         }
+
+    })
     const typeTemp: DiscountType["value"] = type === 1 ? 'fixed' : 'percentage';
     const promotion = {
       id,
@@ -33,13 +52,13 @@ export class PromotionGetByIdMapper {
       endTime,
       startTime,
       name,
-      isActive,
+      isActive: isActive?? true,
       isDeleted,
       imageUrl,
       establishmentId,
-      type: typeTemp
+      type: typeTemp,
     }
-    const details = parsed.details.map((item:any, index: number) => {
+    const details = (parsed.details??[]).map((item:any, index: number) => {
       const mainMeasures = JSON.parse(item.principal)
       const fractionalMeasures = JSON.parse(item.fractional)
       const measures = mergeProductMeasures(mainMeasures, fractionalMeasures);
@@ -60,7 +79,7 @@ export class PromotionGetByIdMapper {
         discountPercent: item.discountPercent,
         discount: item.discount,
         subtotal: item.subtotal,
-        buyQuantity: item.buyQuantity,
+        quantity: item.buyQuantity ?? 1,
         notes: item.notes,
         requiredQuantity: item.requiredQuantity,
         measures,
@@ -68,6 +87,7 @@ export class PromotionGetByIdMapper {
         description: item.description,
         productCode: item.code,
         taxCode: item.taxCode,
+        isActive: item.isActive ?? true,
       }
     })
     return {

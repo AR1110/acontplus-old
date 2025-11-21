@@ -7,7 +7,7 @@ import {PATHS_API} from "@core/constants/global.constants";
 import {RESTAURANT_PATHS} from "@restaurant/domain/enums/restaurant.enum";
 import {HttpClient} from "@angular/common/http";
 import {PromotionListMapper} from "@restaurant/data/promotion/promotion-list-mapper";
-import {PromotionInsertMapper} from "@restaurant/data/promotion/promotion-insert-mapper";
+import {PromotionSaveMapper} from "@restaurant/data/promotion/promotion-save-mapper";
 import {PromotionGetByIdMapper} from "@restaurant/data/promotion/promotion-get-by-id-mapper";
 
 @Injectable({
@@ -26,9 +26,13 @@ export class PromotionHttpRepository implements PromotionRepository {
         .pipe(map((response) => PromotionListMapper.fromJson(response)));
     }
 
-   insert(data: any): Observable<any> {
-      const params = PromotionInsertMapper.toJson(data);
+   insert(data: any): Observable<any> {const params = PromotionSaveMapper.toJson(data);
     return this.#http.post(`${this.#url}`, params);
+  }
+
+  update(params: any): Observable<any> {
+    const data = PromotionSaveMapper.toJson(params);
+    return this.#http.put(`${this.#url}/${params.id}`, data);
   }
 
     getById(id: number): Observable<any> {

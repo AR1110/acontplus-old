@@ -8,5 +8,4 @@ public static class RegisterPromotionEndpoints
         GetEndpoints.MapGetEndpoints(app);
         UpdateEndpoints.MapUpdateEndpoints(app);
     }
-
 }

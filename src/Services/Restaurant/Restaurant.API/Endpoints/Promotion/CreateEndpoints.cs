@@ -1,5 +1,5 @@
 using Restaurant.Application.Dtos.Items;
-using Restaurant.Application.DTOs.Promotions;
+using Restaurant.Application.Dtos.Promotions;
 
 namespace Restaurant.API.Endpoints.Promotion;
 
@@ -13,7 +13,7 @@ public static class CreateEndpoints
             .WithDescription("Endpoints for managing promotions.")
             .WithTags("promotions");
 
-        group.MapPost("/", async ( 
+        group.MapPost("/", async (
             PromotionCreate request,
             IPromotionService promotionService,
             IUserContext userContext,
@@ -27,5 +27,4 @@ public static class CreateEndpoints
             return Results.Ok(await promotionService.AddAsync(parameters));
         });
     }
-
 }

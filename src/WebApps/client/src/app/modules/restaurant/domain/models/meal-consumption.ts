@@ -1,7 +1,7 @@
 export enum ConsumptionStatus {
-  Completed = 1,
-  Cancelled = 2,
-  Pending = 3,
+  Completed = 'completed',
+  Cancelled = 'cancelled',
+  Pending = 'pending',
 }
 
 export interface MealConsumption {

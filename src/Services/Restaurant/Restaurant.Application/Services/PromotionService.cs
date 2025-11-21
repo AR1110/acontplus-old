@@ -1,4 +1,4 @@
-using Restaurant.Application.DTOs.Promotions;
+using Restaurant.Application.Dtos.Promotions;
 
 namespace Restaurant.Application.Services;
 
@@ -8,7 +8,9 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
     {
         try
         {
-            var response = await repository.GetPagedFromStoredProcedureAsync<PromotionItem>("Restaurant.GetPromotion", paginationRequest);
+            var response =
+                await repository.GetPagedFromStoredProcedureAsync<PromotionItem>("Restaurant.GetPromotion",
+                    paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
@@ -20,7 +22,8 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("PROMOTIONS_GET_ERROR", $"An error occurred while retrieving promotions. {ex.Message}");
+            var error = DomainError.Internal("PROMOTIONS_GET_ERROR",
+                $"An error occurred while retrieving promotions. {ex.Message}");
             return Result<PagedResult<PromotionItem>, DomainError>.Failure(error);
         }
     }

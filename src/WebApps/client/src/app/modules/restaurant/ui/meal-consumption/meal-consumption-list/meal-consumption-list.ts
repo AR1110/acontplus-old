@@ -22,7 +22,6 @@ import { MealConsumptionOtherDatesDialog } from '../meal-consumption-other-dates
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import {
@@ -38,7 +37,6 @@ import {
   MatTable,
 } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatFormField, MatLabel, MatSuffix } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
@@ -70,7 +68,6 @@ import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-set
     MatRowDef,
     MatTable,
     MatIcon,
-    MatProgressSpinner,
     MatPaginator,
     MatFormField,
     MatLabel,
@@ -118,7 +115,6 @@ export class MealConsumptionList implements OnInit {
     }),
   );
   mealConsumptions = signal<MealConsumption[]>([]);
-  isLoading = signal<boolean>(false);
 
   // Table configuration
   displayedColumns = [
@@ -145,11 +141,17 @@ export class MealConsumptionList implements OnInit {
       next: (response) => {
         console.log('Meal schedule settings:', response);
         const configs = response ?? [];
-        // configs.push({
-        //   id: 0,
-        //   descripcion: 'Consolidado',
-        //   onTime: false,
-        // });
+        configs.push({
+          displayOrder: 0,
+          endTime: '',
+          mealCode: 'All',
+          startTime: '',
+          id: 0,
+          establishmentId: 0,
+          description: 'Consolidado',
+          onTime: false,
+          isActive: true,
+        });
         this.mealSchedulSettings.set(configs);
 
         // Auto-select the current active service
@@ -158,8 +160,8 @@ export class MealConsumptionList implements OnInit {
           this.selectedConfigId.set(activeConfig.id);
         } else {
           this.selectedConfigId.set(configs[0]?.id ?? 0);
-          this.load();
         }
+        this.load();
       },
       error: (error) => {
         console.error('Error loading configurations:', error);
@@ -173,8 +175,6 @@ export class MealConsumptionList implements OnInit {
   }
 
   load() {
-    this.isLoading.set(true);
-
     this.paginationParams().filters = {
       establishmentId: 421,
       mealScheduleSettingId: this.selectedConfigId(),
@@ -182,7 +182,6 @@ export class MealConsumptionList implements OnInit {
 
     return this.getUseCase
       .execute(this.paginationParams())
-      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response) => {
           this.mealConsumptions.set(response.items);
@@ -233,10 +232,8 @@ export class MealConsumptionList implements OnInit {
     });
 
     if (result.isConfirmed) {
-      this.isLoading.set(true);
       this.deleteUseCase
         .execute({ id: consumption.id })
-        .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
           next: (response) => {
             if (response.code === '1') {
@@ -290,11 +287,9 @@ export class MealConsumptionList implements OnInit {
     });
 
     if (result.isConfirmed && result.value) {
-      this.isLoading.set(true);
       const cancellationReason = result.value as string;
       this.cancelUseCase
         .execute({ id: consumption.id, cancellationReason })
-        .pipe(finalize(() => this.isLoading.set(false)))
         .subscribe({
           next: (response) => {
             if (response.code === '1') {
@@ -326,10 +321,8 @@ export class MealConsumptionList implements OnInit {
   }
 
   async printConsumption(consumption: MealConsumption): Promise<void> {
-    this.isLoading.set(true);
     this.printUseCase
       .execute({ id: consumption.id })
-      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response) => {
           if (response.payload) {
@@ -354,10 +347,8 @@ export class MealConsumptionList implements OnInit {
   }
 
   async getCancellationReason(consumption: MealConsumption): Promise<void> {
-    this.isLoading.set(true);
     this.getCancellationDetailsUseCase
       .execute({ id: consumption.id })
-      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response) => {
           if (response.code === '1' && response.details) {
@@ -428,11 +419,9 @@ export class MealConsumptionList implements OnInit {
 
     this.customer.set(null);
     this.schedules.set([]);
-    this.isLoading.set(true);
 
     this.searchCustomerUseCase
       .execute({ searchTerm: searchValue })
-      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response) => {
           this.clientSearchControl.setValue('');
@@ -529,21 +518,18 @@ export class MealConsumptionList implements OnInit {
     const customer = this.customer();
     if (!customer) return;
 
-    this.isLoading.set(true);
-
     const request = {
       mealScheduleSettingId: schedule.mealScheduleSettingId,
       companyCustomerMealPlanId: customer.idCliente,
       consumptionDate: new Date(),
       amount: cantidad,
-      consumptionStatus: 1,
+      consumptionStatus: ConsumptionStatus.Pending,
       onTime: schedule.onTime,
       idCliente: customer.idCliente,
     };
 
     this.createUseCase
       .execute(request)
-      .pipe(finalize(() => this.isLoading.set(false)))
       .subscribe({
         next: (response) => {
           if (response.code === '1') {

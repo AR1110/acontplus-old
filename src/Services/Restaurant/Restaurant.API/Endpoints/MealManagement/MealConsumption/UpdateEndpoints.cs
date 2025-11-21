@@ -9,15 +9,17 @@ public static class UpdateEndpoints
             .WithOpenApi()
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
-        group.MapPut("/{id:int}", async (int id, MealConsumptionUpdate request, IMealConsumptionService mealConsumptionService, IUserContext userContext, CancellationToken cancellationToken) =>
-        {
-            request = request with
-            {
-                Id = id,
-                CancelledByUserId = userContext.GetUserId()
-            };
-            return await mealConsumptionService.UpdateAsync(id, request).ToMinimalApiResultAsync();
-        })
+        group.MapPut("/{id:int}",
+                async (int id, MealConsumptionUpdate request, IMealConsumptionService mealConsumptionService,
+                    IUserContext userContext, CancellationToken cancellationToken) =>
+                {
+                    request = request with
+                    {
+                        Id = id,
+                        CancelledByUserId = userContext.GetUserId()
+                    };
+                    return await mealConsumptionService.UpdateAsync(id, request).ToMinimalApiResultAsync();
+                })
             .WithName("UpdateMealConsumption")
             .WithSummary("Update an existing meal consumption")
             .WithDescription("Update an existing meal consumption record.")

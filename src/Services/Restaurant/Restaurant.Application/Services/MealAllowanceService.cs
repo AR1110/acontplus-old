@@ -19,7 +19,8 @@ public class MealAllowanceService(IAdoRepository adoRepository) : IMealAllowance
             { "Month", month }
         };
 
-        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.MonthlyMealAllowance_Generate", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.MonthlyMealAllowance_Generate",
+            parameters);
     }
 
     public async Task<SpResponse> GetEmployeeAllowanceAsync(int companyCustomerId, int year, int month)
@@ -45,7 +46,8 @@ public class MealAllowanceService(IAdoRepository adoRepository) : IMealAllowance
             { "ConsumedMeals", consumedMeals }
         };
 
-        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.MonthlyMealAllowance_UpdateConsumption", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>(
+            "Restaurant.MonthlyMealAllowance_UpdateConsumption", parameters);
     }
 
     public async Task<SpResponse> GetAllowanceHistoryAsync(int companyCustomerId, int year)

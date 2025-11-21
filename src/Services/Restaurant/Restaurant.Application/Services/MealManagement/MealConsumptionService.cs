@@ -1,63 +1,100 @@
-using Acontplus.Core.Abstractions.Persistence;
-using Acontplus.Core.Extensions;
-using Mapster;
-using Restaurant.Application.Dtos.Items;
-
 namespace Restaurant.Application.Services.MealManagement;
 
 public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionService
 {
-    private readonly IRepository<MealConsumption> _mealConsumptionRepository = unitOfWork.GetRepository<MealConsumption>();
+    private readonly IRepository<MealConsumption> _mealConsumptionRepository =
+        unitOfWork.GetRepository<MealConsumption>();
+
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-    public async Task<Result<MealConsumptionItem, DomainError>> AddAsync(MealConsumptionCreate request, CancellationToken cancellationToken = default)
+
+    public async Task<Result<MealConsumptionItem, DomainError>> AddAsync(MealConsumptionCreate request,
+        CancellationToken cancellationToken = default)
     {
         return await _mealConsumptionRepository.ExecuteInTransactionAsync(async () =>
         {
             var mealConsumption = Mapster.TypeAdapter.Adapt<MealConsumption>(request);
 
-            await _mealConsumptionRepository.AddAsync(mealConsumption);
+            await _mealConsumptionRepository.AddAsync(mealConsumption, cancellationToken);
             return Result<MealConsumptionItem, DomainError>.Success(mealConsumption.Adapt<MealConsumptionItem>());
-        });
+        }, cancellationToken);
     }
+
     public async Task<Result<bool, DomainError>> DeleteAsync(int id, CancellationToken cancellationToken)
     {
         return await _mealConsumptionRepository.ExecuteInTransactionAsync(async () =>
         {
-            var mealConsumption = await _mealConsumptionRepository.GetByIdOrDefaultAsync(id, cancellationToken: cancellationToken);
+            var mealConsumption =
+                await _mealConsumptionRepository.GetByIdOrDefaultAsync(id, cancellationToken: cancellationToken);
             if (mealConsumption == null)
-                return Result<bool, DomainError>.Failure(DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "Meal consumption not found"));
+                return Result<bool, DomainError>.Failure(DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND",
+                    "Meal consumption not found"));
             mealConsumption.IsDeleted = true;
             mealConsumption.IsActive = false;
             await _mealConsumptionRepository.UpdateAsync(mealConsumption, cancellationToken: cancellationToken);
             return Result<bool, DomainError>.Success(true);
-        });
+        }, cancellationToken);
     }
-    public async Task<Result<PagedResult<MealConsumptionItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken)
+
+    public async Task<Result<PagedResult<MealConsumptionItem>, DomainError>> GetAsync(
+        PaginationRequest paginationRequest, CancellationToken cancellationToken)
     {
         try
         {
-            var response = await _adoRepository.GetPagedFromStoredProcedureAsync<MealConsumptionItem>("Restaurant.GetMealConsumptions", paginationRequest);
+            var response =
+                await _adoRepository.GetPagedFromStoredProcedureAsync<MealConsumptionItem>(
+                    "Restaurant.GetMealConsumptions", paginationRequest, cancellationToken: cancellationToken);
 
-            if (response == null || response.Items == null || !response.Items.Any())
+            if (response.Items.Any())
             {
-                var error = DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "No items were found.");
-                return Result<PagedResult<MealConsumptionItem>, DomainError>.Failure(error);
+                return Result<PagedResult<MealConsumptionItem>, DomainError>.Success(response);
             }
-            return Result<PagedResult<MealConsumptionItem>, DomainError>.Success(response);
+
+            var error = DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "No items were found.");
+            return Result<PagedResult<MealConsumptionItem>, DomainError>.Failure(error);
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("MEAL_CONSUMPTION_ERROR", $"An error occurred while retrieving items. {ex.Message}");
+            var error = DomainError.Internal("MEAL_CONSUMPTION_ERROR",
+                $"An error occurred while retrieving items. {ex.Message}");
             return Result<PagedResult<MealConsumptionItem>, DomainError>.Failure(error);
         }
     }
-    public async Task<Result<MealConsumptionItem, DomainError>> UpdateAsync(int id, MealConsumptionUpdate request, CancellationToken cancellationToken)
+
+    public async Task<Result<PagedResult<CustomerMealConsumptionItem>, DomainError>> SearchCustomerAsync(
+        PaginationRequest paginationRequest, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var response =
+                await _adoRepository.GetPagedFromStoredProcedureAsync<CustomerMealConsumptionItem>(
+                    "Restaurant.SearchCustomerMealConsumption", paginationRequest,
+                    cancellationToken: cancellationToken);
+
+            if (response.Items.Any())
+            {
+                return Result<PagedResult<CustomerMealConsumptionItem>, DomainError>.Success(response);
+            }
+
+            var error = DomainError.NotFound("CUSTOMER_NOT_FOUND", "No items were found.");
+            return Result<PagedResult<CustomerMealConsumptionItem>, DomainError>.Failure(error);
+        }
+        catch (Exception ex)
+        {
+            var error = DomainError.Internal("CUSTOMER_NOT_FOUND",
+                $"An error occurred while retrieving items. {ex.Message}");
+            return Result<PagedResult<CustomerMealConsumptionItem>, DomainError>.Failure(error);
+        }
+    }
+
+    public async Task<Result<MealConsumptionItem, DomainError>> UpdateAsync(int id, MealConsumptionUpdate request,
+        CancellationToken cancellationToken)
     {
         return await _mealConsumptionRepository.ExecuteInTransactionAsync(async () =>
         {
-            var mealConsumption = await _mealConsumptionRepository.GetByIdOrDefaultAsync(id);
+            var mealConsumption = await _mealConsumptionRepository.GetByIdOrDefaultAsync(id, cancellationToken);
             if (mealConsumption == null)
-                return Result<MealConsumptionItem, DomainError>.Failure(DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "Meal consumption not found"));
+                return Result<MealConsumptionItem, DomainError>.Failure(
+                    DomainError.NotFound("MEAL_CONSUMPTION_NOT_FOUND", "Meal consumption not found"));
             mealConsumption.MealScheduleSettingId = request.MealScheduleSettingId;
             mealConsumption.CompanyCustomerMealPlanId = request.CompanyCustomerMealPlanId;
             mealConsumption.ConsumptionDate = request.ConsumptionDate;
@@ -67,9 +104,8 @@ public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionSe
             mealConsumption.CancelledByUserId = request.CancelledByUserId;
             mealConsumption.CancelledAt = request.CancelledAt;
             mealConsumption.CancelledIpAddress = request.CancelledIpAddress;
-            await _mealConsumptionRepository.UpdateAsync(mealConsumption);
+            await _mealConsumptionRepository.UpdateAsync(mealConsumption, cancellationToken);
             return Result<MealConsumptionItem, DomainError>.Success(mealConsumption.Adapt<MealConsumptionItem>());
-        });
+        }, cancellationToken);
     }
 }
-

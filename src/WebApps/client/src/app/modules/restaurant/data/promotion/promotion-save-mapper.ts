@@ -1,16 +1,25 @@
 import {formatDateToString, getTimeString} from "@core/utils/date.util"
 
-export class PromotionInsertMapper {
+export class PromotionSaveMapper {
 
   static toJson(model: any) {
-    const applicableDays = model.schedule?[]: model.schedule.map((x:any)=>{
+    const applicableDays = model.schedule.map((x:any)=>{
       return {
         day: x.day,
         isActive: x.isActive,
         startTime: getTimeString(x.startTime),
         endTime: getTimeString(x.endTime)
       }
+    }).filter((x:any)=>x.isActive)
+
+
+    const details = model.selectedProducts.map((x:any)=>{
+      return {
+        ...x,
+        buyQuantity: x.quantity,
+      }
     })
+
     return {
       establishmentId: model.establishmentId,
       name: model.name ,
@@ -21,9 +30,10 @@ export class PromotionInsertMapper {
       startTime: model.startTime,
       endTime: model.endTime,
       type: model.type ==='fixed' ? 1 : 2,
-      discountPercent: model.value,
+      discountPercent: model.value ?? 0,
+      isActive: model.isActive,
 
-      details: model.selectedProducts
+      details
     }
   }
 }

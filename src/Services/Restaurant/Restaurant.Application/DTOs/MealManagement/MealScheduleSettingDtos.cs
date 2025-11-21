@@ -9,7 +9,8 @@ public record MealScheduleSettingCreate(
     int DisplayOrder,
     int CreatedByUserId);
 
-public record MealScheduleSettingUpdate(int Id,
+public record MealScheduleSettingUpdate(
+    int Id,
     int EstablishmentId,
     string MealCode,
     string Description,
@@ -19,11 +20,13 @@ public record MealScheduleSettingUpdate(int Id,
     bool IsActive,
     int UpdatedByUserId);
 
-public record MealScheduleSettingItem(int Id,
+public record MealScheduleSettingItem(
+    int Id,
     int EstablishmentId,
     string MealCode,
     string Description,
     TimeSpan StartTime,
     TimeSpan EndTime,
     int DisplayOrder,
-    bool IsActive);
+    bool IsActive,
+    bool onTime);

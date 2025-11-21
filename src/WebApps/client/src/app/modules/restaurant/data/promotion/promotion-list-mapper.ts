@@ -1,5 +1,6 @@
 import {PromotionListDto} from "@restaurant/domain/models/promotion";
 import { PaginationParams, PagedResult } from "@acontplus/core";
+import {formatDate, formatDisplayDate} from "@core/utils/date.util";
 export class PromotionListMapper {
   static toJson(params: PaginationParams) {
     const queryParams = new URLSearchParams({
@@ -37,9 +38,21 @@ export class PromotionListMapper {
       items: [],
     };
     console.log(response.items)
-    results.items = response.items.map((item: any) => ({
-      ...item
-    }))
+    results.items = response.items.map((item: any, index: number) => {
+      const schedule = JSON.parse(item.applicableDays) ?? []
+      const startDate = formatDate(item.startDate);
+      const endDate = formatDate(item.endDate);
+     return {
+       ...item,
+       index: index + 1,
+       validityPeriod: `${formatDisplayDate(startDate) ?? "--"} - ${
+         formatDisplayDate(endDate) ?? "--"
+       }`,
+       schedule,
+       name: item.name,
+       imageUrl: 'https://cdn.dribbble.com/userupload/44814864/file/c52ce852f72a4f7497db49fc0d647a29.jpg?resize=400x0',
+     }
+    })
 
 
     return results;

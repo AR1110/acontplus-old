@@ -3,25 +3,25 @@ namespace Restaurant.Domain.Entities;
 [Table("Item", Schema = "Restaurant")]
 public class Item : BaseEntity
 {
-    [Required]
-    public int ProductId { get; set; }
+    [Required] public int ProductId { get; set; }
 
-    [MaxLength(500)]
-    public string? Summary { get; set; }
-        // Producción
-    [MaxLength(1000)]
-    public string? PreparationInstructions { get; set; }
+    [MaxLength(500)] public string? Summary { get; set; }
+
+    // Producción
+    [MaxLength(1000)] public string? PreparationInstructions { get; set; }
+
     public int MeasureId { get; set; }
-    // Pricing
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal SalePrice { get; set; }
 
-    [Column(TypeName = "decimal(18,5)")]
-    public decimal UnitPrice { get; set; }  // Suma de costos de composiciones
+    // Pricing
+    [Column(TypeName = "decimal(18,5)")] public decimal SalePrice { get; set; }
+
+    [Column(TypeName = "decimal(18,5)")] public decimal UnitPrice { get; set; } // Suma de costos de composiciones
 
     // Producción
     public bool RequiresCooking { get; set; }
+
     public int? PreparationTimeMinutes { get; set; }
+
     // Flags
     public bool IsAvailableForPromotion { get; set; }
     public bool IsComposite { get; set; }

@@ -13,20 +13,20 @@ public static class UpdateEndpoints
             .WithTags("Items");
 
         group.MapPut("/{id:int}", async (
-            int id,
-            ItemUpdate request,
-            IItemService itemService,
-            IUserContext userContext,
-            CancellationToken cancellationToken) =>
-        {
-            var parameters = new Dictionary<string, object>
+                int id,
+                ItemUpdate request,
+                IItemService itemService,
+                IUserContext userContext,
+                CancellationToken cancellationToken) =>
             {
-                { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "Id", id },
-                { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ItemUpdate>(request)) }
-            };
-            return Results.Ok(await itemService.UpdateAsync(parameters));
-        })
+                var parameters = new Dictionary<string, object>
+                {
+                    { "UserRoleId", userContext.GetClaimValue<int>("userRoleId") },
+                    { "Id", id },
+                    { "Json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ItemUpdate>(request)) }
+                };
+                return Results.Ok(await itemService.UpdateAsync(parameters));
+            })
             .WithName("UpdateItem")
             .WithSummary("Update an existing item")
             .WithDescription("Update an existing item record.")

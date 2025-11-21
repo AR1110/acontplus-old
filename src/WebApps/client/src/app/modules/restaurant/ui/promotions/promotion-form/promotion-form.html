@@ -60,53 +60,62 @@
               </div>
             </div>
 
+            <div
+              class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+            >
+              <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Vigencia (Rango de Fechas)</mat-label>
+                  <mat-date-range-input [rangePicker]="picker">
+                    <input matStartDate formControlName="startDate" placeholder="Start date">
+                    <input matEndDate formControlName="endDate" placeholder="End date">
+                  </mat-date-range-input>
+                  <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"/>
+                  <mat-date-range-picker #picker/>
 
-            <div class="form-row">
-              <!-- Tipo de Descuento -->
-              <mat-form-field class="flex-1">
-                <mat-label>Vigencia (Rango de Fechas)</mat-label>
-                <mat-date-range-input [rangePicker]="picker">
-                  <input matStartDate formControlName="startDate" placeholder="Start date">
-                  <input matEndDate formControlName="endDate" placeholder="End date">
-                </mat-date-range-input>
-                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker></mat-date-range-picker>
-
-                @if (productForm.controls["startDate"]?.hasError('matStartDateInvalid')) {
-                  <mat-error>Invalid start date</mat-error>
-                }
-                @if (productForm.controls["endDate"]?.hasError('matEndDateInvalid')) {
-                  <mat-error>Invalid end date</mat-error>
-                }
-              </mat-form-field>
-              <!-- Tipo de Descuento -->
-              <mat-form-field appearance="outline" class="flex-2">
-                <mat-label>Tipo de Descuento</mat-label>
-                <mat-select formControlName="type">
-                  @for (type of discountTypes(); track $index) {
-                    <mat-option [value]="type.value">{{ type.label }}</mat-option>
+                  @if (promotionForm.controls["startDate"]?.hasError('matStartDateInvalid')) {
+                    <mat-error>Invalid start date</mat-error>
                   }
-                </mat-select>
-              </mat-form-field>
-
-              <!-- Valor del Descuento -->
-              <mat-form-field appearance="outline" class="flex-1">
-                <mat-label>Valor</mat-label>
-                <mat-icon matPrefix>
-                  {{ promotionForm.get('type')?.value === 'percentage' ? 'percent' : 'attach_money' }}
-                </mat-icon>
-                <input
-                  matInput
-                  type="number"
-                  formControlName="value"
-                  [min]="0.01"
-                  [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.01">
-                @if (promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched) {
-                  <mat-error>{{ getErrorMessage('value') }}</mat-error>
-                }
-              </mat-form-field>
+                  @if (promotionForm.controls["endDate"]?.hasError('matEndDateInvalid')) {
+                    <mat-error>Invalid end date</mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field   class="w-100">
+                  <mat-label>Tipo de Descuento</mat-label>
+                  <mat-select formControlName="type">
+                    @for (type of discountTypes(); track $index) {
+                      <mat-option [value]="type.value">{{ type.label }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col">
+                <mat-form-field class="w-100">
+                  <mat-label>Valor</mat-label>
+                  <mat-icon matPrefix>
+                    {{ promotionForm.get('type')?.value === 'percentage' ? 'percent' : 'attach_money' }}
+                  </mat-icon>
+                  <input
+                    matInput
+                    type="number"
+                    formControlName="value"
+                    [min]="0.0"
+                    [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.0">
+                  @if (promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched) {
+                    <mat-error>{{ getErrorMessage('value') }}</mat-error>
+                  }
+                </mat-form-field>
+              </div>
             </div>
+
+            <mat-form-field class="w-100 mt-3">
+              <mat-label>Descripción</mat-label>
+              <textarea matInput placeholder="Ej: 1 gaseosa" formControlName="description"></textarea>
+            </mat-form-field>
+
           </div>
         </mat-expansion-panel>
 
@@ -143,14 +152,14 @@
                       @if (dayControl.get('isActive')?.value) {
                         <div class="time-inputs">
                           <mat-form-field>
-                            <mat-label>Pick a time</mat-label>
+                            <mat-label>Hora Inicio</mat-label>
                             <input matInput [matTimepicker]="startTime"  formControlName="startTime">
                             <mat-timepicker-toggle matIconSuffix [for]="startTime"/>
                             <mat-timepicker interval="30min" #startTime/>
                           </mat-form-field>
 
                           <mat-form-field>
-                            <mat-label>Pick a time</mat-label>
+                            <mat-label>Hora Fin</mat-label>
                             <input matInput [matTimepicker]="endTime"  formControlName="endTime">
                             <mat-timepicker-toggle matIconSuffix [for]="endTime"/>
                             <mat-timepicker #endTime/>

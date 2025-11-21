@@ -1,4 +1,5 @@
 // No major changes needed, but ensured it aligns with MealPlan entity updates (no nav changes).
+
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
