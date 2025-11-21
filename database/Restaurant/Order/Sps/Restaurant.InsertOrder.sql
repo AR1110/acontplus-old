@@ -15,8 +15,14 @@ BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
+    -->ID
+    DECLARE @OrderId INT
+
+    --> Data Json
+    DECLARE @OrderDetails NVARCHAR(MAX)
+
     --> Varialbles BD
-    DECLARE @UserId INT ,@Sequence INT ,@PuntoEmisionId INT ,@Serie VARCHAR(18)
+    DECLARE @UserId INT ,@Sequence INT ,@PuntoEmisionId INT ,@Serie VARCHAR(18) ,@CreatedByUserId INT
 
     DECLARE @TbOrder AS TABLE
     (
@@ -35,15 +41,32 @@ BEGIN
     (
         [ItemId] INT NOT NULL
        ,[TaxPercentId] INT NOT NULL
+       ,[FeeId] INT NOT NULL
+       ,[WarehouseId] INT NULL
+       ,[MeasureId] INT NOT NULL
+       ,[TaxValue] NUMERIC(18,5) NOT NULL
+       ,[Quantity] NUMERIC(18,5) NOT NULL
+       ,[UnitPrice] NUMERIC(18,5) NOT NULL
+       ,[SalePrice] NUMERIC(18,5) NOT NULL
+       ,[Discount] NUMERIC(18,5) NOT NULL
+       ,[DiscountPercent] NUMERIC(18,5) NOT NULL
+       ,[Subtotal] NUMERIC(18,5) NOT NULL
+       ,[Total] NUMERIC(18,5) NOT NULL
+       ,[Obs] VARCHAR(1000)
+       ,[IsPaid] BIT NOT NULL DEFAULT 0
+       ,[RemainingQuantity] NUMERIC(18,5) NULL
+       ,[Status] INT NOT NULL 
     )
 
     BEGIN TRY
 
         --> Data json
+        SELECT @OrderDetails = orderDetails FROM OPENJSON(@Json) WITH (orderDetails NVARCHAR(MAX) AS JSON)
+
         INSERT INTO @TbOrder
               ([puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isdivided],[isfinished],[CreatedByUserId])
         SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isdivided],[isfinished],[CreatedByUserId]
-        FROM OPENJSON(@json)
+        FROM OPENJSON(@Json)
         WITH
         (
             [puntoEmisionId]    INT
@@ -53,12 +76,36 @@ BEGIN
            ,[tip]               NUMERIC(18,5) 
            ,[total]             NUMERIC(18,5)
            ,[obs]               VARCHAR(500) 
-           ,[isDivided]           BIT
-           ,[isFinished]          BIT
+           ,[isDivided]         BIT
+           ,[isFinished]        BIT
+        )
+
+        INSERT INTO @TbOrderDetails
+              ([ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status])
+        SELECT [ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status]
+        FROM OPENJSON(@OrderDetails)
+        WITH
+        (
+            [itemId]            INT 
+           ,[taxPercentId]      INT 
+           ,[feeId]             INT 
+           ,[warehouseId]       INT
+           ,[measureId]         INT 
+           ,[taxValue]          NUMERIC(18,5) 
+           ,[quantity]          NUMERIC(18,5) 
+           ,[unitPrice]         NUMERIC(18,5) 
+           ,[salePrice]         NUMERIC(18,5) 
+           ,[discount]          NUMERIC(18,5) 
+           ,[discountPercent]   NUMERIC(18,5) 
+           ,[subtotal]          NUMERIC(18,5) 
+           ,[total]             NUMERIC(18,5) 
+           ,[obs]               VARCHAR(1000)
+           ,[remainingQuantity] NUMERIC(18,5)
+           ,[status]            INT 
         )
 
         --> Variables dependientes
-        SELECT TOP 1 @PuntoEmisionId = PuntoEmisionId FROM @TbOrder
+        SELECT TOP 1 @PuntoEmisionId = PuntoEmisionId ,@CreatedByUserId = CreatedByUserId FROM @TbOrder
 
         SELECT TOP 1 @Sequence = ultimaSecuencia
                     ,@Serie    = es.estab + '-' + pe.ptoEmi + '-' +  FORMAT(cd.ultimaSecuencia, 'D9')
@@ -72,6 +119,12 @@ BEGIN
         IF NOT EXISTS (SELECT 1 FROM @TbOrder)
             BEGIN
                 SELECT '0' code, 'Error en la informacion de la orden' as 'message'
+                RETURN
+            END
+
+        IF NOT EXISTS (SELECT 1 FROM @TbOrderDetails)
+            BEGIN
+                SELECT '0' code, 'Error en la informacion de los detales de la orden' as 'message'
                 RETURN
             END
 
@@ -93,7 +146,15 @@ BEGIN
             SELECT [puntoEmisionId],[customerCompanyId],[discount],[tip],[total],[obs],[isDivided],[isFinished],[CreatedByUserId], @Sequence,@Serie
             FROM @TbOrder
 
+            SET @OrderId = SCOPE_IDENTITY();
+
+            INSERT INTO Restaurant.OrderDetail
+                   (OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],CreatedByUserId)
+            SELECT @OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],@CreatedByUserId
+            FROM @TbOrderDetails
+
         COMMIT TRAN
+        SELECT '1' code, 'Registrado Correctamente' as 'message'
     END TRY
 
     BEGIN CATCH
@@ -119,5 +180,6 @@ BEGIN
                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
         SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
 
+        SELECT '0' code, 'Error en el procedimiento' as 'message'
     END CATCH
 END

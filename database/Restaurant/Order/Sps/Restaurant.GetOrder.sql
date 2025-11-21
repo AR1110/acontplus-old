@@ -43,7 +43,7 @@ BEGIN
            ,@IsSearchDate BIT
            ,@TableId INT
            ,@CreatedByUserId INT
-           ,@Finished BIT
+           ,@IsFinished BIT
            ,@StartDate DATETIME2
            ,@EndDate DATETIME2
 
@@ -60,7 +60,7 @@ BEGIN
                       ,@EndDate         = endDate
                       ,@TableId         = TableId
                       ,@CreatedByUserId = createdByUserId
-                      ,@Finished        = Finished
+                      ,@IsFinished      = isFinished
                 FROM OPENJSON(@Filters)
                 WITH
                 (
@@ -72,7 +72,7 @@ BEGIN
                    ,endDate         DATETIME2
                    ,tableId         INT
                    ,createdByUserId INT
-                   ,finished        BIT
+                   ,isFinished      BIT
                 )
             END
 
@@ -132,9 +132,9 @@ BEGIN
                 SET @WhereClause = @WhereClause + 'AND od.CreatedByUserId = @CreatedByUserId '
             END
 
-        IF @Finished = 1
+        IF @IsFinished = 1
             BEGIN
-                SET @WhereClause = @WhereClause + 'AND ro.Finished = @Finished '
+                SET @WhereClause = @WhereClause + 'AND ro.IsFinished = @IsFinished '
             END
 
         SET @Params = '@idEntidad       INT
@@ -143,7 +143,7 @@ BEGIN
                       ,@CreatedByUserId INT
                       ,@StartDate       DATETIME2
                       ,@EndDate         DATETIME2
-                      ,@Finished        BIT
+                      ,@IsFinished      BIT
                       ,@SearchTerm      VARCHAR(100)
                       ,@Offset          INT
                       ,@PageSize        INT
@@ -159,8 +159,8 @@ BEGIN
 	                                  ,od.Serie
                                       ,od.Total
                                       ,od.Obs
-		                              ,od.Divided
-                                      ,od.Finished
+		                              ,od.IsDivided
+                                      ,od.IsFinished
 		                              ,FORMAT(od.CreatedAt, ''dd-MM-yyyy HH:mm'') as CreatedAt
                                       ,od.IsActive
 		                              ,ta.[Description]						      as [UserName]
@@ -195,7 +195,7 @@ BEGIN
            ,@CreatedByUserId
            ,@StartDate
            ,@EndDate
-           ,@Finished
+           ,@IsFinished
            ,@SearchTerm
            ,@Offset
            ,@PageSize

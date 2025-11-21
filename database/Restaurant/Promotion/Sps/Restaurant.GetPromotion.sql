@@ -107,6 +107,7 @@ BEGIN
                              (
                                 
                                 SELECT pr.Id
+                                      ,pr.Name
                                       ,pr.Description
                                       ,FORMAT(pr.StartDate, ''yyyy-MM-dd'')   AS StartDate
                                       ,FORMAT(pr.EndDate, ''yyyy-MM-dd'')     AS EndDate
