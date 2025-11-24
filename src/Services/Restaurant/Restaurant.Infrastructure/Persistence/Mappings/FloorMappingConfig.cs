@@ -1,5 +1,5 @@
 using Mapster;
-using Restaurant.Domain.DTOs;
+using Restaurant.Domain.Dtos;
 
 namespace Restaurant.Infrastructure.Persistence.Mappings;
 

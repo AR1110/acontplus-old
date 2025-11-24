@@ -1,6 +1,3 @@
-using Restaurant.Application.DTOs.Orders;
-using Restaurant.Application.Interfaces.Order;
-
 namespace Restaurant.API.Endpoints.Order;
 
 public static class GetEndpoints

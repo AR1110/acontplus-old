@@ -1,29 +1,30 @@
-using Restaurant.Application.DTOs.Orders;
+using Restaurant.Application.Dtos.Order;
 
-namespace Restaurant.Application.Services.Order;
+namespace Restaurant.Application.Services;
+
 public class OrderService(IAdoRepository repository) : IOrderService
 {
-    public async Task<Result<PagedResult<DTOs.Orders.OrderItem>, DomainError>> GetAsync(PaginationRequest paginationRequest)
+    public async Task<Result<PagedResult<OrderItemDto>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
             var response =
-                await repository.GetPagedFromStoredProcedureAsync<DTOs.Orders.OrderItem>("Restaurant.GetOrder",
+                await repository.GetPagedFromStoredProcedureAsync<OrderItemDto>("Restaurant.GetOrder",
                     paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
                 var error = DomainError.NotFound("ORDERS_NOT_FOUND", "No orders were found.");
-                return Result<PagedResult<DTOs.Orders.OrderItem>, DomainError>.Failure(error);
+                return Result<PagedResult<OrderItemDto>, DomainError>.Failure(error);
             }
 
-            return Result<PagedResult<DTOs.Orders.OrderItem>, DomainError>.Success(response);
+            return Result<PagedResult<OrderItemDto>, DomainError>.Success(response);
         }
         catch (Exception ex)
         {
             var error = DomainError.Internal("ORDERS_GET_ERROR",
                 $"An error occurred while retrieving orders. {ex.Message}");
-            return Result<PagedResult<DTOs.Orders.OrderItem>, DomainError>.Failure(error);
+            return Result<PagedResult<OrderItemDto>, DomainError>.Failure(error);
         }
     }
 

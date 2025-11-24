@@ -1,8 +1,8 @@
+using Humanizer;
+using Restaurant.Application.Dtos;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Text.Json;
-using Humanizer;
-using Restaurant.Application.Dtos;
 
 namespace Restaurant.Application.Services;
 

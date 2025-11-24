@@ -1,4 +1,3 @@
-using Restaurant.Application.Dtos.Items;
 using Restaurant.Application.Dtos.Promotions;
 
 namespace Restaurant.API.Endpoints.Promotion;

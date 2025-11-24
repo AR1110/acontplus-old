@@ -10,7 +10,10 @@ GO
 -- =============================================
 -- Author:      Ivan Paz
 -- Create date: 2022-09-17
--- Description: SP Para insertar los detalles temporales del comprobante importado
+-- Description: SP Para insertar los detalles temporales del comprobante importado.
+--              Transfiere datos de tablas temporales a definitivas (DocumentoDetalle, Impuestos).
+--              Genera transacciones de inventario si corresponde.
+--              Incluye validaciones de concurrencia para evitar duplicados.
 -- =============================================
 CREATE OR ALTER PROCEDURE Recepcion.DocumentoDetalle_Insert
     @idUsuarioRol INT,
@@ -55,6 +58,7 @@ BEGIN
         WHERE IDCard = @rucProv;
 
         -- Validations
+        -- 1. Verificar si existen datos en tablas temporales
         IF NOT EXISTS (SELECT 1 FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = @idDocumento)
         BEGIN
             SELECT '0' AS code, 'No existe datos para registrar' AS 'message';
@@ -75,6 +79,8 @@ BEGIN
 
         BEGIN TRAN
             -- Insert single article
+            -- Se inserta un articulo especifico si @idArticulo > 0.
+            -- Se valida NOT EXISTS para evitar duplicados por doble click en frontend.
             IF @idArticulo > 0
             BEGIN
                 INSERT INTO Recepcion.DocumentoDetalle
@@ -121,6 +127,8 @@ BEGIN
                 WHERE ddi.idDocumento = @idDocumento;
             END
             -- Insert all articles
+            -- Se insertan todos los articulos si @idArticulo es 0 o NULL.
+            -- Se valida NOT EXISTS para evitar duplicados.
             ELSE
             BEGIN
                 INSERT INTO Recepcion.DocumentoDetalle
@@ -172,6 +180,8 @@ BEGIN
             WHERE idDocumento = @idDocumento;
 
             -- ========== Inventario ==========
+            -- Logica para generar movimientos de inventario si la empresa maneja inventario
+            -- y los articulos involucrados son inventariables.
             IF EXISTS (
                 SELECT 1
                 FROM Recepcion.DocumentoDetalle t
@@ -217,6 +227,7 @@ BEGIN
                 SET @codDocInv = (SELECT CASE WHEN @codDoc = '01' THEN 'FE' WHEN @codDoc = '04' THEN 'NC' END);
                 SET @multiplier = (SELECT CASE WHEN @codDoc = '01' THEN 1 WHEN @codDoc = '04' THEN -1 END);
 
+                -- Buscar transaccion original si es una nota de credito o similar
                 SELECT TOP 1 @idTransaccionOriginal = idTransaccion
                 FROM Inventario.Transaccion tr
                 INNER JOIN Inventario.TipoDocumento td ON td.idTipoDocumento = tr.idTipoDocumento
@@ -262,6 +273,7 @@ BEGIN
                     WHERE codigo = 'E';
                 END
 
+                -- Verificar si ya existe una transaccion para este documento (Idempotencia)
                 SELECT TOP 1 @idTransaccion = idTransaccion
                 FROM Inventario.Transaccion WITH (NOLOCK)
                 WHERE idDocumento = @idDocumento
@@ -291,6 +303,7 @@ BEGIN
                     END
                 END
 
+                -- Insertar detalles de la transaccion
                 INSERT INTO Inventario.TransaccionDetalle
                 (
                     idTransaccion, idArticulo, idBodega, idMedida, cantidad, cantidadTransaccion,
@@ -309,12 +322,13 @@ BEGIN
                     ISNULL((SELECT TOP 1 af.conversion FROM dbo.ArticuloFraccionado af WITH (NOLOCK) WHERE af.idArticulo = td.idArticulo AND af.idMedida = td.idMedida), 1),
                     precioTotalSimImpuestos
                 FROM @tblDetails td
-                WHERE NOT EXISTS (SELECT 1 FROM Inventario.TransaccionDetalle itd WHERE itd.idTransaccion = @idTransaccion AND itd.idArticulo = td.idArticulo);
 
                 -- Sequence update moved to transaction creation block
 
+                -- Inicializar handler de transaccion (triggers, stocks, etc)
                 EXEC dbo.Transaccion_Handler_Init @idTransaccion;
 
+                -- Actualizacion de costos para metodo de valoracion UEPS (Ultimo en Entrar, Primero en Salir)
                 IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
                 BEGIN
                     UPDATE ar

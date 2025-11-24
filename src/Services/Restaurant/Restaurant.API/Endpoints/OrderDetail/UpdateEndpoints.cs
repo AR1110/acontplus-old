@@ -1,5 +1,4 @@
-using Restaurant.Application.DTOs.Orders;
-using Restaurant.Application.Interfaces;
+using Restaurant.Application.Dtos.Order;
 
 namespace Restaurant.API.Endpoints.OrderDetail;
 

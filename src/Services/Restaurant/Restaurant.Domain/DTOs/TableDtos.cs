@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Restaurant.Domain.DTOs;
+namespace Restaurant.Domain.Dtos;
 
 public record TableCreate
 {

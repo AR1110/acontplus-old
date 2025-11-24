@@ -1,5 +1,3 @@
-using Acontplus.Core.Dtos.Requests;
-using Acontplus.Core.Dtos.Responses;
 using Restaurant.Application.Dtos;
 
 namespace Restaurant.Application.Interfaces;

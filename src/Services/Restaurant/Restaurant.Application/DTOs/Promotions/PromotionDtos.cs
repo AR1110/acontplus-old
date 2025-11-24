@@ -5,7 +5,7 @@ namespace Restaurant.Application.Dtos.Promotions;
 public record PromotionCreate
 {
     public int EstablishmentId { get; init; }
-    [Required] [MaxLength(100)] public required string Name { get; init; }
+    [Required][MaxLength(100)] public required string Name { get; init; }
     [MaxLength(500)] public string? Description { get; init; }
     public string? StartDate { get; init; }
     public string? EndDate { get; init; }
@@ -27,7 +27,7 @@ public record PromotionCreate
 public record PromotionUpdate
 {
     public int EstablishmentId { get; init; }
-    [Required] [MaxLength(100)] public required string Name { get; init; }
+    [Required][MaxLength(100)] public required string Name { get; init; }
     [MaxLength(500)] public string? Description { get; init; }
     public string? StartDate { get; init; }
     public string? EndDate { get; init; }
