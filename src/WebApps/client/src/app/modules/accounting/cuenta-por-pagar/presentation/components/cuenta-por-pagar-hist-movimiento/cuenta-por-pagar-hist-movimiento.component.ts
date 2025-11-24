@@ -16,7 +16,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { finalize } from 'rxjs';
 import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/historial-pago.model';
 import { MatDivider } from '@angular/material/divider';
 import { DialogService } from '@core/services/dialog.service';
@@ -38,7 +38,7 @@ import { CuentaPorPagarUseCase } from '@accounting/cuenta-por-pagar/application/
     MatDatepickerModule,
     MatMenuModule,
     MatNativeDateModule,
-    MatCardModule,
+    DynamicCard,
     MatDivider,
     MatCustomDialogComponent,
     MatDynamicTableComponent,

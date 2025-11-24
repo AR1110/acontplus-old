@@ -5,7 +5,7 @@
     <div class="hstack gap-4">
       <mat-form-field>
         <mat-label>Establecimiento</mat-label>
-        <mat-select  [(ngModel)]="dataFilter.establishmentId">
+        <mat-select [(ngModel)]="dataFilter.establishmentId">
           @for (item of establishments(); track $index) {
             <mat-option [value]="item.id">
               {{ item.value }}
@@ -13,27 +13,35 @@
           }
         </mat-select>
       </mat-form-field>
-       <mat-form-field>
-         <mat-label>Buscar</mat-label>
-         <ng-container matPrefix>
-           <mat-icon>filter_alt</mat-icon>
-         </ng-container>
-         <input matInput placeholder="Buscar" [(ngModel)]="dataFilter.searchTerm" (keydown.enter)="refresh()" aria-label="State"   />
-         <ng-container matSuffix>
-           <button mat-icon-button (click)="refresh()">
-             <mat-icon>refresh</mat-icon>
-           </button>
-         </ng-container>
-       </mat-form-field>
+      <mat-form-field>
+        <mat-label>Buscar</mat-label>
+        <ng-container matPrefix>
+          <mat-icon>filter_alt</mat-icon>
+        </ng-container>
+        <input
+          matInput
+          placeholder="Buscar"
+          [(ngModel)]="dataFilter.searchTerm"
+          (keydown.enter)="refresh()"
+          aria-label="State"
+        />
+        <ng-container matSuffix>
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </ng-container>
+      </mat-form-field>
     </div>
   </div>
   <div class="col">
     <div class="d-flex flex-row gap-1 justify-content-end">
-      <acp-button   type="button" icon="add"
-                  matStyle="filled"
-                  text="Nueva promocón"
-                  variant="info"
-                    (handleClick)="newPromotion()"
+      <acp-button
+        type="button"
+        icon="add"
+        matStyle="filled"
+        text="Nueva promocón"
+        variant="info"
+        (handleClick)="newPromotion()"
       />
     </div>
   </div>
@@ -46,31 +54,25 @@
   [columns]="columns"
   [cellTemplate]="{ op: opTpl, schedule: scheduleTpl }"
   (page)="getNextPage($event)"
-></app-data-grid>
+/>
 
 <ng-template #scheduleTpl let-row>
-  @for (item of row.schedule; track $index){
-    <div class="hstack justify-content-between ">
+  @for (item of row.schedule; track $index) {
+    <div class="hstack justify-content-between">
       <span class="font-medium">{{ item.day }}:</span>
       <span class="text-primary">{{ item.startTime }} - {{ item.endTime }}</span>
     </div>
   }
-
 </ng-template>
 
-
 <ng-template #opTpl let-row let-index="index" let-col="colDef">
-  <acp-button   type="button" icon="visibility"
-                matStyle="icon"
-                variant="info"
+  <acp-button type="button" icon="visibility" matStyle="icon" variant="info" />
+  <acp-button
+    type="button"
+    icon="edit"
+    matStyle="icon"
+    variant="success"
+    (handleClick)="editPromotion(row)"
   />
-  <acp-button   type="button" icon="edit"
-                matStyle="icon"
-                variant="success"
-                (handleClick)="editPromotion(row)"
-  />
-  <acp-button   type="button" icon="delete"
-                matStyle="icon"
-                variant="danger"
-  />
+  <acp-button type="button" icon="delete" matStyle="icon" variant="danger" />
 </ng-template>

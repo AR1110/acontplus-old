@@ -24,7 +24,7 @@
     >
       @for (item of productPhotos(); track $index) {
         <div class="col">
-          <mat-card class="custom-card" appearance="outlined">
+          <acp-dynamic-card class="custom-card">
             @if (item.isDefault) {
               <div class="success-default">&#10004;</div>
             }
@@ -39,12 +39,12 @@
               />
             </div>
 
-            <mat-card-actions>
+            <div>
               <button mat-icon-button aria-label="Btn Remove Photo" (click)="removePhoto(item)">
                 <mat-icon>delete_forever</mat-icon>
               </button>
-            </mat-card-actions>
-          </mat-card>
+            </div>
+          </acp-dynamic-card>
         </div>
       }
     </div>

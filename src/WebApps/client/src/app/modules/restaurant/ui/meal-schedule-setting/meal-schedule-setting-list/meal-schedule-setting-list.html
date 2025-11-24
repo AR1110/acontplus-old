@@ -1,98 +1,86 @@
 <div class="meal-schedule-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <div class="header-title">
-          <h2>Configuración de Horarios TPV</h2>
-          <button mat-raised-button color="primary" (click)="openDialog()" [disabled]="isLoading()">
-            <mat-icon>add</mat-icon>
-            Nuevo Horario
-          </button>
-        </div>
-      </mat-card-title>
-    </mat-card-header>
+  <acp-dynamic-card cardTitle="Configuración de Horarios TPV" [isHeaderVisible]="true">
+    <div headerActions class="header-title">
+      <button mat-raised-button color="primary" (click)="openDialog()" [disabled]="isLoading()">
+        <mat-icon>add</mat-icon>
+        Nuevo Horario
+      </button>
+    </div>
 
-    <mat-card-content>
-      @if (isLoading()) {
-        <div class="loading-container">
-          <mat-spinner diameter="50" />
-          <p>Cargando configuraciones...</p>
-        </div>
-      } @else {
-        <div class="table-container">
-          <table mat-table [dataSource]="settings()" class="mat-elevation-z2">
-            <!-- Description Column -->
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef>Servicio</th>
-              <td mat-cell *matCellDef="let setting">{{ setting.description }}</td>
-            </ng-container>
+    @if (isLoading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="50" />
+        <p>Cargando configuraciones...</p>
+      </div>
+    } @else {
+      <div class="table-container">
+        <table mat-table [dataSource]="settings()" class="mat-elevation-z2">
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Servicio</th>
+            <td mat-cell *matCellDef="let setting">{{ setting.description }}</td>
+          </ng-container>
 
-            <!-- Start Time Column -->
-            <ng-container matColumnDef="startTime">
-              <th mat-header-cell *matHeaderCellDef>Hora Inicio</th>
-              <td mat-cell *matCellDef="let setting">{{ formatTime(setting.startTime) }}</td>
-            </ng-container>
+          <!-- Start Time Column -->
+          <ng-container matColumnDef="startTime">
+            <th mat-header-cell *matHeaderCellDef>Hora Inicio</th>
+            <td mat-cell *matCellDef="let setting">{{ formatTime(setting.startTime) }}</td>
+          </ng-container>
 
-            <!-- End Time Column -->
-            <ng-container matColumnDef="endTime">
-              <th mat-header-cell *matHeaderCellDef>Hora Fin</th>
-              <td mat-cell *matCellDef="let setting">{{ formatTime(setting.endTime) }}</td>
-            </ng-container>
+          <!-- End Time Column -->
+          <ng-container matColumnDef="endTime">
+            <th mat-header-cell *matHeaderCellDef>Hora Fin</th>
+            <td mat-cell *matCellDef="let setting">{{ formatTime(setting.endTime) }}</td>
+          </ng-container>
 
-            <!-- Display Order Column -->
-            <ng-container matColumnDef="displayOrder">
-              <th mat-header-cell *matHeaderCellDef>Orden</th>
-              <td mat-cell *matCellDef="let setting">{{ setting.displayOrder }}</td>
-            </ng-container>
+          <!-- Display Order Column -->
+          <ng-container matColumnDef="displayOrder">
+            <th mat-header-cell *matHeaderCellDef>Orden</th>
+            <td mat-cell *matCellDef="let setting">{{ setting.displayOrder }}</td>
+          </ng-container>
 
-            <!-- Active Column -->
-            <ng-container matColumnDef="isActive">
-              <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
-              <td mat-cell *matCellDef="let setting" class="text-center">
-                <mat-slide-toggle [checked]="setting.isActive" [disabled]="true" color="primary" />
+          <!-- Active Column -->
+          <ng-container matColumnDef="isActive">
+            <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+            <td mat-cell *matCellDef="let setting" class="text-center">
+              <mat-slide-toggle [checked]="setting.isActive" [disabled]="true" color="primary" />
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Opciones</th>
+            <td mat-cell *matCellDef="let setting">
+              <button mat-icon-button color="primary" (click)="openDialog(setting)" title="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteSetting(setting)"
+                title="Eliminar"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- No data row -->
+          @if (settings().length === 0) {
+            <tr class="mat-row no-data-row">
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                <div class="no-data">
+                  <mat-icon>info</mat-icon>
+                  <p>No hay configuraciones de horarios</p>
+                </div>
               </td>
-            </ng-container>
-
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Opciones</th>
-              <td mat-cell *matCellDef="let setting">
-                <button
-                  mat-icon-button
-                  color="primary"
-                  (click)="openDialog(setting)"
-                  title="Editar"
-                >
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button
-                  mat-icon-button
-                  color="warn"
-                  (click)="deleteSetting(setting)"
-                  title="Eliminar"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-            <!-- No data row -->
-            @if (settings().length === 0) {
-              <tr class="mat-row no-data-row">
-                <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-                  <div class="no-data">
-                    <mat-icon>info</mat-icon>
-                    <p>No hay configuraciones de horarios</p>
-                  </div>
-                </td>
-              </tr>
-            }
-          </table>
-        </div>
-      }
-    </mat-card-content>
-  </mat-card>
+            </tr>
+          }
+        </table>
+      </div>
+    }
+  </acp-dynamic-card>
 </div>

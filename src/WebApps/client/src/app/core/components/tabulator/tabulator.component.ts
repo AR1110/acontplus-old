@@ -17,7 +17,8 @@ import {
   TabulatorFull as Tabulator,
   ValidateModule,
   ColumnCalcsModule,
-  SortModule, TooltipModule
+  SortModule,
+  TooltipModule,
 } from 'tabulator-tables';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
@@ -30,9 +31,8 @@ Tabulator.registerModule([
   ValidateModule,
   ColumnCalcsModule,
   SortModule,
-  TooltipModule
+  TooltipModule,
 ]);
-
 
 @Component({
   selector: 'app-tabulator',

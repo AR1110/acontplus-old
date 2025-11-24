@@ -20,7 +20,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { ComprobanteIngresoUseCase } from '@accounting/comprobante-ingreso/application/comprobante-ingreso.use-case';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatButton } from '@angular/material/button';
 import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -28,7 +28,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-comprobante-ingreso-lote-modal',
-  imports: [MatTableModule, MatIconModule, MatCard, MatCardContent, MatButton, Button],
+  imports: [MatTableModule, MatIconModule, DynamicCard, MatButton, Button],
   templateUrl: './comprobante-ingreso-lote-modal.component.html',
   styleUrl: './comprobante-ingreso-lote-modal.component.scss',
   animations: [

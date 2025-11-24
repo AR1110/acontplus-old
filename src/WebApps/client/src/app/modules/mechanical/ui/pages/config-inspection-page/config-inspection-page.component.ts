@@ -15,9 +15,8 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 
 import { VehicleList } from '@mechanical/domain/models/vehicle.model';
 import { ConfigInspectionAddEditDirective } from '@mechanical/ui/directives/config-inspection-add-edit.directive';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DynamicCard } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
@@ -40,7 +39,7 @@ import { ListVehicleUseCase } from '@mechanical/application/use-cases/vehicle/li
     BreadcrumbComponent,
     ConfigInspectionAddEditDirective,
 
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
   ],
   styles: ``,

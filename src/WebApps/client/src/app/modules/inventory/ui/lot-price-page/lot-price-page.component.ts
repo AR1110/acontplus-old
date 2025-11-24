@@ -21,8 +21,7 @@ import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDivider } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
@@ -53,7 +52,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     SupplierSearchComponent,
     Button,
     MatIconButton,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDivider,
   ],
   templateUrl: './lot-price-page.component.html',

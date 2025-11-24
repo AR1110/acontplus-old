@@ -98,8 +98,8 @@
       <!--                          element === expandedElement ? 'expanded' : 'collapsed'-->
       <!--                        "-->
       <!--                      >-->
-      <!--                        <mat-card appearance="outlined">-->
-      <!--                          <mat-card-content>-->
+      <!--                        <acp-dynamic-card>-->
+      <!--                          -->
       <!--                            <table class="table table-condensed table-sm">-->
       <!--                              <thead>-->
       <!--                                <tr>-->
@@ -139,8 +139,8 @@
       <!--                                }-->
       <!--                              </tbody>-->
       <!--                            </table>-->
-      <!--                          </mat-card-content>-->
-      <!--                        </mat-card>-->
+      <!--                          -->
+      <!--                        </acp-dynamic-card>-->
       <!--                      </div>-->
       <!--                    </td>-->
       <!--                  </ng-container>-->
@@ -261,71 +261,69 @@
     </div>
 
     <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-      <mat-card appearance="outlined">
-        <mat-card-content>
-          <acp-button
-            variant="primary"
-            icon="add"
-            text="Nuevo Abono"
-            (handleClick)="openModalFormaCobro()"
-          />
+      <acp-dynamic-card>
+        <acp-button
+          variant="primary"
+          icon="add"
+          text="Nuevo Abono"
+          (handleClick)="openModalFormaCobro()"
+        />
 
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Total:
-              <span>
-                <h5>
-                  {{ data.importeTotal }}
-                </h5>
-              </span>
-            </li>
-            @if (data.totalAbonoAnterior > 0) {
-              <li
-                class="list-group-item d-flex justify-content-between align-items-center list-group-item-info"
-              >
-                Abono Anterior:
-                <span>
-                  {{ data.totalAbonoAnterior }}
-                </span>
-              </li>
-            }
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Abono
-              <span>
-                {{ data.totalValorAbono }}
-              </span>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Saldo Doc
-              <span>
-                {{ data.totalSaldoDoc }}
-              </span>
-            </li>
-
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Mora
-              <span>
-                {{ data.totalMora }}
-              </span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Saldo:
-              <span>
-                {{ data.totalSaldo }}
-              </span>
-            </li>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Total:
+            <span>
+              <h5>
+                {{ data.importeTotal }}
+              </h5>
+            </span>
+          </li>
+          @if (data.totalAbonoAnterior > 0) {
             <li
-              class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger"
+              class="list-group-item d-flex justify-content-between align-items-center list-group-item-info"
             >
-              Cambio:
+              Abono Anterior:
               <span>
-                {{ data.valorCambio }}
+                {{ data.totalAbonoAnterior }}
               </span>
             </li>
-          </ul>
-        </mat-card-content>
-      </mat-card>
+          }
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Abono
+            <span>
+              {{ data.totalValorAbono }}
+            </span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo Doc
+            <span>
+              {{ data.totalSaldoDoc }}
+            </span>
+          </li>
+
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Mora
+            <span>
+              {{ data.totalMora }}
+            </span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Saldo:
+            <span>
+              {{ data.totalSaldo }}
+            </span>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center list-group-item-danger"
+          >
+            Cambio:
+            <span>
+              {{ data.valorCambio }}
+            </span>
+          </li>
+        </ul>
+      </acp-dynamic-card>
     </div>
   </div>
 </div>

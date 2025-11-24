@@ -2,9 +2,8 @@ import { UserCustomerAddEditModalComponent } from '@modules/config/ui/user-custo
 import { SettingUserCustomerComponent } from '@modules/config/ui/user-customer/setting-user-customer/setting-user-customer.component';
 import { ListUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/list-user-customer.use-case';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { UserCustomerList } from '@modules/config/domain/models/user-customer/user-customer.model';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -22,7 +21,7 @@ import { firstValueFrom } from 'rxjs';
   selector: 'app-user-customer',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     MatIconModule,
     MatButtonModule,

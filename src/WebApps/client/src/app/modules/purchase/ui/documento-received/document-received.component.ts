@@ -15,7 +15,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DocManualUploadComponent } from '@purchase/ui/documento-received/components/doc-manual-upload/doc-manual-upload.component';
 import { SharedService } from '@core/services/shared.service';
 import { DocumentReceived } from '@purchase/domain/document-received.model';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DynamicCard } from '@acontplus/ng-components';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
@@ -33,6 +33,7 @@ import { Button } from '@acontplus/ng-components';
 @Component({
   selector: 'app-documento-received',
   imports: [
+    DynamicCard,
     MatDynamicTableComponent,
     BreadcrumbComponent,
     MatCard,

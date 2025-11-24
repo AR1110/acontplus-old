@@ -64,8 +64,8 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(MatNativeDateModule),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: 'outline'},
-//      useValue: { appearance: 'outline',  subscriptSizing:"dynamic" },
+      useValue: { appearance: 'outline' },
+      //      useValue: { appearance: 'outline',  subscriptSizing:"dynamic" },
     },
     {
       provide: MAT_DATE_LOCALE,

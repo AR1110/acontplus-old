@@ -5,8 +5,18 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
-import { distinctUntilChanged, of, Subject, Subscription, switchMap, tap, catchError, debounceTime, finalize } from 'rxjs';
-import {  JsonPipe } from '@angular/common';
+import {
+  distinctUntilChanged,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+  catchError,
+  debounceTime,
+  finalize,
+} from 'rxjs';
+import { JsonPipe } from '@angular/common';
 import { ItemSearchUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
@@ -33,7 +43,7 @@ export class ItemSearch implements OnInit, OnDestroy {
   loading = signal(false);
   selectedItem = output<any>();
 
-  categoryAbbraviation = input.required()
+  categoryAbbraviation = input.required();
   placeholder = input('');
   label = input('');
 
@@ -65,10 +75,10 @@ export class ItemSearch implements OnInit, OnDestroy {
               catchError((err) => {
                 console.error('Error en búsqueda:', err);
                 return of({ items: [] });
-              })
+              }),
             );
         }),
-        finalize(() => this.loading.set(false)) // 🔹 se ejecuta en TODOS los casos
+        finalize(() => this.loading.set(false)), // 🔹 se ejecuta en TODOS los casos
       )
       .subscribe((res) => {
         this.items.set(res.items ?? []);

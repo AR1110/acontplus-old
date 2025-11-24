@@ -3,278 +3,253 @@
 <div class="row">
   <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-12">
     <!-- Customer Search and Registration Section -->
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <h5>Registro Diario</h5>
-        </mat-card-title>
-      </mat-card-header>
-
-      <mat-card-content>
-        <div class="search-section">
-          <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Número de Identificación</mat-label>
-            <input
-              matInput
-              [formControl]="clientSearchControl"
-              maxlength="13"
-              placeholder="Ingrese número de identificación"
-              (keydown.enter)="searchCustomer()"
-            />
-          </mat-form-field>
-          <button
-            mat-raised-button
-            color="primary"
-            (click)="searchCustomer()"
-          >
-            <mat-icon>search</mat-icon>
-            Buscar
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <acp-dynamic-card cardTitle="Registro Diario" [isHeaderVisible]="true">
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Número de Identificación</mat-label>
+          <input
+            matInput
+            [formControl]="clientSearchControl"
+            maxlength="13"
+            placeholder="Ingrese número de identificación"
+            (keydown.enter)="searchCustomer()"
+          />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="searchCustomer()">
+          <mat-icon>search</mat-icon>
+          Buscar
+        </button>
+      </div>
+    </acp-dynamic-card>
 
     <!-- Customer Details -->
     @if (customer()) {
-      <mat-card class="customer-details-card">
-        <mat-card-header>
-          <mat-card-title>
-            <h3>Datos del Cliente</h3>
-          </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="customer-details-grid">
-            <div class="detail-item">
-              <strong>N° Identificación:</strong>
-              <p>{{ customer()?.numeroIdentificacion }}</p>
-            </div>
-            <div class="detail-item">
-              <strong>Razón Social:</strong>
-              <p>{{ customer()?.razonSocial }}</p>
-            </div>
-            <div class="detail-item">
-              <strong>Empresa:</strong>
-              <p>{{ customer()?.empresa }}</p>
-            </div>
-            <div class="detail-item">
-              <strong>Cargo:</strong>
-              <p>{{ customer()?.cargo }}</p>
-            </div>
+      <acp-dynamic-card
+        cardTitle="Datos del Cliente"
+        [isHeaderVisible]="true"
+        class="customer-details-card"
+      >
+        <div class="customer-details-grid">
+          <div class="detail-item">
+            <strong>N° Identificación:</strong>
+            <p>{{ customer()?.numeroIdentificacion }}</p>
           </div>
-        </mat-card-content>
-      </mat-card>
+          <div class="detail-item">
+            <strong>Razón Social:</strong>
+            <p>{{ customer()?.razonSocial }}</p>
+          </div>
+          <div class="detail-item">
+            <strong>Empresa:</strong>
+            <p>{{ customer()?.empresa }}</p>
+          </div>
+          <div class="detail-item">
+            <strong>Cargo:</strong>
+            <p>{{ customer()?.cargo }}</p>
+          </div>
+        </div>
+      </acp-dynamic-card>
 
       <!-- Meal Schedules -->
       @if (schedules().length > 0) {
-        <mat-card class="schedules-card">
-          <mat-card-content>
-            <div class="table-responsive">
-              <table class="schedules-table">
-                <thead>
+        <acp-dynamic-card class="schedules-card">
+          <div class="table-responsive">
+            <table class="schedules-table">
+              <thead>
+                <tr>
+                  <th>Servicio</th>
+                  <th>Hora Inicio</th>
+                  <th>Hora Fin</th>
+                  <th class="text-center">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (schedule of schedules(); track schedule.mealScheduleSettingId) {
                   <tr>
-                    <th>Servicio</th>
-                    <th>Hora Inicio</th>
-                    <th>Hora Fin</th>
-                    <th class="text-center">Estado</th>
+                    <td>{{ schedule.description }}</td>
+                    <td>
+                      <input
+                        type="time"
+                        [value]="formatTime(schedule.startDate)"
+                        class="time-input"
+                        disabled
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="time"
+                        [value]="formatTime(schedule.endDate)"
+                        class="time-input"
+                        disabled
+                      />
+                    </td>
+                    <td class="text-center status-cell">
+                      @if (schedule.isActive) {
+                        <span class="status-registered">
+                          <mat-icon>check_circle</mat-icon>
+                          Registrado
+                        </span>
+                      } @else {
+                        <div class="action-buttons">
+                          <mat-checkbox
+                            [checked]="false"
+                            [disabled]="!schedule.onTime"
+                            (change)="askToSave(schedule)"
+                            title="Marque para guardar"
+                          />
+                          <button
+                            mat-icon-button
+                            color="primary"
+                            (click)="openOtherDatesDialog(schedule)"
+                            title="Añadir registros de otras fechas"
+                          >
+                            <mat-icon>add</mat-icon>
+                          </button>
+                        </div>
+                      }
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  @for (schedule of schedules(); track schedule.mealScheduleSettingId) {
-                    <tr>
-                      <td>{{ schedule.description }}</td>
-                      <td>
-                        <input
-                          type="time"
-                          [value]="formatTime(schedule.startDate)"
-                          class="time-input"
-                          disabled
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="time"
-                          [value]="formatTime(schedule.endDate)"
-                          class="time-input"
-                          disabled
-                        />
-                      </td>
-                      <td class="text-center status-cell">
-                        @if (schedule.isActive) {
-                          <span class="status-registered">
-                            <mat-icon>check_circle</mat-icon>
-                            Registrado
-                          </span>
-                        } @else {
-                          <div class="action-buttons">
-                            <mat-checkbox
-                              [checked]="false"
-                              [disabled]="!schedule.onTime"
-                              (change)="askToSave(schedule)"
-                              title="Marque para guardar"
-                            />
-                            <button
-                              mat-icon-button
-                              color="primary"
-                              (click)="openOtherDatesDialog(schedule)"
-                              title="Añadir registros de otras fechas"
-                            >
-                              <mat-icon>add</mat-icon>
-                            </button>
-                          </div>
-                        }
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </mat-card-content>
-        </mat-card>
+                }
+              </tbody>
+            </table>
+          </div>
+        </acp-dynamic-card>
       }
     }
 
     <!-- Daily Records List Section -->
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <div class="header-title">
-            <h2>Registros del Día - Consumo de Alimentación</h2>
-          </div>
-        </mat-card-title>
-      </mat-card-header>
-
-      <mat-card-content>
-        <!-- Filters Section -->
-        <div class="filters-section">
-          <mat-form-field appearance="outline" class="config-filter">
-            <mat-label>Servicio</mat-label>
-            <mat-select
-              [value]="selectedConfigId()"
-              (selectionChange)="onConfigurationChange($event.value)"
-            >
-              @for (config of mealSchedulSettings(); track config.id) {
-                <mat-option [value]="config.id">
-                  {{ config.description }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="search-filter">
-            <mat-label>Buscar registro</mat-label>
-            <input matInput [formControl]="searchControl" placeholder="Buscar..." />
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
-        </div>
-
-          <div class="table-container">
-            <table mat-table [dataSource]="mealConsumptions()" class="mat-elevation-z2">
-              <!-- Consumption Date Column -->
-              <ng-container matColumnDef="consumptionDate">
-                <th mat-header-cell *matHeaderCellDef>Fecha Consumo</th>
-                <td mat-cell *matCellDef="let consumption">
-                  {{ consumption.consumptionDate | date: 'dd/MM/yyyy HH:mm' }}
-                </td>
-              </ng-container>
-
-              <!-- Meal Schedule Column -->
-              <ng-container matColumnDef="mealScheduleSettingName">
-                <th mat-header-cell *matHeaderCellDef>Servicio</th>
-                <td mat-cell *matCellDef="let consumption">
-                  {{ consumption.mealScheduleSettingName }}
-                </td>
-              </ng-container>
-
-              <!-- Customer Column -->
-              <ng-container matColumnDef="customerName">
-                <th mat-header-cell *matHeaderCellDef>Cliente</th>
-                <td mat-cell *matCellDef="let consumption">{{ consumption.customerName }}</td>
-              </ng-container>
-
-              <!-- Amount Column -->
-              <ng-container matColumnDef="amount">
-                <th mat-header-cell *matHeaderCellDef>Cantidad</th>
-                <td mat-cell *matCellDef="let consumption">{{ consumption.amount }}</td>
-              </ng-container>
-
-              <!-- Status Column -->
-              <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef>Estado</th>
-                <td mat-cell *matCellDef="let consumption">
-                  <span [class]="getStatusClass(consumption.status)">
-                    {{ getStatusLabel(consumption.status) }}
-                  </span>
-                </td>
-              </ng-container>
-
-              <!-- Actions Column -->
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef>Opciones</th>
-                <td mat-cell *matCellDef="let consumption">
-                  @if (consumption.consumptionStatus !== ConsumptionStatus.Cancelled) {
-                    <acp-button
-                      matStyle="icon"
-                      icon="print"
-                      variant="secondary"
-                      (handleClick)="printConsumption(consumption)"
-                      title="Imprimir"
-                    />
-                    <acp-button
-                      matStyle="icon"
-                      icon="cancel"
-                      variant="warning"
-                      (handleClick)="cancelConsumption(consumption)"
-                      title="Anular"
-                    />
-                  } @else {
-                    <button
-                      mat-icon-button
-                      color="accent"
-                      (click)="getCancellationReason(consumption)"
-                      title="Ver motivo anulación"
-                    >
-                      <mat-icon>info</mat-icon>
-                    </button>
-                  }
-                  <acp-button
-                    matStyle="icon"
-                    icon="delete"
-                    variant="danger"
-                    (handleClick)="deleteConsumption(consumption)"
-                    title="Eliminar"
-                  />
-                </td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-
-              <!-- No data row -->
-              @if (mealConsumptions().length === 0) {
-                <tr class="mat-row no-data-row">
-                  <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-                    <div class="no-data">
-                      <mat-icon>info</mat-icon>
-                      <p>No hay consumos registrados</p>
-                    </div>
-                  </td>
-                </tr>
-              }
-            </table>
-
-            @if (mealConsumptions().length > 0) {
-              <mat-paginator
-                [length]="mealConsumptionConfig().totalRecords"
-                [pageSize]="mealConsumptionConfig().pageSize"
-                [pageIndex]="mealConsumptionConfig().pageIndex"
-                [pageSizeOptions]="mealConsumptionConfig().pageSizeOptions"
-                (page)="onPageChange($event)"
-                showFirstLastButtons
-              />
+    <acp-dynamic-card
+      cardTitle="Registros del Día - Consumo de Alimentación"
+      [isHeaderVisible]="true"
+    >
+      <!-- Filters Section -->
+      <div class="filters-section">
+        <mat-form-field appearance="outline" class="config-filter">
+          <mat-label>Servicio</mat-label>
+          <mat-select
+            [value]="selectedConfigId()"
+            (selectionChange)="onConfigurationChange($event.value)"
+          >
+            @for (config of mealSchedulSettings(); track config.id) {
+              <mat-option [value]="config.id">
+                {{ config.description }}
+              </mat-option>
             }
-          </div>
-      </mat-card-content>
-    </mat-card>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="search-filter">
+          <mat-label>Buscar registro</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Buscar..." />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="table-container">
+        <table mat-table [dataSource]="mealConsumptions()" class="mat-elevation-z2">
+          <!-- Consumption Date Column -->
+          <ng-container matColumnDef="consumptionDate">
+            <th mat-header-cell *matHeaderCellDef>Fecha Consumo</th>
+            <td mat-cell *matCellDef="let consumption">
+              {{ consumption.consumptionDate | date: 'dd/MM/yyyy HH:mm' }}
+            </td>
+          </ng-container>
+
+          <!-- Meal Schedule Column -->
+          <ng-container matColumnDef="mealScheduleSettingName">
+            <th mat-header-cell *matHeaderCellDef>Servicio</th>
+            <td mat-cell *matCellDef="let consumption">
+              {{ consumption.mealScheduleSettingName }}
+            </td>
+          </ng-container>
+
+          <!-- Customer Column -->
+          <ng-container matColumnDef="customerName">
+            <th mat-header-cell *matHeaderCellDef>Cliente</th>
+            <td mat-cell *matCellDef="let consumption">{{ consumption.customerName }}</td>
+          </ng-container>
+
+          <!-- Amount Column -->
+          <ng-container matColumnDef="amount">
+            <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+            <td mat-cell *matCellDef="let consumption">{{ consumption.amount }}</td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let consumption">
+              <span [class]="getStatusClass(consumption.status)">
+                {{ getStatusLabel(consumption.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Opciones</th>
+            <td mat-cell *matCellDef="let consumption">
+              @if (consumption.consumptionStatus !== ConsumptionStatus.Cancelled) {
+                <acp-button
+                  matStyle="icon"
+                  icon="print"
+                  variant="secondary"
+                  (handleClick)="printConsumption(consumption)"
+                  title="Imprimir"
+                />
+                <acp-button
+                  matStyle="icon"
+                  icon="cancel"
+                  variant="warning"
+                  (handleClick)="cancelConsumption(consumption)"
+                  title="Anular"
+                />
+              } @else {
+                <button
+                  mat-icon-button
+                  color="accent"
+                  (click)="getCancellationReason(consumption)"
+                  title="Ver motivo anulación"
+                >
+                  <mat-icon>info</mat-icon>
+                </button>
+              }
+              <acp-button
+                matStyle="icon"
+                icon="delete"
+                variant="danger"
+                (handleClick)="deleteConsumption(consumption)"
+                title="Eliminar"
+              />
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- No data row -->
+          @if (mealConsumptions().length === 0) {
+            <tr class="mat-row no-data-row">
+              <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                <div class="no-data">
+                  <mat-icon>info</mat-icon>
+                  <p>No hay consumos registrados</p>
+                </div>
+              </td>
+            </tr>
+          }
+        </table>
+
+        @if (mealConsumptions().length > 0) {
+          <mat-paginator
+            [length]="mealConsumptionConfig().totalRecords"
+            [pageSize]="mealConsumptionConfig().pageSize"
+            [pageIndex]="mealConsumptionConfig().pageIndex"
+            [pageSizeOptions]="mealConsumptionConfig().pageSizeOptions"
+            (page)="onPageChange($event)"
+            showFirstLastButtons
+          />
+        }
+      </div>
+    </acp-dynamic-card>
   </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,7 +28,7 @@ import { DocElectList } from '@billing/domain/models/documento-electronico.model
   selector: 'app-doc-elect',
   imports: [
     FormsModule,
-    MatCardModule,
+    DynamicCard,
     MatIconModule,
     MatButtonModule,
     MatMenuModule,

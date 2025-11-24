@@ -1,140 +1,130 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row mb-3">
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer"> Cliente </mat-checkbox>
-      </div>
+<acp-dynamic-card>
+  <div class="row mb-3">
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-checkbox [(ngModel)]="dataSearch.checkBoxCustomer"> Cliente </mat-checkbox>
+    </div>
 
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser"> Usuario </mat-checkbox>
-      </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-checkbox [(ngModel)]="dataSearch.checkBoxUser"> Usuario </mat-checkbox>
     </div>
-    <div class="row mb-3">
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Tipo Documento: </mat-label>
-          <mat-select
-            [(ngModel)]="dataSearch.idTipoDocumento"
-            (selectionChange)="onChangeTipoDoc()"
-          >
-            @for (item of tiposDoc(); track $index) {
-              <mat-option [value]="item.idTipoDocumento">
-                {{ item.descripcion }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Establecimiento:</mat-label>
-          <mat-select [(ngModel)]="dataSearch.idEstablecimiento" (change)="onChangeEstab()">
-            <mat-option [value]="0">Todos</mat-option>
-            @for (item of establecimientos; track $index) {
-              <mat-option [value]="item.idEstablecimiento">
-                {{ item.nombreComercial }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Punto Emisión</mat-label>
-          <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
-            <mat-option [value]="0">Todos</mat-option>
-            @for (item of puntosEmision; track $index) {
-              <mat-option [value]="item.idPuntoEmision">
-                {{ item.ptoEmi }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-        <mat-form-field class="w-100">
-          <mat-label>Estado</mat-label>
-          <mat-select [(ngModel)]="dataSearch.codEstado">
-            <mat-option [value]="0">Todos</mat-option>
-            @for (item of estadosDoc; track $index) {
-              <mat-option [value]="item.codEstado">
-                {{ item.descripcion }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Tipo Documento: </mat-label>
+        <mat-select [(ngModel)]="dataSearch.idTipoDocumento" (selectionChange)="onChangeTipoDoc()">
+          @for (item of tiposDoc(); track $index) {
+            <mat-option [value]="item.idTipoDocumento">
+              {{ item.descripcion }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="row mb-3">
-      <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-        <app-date-range-selection
-          [showInputMaterial]="true"
-          (onChangeDateRange)="onDateRangeSelection($event)"
-        />
-      </div>
-
-      @if (showField) {
-        <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-          <mat-form-field class="w-100">
-            <mat-label>Retencion</mat-label>
-            <mat-select [(ngModel)]="dataSearch.codeRetencion">
-              @for (item of retenciones; track $index) {
-                <mat-option [value]="item.code">
-                  {{ item.descripcion }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-          <mat-form-field class="w-100">
-            <mat-label>Devolución</mat-label>
-            <mat-select [(ngModel)]="dataSearch.codeDevolucion">
-              @for (item of devoluciones; track $index) {
-                <mat-option [value]="item.code">
-                  {{ item.descripcion }}
-                </mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      }
-
-      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-        <div class="w-100">
-          <app-user-search
-            (clearSearch)="emptyInputUser()"
-            (userSelected)="onUserSelected($event)"
-            [isSimpleMode]="true"
-          />
-        </div>
-      </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento:</mat-label>
+        <mat-select [(ngModel)]="dataSearch.idEstablecimiento" (change)="onChangeEstab()">
+          <mat-option [value]="0">Todos</mat-option>
+          @for (item of establecimientos; track $index) {
+            <mat-option [value]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="row mb-3">
-      <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-        <div class="w-100">
-          <app-company-customer-search
-            [isSimpleMode]="true"
-            (clearSearch)="clearSearchCustomer()"
-            (customerSelected)="onCustomerSelected($event)"
-          />
-        </div>
-      </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Punto Emisión</mat-label>
+        <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
+          <mat-option [value]="0">Todos</mat-option>
+          @for (item of puntosEmision; track $index) {
+            <mat-option [value]="item.idPuntoEmision">
+              {{ item.ptoEmi }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="d-flex flex-row gap-1">
-      <acp-button
-        variant="danger"
-        icon="picture_as_pdf"
-        text="PDF"
-        (handleClick)="getReportPdf()"
-      /><acp-button
-        variant="success"
-        icon="download"
-        text="EXCEL"
-        (handleClick)="getReportExcel()"
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Estado</mat-label>
+        <mat-select [(ngModel)]="dataSearch.codEstado">
+          <mat-option [value]="0">Todos</mat-option>
+          @for (item of estadosDoc; track $index) {
+            <mat-option [value]="item.codEstado">
+              {{ item.descripcion }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+      <app-date-range-selection
+        [showInputMaterial]="true"
+        (onChangeDateRange)="onDateRangeSelection($event)"
       />
     </div>
-  </mat-card-content>
-</mat-card>
+
+    @if (showField) {
+      <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Retencion</mat-label>
+          <mat-select [(ngModel)]="dataSearch.codeRetencion">
+            @for (item of retenciones; track $index) {
+              <mat-option [value]="item.code">
+                {{ item.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-xxl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>Devolución</mat-label>
+          <mat-select [(ngModel)]="dataSearch.codeDevolucion">
+            @for (item of devoluciones; track $index) {
+              <mat-option [value]="item.code">
+                {{ item.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    }
+
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="w-100">
+        <app-user-search
+          (clearSearch)="emptyInputUser()"
+          (userSelected)="onUserSelected($event)"
+          [isSimpleMode]="true"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="w-100">
+        <app-company-customer-search
+          [isSimpleMode]="true"
+          (clearSearch)="clearSearchCustomer()"
+          (customerSelected)="onCustomerSelected($event)"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-row gap-1">
+    <acp-button
+      variant="danger"
+      icon="picture_as_pdf"
+      text="PDF"
+      (handleClick)="getReportPdf()"
+    /><acp-button variant="success" icon="download" text="EXCEL" (handleClick)="getReportExcel()" />
+  </div>
+</acp-dynamic-card>

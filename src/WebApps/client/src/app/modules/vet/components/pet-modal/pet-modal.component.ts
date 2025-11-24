@@ -17,7 +17,7 @@ import { Breed } from '@modules/vet/models/breed.model';
 import { Gender } from '@modules/vet/models/gender.model';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatCard, MatCardContent } from '@angular/material/card';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -25,11 +25,10 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 @Component({
   selector: 'app-pet-modal',
   imports: [
+    DynamicCard,
     FormsModule,
     ReactiveFormsModule,
     CompanyCustomerSearchComponent,
-    MatCard,
-    MatCardContent,
     Button,
     MatCustomDialogComponent,
   ],

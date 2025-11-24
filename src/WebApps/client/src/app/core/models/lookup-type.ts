@@ -1,6 +1,6 @@
 export interface LookupType {
-  module: string;   // 'sales', 'billing', 'config'
-  context: string;  // 'filters', 'dialog', 'form'
+  module: string; // 'sales', 'billing', 'config'
+  context: string; // 'filters', 'dialog', 'form'
 }
 
 export interface LookupItem {
@@ -16,10 +16,10 @@ export interface LookupItem {
 
 export enum ModuleType {
   Products = 'Products',
-  Customers = 'Customers'
+  Customers = 'Customers',
 }
 
 export enum ContextType {
   Filter = 'Filter',
-  Dialog = 'Dialog'
+  Dialog = 'Dialog',
 }

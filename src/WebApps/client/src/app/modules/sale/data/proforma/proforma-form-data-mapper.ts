@@ -1,18 +1,18 @@
-import {ApiResponseLegacy} from "@core/models/api-response-legacy";
-import {groupEstablishments, groupEstabUtil} from "@core/utils/group-estab.util";
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
+import { groupEstablishments, groupEstabUtil } from '@core/utils/group-estab.util';
 
 export class ProformaInvoiceFormDataMapper {
   static toJson() {
     return JSON.stringify({
-      tipo: 2
-    })
+      tipo: 2,
+    });
   }
 
   static fromJson(response: ApiResponseLegacy) {
     const {
       decimalSettings,
       taxPercentages,
-      fees=[],
+      fees = [],
       creditTimes,
       defaultProduct,
       defaultCustomer,
@@ -20,31 +20,30 @@ export class ProformaInvoiceFormDataMapper {
       users,
       estabEmissionPoints,
       estabWarehouses,
-      documentConfig
+      documentConfig,
     } = JSON.parse(response.payload as string);
-    console.log(JSON.parse(response.payload as string))
+    console.log(JSON.parse(response.payload as string));
 
     const estabs = groupEstablishments({
       emissionPoints: estabEmissionPoints,
-      warehouses: estabWarehouses
-    })
+      warehouses: estabWarehouses,
+    });
     console.log(estabs);
 
-
     return {
-      fees: fees.map((fee:any) => ({
+      fees: fees.map((fee: any) => ({
         id: fee.idTarifa,
         name: fee.descripcion,
-        isDefault: fee.predeterminada
+        isDefault: fee.predeterminada,
       })),
-      taxRates: taxPercentages.map((tax:any) => ({
+      taxRates: taxPercentages.map((tax: any) => ({
         id: tax.idTipoIva,
         taxTypeId: tax.idImpuesto,
         name: tax.descripcion,
         rate: tax.tarifa,
         code: tax.codigoPorcentaje,
       })),
-      estabs
-    }
+      estabs,
+    };
   }
 }

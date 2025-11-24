@@ -1,5 +1,5 @@
 import { Component, inject, input, model, output, OnInit } from '@angular/core';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +30,7 @@ import { ProductGetIdUseCase } from '@inventory/product/application/use-cases/pr
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     ToUpperCaseDirective,
   ],

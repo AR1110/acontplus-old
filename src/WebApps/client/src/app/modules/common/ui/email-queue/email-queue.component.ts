@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatError, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -29,7 +29,7 @@ export enum RecipientType {
     MatButton,
     MatLabel,
     MatError,
-    MatCardModule,
+    DynamicCard,
     BreadcrumbComponent,
     MatIcon,
     QuillEditorComponent,

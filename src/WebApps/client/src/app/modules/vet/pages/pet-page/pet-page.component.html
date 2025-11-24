@@ -1,126 +1,124 @@
 <app-breadcrumb />
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-md-2 col-12">
-        <button (click)="onModalOpen()" mat-raised-button type="button">
-          <mat-icon>add</mat-icon>
-          Nueva
-        </button>
-      </div>
-      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-        <input
-          #input
-          (keyup)="applyFilter($event)"
-          class="form-control"
-          matInput
-          placeholder="Buscar mascota"
-        />
-      </div>
+<acp-dynamic-card>
+  <div class="row">
+    <div class="col-md-2 col-12">
+      <button (click)="onModalOpen()" mat-raised-button type="button">
+        <mat-icon>add</mat-icon>
+        Nueva
+      </button>
     </div>
-    <br />
-    <div class="mat-elevation-z8">
-      <section class="section-container-table" tabindex="0">
-        <table [dataSource]="dataSource" mat-table matSort>
-          <!-- Options -->
-          <ng-container matColumnDef="op">
-            <th *matHeaderCellDef mat-header-cell>Op.</th>
-            <td *matCellDef="let element" mat-cell>
-              <button mat-button [matMenuTriggerFor]="menu">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-              <mat-menu #menu="matMenu">
-                <button (click)="onEdit(element)" mat-menu-item>
-                  <mat-icon>edit</mat-icon>
-                  Editar
-                </button>
-                <button (click)="onDelete(element)" mat-menu-item>
-                  <mat-icon>delete</mat-icon>
-                  Eliminar
-                </button>
-              </mat-menu>
-            </td>
-          </ng-container>
-
-          <!-- Position Column -->
-          <ng-container matColumnDef="position">
-            <th *matHeaderCellDef mat-header-cell>Nro.</th>
-            <td *matCellDef="let element" mat-cell>{{ element.position }}</td>
-          </ng-container>
-          <ng-container matColumnDef="name">
-            <th *matHeaderCellDef mat-header-cell>Nombre</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.name }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="petType">
-            <th *matHeaderCellDef mat-header-cell>Especie</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.petType }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="breed">
-            <th *matHeaderCellDef mat-header-cell>Raza</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.breed }}
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="gender">
-            <th *matHeaderCellDef mat-header-cell>Sexo</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.gender }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="age">
-            <th *matHeaderCellDef mat-header-cell>Edad</th>
-            <td *matCellDef="let element" mat-cell>
-              {{ element.age }}
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="color">
-            <th *matHeaderCellDef mat-header-cell>Color</th>
-            <td *matCellDef="let element" mat-cell>{{ element.color }}</td>
-          </ng-container>
-          <ng-container matColumnDef="weight">
-            <th *matHeaderCellDef mat-header-cell>Peso</th>
-            <td *matCellDef="let element" mat-cell>{{ element.weight }}</td>
-          </ng-container>
-          <ng-container matColumnDef="enabled">
-            <th *matHeaderCellDef mat-header-cell>Estado</th>
-            <td *matCellDef="let element" mat-cell>
-              <mat-slide-toggle
-                (change)="askToEnableDisable($event, element)"
-                [(ngModel)]="element.enabled"
-                [checked]="element.enabled"
-                [color]="colorToggle"
-                class="example-margin"
-              >
-                Activa
-              </mat-slide-toggle>
-            </td>
-          </ng-container>
-
-          <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
-          <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
-
-          <!-- Row shown when there is no matching infrastructure. -->
-          <tr *matNoDataRow class="mat-row">
-            <td class="mat-cell" colspan="7">No data matching the filter {{ input.value }}</td>
-          </tr>
-        </table>
-      </section>
-      <mat-paginator
-        #paginator
-        (page)="pageChanged($event)"
-        [length]="pagination.totalRecords"
-        [pageIndex]="pagination.pageIndex"
-        [pageSizeOptions]="pagination.pageSizeOptions"
-        [pageSize]="pagination.pageSize"
-        aria-label="Select page"
-        showFirstLastButtons
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+      <input
+        #input
+        (keyup)="applyFilter($event)"
+        class="form-control"
+        matInput
+        placeholder="Buscar mascota"
       />
     </div>
-  </mat-card-content>
-</mat-card>
+  </div>
+  <br />
+  <div class="mat-elevation-z8">
+    <section class="section-container-table" tabindex="0">
+      <table [dataSource]="dataSource" mat-table matSort>
+        <!-- Options -->
+        <ng-container matColumnDef="op">
+          <th *matHeaderCellDef mat-header-cell>Op.</th>
+          <td *matCellDef="let element" mat-cell>
+            <button mat-button [matMenuTriggerFor]="menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button (click)="onEdit(element)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                Editar
+              </button>
+              <button (click)="onDelete(element)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                Eliminar
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th *matHeaderCellDef mat-header-cell>Nro.</th>
+          <td *matCellDef="let element" mat-cell>{{ element.position }}</td>
+        </ng-container>
+        <ng-container matColumnDef="name">
+          <th *matHeaderCellDef mat-header-cell>Nombre</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.name }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="petType">
+          <th *matHeaderCellDef mat-header-cell>Especie</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.petType }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="breed">
+          <th *matHeaderCellDef mat-header-cell>Raza</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.breed }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="gender">
+          <th *matHeaderCellDef mat-header-cell>Sexo</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.gender }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="age">
+          <th *matHeaderCellDef mat-header-cell>Edad</th>
+          <td *matCellDef="let element" mat-cell>
+            {{ element.age }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="color">
+          <th *matHeaderCellDef mat-header-cell>Color</th>
+          <td *matCellDef="let element" mat-cell>{{ element.color }}</td>
+        </ng-container>
+        <ng-container matColumnDef="weight">
+          <th *matHeaderCellDef mat-header-cell>Peso</th>
+          <td *matCellDef="let element" mat-cell>{{ element.weight }}</td>
+        </ng-container>
+        <ng-container matColumnDef="enabled">
+          <th *matHeaderCellDef mat-header-cell>Estado</th>
+          <td *matCellDef="let element" mat-cell>
+            <mat-slide-toggle
+              (change)="askToEnableDisable($event, element)"
+              [(ngModel)]="element.enabled"
+              [checked]="element.enabled"
+              [color]="colorToggle"
+              class="example-margin"
+            >
+              Activa
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
+
+        <!-- Row shown when there is no matching infrastructure. -->
+        <tr *matNoDataRow class="mat-row">
+          <td class="mat-cell" colspan="7">No data matching the filter {{ input.value }}</td>
+        </tr>
+      </table>
+    </section>
+    <mat-paginator
+      #paginator
+      (page)="pageChanged($event)"
+      [length]="pagination.totalRecords"
+      [pageIndex]="pagination.pageIndex"
+      [pageSizeOptions]="pagination.pageSizeOptions"
+      [pageSize]="pagination.pageSize"
+      aria-label="Select page"
+      showFirstLastButtons
+    />
+  </div>
+</acp-dynamic-card>

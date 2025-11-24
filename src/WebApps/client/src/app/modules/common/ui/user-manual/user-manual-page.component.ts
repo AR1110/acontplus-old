@@ -9,14 +9,13 @@ import { QuillViewComponent } from 'ngx-quill';
 import { FormsModule } from '@angular/forms';
 import { UserManualUseCase } from '@modules/common/core/use-cases/user-manual.use-case';
 import { UserManual } from '@modules/common/core/domain/user-manual.model';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTreeModule } from '@angular/material/tree';
-import { MatCardModule } from '@angular/material/card';
 interface MenuNode {
   title: string;
   name: string;
@@ -32,7 +31,7 @@ interface MenuNode {
     BreadcrumbComponent,
     FormsModule,
     QuillViewComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
@@ -40,7 +39,7 @@ interface MenuNode {
     MatExpansionModule,
     MatPaginatorModule,
     MatIcon,
-    MatCardModule,
+    DynamicCard,
     MatTreeModule,
   ],
   templateUrl: './user-manual-page.component.html',

@@ -7,10 +7,9 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Pagination } from '@acontplus/ng-components';
+import { DynamicCard, Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
@@ -20,7 +19,7 @@ import { DialogService } from '@core/services/dialog.service';
     MatIconModule,
     BreadcrumbComponent,
     MatDynamicTableComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
   ],
   templateUrl: './subcategory.component.html',
   styles: ``,

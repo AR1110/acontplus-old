@@ -1,7 +1,7 @@
 import { BodegaEstablecimiento } from '@core/models/bodega.model';
 import { GroupedEstab } from '@core/models/estab.model';
 import { PuntoEmisionEstablecimiento } from '@core/models/punto-emision.model';
-import {GroupedEstablishment} from "@core/models/establishment";
+import { GroupedEstablishment } from '@core/models/establishment';
 
 interface GroupEstabProps {
   estabs?: PuntoEmisionEstablecimiento[];
@@ -133,23 +133,23 @@ interface GroupEstablishmentProps {
  * Combina en una sola pasada los establecimientos con sus puntos de emisión y bodegas.
  */
 export const groupEstablishments = ({
-                                      emissionPoints,
-                                      warehouses,
-                                    }: GroupEstablishmentProps): GroupedEstablishment[] => {
+  emissionPoints,
+  warehouses,
+}: GroupEstablishmentProps): GroupedEstablishment[] => {
   const groupedMap = new Map<number, GroupedEstablishment>();
 
-  const getMapEstablishment = (establishment:any) => ({
+  const getMapEstablishment = (establishment: any) => ({
     id: establishment.idEstablecimiento,
     tradeName: establishment.nombreComercial,
     code: establishment.codEstab,
     isDefault: establishment.defaultEstab,
     email: establishment.correo,
-  })
-  const getMapEmissionPoint = (point:any) => ({
+  });
+  const getMapEmissionPoint = (point: any) => ({
     id: point.idPuntoEmision,
     name: point.ptoEmi,
     isDefault: point.defaultPtoEmi,
-  })
+  });
 
   // Agrupar primero por puntos de emisión
   emissionPoints?.forEach((point) => {

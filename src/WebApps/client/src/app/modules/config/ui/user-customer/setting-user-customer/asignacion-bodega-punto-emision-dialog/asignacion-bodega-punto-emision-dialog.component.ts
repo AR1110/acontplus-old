@@ -17,7 +17,7 @@ import { AsignacionPuntoEmisionList } from '@modules/config/domain/models/user-c
 import { forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -38,7 +38,7 @@ import { UpdateAsignacionPuntoEmisionUseCase } from '@modules/config/application
 
     FormsModule,
     MatCustomDialogComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     MatIcon,
     MatIconButton,

@@ -22,12 +22,13 @@ import { NotaEntregaDetalleDialogDirective } from '@sale/ui/directives/nota-entr
 import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DynamicCard } from '@acontplus/ng-components';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-delivery-notes',
   imports: [
+    DynamicCard,
     FormsModule,
     MatCardModule,
     MatButtonModule,

@@ -1,5 +1,5 @@
 import { MedidaProducto } from '../models/measure.model';
-import {ProductMeasure} from "@inventory/domain/models/product-measure";
+import { ProductMeasure } from '@inventory/domain/models/product-measure';
 
 /**
  * @deprecated
@@ -41,7 +41,7 @@ export const mergeMeasureUtil = function (
     mapMedida(medida, 'FRACCIONADO'),
   );
 
-  let orderMedidaArray = [...medidasFraccionadoMapper, ...medidasPrincipalMapper]
+  const orderMedidaArray = [...medidasFraccionadoMapper, ...medidasPrincipalMapper]
     .slice()
     .sort((a, b) => a.orden - b.orden)
     .map((medida) => ({

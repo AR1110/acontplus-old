@@ -63,9 +63,7 @@ export class GetProductPurchaseUseCase implements BaseUseCase<GetProductPurchase
 @Injectable({
   providedIn: 'root',
 })
-export class GetProductSaleUseCase
-  implements BaseUseCase<any, { id?: number; search?: string }>
-{
+export class GetProductSaleUseCase implements BaseUseCase<any, { id?: number; search?: string }> {
   private repo = inject(ProductRepository);
 
   execute(obj: { id?: number; search?: string }) {

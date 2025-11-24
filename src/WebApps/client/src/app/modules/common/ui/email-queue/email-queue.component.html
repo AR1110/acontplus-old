@@ -4,100 +4,96 @@
   <div
     class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 offset-xxl-3 offset-xl-3 offset-lg-3 offset-md-3"
   >
-    <mat-card class="email-form-card">
-      <mat-card-header>
-        <mat-card-title> <mat-icon>send</mat-icon> Envio de correo</mat-card-title>
-      </mat-card-header>
+    <acp-dynamic-card cardTitle="Envio de correo" [isHeaderVisible]="true">
+      <mat-icon headerIcon>send</mat-icon>
 
-      <mat-card-content>
-        <form [formGroup]="emailForm" (ngSubmit)="onSubmit()">
-          <div class="checkbox-container">
-            <mat-checkbox formControlName="isMassive" (change)="onMassiveChange($event)">
-              Envio Masivo
-            </mat-checkbox>
-          </div>
-          <div class="row mb-3">
-            <div class="col">
-              @if (emailForm.get('isMassive')?.value) {
-                <mat-form-field appearance="outline" class="full-width w-100">
-                  <mat-label>Receptores</mat-label>
-                  <mat-select formControlName="recipientType">
-                    <mat-option [value]="RecipientType.USERS">Usuarios</mat-option>
-                    <mat-option [value]="RecipientType.CUSTOMERS">Clientes</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              }
-              @if (!emailForm.get('isMassive')?.value) {
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Para</mat-label>
-                  <input matInput formControlName="recipientEmail" type="email" />
-                  @if (emailForm.get('recipientEmail')?.hasError('required')) {
-                    <mat-error> Email is required </mat-error>
-                  }
-                  @if (emailForm.get('recipientEmail')?.hasError('email')) {
-                    <mat-error> Please enter a valid email </mat-error>
-                  }
-                </mat-form-field>
-              }
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>CC</mat-label>
-                <input matInput formControlName="cc" />
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="row mb-3">
-            <div class="col">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Asunto</mat-label>
-                <input matInput formControlName="subject" />
-                @if (emailForm.get('subject')?.hasError('required')) {
-                  <mat-error> Subject is required </mat-error>
-                }
-              </mat-form-field>
-            </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Plantilla</mat-label>
-                <mat-select
-                  formControlName="template"
-                  (selectionChange)="onTemplateChange($event.value)"
-                >
-                  <mat-option value="Christmas">Navidad</mat-option>
-                  <mat-option value="NewYear">Año Nuevo</mat-option>
-                  <mat-option value="Custom">Personalizada</mat-option>
+      <form [formGroup]="emailForm" (ngSubmit)="onSubmit()">
+        <div class="checkbox-container">
+          <mat-checkbox formControlName="isMassive" (change)="onMassiveChange($event)">
+            Envio Masivo
+          </mat-checkbox>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            @if (emailForm.get('isMassive')?.value) {
+              <mat-form-field appearance="outline" class="full-width w-100">
+                <mat-label>Receptores</mat-label>
+                <mat-select formControlName="recipientType">
+                  <mat-option [value]="RecipientType.USERS">Usuarios</mat-option>
+                  <mat-option [value]="RecipientType.CUSTOMERS">Clientes</mat-option>
                 </mat-select>
               </mat-form-field>
-            </div>
+            }
+            @if (!emailForm.get('isMassive')?.value) {
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Para</mat-label>
+                <input matInput formControlName="recipientEmail" type="email" />
+                @if (emailForm.get('recipientEmail')?.hasError('required')) {
+                  <mat-error> Email is required </mat-error>
+                }
+                @if (emailForm.get('recipientEmail')?.hasError('email')) {
+                  <mat-error> Please enter a valid email </mat-error>
+                }
+              </mat-form-field>
+            }
           </div>
-
-          <div class="row mb-3">
-            <div class="col">
-              <quill-editor
-                [styles]="{ height: '200px' }"
-                [modules]="quillModules"
-                formControlName="body"
-                [placeholder]="'Escribe tu mensaje aqui...'"
-              />
-              @if (emailForm.get('body')?.hasError('required')) {
-                <mat-error> Message is required </mat-error>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>CC</mat-label>
+              <input matInput formControlName="cc" />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Asunto</mat-label>
+              <input matInput formControlName="subject" />
+              @if (emailForm.get('subject')?.hasError('required')) {
+                <mat-error> Subject is required </mat-error>
               }
-            </div>
+            </mat-form-field>
           </div>
+        </div>
 
-          <div class="button-container">
-            <button mat-raised-button color="primary" type="submit" [disabled]="!emailForm.valid">
-              Enviar Correo
-            </button>
+        <div class="row mb-3">
+          <div class="col">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Plantilla</mat-label>
+              <mat-select
+                formControlName="template"
+                (selectionChange)="onTemplateChange($event.value)"
+              >
+                <mat-option value="Christmas">Navidad</mat-option>
+                <mat-option value="NewYear">Año Nuevo</mat-option>
+                <mat-option value="Custom">Personalizada</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col">
+            <quill-editor
+              [styles]="{ height: '200px' }"
+              [modules]="quillModules"
+              formControlName="body"
+              [placeholder]="'Escribe tu mensaje aqui...'"
+            />
+            @if (emailForm.get('body')?.hasError('required')) {
+              <mat-error> Message is required </mat-error>
+            }
+          </div>
+        </div>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!emailForm.valid">
+            Enviar Correo
+          </button>
+        </div>
+      </form>
+    </acp-dynamic-card>
   </div>
 </div>

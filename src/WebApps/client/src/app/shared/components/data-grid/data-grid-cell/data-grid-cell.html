@@ -197,21 +197,23 @@
       }
       <!-- Image -->
       @case ('image') {
-  @if (_value) {
-    <!-- Imagen real -->
-    <img class="placeholder-image" [src]="_value" alt="img" />
-  } @else {
-    <!-- Placeholder -->
-    <div class="placeholder-box">
-      <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L15 14m-12 5h16a1 1 0 001-1V5a1 1 0 00-1-1H3a1 1 0 00-1 1v14a1 1 0 001 1z" />
-      </svg>
-    </div>
-  }
-
-
-}
+        @if (_value) {
+          <!-- Imagen real -->
+          <img class="placeholder-image" [src]="_value" alt="img" />
+        } @else {
+          <!-- Placeholder -->
+          <div class="placeholder-box">
+            <svg class="placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L15 14m-12 5h16a1 1 0 001-1V5a1 1 0 00-1-1H3a1 1 0 00-1 1v14a1 1 0 001 1z"
+              />
+            </svg>
+          </div>
+        }
+      }
       <!-- Boolean -->
       @case ('boolean') {
         <span [title]="_getTooltip(_value)">{{ _getText(_value) }}</span>

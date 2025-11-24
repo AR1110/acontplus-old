@@ -24,10 +24,8 @@
     >
       @for (item of historialPagos(); track $index) {
         <div class="col">
-          <mat-card>
-            <mat-card-header class="d-flex justify-content-between">
-              <mat-card-subtitle>{{ row.serieComprobante }}</mat-card-subtitle>
-
+          <acp-dynamic-card [cardSubtitle]="row.serieComprobante" [isHeaderVisible]="true">
+            <div headerActions class="d-flex">
               <button
                 mat-icon-button
                 (click)="openPagoDetalle(item)"
@@ -35,72 +33,71 @@
               >
                 <mat-icon>visibility</mat-icon>
               </button>
-            </mat-card-header>
-            <mat-card-content>
-              <div
-                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
-              >
-                <div class="d-flex flex-column">
-                  <div class="vstack">
-                    <small class="fw-semibold">Fecha Emisión</small>
-                    <small>{{ item.fechaEmision }}</small>
-                  </div>
-                  <div class="vstack">
-                    <small class="fw-semibold">Forma de Pago</small>
-                    <small>{{ item.nombreFormaPago }}</small>
-                  </div>
+            </div>
 
-                  <div class="vstack">
-                    <small class="fw-semibold">Posfechado</small>
-                    <small>{{ item.nombrePosfechado }}</small>
-                  </div>
+            <div
+              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+            >
+              <div class="d-flex flex-column">
+                <div class="vstack">
+                  <small class="fw-semibold">Fecha Emisión</small>
+                  <small>{{ item.fechaEmision }}</small>
+                </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Forma de Pago</small>
+                  <small>{{ item.nombreFormaPago }}</small>
                 </div>
 
-                <div class="d-flex flex-column">
-                  <div class="vstack">
-                    <small class="fw-semibold">Valor</small>
-                    <small>{{ item.valor }}</small>
-                  </div>
-
-                  <div class="vstack">
-                    <small class="fw-semibold">Abono</small>
-                    <small>{{ item.abono }}</small>
-                  </div>
-
-                  <div class="vstack">
-                    <small class="fw-semibold">Cambio</small>
-                    <small>{{ item.vuelto }}</small>
-                  </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Posfechado</small>
+                  <small>{{ item.nombrePosfechado }}</small>
                 </div>
               </div>
-              <mat-divider />
 
-              <div
-                class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
-              >
+              <div class="d-flex flex-column">
                 <div class="vstack">
-                  <small class="fw-semibold">Banco:</small>
-                  <small>{{ item.nombreBanco }}</small>
+                  <small class="fw-semibold">Valor</small>
+                  <small>{{ item.valor }}</small>
                 </div>
+
                 <div class="vstack">
-                  <small class="fw-semibold">Número: </small>
-                  <small>{{ item.nro }}</small>
+                  <small class="fw-semibold">Abono</small>
+                  <small>{{ item.abono }}</small>
                 </div>
+
                 <div class="vstack">
-                  <small class="fw-semibold">Referencia:</small>
-                  <small>{{ item.referencia }}</small>
-                </div>
-                <div class="vstack">
-                  <small class="fw-semibold">Lote: </small>
-                  <small>{{ item.lote }}</small>
-                </div>
-                <div class="vstack">
-                  <small class="fw-semibold">Aprobación: </small>
-                  <small>{{ item.aprobacion }}</small>
+                  <small class="fw-semibold">Cambio</small>
+                  <small>{{ item.vuelto }}</small>
                 </div>
               </div>
-            </mat-card-content>
-          </mat-card>
+            </div>
+            <mat-divider />
+
+            <div
+              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+            >
+              <div class="vstack">
+                <small class="fw-semibold">Banco:</small>
+                <small>{{ item.nombreBanco }}</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Número: </small>
+                <small>{{ item.nro }}</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Referencia:</small>
+                <small>{{ item.referencia }}</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Lote: </small>
+                <small>{{ item.lote }}</small>
+              </div>
+              <div class="vstack">
+                <small class="fw-semibold">Aprobación: </small>
+                <small>{{ item.aprobacion }}</small>
+              </div>
+            </div>
+          </acp-dynamic-card>
         </div>
       }
     </div>

@@ -12,8 +12,8 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
+
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -31,7 +31,7 @@ type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
     DateRangeSelectionComponent,
     SupplierSearchComponent,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatCheckbox,
     MatDivider,
     MatFormFieldModule,

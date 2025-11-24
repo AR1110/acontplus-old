@@ -1,6 +1,5 @@
 import { Route } from '@angular/router';
 
-
 export const routes: Route[] = [
   {
     path: 'products',
@@ -68,5 +67,5 @@ export const routes: Route[] = [
     path: 'promotions',
     loadComponent: () => import('@restaurant/ui/promotions/promotions').then((m) => m.Promotions),
     data: { breadcrumb: 'Promociones' },
-  }
+  },
 ];

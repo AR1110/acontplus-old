@@ -7,7 +7,7 @@ import { VehicleTypeSelectHtmlOnly } from '@mechanical/domain/models/vehicle-typ
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,7 +30,7 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
     MatAutocompleteModule,
     ToUpperCaseDirective,
     MatCustomDialogComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     CompanyCustomerSearchComponent,
   ],
   templateUrl: './vehicle-add-edit-modal.component.html',

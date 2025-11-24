@@ -30,7 +30,7 @@ import {
   MatStepperModule,
 } from '@angular/material/stepper';
 import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -153,7 +153,7 @@ interface EstabFormControls {
     ReactiveFormsModule,
     RouterModule,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatIconModule,
     MatInput,
     MatLabel,

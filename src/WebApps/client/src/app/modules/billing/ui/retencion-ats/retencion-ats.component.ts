@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -35,8 +35,7 @@ import { PersonType } from '@customer/shared/enums/customer.enum';
   selector: 'app-retencion-ats',
   imports: [
     BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
+    DynamicCard,
     MatMenuTrigger,
     MatIconButton,
     MatIcon,

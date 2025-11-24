@@ -124,32 +124,30 @@
     [cdkConnectedOverlayViewportMargin]="7"
   >
     <div class="overlay-content">
-      <mat-card class="m-0 p-0">
-        <mat-card-content>
-          @if (customerDetail()) {
-            <div class="vstack gap-1">
-              <p>
-                <strong>Identificación:</strong>
-                {{ customerDetail()?.numeroIdentificacion }}
-              </p>
-              <p>
-                <strong>Nombre Fiscal:</strong>
-                {{ customerDetail()?.nombreFiscal }}
-              </p>
-              <p>
-                <strong>Nombre Comercial:</strong>
-                {{ customerDetail()?.nombreComercial }}
-              </p>
-              <p>
-                <strong>Dirección:</strong>
-                {{ customerDetail()?.direccion }}
-              </p>
-            </div>
-          } @else {
-            <p>Cargando...</p>
-          }
-        </mat-card-content>
-      </mat-card>
+      <acp-dynamic-card>
+        @if (customerDetail()) {
+          <div class="vstack gap-1">
+            <p>
+              <strong>Identificación:</strong>
+              {{ customerDetail()?.numeroIdentificacion }}
+            </p>
+            <p>
+              <strong>Nombre Fiscal:</strong>
+              {{ customerDetail()?.nombreFiscal }}
+            </p>
+            <p>
+              <strong>Nombre Comercial:</strong>
+              {{ customerDetail()?.nombreComercial }}
+            </p>
+            <p>
+              <strong>Dirección:</strong>
+              {{ customerDetail()?.direccion }}
+            </p>
+          </div>
+        } @else {
+          <p>Cargando...</p>
+        }
+      </acp-dynamic-card>
     </div>
   </ng-template>
 }

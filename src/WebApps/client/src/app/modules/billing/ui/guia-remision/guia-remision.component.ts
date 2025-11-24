@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,7 +39,7 @@ import { AddEditGuiaRemisionComponent } from '@billing/ui/guia-remision/componen
     FormsModule,
     MatMenuModule,
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
