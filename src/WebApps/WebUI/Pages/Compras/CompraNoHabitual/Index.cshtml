@@ -199,12 +199,21 @@
                                             </md-button>
                                         </md-menu-item>
 
-                                        <md-menu-item>
+                                        @* <md-menu-item>
                                             <md-button ng-disabled="!(accion.editar && item.isUpdate)"
                                                 ng-click="openModalEditar(item)">
                                                 <span md-menu-align-target>
                                                     <i class="ti-pencil"></i>
                                                     Editar
+                                                </span>
+                                            </md-button>
+                                        </md-menu-item> *@
+
+                                        <md-menu-item ng-if="accion.crear">
+                                            <md-button ng-click="openModalDuplicate(item)">
+                                                <span md-menu-align-target>
+                                                    <i class="ti-doc"></i>
+                                                    Duplicar
                                                 </span>
                                             </md-button>
                                         </md-menu-item>

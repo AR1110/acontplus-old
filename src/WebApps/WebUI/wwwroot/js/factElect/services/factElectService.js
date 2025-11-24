@@ -218,7 +218,7 @@
 
             return mS
                 .getData("get", `${url}?json=${json}`, null, true)
-                .then((response) => {
+                .then(async (response) => {
                     if (response.code !== "1") {
                         throw new Error(response.message || "Error al validar normativa SRI.");
                     }
@@ -227,19 +227,26 @@
                     const [parsedList] = JSON.parse(response.payload);
                     const parsed = parsedList[0] || null;
 
-                    // ⚠️ Si no hay datos devueltos, asumimos que todo está OK
+                    //  Si no hay datos devueltos, asumimos que todo está OK
                     if (!parsed) return { code: "1" };
 
-                    // 🚫 Si el backend devuelve restricción, se muestra alerta
+                    //  Si el backend devuelve restricción, se muestra alerta
                     if (parsed.code === "0") {
+                        if (accion === 'anular') {
+                            await Swal.fire({
+                                icon: 'warning',
+                                html: response.message,
+                            });
+                            return parsed;
+                        }
                         Swal.fire({
                             icon: 'warning',
-                            html: parsed.message
+                            html: response.message,
                         });
                         throw new Error("Operación restringida por normativa SRI.");
                     }
 
-                    return parsed; // ✅ Devuelve el objeto si todo fue exitoso
+                    return parsed; //  Devuelve el objeto si todo fue exitoso
 
                 })
         };
