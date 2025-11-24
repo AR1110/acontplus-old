@@ -34,7 +34,7 @@ BEGIN
     DECLARE @WhereClause NVARCHAR(MAX)
 
     --> Order
-    DECLARE @OrderByClause NVARCHAR(200);
+    DECLARE @OrderByClause NVARCHAR(200) ,@InnerJoin NVARCHAR(MAX)= ' ' ,@Column VARCHAR(MAX) = '';
     
 
     --> Parse JSON filters
@@ -44,6 +44,7 @@ BEGIN
            ,@idSubFamilia INT
            ,@UserId INT
            ,@IncludeDeleted BIT = 0
+           ,@IsPos BIT
 
     BEGIN TRY
         --> Data Json
@@ -53,6 +54,7 @@ BEGIN
                       ,@idSubFamilia   = ISNULL(TRY_CAST(idSubFamilia   AS INT), 0)
                       ,@userRoleId     = ISNULL(TRY_CAST(userRoleId     AS INT), 0)
                       ,@sigla          = sigla
+                      ,@IsPos          = isPos
                 FROM OPENJSON(@Filters)
                 WITH
                 (
@@ -60,6 +62,7 @@ BEGIN
                    ,idSubFamilia   INT         
                    ,userRoleId     INT         
                    ,sigla          VARCHAR(50)
+                   ,isPos          BIT     
                 );
             END
 
@@ -86,6 +89,15 @@ BEGIN
                                           WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
                                                              ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
                              END;
+
+        -->Variables Join
+        IF @IsPos = 1
+            BEGIN
+                SET @InnerJoin = 'INNER JOIN dbo.ArticuloPvP  pv ON pv.idArticulo = ar.idArticulo 
+                                  INNER JOIN dbo.Tarifa       ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = 1  '
+
+                SET @Column = ',pv.precioConIva AS priceWithTax '
+            END
 
         --> Validate input parameters
         IF @IncludeDeleted = 0
@@ -146,9 +158,11 @@ BEGIN
                                       ,ar.precioCosto           AS CostPrice
                                       ,ar.categoria             AS Category
                                       ,ar.siglaFamilia          AS AcronymFamily
-                                      ,COUNT(*) OVER()          AS TotalCount
+                                      ,COUNT(*) OVER()          AS TotalCount '
+                                      + @Column + N' 
                                 FROM Restaurant.Item             ri
                                 INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
+                                + @InnerJoin + N' '
                                 + @WhereClause
 
                          + N')

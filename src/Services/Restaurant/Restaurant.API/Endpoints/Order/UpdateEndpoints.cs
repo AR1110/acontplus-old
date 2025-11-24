@@ -1,5 +1,4 @@
 using Restaurant.Application.DTOs.Orders;
-using Restaurant.Application.Interfaces.Order;
 
 namespace Restaurant.API.Endpoints.Order;
 
@@ -31,7 +30,7 @@ public static class UpdateEndpoints
             .WithName("UpdateOrder")
             .WithSummary("Update an existing Order")
             .WithDescription("Update an existing order record.")
-            .Produces<OrderItem>(StatusCodes.Status200OK)
+            .Produces<Application.DTOs.Orders.OrderItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
