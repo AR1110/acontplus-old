@@ -29,7 +29,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import Swal from 'sweetalert2';
 import { ProductMeasure } from '@inventory/domain/models/product-measure';
@@ -63,7 +63,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     MatDivider,
     Button,
     ItemSearch,
-    TabulatorComponent,
+    TabulatorTable,
     MatCustomDialogComponent,
   ],
   templateUrl: './promotion-form.html',

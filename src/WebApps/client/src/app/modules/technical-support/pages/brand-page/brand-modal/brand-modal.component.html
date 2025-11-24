@@ -41,7 +41,7 @@
       <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
         <acp-button icon="add" text="Añadir Serie" (handleClick)="onSerieAdd()" />
         @if (this.series.length > 0) {
-          <app-tabulator [columnNames]="columnNames" [tableData]="series" />
+          <acp-tabulator-table [columns]="columnNames" [data]="series" />
         }
       </div>
     </div>

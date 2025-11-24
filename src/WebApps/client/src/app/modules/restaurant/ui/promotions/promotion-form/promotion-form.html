@@ -223,10 +223,9 @@
                   <p>No hay productos configurados para esta promoción.</p>
                 </mat-card>
               } @else {
-                <app-tabulator
-                  [columnNames]="columns"
-                  [tableData]="selectedProducts()"
-                  [theme]="'semantic-ui'"
+                <acp-tabulator-table
+                  [columns]="columns"
+                  [data]="selectedProducts()"
                   [options]="{
                     height: 'auto',
                     layout: 'fitDataFill',

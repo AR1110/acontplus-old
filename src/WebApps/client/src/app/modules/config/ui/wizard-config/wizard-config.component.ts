@@ -46,7 +46,7 @@ import { of } from 'rxjs';
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
@@ -162,7 +162,7 @@ interface EstabFormControls {
     MatStepperModule,
     MatTooltipModule,
     BreadcrumbComponent,
-    TabulatorComponent,
+    TabulatorTable,
     InputChip,
     Button,
     NgDynamicSelectComponent,

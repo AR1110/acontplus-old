@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable, Button } from '@acontplus/ng-components';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import {
@@ -37,7 +37,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import Swal from 'sweetalert2';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { MatIcon } from '@angular/material/icon';
-import { Button } from '@acontplus/ng-components';
+
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -48,7 +48,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
     FormsModule,
     DrawTaxTotalComponent,
     ReactiveFormsModule,
-    TabulatorComponent,
+    TabulatorTable,
     ProductSearchOverlayComponent,
     InputDateComponent,
     MatIcon,
@@ -77,7 +77,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
   private orderMaintenanceSvc = inject(OrderMaintenanceService);
   private _productUseCase = inject(ProductUseCase);
 
-  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
+  @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
   orderDetails = signal<any[]>([]);
   cloneOrderMaintenances = signal<OrderMaintenance[]>([]);
@@ -785,7 +785,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       };
       this.orderMaintenances.set(structuredClone(this.cloneOrderMaintenances()));
       this.setGroupValues();
-      this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
+      this.tabulatorComponent.getInstance().setGroupBy(['orderDetailId']);
 
       this.drawImpuestoTotales();
     }
@@ -1002,7 +1002,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
       this.orderMaintenances.update((r) => [...r, row]);
 
       this.setCalculoTotales('quantity', row, undefined);
-      this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
+      this.tabulatorComponent.getInstance().setGroupBy(['orderDetailId']);
       return;
     }
 
@@ -1071,7 +1071,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
                 }
                 if (code === '2') {
                   this.setCalculoTotales('quantity', row, undefined);
-                  this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
+                  this.tabulatorComponent.getInstance().setGroupBy(['orderDetailId']);
                 }
               }
             }
@@ -1123,7 +1123,7 @@ export class OrderMaintenanceModalComponent implements OnInit {
     // }
 
     // this.setCalculoTotales("quantity", row, undefined)
-    this.tabulatorComponent.refTabulator.setGroupBy(['orderDetailId']);
+    this.tabulatorComponent.getInstance().setGroupBy(['orderDetailId']);
   }
 
   /**
@@ -1142,9 +1142,12 @@ export class OrderMaintenanceModalComponent implements OnInit {
       columnDefs: this.tabulatorOptions.columns,
     });
 
-    const row = this.tabulatorComponent.refTabulator.getRows().find(function (row) {
-      return row.getData()['rowguid'] === data.rowguid;
-    });
+    const row = this.tabulatorComponent
+      .getInstance()
+      .getRows()
+      .find(function (row) {
+        return row.getData()['rowguid'] === data.rowguid;
+      });
 
     if (row) {
       row.update({

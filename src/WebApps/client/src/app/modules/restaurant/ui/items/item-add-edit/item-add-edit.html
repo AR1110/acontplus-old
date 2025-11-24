@@ -22,10 +22,9 @@
           [categoryAbbraviation]="getCategoryAbbreviationToSearch()"
         />
 
-        <app-tabulator
-          [columnNames]="columns"
-          [tableData]="itemCompositions()"
-          [theme]="'semantic-ui'"
+        <acp-tabulator-table
+          [columns]="columns"
+          [data]="itemCompositions()"
           [options]="{
             height: 'auto',
             rowHeader: {

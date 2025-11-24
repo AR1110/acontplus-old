@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { Room } from '@restaurant/domain/models/room.model';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
@@ -19,7 +19,7 @@ import { MatInputModule } from '@angular/material/input';
   selector: 'app-floor-add-edit-modal',
   imports: [
     ReactiveFormsModule,
-    TabulatorComponent,
+    TabulatorTable,
     MatSlideToggle,
     Button,
     MatCustomDialogComponent,

@@ -43,7 +43,7 @@ import {
   GetProductPurchaseUseCase,
   ValidateProductStockUseCase,
 } from '@inventory/product/application/use-cases/product/get-product.use-case';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import DecimalUtil from '@core/utils/decimal.util';
@@ -75,7 +75,7 @@ interface CommonType {
     AddEditProductDirective,
     MatIcon,
     MatIconButton,
-    TabulatorComponent,
+    TabulatorTable,
   ],
   templateUrl: './warehouse-transfer-add-edit.html',
   styleUrl: './warehouse-transfer-add-edit.scss',

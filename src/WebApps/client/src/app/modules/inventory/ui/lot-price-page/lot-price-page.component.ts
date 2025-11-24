@@ -3,7 +3,7 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -46,7 +46,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     MatInputModule,
     MatRadioModule,
     BreadcrumbComponent,
-    TabulatorComponent,
+    TabulatorTable,
     SubCategorySelectMultipleComponent,
     ProductSearchComponent,
     SupplierSearchComponent,
@@ -65,7 +65,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 export class LotPricePageComponent implements OnInit {
   private readonly lotPriceSvc = inject(LotPriceService);
 
-  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
+  @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
   readonly catalogs = [
     // { code: 0, description: 'Ninguno' },
@@ -156,10 +156,10 @@ export class LotPricePageComponent implements OnInit {
         const targetElement = e.target;
         if (targetElement.tagName === 'INPUT' && targetElement.type === 'checkbox') {
           if (!targetElement.checked) {
-            this.tabulatorComponent.refTabulator.deselectRow();
+            this.tabulatorComponent.getInstance().deselectRow();
             return;
           }
-          const rows = this.tabulatorComponent.refTabulator.getRows();
+          const rows = this.tabulatorComponent.getInstance().getRows();
 
           for (let i = 0; i < rows.length; i++) {
             const childRows = rows[i].getTreeChildren();
@@ -880,7 +880,7 @@ export class LotPricePageComponent implements OnInit {
   }
 
   getSelectedData() {
-    const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+    const selectedData = this.tabulatorComponent.getInstance().getSelectedData();
     return this.productsModified.filter((data) => {
       return selectedData.some((rowSelect) => {
         return this.isProductModified(data, rowSelect);

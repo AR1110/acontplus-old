@@ -96,9 +96,9 @@
     <!--    end row products -->
 
     <!--    start details-->
-    <app-tabulator
-      [columnNames]="columns()"
-      [tableData]="details()"
+    <acp-tabulator-table
+      [columns]="columns()"
+      [data]="details()"
       [options]="{
         height: '100%',
         dataTreeSelectPropagate: false,

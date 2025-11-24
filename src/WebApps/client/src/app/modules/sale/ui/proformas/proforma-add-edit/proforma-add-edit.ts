@@ -17,7 +17,7 @@ import { MatIconButton } from '@angular/material/button';
 import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
 import { SearchDialogService } from '@shared/services/search-dialog';
 import { MatIcon } from '@angular/material/icon';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
@@ -57,7 +57,7 @@ import { ProformaDetail } from '@sale/domain/models/proforma-detail';
     AddEditProductDirective,
     MatIcon,
     MatIconButton,
-    TabulatorComponent,
+    TabulatorTable,
     DataGrid,
   ],
   templateUrl: './proforma-add-edit.html',

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -26,7 +26,7 @@ import { MatTooltip } from '@angular/material/tooltip';
   selector: 'app-item-add-edit',
   imports: [
     ReactiveFormsModule,
-    TabulatorComponent,
+    TabulatorTable,
     Button,
     MatCustomDialogComponent,
     MatInputModule,

@@ -185,10 +185,10 @@
       </div>
     </div>
     <div class="mt-2">
-      <app-tabulator
-        [columnNames]="columns"
+      <acp-tabulator-table
+        [columns]="columns"
         [dataTree]="true"
-        [tableData]="nestedProducts()"
+        [data]="nestedProducts()"
         [dataTreeStartExpanded]="true"
         (cellEdited)="cellEdited($event)"
         (cellClick)="cellClick($event)"

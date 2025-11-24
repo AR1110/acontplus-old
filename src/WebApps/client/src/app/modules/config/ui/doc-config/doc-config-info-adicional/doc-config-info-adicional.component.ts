@@ -11,7 +11,7 @@ import {
 import { FormsModule } from '@angular/forms';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { isValidField } from '@core/utils/utils';
 import { Button } from '@acontplus/ng-components';
@@ -52,7 +52,7 @@ export class DocConfigInfoAdicionalComponent implements OnInit, AfterViewInit {
   private $getInfoAdicional = inject(GetDocConfigInfoAdicionalUseCase);
   private $createUseCase = inject(CreateDocConfigUseCase);
 
-  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
+  @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
   dataSource = signal<DocConfigInfoAdicional[]>([]);
 

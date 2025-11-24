@@ -665,10 +665,9 @@
 
                     <!-- Success State -->
                     @if (!isLoadingDocs() && !loadError() && docsConfig().length > 0) {
-                      <app-tabulator
-                        [theme]="'semantic-ui'"
-                        [columnNames]="columnNames"
-                        [tableData]="docsConfig()"
+                      <acp-tabulator-table
+                        [columns]="columnNames"
+                        [data]="docsConfig()"
                         [options]="{ height: 400 }"
                         [dataTree]="true"
                         [dataTreeChildField]="'_children'"
