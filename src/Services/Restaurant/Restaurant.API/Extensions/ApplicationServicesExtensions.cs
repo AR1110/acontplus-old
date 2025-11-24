@@ -3,7 +3,6 @@ using Acontplus.Services.Extensions.Authentication;
 using Restaurant.Application.Mapping;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
-using System.Text.Json;
 
 namespace Restaurant.API.Extensions;
 

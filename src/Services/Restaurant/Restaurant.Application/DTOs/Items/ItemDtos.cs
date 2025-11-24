@@ -1,5 +1,3 @@
-using Restaurant.Application.Dtos;
-
 namespace Restaurant.Application.Dtos.Items;
 
 public record ItemCreate
