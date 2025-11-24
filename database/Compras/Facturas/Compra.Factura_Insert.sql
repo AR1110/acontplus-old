@@ -278,7 +278,7 @@ BEGIN
 				RETURN 
 			END
 
-		IF EXISTS(SELECT 1 FROM FacturaCompra WHERE nroAutorizacion = @nroAutorizacion  AND idProveedor = @idProveedor AND puntoEmision= @puntoEmision AND nroDocumento = @nroDocumento )
+		IF EXISTS(SELECT 1 FROM FacturaCompra WHERE nroAutorizacion = @nroAutorizacion  AND idProveedor = @idProveedor AND puntoEmision= @puntoEmision AND nroDocumento = @nroDocumento AND estado = 1)
 			BEGIN
 				SELECT '0'code,'Este comprobante ya se encuentra registrado'[message]
 				RETURN 

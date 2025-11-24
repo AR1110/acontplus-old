@@ -1,11 +1,4 @@
-using Acontplus.Core.Dtos.Responses;
-using Acontplus.Core.Enums;
-using Acontplus.Core.Extensions;
-using Mapster;
-using Restaurant.Application.Dtos.Items;
 using Restaurant.Application.Dtos.Promotions;
-using Restaurant.Application.Interfaces;
-using Restaurant.Application.Services;
 
 namespace Restaurant.API.Endpoints.Promotion;
 

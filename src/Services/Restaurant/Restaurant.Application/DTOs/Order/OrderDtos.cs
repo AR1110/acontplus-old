@@ -1,4 +1,4 @@
-namespace Restaurant.Application.Dtos;
+namespace Restaurant.Application.DTOs.Orders;
 
 public record OrderCreate
 {
@@ -44,6 +44,13 @@ public record OrderUpdate
     public bool IsDivided { get; init; }
     public bool IsFinished { get; init; }
     public ICollection<OrderDetailUpdate>? OrderDetails { get; init; }
+}
+
+public record OrderCancel
+{
+    public bool IsActive { get; init; }
+    public bool IsDeleted { get; init; }
+    public string? Obs { get; init; }
 }
 
 public record OrderDetailCreate

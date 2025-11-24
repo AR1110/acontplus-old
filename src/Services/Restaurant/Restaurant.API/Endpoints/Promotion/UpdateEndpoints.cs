@@ -10,7 +10,7 @@ public static class UpdateEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .WithDescription("Endpoints for managing promotions.")
-            .WithTags("promotions");
+            .WithTags("Promotions");
 
         group.MapPut("/{id:int}", async (
                 int id,
