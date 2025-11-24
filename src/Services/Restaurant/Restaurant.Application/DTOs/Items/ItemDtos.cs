@@ -45,6 +45,7 @@ public record ItemItem
     public string? Measure { get; set; }
     public string? AuxiliaryCode { get; set; }
     public decimal? CostPrice { get; set; }
+    public decimal? PriceWithTax { get; set; }
     public string? Category { get; set; }
     public string? AcronymFamily { get; set; }
     public ICollection<ItemCompositionItem>? Compositions { get; init; }
