@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Index";
-    
+
 }
 
 <div ng-controller="facturaCompraCtrl">
@@ -19,7 +19,7 @@
                     <li class="breadcrumb-item active">Factura de Compra</li>
                     </ol> *@
                 <button type="button" class="btn btn-info m-l-15" ng-if="accion.leer && accion.crear"
-                        ng-click="openModalNew()">
+                    ng-click="openModalNew()">
                     <i class="fa fa-plus-circle"></i> Nuevo
                 </button>
                 @* <button class="btn btn-danger" ng-click="openModalTestNew()">Test New</button> *@
@@ -34,7 +34,7 @@
                     <div class="form-gorup">
                         <span for="establecimiento">Establecimiento</span>
                         <select name="establecimiento" id="establecimiento" ng-model="dataSearch.codEstab"
-                                class="form-control  border-select" ng-change="getFacturas()">
+                            class="form-control  border-select" ng-change="getFacturas()">
                             <option ng-value="item.codEstab" ng-repeat="item in establecimientos">
                                 {{item.nombreComercial}}
                             </option>
@@ -48,24 +48,24 @@
                             <div class="input-group-text">
                                 <div class="custom-control custom-checkbox mr-sm-2">
                                     <input type="checkbox" ng-model="dataSearch.checkBoxFecha"
-                                           class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
+                                        class="custom-control-input" id="checkBoxFecha" ng-change="refresh()">
                                     <label class="custom-control-label" for="checkBoxFecha"></label>
                                 </div>
                             </div>
                         </div>
 
                         <date-range-filter current-date="dataSearch.fechaInicio" start-date="dataSearch.fechaInicio"
-                                           end-date="dataSearch.fechaFin"
-                                           result-range-date="resultRangeFilter(result)"></date-range-filter>
+                            end-date="dataSearch.fechaFin"
+                            result-range-date="resultRangeFilter(result)"></date-range-filter>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span for="proveedorFiltro">Proveedor:</span>
                         <input type="text" id="providerInputSearch" class="form-control border-select"
-                               ng-model="proveedor.nombreProveedor" provider-search-drtv
-                               on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
-                               placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
+                            ng-model="proveedor.nombreProveedor" provider-search-drtv
+                            on-select="onSelectProveedor(result)" on-keyup="onKeyupProveedor()"
+                            placeholder="Ingrese C.I o Nombre Comercial" onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteProviderTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -78,7 +78,7 @@
                     <div class="card">
                         <div class="card-body">
                             <button type="button" class="btn btn-info btn-sm" data-toggle="button" data-more="#sh"
-                                    aria-pressed="false" ng-click="onClickBtnMore()">
+                                aria-pressed="false" ng-click="onClickBtnMore()">
                                 <span class="text">
                                     <i class="mdi mdi-eye" aria-hidden="true" uib-tooltip="Más opciones"></i>
                                 </span>
@@ -87,7 +87,7 @@
                                 </span>
                             </button>
                             <button type="button" class="btn btn-success btn-sm" ng-click="getFacturas()"
-                                    uib-tooltip="Recargar">
+                                uib-tooltip="Recargar">
                                 <i class="mdi mdi-refresh"></i>
                             </button>
                         </div>
@@ -99,8 +99,8 @@
                     <div class="form-group">
                         <span for="usuarioFiltro">Usuario</span>
                         <input type="text" id="customerInputSearchUser" class="form-control border-select"
-                               ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
-                               on-keyup="onKeyupUser()" placeholder="..." onclick="select();">
+                            ng-model="searchUser.nombreCompleto" user-search-drtv on-select="onSelectUser(result)"
+                            on-keyup="onKeyupUser()" placeholder="..." onclick="select();">
 
                         <script type="text/ng-template" id="autocompleteUserTemplate.html">
                             <div class="autocomplete-suggestion-uib-typeahead">
@@ -112,7 +112,8 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                     <div class="form-group">
                         <span>Estado:</span>
-                        <select class="form-control border-select" ng-model="dataSearch.codEstadoDoc" ng-change="getFacturas()">
+                        <select class="form-control border-select" ng-model="dataSearch.codEstadoDoc"
+                            ng-change="getFacturas()">
                             <option value="">Todos</option>
                             <option ng-value="item.codigo" ng-repeat="item in estadosDoc">
                                 {{item.descripcion}}
@@ -124,7 +125,7 @@
                     <div class="form-group">
                         <label for="subcategoryId">Subcategoría:</label>
                         <select class="form-control border-select" id="" ng-model="dataSearch.subcategoryId"
-                                ng-change="getFacturas()">
+                            ng-change="getFacturas()">
                             <option ng-value="">Todos</option>
                             <option ng-value="item.id" ng-repeat="item in subcategories">
                                 {{item.name}}
@@ -142,15 +143,15 @@
                 <div class="col-6 d-flex justify-content-start">
                     <span class="form-group pull-left page-size form-inline">
                         <select class="form-control control-color border-select" ng-model="dataSearch.pageSize"
-                                ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
+                            ng-change="changePageSize()" ng-options="ra for ra in recordsQuantity">
                         </select>
                     </span>
                 </div>
 
                 <div class="col-6 d-flex justify-content-end">
                     <form class="form-material">
-                        <input type="text" class="form-control" ng-keyup="filterLocal()" ng-model="dataSearch.textSearch"
-                               placeholder="Buscar">
+                        <input type="text" class="form-control" ng-keyup="filterLocal()"
+                            ng-model="dataSearch.textSearch" placeholder="Buscar">
                     </form>
                 </div>
             </div>
@@ -159,8 +160,8 @@
             </div>
             <div ng-style="getStyle($index)">
                 <md-table-container name="wireTable" infinite-scroll="loadMore($index)" infinite-scroll-distance="1"
-                                    infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
-                                    style=" max-height: 400px; overflow-x: hidden;">
+                    infinite-scroll-parent="true" ng-init="isShow=true" ng-show="isShow"
+                    style=" max-height: 400px; overflow-x: hidden;">
                     <table resize master md-table name="innerWireTable">
                         <thead fix-head md-head md-on-reorder="facturaCompras">
                             <tr md-row>
@@ -182,10 +183,19 @@
                                 <td md-cell>
                                     <md-menu>
                                         <md-button aria-label="Open demo menu" class="md-icon-button"
-                                                   ng-click="$mdMenu.open($event)">
+                                            ng-click="$mdMenu.open($event)">
                                             <i class="mdi mdi-menu"></i>
                                         </md-button>
                                         <md-menu-content class="md-dense">
+                                            <md-menu-item ng-if="accion.crear">
+                                                <md-button ng-click="openModalDuplicate(f)">
+                                                    <span md-menu-align-target>
+                                                        <i class="ti-files"></i>
+                                                        Duplicar
+                                                    </span>
+                                                </md-button>
+                                            </md-menu-item>
+
                                             <md-menu-item>
                                                 <md-button ng-click="openModalDetalle(f)">
                                                     <span md-menu-align-target>
@@ -221,14 +231,14 @@
                                                 </md-button>
                                             </md-menu-item>
 
-                                            <md-menu-item  >
-                                                <md-button  btn-cuenta-por-pagar>
+                                            <md-menu-item>
+                                                <md-button btn-cuenta-por-pagar>
                                                     <span md-menu-align-target>
-                                                        <i class=" far fa-money-bill-alt"></i>                                                    
+                                                        <i class=" far fa-money-bill-alt"></i>
                                                         Cuenta por pagar
                                                     </span>
                                                 </md-button>
-                                            </md-menu-item> 
+                                            </md-menu-item>
                                         </md-menu-content>
                                     </md-menu>
                                 </td>
