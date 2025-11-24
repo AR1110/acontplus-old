@@ -12,7 +12,7 @@
       <input matInput [(ngModel)]="data.descripcion" appToUpperCase placeholder="Ej: Moto" />
     </mat-form-field>
 
-    <app-mat-input-chip [chips]="etiquetas" [labelText]="'Etiquetas'" />
+    <acp-input-chip [chips]="etiquetas" [labelText]="'Etiquetas'" />
 
     @if (data.idEtiqueta > 0) {
       <mat-radio-group aria-label="Select an option status" [(ngModel)]="data.estado">

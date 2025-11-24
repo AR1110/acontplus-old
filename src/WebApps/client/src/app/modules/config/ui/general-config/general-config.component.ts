@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { Button } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
@@ -40,7 +40,7 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
     DecimalSelectComponent,
     BreadcrumbComponent,
     DynamicCard,
-    MatInputChipComponent,
+    InputChip,
     Button,
   ],
   templateUrl: './general-config.component.html',

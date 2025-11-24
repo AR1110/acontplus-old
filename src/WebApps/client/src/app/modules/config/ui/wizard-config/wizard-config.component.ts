@@ -52,7 +52,7 @@ import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 
 // Shared Components & Models
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -163,7 +163,7 @@ interface EstabFormControls {
     MatTooltipModule,
     BreadcrumbComponent,
     TabulatorComponent,
-    MatInputChipComponent,
+    InputChip,
     Button,
     NgDynamicSelectComponent,
   ],
