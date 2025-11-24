@@ -241,7 +241,7 @@
                         }
                         Swal.fire({
                             icon: 'warning',
-                            html: response.message,
+                            html: parsed.message,
                         });
                         throw new Error("Operación restringida por normativa SRI.");
                     }
