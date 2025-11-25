@@ -1,3 +1,5 @@
+using Restaurant.Application.Dtos.Order;
+
 namespace Restaurant.API.Endpoints.Order;
 
 public static class GetEndpoints
@@ -32,7 +34,7 @@ public static class GetEndpoints
             .WithName("GetOrders")
             .WithSummary("Get all orders")
             .WithDescription("Retrieve a paginated list of orders.")
-            .Produces<PagedResult<OrderItem>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<OrderItemTestDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
