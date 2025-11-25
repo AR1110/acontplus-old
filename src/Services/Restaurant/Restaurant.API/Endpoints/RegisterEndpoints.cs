@@ -1,8 +1,8 @@
-using Restaurant.API.Endpoints.Item;
-using Restaurant.API.Endpoints.MealManagement;
-using Restaurant.API.Endpoints.Promotion;
+using Restaurant.Api.Endpoints.Item;
+using Restaurant.Api.Endpoints.MealManagement;
+using Restaurant.Api.Endpoints.Promotion;
 
-namespace Restaurant.API.Endpoints;
+namespace Restaurant.Api.Endpoints;
 
 public static class RegisterEndpoints
 {

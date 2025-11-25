@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace Identity.API.Services;
+namespace Identity.Api.Services;
 
 public interface IRefreshTokenService
 {

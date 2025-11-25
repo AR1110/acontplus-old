@@ -1,7 +1,7 @@
 using Acontplus.Core.Extensions;
 using System.Security.Cryptography.X509Certificates;
 
-namespace Configuration.API.Controllers;
+namespace Configuration.Api.Controllers;
 
 public class FirmaElectronicaController(
     IFirmaElectronicaService firmaElectronicaService) : BaseApiController

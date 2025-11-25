@@ -1,4 +1,4 @@
-namespace BarberShop.API.Endpoints.Implementations;
+namespace BarberShop.Api.Endpoints.Implementations;
 
 public class WorkSessionEndpoints(IUserContext userContext, IWorkSessionService workSessionService)
     : IWorkSessionEndpoints

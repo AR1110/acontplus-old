@@ -1,4 +1,4 @@
-namespace Identity.API.Endpoints.UserProfileEndpoints;
+namespace Identity.Api.Endpoints.UserProfileEndpoints;
 
 public static class UserProfileEndpoints
 {

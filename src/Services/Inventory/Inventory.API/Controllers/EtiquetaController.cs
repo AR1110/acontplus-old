@@ -1,4 +1,4 @@
-namespace Inventory.API.Controllers;
+namespace Inventory.Api.Controllers;
 
 public class EtiquetaController(IEtiquetaService etiquetaService) : BaseApiController
 {

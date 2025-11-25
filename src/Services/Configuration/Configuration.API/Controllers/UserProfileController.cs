@@ -1,4 +1,4 @@
-namespace Configuration.API.Controllers;
+namespace Configuration.Api.Controllers;
 
 public class UserProfileController(IUserProfileService userProfileService) : BaseApiController
 {

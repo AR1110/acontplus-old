@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers;
+namespace Billing.Api.Controllers;
 
 public class FacturaReembolsoController : BaseApiController
 {

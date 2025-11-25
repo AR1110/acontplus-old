@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Restaurant.API.Controllers;
+namespace Restaurant.Api.Controllers;
 
 public class RoomController(IRoomRepository roomService) : BaseApiController
 {

@@ -1,4 +1,4 @@
-namespace Vet.API.Controllers;
+namespace Vet.Api.Controllers;
 
 public class PetController(IPetRepository petService) : BaseApiController
 {

@@ -1,6 +1,6 @@
-using Billing.API.Endpoints.Interfaces;
+using Billing.Api.Endpoints.Interfaces;
 
-namespace Billing.API.Endpoints.Implementations;
+namespace Billing.Api.Endpoints.Implementations;
 
 public class DocumentoElectronicoErrorEndpoints(IDocumentoElectronicoErrorService documentoElectronicoErrorService, IUserContext userContext) : IDocumentoElectronicoErrorEndpoints
 {

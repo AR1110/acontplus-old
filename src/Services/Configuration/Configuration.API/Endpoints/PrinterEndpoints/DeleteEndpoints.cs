@@ -1,4 +1,4 @@
-namespace Configuration.API.Endpoints.PrinterEndpoints;
+namespace Configuration.Api.Endpoints.PrinterEndpoints;
 
 public static class DeleteEndpoints
 {

@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers.Sri;
+namespace Billing.Api.Controllers.Sri;
 
 public class CatalogoController(ICatalogoService catalogoService) : BaseApiController
 {

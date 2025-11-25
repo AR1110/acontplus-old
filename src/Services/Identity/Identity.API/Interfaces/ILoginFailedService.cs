@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Interfaces;
+namespace Identity.Api.Interfaces;
 
 public interface ILoginFailedService
 {

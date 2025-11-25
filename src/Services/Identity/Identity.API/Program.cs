@@ -1,5 +1,5 @@
 using Acontplus.Services.Extensions;
-using Identity.API.Endpoints;
+using Identity.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

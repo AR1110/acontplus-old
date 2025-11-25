@@ -1,4 +1,4 @@
-namespace Billing.API.Endpoints.Interfaces.Sri;
+namespace Billing.Api.Endpoints.Interfaces.Sri;
 
 public interface IAtsEndpoints
 {

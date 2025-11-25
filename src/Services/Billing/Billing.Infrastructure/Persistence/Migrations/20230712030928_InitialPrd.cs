@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Billing.API.Data.Migrations
+namespace Billing.Api.Data.Migrations
 {
     public partial class InitialPrd : Migration
     {

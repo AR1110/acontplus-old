@@ -1,4 +1,4 @@
-namespace BarberShop.API.Endpoints.Implementations;
+namespace BarberShop.Api.Endpoints.Implementations;
 
 public class SeatEndpoints(IUserContext userContext, ISeatService seatService) : ISeatEndpoints
 {

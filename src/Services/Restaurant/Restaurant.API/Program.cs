@@ -1,4 +1,4 @@
-using Restaurant.API.Endpoints;
+using Restaurant.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

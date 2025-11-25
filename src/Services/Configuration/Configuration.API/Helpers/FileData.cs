@@ -1,4 +1,4 @@
-namespace Configuration.API.Helpers;
+namespace Configuration.Api.Helpers;
 
 public static class FileData
 {

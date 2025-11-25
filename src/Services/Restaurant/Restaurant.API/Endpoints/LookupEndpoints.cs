@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints;
+namespace Restaurant.Api.Endpoints;
 
 public static class LookupEndpoints
 {

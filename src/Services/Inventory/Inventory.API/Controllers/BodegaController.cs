@@ -1,4 +1,4 @@
-namespace Inventory.API.Controllers;
+namespace Inventory.Api.Controllers;
 
 public class BodegaController(IBodegaService bodegaService) : BaseApiController
 {

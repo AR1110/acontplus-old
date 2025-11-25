@@ -1,6 +1,6 @@
 using Acontplus.Core.Extensions;
 
-namespace Sales.API.Controllers;
+namespace Sales.Api.Controllers;
 
 public class ClienteController(IClienteService clienteService) : BaseApiController
 {

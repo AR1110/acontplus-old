@@ -1,8 +1,8 @@
-﻿using Restaurant.API.Endpoints.MealManagement.MealConsumption;
-using Restaurant.API.Endpoints.MealManagement.MealPlan;
-using Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
+using Restaurant.Api.Endpoints.MealManagement.MealConsumption;
+using Restaurant.Api.Endpoints.MealManagement.MealPlan;
+using Restaurant.Api.Endpoints.MealManagement.MealScheduleSetting;
 
-namespace Restaurant.API.Endpoints.MealManagement;
+namespace Restaurant.Api.Endpoints.MealManagement;
 
 public static class RegisterMealManagementEndpoints
 {

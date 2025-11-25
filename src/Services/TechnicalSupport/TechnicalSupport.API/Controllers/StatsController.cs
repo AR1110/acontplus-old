@@ -1,4 +1,4 @@
-﻿namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.Api.Controllers;
 
 public class StatsController : BaseApiController
 {

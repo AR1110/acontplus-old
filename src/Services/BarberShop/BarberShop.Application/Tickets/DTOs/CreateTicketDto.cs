@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Tickets.DTOs;
+namespace BarberShop.Application.Tickets.DTOs;
 
 public class CreateTicketDto
 {

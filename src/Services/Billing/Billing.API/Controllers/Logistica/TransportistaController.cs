@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers.Logistica;
+namespace Billing.Api.Controllers.Logistica;
 
 public class TransportistaController(ITransportistaService transportistaService) : BaseApiController
 {

@@ -1,7 +1,7 @@
 using Acontplus.Core.Extensions;
 using OrderDto = TechnicalSupport.Domain.DTOs.OrderDto;
 
-namespace TechnicalSupport.API.Controllers;
+namespace TechnicalSupport.Api.Controllers;
 
 public class OrderController : BaseApiController
 {

@@ -1,4 +1,4 @@
-namespace BarberShop.API.Endpoints.Interfaces;
+namespace BarberShop.Api.Endpoints.Interfaces;
 
 public interface IWorkSessionEndpoints
 {

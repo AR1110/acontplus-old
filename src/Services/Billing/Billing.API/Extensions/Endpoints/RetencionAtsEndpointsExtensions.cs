@@ -1,4 +1,4 @@
-namespace Billing.API.Extensions.Endpoints;
+namespace Billing.Api.Extensions.Endpoints;
 
 public static class RetencionAtsEndpointsExtensions
 {

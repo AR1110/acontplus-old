@@ -1,6 +1,6 @@
 using Restaurant.Application.Dtos.Promotions;
 
-namespace Restaurant.API.Endpoints.Promotion;
+namespace Restaurant.Api.Endpoints.Promotion;
 
 public static class CreateEndpoints
 {

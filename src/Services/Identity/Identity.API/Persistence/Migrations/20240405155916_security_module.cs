@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.API.Data.Migrations
+namespace Identity.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class security_module : Migration

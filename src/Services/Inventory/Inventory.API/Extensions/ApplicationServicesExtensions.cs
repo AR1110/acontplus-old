@@ -1,7 +1,7 @@
 using Acontplus.Services.Extensions.Authentication;
 using Scrutor;
 
-namespace Inventory.API.Extensions;
+namespace Inventory.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

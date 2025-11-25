@@ -15,7 +15,7 @@ global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Purchases.API.Utils;
+global using Purchases.Api.Utils;
 global using Purchases.Application.DTOs;
 global using Purchases.Application.Interfaces;
 global using Purchases.Domain.Repositories;

@@ -1,6 +1,6 @@
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
-using Common.API.Endpoints;
+using Common.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

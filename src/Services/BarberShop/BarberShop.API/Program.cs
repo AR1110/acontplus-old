@@ -1,5 +1,5 @@
-using BarberShop.API.Extensions;
-using BarberShop.API.Extensions.Endpoints;
+using BarberShop.Api.Extensions;
+using BarberShop.Api.Extensions.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

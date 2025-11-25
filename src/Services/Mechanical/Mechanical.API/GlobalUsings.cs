@@ -5,7 +5,7 @@ global using Acontplus.Persistence.SqlServer.Repositories;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Authentication;
-global using Mechanical.API.Extensions;
+global using Mechanical.Api.Extensions;
 global using Mechanical.Application.Interfaces;
 global using Mechanical.Application.Services;
 global using Mechanical.Domain.Repositories;

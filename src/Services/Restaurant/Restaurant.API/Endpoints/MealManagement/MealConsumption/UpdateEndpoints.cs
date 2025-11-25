@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints.MealManagement.MealConsumption;
+namespace Restaurant.Api.Endpoints.MealManagement.MealConsumption;
 
 public static class UpdateEndpoints
 {

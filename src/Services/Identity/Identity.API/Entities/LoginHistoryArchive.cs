@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Entities;
+namespace Identity.Api.Entities;
 
 [Table("LoginHistoryArchive", Schema = "Seguridad")]
 public class LoginHistoryArchive : BaseEntity

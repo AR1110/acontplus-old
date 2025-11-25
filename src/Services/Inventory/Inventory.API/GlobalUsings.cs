@@ -8,7 +8,7 @@ global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
-global using Inventory.API.Extensions;
+global using Inventory.Api.Extensions;
 global using Inventory.Application.DTOs;
 global using Inventory.Application.Interfaces;
 global using Inventory.Application.Services;

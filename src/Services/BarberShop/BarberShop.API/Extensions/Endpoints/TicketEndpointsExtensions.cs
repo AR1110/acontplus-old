@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace BarberShop.API.Extensions.Endpoints;
+namespace BarberShop.Api.Extensions.Endpoints;
 
 public static class TicketEndpointsExtensions
 {

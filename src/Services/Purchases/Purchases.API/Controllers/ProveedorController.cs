@@ -1,4 +1,4 @@
-namespace Purchases.API.Controllers;
+namespace Purchases.Api.Controllers;
 
 public class ProveedorController(IProveedorRepository _proveedorService) : BaseApiController
 {

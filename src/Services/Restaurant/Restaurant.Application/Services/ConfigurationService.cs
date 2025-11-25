@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Application.Services;
+namespace Restaurant.Application.Services;
 
 public interface IConfigurationService
 {

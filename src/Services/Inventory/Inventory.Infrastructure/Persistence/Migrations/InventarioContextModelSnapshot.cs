@@ -22,7 +22,7 @@ namespace Inventory.Infrastructure.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Inventory.API.Entities.MotivoDiscrepancia", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.MotivoDiscrepancia", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -85,7 +85,7 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.ToTable("MotivoDiscrepancia", "Inventario");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.ProductPhoto", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.ProductPhoto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -156,7 +156,7 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.ToTable("ProductPhoto", "Inventario");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.StockFisico", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.StockFisico", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -242,7 +242,7 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.ToTable("StockFisico", "Inventario");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.StockFisicoDetalle", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.StockFisicoDetalle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -325,7 +325,7 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.ToTable("StockFisicoDetalle", "Inventario");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.SubcategoryPhoto", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.SubcategoryPhoto", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,13 +396,13 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.ToTable("SubcategoryPhoto", "Inventario");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.StockFisicoDetalle", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.StockFisicoDetalle", b =>
                 {
-                    b.HasOne("Inventory.API.Entities.MotivoDiscrepancia", "MotivoDiscrepancia")
+                    b.HasOne("Inventory.Api.Entities.MotivoDiscrepancia", "MotivoDiscrepancia")
                         .WithMany()
                         .HasForeignKey("MotivoDiscrepanciaId");
 
-                    b.HasOne("Inventory.API.Entities.StockFisico", "StockFisico")
+                    b.HasOne("Inventory.Api.Entities.StockFisico", "StockFisico")
                         .WithMany("StockFisicoDetalles")
                         .HasForeignKey("StockFisicoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -413,7 +413,7 @@ namespace Inventory.Infrastructure.Data.Migrations
                     b.Navigation("StockFisico");
                 });
 
-            modelBuilder.Entity("Inventory.API.Entities.StockFisico", b =>
+            modelBuilder.Entity("Inventory.Api.Entities.StockFisico", b =>
                 {
                     b.Navigation("StockFisicoDetalles");
                 });

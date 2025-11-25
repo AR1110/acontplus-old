@@ -1,6 +1,6 @@
-using Billing.API.Endpoints.Interfaces;
+using Billing.Api.Endpoints.Interfaces;
 
-namespace Billing.API.Extensions.Endpoints;
+namespace Billing.Api.Extensions.Endpoints;
 
 public static class BillingEndpointsExtensions
 {

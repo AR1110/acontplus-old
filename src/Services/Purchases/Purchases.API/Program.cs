@@ -1,4 +1,4 @@
-using Purchases.API.Extensions;
+using Purchases.Api.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

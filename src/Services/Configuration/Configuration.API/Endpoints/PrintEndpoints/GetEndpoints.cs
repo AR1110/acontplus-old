@@ -1,4 +1,4 @@
-namespace Configuration.API.Endpoints.PrintEndpoints;
+namespace Configuration.Api.Endpoints.PrintEndpoints;
 
 public static class GetEndpoints
 {

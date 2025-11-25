@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints.Promotion;
+namespace Restaurant.Api.Endpoints.Promotion;
 
 public static class RegisterPromotionEndpoints
 {

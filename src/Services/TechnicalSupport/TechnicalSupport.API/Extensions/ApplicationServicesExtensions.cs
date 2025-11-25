@@ -1,6 +1,6 @@
 using Acontplus.Services.Extensions.Authentication;
 
-namespace TechnicalSupport.API.Extensions;
+namespace TechnicalSupport.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

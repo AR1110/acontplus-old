@@ -1,4 +1,4 @@
-namespace Identity.API.Helpers;
+namespace Identity.Api.Helpers;
 
 public static class UserAgentHelper
 {

@@ -3,7 +3,7 @@ using Acontplus.Services.Extensions.Authentication;
 using Vet.Infrastructure.Persistence;
 using Vet.Infrastructure.Persistence.Repositories;
 
-namespace Vet.API.Extensions;
+namespace Vet.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

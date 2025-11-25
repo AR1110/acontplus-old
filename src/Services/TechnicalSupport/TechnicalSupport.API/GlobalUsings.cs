@@ -8,7 +8,7 @@ global using Acontplus.Services.Extensions.Context;
 global using Acontplus.Utilities.Data;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using TechnicalSupport.API.Extensions;
+global using TechnicalSupport.Api.Extensions;
 global using TechnicalSupport.Application.DTOs;
 global using TechnicalSupport.Application.Interfaces;
 global using TechnicalSupport.Application.Services;

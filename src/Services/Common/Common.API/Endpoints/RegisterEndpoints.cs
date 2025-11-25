@@ -2,7 +2,7 @@ using Acontplus.Core.Abstractions.Context;
 using Acontplus.Utilities.Data;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Common.API.Endpoints;
+namespace Common.Api.Endpoints;
 
 public static class RegisterEndpoints
 {

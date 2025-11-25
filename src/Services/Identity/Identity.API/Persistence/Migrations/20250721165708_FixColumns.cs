@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.API.Data.Migrations
+namespace Identity.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FixColumns : Migration

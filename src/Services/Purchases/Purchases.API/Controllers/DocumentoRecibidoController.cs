@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace Purchases.API.Controllers;
+namespace Purchases.Api.Controllers;
 
 public class DocumentoRecibidoController(
     IAdoRepository adoRepository,

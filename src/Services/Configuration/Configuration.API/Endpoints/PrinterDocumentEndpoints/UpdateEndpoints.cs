@@ -1,4 +1,4 @@
-namespace Configuration.API.Endpoints.PrinterDocumentEndpoints;
+namespace Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 
 public static class UpdateEndpoints
 {

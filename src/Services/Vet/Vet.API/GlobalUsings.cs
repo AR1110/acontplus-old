@@ -7,7 +7,7 @@ global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Context;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Vet.API.Extensions;
+global using Vet.Api.Extensions;
 global using Vet.Application.Interfaces;
 global using Vet.Application.Services;
 global using Vet.Domain.Entities;

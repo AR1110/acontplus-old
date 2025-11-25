@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Mechanical.API.Data.Migrations
+namespace Mechanical.Api.Data.Migrations
 {
     [DbContext(typeof(MechanicalContext))]
     [Migration("20250528043053_DefaultValuesBaseColumns")]
@@ -25,7 +25,7 @@ namespace Mechanical.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Mechanical.API.Entities.Inspection", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Inspection", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -146,7 +146,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("Inspection", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.Support", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Support", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -238,7 +238,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("Support", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.SupportDetail", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.SupportDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -343,7 +343,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("SupportDetail", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.SupportDocument", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.SupportDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -413,7 +413,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("SupportDocument", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.SupportStatus", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.SupportStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -485,7 +485,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("SupportStatus", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.Vehicle", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Vehicle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -593,7 +593,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("Vehicle", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehicleCompany", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehicleCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -662,7 +662,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehicleCompany", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehiclePart", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehiclePart", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -736,7 +736,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehiclePart", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehiclePartType", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehiclePartType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -805,7 +805,7 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehiclePartType", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehicleType", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehicleType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -874,9 +874,9 @@ namespace Mechanical.API.Data.Migrations
                     b.ToTable("VehicleType", "Mechanical");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.Inspection", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Inspection", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.Support", "support")
+                    b.HasOne("Mechanical.Api.Entities.Support", "support")
                         .WithMany()
                         .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -885,15 +885,15 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("support");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.Support", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Support", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.SupportStatus", "SupportStatus")
+                    b.HasOne("Mechanical.Api.Entities.SupportStatus", "SupportStatus")
                         .WithMany()
                         .HasForeignKey("SupportStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Mechanical.API.Entities.VehicleCompany", "VehicleCompany")
+                    b.HasOne("Mechanical.Api.Entities.VehicleCompany", "VehicleCompany")
                         .WithMany()
                         .HasForeignKey("VehicleCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -904,9 +904,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("VehicleCompany");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.SupportDetail", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.SupportDetail", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.Support", "support")
+                    b.HasOne("Mechanical.Api.Entities.Support", "support")
                         .WithMany()
                         .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -915,9 +915,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("support");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.SupportDocument", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.SupportDocument", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.Support", "Support")
+                    b.HasOne("Mechanical.Api.Entities.Support", "Support")
                         .WithMany()
                         .HasForeignKey("SupportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -926,9 +926,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("Support");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.Vehicle", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.Vehicle", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.VehicleType", "VehicleType")
+                    b.HasOne("Mechanical.Api.Entities.VehicleType", "VehicleType")
                         .WithMany()
                         .HasForeignKey("VehicleTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -937,9 +937,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("VehicleType");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehicleCompany", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehicleCompany", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.Vehicle", "Vehicle")
+                    b.HasOne("Mechanical.Api.Entities.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -948,9 +948,9 @@ namespace Mechanical.API.Data.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("Mechanical.API.Entities.VehiclePart", b =>
+            modelBuilder.Entity("Mechanical.Api.Entities.VehiclePart", b =>
                 {
-                    b.HasOne("Mechanical.API.Entities.VehiclePartType", "vehiclePartType")
+                    b.HasOne("Mechanical.Api.Entities.VehiclePartType", "vehiclePartType")
                         .WithMany()
                         .HasForeignKey("VehiclePartTypeId")
                         .OnDelete(DeleteBehavior.Cascade)

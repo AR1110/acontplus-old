@@ -1,4 +1,4 @@
-namespace Identity.API.Entities;
+namespace Identity.Api.Entities;
 
 [Table("ForgotPassword", Schema = "Seguridad")]
 public class ForgotPassword : BaseEntity

@@ -1,9 +1,9 @@
-using Configuration.API.Endpoints.PrintEndpoints;
-using Configuration.API.Endpoints.PrinterDocumentEndpoints;
-using Configuration.API.Endpoints.PrinterEndpoints;
-using Configuration.API.Endpoints.PrinterTypeEndpoints;
+using Configuration.Api.Endpoints.PrintEndpoints;
+using Configuration.Api.Endpoints.PrinterDocumentEndpoints;
+using Configuration.Api.Endpoints.PrinterEndpoints;
+using Configuration.Api.Endpoints.PrinterTypeEndpoints;
 
-namespace Configuration.API.Endpoints;
+namespace Configuration.Api.Endpoints;
 
 public static class RegisterEndpoints
 {

@@ -1,6 +1,6 @@
-using Billing.API.Endpoints.Interfaces.Sri;
+using Billing.Api.Endpoints.Interfaces.Sri;
 
-namespace Billing.API.Extensions.Endpoints;
+namespace Billing.Api.Extensions.Endpoints;
 
 public static class SriEndpointsExtensions
 {

@@ -12,7 +12,7 @@ global using Acontplus.Utilities.Data;
 global using Acontplus.Utilities.Dtos;
 global using Acontplus.Utilities.Extensions;
 global using Mapster;
-global using Restaurant.API.Extensions;
+global using Restaurant.Api.Extensions;
 global using Restaurant.Application.Dtos;
 global using Restaurant.Application.Dtos.Items;
 global using Restaurant.Application.Dtos.MealManagement;

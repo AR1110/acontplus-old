@@ -1,7 +1,7 @@
 using Acontplus.Billing.Services.Documents.Mapping;
-using Billing.API.Endpoints.Interfaces.Sri;
+using Billing.Api.Endpoints.Interfaces.Sri;
 
-namespace Billing.API.Endpoints.Implementations.Sri;
+namespace Billing.Api.Endpoints.Implementations.Sri;
 
 public class AtsEndpoints(IUserContext userContext, IAtsRepository atsRepository, Billing.Application.Interfaces.IAtsXmlService atsXmlService)
     : IAtsEndpoints

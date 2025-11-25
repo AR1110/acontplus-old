@@ -1,6 +1,6 @@
 using Acontplus.Core.Extensions;
 
-namespace Inventory.API.Controllers;
+namespace Inventory.Api.Controllers;
 
 public class ArticuloController(
     S3ObjectCustom s3ObjectCustom,

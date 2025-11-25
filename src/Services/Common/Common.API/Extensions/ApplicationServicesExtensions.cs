@@ -4,7 +4,7 @@ using Acontplus.Services.Extensions.Authentication;
 using Common.Infrastructure.Persistence;
 using Scrutor;
 
-namespace Common.API.Extensions;
+namespace Common.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

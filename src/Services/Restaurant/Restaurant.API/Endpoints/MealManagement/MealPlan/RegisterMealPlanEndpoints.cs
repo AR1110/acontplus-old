@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints.MealManagement.MealPlan;
+namespace Restaurant.Api.Endpoints.MealManagement.MealPlan;
 
 public static class RegisterMealPlanEndpoints
 {

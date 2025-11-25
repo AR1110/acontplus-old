@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Mechanical.API.Extensions;
+namespace Mechanical.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

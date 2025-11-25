@@ -1,4 +1,4 @@
-namespace BarberShop.API.Endpoints.Implementations;
+namespace BarberShop.Api.Endpoints.Implementations;
 
 public class TicketEndpoints(IUserContext userContext, ITicketService ticketService) : ITicketEndpoints
 {

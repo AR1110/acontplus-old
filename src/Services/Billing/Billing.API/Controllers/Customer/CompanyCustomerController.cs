@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers.Customer;
+namespace Billing.Api.Controllers.Customer;
 
 public class CompanyCustomerController(ICompanyCustomerService companyCustomer) : BaseApiController
 {

@@ -1,4 +1,4 @@
-namespace Billing.API.Endpoints.Interfaces;
+namespace Billing.Api.Endpoints.Interfaces;
 
 public interface INotificacionTributariaEndpoints
 {

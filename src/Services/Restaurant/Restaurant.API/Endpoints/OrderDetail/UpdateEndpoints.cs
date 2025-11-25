@@ -1,6 +1,6 @@
 using Restaurant.Application.Dtos.Order;
 
-namespace Restaurant.API.Endpoints.OrderDetail;
+namespace Restaurant.Api.Endpoints.OrderDetail;
 
 public static class UpdateEndpoints
 {

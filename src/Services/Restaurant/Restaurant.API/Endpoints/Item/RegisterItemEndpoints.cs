@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints.Item;
+namespace Restaurant.Api.Endpoints.Item;
 
 public static class RegisterItemEndpoints
 {

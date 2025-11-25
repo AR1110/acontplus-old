@@ -1,4 +1,4 @@
-namespace Configuration.API.Controllers.Sri;
+namespace Configuration.Api.Controllers.Sri;
 
 [Route("api/[controller]")]
 [ApiController]

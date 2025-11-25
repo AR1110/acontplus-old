@@ -1,4 +1,4 @@
-namespace Identity.API.Endpoints.AccountEndpoints;
+namespace Identity.Api.Endpoints.AccountEndpoints;
 
 public static class AccountEndpoints
 {

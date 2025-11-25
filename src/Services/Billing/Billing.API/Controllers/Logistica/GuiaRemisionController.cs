@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers.Logistica;
+namespace Billing.Api.Controllers.Logistica;
 
 public class GuiaRemisionController(IGuiaRemisionService service) : BaseApiController
 {

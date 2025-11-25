@@ -1,4 +1,4 @@
-namespace Identity.API.DTOs;
+namespace Identity.Api.DTOs;
 
 public class RequestAccessDto
 {

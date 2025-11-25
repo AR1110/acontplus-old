@@ -1,6 +1,6 @@
 using Scrutor;
 
-namespace Billing.API.Extensions;
+namespace Billing.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
@@ -40,7 +40,7 @@ public static class ApplicationServicesExtensions
             "Billing.Application.Services.Logistica",
             "Billing.Application.Services.RetencionAts",
             "Billing.Application.Services.Sri",
-            "Billing.API.Endpoints.Implementations",
+            "Billing.Api.Endpoints.Implementations",
             "Acontplus.Persistence.SqlServer.Repositories",
             "Acontplus.Services.Extensions.Context",
             "Billing.Infrastructure.Persistence.Repositories"

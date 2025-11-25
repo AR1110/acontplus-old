@@ -1,7 +1,7 @@
 //using Newtonsoft.Json.Serialization;
 //using Newtonsoft.Json;
 
-namespace Billing.API.Controllers;
+namespace Billing.Api.Controllers;
 
 public class FacturaController(IFacturaService service) : BaseApiController
 {

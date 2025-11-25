@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Billing.API.Controllers;
+namespace Billing.Api.Controllers;
 
 public class DocumentoElectronicoController(IMemoryCache _cache, IDocumentoElectronicoService documentoElectronicoService)
     : BaseApiController

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Identity.API.Persistence.Migrations
+namespace Identity.Api.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class IdentityEntities : Migration

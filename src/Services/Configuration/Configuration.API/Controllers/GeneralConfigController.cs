@@ -1,5 +1,5 @@
 
-namespace Configuration.API.Controllers;
+namespace Configuration.Api.Controllers;
 
 public class GeneralConfigController(IGeneralConfigService generalConfigService) : BaseApiController
 {

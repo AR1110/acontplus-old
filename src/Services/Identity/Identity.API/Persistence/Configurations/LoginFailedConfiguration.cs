@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Identity.API.Persistence.Configurations;
+namespace Identity.Api.Persistence.Configurations;
 
 public class LoginFailedConfiguration : BaseEntityTypeConfiguration<LoginFailed>
 {

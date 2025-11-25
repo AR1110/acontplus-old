@@ -1,5 +1,5 @@
 
-namespace Configuration.API.Controllers.Sri;
+namespace Configuration.Api.Controllers.Sri;
 
 public class EstablishmentController(IEstablishmentService service) : BaseApiController
 {

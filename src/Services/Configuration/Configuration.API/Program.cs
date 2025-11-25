@@ -1,4 +1,4 @@
-using Configuration.API.Endpoints;
+using Configuration.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()

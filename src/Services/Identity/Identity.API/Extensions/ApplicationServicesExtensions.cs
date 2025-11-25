@@ -1,6 +1,6 @@
 using Acontplus.Services.Extensions;
 
-namespace Identity.API.Extensions;
+namespace Identity.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

@@ -1,4 +1,4 @@
-namespace Sales.API.Controllers;
+namespace Sales.Api.Controllers;
 
 public class AprobacionDocumentoController(IAprobacionDocService svc) : BaseApiController
 {

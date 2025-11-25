@@ -1,4 +1,4 @@
-namespace Identity.API.Services;
+namespace Identity.Api.Services;
 
 public class AccountService(IAdoRepository repository) : IAccountService
 {

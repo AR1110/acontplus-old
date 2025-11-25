@@ -1,4 +1,4 @@
-namespace Billing.API.Controllers;
+namespace Billing.Api.Controllers;
 
 public class NotaCreditoController(INotaCreditoService notaCreditoService) : BaseApiController
 {

@@ -1,4 +1,4 @@
-namespace Identity.API.Endpoints;
+namespace Identity.Api.Endpoints;
 
 public static class RegisterEndpoints
 {

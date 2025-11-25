@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Entities;
+namespace Identity.Api.Entities;
 
 [Table("LoginFailed", Schema = "Seguridad")]
 public class LoginFailed : BaseEntity

@@ -1,4 +1,4 @@
-namespace Billing.API.Endpoints.Implementations.RetencionAts;
+namespace Billing.Api.Endpoints.Implementations.RetencionAts;
 
 public class RetencionAtsInfoAdicionalEndpoints(
     IRetencionAtsInfoAdicionalService retencionAtsInfoAdicionalService,

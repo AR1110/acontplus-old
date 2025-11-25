@@ -1,4 +1,4 @@
-namespace Restaurant.API.Endpoints.MealManagement.MealScheduleSetting;
+namespace Restaurant.Api.Endpoints.MealManagement.MealScheduleSetting;
 
 public static class RegisterMealScheduleSettingEndpoints
 {

@@ -1,4 +1,4 @@
-﻿namespace Identity.API.Entities;
+namespace Identity.Api.Entities;
 
 [Table("AccessAuthorization", Schema = "Seguridad")]
 public class AccessAuthorization : BaseEntity

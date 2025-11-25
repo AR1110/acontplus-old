@@ -4,7 +4,7 @@ using Restaurant.Application.Mapping;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
 
-namespace Restaurant.API.Extensions;
+namespace Restaurant.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {

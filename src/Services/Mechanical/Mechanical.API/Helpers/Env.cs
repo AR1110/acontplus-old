@@ -1,4 +1,4 @@
-﻿namespace Mechanical.API.Helpers;
+namespace Mechanical.Api.Helpers;
 
 public enum Env
 {

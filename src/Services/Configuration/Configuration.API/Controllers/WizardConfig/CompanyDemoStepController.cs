@@ -1,4 +1,4 @@
-namespace Configuration.API.Controllers.WizardConfig;
+namespace Configuration.Api.Controllers.WizardConfig;
 
 public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepService) : BaseApiController
 {

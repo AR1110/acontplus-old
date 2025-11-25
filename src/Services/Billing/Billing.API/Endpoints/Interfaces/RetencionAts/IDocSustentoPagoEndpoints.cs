@@ -1,4 +1,4 @@
-namespace Billing.API.Endpoints.Interfaces.RetencionAts;
+namespace Billing.Api.Endpoints.Interfaces.RetencionAts;
 
 public interface IDocSustentoPagoEndpoints
 {

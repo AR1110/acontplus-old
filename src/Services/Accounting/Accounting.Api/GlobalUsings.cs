@@ -1,0 +1,17 @@
+global using Accounting.Api.Extensions;
+global using Accounting.Application.DTOs;
+global using Accounting.Domain.Entities;
+global using Accounting.Domain.Repositories;
+global using Accounting.Infrastructure.Persistence;
+global using Accounting.Infrastructure.Persistence.Repositories;
+global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Logging;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Authentication;
+global using Acontplus.Services.Extensions.Context;
+global using Acontplus.Utilities.Data;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using System.Text.Json;

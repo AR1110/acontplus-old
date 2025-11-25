@@ -1,6 +1,6 @@
 using Acontplus.Utilities.Extensions;
 
-namespace Billing.API.Controllers.Customer;
+namespace Billing.Api.Controllers.Customer;
 
 public class ConsultasController(
     IRucService rucService,

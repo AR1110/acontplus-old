@@ -1,6 +1,6 @@
 using Restaurant.Application.Dtos.Order;
 
-namespace Restaurant.API.Endpoints.Order;
+namespace Restaurant.Api.Endpoints.Order;
 
 public static class CreateEndpoints
 {

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Configuration.API.Data.Migrations
+namespace Configuration.Api.Data.Migrations
 {
     [DbContext(typeof(ConfigurationContext))]
     [Migration("20240129022431_LatestVersion")]
@@ -25,7 +25,7 @@ namespace Configuration.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Configuration.API.Entities.EstablecimientoLogo", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.EstablecimientoLogo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,7 +84,7 @@ namespace Configuration.API.Data.Migrations
                     b.ToTable("EstablecimientoLogo", "Config");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.Printer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -153,7 +153,7 @@ namespace Configuration.API.Data.Migrations
                     b.ToTable("Printer", "Config");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.PrinterDocument", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.PrinterDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -199,7 +199,7 @@ namespace Configuration.API.Data.Migrations
                     b.ToTable("PrinterDocument", "Config");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.PrinterType", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.PrinterType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,9 +261,9 @@ namespace Configuration.API.Data.Migrations
                     b.ToTable("PrinterType", "Config");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.Printer", b =>
                 {
-                    b.HasOne("Configuration.API.Entities.PrinterType", "PrinterType")
+                    b.HasOne("Configuration.Api.Entities.PrinterType", "PrinterType")
                         .WithMany()
                         .HasForeignKey("PrinterTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -272,9 +272,9 @@ namespace Configuration.API.Data.Migrations
                     b.Navigation("PrinterType");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.PrinterDocument", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.PrinterDocument", b =>
                 {
-                    b.HasOne("Configuration.API.Entities.Printer", "Printer")
+                    b.HasOne("Configuration.Api.Entities.Printer", "Printer")
                         .WithMany("Documents")
                         .HasForeignKey("PrinterId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -283,7 +283,7 @@ namespace Configuration.API.Data.Migrations
                     b.Navigation("Printer");
                 });
 
-            modelBuilder.Entity("Configuration.API.Entities.Printer", b =>
+            modelBuilder.Entity("Configuration.Api.Entities.Printer", b =>
                 {
                     b.Navigation("Documents");
                 });

@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Tickets.Commands.ProcessPayment
+namespace BarberShop.Application.Tickets.Commands.ProcessPayment
 {
     internal class ProcessPaymentCommand
     {
