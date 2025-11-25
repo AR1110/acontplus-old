@@ -93,10 +93,10 @@ BEGIN
         -->Variables Join
         IF @IsPos = 1
             BEGIN
-                SET @InnerJoin = 'INNER JOIN dbo.ArticuloPvP  pv ON pv.idArticulo = ar.idArticulo 
-                                  INNER JOIN dbo.Tarifa       ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = 1  '
+                SET @InnerJoin = @InnerJoin +  'INNER JOIN dbo.ArticuloPvP pv ON pv.idArticulo = fi.ProductId 
+                                                INNER JOIN dbo.Tarifa      ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = 1  '
 
-                SET @Column = ',pv.precioConIva AS priceWithTax '
+                SET @Column = @Column + ',pv.precioConIva AS priceWithTax '
             END
 
         --> Validate input parameters
@@ -158,11 +158,9 @@ BEGIN
                                       ,ar.precioCosto           AS CostPrice
                                       ,ar.categoria             AS Category
                                       ,ar.siglaFamilia          AS AcronymFamily
-                                      ,COUNT(*) OVER()          AS TotalCount '
-                                      + @Column + N' 
+                                      ,COUNT(*) OVER()          AS TotalCount
                                 FROM Restaurant.Item             ri
                                 INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
-                                + @InnerJoin + N' '
                                 + @WhereClause
 
                          + N')
@@ -171,7 +169,7 @@ BEGIN
 
                      SELECT TOP 1 @TotalCount = TotalCount FROM #FilteredItems;
 
-                     SELECT * FROM #FilteredItems ' + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                     SELECT fi.* ' + @Column + N'  FROM #FilteredItems fi '+ @InnerJoin + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
 
                      IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems ' ;
 

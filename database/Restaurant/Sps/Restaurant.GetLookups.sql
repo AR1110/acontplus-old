@@ -30,7 +30,6 @@ BEGIN
        ,DisplayOrder INT NULL
        ,ParentId     INT NULL
        ,Metadata     NVARCHAR(MAX) NULL
-       ,ImagenUrl    NVARCHAR(800) NULL
        ,isDefault    BIT DEFAULT 0    
        ,INDEX IX_Temp_TableName CLUSTERED (TableName, Id)
        ,INDEX IX_Temp_TableName_Value NONCLUSTERED (TableName, [Value])
@@ -85,12 +84,12 @@ BEGIN
 		WHERE es.estado = 1
 		  AND es.idEntidad = @idEntidad
 
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,ImagenUrl)
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,Metadata)
         SELECT 'SubCategories'            as TableName
               ,sf.idSubFamilia			  as Id
               ,sf.siglaFamilia            as Code
 		      ,sf.descripcion		      as [Description]
-              ,ISNULL(sf.s3ObjectUrl, '') as ImagenUrl
+              ,(SELECT ISNULL(sf.s3ObjectUrl, '') as imagenUrl FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
 	    FROM Inventario.v_Subfamilia  sf  
 	    WHERE sf.estado = 1
           AND sf.idEntidad = @idEntidad 
