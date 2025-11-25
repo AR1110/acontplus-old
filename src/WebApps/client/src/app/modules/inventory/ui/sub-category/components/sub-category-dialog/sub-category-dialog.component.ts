@@ -17,6 +17,7 @@ import { MatButton } from '@angular/material/button';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import {MatSlideToggle} from "@angular/material/slide-toggle";
 
 @Component({
   selector: 'app-sub-category-dialog',
@@ -30,6 +31,7 @@ import Swal from 'sweetalert2';
     ToUpperCaseDirective,
     MatButton,
     MatIconModule,
+    MatSlideToggle,
   ],
   templateUrl: './sub-category-dialog.component.html',
 })
@@ -43,7 +45,7 @@ export class SubCategoryDialogComponent implements OnInit {
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
   private tS = inject(ToastrNotificationService);
 
-  titleModal = 'Nueva SubCategoria';
+  titleModal = 'Nueva SubFamilia';
   categorias = signal<any[]>([]);
 
   files: NgxFileDropEntry[] = [];
@@ -78,7 +80,7 @@ export class SubCategoryDialogComponent implements OnInit {
     this.getDataForm();
 
     if (typeof this.params === 'object' && this.esEditar()) {
-      this.titleModal = 'Editar SubCategoria';
+      this.titleModal = 'Editar SubFamilia';
       this.data = structuredClone(this.params);
       this.imageUrl.set(this.params.s3ObjectUrl || imgDefault());
     }

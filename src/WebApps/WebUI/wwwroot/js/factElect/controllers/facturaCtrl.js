@@ -2814,6 +2814,18 @@
                 return;
             }
 
+            for (let item of $scope.gridOptions.data) {
+                if (item.precioSinSubsidio > 0 && item.precioUnitario >= item.precioSinSubsidio) {
+                    tS.toastr({
+                        type: "warning",
+                        message: `Artículo ${item.descripcion}: El precio de venta no puede ser mayor o igual al precio sin subsidio.`,
+                    });
+                    throw new Error(`Artículo ${item.descripcion}: El precio de venta no puede ser mayor o igual al precio sin subsidio.`);
+                }
+            }
+
+
+
             // if (
             //     $scope.gridOptions.data.some((item) =>
             //         item.articuloTarifas.some(
