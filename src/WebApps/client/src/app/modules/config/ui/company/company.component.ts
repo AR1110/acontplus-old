@@ -2,8 +2,8 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CompanyAddEditModalComponent } from '@modules/config/ui/company/company-add-edit-modal/company-add-edit-modal.component';
 
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
+
 import { ListCompanyUseCase } from '@modules/config/application/use-cases/company/list-company.use-case';
 import { CompanyList } from '@modules/config/domain/models/company.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -12,7 +12,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-company',
-  imports: [BreadcrumbComponent, Button, MatDynamicCardComponent, MatDynamicTableComponent],
+  imports: [BreadcrumbComponent, Button, DynamicCard, MatDynamicTableComponent],
   templateUrl: './company.component.html',
 })
 export class CompanyComponent implements OnInit {

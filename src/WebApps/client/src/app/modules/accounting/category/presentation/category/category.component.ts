@@ -7,7 +7,7 @@ import { Category } from '@accounting/category/domain/category';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
@@ -18,7 +18,7 @@ import { DialogService } from '@core/services/dialog.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    MatDynamicCardComponent,
+    DynamicCard,
   ],
   templateUrl: './category.component.html',
   styles: ``,

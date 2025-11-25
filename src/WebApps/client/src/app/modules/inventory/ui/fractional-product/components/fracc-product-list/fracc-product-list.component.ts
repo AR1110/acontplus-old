@@ -5,14 +5,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Pagination, Button, DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FractionalProductGetAllUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-all.use-case';
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';
-import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-product/components/add-edit-fractional-product/add-edit-fractional-product.component';
 
@@ -25,7 +23,7 @@ import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-prod
     MatFormFieldModule,
     MatInputModule,
     MatDynamicTableComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     Button,
   ],
   templateUrl: './fracc-product-list.component.html',

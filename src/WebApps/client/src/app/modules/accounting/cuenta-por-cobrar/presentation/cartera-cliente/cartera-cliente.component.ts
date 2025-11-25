@@ -19,13 +19,12 @@ import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/applicatio
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatDivider } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-cartera-cliente',
@@ -36,7 +35,7 @@ import { Button } from '@acontplus/ng-components';
     CompanyCustomerSearchComponent,
     MatSelectModule,
     MatTabsModule,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatFormFieldModule,
     MatCheckboxModule,
     MatInputModule,

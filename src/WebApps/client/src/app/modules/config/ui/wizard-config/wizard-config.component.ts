@@ -30,7 +30,7 @@ import {
   MatStepperModule,
 } from '@angular/material/stepper';
 import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -46,13 +46,13 @@ import { of } from 'rxjs';
 // Core Components & Services
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 
 // Shared Components & Models
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 
 // Module Services
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
@@ -153,7 +153,7 @@ interface EstabFormControls {
     ReactiveFormsModule,
     RouterModule,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatIconModule,
     MatInput,
     MatLabel,
@@ -162,8 +162,8 @@ interface EstabFormControls {
     MatStepperModule,
     MatTooltipModule,
     BreadcrumbComponent,
-    TabulatorComponent,
-    MatInputChipComponent,
+    TabulatorTable,
+    InputChip,
     Button,
     NgDynamicSelectComponent,
   ],

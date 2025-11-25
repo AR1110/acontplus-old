@@ -2,11 +2,11 @@
   (close)="close()"
   [containerTemplate]="body"
   [actionsTemplate]="footer"
-  [title]="'Detalle Consolidación'"
+  cardcardTitle="Detalle Consolidación"
 />
 
 <ng-template #body>
-  <app-mat-dynamic-card>
+  <acp-dynamic-card>
     <div class="row mb-4">
       <div class="col-sm-6">
         <!--          <h3 class="text-dark mb-1">Nro. Doc #BBB10234</h3>-->
@@ -80,7 +80,7 @@
     <!--          </table>-->
     <!--        </div>-->
     <!--      </div>-->
-  </app-mat-dynamic-card>
+  </acp-dynamic-card>
 </ng-template>
 
 <ng-template #footer>

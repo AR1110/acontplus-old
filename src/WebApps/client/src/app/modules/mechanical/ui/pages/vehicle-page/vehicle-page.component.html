@@ -1,10 +1,10 @@
 <app-breadcrumb />
 
-<app-mat-dynamic-card
-  title="Producto Destacado"
-  subtitle="¡El mejor producto del año!"
-  [primaryActionLabel]="'Comprar'"
-  [secondaryActionLabel]="'Ver más'"
+<acp-dynamic-card
+  cardTitle="Producto Destacado"
+  cardSubtitle="¡El mejor producto del año!"
+  [primaryButtonText]="'Comprar'"
+  [secondaryButtonText]="'Ver más'"
 >
   <ng-container>
     <div
@@ -60,4 +60,4 @@
       <mat-slide-toggle (change)="putState(item.id, item.enabled)" [(ngModel)]="item.enabled" />
     </ng-template>
   </ng-container>
-</app-mat-dynamic-card>
+</acp-dynamic-card>

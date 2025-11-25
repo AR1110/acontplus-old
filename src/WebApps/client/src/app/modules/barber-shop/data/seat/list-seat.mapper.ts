@@ -9,7 +9,7 @@ export class ListSeatMapper {
     });
   }
   static fromJson(response: any): SeatResponse {
-    const { items = [], totalCount = 0 } = response.payload as any;
+    const { items = [], totalCount = 0 } = response.payload;
     const data = items.map((item: any, index: number) => {
       return {
         index: index + 1,

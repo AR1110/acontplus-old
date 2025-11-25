@@ -1,17 +1,17 @@
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {ProductFee, ProductMeasure} from "@inventory/domain/models/product-measure";
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-measure';
 
 export class ItemComposition {
   uuid = generateUuidv4();
   id = 0;
   parentItemId = 0;
   childItemId = 0;
-  fees:ProductFee[]=[]
+  fees: ProductFee[] = [];
   feeId = 0;
   description = '';
   code = '';
 
-  measures:ProductMeasure[] = [];
+  measures: ProductMeasure[] = [];
   measureId = 0;
   salePrice = 0;
   unitPrice = 0;

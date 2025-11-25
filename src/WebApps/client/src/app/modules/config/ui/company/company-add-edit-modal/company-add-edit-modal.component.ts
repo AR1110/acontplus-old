@@ -7,7 +7,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { UpdateCompanyUseCase } from '@modules/config/application/use-cases/company/update-company.use-case';
 import Swal from 'sweetalert2';
@@ -20,7 +20,7 @@ import Swal from 'sweetalert2';
     MatInputModule,
     Button,
     MatCustomDialogComponent,
-    MatInputChipComponent,
+    InputChip,
   ],
   templateUrl: './company-add-edit-modal.component.html',
   styles: ``,

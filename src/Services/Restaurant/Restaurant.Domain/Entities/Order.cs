@@ -15,6 +15,7 @@ public class Order : BaseEntity
     [MaxLength(500)] public string? Obs { get; set; }
     public bool IsDivided { get; set; }
     public bool IsFinished { get; set; }
+    public ICollection<OrderItem> OrderItems { get; set; } = []; //Legacy property, may be removed in future
     public ICollection<OrderDetail> OrderDetails { get; set; } = [];
     public ICollection<MealManagement.MealConsumption> MealConsumptions { get; set; } = [];
 }

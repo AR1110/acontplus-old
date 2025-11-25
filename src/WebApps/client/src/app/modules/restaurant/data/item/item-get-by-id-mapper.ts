@@ -1,5 +1,5 @@
-import {mergeProductMeasures} from "@inventory/domain/utils/merge-measure.util";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import { mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 export class ItemGetByIdMapper {
   static toJson(params: any) {
@@ -7,17 +7,9 @@ export class ItemGetByIdMapper {
   }
 
   static fromJson(response: any) {
-    const {item, itemCompositions=[]} = JSON.parse(response.payload as string);
+    const { item, itemCompositions = [] } = JSON.parse(response.payload as string);
 
-    const {
-      id,
-      title,
-      cooking,
-      forPromotion,
-      summary,
-      recipe,
-      instructions
-    } = item[0];
+    const { id, title, cooking, forPromotion, summary, recipe, instructions } = item[0];
 
     console.log(item);
     console.log(itemCompositions);
@@ -33,20 +25,20 @@ export class ItemGetByIdMapper {
         forPromotion,
         isActive: true,
       },
-      itemCompositions: itemCompositions.map((item:any, index: number) => {
-        const  mainMeasures = JSON.parse(item.principal)
-        const fractionalMeasures = JSON.parse(item.fractional)
-        const measures  = mergeProductMeasures(mainMeasures, fractionalMeasures);
+      itemCompositions: itemCompositions.map((item: any, index: number) => {
+        const mainMeasures = JSON.parse(item.principal);
+        const fractionalMeasures = JSON.parse(item.fractional);
+        const measures = mergeProductMeasures(mainMeasures, fractionalMeasures);
 
         const dataMeasure = measures.find((x: any) => x.id === item.measureId);
 
         console.log(item);
-        const fees = dataMeasure?.fees ?? []
+        const fees = dataMeasure?.fees ?? [];
 
         return {
           uuid: item.uniqueId ?? generateUuidv4(),
           id: item.id,
-        //  parentItemId: item.parentItemId,
+          //  parentItemId: item.parentItemId,
           childItemId: item.childItemId,
           feeId: item.feeId,
           fees,
@@ -60,12 +52,8 @@ export class ItemGetByIdMapper {
           code: item.code,
           measures,
           isActive: true,
-        }
-
-
-      })
-    }
-
-    }
-
+        };
+      }),
+    };
+  }
 }

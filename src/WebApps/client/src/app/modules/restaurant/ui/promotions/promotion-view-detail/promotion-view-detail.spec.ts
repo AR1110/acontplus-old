@@ -8,9 +8,8 @@ describe('PromotionViewDetail', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PromotionViewDetail]
-    })
-    .compileComponents();
+      imports: [PromotionViewDetail],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PromotionViewDetail);
     component = fixture.componentInstance;

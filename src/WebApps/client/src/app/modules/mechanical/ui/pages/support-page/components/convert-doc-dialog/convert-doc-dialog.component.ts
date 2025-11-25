@@ -9,7 +9,7 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import { InvoiceService } from '@billing/services/invoice.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SalesDetailCalculationService } from '@shared/services/sales-detail-calculation.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
 import Swal from 'sweetalert2';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
@@ -28,7 +28,7 @@ import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
 
 @Component({
   selector: 'app-convert-doc-dialog',
-  imports: [MatButtonModule, MatIconModule, MatCustomDialogComponent, TabulatorComponent],
+  imports: [MatButtonModule, MatIconModule, MatCustomDialogComponent, TabulatorTable],
   templateUrl: './convert-doc-dialog.component.html',
   styles: ``,
 })
@@ -52,8 +52,8 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
   private invoiceSvc = inject(InvoiceService);
   private tS = inject(ToastrNotificationService);
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
-  @ViewChild(TabulatorComponent, { static: false })
-  tabulatorComponent!: TabulatorComponent;
+  @ViewChild(TabulatorTable, { static: false })
+  tabulatorComponent!: TabulatorTable;
 
   companyCustomer = {
     idCliente: 0,
@@ -181,8 +181,8 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     setTimeout(() => {
-      const allRows = this.tabulatorComponent.refTabulator.getRows();
-      this.tabulatorComponent.refTabulator.selectRow(allRows);
+      const allRows = this.tabulatorComponent.getInstance().getRows();
+      this.tabulatorComponent.getInstance().selectRow(allRows);
     });
   }
 
@@ -457,7 +457,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         supportId: this.data.supportId,
       };
 
-      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+      const selectedData = this.tabulatorComponent.getInstance().getSelectedData();
 
       const params = {
         comprobante,
@@ -525,7 +525,7 @@ export class ConvertDocDialogComponent implements AfterViewInit, OnInit {
         supportId: this.data.supportId,
       };
 
-      const selectedData = this.tabulatorComponent.refTabulator.getSelectedData();
+      const selectedData = this.tabulatorComponent.getInstance().getSelectedData();
 
       const params = {
         comprobante,

@@ -11,10 +11,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-setup-dashboard',
-  imports: [MatCardModule, MatButtonModule, MatIconModule, MatProgressBarModule, MatChipsModule],
+  imports: [
+    DynamicCard,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressBarModule,
+    MatChipsModule,
+  ],
   templateUrl: './setup-dashboard.component.html',
   styleUrl: './setup-dashboard.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

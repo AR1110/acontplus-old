@@ -8,7 +8,7 @@ import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
 import { ProformaInvoiceListMapper } from '@sale/data/proforma/proforma-list-mapper';
 import { ProformaFilterMapper } from '@sale/data/proforma/proforma-filter-mapper';
 import { ProformaViewDetailMapper } from '@sale/data/proforma/proforma-view-detail-mapper';
-import {ProformaInvoiceFormDataMapper} from "@sale/data/proforma/proforma-form-data-mapper";
+import { ProformaInvoiceFormDataMapper } from '@sale/data/proforma/proforma-form-data-mapper';
 
 @Injectable({
   providedIn: 'root',

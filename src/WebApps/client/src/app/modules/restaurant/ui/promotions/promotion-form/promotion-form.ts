@@ -1,36 +1,50 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import { MatInputModule} from "@angular/material/input";
-import {MatFormField} from "@angular/material/form-field";
-import {MatIcon} from "@angular/material/icon";
-import {FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatSelectModule} from "@angular/material/select";
-import {MatChipsModule} from "@angular/material/chips";
-import {MatCardModule} from "@angular/material/card";
-import {MatDivider} from "@angular/material/divider";
-import {Button} from "@acontplus/ng-components";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {DAYS_OF_WEEK, DISCOUNT_TYPES} from "@restaurant/domain/models/promotion";
-import {MatSlideToggleModule} from "@angular/material/slide-toggle";
-import {MatTimepickerModule} from "@angular/material/timepicker";
-import {ItemSearch} from "@restaurant/ui/items/item-search/item-search";
-import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
-import {TabulatorComponent} from "@core/components/tabulator/tabulator.component";
-import {ItemComposition} from "@restaurant/domain/models/item-composition";
-import Swal from "sweetalert2";
-import {ProductMeasure} from "@inventory/domain/models/product-measure";
-import {GetProductSaleUseCase} from "@inventory/product/application/use-cases/product/get-product.use-case";
-import {LookupItem} from "@core/models/lookup-type";
-import {LookupService} from "@restaurant/application/services/lookup-service";
-import {PromotionDetail} from "@restaurant/domain/models/promotion-detail";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  signal,
+  OnInit,
+} from '@angular/core';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormField } from '@angular/material/form-field';
+import { MatIcon } from '@angular/material/icon';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
+import { MatDivider } from '@angular/material/divider';
+import { Button } from '@acontplus/ng-components';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DAYS_OF_WEEK, DISCOUNT_TYPES } from '@restaurant/domain/models/promotion';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { TabulatorTable } from '@acontplus/ng-components';
+import { ItemComposition } from '@restaurant/domain/models/item-composition';
+import Swal from 'sweetalert2';
+import { ProductMeasure } from '@inventory/domain/models/product-measure';
+import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { LookupItem } from '@core/models/lookup-type';
+import { LookupService } from '@restaurant/application/services/lookup-service';
+import { PromotionDetail } from '@restaurant/domain/models/promotion-detail';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   PromotionGetByIdUseCase,
   PromotionInsertUseCase,
-  PromotionUpdateUseCase
-} from "@restaurant/application/use-cases/promotion-use-case";
-import {MatCustomDialogComponent} from "@core/components/mat-custom-dialog/mat-custom-dialog.component";
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+  PromotionUpdateUseCase,
+} from '@restaurant/application/use-cases/promotion-use-case';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-promotion-form',
@@ -49,23 +63,23 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
     MatDivider,
     Button,
     ItemSearch,
-    TabulatorComponent,
-    MatCustomDialogComponent
+    TabulatorTable,
+    MatCustomDialogComponent,
   ],
   templateUrl: './promotion-form.html',
   styleUrl: './promotion-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PromotionForm {
+export class PromotionForm implements OnInit {
   dgRef = inject(MatDialogRef<PromotionForm>);
-  params = inject<{id: number}>(MAT_DIALOG_DATA)
-  private lookupSvc = inject(LookupService)
+  params = inject<{ id: number }>(MAT_DIALOG_DATA);
+  private lookupSvc = inject(LookupService);
   private productSaleUseCase = inject(GetProductSaleUseCase);
-  #getByIdUseCase = inject(PromotionGetByIdUseCase)
+  #getByIdUseCase = inject(PromotionGetByIdUseCase);
 
-   private notiSvc = inject(ToastrNotificationService)
-  private insertUseCase = inject(PromotionInsertUseCase)
-  private updateUseCase = inject(PromotionUpdateUseCase)
+  private notiSvc = inject(ToastrNotificationService);
+  private insertUseCase = inject(PromotionInsertUseCase);
+  private updateUseCase = inject(PromotionUpdateUseCase);
 
   // Signals
   isSubmitting = signal<boolean>(false);
@@ -73,12 +87,12 @@ export class PromotionForm {
   selectedProductsDeleted = signal<any[]>([]);
   openSection = signal<string>('general');
 
-  discountTypes = signal(DISCOUNT_TYPES)
+  discountTypes = signal(DISCOUNT_TYPES);
   establishments = signal<LookupItem[]>([]);
   taxes = signal<LookupItem[]>([]);
 
   // Forms
-    private fb = inject(FormBuilder)
+  private fb = inject(FormBuilder);
   promotionForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
     type: ['percentage', Validators.required],
@@ -109,7 +123,7 @@ export class PromotionForm {
     }
 
     if (column === 'feeId') {
-      for (const t of (data.fees ?? [])) {
+      for (const t of data.fees ?? []) {
         const opt = document.createElement('option');
         opt.value = t.id.toString();
         opt.innerHTML = t.name + ' - $' + t.priceWithTax;
@@ -118,14 +132,13 @@ export class PromotionForm {
     }
 
     if (column === 'taxId') {
-      for (const t of (this.taxes() ?? [])) {
+      for (const t of this.taxes() ?? []) {
         const opt = document.createElement('option');
         opt.value = t.id.toString();
-        opt.innerHTML = t.value
+        opt.innerHTML = t.value;
         editor.appendChild(opt);
       }
     }
-
 
     editor.style.padding = '3px';
     editor.style.width = '100%';
@@ -194,7 +207,7 @@ export class PromotionForm {
     {
       title: 'Menús/Producto',
       field: 'description',
-      width:   350,
+      width: 350,
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
@@ -206,13 +219,13 @@ export class PromotionForm {
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      formatter:  (cell: any)=> {
+      formatter: (cell: any) => {
         for (const m of this.taxes() ?? []) {
           if (m.id == cell.getValue()) {
             return m.value;
           }
         }
-        return ''
+        return '';
       },
       validator: 'required',
       width: '9px',
@@ -235,9 +248,6 @@ export class PromotionForm {
       validator: 'required',
       width: '9px',
     },
-
-
-
 
     //start when is product combo
     {
@@ -319,20 +329,19 @@ export class PromotionForm {
   isAdd = computed(() => this.params.id === 0);
   isEdit = computed(() => this.params.id > 0);
 
-  modalTitle = computed(()=>{
-    return this.isEdit()? 'Editar Promoción': 'Crear Nueva Promoción'
-  })
-  btnTitle = computed(()=>{
-    return this.isEdit()?'Actualizar': 'Guardar'
-  })
+  modalTitle = computed(() => {
+    return this.isEdit() ? 'Editar Promoción' : 'Crear Nueva Promoción';
+  });
+  btnTitle = computed(() => {
+    return this.isEdit() ? 'Actualizar' : 'Guardar';
+  });
 
-  getCategoryAbbreviationToSearch(){
-    return [CATEGORY_ABBREVIATIONS.COMBO, CATEGORY_ABBREVIATIONS.RESTAURANT].toString()
+  getCategoryAbbreviationToSearch() {
+    return [CATEGORY_ABBREVIATIONS.COMBO, CATEGORY_ABBREVIATIONS.RESTAURANT].toString();
   }
 
-
   async deleteRow(rowData: ItemComposition) {
-    const {isConfirmed} = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: '¿Está seguro de eliminar este registro?',
       icon: 'warning',
       showCancelButton: true,
@@ -340,43 +349,44 @@ export class PromotionForm {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar',
-    })
+    });
 
-    if(isConfirmed){
+    if (isConfirmed) {
       const cloneItemCompositions = JSON.parse(JSON.stringify(this.selectedProducts()));
       this.selectedProducts.set(cloneItemCompositions.filter((x: any) => x.uuid !== rowData.uuid));
 
-      if(rowData.id>0){
-        this.selectedProductsDeleted.update((x:any) => [...x, {
-          ...rowData,
-          isActive: false,
-          isDeleted: true,
-        }]);
+      if (rowData.id > 0) {
+        this.selectedProductsDeleted.update((x: any) => [
+          ...x,
+          {
+            ...rowData,
+            isActive: false,
+            isDeleted: true,
+          },
+        ]);
       }
     }
   }
 
-  constructor(
-  ) {
-    this.initializeScheduleControls()
+  constructor() {
+    this.initializeScheduleControls();
   }
 
   ngOnInit(): void {
-    this.lookupSvc.getLookupList('establishments,taxes').subscribe(x => {
+    this.lookupSvc.getLookupList('establishments,taxes').subscribe((x) => {
       this.establishments.set(x.establishments);
       this.taxes.set(x.taxes);
-      if(this.isEdit()){
-
-        this.#getByIdUseCase.execute(this.params.id).subscribe(response => {
-          const {schedule, ...rest} = response.promotion;
+      if (this.isEdit()) {
+        this.#getByIdUseCase.execute(this.params.id).subscribe((response) => {
+          const { schedule, ...rest } = response.promotion;
           this.promotionForm.patchValue(rest);
           this.patchSavedDays(schedule);
-          this.selectedProducts.set(response.details)
-        })
-      }else{
+          this.selectedProducts.set(response.details);
+        });
+      } else {
         const defaultEstablishment = this.establishments()[0];
-        if(defaultEstablishment){
-          this.promotionForm.patchValue({ establishmentId: defaultEstablishment.id??null });
+        if (defaultEstablishment) {
+          this.promotionForm.patchValue({ establishmentId: defaultEstablishment.id ?? null });
         }
       }
     });
@@ -388,25 +398,23 @@ export class PromotionForm {
 
       const dow = control.get('day')?.value;
 
-      const saved = savedDays.find(d => d.day === dow);
+      const saved = savedDays.find((d) => d.day === dow);
 
       if (saved) {
         control.patchValue({
           isActive: true,
           startTime: saved.startTime,
-          endTime: saved.endTime
+          endTime: saved.endTime,
         });
       } else {
         control.patchValue({
           isActive: false,
           startTime: new Date().setHours(0, 0, 0, 0),
-          endTime: new Date().setHours(23, 30, 0, 0)
+          endTime: new Date().setHours(23, 30, 0, 0),
         });
       }
     });
-
   }
-
 
   private initializeScheduleControls(): void {
     const scheduleArray = this.promotionForm.get('schedule') as FormArray;
@@ -414,14 +422,14 @@ export class PromotionForm {
     scheduleArray.clear();
     const BASE_DATE = new Date(2000, 0, 1); // año 2000 para evitar conflictos
 
-    DAYS_OF_WEEK.forEach(dow => {
+    DAYS_OF_WEEK.forEach((dow) => {
       scheduleArray.push(
         this.fb.group({
           day: [dow],
           isActive: [false],
           startTime: [new Date(BASE_DATE.setHours(0, 0, 0, 0))],
-          endTime: [new Date(BASE_DATE.setHours(23, 30, 0, 0))]
-        })
+          endTime: [new Date(BASE_DATE.setHours(23, 30, 0, 0))],
+        }),
       );
     });
   }
@@ -429,7 +437,6 @@ export class PromotionForm {
   get scheduleArray(): FormArray {
     return this.promotionForm.get('schedule') as FormArray;
   }
-
 
   onSelectItem(rowData: any): void {
     if (!rowData?.productId) return;
@@ -440,17 +447,15 @@ export class PromotionForm {
         if (!product || !Array.isArray(measures)) return;
 
         const compositions = structuredClone(this.selectedProducts());
-        const existingIndex = compositions.findIndex(x => x.itemId === rowData.id);
+        const existingIndex = compositions.findIndex((x) => x.itemId === rowData.id);
 
         const getDefaultMeasure = (): ProductMeasure | undefined =>
-          measures.find(m => m.defaultMeasure);
+          measures.find((m) => m.defaultMeasure);
 
-        const getDefaultFee = (measure?: ProductMeasure) =>
-          measure?.fees?.find(f => f.isDefault);
+        const getDefaultFee = (measure?: ProductMeasure) => measure?.fees?.find((f) => f.isDefault);
 
         const getDefaultTax = (): LookupItem | undefined =>
-          this.taxes().find(x => x.code === product.taxCode);
-
+          this.taxes().find((x) => x.code === product.taxCode);
 
         if (existingIndex === -1) {
           const defaultMeasure = getDefaultMeasure();
@@ -473,19 +478,18 @@ export class PromotionForm {
           newPromotionDetail.fees = defaultMeasure.fees ?? [];
           newPromotionDetail.description = product.descripcion;
           newPromotionDetail.unitPrice = defaultMeasure.costPrice;
-          newPromotionDetail.taxPercentage = defaultTax.metadata?.["percentage"];
+          newPromotionDetail.taxPercentage = defaultTax.metadata?.['percentage'];
 
           compositions.push(new PromotionDetail(newPromotionDetail).calculate());
         } else {
           let existing = compositions[existingIndex];
           existing.quantity += 1;
-          existing = new PromotionDetail(existing).calculate()
-
+          existing = new PromotionDetail(existing).calculate();
         }
 
         this.selectedProducts.set(compositions);
       },
-      error: (err) => console.error('Error al obtener el producto:', err)
+      error: (err) => console.error('Error al obtener el producto:', err),
     });
   }
 
@@ -506,21 +510,20 @@ export class PromotionForm {
     // -----------------------------
     // CAMBIO DE UNIDAD (measureId)
     // -----------------------------
-    if (column === "measureId") {
-      const dataMeasure = data.measures.find(x => x.id === Number(newValue));
+    if (column === 'measureId') {
+      const dataMeasure = data.measures.find((x) => x.id === Number(newValue));
 
       if (dataMeasure) {
-        data.unitPrice = dataMeasure.costPrice;     // costo
-        data.fees = dataMeasure.fees;               // tarifas
+        data.unitPrice = dataMeasure.costPrice; // costo
+        data.fees = dataMeasure.fees; // tarifas
 
-        const defaultFee = dataMeasure.fees?.find(f => f.isDefault);
+        const defaultFee = dataMeasure.fees?.find((f) => f.isDefault);
         if (!defaultFee) {
           throw new Error('No se encontró tarifa por defecto para el producto seleccionado');
         }
 
         // precio venta base
         data.promotionalPrice = defaultFee.salePrice;
-
       } else {
         // fallback
         data.unitPrice = oldValue;
@@ -531,7 +534,7 @@ export class PromotionForm {
     // CAMBIO DE TARIFA (feeId)
     // -----------------------------
     if (column === 'feeId') {
-      const dataFee = data.fees.find(x => x.id == data.feeId);
+      const dataFee = data.fees.find((x) => x.id == data.feeId);
       if (dataFee) {
         data.promotionalPrice = dataFee.salePrice;
       }
@@ -546,9 +549,7 @@ export class PromotionForm {
     // Actualizar arreglo reactivo
     // -----------------------------
     this.selectedProducts.set(
-      this.selectedProducts().map(item =>
-        item.uuid === data.uuid ? data : item
-      )
+      this.selectedProducts().map((item) => (item.uuid === data.uuid ? data : item)),
     );
   }
 
@@ -574,10 +575,9 @@ export class PromotionForm {
     return true;
   }
 
-
   validateSchedule(): boolean {
     const scheduleData = this.scheduleArray.value;
-    const hasActiveDay = scheduleData.some((day:any) => day.isActive);
+    const hasActiveDay = scheduleData.some((day: any) => day.isActive);
 
     if (!hasActiveDay) {
       return false;
@@ -599,8 +599,8 @@ export class PromotionForm {
   }
 
   // Validación y envío del formulario
-   onSubmit()  {
-    console.log(this.promotionForm.value)
+  onSubmit() {
+    console.log(this.promotionForm.value);
     // Validaciones
     if (this.promotionForm.invalid) {
       this.promotionForm.markAllAsTouched();
@@ -611,7 +611,7 @@ export class PromotionForm {
     if (!this.validateDates()) {
       this.openSection.set('vigencia');
       this.notiSvc.warning({
-        message: 'La fecha de finalización debe ser posterior a la de inicio'
+        message: 'La fecha de finalización debe ser posterior a la de inicio',
       });
       return;
     }
@@ -619,24 +619,24 @@ export class PromotionForm {
     if (!this.validatePercentage()) {
       this.openSection.set('general');
       this.notiSvc.warning({
-        message: 'El porcentaje no puede ser mayor a 100'
-      })
+        message: 'El porcentaje no puede ser mayor a 100',
+      });
       return;
     }
 
     if (!this.validateSchedule()) {
       this.openSection.set('schedule');
       this.notiSvc.warning({
-        message: 'Debe activar al menos un día con horario válido'
-      })
+        message: 'Debe activar al menos un día con horario válido',
+      });
       return;
     }
 
     if (this.selectedProducts().length === 0) {
       this.openSection.set('products');
       this.notiSvc.warning({
-        message: 'Debe agregar al menos un producto'
-      })
+        message: 'Debe agregar al menos un producto',
+      });
       return;
     }
 
@@ -646,7 +646,7 @@ export class PromotionForm {
     const formValue = this.promotionForm.value;
     const scheduleData = this.scheduleArray.value;
     //
-    const promotion  = {
+    const promotion = {
       id: this.params.id,
       establishmentId: formValue.establishmentId,
       name: formValue.name,
@@ -659,39 +659,38 @@ export class PromotionForm {
       selectedProducts: this.selectedProducts(),
       schedule: scheduleData,
     };
-    console.log(scheduleData)
+    console.log(scheduleData);
 
     try {
-      if(this.isEdit()){
-        this.updateUseCase.execute(promotion).subscribe(this.commonResponse)
+      if (this.isEdit()) {
+        this.updateUseCase.execute(promotion).subscribe(this.commonResponse);
       }
 
-      if(this.isAdd()){
-      this.insertUseCase.execute(promotion).subscribe(this.commonResponse)
+      if (this.isAdd()) {
+        this.insertUseCase.execute(promotion).subscribe(this.commonResponse);
       }
-
     } catch (error: any) {
-      console.log(error)
+      console.log(error);
       this.notiSvc.error({
-        message: 'Error al guardar la promoción'
-      })
+        message: 'Error al guardar la promoción',
+      });
     } finally {
       this.isSubmitting.set(false);
     }
   }
 
-  private commonResponse = (response:any)=>{
-    if(response.code==="0"){
+  private commonResponse = (response: any) => {
+    if (response.code === '0') {
       this.notiSvc.warning({
-        message: response.message
-      })
-      return
+        message: response.message,
+      });
+      return;
     }
     this.notiSvc.success({
-      message: 'Promoción guardada exitosamente'
-    })
-    this.dgRef.close(response)
-  }
+      message: 'Promoción guardada exitosamente',
+    });
+    this.dgRef.close(response);
+  };
 
   getErrorMessage(controlName: string): string {
     const control = this.promotionForm.get(controlName);
@@ -706,7 +705,7 @@ export class PromotionForm {
     return '';
   }
 
-  dgClose(){
+  dgClose() {
     this.dgRef.close();
   }
 }

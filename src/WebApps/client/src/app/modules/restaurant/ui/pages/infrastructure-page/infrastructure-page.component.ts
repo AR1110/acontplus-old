@@ -1,6 +1,6 @@
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +30,7 @@ import { TableUseCase } from '@restaurant/application/use-cases/table.use-case';
   selector: 'app-infrastructure-page',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

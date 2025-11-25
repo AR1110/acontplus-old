@@ -56,7 +56,7 @@
   <div class="row mt-3">
     <div class="col-xl-5 col-lg-5 col-md-12 col-12">
       <div class="vstack gap-2">
-        <app-mat-dynamic-card class="my-2">
+        <acp-dynamic-card class="my-2">
           <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-12">
               <div class="mb-3">
@@ -118,23 +118,18 @@
               }
             </div>
           </div>
-        </app-mat-dynamic-card>
-        <mat-card appearance="outlined">
-          <mat-card-header>
-            <span class="card-title">Autorización Comprobante</span>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-radio-group [(ngModel)]="data.autoSriAuth" (change)="configSaveFactElect()">
-              <mat-radio-button [value]="false"> Manual </mat-radio-button>
-              <mat-radio-button [value]="true"> Automática </mat-radio-button>
-            </mat-radio-group>
+        </acp-dynamic-card>
+        <acp-dynamic-card cardTitle="Autorización Comprobante">
+          <mat-radio-group [(ngModel)]="data.autoSriAuth" (change)="configSaveFactElect()">
+            <mat-radio-button [value]="false"> Manual </mat-radio-button>
+            <mat-radio-button [value]="true"> Automática </mat-radio-button>
+          </mat-radio-group>
 
-            <div class="alert alert-info" role="alert">
-              En caso de que sea "Automática", los documentos electrónicos, una vez creados, no se
-              podrán editar más y se autorizarán automáticamente.
-            </div>
-          </mat-card-content>
-        </mat-card>
+          <div class="alert alert-info" role="alert">
+            En caso de que sea "Automática", los documentos electrónicos, una vez creados, no se
+            podrán editar más y se autorizarán automáticamente.
+          </div>
+        </acp-dynamic-card>
       </div>
     </div>
     <div class="col-xl-7 col-lg-7 col-md-12 col-12">

@@ -13,7 +13,6 @@ export class SriCustomerWebRepository implements SriCustomerRepository {
   //FROM REGISTRO CIVIL DATA
   url = `${PATHS_API.BILLING}Consultas/`;
 
-
   search(codigo: string, id: string) {
     let path;
     if (codigo == SRI_IDENTIFICATION_CODE.RUC) {

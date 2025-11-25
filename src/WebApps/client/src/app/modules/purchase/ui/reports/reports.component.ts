@@ -15,9 +15,8 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -33,7 +32,7 @@ import { MatSelectModule } from '@angular/material/select';
     SupplierSearchComponent,
     DateRangeSelectionComponent,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDivider,
   ],
   templateUrl: './reports.component.html',

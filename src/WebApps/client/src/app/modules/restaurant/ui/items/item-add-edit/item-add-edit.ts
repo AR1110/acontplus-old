@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -8,24 +8,25 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import Swal from 'sweetalert2';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
-import {ItemGetBydIdUseCase, ItemUpdateUseCase} from '@restaurant/application/use-cases/item.use-case';
 import {
-  GetProductSaleUseCase
-} from '@inventory/product/application/use-cases/product/get-product.use-case';
-import {ProductMeasure} from "@inventory/domain/models/product-measure";
-import {ItemComposition} from "@restaurant/domain/models/item-composition";
-import DecimalUtil from "@core/utils/decimal.util";
-import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
-import {MatIconButton} from "@angular/material/button";
-import {MatIcon} from "@angular/material/icon";
-import {MatTooltip} from "@angular/material/tooltip";
+  ItemGetBydIdUseCase,
+  ItemUpdateUseCase,
+} from '@restaurant/application/use-cases/item.use-case';
+import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { ProductMeasure } from '@inventory/domain/models/product-measure';
+import { ItemComposition } from '@restaurant/domain/models/item-composition';
+import DecimalUtil from '@core/utils/decimal.util';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { MatIconButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-item-add-edit',
   imports: [
     ReactiveFormsModule,
-    TabulatorComponent,
+    TabulatorTable,
     Button,
     MatCustomDialogComponent,
     MatInputModule,
@@ -40,12 +41,12 @@ import {MatTooltip} from "@angular/material/tooltip";
 export class ItemAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
   private productSaleUseCase = inject(GetProductSaleUseCase);
-  private updateUseCase = inject(ItemUpdateUseCase)
+  private updateUseCase = inject(ItemUpdateUseCase);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #tS = inject(ToastrNotificationService);
 
-  params = inject<{ id: number, acronymCategory: string }>(MAT_DIALOG_DATA);
-  itemForm!:FormGroup;
+  params = inject<{ id: number; acronymCategory: string }>(MAT_DIALOG_DATA);
+  itemForm!: FormGroup;
   itemCompositions = signal<ItemComposition[]>([]);
   itemCompositionsDeleted = signal<ItemComposition[]>([]);
 
@@ -67,14 +68,13 @@ export class ItemAddEdit implements OnInit {
     }
 
     if (column === 'feeId') {
-      for (const t of (data.fees || [])) {
+      for (const t of data.fees || []) {
         const opt = document.createElement('option');
         opt.value = t.id.toString();
         opt.innerHTML = t.name + ' - $' + t.priceWithTax;
         editor.appendChild(opt);
       }
     }
-
 
     editor.style.padding = '3px';
     editor.style.width = '100%';
@@ -141,9 +141,9 @@ export class ItemAddEdit implements OnInit {
       headerHozAlign: 'center',
     },
     {
-      title: this.isProduct() ? 'Ingrediente': 'Producto',
+      title: this.isProduct() ? 'Ingrediente' : 'Producto',
       field: 'description',
-      width:   280,
+      width: 280,
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
@@ -166,9 +166,6 @@ export class ItemAddEdit implements OnInit {
       validator: 'required',
       width: '9px',
     },
-
-
-
 
     //start when is product combo
     {
@@ -247,7 +244,6 @@ export class ItemAddEdit implements OnInit {
     },
   ];
 
-
   isProduct(): boolean {
     return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.RESTAURANT;
   }
@@ -260,11 +256,11 @@ export class ItemAddEdit implements OnInit {
     return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.INGREDIENT;
   }
 
-  getCategoryAbbreviationToSearch(){
-    if(this.isProduct()){
+  getCategoryAbbreviationToSearch() {
+    if (this.isProduct()) {
       return CATEGORY_ABBREVIATIONS.INGREDIENT;
     }
-    if(this.isCombo()){
+    if (this.isCombo()) {
       return CATEGORY_ABBREVIATIONS.RESTAURANT;
     }
     return '';
@@ -276,15 +272,14 @@ export class ItemAddEdit implements OnInit {
     this.itemCompositions.set(closeItemCompositions.filter((x: any) => x.uuid !== data.uuid));
   }
 
-  itemSearchLabel = this.isCombo()   ? 'Buscar Producto': 'Buscar Ingrediente';
+  itemSearchLabel = this.isCombo() ? 'Buscar Producto' : 'Buscar Ingrediente';
 
-  getColumns(){
-    return
+  getColumns() {
+    return;
   }
 
   ngOnInit() {
-
-    if(this.isProduct()){
+    if (this.isProduct()) {
       this.itemForm = new FormGroup({
         id: new FormControl(0),
         summary: new FormControl('', [Validators.required]),
@@ -296,7 +291,7 @@ export class ItemAddEdit implements OnInit {
       });
     }
 
-    if(this.isCombo()){
+    if (this.isCombo()) {
       this.itemForm = new FormGroup({
         id: new FormControl(0),
         summary: new FormControl(''),
@@ -304,7 +299,7 @@ export class ItemAddEdit implements OnInit {
       });
     }
 
-     this.getItemById();
+    this.getItemById();
   }
 
   async cellEdited(cell: any): Promise<void> {
@@ -319,34 +314,34 @@ export class ItemAddEdit implements OnInit {
       return;
     }
 
-    if(column==="measureId"){
-      const dataMeasure = data.measures.find((x:any) => x.measureId === Number(newValue));
-      if(dataMeasure){
+    if (column === 'measureId') {
+      const dataMeasure = data.measures.find((x: any) => x.measureId === Number(newValue));
+      if (dataMeasure) {
         data.unitPrice = dataMeasure.costPrice;
-      }else{
+      } else {
         data.unitPrice = oldValue;
       }
     }
 
     if (column == 'feeId') {
       const dataFee = data.fees.find((x: any) => x.id == data.feeId);
-      if(dataFee){
+      if (dataFee) {
         data.salePrice = dataFee.salePrice;
       }
     }
-    data.totalPrice =   DecimalUtil.multiplyAsNumber(data.quantity, data.salePrice)
+    data.totalPrice = DecimalUtil.multiplyAsNumber(data.quantity, data.salePrice);
 
-      this.itemCompositions.set(this.itemCompositions().map((item) => (item.uuid === data.uuid ? data : item)));
+    this.itemCompositions.set(
+      this.itemCompositions().map((item) => (item.uuid === data.uuid ? data : item)),
+    );
   }
 
-  private getItemById(){
-    this.itemGetByIdUseCase.execute(  this.params.id).subscribe((response) => {
+  private getItemById() {
+    this.itemGetByIdUseCase.execute(this.params.id).subscribe((response) => {
       this.itemForm.patchValue(response.item);
       this.itemCompositions.set(response.itemCompositions);
     });
   }
-
-
 
   onSelectItem(rowData: any): void {
     if (!rowData?.productId) return;
@@ -357,13 +352,12 @@ export class ItemAddEdit implements OnInit {
         if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
 
         const compositions = structuredClone(this.itemCompositions());
-        const existingIndex = compositions.findIndex(x => x.childItemId === rowData.id);
+        const existingIndex = compositions.findIndex((x) => x.childItemId === rowData.id);
 
         const getDefaultMeasure = (): ProductMeasure | undefined =>
-          measures.find(m => m.defaultMeasure);
+          measures.find((m) => m.defaultMeasure);
 
-        const getDefaultFee = (measure?: ProductMeasure) =>
-          measure?.fees?.find(f => f.isDefault);
+        const getDefaultFee = (measure?: ProductMeasure) => measure?.fees?.find((f) => f.isDefault);
 
         if (existingIndex === -1) {
           const defaultMeasure = getDefaultMeasure();
@@ -386,24 +380,26 @@ export class ItemAddEdit implements OnInit {
           newComposition.description = product.descripcion;
           newComposition.unitPrice = defaultMeasure.costPrice;
 
-          newComposition.totalPrice =   DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.salePrice)
+          newComposition.totalPrice = DecimalUtil.multiplyAsNumber(
+            newComposition.quantity,
+            newComposition.salePrice,
+          );
 
           compositions.push(newComposition);
         } else {
           const existing = compositions[existingIndex];
           existing.quantity += 1;
-          existing.totalPrice =   DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice)
-
+          existing.totalPrice = DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice);
         }
 
         this.itemCompositions.set(compositions);
       },
-      error: (err) => console.error('Error al obtener el producto:', err)
+      error: (err) => console.error('Error al obtener el producto:', err),
     });
   }
 
   async deleteRow(rowData: ItemComposition) {
-    const {isConfirmed} = await Swal.fire({
+    const { isConfirmed } = await Swal.fire({
       title: '¿Está seguro de eliminar este registro?',
       icon: 'warning',
       showCancelButton: true,
@@ -411,18 +407,21 @@ export class ItemAddEdit implements OnInit {
       cancelButtonColor: '#d33',
       confirmButtonText: 'Si, eliminar',
       cancelButtonText: 'Cancelar',
-    })
+    });
 
-    if(isConfirmed){
+    if (isConfirmed) {
       const cloneItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
       this.itemCompositions.set(cloneItemCompositions.filter((x: any) => x.uuid !== rowData.uuid));
 
-      if(rowData.id>0){
-        this.itemCompositionsDeleted.update((x:any) => [...x, {
-          ...rowData,
-          isActive: false,
-          isDeleted: true,
-        }]);
+      if (rowData.id > 0) {
+        this.itemCompositionsDeleted.update((x: any) => [
+          ...x,
+          {
+            ...rowData,
+            isActive: false,
+            isDeleted: true,
+          },
+        ]);
       }
     }
   }
@@ -435,7 +434,6 @@ export class ItemAddEdit implements OnInit {
     this.itemForm.get('summary')?.setValue(summary);
   }
 
-
   onSave() {
     if (this.itemForm.invalid) {
       return this.#tS.show({
@@ -445,32 +443,27 @@ export class ItemAddEdit implements OnInit {
     }
     const dataToSave = {
       item: this.itemForm.value,
-      itemCompositions: [
-        ...this.itemCompositions(),
-        ...this.itemCompositionsDeleted(),
-      ],
+      itemCompositions: [...this.itemCompositions(), ...this.itemCompositionsDeleted()],
       isProduct: this.isProduct(),
       isCombo: this.isCombo(),
     };
-    this.updateUseCase.execute({
-      id: this.params.id,
-      data: dataToSave,
-    }).subscribe((response) => {
-      Swal.fire({
-        icon: response.code === '1' ? 'success' : 'warning',
-        html: response.message,
+    this.updateUseCase
+      .execute({
+        id: this.params.id,
+        data: dataToSave,
+      })
+      .subscribe((response) => {
+        Swal.fire({
+          icon: response.code === '1' ? 'success' : 'warning',
+          html: response.message,
+        });
+        if (response.code === '1') {
+          this.#modalRef.close(response);
+        }
       });
-      if (response.code === '1') {
-        this.#modalRef.close(response);
-      }
-    });
   }
-
-
 
   onModalClose() {
     this.#modalRef.close();
   }
-
-
 }

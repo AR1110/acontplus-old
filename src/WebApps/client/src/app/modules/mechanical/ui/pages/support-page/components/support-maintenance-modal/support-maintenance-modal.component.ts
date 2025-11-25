@@ -1,5 +1,5 @@
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { Component, inject, signal, OnInit, viewChild } from '@angular/core';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { isApiResponse } from '@core/models/api-response-legacy';
@@ -36,7 +36,7 @@ import Swal from 'sweetalert2';
   imports: [
     FormsModule,
     MatIcon,
-    TabulatorComponent,
+    TabulatorTable,
     DrawTaxTotalComponent,
     ProductSearchOverlayComponent,
     MatButtonModule,
@@ -61,7 +61,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   private supportDetailUseCase = inject(SupportDetailUseCase);
   private tS = inject(ToastrNotificationService);
 
-  readonly tabulatorComponent = viewChild.required(TabulatorComponent);
+  readonly tabulatorComponent = viewChild.required(TabulatorTable);
 
   data = {
     id: 0,
@@ -822,7 +822,8 @@ export class SupportMaintenanceModalComponent implements OnInit {
     });
 
     const row = this.tabulatorComponent()
-      .refTabulator.getRows()
+      .getInstance()
+      .getRows()
       .find(function (row) {
         return row.getData()['rowguid'] === data.rowguid;
       });

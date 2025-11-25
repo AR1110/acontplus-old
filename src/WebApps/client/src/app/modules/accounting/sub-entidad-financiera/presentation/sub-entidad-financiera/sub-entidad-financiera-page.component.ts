@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SubEntidadFinancieraUseCase } from '@accounting/sub-entidad-financiera/application/sub-entidad-financiera.use-case';
 import { DialogService } from '@core/services/dialog.service';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-sub-entidad-financiera-page',
@@ -26,7 +26,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
     MatButtonModule,
     BreadcrumbComponent,
     MatDynamicTableComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
   ],
   templateUrl: './sub-entidad-financiera-page.component.html',
 })

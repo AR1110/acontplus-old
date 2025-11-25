@@ -1,5 +1,3 @@
-using Restaurant.Application.Dtos.Items;
-
 namespace Restaurant.API.Endpoints.Item;
 
 public static class UpdateEndpoints

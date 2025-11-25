@@ -1,10 +1,10 @@
-import {DocumentDetail, DocumentDetailModel} from "@shared/models/document-detail";
+import { DocumentDetail, DocumentDetailModel } from '@shared/models/document-detail';
 
 export interface DocumentBaseModel {
   id?: string;
   documentNumber?: string;
   date: Date;
-  customerId : number;
+  customerId: number;
   customerName: string;
   details: DocumentDetailModel[];
   subtotal: number;
@@ -13,7 +13,6 @@ export interface DocumentBaseModel {
   total: number;
   notes?: string;
 }
-
 
 export abstract class DocumentBase implements DocumentBaseModel {
   id?: string;
@@ -33,7 +32,7 @@ export abstract class DocumentBase implements DocumentBaseModel {
   constructor(data?: Partial<DocumentBaseModel>) {
     Object.assign(this, data);
     if (data?.details) {
-      this.details = data.details.map(d => new DocumentDetail(d));
+      this.details = data.details.map((d) => new DocumentDetail(d));
     }
   }
 
@@ -53,7 +52,7 @@ export abstract class DocumentBase implements DocumentBaseModel {
 
   calculateTotals(): this {
     // Recalcular cada detalle
-    this.details.forEach(detail => detail.calculate());
+    this.details.forEach((detail) => detail.calculate());
 
     // Calcular totales del documento
     // this.subtotal = this.details.reduce((sum, d) => sum + d.subtotal, 0);

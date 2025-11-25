@@ -3,7 +3,7 @@ import { EgresoIngresoCajaComponent } from '@accounting/movimiento-caja/presenta
 import { AnticipoComponent } from '@accounting/movimiento-caja/presentation/anticipo/anticipo.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-movimiento-caja-page',
@@ -12,7 +12,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
     BreadcrumbComponent,
     EgresoIngresoCajaComponent,
     AnticipoComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
   ],
   templateUrl: './movimiento-caja-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

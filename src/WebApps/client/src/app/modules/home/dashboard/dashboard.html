@@ -10,89 +10,73 @@
   <!-- Statistics -->
   @for (stat of statistics(); track $index) {
     <div class="col-sm-6 col-md-3">
-      <mat-card [class]="['text-white', 'b-0', stat.color]">
-        <mat-card-header>
-          <mat-card-subtitle class="text-white">{{ stat.title }}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <h2 class="m-t-0 m-b-8">{{ stat.count }}</h2>
-          <!-- <mtx-progress
+      <acp-dynamic-card
+        [class]="['text-white', 'b-0', stat.color]"
+        [cardSubtitle]="stat.title"
+        [isHeaderVisible]="true"
+      >
+        <h2 class="m-t-0 m-b-8">{{ stat.count }}</h2>
+        <!-- <mtx-progress
             [value]="stat.progress.value"
             height="2px"
             foreground="rgba(255,255,255,1)"
             background="rgba(0,0,0,.4)"
           /> -->
-          <!--          <small class="text-muted">Monthly</small>-->
-        </mat-card-content>
-      </mat-card>
+        <!--          <small class="text-muted">Monthly</small>-->
+      </acp-dynamic-card>
     </div>
   }
 
   <!-- Charts -->
   <div class="col-md-4">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-subtitle>Documentos Emitidos</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div id="chart1">
-          <apx-chart
-            #chart1
-            [series]="chart1Options.series"
-            [chart]="chart1Options.chart"
-            [dataLabels]="chart1Options.dataLabels"
-            [plotOptions]="chart1Options.plotOptions"
-            [yaxis]="chart1Options.yaxis"
-            [xaxis]="chart1Options.xaxis"
-            [stroke]="chart1Options.stroke"
-            [grid]="chart1Options.grid"
-            [fill]="chart1Options.fill"
-            [annotations]="chart1Options.annotations"
-          />
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <acp-dynamic-card [cardSubtitle]="'Documentos Emitidos'" [isHeaderVisible]="true">
+      <div id="chart1">
+        <apx-chart
+          #chart1
+          [series]="chart1Options.series"
+          [chart]="chart1Options.chart"
+          [dataLabels]="chart1Options.dataLabels"
+          [plotOptions]="chart1Options.plotOptions"
+          [yaxis]="chart1Options.yaxis"
+          [xaxis]="chart1Options.xaxis"
+          [stroke]="chart1Options.stroke"
+          [grid]="chart1Options.grid"
+          [fill]="chart1Options.fill"
+          [annotations]="chart1Options.annotations"
+        />
+      </div>
+    </acp-dynamic-card>
   </div>
   <div class="col-md-4">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-subtitle>Documentos No Tributarios</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div id="chart2">
-          <apx-chart
-            #chart2
-            [series]="chart2Options.series"
-            [chart]="chart2Options.chart"
-            [dataLabels]="chart2Options.dataLabels"
-            [plotOptions]="chart2Options.plotOptions"
-            [xaxis]="chart2Options.xaxis"
-          />
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <acp-dynamic-card [cardSubtitle]="'Documentos No Tributarios'" [isHeaderVisible]="true">
+      <div id="chart2">
+        <apx-chart
+          #chart2
+          [series]="chart2Options.series"
+          [chart]="chart2Options.chart"
+          [dataLabels]="chart2Options.dataLabels"
+          [plotOptions]="chart2Options.plotOptions"
+          [xaxis]="chart2Options.xaxis"
+        />
+      </div>
+    </acp-dynamic-card>
   </div>
   <div class="col-md-4">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-subtitle>Documentos Recibidos</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div id="chart3">
-          <apx-chart
-            #chart3
-            [series]="chart3Options.series"
-            [chart]="chart3Options.chart"
-            [dataLabels]="chart3Options.dataLabels"
-            [plotOptions]="chart3Options.plotOptions"
-            [yaxis]="chart3Options.yaxis"
-            [xaxis]="chart3Options.xaxis"
-            [legend]="chart3Options.legend"
-            [colors]="chart3Options.colors"
-            [grid]="chart3Options.grid"
-          />
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <acp-dynamic-card [cardSubtitle]="'Documentos Recibidos'" [isHeaderVisible]="true">
+      <div id="chart3">
+        <apx-chart
+          #chart3
+          [series]="chart3Options.series"
+          [chart]="chart3Options.chart"
+          [dataLabels]="chart3Options.dataLabels"
+          [plotOptions]="chart3Options.plotOptions"
+          [yaxis]="chart3Options.yaxis"
+          [xaxis]="chart3Options.xaxis"
+          [legend]="chart3Options.legend"
+          [colors]="chart3Options.colors"
+          [grid]="chart3Options.grid"
+        />
+      </div>
+    </acp-dynamic-card>
   </div>
 </div>

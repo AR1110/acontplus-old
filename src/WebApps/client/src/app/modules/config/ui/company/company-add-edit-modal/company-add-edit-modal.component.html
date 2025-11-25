@@ -32,9 +32,9 @@
       <textarea matInput [(ngModel)]="data.direccion"></textarea>
     </mat-form-field>
 
-    <app-mat-input-chip [labelText]="'Correo'" [chips]="emails()" />
+    <acp-input-chip [labelText]="'Correo'" [chips]="emails()" />
 
-    <app-mat-input-chip [labelText]="'Teléfono'" [chips]="telefonos()" />
+    <acp-input-chip [labelText]="'Teléfono'" [chips]="telefonos()" />
   </div>
 </ng-template>
 <ng-template #footer>

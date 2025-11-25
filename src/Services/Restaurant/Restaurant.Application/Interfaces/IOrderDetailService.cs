@@ -1,4 +1,4 @@
-using Restaurant.Application.DTOs.Orders;
+using Restaurant.Application.Dtos.Order;
 
 namespace Restaurant.Application.Interfaces;
 

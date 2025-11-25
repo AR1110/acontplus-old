@@ -158,18 +158,17 @@ export function fechaString(fecha: Date): string {
 
 export const getTimeString = function (date: Date | string): string {
   const d = new Date(date);
-  const hh = d.getHours().toString().padStart(2, "0");
-  const mm = d.getMinutes().toString().padStart(2, "0");
+  const hh = d.getHours().toString().padStart(2, '0');
+  const mm = d.getMinutes().toString().padStart(2, '0');
   return `${hh}:${mm}`;
-}
-
+};
 
 /**
  * Formatea una fecha a un string legible (solo día, mes, año).
  * @param {Date} date
  * @returns {string}
  */
-export const formatDisplayDate = (date:Date|number) => {
+export const formatDisplayDate = (date: Date | number) => {
   return new Intl.DateTimeFormat('es-ES', {
     day: 'numeric',
     month: 'short',

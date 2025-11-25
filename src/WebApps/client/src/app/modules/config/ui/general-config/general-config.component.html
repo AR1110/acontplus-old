@@ -1,6 +1,6 @@
 <app-breadcrumb />
 
-<app-mat-dynamic-card>
+<acp-dynamic-card>
   <mat-tab-group
     [selectedIndex]="selectedTab()"
     (selectedIndexChange)="selectedIndexChange($event)"
@@ -140,7 +140,7 @@
               </div>
               <div class="col">
                 @if (configVenta.configCc) {
-                  <app-mat-input-chip [chips]="emails" [labelText]="'Correo'" />
+                  <acp-input-chip [chips]="emails" [labelText]="'Correo'" />
                 }
               </div>
             </div>
@@ -220,103 +220,85 @@
               class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2"
             >
               <div class="col">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-title>Ventas</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select [label]="'Precio'" [(value)]="decimalVenta.nroPrecio" />
+                <acp-dynamic-card cardTitle="Ventas" [isHeaderVisible]="true">
+                  <div class="d-grid gap-2 mt-2">
+                    <app-decimal-select [label]="'Precio'" [(value)]="decimalVenta.nroPrecio" />
 
-                      <app-decimal-select
-                        [label]="'Cantidad'"
-                        [(value)]="decimalVenta.nroCantidad"
-                      />
+                    <app-decimal-select [label]="'Cantidad'" [(value)]="decimalVenta.nroCantidad" />
 
-                      <app-decimal-select [label]="'IVA'" [(value)]="decimalVenta.nroIva" />
+                    <app-decimal-select [label]="'IVA'" [(value)]="decimalVenta.nroIva" />
 
-                      <app-decimal-select
-                        [label]="'Descuento general'"
-                        [(value)]="decimalVenta.nroDescuento"
-                      />
+                    <app-decimal-select
+                      [label]="'Descuento general'"
+                      [(value)]="decimalVenta.nroDescuento"
+                    />
 
-                      <app-decimal-select
-                        [label]="'Descuento por artículo'"
-                        [(value)]="decimalVenta.nroDescuentoDetalle"
-                      />
+                    <app-decimal-select
+                      [label]="'Descuento por artículo'"
+                      [(value)]="decimalVenta.nroDescuentoDetalle"
+                    />
 
-                      <app-decimal-select
-                        [label]="'Total detalle'"
-                        [(value)]="decimalVenta.nroTotalDetalle"
-                      />
+                    <app-decimal-select
+                      [label]="'Total detalle'"
+                      [(value)]="decimalVenta.nroTotalDetalle"
+                    />
 
-                      <app-decimal-select
-                        [label]="'SubTotales de comprobante'"
-                        [(value)]="decimalVenta.nroTotalSubTotal"
-                      />
+                    <app-decimal-select
+                      [label]="'SubTotales de comprobante'"
+                      [(value)]="decimalVenta.nroTotalSubTotal"
+                    />
 
-                      <app-decimal-select [label]="'ICE'" [(value)]="decimalVenta.nroIce" />
+                    <app-decimal-select [label]="'ICE'" [(value)]="decimalVenta.nroIce" />
 
-                      <app-decimal-select
-                        [label]="'Importe total'"
-                        [(value)]="decimalVenta.importeTotal"
-                      />
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+                    <app-decimal-select
+                      [label]="'Importe total'"
+                      [(value)]="decimalVenta.importeTotal"
+                    />
+                  </div>
+                </acp-dynamic-card>
               </div>
               <div class="col">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-title>Compras</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select [label]="'Precio'" [(value)]="decimalCompra.nroPrecio" />
+                <acp-dynamic-card cardTitle="Compras" [isHeaderVisible]="true">
+                  <div class="d-grid gap-2 mt-2">
+                    <app-decimal-select [label]="'Precio'" [(value)]="decimalCompra.nroPrecio" />
 
-                      <app-decimal-select
-                        [label]="'Cantidad'"
-                        [(value)]="decimalCompra.nroCantidad"
-                      />
+                    <app-decimal-select
+                      [label]="'Cantidad'"
+                      [(value)]="decimalCompra.nroCantidad"
+                    />
 
-                      <app-decimal-select [label]="'IVA'" [(value)]="decimalCompra.nroIva" />
+                    <app-decimal-select [label]="'IVA'" [(value)]="decimalCompra.nroIva" />
 
-                      <app-decimal-select
-                        [label]="'Descuento general'"
-                        [(value)]="decimalCompra.nroDescuento"
-                      />
+                    <app-decimal-select
+                      [label]="'Descuento general'"
+                      [(value)]="decimalCompra.nroDescuento"
+                    />
 
-                      <app-decimal-select
-                        [label]="'Descuento por artículo'"
-                        [(value)]="decimalCompra.nroDescuentoDetalle"
-                      />
+                    <app-decimal-select
+                      [label]="'Descuento por artículo'"
+                      [(value)]="decimalCompra.nroDescuentoDetalle"
+                    />
 
-                      <app-decimal-select
-                        [label]="'Total detalle'"
-                        [(value)]="decimalCompra.nroTotalDetalle"
-                      />
+                    <app-decimal-select
+                      [label]="'Total detalle'"
+                      [(value)]="decimalCompra.nroTotalDetalle"
+                    />
 
-                      <app-decimal-select [label]="'ICE'" [(value)]="decimalCompra.nroIce" />
+                    <app-decimal-select [label]="'ICE'" [(value)]="decimalCompra.nroIce" />
 
-                      <app-decimal-select
-                        [label]="'Totales y SubTotales'"
-                        [(value)]="decimalCompra.nroTotalSubTotal"
-                      />
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+                    <app-decimal-select
+                      [label]="'Totales y SubTotales'"
+                      [(value)]="decimalCompra.nroTotalSubTotal"
+                    />
+                  </div>
+                </acp-dynamic-card>
               </div>
               <div class="col">
-                <mat-card appearance="outlined">
-                  <mat-card-header>
-                    <mat-card-title>Inventario</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="d-grid gap-2 mt-2">
-                      <app-decimal-select [label]="'Precio'" [(value)]="decimalAlmacen.nroPrecio" />
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+                <acp-dynamic-card cardTitle="Inventario" [isHeaderVisible]="true">
+                  <div class="d-grid gap-2 mt-2">
+                    <app-decimal-select [label]="'Precio'" [(value)]="decimalAlmacen.nroPrecio" />
+                  </div>
+                </acp-dynamic-card>
               </div>
             </div>
 
@@ -358,4 +340,4 @@
       </ng-template>
     </mat-tab>
   </mat-tab-group>
-</app-mat-dynamic-card>
+</acp-dynamic-card>

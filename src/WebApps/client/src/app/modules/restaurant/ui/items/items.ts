@@ -15,10 +15,10 @@ import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
-import {MatInput} from "@angular/material/input";
-import {ValidatorUtils} from "@core/utils/utils";
-import {MatFormField, MatLabel} from "@angular/material/form-field";
-import {LookupService} from "@restaurant/application/services/lookup-service";
+import { MatInput } from '@angular/material/input';
+import { ValidatorUtils } from '@core/utils/utils';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { LookupService } from '@restaurant/application/services/lookup-service';
 
 @Component({
   selector: 'app-items',
@@ -39,12 +39,12 @@ import {LookupService} from "@restaurant/application/services/lookup-service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Items implements OnInit {
-  private lookupSvc = inject(LookupService)
+  private lookupSvc = inject(LookupService);
   private _listUseCase = inject(ItemListUseCase);
   private _dgSvc = inject(DialogService);
 
   columns: DataGridColumn[] = [
-    { header: 'Op.', field: 'op', pinned: 'left', },
+    { header: 'Op.', field: 'op', pinned: 'left' },
     { header: 'Nro.', field: 'index' },
     { header: 'Categoría', field: 'category' },
     { header: 'Imagen', field: 'imageUrl', type: 'image' },
@@ -72,8 +72,7 @@ export class Items implements OnInit {
   isLoading = signal(false);
   pagination = signal(new Pagination());
 
-
-  searchTerm = ''
+  searchTerm = '';
 
   ngOnInit() {
     // this.lookupSvc.lookupListUseCase.execute({
@@ -89,11 +88,10 @@ export class Items implements OnInit {
   }
 
   getList() {
-
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-        searchTerm: ValidatorUtils.isValidField(this.searchTerm) ?? undefined ,
+      searchTerm: ValidatorUtils.isValidField(this.searchTerm) ?? undefined,
       filters: {
         categoryAbbreviations:
           this.categoryAbbreviationsSelected.length > 0
@@ -110,15 +108,14 @@ export class Items implements OnInit {
         next: (response) => {
           this.list.set(response.items);
           this.pagination.update(
-            (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount)
+            (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount),
           );
         },
         error: (err) => {
           this.list.set([]);
           console.error('Error al cargar la lista:', err);
-        }
+        },
       });
-
   }
 
   onEdit(rowData: any) {

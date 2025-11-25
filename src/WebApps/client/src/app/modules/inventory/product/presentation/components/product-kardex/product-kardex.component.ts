@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
@@ -35,7 +35,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatChipsModule,
     ProductSearchComponent,
     DateRangeSelectionComponent,
-    TabulatorComponent,
+    TabulatorTable,
     Button,
     MatCustomDialogComponent,
   ],
@@ -52,7 +52,7 @@ export class ProductKardexComponent implements OnInit {
   tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 
-  @ViewChild(TabulatorComponent) tabulatorComponent!: TabulatorComponent;
+  @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
   tabulatorOptions = {
     columnHeaderVertAlign: 'bottom',
@@ -389,7 +389,7 @@ export class ProductKardexComponent implements OnInit {
         for (const value of this.transacciones()) {
           value.totalGeneral = (value.precioCosto * value.saldo).toFixed(2);
         }
-        this.tabulatorComponent.refTabulator.setData(this.transacciones());
+        this.tabulatorComponent.getInstance().setData(this.transacciones());
       });
     } catch (error) {
       console.log(error);

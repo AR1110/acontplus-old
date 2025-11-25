@@ -1,5 +1,5 @@
-import { generateUuidv4 } from "@core/utils/generate-uuidv4";
-import { ProductFee, ProductMeasure } from "@inventory/domain/models/product-measure";
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-measure';
 
 export class PromotionDetail {
   uuid = generateUuidv4();
@@ -25,8 +25,8 @@ export class PromotionDetail {
 
   taxPercentage = 0;
   // Descuentos
-  discountPercent = 0;  // %
-  discount = 0;         // USD
+  discountPercent = 0; // %
+  discount = 0; // USD
 
   quantity = 1;
   subtotal = 0;
@@ -55,22 +55,17 @@ export class PromotionDetail {
     // ------------------------------------------------------------
     // 2. Calcular descuento porcentual
     // ------------------------------------------------------------
-    const percentDiscountAmount =
-      (this.promotionalPrice * this.discountPercent) / 100;
+    const percentDiscountAmount = (this.promotionalPrice * this.discountPercent) / 100;
 
     // ------------------------------------------------------------
     // 3. Total descuentos (fijo + %)
     // ------------------------------------------------------------
-    const totalDiscount =
-      percentDiscountAmount + this.discount;
+    const totalDiscount = percentDiscountAmount + this.discount;
 
     // ------------------------------------------------------------
     // 4. Precio final (venta) después de descuentos
     // ------------------------------------------------------------
-    const finalPrice = Math.max(
-      this.promotionalPrice - totalDiscount,
-      0
-    );
+    const finalPrice = Math.max(this.promotionalPrice - totalDiscount, 0);
 
     // ------------------------------------------------------------
     // 5. Actualizar promotionalPrice como precio final

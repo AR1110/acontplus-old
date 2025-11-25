@@ -1,5 +1,5 @@
 <app-breadcrumb />
-<app-mat-dynamic-card>
+<acp-dynamic-card>
   <div class="vstack gap-2">
     <div class="row">
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
@@ -185,10 +185,10 @@
       </div>
     </div>
     <div class="mt-2">
-      <app-tabulator
-        [columnNames]="columns"
+      <acp-tabulator-table
+        [columns]="columns"
         [dataTree]="true"
-        [tableData]="nestedProducts()"
+        [data]="nestedProducts()"
         [dataTreeStartExpanded]="true"
         (cellEdited)="cellEdited($event)"
         (cellClick)="cellClick($event)"
@@ -196,4 +196,4 @@
       />
     </div>
   </div>
-</app-mat-dynamic-card>
+</acp-dynamic-card>

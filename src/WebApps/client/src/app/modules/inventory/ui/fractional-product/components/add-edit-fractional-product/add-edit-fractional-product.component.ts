@@ -10,7 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -43,7 +43,7 @@ import {
     MatCustomDialogComponent,
     Button,
     MeasureAddEditDirective,
-    TabulatorComponent,
+    TabulatorTable,
   ],
   templateUrl: './add-edit-fractional-product.component.html',
   styles: ``,

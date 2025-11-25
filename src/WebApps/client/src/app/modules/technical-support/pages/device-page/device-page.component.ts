@@ -1,3 +1,4 @@
+import { DynamicCard } from '@acontplus/ng-components';
 import { Component, inject, ViewChild } from '@angular/core';
 import { DeviceListComponent } from './device-list/device-list.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -9,7 +10,7 @@ import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-device-page',
-  imports: [BreadcrumbComponent, DeviceListComponent, MatCard, MatCardContent, MatButton, MatIcon],
+  imports: [DynamicCard, BreadcrumbComponent, DeviceListComponent, MatButton, MatIcon],
   templateUrl: './device-page.component.html',
   styles: ``,
 })

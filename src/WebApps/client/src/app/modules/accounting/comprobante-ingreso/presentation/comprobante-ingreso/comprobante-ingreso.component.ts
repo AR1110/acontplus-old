@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { finalize } from 'rxjs';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Pagination } from '@acontplus/ng-components';
@@ -19,7 +19,7 @@ import { isValidField } from '@core/utils/utils';
 @Component({
   selector: 'app-comprobante-ingreso',
   imports: [
-    MatCardModule,
+    DynamicCard,
     MatButtonModule,
     MatIconModule,
     BreadcrumbComponent,

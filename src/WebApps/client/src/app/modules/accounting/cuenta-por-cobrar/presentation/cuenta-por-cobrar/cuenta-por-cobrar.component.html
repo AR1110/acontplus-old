@@ -1,155 +1,153 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
-          <select class="form-select" id="establecimiento" name="establecimiento">
-            @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.codEstab">
-                {{ item.nombreComercial }}
-              </option>
-            }
-          </select>
-        </div>
+<acp-dynamic-card>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="establecimiento">Establecimiento: <span class="text-danger">*</span></label>
+        <select class="form-select" id="establecimiento" name="establecimiento">
+          @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
+          }
+        </select>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="form-group">
-          <label for="dateRange">Rango fechas: </label>
-          <div class="input-group mb-3">
-            <div class="input-group-text">
-              <input
-                [(ngModel)]="dataSearch.checkBoxFecha"
-                aria-label="Checkbox for following text input"
-                class="form-check-input mt-0"
-                type="checkbox"
-              />
-            </div>
-            <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
+    </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="dateRange">Rango fechas: </label>
+        <div class="input-group mb-3">
+          <div class="input-group-text">
+            <input
+              [(ngModel)]="dataSearch.checkBoxFecha"
+              aria-label="Checkbox for following text input"
+              class="form-check-input mt-0"
+              type="checkbox"
+            />
           </div>
+          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
         </div>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
     </div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
+  </div>
 
-    <div class="row">
-      <div
-        class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center"
-      >
-        <div class="d-grid gap-2 text-center w-100">
-          <button (click)="openDocPaymentModal()" mat-raised-button type="button">
-            <mat-icon>payments</mat-icon>
-            Cobrar
-          </button>
-        </div>
+  <div class="row">
+    <div
+      class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12 d-flex justify-content-center align-items-center"
+    >
+      <div class="d-grid gap-2 text-center w-100">
+        <button (click)="openDocPaymentModal()" mat-raised-button type="button">
+          <mat-icon>payments</mat-icon>
+          Cobrar
+        </button>
       </div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
-      <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
     </div>
-    <section class="section-container-table">
-      <table [dataSource]="dataSource" class="mat-elevation-z0" mat-table>
-        <ng-container matColumnDef="select">
-          <th *matHeaderCellDef mat-header-cell>
-            <mat-checkbox
-              (change)="$event ? toggleAllRows() : null"
-              [aria-label]="checkboxLabel()"
-              [checked]="selection.hasValue() && isAllSelected()"
-              [indeterminate]="selection.hasValue() && !isAllSelected()"
-            />
-          </th>
-          <td *matCellDef="let row" mat-cell>
-            <mat-checkbox
-              (change)="$event ? selection.toggle(row) : null"
-              (click)="$event.stopPropagation()"
-              [aria-label]="checkboxLabel(row)"
-              [checked]="selection.isSelected(row)"
-            />
-          </td>
-        </ng-container>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12"></div>
+  </div>
+  <section class="section-container-table">
+    <table [dataSource]="dataSource" class="mat-elevation-z0" mat-table>
+      <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+          <mat-checkbox
+            (change)="$event ? toggleAllRows() : null"
+            [aria-label]="checkboxLabel()"
+            [checked]="selection.hasValue() && isAllSelected()"
+            [indeterminate]="selection.hasValue() && !isAllSelected()"
+          />
+        </th>
+        <td *matCellDef="let row" mat-cell>
+          <mat-checkbox
+            (change)="$event ? selection.toggle(row) : null"
+            (click)="$event.stopPropagation()"
+            [aria-label]="checkboxLabel(row)"
+            [checked]="selection.isSelected(row)"
+          />
+        </td>
+      </ng-container>
 
-        <!-- Position Column -->
-        <ng-container matColumnDef="index">
-          <th *matHeaderCellDef mat-header-cell>No.</th>
-          <td *matCellDef="let element; let i = index" mat-cell>{{ i + 1 }}</td>
-        </ng-container>
+      <!-- Position Column -->
+      <ng-container matColumnDef="index">
+        <th *matHeaderCellDef mat-header-cell>No.</th>
+        <td *matCellDef="let element; let i = index" mat-cell>{{ i + 1 }}</td>
+      </ng-container>
 
-        <!-- Name Column -->
-        <!-- <ng-container matColumnDef="op">
+      <!-- Name Column -->
+      <!-- <ng-container matColumnDef="op">
           <th mat-header-cell *matHeaderCellDef> Op. </th>
           <td mat-cell *matCellDef="let element"> {{element.name}} </td>
         </ng-container> -->
 
-        <!-- Weight Column -->
-        <ng-container matColumnDef="tipoDoc">
-          <th *matHeaderCellDef mat-header-cell>Tipo Doc.</th>
-          <td *matCellDef="let element" mat-cell>{{ element.codDoc }}</td>
-        </ng-container>
+      <!-- Weight Column -->
+      <ng-container matColumnDef="tipoDoc">
+        <th *matHeaderCellDef mat-header-cell>Tipo Doc.</th>
+        <td *matCellDef="let element" mat-cell>{{ element.codDoc }}</td>
+      </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="serieComprobante">
-          <th *matHeaderCellDef mat-header-cell>Serie Comprobante</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.serieComprobante }}
-          </td>
-        </ng-container>
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="serieComprobante">
+        <th *matHeaderCellDef mat-header-cell>Serie Comprobante</th>
+        <td *matCellDef="let element" mat-cell>
+          {{ element.serieComprobante }}
+        </td>
+      </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="razonSocialComprador">
-          <th *matHeaderCellDef mat-header-cell>Razon Social Comprador</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.razonSocialComprador }}
-          </td>
-        </ng-container>
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="razonSocialComprador">
+        <th *matHeaderCellDef mat-header-cell>Razon Social Comprador</th>
+        <td *matCellDef="let element" mat-cell>
+          {{ element.razonSocialComprador }}
+        </td>
+      </ng-container>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="fechaEmision">
-          <th *matHeaderCellDef mat-header-cell>Fecha Emisión</th>
-          <td *matCellDef="let element" mat-cell>{{ element.fechaEmision }}</td>
-        </ng-container>
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="fechaEmision">
+        <th *matHeaderCellDef mat-header-cell>Fecha Emisión</th>
+        <td *matCellDef="let element" mat-cell>{{ element.fechaEmision }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="fechaVcto">
-          <th *matHeaderCellDef mat-header-cell>Fecha Vcto.</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.fechaVencimiento }}
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="fechaVcto">
+        <th *matHeaderCellDef mat-header-cell>Fecha Vcto.</th>
+        <td *matCellDef="let element" mat-cell>
+          {{ element.fechaVencimiento }}
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="total">
-          <th *matHeaderCellDef mat-header-cell>Total</th>
-          <td *matCellDef="let element" mat-cell>{{ element.importeTotal }}</td>
-        </ng-container>
+      <ng-container matColumnDef="total">
+        <th *matHeaderCellDef mat-header-cell>Total</th>
+        <td *matCellDef="let element" mat-cell>{{ element.importeTotal }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="abono">
-          <th *matHeaderCellDef mat-header-cell>Abono</th>
-          <td *matCellDef="let element" mat-cell>{{ element.abono }}</td>
-        </ng-container>
+      <ng-container matColumnDef="abono">
+        <th *matHeaderCellDef mat-header-cell>Abono</th>
+        <td *matCellDef="let element" mat-cell>{{ element.abono }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="saldo">
-          <th *matHeaderCellDef mat-header-cell>Saldo</th>
-          <td *matCellDef="let element" mat-cell>{{ element.saldo }}</td>
-        </ng-container>
+      <ng-container matColumnDef="saldo">
+        <th *matHeaderCellDef mat-header-cell>Saldo</th>
+        <td *matCellDef="let element" mat-cell>{{ element.saldo }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="tiempoCredito">
-          <th *matHeaderCellDef mat-header-cell>Tiempo Credito</th>
-          <td *matCellDef="let element" mat-cell>
-            {{ element.tiempoCredito }}
-          </td>
-        </ng-container>
+      <ng-container matColumnDef="tiempoCredito">
+        <th *matHeaderCellDef mat-header-cell>Tiempo Credito</th>
+        <td *matCellDef="let element" mat-cell>
+          {{ element.tiempoCredito }}
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="estado">
-          <th *matHeaderCellDef mat-header-cell>Estado</th>
-          <td *matCellDef="let element" mat-cell>{{ element.estado }}</td>
-        </ng-container>
+      <ng-container matColumnDef="estado">
+        <th *matHeaderCellDef mat-header-cell>Estado</th>
+        <td *matCellDef="let element" mat-cell>{{ element.estado }}</td>
+      </ng-container>
 
-        <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
-        <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
+      <tr *matHeaderRowDef="visibleColumns; sticky: true" mat-header-row></tr>
+      <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
 
-        <tr *matNoDataRow class="mat-row">
-          <td class="mat-cell text-center" colspan="12">Sin registro</td>
-        </tr>
-      </table>
-    </section>
-  </mat-card-content>
-</mat-card>
+      <tr *matNoDataRow class="mat-row">
+        <td class="mat-cell text-center" colspan="12">Sin registro</td>
+      </tr>
+    </table>
+  </section>
+</acp-dynamic-card>

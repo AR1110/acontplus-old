@@ -1,7 +1,7 @@
-import {formatDate} from "@core/utils/date.util";
-import {DiscountType} from "@restaurant/domain/models/promotion";
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
-import {mergeProductMeasures} from "@inventory/domain/utils/merge-measure.util";
+import { formatDate } from '@core/utils/date.util';
+import { DiscountType } from '@restaurant/domain/models/promotion';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
 
 export class PromotionGetByIdMapper {
   static fromJson(response: any) {
@@ -19,12 +19,12 @@ export class PromotionGetByIdMapper {
       endTime,
       name,
       startTime,
-      type
-    } = parsed.promotions[0]
- //   console.log(res)
-    console.log((JSON.parse(applicableDays)));
+      type,
+    } = parsed.promotions[0];
+    //   console.log(res)
+    console.log(JSON.parse(applicableDays));
     const toDate = (timeString: string): Date => {
-      const [hours, minutes] = timeString.split(":").map(Number);
+      const [hours, minutes] = timeString.split(':').map(Number);
       const date = new Date();
       date.setHours(hours);
       date.setMinutes(minutes);
@@ -32,17 +32,15 @@ export class PromotionGetByIdMapper {
       date.setMilliseconds(0);
       return date;
     };
-    const schedule = (JSON.parse(applicableDays) ?? []).map((day:any) => {
-
-         return {
-           day: day.day,
-           isActive: day.isActive,
-           startTime: toDate(day.startTime),
-           endTime: toDate(day.endTime)
-         }
-
-    })
-    const typeTemp: DiscountType["value"] = type === 1 ? 'fixed' : 'percentage';
+    const schedule = (JSON.parse(applicableDays) ?? []).map((day: any) => {
+      return {
+        day: day.day,
+        isActive: day.isActive,
+        startTime: toDate(day.startTime),
+        endTime: toDate(day.endTime),
+      };
+    });
+    const typeTemp: DiscountType['value'] = type === 1 ? 'fixed' : 'percentage';
     const promotion = {
       id,
       description,
@@ -52,19 +50,19 @@ export class PromotionGetByIdMapper {
       endTime,
       startTime,
       name,
-      isActive: isActive?? true,
+      isActive: isActive ?? true,
       isDeleted,
       imageUrl,
       establishmentId,
       type: typeTemp,
-    }
-    const details = (parsed.details??[]).map((item:any, index: number) => {
-      const mainMeasures = JSON.parse(item.principal)
-      const fractionalMeasures = JSON.parse(item.fractional)
+    };
+    const details = (parsed.details ?? []).map((item: any, index: number) => {
+      const mainMeasures = JSON.parse(item.principal);
+      const fractionalMeasures = JSON.parse(item.fractional);
       const measures = mergeProductMeasures(mainMeasures, fractionalMeasures);
       const dataMeasure = measures.find((x: any) => x.id === item.measureId);
-      if(!dataMeasure){
-        throw new Error('No se encontró la medida')
+      if (!dataMeasure) {
+        throw new Error('No se encontró la medida');
       }
       return {
         index: index + 1,
@@ -88,11 +86,11 @@ export class PromotionGetByIdMapper {
         productCode: item.code,
         taxCode: item.taxCode,
         isActive: item.isActive ?? true,
-      }
-    })
+      };
+    });
     return {
       promotion,
-      details
+      details,
     };
   }
 }

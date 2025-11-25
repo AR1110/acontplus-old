@@ -10,7 +10,7 @@ import {
   effect,
 } from '@angular/core';
 import { CHARTS, ELEMENT_DATA, MESSAGES, STATS } from './data';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { SettingsService } from '@core/bootstrap';
 import { Subscription } from 'rxjs';
 import { AdminLayoutService } from '@core/services/admin-layout.service';
@@ -65,7 +65,7 @@ export interface Chart3Options {
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
-  imports: [MatCardModule, ChartComponent],
+  imports: [DynamicCard, ChartComponent],
   // encapsulation: ViewEncapsulation.None
 })
 export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
@@ -399,7 +399,6 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     //     borderColor: isDark ? '#5a5a5a' : '#e1e1e1',
     //   },
     // });
-
     // this.chart2?.updateOptions({
     //   chart: {
     //     foreColor: isDark ? '#ccc' : '#333',
@@ -434,8 +433,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
    */
   private getChartColors(): string[] {
     const root = document.documentElement;
-    const getColor = (varName: string) =>
-      getComputedStyle(root).getPropertyValue(varName).trim();
+    const getColor = (varName: string) => getComputedStyle(root).getPropertyValue(varName).trim();
 
     return [
       getColor('--mat-sys-primary'),

@@ -21,11 +21,11 @@ import { DocConfigInfoAdicionalComponent } from '@modules/config/ui/doc-config/d
 
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ListDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/list-doc-config.use-case';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { DialogService } from '@core/services/dialog.service';
@@ -42,7 +42,7 @@ import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cas
     MatCheckboxModule,
     Button,
     MatSelectModule,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
   ],
   templateUrl: './doc-config.component.html',
@@ -60,7 +60,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
   docs = signal<DocConfigList[]>([]);
 
-  dataSearch =  {
+  dataSearch = {
     idPuntoEmision: 0,
     codEstab: '',
   };
@@ -114,9 +114,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
   }
 
   onChangeEstab() {
-    const dataEstab = this.establecimientos().find(
-      (e) => e.codEstab === this.dataSearch.codEstab,
-    );
+    const dataEstab = this.establecimientos().find((e) => e.codEstab === this.dataSearch.codEstab);
     if (dataEstab) {
       this.puntosEmision.set(dataEstab.puntosEmision);
       const dataPuntoEmision = this.puntosEmision().find((e) => e.defaultPtoEmi);
@@ -125,7 +123,7 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
         this.getDocs();
       } else {
-        this.dataSearch. idPuntoEmision = 0;
+        this.dataSearch.idPuntoEmision = 0;
       }
     }
   }
