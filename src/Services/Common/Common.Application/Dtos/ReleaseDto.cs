@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace Common.Application.DTOs;
+namespace Common.Application.Dtos;
 
 public class ReleaseDto
 {

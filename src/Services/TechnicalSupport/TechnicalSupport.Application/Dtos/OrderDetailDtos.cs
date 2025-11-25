@@ -1,4 +1,4 @@
-namespace TechnicalSupport.Application.DTOs;
+namespace TechnicalSupport.Application.Dtos;
 
 public record CreateOrderDetailDto
 {

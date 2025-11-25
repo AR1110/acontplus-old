@@ -1,5 +1,5 @@
 
-namespace Configuration.Application.DTOs;
+namespace Configuration.Application.Dtos;
 
 public record EstablishmentDto
 {

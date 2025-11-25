@@ -1,4 +1,4 @@
-namespace TechnicalSupport.Domain.DTOs;
+namespace TechnicalSupport.Domain.Dtos;
 
 public class OrderDeliveryDto
 {

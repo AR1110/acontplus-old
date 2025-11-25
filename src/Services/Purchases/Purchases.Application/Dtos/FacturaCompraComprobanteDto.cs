@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Purchases.Application.DTOs
+namespace Purchases.Application.Dtos
 {
     public record FacturaCompraComprobanteDto : CompraBaseDto
     {

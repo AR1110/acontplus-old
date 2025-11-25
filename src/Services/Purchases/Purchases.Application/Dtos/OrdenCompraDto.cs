@@ -1,4 +1,4 @@
-namespace Purchases.Application.DTOs
+namespace Purchases.Application.Dtos
 {
     public record OrdenCompraDto
     {

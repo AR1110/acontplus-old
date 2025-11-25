@@ -1,4 +1,4 @@
-namespace Common.Application.DTOs;
+namespace Common.Application.Dtos;
 
 // DTO for UserReleaseRead endpoint
 public record CreateUserReleaseReadDto

@@ -1,4 +1,4 @@
-namespace Inventory.Application.DTOs;
+namespace Inventory.Application.Dtos;
 
 public record StockFisicoDto
 {

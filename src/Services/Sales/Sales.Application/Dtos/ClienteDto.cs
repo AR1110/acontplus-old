@@ -1,4 +1,4 @@
-namespace Sales.Application.DTOs;
+namespace Sales.Application.Dtos;
 
 public class ClienteDto
 {

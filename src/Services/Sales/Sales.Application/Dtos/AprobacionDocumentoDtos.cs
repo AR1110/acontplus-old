@@ -1,4 +1,4 @@
-namespace Sales.Application.DTOs;
+namespace Sales.Application.Dtos;
 
 // DTO for creating a new AprobacionDocumento
 public record CreateAprobacionDocumentoDto

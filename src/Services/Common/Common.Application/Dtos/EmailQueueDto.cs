@@ -1,4 +1,4 @@
-namespace Common.Application.DTOs
+namespace Common.Application.Dtos
 {
     public class EmailQueueDto
     {

@@ -1,4 +1,4 @@
-namespace BarberShop.Application.Services.DTOs
+namespace BarberShop.Application.Services.Dtos
 {
     internal class CreateServiceDto
     {

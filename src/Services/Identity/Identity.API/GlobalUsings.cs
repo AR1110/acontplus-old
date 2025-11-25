@@ -15,7 +15,7 @@ global using Acontplus.Utilities.Data;
 global using Acontplus.Utilities.Time;
 global using Asp.Versioning;
 global using Asp.Versioning.Builder;
-global using Identity.Api.DTOs;
+global using Identity.Api.Dtos;
 global using Identity.Api.Endpoints.AccountEndpoints;
 global using Identity.Api.Endpoints.UserProfileEndpoints;
 global using Identity.Api.Entities;

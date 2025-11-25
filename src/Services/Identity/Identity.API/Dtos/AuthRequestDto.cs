@@ -1,4 +1,4 @@
-namespace Identity.Api.DTOs;
+namespace Identity.Api.Dtos;
 
 public class AuthRequestDto
 {

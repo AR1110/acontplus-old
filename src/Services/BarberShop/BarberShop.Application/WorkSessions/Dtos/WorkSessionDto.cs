@@ -1,4 +1,4 @@
-namespace BarberShop.Application.WorkSessions.DTOs;
+namespace BarberShop.Application.WorkSessions.Dtos;
 
 public class WorkSessionDto
 {

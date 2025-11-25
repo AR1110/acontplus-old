@@ -1,4 +1,4 @@
-namespace Billing.Application.DTOs;
+namespace Billing.Application.Dtos;
 
 public class SriAuthenticationResult
 {

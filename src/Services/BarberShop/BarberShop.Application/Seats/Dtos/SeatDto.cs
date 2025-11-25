@@ -1,4 +1,4 @@
-namespace BarberShop.Application.Seats.DTOs;
+namespace BarberShop.Application.Seats.Dtos;
 
 public class SeatDto
 {

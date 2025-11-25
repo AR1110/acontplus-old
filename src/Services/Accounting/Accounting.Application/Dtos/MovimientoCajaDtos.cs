@@ -1,4 +1,4 @@
-namespace Accounting.Application.DTOs;
+namespace Accounting.Application.Dtos;
 
 public record CreateMovimientoCajaDto(
     int IdTipoDocumento,

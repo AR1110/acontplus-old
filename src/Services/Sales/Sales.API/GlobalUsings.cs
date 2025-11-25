@@ -8,6 +8,6 @@ global using Acontplus.Utilities.Data;
 global using Microsoft.AspNetCore.Mvc;
 
 global using Sales.Api.Extensions;
-global using Sales.Application.DTOs;
+global using Sales.Application.Dtos;
 global using Sales.Application.Interfaces;
 global using Sales.Application.Services;

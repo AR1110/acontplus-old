@@ -1,4 +1,4 @@
-namespace Mechanical.Application.DTOs;
+namespace Mechanical.Application.Dtos;
 
 public record CreateSupportDto
 {

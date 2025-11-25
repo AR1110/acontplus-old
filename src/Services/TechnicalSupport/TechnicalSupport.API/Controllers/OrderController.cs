@@ -1,5 +1,5 @@
 using Acontplus.Core.Extensions;
-using OrderDto = TechnicalSupport.Domain.DTOs.OrderDto;
+using OrderDto = TechnicalSupport.Domain.Dtos.OrderDto;
 
 namespace TechnicalSupport.Api.Controllers;
 

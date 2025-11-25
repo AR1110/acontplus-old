@@ -1,4 +1,4 @@
-namespace Billing.Application.DTOs.RetencionAts;
+namespace Billing.Application.Dtos.RetencionAts;
 
 public class RetencionAtsPagoDto
 {

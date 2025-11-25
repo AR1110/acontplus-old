@@ -13,7 +13,7 @@ global using Acontplus.Utilities.Mapping;
 global using Acontplus.Utilities.Services;
 global using Configuration.Api.Extensions;
 global using Configuration.Api.Helpers;
-global using Configuration.Application.DTOs;
+global using Configuration.Application.Dtos;
 global using Configuration.Application.Interfaces;
 global using Configuration.Application.Interfaces.Printing;
 global using Configuration.Application.Interfaces.Sri;

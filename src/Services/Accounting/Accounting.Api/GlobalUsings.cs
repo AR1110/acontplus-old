@@ -1,5 +1,5 @@
 global using Accounting.Api.Extensions;
-global using Accounting.Application.DTOs;
+global using Accounting.Application.Dtos;
 global using Accounting.Domain.Entities;
 global using Accounting.Domain.Repositories;
 global using Accounting.Infrastructure.Persistence;
