@@ -13,7 +13,6 @@
   <ItemGroup>
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
 
