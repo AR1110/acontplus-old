@@ -1,7 +1,6 @@
 using Acontplus.Logging;
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions.Authentication;
-using Acontplus.Services.Extensions.Infrastructure;
 using Acontplus.Services.Extensions.Middleware;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -58,7 +57,7 @@ try
 
     builder.Services.AddOcelot();
 
-    builder.Services.AddResponseCompressionServices();
+    builder.Services.AddResponseCompression();
 
     // Identity Services (adapt to your specific authentication mechanism)
     builder.Services.AddJwtAuthentication(builder.Configuration);

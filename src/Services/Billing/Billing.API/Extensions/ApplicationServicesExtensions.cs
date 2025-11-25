@@ -7,7 +7,7 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddBillingServices(this IServiceCollection services,
         IConfiguration configuration, IWebHostEnvironment environment)
     {
-        services.AddAcontplusServices(configuration);
+        services.AddApplicationServices(configuration);
 
         services.AddAdvancedLoggingOptions(configuration);
 

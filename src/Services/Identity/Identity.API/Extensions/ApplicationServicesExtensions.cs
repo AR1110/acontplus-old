@@ -8,7 +8,7 @@ public static class ApplicationServicesExtensions
         IConfiguration configuration)
     {
 
-        services.AddAcontplusServices(configuration);
+        services.AddApplicationServices(configuration);
 
         services.AddAdvancedLoggingOptions(configuration);
 
