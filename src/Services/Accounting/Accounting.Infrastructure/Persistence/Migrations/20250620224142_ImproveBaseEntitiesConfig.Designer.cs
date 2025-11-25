@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Accounting.API.Data.Migrations
+namespace Accounting.Api.Data.Migrations
 {
     [DbContext(typeof(AccountingContext))]
     [Migration("20250620224142_ImproveBaseEntitiesConfig")]
@@ -25,7 +25,7 @@ namespace Accounting.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Accounting.API.Entities.Account", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Account", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -121,7 +121,7 @@ namespace Accounting.API.Data.Migrations
                     b.ToTable("Account", "Contabilidad");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Category", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,7 +203,7 @@ namespace Accounting.API.Data.Migrations
                     b.ToTable("Category", "Contabilidad");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Subcategory", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Subcategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -284,7 +284,7 @@ namespace Accounting.API.Data.Migrations
                     b.ToTable("Subcategory", "Contabilidad");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Tipo", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Tipo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -361,14 +361,14 @@ namespace Accounting.API.Data.Migrations
                     b.ToTable("Tipo", "Contabilidad");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Account", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Account", b =>
                 {
-                    b.HasOne("Accounting.API.Entities.Account", "ParentAccount")
+                    b.HasOne("Accounting.Api.Entities.Account", "ParentAccount")
                         .WithMany("ChildAccounts")
                         .HasForeignKey("ParentAccountId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Accounting.API.Entities.Tipo", "tipo")
+                    b.HasOne("Accounting.Api.Entities.Tipo", "tipo")
                         .WithMany()
                         .HasForeignKey("TipoId");
 
@@ -377,9 +377,9 @@ namespace Accounting.API.Data.Migrations
                     b.Navigation("tipo");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Category", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Category", b =>
                 {
-                    b.HasOne("Accounting.API.Entities.Tipo", "Tipo")
+                    b.HasOne("Accounting.Api.Entities.Tipo", "Tipo")
                         .WithMany()
                         .HasForeignKey("TipoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -388,9 +388,9 @@ namespace Accounting.API.Data.Migrations
                     b.Navigation("Tipo");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Subcategory", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Subcategory", b =>
                 {
-                    b.HasOne("Accounting.API.Entities.Category", "Category")
+                    b.HasOne("Accounting.Api.Entities.Category", "Category")
                         .WithMany("Subcategories")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -399,12 +399,12 @@ namespace Accounting.API.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Account", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Account", b =>
                 {
                     b.Navigation("ChildAccounts");
                 });
 
-            modelBuilder.Entity("Accounting.API.Entities.Category", b =>
+            modelBuilder.Entity("Accounting.Api.Entities.Category", b =>
                 {
                     b.Navigation("Subcategories");
                 });

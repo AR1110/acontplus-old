@@ -9,7 +9,7 @@ using Vet.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace Vet.API.Data.Migrations
+namespace Vet.Api.Data.Migrations
 {
     [DbContext(typeof(VetContext))]
     [Migration("20250528045258_DefaultValuesBaseColumns")]
@@ -25,7 +25,7 @@ namespace Vet.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Vet.API.Entities.Behavior", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Behavior", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -107,7 +107,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("Behavior", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.BehaviorStatus", b =>
+            modelBuilder.Entity("Vet.Api.Entities.BehaviorStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -192,7 +192,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("BehaviorStatus", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.BehaviorTest", b =>
+            modelBuilder.Entity("Vet.Api.Entities.BehaviorTest", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -268,7 +268,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("BehaviorTest", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Breed", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Breed", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -355,7 +355,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("Breed", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Disease", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Disease", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -442,7 +442,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("Disease", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.DiseaseStatus", b =>
+            modelBuilder.Entity("Vet.Api.Entities.DiseaseStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -527,7 +527,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("DiseaseStatus", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.DiseaseType", b =>
+            modelBuilder.Entity("Vet.Api.Entities.DiseaseType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -609,7 +609,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("DiseaseType", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Gender", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Gender", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -691,7 +691,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("Gender", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.HealthCheck", b =>
+            modelBuilder.Entity("Vet.Api.Entities.HealthCheck", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -767,7 +767,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("HealthCheck", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.MedicalHistory", b =>
+            modelBuilder.Entity("Vet.Api.Entities.MedicalHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -850,7 +850,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("MedicalHistory", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Pet", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Pet", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -939,7 +939,7 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("Pet", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.PetType", b =>
+            modelBuilder.Entity("Vet.Api.Entities.PetType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1021,21 +1021,21 @@ namespace Vet.API.Data.Migrations
                     b.ToTable("PetType", "Vet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.BehaviorTest", b =>
+            modelBuilder.Entity("Vet.Api.Entities.BehaviorTest", b =>
                 {
-                    b.HasOne("Vet.API.Entities.Behavior", "Behavior")
+                    b.HasOne("Vet.Api.Entities.Behavior", "Behavior")
                         .WithMany()
                         .HasForeignKey("BehaviorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.API.Entities.BehaviorStatus", "BehaviorStatus")
+                    b.HasOne("Vet.Api.Entities.BehaviorStatus", "BehaviorStatus")
                         .WithMany()
                         .HasForeignKey("BehaviorStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.API.Entities.MedicalHistory", "MedicalHistory")
+                    b.HasOne("Vet.Api.Entities.MedicalHistory", "MedicalHistory")
                         .WithMany("BehaviorTests")
                         .HasForeignKey("MedicalHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1048,9 +1048,9 @@ namespace Vet.API.Data.Migrations
                     b.Navigation("MedicalHistory");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Breed", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Breed", b =>
                 {
-                    b.HasOne("Vet.API.Entities.PetType", "PetType")
+                    b.HasOne("Vet.Api.Entities.PetType", "PetType")
                         .WithMany()
                         .HasForeignKey("PetTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1059,30 +1059,30 @@ namespace Vet.API.Data.Migrations
                     b.Navigation("PetType");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Disease", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Disease", b =>
                 {
-                    b.HasOne("Vet.API.Entities.DiseaseType", "DiseaseType")
+                    b.HasOne("Vet.Api.Entities.DiseaseType", "DiseaseType")
                         .WithMany()
                         .HasForeignKey("DiseaseTypeId");
 
                     b.Navigation("DiseaseType");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.HealthCheck", b =>
+            modelBuilder.Entity("Vet.Api.Entities.HealthCheck", b =>
                 {
-                    b.HasOne("Vet.API.Entities.Disease", "Disease")
+                    b.HasOne("Vet.Api.Entities.Disease", "Disease")
                         .WithMany()
                         .HasForeignKey("DiseaseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.API.Entities.DiseaseStatus", "DiseaseStatus")
+                    b.HasOne("Vet.Api.Entities.DiseaseStatus", "DiseaseStatus")
                         .WithMany()
                         .HasForeignKey("DiseaseStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Vet.API.Entities.MedicalHistory", "MedicalHistory")
+                    b.HasOne("Vet.Api.Entities.MedicalHistory", "MedicalHistory")
                         .WithMany("HealthChecks")
                         .HasForeignKey("MedicalHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1095,9 +1095,9 @@ namespace Vet.API.Data.Migrations
                     b.Navigation("MedicalHistory");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.MedicalHistory", b =>
+            modelBuilder.Entity("Vet.Api.Entities.MedicalHistory", b =>
                 {
-                    b.HasOne("Vet.API.Entities.Pet", "Pet")
+                    b.HasOne("Vet.Api.Entities.Pet", "Pet")
                         .WithMany()
                         .HasForeignKey("PetId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1106,13 +1106,13 @@ namespace Vet.API.Data.Migrations
                     b.Navigation("Pet");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.Pet", b =>
+            modelBuilder.Entity("Vet.Api.Entities.Pet", b =>
                 {
-                    b.HasOne("Vet.API.Entities.Breed", "Breed")
+                    b.HasOne("Vet.Api.Entities.Breed", "Breed")
                         .WithMany()
                         .HasForeignKey("BreedId");
 
-                    b.HasOne("Vet.API.Entities.Gender", "Gender")
+                    b.HasOne("Vet.Api.Entities.Gender", "Gender")
                         .WithMany()
                         .HasForeignKey("GenderId");
 
@@ -1121,7 +1121,7 @@ namespace Vet.API.Data.Migrations
                     b.Navigation("Gender");
                 });
 
-            modelBuilder.Entity("Vet.API.Entities.MedicalHistory", b =>
+            modelBuilder.Entity("Vet.Api.Entities.MedicalHistory", b =>
                 {
                     b.Navigation("BehaviorTests");
 

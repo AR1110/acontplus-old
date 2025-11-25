@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Domain.Entities;
+namespace Restaurant.Domain.Entities;
 
 [Table("IngredientType", Schema = "Restaurant")]
 public class IngredientType : BaseEntity

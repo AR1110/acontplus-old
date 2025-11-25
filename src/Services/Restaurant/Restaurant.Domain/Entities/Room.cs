@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Domain.Entities;
+namespace Restaurant.Domain.Entities;
 
 [Table("Room", Schema = "Restaurant")]
 public class Room : BaseEntity

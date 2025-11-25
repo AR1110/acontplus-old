@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Domain.Entities;
+namespace BarberShop.Domain.Entities;
 
 public class BarberPayment : BaseEntity
 {

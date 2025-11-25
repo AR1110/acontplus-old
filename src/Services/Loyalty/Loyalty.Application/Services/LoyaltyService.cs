@@ -1,4 +1,4 @@
-﻿namespace Loyalty.Application.Services;
+namespace Loyalty.Application.Services;
 
 public class LoyaltyService
 {

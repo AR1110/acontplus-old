@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Billing.API.Data.Migrations
+namespace Billing.Api.Data.Migrations
 {
     [DbContext(typeof(BillingContext))]
     [Migration("20240811174831_FromMobileColumnFactElect")]
@@ -25,7 +25,7 @@ namespace Billing.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Billing.API.Entities.AppCustomer", b =>
+            modelBuilder.Entity("Billing.Api.Entities.AppCustomer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

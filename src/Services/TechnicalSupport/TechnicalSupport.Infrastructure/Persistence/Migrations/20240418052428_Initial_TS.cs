@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace TechnicalSupport.API.Data.Migrations
+namespace TechnicalSupport.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Initial_TS : Migration

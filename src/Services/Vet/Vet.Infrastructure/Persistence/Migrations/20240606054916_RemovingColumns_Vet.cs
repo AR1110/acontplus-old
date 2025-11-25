@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Vet.API.Data.Migrations
+namespace Vet.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class RemovingColumns_Vet : Migration

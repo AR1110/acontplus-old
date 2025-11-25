@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Configuration.API.Data.Migrations
+namespace Configuration.Api.Data.Migrations
 {
     [DbContext(typeof(ConfigurationContext))]
     partial class ConfigContextModelSnapshot : ModelSnapshot

@@ -2,7 +2,7 @@ using Billing.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Billing.API.Data.Migrations
+namespace Billing.Api.Data.Migrations
 {
     [DbContext(typeof(BillingContext))]
     [Migration("20230712030928_InitialPrd")]
