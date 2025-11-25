@@ -13,7 +13,6 @@
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Ocelot" />
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
