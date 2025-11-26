@@ -30,7 +30,7 @@ public static class UpdateEndpoints
             .WithName("UpdateOrder")
             .WithSummary("Update an existing Order")
             .WithDescription("Update an existing order record.")
-            .Produces<OrderItemDto>(StatusCodes.Status200OK)
+            .Produces<OrderItemTestDto>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
