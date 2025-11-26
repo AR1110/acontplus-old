@@ -6,10 +6,10 @@
   <ItemGroup>
     <PackageVersion Include="Acontplus.ApiDocumentation" Version="1.1.0" />
     <PackageVersion Include="Acontplus.Billing" Version="1.1.0" />
-    <PackageVersion Include="Acontplus.Infrastructure" Version="1.0.0" />
+    <PackageVersion Include="Acontplus.Infrastructure" Version="1.0.1" />
     <PackageVersion Include="Acontplus.Persistence.SqlServer" Version="2.0.0" />
     <PackageVersion Include="Acontplus.Logging" Version="1.2.0" />
-    <PackageVersion Include="Acontplus.Notifications" Version="1.4.0" />
+    <PackageVersion Include="Acontplus.Notifications" Version="1.4.1" />
     <PackageVersion Include="Acontplus.S3Application" Version="1.2.1" />
     <PackageVersion Include="Acontplus.Services" Version="2.0.0" />
     <PackageVersion Include="Acontplus.Utilities" Version="2.0.0" />
