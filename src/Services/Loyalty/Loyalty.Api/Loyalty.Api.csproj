@@ -12,11 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build;</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
 
@@ -24,7 +21,7 @@
     <ProjectReference Include="..\Loyalty.Application\Loyalty.Application.csproj" />
     <ProjectReference Include="..\Loyalty.Infrastructure\Loyalty.Infrastructure.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>

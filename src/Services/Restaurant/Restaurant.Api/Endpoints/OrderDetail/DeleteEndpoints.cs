@@ -7,7 +7,7 @@ public static class DeleteEndpoints
         app.MapDelete("/api/orderdetails/{id:int}", DeleteOrderDetail)
             .WithName("DeleteOrderDetail")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
     }
 
     private static async Task<IResult> DeleteOrderDetail(

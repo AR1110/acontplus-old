@@ -23,7 +23,7 @@ public static class AccountEndpoints
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(new ApiVersion(1, 0))
             .WithTags("Account V1")
-            .WithOpenApi();
+            ;
 
         // Login endpoint
         accountV1Group.MapPost("/Login", async (
@@ -202,7 +202,7 @@ public static class AccountEndpoints
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(new ApiVersion(2, 0))
             .WithTags("Account V2")
-            .WithOpenApi();
+            ;
 
         // Login endpoint
         accountV2Group.MapPost("/Login", async (
@@ -316,7 +316,7 @@ public static class AccountEndpoints
             .WithApiVersionSet(apiVersionSet)
             .MapToApiVersion(new ApiVersion(3, 0))
             .WithTags("Account V3")
-            .WithOpenApi();
+            ;
 
         // Login endpoint
         accountV3Group.MapPost("/login", async (

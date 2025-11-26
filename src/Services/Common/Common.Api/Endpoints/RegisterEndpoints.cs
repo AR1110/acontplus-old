@@ -31,12 +31,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Get dashboard data";
-                operation.Description = "Retrieves dashboard information for the authenticated user";
-                return operation;
-            })
+            
             .WithTags("Dashboard")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -70,12 +65,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Create notification";
-                operation.Description = "Creates a new notification for the authenticated user";
-                return operation;
-            })
+            
             .WithTags("Notificacion")
             .Produces<SpResponse>(200)
             .Produces(400)
@@ -99,12 +89,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Get release information";
-                operation.Description = "Retrieves release notes and version information";
-                return operation;
-            })
+            
             .WithTags("Release")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -144,12 +129,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Get user manual";
-                operation.Description = "Retrieves user manual content and documentation";
-                return operation;
-            })
+            
             .WithTags("User Manual")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -184,12 +164,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Mark release as read";
-                operation.Description = "Marks a release as read by the authenticated user";
-                return operation;
-            })
+            
             .WithTags("User Release")
             .Produces<SpResponse>(200)
             .Produces(400)
@@ -227,12 +202,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            .WithOpenApi(operation =>
-            {
-                operation.Summary = "Send WhatsApp message";
-                operation.Description = "Sends a WhatsApp message through the system";
-                return operation;
-            })
+            
             .WithTags("WhatsApp Message")
             .Produces<SpResponse>(200)
             .Produces(400)

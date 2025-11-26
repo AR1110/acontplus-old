@@ -8,7 +8,7 @@ public static class CancelEndpoints
     {
         var group = app.MapGroup("/api/orders")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing orders.")
             .WithTags("Orders");
 

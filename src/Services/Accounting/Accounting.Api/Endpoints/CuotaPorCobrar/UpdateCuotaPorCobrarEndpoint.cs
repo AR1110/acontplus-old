@@ -6,8 +6,7 @@ public static class UpdateCuotaPorCobrarEndpoint
     {
         app.MapPut("/{id:int}", HandleAsync)
            .WithName("UpdateCuotaPorCobrar")
-           .WithSummary("Update an existing cuota por cobrar")
-           .WithOpenApi();
+           .WithSummary("Update an existing cuota por cobrar");
     }
 
     private static async Task<IResult> HandleAsync(

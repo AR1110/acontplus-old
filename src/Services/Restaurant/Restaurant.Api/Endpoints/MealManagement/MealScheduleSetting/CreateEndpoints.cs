@@ -6,7 +6,7 @@ public static class CreateEndpoints
     {
         var group = app.MapGroup("/api/meal-schedule-settings")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing meal schedule setting records.")
             .WithTags("Meal Schedule Settings");
 

@@ -17,9 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build;</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />

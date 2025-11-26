@@ -6,7 +6,7 @@ public static class LookupEndpoints
     {
         var group = app.MapGroup("/api/lookups")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing restaurant lookups.")
             .WithTags("Lookups");
 

@@ -6,7 +6,7 @@ public static class UpdateEndpoints
     {
         var group = app.MapGroup("/api/items")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing items.")
             .WithTags("Items");
 

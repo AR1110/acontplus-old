@@ -7,17 +7,17 @@ public static class GetEndpoints
         app.MapGet("/api/orderdetails/{id:int}", GetOrderDetailById)
             .WithName("GetOrderDetailById")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
 
         app.MapGet("/api/orderdetails/order/{orderId:int}", GetOrderDetailsByOrderId)
             .WithName("GetOrderDetailsByOrderId")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
 
         app.MapGet("/api/orderdetails/status/{status:int}", GetOrderDetailsByStatus)
             .WithName("GetOrderDetailsByStatus")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
     }
 
     private static async Task<IResult> GetOrderDetailById(

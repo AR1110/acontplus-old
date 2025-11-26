@@ -6,7 +6,7 @@ public static class RegisterEndpoints
     {
         var cuotaPorCobrarGroup = endpointRouteBuilder.MapGroup("/api/cuotaporcobrar")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("CuotaPorCobrar");
 
         UpdateCuotaPorCobrarEndpoint.Map(cuotaPorCobrarGroup);

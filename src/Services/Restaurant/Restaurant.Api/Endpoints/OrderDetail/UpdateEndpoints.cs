@@ -9,12 +9,12 @@ public static class UpdateEndpoints
         app.MapPut("/api/orderdetails/{id:int}", UpdateOrderDetail)
             .WithName("UpdateOrderDetail")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
 
         app.MapPatch("/api/orderdetails/{id:int}/status/{status:int}", UpdateOrderDetailStatus)
             .WithName("UpdateOrderDetailStatus")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
     }
 
     private static async Task<IResult> UpdateOrderDetail(
