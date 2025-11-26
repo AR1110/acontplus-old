@@ -30,7 +30,7 @@ BEGIN
        ,DisplayOrder INT NULL
        ,ParentId     INT NULL
        ,Metadata     NVARCHAR(MAX) NULL
-       ,isDefault    BIT DEFAULT 0    
+       ,IsDefault    BIT DEFAULT 0    
        ,INDEX IX_Temp_TableName CLUSTERED (TableName, Id)
        ,INDEX IX_Temp_TableName_Value NONCLUSTERED (TableName, [Value])
        ,INDEX IX_Temp_TableName_Order NONCLUSTERED (TableName, DisplayOrder)
@@ -53,20 +53,40 @@ BEGIN
             END 
 
         --> Data Lookups
-        INSERT INTO #LookupResults (TableName, Id, Code, [Value], Metadata)
+        INSERT INTO #LookupResults (TableName, Id, Code, [Value] ,IsDefault)
         SELECT 'Establishments'     as TableName
               ,es.idEstablecimiento as Id
               ,es.estab             as Code
               ,es.nombreComercial   as Value
-              ,(SELECT (SELECT pe.idPuntoEmision as id, pe.ptoEmi FROM dbo.PuntoEmision pe WHERE pe.estado = 1 AND pe.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as issuingPoints,
-
-                       (SELECT bo.idBodega as id, bo.descripcion as [description] FROM dbo.Bodega bo WHERE bo.estado = 1 AND bo.idEstablecimiento = es.idEstablecimiento FOR JSON PATH) as warehouses
-               FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
-        FROM Sri.Establecimiento          es
-        INNER JOIN Sri.ActividadEconomica ae ON ae.idActividadEconomica = es.idActividadEconomica
-        WHERE es.idEntidad = @idEntidad
+              ,ea.predeterminado    as IsDefault
+        FROM Config.Estab_Asig         ea
+        INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = ea.idEstablecimiento
+        WHERE ea.idUsuarioRol = @UserRoleId
           AND es.estado = 1
-          AND ae.codigo = '01'
+
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault)
+        SELECT 'IssuingPoints'   as TableName
+              ,pe.idPuntoEmision as Id
+              ,pe.ptoEmi         as Value
+              ,(SELECT pe.idEstablecimiento as establishmentId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+              ,pa.predeterminado as IsDefault
+        FROM Config.PtoEmi_Asig      pa
+        INNER JOIN Config.Estab_Asig ea ON ea.idEstab_Asig   = pa.idEstab_Asig
+        INNER JOIN dbo.PuntoEmision  pe ON pe.idPuntoEmision = pa.idPuntoEmision
+        WHERE ea.idUsuarioRol = @UserRoleId
+          AND pe.estado = 1
+
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault)
+        SELECT 'Warehouses'      as TableName
+              ,bo.idBodega       as Id
+              ,bo.descripcion    as Value
+              ,(SELECT bo.idEstablecimiento as establishmentId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
+              ,ba.predeterminado as IsDefault
+        FROM Config.Bodeg_Asig       ba 
+        INNER JOIN Config.Estab_Asig ea ON ea.idEstab_Asig = ba.idEstab_Asig
+        INNER JOIN dbo.Bodega        bo ON bo.idBodega     = ba.idBodega
+        WHERE ea.idUsuarioRol = @UserRoleId
+          AND bo.estado = 1
 
         INSERT INTO #LookupResults (TableName, Id ,[Value] ,Metadata )
         SELECT 'Tables'         as TableName
@@ -74,8 +94,9 @@ BEGIN
 			  ,tb.[Description] as [Value]
               ,(SELECT ISNULL(tb.Assigned,0) as assigned
                       ,fl.[Description]      as [floor]
+                      ,fl.EstablecimientoId  as establishmentId
                       ,ro.[Description]      as room
-                      ,fl.EstablecimientoId  as EstablishmentId
+                      ,ro.FloorId            as floorId
                FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
         FROM Restaurant.[Table]       tb 
         INNER JOIN Restaurant.[Room]  ro  ON ro.Id				   = Tb.RoomId

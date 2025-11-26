@@ -114,6 +114,7 @@ BEGIN
         INNER JOIN dbo.PuntoEmision     pe ON pe.idPuntoEmision    = cd.idPuntoEmision
         INNER JOIN Sri.Establecimiento  es ON es.idEstablecimiento = pe.idEstablecimiento
         WHERE td.codigo = 'OR'
+          AND cd.idPuntoEmision = @PuntoEmisionId
 
         --> Validaciones
         IF NOT EXISTS (SELECT 1 FROM @TbOrder)
@@ -149,8 +150,8 @@ BEGIN
             SET @OrderId = SCOPE_IDENTITY();
 
             INSERT INTO Restaurant.OrderDetail
-                   (OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],CreatedByUserId)
-            SELECT @OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],@CreatedByUserId
+                   (OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsPaid],CreatedByUserId)
+            SELECT @OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsPaid],@CreatedByUserId
             FROM @TbOrderDetails
 
         COMMIT TRAN

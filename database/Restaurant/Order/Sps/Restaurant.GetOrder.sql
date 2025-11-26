@@ -163,14 +163,14 @@ BEGIN
                                       ,od.IsFinished
 		                              ,FORMAT(od.CreatedAt, ''dd-MM-yyyy HH:mm'') as CreatedAt
                                       ,od.IsActive
-		                              ,ta.[Description]						      as [UserName]
-		                              ,us.nombreUsuario						      as [User]
+		                              ,ta.[Description]						      as [Table]
+		                              ,us.nombreUsuario						      as [CreatedByUser]
 		                              ,cu.IdCard
 		                              ,cu.BusinessName
 		                              ,COUNT(*) OVER()						      as TotalCount
 	                            FROM Restaurant.[Order]	       od
 	                            INNER JOIN dbo.PuntoEmision    pe ON pe.idPuntoEmision    = od.PuntoEmisionId 
-	                            INNER JOIN Restaurant.[Table]  ta ON ta.Id				  = od.TableId
+	                             LEFT JOIN Restaurant.[Table]  ta ON ta.Id				  = od.TableId
 	                             LEFT JOIN dbo.Usuario         us ON us.idUsuario         = od.CreatedByUserId
 	                            INNER JOIN dbo.Cliente         cl ON cl.idCliente	      = od.CustomerCompanyId
 	                            INNER JOIN Customer.Customer   cu ON cu.Id			      = cl.CustomerId
