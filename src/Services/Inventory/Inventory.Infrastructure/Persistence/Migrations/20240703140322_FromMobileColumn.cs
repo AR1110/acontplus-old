@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Inventory.API.Data.Migrations
+namespace Inventory.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FromMobileColumn : Migration

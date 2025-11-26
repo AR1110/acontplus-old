@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Application.Dtos.MealManagement;
+namespace Restaurant.Application.Dtos.MealManagement;
 
 public record CustomerMealConsumptionItem
 {

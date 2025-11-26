@@ -4,7 +4,7 @@ global using Acontplus.Core.Dtos.Common;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Utilities.Data;
-global using Billing.Application.DTOs;
+global using Billing.Application.Dtos;
 global using Billing.Application.Interfaces;
 global using Billing.Application.Interfaces.Logistica;
 global using Billing.Application.Interfaces.RetencionAts;

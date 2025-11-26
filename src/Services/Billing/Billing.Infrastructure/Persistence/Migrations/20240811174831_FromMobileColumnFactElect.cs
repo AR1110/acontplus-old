@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Billing.API.Data.Migrations
+namespace Billing.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class FromMobileColumnFactElect : Migration

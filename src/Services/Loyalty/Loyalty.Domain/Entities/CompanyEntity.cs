@@ -1,4 +1,4 @@
-﻿namespace Loyalty.Domain.Entities;
+namespace Loyalty.Domain.Entities;
 
 public class CompanyEntity : BaseEntity
 {

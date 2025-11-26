@@ -1,4 +1,4 @@
-﻿using Loyalty.Domain.Entities;
+using Loyalty.Domain.Entities;
 
 namespace Loyalty.Application.Models;
 public class LoyaltyCustomerProfile

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Common.API.Data.Migrations
+namespace Common.Api.Data.Migrations
 {
     [DbContext(typeof(CommonContext))]
     partial class CommonContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace Common.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.API.Entities.HousingType", b =>
+            modelBuilder.Entity("Common.Api.Entities.HousingType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,7 +104,7 @@ namespace Common.API.Data.Migrations
                     b.ToTable("HousingType", "Common");
                 });
 
-            modelBuilder.Entity("Common.API.Entities.MaritalStatus", b =>
+            modelBuilder.Entity("Common.Api.Entities.MaritalStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

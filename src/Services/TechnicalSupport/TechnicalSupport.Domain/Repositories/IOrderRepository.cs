@@ -1,4 +1,4 @@
-using TechnicalSupport.Domain.DTOs;
+using TechnicalSupport.Domain.Dtos;
 
 namespace TechnicalSupport.Domain.Repositories;
 

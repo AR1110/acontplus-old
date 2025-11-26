@@ -1,0 +1,16 @@
+global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Core.Dtos.Requests;
+global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Logging;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Authentication;
+global using BarberShop.Api.Endpoints.Interfaces;
+global using BarberShop.Application.Seats.Dtos;
+global using BarberShop.Application.Seats.Interfaces;
+global using BarberShop.Application.Tickets.Dtos;
+global using BarberShop.Application.Tickets.Interfaces;
+global using BarberShop.Application.WorkSessions.Dtos;
+global using BarberShop.Application.WorkSessions.Interfaces;
+global using BarberShop.Infrastructure.Persistence;
+global using Microsoft.EntityFrameworkCore;

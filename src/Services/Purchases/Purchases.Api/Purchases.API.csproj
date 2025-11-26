@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
+    <UserSecretsId>9cd0f68c-b8e7-4ca9-b89a-9e148199c8e2</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Acontplus.Billing" />
+    <PackageReference Include="Acontplus.Logging" />
+    <PackageReference Include="Acontplus.Services" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scrutor" />
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Purchases.Application\Purchases.Application.csproj" />
+    <ProjectReference Include="..\Purchases.Infrastructure\Purchases.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

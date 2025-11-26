@@ -1,0 +1,20 @@
+global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Logging;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.S3Application.Interfaces;
+global using Acontplus.S3Application.Models;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Context;
+global using Acontplus.Utilities.Data;
+global using Inventory.Api.Extensions;
+global using Inventory.Application.Dtos;
+global using Inventory.Application.Interfaces;
+global using Inventory.Application.Services;
+global using Inventory.Domain.Entities;
+global using Inventory.Domain.Repositories;
+global using Inventory.Infrastructure.Persistence;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+

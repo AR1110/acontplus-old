@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Mechanical.API.Data.Migrations
+namespace Mechanical.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class BaseColumnsRefactored : Migration

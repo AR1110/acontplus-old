@@ -1,0 +1,14 @@
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Logging;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.Services.Configuration;
+global using Acontplus.Services.Extensions;
+global using Acontplus.Services.Extensions.Context;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.EntityFrameworkCore;
+global using Vet.Api.Extensions;
+global using Vet.Application.Interfaces;
+global using Vet.Application.Services;
+global using Vet.Domain.Entities;
+global using Vet.Domain.Repositories;

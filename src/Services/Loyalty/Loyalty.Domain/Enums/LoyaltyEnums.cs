@@ -1,4 +1,4 @@
-﻿namespace Loyalty.Domain.Enums;
+namespace Loyalty.Domain.Enums;
 
 public enum BusinessType
 {
