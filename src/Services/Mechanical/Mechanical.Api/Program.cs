@@ -31,10 +31,6 @@ try
 
   app.UseSerilogRequestLogging();
 
-  app.UseResponseCompression();
-
-
-
   app.UseApplicationMiddleware(builder.Environment);
 
   app.UseRouting();

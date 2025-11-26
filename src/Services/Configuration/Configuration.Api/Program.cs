@@ -31,8 +31,6 @@ try
 
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseResponseCompression();
-
     app.UseApplicationMiddleware(builder.Environment);
 
     app.MapAllEndpoints();
