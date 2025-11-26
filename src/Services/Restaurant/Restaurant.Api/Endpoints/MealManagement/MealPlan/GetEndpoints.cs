@@ -6,7 +6,7 @@ public static class GetEndpoints
     {
         var group = app.MapGroup("/api/meal-plans")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
         group.MapGet("/{establishmentId:int}",

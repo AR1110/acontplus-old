@@ -8,53 +8,49 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
-    });
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+    loggerConfiguration.ReadFrom.Services(services);
+  });
 
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddBarberShopServices(builder.Configuration);
+  builder.Services.AddBarberShopServices(builder.Configuration);
 
-    var app = builder.Build();
+  var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+  // Configure the HTTP request pipeline.
+  if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseSerilogRequestLogging();
+  app.UseSerilogRequestLogging();
 
-    app.UseResponseCompression();
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.UseRateLimiter();
+  app.UseHttpsRedirection();
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseAuthentication();
 
-    app.UseHttpsRedirection();
+  app.UseAuthorization();
 
-    app.UseAuthentication();
+  app.MapTicketEndpoints();
 
-    app.UseAuthorization();
-
-    app.MapTicketEndpoints();
-
-    await app.RunAsync();
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }

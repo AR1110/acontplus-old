@@ -21,6 +21,8 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
+        services.AddResponseCompression();
+
         // Register Application Mappings -> Mapster
 
         services.RegisterMappings();

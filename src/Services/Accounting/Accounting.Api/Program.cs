@@ -7,72 +7,67 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
-    });
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+    loggerConfiguration.ReadFrom.Services(services);
+  });
 
-    // Use AppConfiguration for loading settings
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  // Use AppConfiguration for loading settings
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddAccountingServices(builder.Configuration);
+  builder.Services.AddAccountingServices(builder.Configuration);
 
-    var app = builder.Build();
+  var app = builder.Build();
 
-    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+  if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseSerilogRequestLogging();
+  app.UseSerilogRequestLogging();
 
-    app.UseResponseCompression();
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.UseRateLimiter();
+  app.UseHttpsRedirection();
+  app.UseRouting();
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseAuthentication();
 
-    app.UseHttpsRedirection();
+  app.UseAuthorization();
 
-    app.UseRouting();
+  app.MapContabilidadEndpoints();
 
-    app.UseAuthentication();
+  app.MapControllers().RequireAuthorization();
 
-    app.UseAuthorization();
+  //using var scope = app.Services.CreateScope();
+  //var services = scope.ServiceProvider;
+  //var context = services.GetRequiredService<ContabilidadContext>();
+  //var logger = services.GetRequiredService<ILogger<Program>>();
 
-    app.MapContabilidadEndpoints();
+  //try
+  //{
+  //    await context.Database.MigrateAsync();
+  //    await ContabilidadContextSeed.SeedAsync(context);
+  //}
+  //catch (Exception ex)
+  //{
+  //    logger.LogError(ex, "An error occured during migration");
+  //}
 
-    app.MapControllers().RequireAuthorization();
-
-    //using var scope = app.Services.CreateScope();
-    //var services = scope.ServiceProvider;
-    //var context = services.GetRequiredService<ContabilidadContext>();
-    //var logger = services.GetRequiredService<ILogger<Program>>();
-
-    //try
-    //{
-    //    await context.Database.MigrateAsync();
-    //    await ContabilidadContextSeed.SeedAsync(context);
-    //}
-    //catch (Exception ex)
-    //{
-    //    logger.LogError(ex, "An error occured during migration");
-    //}
-
-    await app.RunAsync();
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }

@@ -6,7 +6,7 @@ public static class DeleteEndpoints
     {
         var group = app.MapGroup("/api/meal-plans")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
         group.MapDelete("/{id:int}",

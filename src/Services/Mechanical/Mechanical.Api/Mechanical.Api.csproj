@@ -4,33 +4,27 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
-    <UserSecretsId>fdc06b39-4f41-41cf-b673-00c58707f311</UserSecretsId>
+    <UserSecretsId>61c01700-a1e9-4cec-b7f4-ccd92faad3ba</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Acontplus.Persistence.SqlServer" />
     <PackageReference Include="Acontplus.Logging" />
-    <PackageReference Include="Acontplus.Notifications" />
-    <PackageReference Include="Acontplus.S3Application" />
     <PackageReference Include="Acontplus.Services" />
 
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build;</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Configuration.Application\Configuration.Application.csproj" />
-    <ProjectReference Include="..\Configuration.Infrastructure\Configuration.Infrastructure.csproj" />
+    <ProjectReference Include="..\Mechanical.Application\Mechanical.Application.csproj" />
+    <ProjectReference Include="..\Mechanical.Infrastructure\Mechanical.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

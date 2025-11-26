@@ -8,7 +8,7 @@ public static class UpdateEndpoints
     {
         var printerGroup = endpointRouteBuilder.MapGroup($"/api/Printer")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("Printer");
 
         printerGroup.MapPut("/{id:int}",

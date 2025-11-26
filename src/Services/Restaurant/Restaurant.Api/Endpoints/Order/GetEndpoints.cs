@@ -8,7 +8,7 @@ public static class GetEndpoints
     {
         var group = app.MapGroup("/api/orders")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing orders.")
             .WithTags("Orders");
 
@@ -34,7 +34,7 @@ public static class GetEndpoints
             .WithName("GetOrders")
             .WithSummary("Get all orders")
             .WithDescription("Retrieve a paginated list of orders.")
-            .Produces<PagedResult<OrderItemTestDto>>(StatusCodes.Status200OK)
+            .Produces<PagedResult<OrderItemDto>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 

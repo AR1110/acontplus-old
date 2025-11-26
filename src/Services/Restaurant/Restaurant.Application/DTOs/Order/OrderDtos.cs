@@ -15,11 +15,11 @@ public record OrderCreate
     public ICollection<OrderDetailCreate>? OrderDetails { get; init; }
 }
 //Temp name OrderItemDto - to be changed to OrderItem
-public record OrderItemTestDto
+public record OrderItemDto
 {
     public int Id { get; init; }
-    public int PuntoEmisionId { get; init; }  
-    public string? Serie { get; init; } 
+    public int PuntoEmisionId { get; init; }
+    public string? Serie { get; init; }
     public decimal? Discount { get; init; }
     public decimal? Tip { get; init; }
     public decimal Total { get; init; }
@@ -28,11 +28,11 @@ public record OrderItemTestDto
     public bool IsFinished { get; init; }
     public int TestName { get; init; } = 0;
     public bool IsActive { get; init; }
-    public   string? CreatedByUser { get; init; }
-    public  string Table { get; init; }
-    public  string CreatedAt { get; init; }
-    public  string IdCard { get; init; }
-    public  string BusinessName { get; init; }
+    public string? CreatedByUser { get; init; }
+    public string? TableName { get; init; }
+    public string? CreatedAt { get; init; }
+    public required string IdCard { get; init; }
+    public required string BusinessName { get; init; }
 }
 
 public record OrderUpdate

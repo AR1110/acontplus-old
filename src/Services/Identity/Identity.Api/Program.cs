@@ -8,60 +8,56 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
-    });
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+    loggerConfiguration.ReadFrom.Services(services);
+  });
 
-    // Use AppConfiguration for loading settings
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  // Use AppConfiguration for loading settings
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddIdentityServices(builder.Configuration);
+  builder.Services.AddIdentityServices(builder.Configuration);
 
-    var app = builder.Build();
+  var app = builder.Build();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseApiVersioningAndDocumentation();
-        app.MapOpenApi();
-    }
+  if (app.Environment.IsDevelopment())
+  {
+    app.UseApiVersioningAndDocumentation();
+    app.MapOpenApi();
+  }
 
-    app.UseSerilogRequestLogging();
+  app.UseSerilogRequestLogging();
 
-    app.UseResponseCompression();
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.UseRateLimiter();
+  app.UseRouting();
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseHttpsRedirection();
 
-    app.UseRouting();
+  app.UseAuthentication();
 
-    app.UseHttpsRedirection();
+  app.UseAuthorization();
 
-    app.UseAuthentication();
+  // Map minimal API endpoints
+  app.MapAllIdentityEndpoints();
 
-    app.UseAuthorization();
-
-    // Map minimal API endpoints
-    app.MapAllIdentityEndpoints();
-
-    await app.RunAsync();
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }
