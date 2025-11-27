@@ -1,5 +1,7 @@
+using Acontplus.Infrastructure.Extensions;
 using Acontplus.Services.Extensions;
 using Identity.Api.Endpoints;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -26,6 +28,8 @@ try
 
   builder.Services.AddIdentityServices(builder.Configuration);
 
+  builder.Services.AddInfrastructureHealthChecks();
+
   var app = builder.Build();
 
   if (app.Environment.IsDevelopment())
@@ -48,6 +52,8 @@ try
 
   // Map minimal API endpoints
   app.MapAllIdentityEndpoints();
+
+  app.MapHealthCheckEndpoints();
 
   await app.RunAsync();
 }

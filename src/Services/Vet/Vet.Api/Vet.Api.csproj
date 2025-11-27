@@ -9,6 +9,7 @@
     <DockerfileContext>..\..\..\..</DockerfileContext>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
 

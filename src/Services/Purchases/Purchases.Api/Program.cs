@@ -1,3 +1,5 @@
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Purchases.Api.Extensions;
 using Serilog;
 
@@ -26,6 +28,8 @@ try
 
   builder.Services.AddComprasServices(builder.Configuration);
 
+  builder.Services.AddInfrastructureHealthChecks();
+
   var app = builder.Build();
 
   if (app.Environment.IsDevelopment()) app.MapOpenApi();
@@ -43,6 +47,8 @@ try
   app.UseAuthorization();
 
   app.MapControllers().RequireAuthorization();
+
+  app.MapHealthCheckEndpoints();
 
   await app.RunAsync();
 }

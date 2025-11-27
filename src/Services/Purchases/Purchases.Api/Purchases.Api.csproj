@@ -12,6 +12,7 @@
   
   <ItemGroup>
     <PackageReference Include="Acontplus.Billing" />
+    <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

@@ -1,3 +1,5 @@
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Restaurant.Api.Endpoints;
 using Serilog;
 
@@ -7,83 +9,87 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration)
-            .ReadFrom.Services(services);
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
-    });
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration)
+          .ReadFrom.Services(services);
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  });
 
-    const string corsPolicy = "RestaurantCorsPolicy";
+  const string corsPolicy = "RestaurantCorsPolicy";
 
-    var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
+  var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
 
-    // Use AppConfiguration for loading settings
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  // Use AppConfiguration for loading settings
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddRestaurantServices(builder.Configuration);
+  builder.Services.AddRestaurantServices(builder.Configuration);
 
-    builder.Services.AddCors(options =>
-    {
-        options.AddPolicy(corsPolicy, policy =>
-        {
-            policy.WithOrigins(safeOrigins)
-                .SetIsOriginAllowed(_ => true)
-                .SetIsOriginAllowedToAllowWildcardSubdomains()
-                .AllowCredentials()
-                .AllowAnyHeader()
-                .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                .WithExposedHeaders("Content-Disposition")
-                .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
-        });
-    });
+  builder.Services.AddInfrastructureHealthChecks();
 
-    var app = builder.Build();
+  builder.Services.AddCors(options =>
+  {
+    options.AddPolicy(corsPolicy, policy =>
+      {
+        policy.WithOrigins(safeOrigins)
+              .SetIsOriginAllowed(_ => true)
+              .SetIsOriginAllowedToAllowWildcardSubdomains()
+              .AllowCredentials()
+              .AllowAnyHeader()
+              .WithMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+              .WithExposedHeaders("Content-Disposition")
+              .SetPreflightMaxAge(TimeSpan.FromSeconds(3600));
+      });
+  });
 
-    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+  var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
+  if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseResponseCompression();
+  app.UseSerilogRequestLogging();
+
+  app.UseResponseCompression();
 
 
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.UseHttpsRedirection();
+  app.UseHttpsRedirection();
 
-    app.UseCors(corsPolicy);
+  app.UseCors(corsPolicy);
 
-    app.UseRouting();
+  app.UseRouting();
 
-    app.UseAuthentication();
+  app.UseAuthentication();
 
-    app.UseAuthorization();
+  app.UseAuthorization();
 
-    app.MapAllEndpoints();
+  app.MapAllEndpoints();
 
-    app.MapControllers().RequireAuthorization();
+  app.MapControllers().RequireAuthorization();
 
-    app.UseStaticFiles();
+  app.MapHealthCheckEndpoints();
 
-    app.UseDefaultFiles();
+  app.UseStaticFiles();
 
-    app.MapFallbackToFile("/index.html");
+  app.UseDefaultFiles();
 
-    await app.RunAsync();
+  app.MapFallbackToFile("/index.html");
+
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }

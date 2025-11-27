@@ -1,3 +1,5 @@
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -25,6 +27,8 @@ try
   // Add services to the container.
   builder.Services.AddMechanicalServices(builder.Configuration);
 
+  builder.Services.AddInfrastructureHealthChecks();
+
   var app = builder.Build();
 
   if (app.Environment.IsDevelopment()) app.MapOpenApi();
@@ -42,6 +46,8 @@ try
   app.UseAuthorization();
 
   app.MapControllers().RequireAuthorization();
+
+  app.MapHealthCheckEndpoints();
 
   await app.RunAsync();
 }

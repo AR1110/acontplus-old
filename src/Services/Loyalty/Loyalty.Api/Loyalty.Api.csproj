@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

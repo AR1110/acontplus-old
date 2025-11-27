@@ -36,6 +36,7 @@ $services = @(
     "LoyaltyApi",
     "MechanicalApi",
     "PurchasesApi",
+    "ReportsApi",
     "RestaurantApi",
     "SalesApi",
     "TechnicalSupportApi",

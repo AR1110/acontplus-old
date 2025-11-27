@@ -1,3 +1,7 @@
+using Acontplus.Infrastructure.Extensions;
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -27,6 +31,8 @@ try
 
   builder.Services.AddBillingServices(builder.Configuration, builder.Environment);
 
+  builder.Services.AddInfrastructureHealthChecks();
+
   var app = builder.Build();
 
   if (app.Environment.IsDevelopment()) app.MapOpenApi();
@@ -50,6 +56,8 @@ try
   app.UseAuthorization();
 
   app.MapControllers().RequireAuthorization();
+
+  app.MapHealthCheckEndpoints();
 
   await app.RunAsync();
 }

@@ -17,6 +17,7 @@
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
 

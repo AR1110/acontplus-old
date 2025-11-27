@@ -20,6 +20,7 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile1.pubxml" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.S3Application" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />

@@ -1,5 +1,7 @@
+using Acontplus.Infrastructure.Extensions;
 using BarberShop.Api.Extensions;
 using BarberShop.Api.Extensions.Endpoints;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -25,6 +27,8 @@ try
 
   builder.Services.AddBarberShopServices(builder.Configuration);
 
+  builder.Services.AddInfrastructureHealthChecks();
+
   var app = builder.Build();
 
   // Configure the HTTP request pipeline.
@@ -41,6 +45,8 @@ try
   app.UseAuthorization();
 
   app.MapTicketEndpoints();
+
+  app.MapHealthCheckEndpoints();
 
   await app.RunAsync();
 }
