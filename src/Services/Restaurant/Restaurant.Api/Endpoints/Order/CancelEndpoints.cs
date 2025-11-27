@@ -14,7 +14,7 @@ public static class CancelEndpoints
 
         group.MapPut("cancel/{id:int}", async (
                 int id,
-                OrderUpdate request,
+                OrderCancel request,
                 IOrderService orderService,
                 IUserContext userContext,
                 CancellationToken cancellationToken) =>
