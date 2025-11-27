@@ -24,6 +24,8 @@ public record OrderDetailCreate
 
 public record OrderDetailUpdate
 {
+    
+    public int Id { get; init; }
     public int OrderId { get; init; }
     public int ItemId { get; init; }
     public int? TaxPercentId { get; init; }
@@ -42,6 +44,8 @@ public record OrderDetailUpdate
     public bool IsPaid { get; init; }
     public decimal? RemainingQuantity { get; init; }
     public int Status { get; init; }
+    public bool IsActive { get; init; }
+    public bool IsDeleted { get; init; }
 }
 
 public record OrderDetailItem
