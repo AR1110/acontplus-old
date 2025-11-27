@@ -25,11 +25,10 @@ public record OrderItemDto
     public decimal Total { get; init; }
     public string? Obs { get; init; }
     public bool IsDivided { get; init; }
-    public bool IsFinished { get; init; }
-    public int TestName { get; init; } = 0;
+    public bool IsFinished { get; init; } 
     public bool IsActive { get; init; }
     public string? CreatedByUser { get; init; }
-    public string? TableName { get; init; }
+    public string? Table { get; init; }
     public string? CreatedAt { get; init; }
     public required string IdCard { get; init; }
     public required string BusinessName { get; init; }
