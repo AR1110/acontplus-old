@@ -28,7 +28,72 @@ BEGIN
           ,it.Summary
           ,it.PreparationInstructions
           ,it.RequiresCooking
-    FROM Restaurant.Item it WITH (NOLOCK)
+          ,ISNULL
+           ((
+              SELECT af.idMedida
+                    ,IIF(af.gestionVenta = 1,1,3) as orden
+                    ,af.conversion
+                    ,af.precioCostoFraccionado
+                    ,sa.precioCosto
+			        ,me.descripcion               as descripcion
+			        ,(
+                        SELECT pv.idTarifa
+                                ,pv.precioVenta
+                                ,pv.precioConIva
+                                ,UPPER(ta.descripcion) as tarifa
+                                ,ta.ventaPorMayor
+					    FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
+					    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
+					    WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
+					    ORDER BY ta.predeterminada DESC 
+                        FOR JSON PATH
+
+                    ) as tarifas
+			FROM dbo.ArticuloFraccionado af WITH (NOLOCK) 
+			INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = af.idMedida
+            INNER JOIN dbo.Articulo      sa WITH (NOLOCK) ON sa.idArticulo = af.idArticulo
+			WHERE af.idArticulo = ar.idArticulo 
+            FOR JSON PATH
+                
+         ),'[]') as fractional
+
+         ,ISNULL
+          ((
+                SELECT sc.idMedida
+                      ,2              as orden
+                      ,1              as conversion
+			          ,sc.precioCosto as precioCostoFraccionado
+                      ,sc.precioCosto
+                      ,me.descripcion
+			          ,(
+                            SELECT ap.idTarifa
+                                  ,ap.precioVenta
+                                  ,ap.precioConIva
+                                  ,UPPER(ta.descripcion) as tarifa
+                                  ,ta.ventaPorMayor 
+					        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
+					        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
+					        WHERE ap.idArticulo = sc.idArticulo
+					        ORDER BY ta.predeterminada DESC 
+                            FOR JSON PATH
+
+                       ) as tarifas
+			    FROM dbo.Articulo     sc WITH (NOLOCK)
+			    INNER JOIN dbo.Medida me WITH (NOLOCK) ON me.idMedida = sc.idMedida
+			    WHERE sc.idArticulo = ar.idArticulo 
+                FOR JSON PATH
+
+         ),'[]')             as principal
+        ,ar.idArticulo       as [ProductId]
+        ,ar.descripcion      as [Description]
+        ,ar.codigo           as Code
+        ,ar.llevaInventario  as IsStockable
+        ,ti.idTipoIva        as TaxPercentId
+        ,CAST(ti.codigoPorcentaje as varchar(50)) as CodePercentage
+        ,ti.descripcion      as Tax
+    FROM Restaurant.Item    it
+    INNER JOIN dbo.Articulo ar ON ar.idArticulo = it.ProductId
+    INNER JOIN dbo.TipoIva  ti ON ti.idTipoIva  = ar.idTipoIva
     WHERE it.Id =  @id
 
     SELECT ic.Id

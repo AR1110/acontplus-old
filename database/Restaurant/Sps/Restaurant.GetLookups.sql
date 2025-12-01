@@ -53,6 +53,27 @@ BEGIN
             END 
 
         --> Data Lookups
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value])
+        SELECT 'PaymentMethodsSri' as TableName
+              ,idFormaPagoSri      as Id
+              ,codigo              as Code
+	          ,descripcion         as [Value]
+        FROM FormaPagoSri WHERE estado = 1 
+
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata)
+        SELECT 'CreditTimes'   as TableName
+              ,idTiempoCredito as Id
+              ,descripcion	   as [Value]
+	          ,(SELECT diasCredito as creditDays 
+	                  ,numeroCuota as quotaNumber
+			          ,entrada     as isDownPayment 
+                FOR JSON PATH
+	           ) as MetaData
+        FROM dbo.TiempoCredito 
+        WHERE estado = 1
+          AND gestion = 1 
+          AND idEntidad = @idEntidad
+
         INSERT INTO #LookupResults (TableName, Id, Code, [Value] ,IsDefault)
         SELECT 'Establishments'     as TableName
               ,es.idEstablecimiento as Id
@@ -122,7 +143,7 @@ BEGIN
               ,ti.idTarifaImpuesto as Id  
 			  ,ti.codigo    
 			  ,ti.descripcion
-              ,(SELECT ti.porcentaje FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
+              ,(SELECT ti.porcentaje as [percentage] ,ti.idImpuesto as taxId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) as Metadata
 	    FROM Sri.TarifaImpuesto ti 
         INNER JOIN Sri.Impuesto im ON im.idImpuesto = ti.idImpuesto
 	    WHERE ti.estado = 1

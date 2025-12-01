@@ -194,8 +194,8 @@ BEGIN
                 DECLARE @multiplier INT;
                 DECLARE @idTipoDocumento INT;
                 DECLARE @idTipoTransaccion INT;
-                DECLARE @idTransaccion INT;
                 DECLARE @idTransaccionOriginal INT;
+                DECLARE @idTransaccion INT
 
                 DECLARE @tblDetails AS TABLE
                 (
@@ -237,71 +237,60 @@ BEGIN
                   AND tr.idDocumento = @idDocumento;
 
                 IF @idTransaccionOriginal > 0
-                BEGIN
-                    DECLARE @idPuntoEmision INT;
-
-                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento
-                    FROM Inventario.TipoDocumento WITH (NOLOCK)
-                    WHERE codigo = 'AJ';
-
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion
-                    FROM Inventario.TipoTransaccion WITH (NOLOCK)
-                    WHERE codigo = 'E';
-
-                    SELECT TOP 1 @idPuntoEmision = pa.idPuntoEmision
-                    FROM Config.PtoEmi_Asig pa
-                    INNER JOIN Config.Estab_Asig ae ON ae.idEstab_Asig = pa.idEstab_Asig
-                    WHERE pa.predeterminado = 1
-                      AND ae.idUsuarioRol = @idUsuarioRol;
-
-                    SELECT TOP 1 @serieComprobante = es.estab + '-' + pe.ptoEmi + '-' + FORMAT(cd.ultimaSecuencia, 'D9')
-                    FROM ConfiguracionDocumento cd
-                    INNER JOIN dbo.TipoDocumento td ON td.idTipoDocumento = cd.idTipoDocumento
-                    INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = cd.idPuntoEmision
-                    INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
-                    WHERE cd.idPuntoEmision = @idPuntoEmision
-                      AND td.codigo = 'AJ';
-                END
-                ELSE
-                BEGIN
-                    SELECT TOP 1 @idTipoDocumento = idTipoDocumento
-                    FROM Inventario.TipoDocumento WITH (NOLOCK)
-                    WHERE codigo = @codDocInv;
-
-                    SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion
-                    FROM Inventario.TipoTransaccion WITH (NOLOCK)
-                    WHERE codigo = 'E';
-                END
-
-                -- Verificar si ya existe una transaccion para este documento (Idempotencia)
-                SELECT TOP 1 @idTransaccion = idTransaccion
-                FROM Inventario.Transaccion WITH (NOLOCK)
-                WHERE idDocumento = @idDocumento
-                  AND idTipoTransaccion = @idTipoTransaccion;
-
-                IF @idTransaccion IS NULL
-                BEGIN
-                    INSERT INTO Inventario.Transaccion
-                    (
-                        idTipoTransaccion, fechaEmision, idTipoDocumento, idDocumento,
-                        CustomerId, idUsuario, idEntidad, serieComprobante, idTransaccionOriginal
-                    )
-                    SELECT
-                        @idTipoTransaccion, @fechaEmision, @idTipoDocumento, @idDocumento,
-                        @CustomerId, @idUsuario, @idEntidad, @serieComprobante, @idTransaccionOriginal;
-
-                    SET @idTransaccion = SCOPE_IDENTITY();
-
-                    IF @idTransaccionOriginal > 0
                     BEGIN
-                        UPDATE cd
-                        SET cd.ultimaSecuencia = cd.ultimaSecuencia + 1
+                        DECLARE @idPuntoEmision INT;
+
+                        SELECT TOP 1 @idTipoDocumento = idTipoDocumento
+                        FROM Inventario.TipoDocumento WITH (NOLOCK)
+                        WHERE codigo = 'AJ';
+
+                        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion
+                        FROM Inventario.TipoTransaccion WITH (NOLOCK)
+                        WHERE codigo = 'E';
+
+                        SELECT TOP 1 @idPuntoEmision = pa.idPuntoEmision
+                        FROM Config.PtoEmi_Asig pa
+                        INNER JOIN Config.Estab_Asig ae ON ae.idEstab_Asig = pa.idEstab_Asig
+                        WHERE pa.predeterminado = 1
+                          AND ae.idUsuarioRol = @idUsuarioRol;
+
+                        SELECT TOP 1 @serieComprobante = es.estab + '-' + pe.ptoEmi + '-' + FORMAT(cd.ultimaSecuencia, 'D9')
                         FROM ConfiguracionDocumento cd
-                        INNER JOIN TipoDocumento td ON td.idTipoDocumento = cd.idTipoDocumento
-                        WHERE td.codigo = 'AJ'
-                          AND cd.idPuntoEmision = @idPuntoEmision;
+                        INNER JOIN dbo.TipoDocumento td ON td.idTipoDocumento = cd.idTipoDocumento
+                        INNER JOIN dbo.PuntoEmision pe ON pe.idPuntoEmision = cd.idPuntoEmision
+                        INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = pe.idEstablecimiento
+                        WHERE cd.idPuntoEmision = @idPuntoEmision
+                          AND td.codigo = 'AJ';
+
+                        SELECT @fechaEmision = GETDATE()
+
+                        SET @idDocumento =  0
+
                     END
-                END
+                ELSE
+                    BEGIN
+                        SELECT TOP 1 @idTipoDocumento = idTipoDocumento
+                        FROM Inventario.TipoDocumento WITH (NOLOCK)
+                        WHERE codigo = @codDocInv;
+
+                        SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion
+                        FROM Inventario.TipoTransaccion WITH (NOLOCK)
+                        WHERE codigo = 'E';
+                    END
+
+                
+                INSERT INTO Inventario.Transaccion
+                (
+                    idTipoTransaccion, fechaEmision, idTipoDocumento, idDocumento,
+                    CustomerId, idUsuario, idEntidad, serieComprobante, idTransaccionOriginal
+                )
+                SELECT
+                    @idTipoTransaccion, @fechaEmision, @idTipoDocumento, @idDocumento,
+                    @CustomerId, @idUsuario, @idEntidad, @serieComprobante, @idTransaccionOriginal;
+
+                 SET @idTransaccion = SCOPE_IDENTITY();
+
+                    
 
                 -- Insertar detalles de la transaccion
                 INSERT INTO Inventario.TransaccionDetalle

@@ -115,6 +115,7 @@ BEGIN
         ,me.descripcion as Measure
         ,ti.codigo      as CodePercentage
         ,ti.descripcion as Tax
+        ,ti.porcentaje  as [Percentage]
     FROM Restaurant.OrderDetail      od WITH (NOLOCK)
     INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id               = od.ItemId
     INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa         = od.FeeId

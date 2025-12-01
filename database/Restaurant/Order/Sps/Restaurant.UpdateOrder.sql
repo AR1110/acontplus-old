@@ -10,27 +10,32 @@ CREATE OR ALTER PROCEDURE Restaurant.UpdateOrder
      @UserRoleId INT
     ,@Id INT
     ,@Json VARCHAR(MAX)
-
 AS
 BEGIN
 	SET NOCOUNT ON;
     SET LANGUAGE SPANISH;
 
+    --> RETURN OUT
+   DECLARE @Payload NVARCHAR(MAX)
+
     --> Data Json
-    DECLARE @OrderDetails NVARCHAR(MAX)
+    DECLARE @OrderDetails NVARCHAR(MAX) ,@DataDoc NVARCHAR(MAX)
 
     --> Varialbles BD
-    DECLARE @UserId INT
+    DECLARE @UserId INT 
 
     DECLARE @TbOrder AS TABLE
     (
         [Id] INT NOT NULL
        ,[CustomerCompanyId] INT NOT NULL
+       ,[TableId] INT NULL
        ,[Discount] NUMERIC(18,5) NULL
        ,[Tip] NUMERIC(18,5) NULL
        ,[Total] NUMERIC(18,5) NOT NULL
        ,[Obs] VARCHAR(500) NULL
+       ,[IsDivided] BIT NOT NULL
        ,[UpdatedByUserId] INT NOT NULL
+       ,[IsQuickSale] BIT NULL
        ,[UpdatedAt] DATETIME2 NOT NULL DEFAULT GETDATE()
     )
 
@@ -70,26 +75,30 @@ BEGIN
         SELECT @OrderDetails = orderDetails FROM OPENJSON(@Json) WITH (orderDetails NVARCHAR(MAX) AS JSON)
 
         INSERT INTO @TbOrder
-              ([Id],[customerCompanyId],[discount],[tip],[total],[obs],[UpdatedByUserId])
-        SELECT @Id ,[customerCompanyId],[discount],[tip],[total],[obs],@UserId
+              ([Id],[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsQuickSale],[UpdatedByUserId])
+        SELECT @Id ,[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsQuickSale],@UserId
         FROM OPENJSON(@Json)
         WITH
         (
             [customerCompanyId] INT
+           ,[tableId]           INT
            ,[createdByUserId]   INT
            ,[discount]          NUMERIC(18,5) 
            ,[tip]               NUMERIC(18,5) 
            ,[total]             NUMERIC(18,5)
-           ,[obs]               VARCHAR(500) 
+           ,[obs]               VARCHAR(500)
+           ,[isDivided]         BIT
+           ,[isQuickSale]       BIT
         )
 
         INSERT INTO @TbOrderDetails
-              ([OrderId],[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],[CreatedByUserId],[UpdatedByUserId])
-        SELECT @Id      ,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],@UserId          ,@UserId
+              ([Id],[OrderId],[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],[CreatedByUserId],[UpdatedByUserId])
+        SELECT [Id],@Id      ,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],@UserId          ,@UserId
         FROM OPENJSON(@OrderDetails)
         WITH
         (
-            [itemId]            INT 
+            [id]                INT
+           ,[itemId]            INT 
            ,[taxPercentId]      INT 
            ,[feeId]             INT 
            ,[warehouseId]       INT
@@ -108,6 +117,12 @@ BEGIN
            ,[isActive]          BIT 
            ,[isDeleted]         BIT
         )
+
+        --> Variables dependientes
+        IF EXISTS (SELECT 1 FROM @tbOrder WHERE IsQuickSale = 1)
+            BEGIN
+                SELECT @DataDoc = dataDoc FROM OPENJSON(@Json) WITH (dataDoc NVARCHAR(MAX) AS JSON)
+            END
 
         --> Validaciones
         IF NOT EXISTS (SELECT 1 FROM @TbOrder)
@@ -132,6 +147,7 @@ BEGIN
 
             UPDATE od SET
                    od.[CustomerCompanyId] = tb.[CustomerCompanyId]
+                  ,od.[TableId]           = tb.[TableId]
                   ,od.[Discount]          = tb.[Discount]
                   ,od.[Tip]               = tb.[Tip]
                   ,od.[Total]             = tb.[Total]
@@ -163,10 +179,15 @@ BEGIN
             INNER JOIN @TbOrderDetails  td ON od.Id = td.Id
 
             INSERT INTO Restaurant.OrderDetail
-                  (OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[CreatedByUserId])
-            SELECT OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[CreatedByUserId]
+                  (OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsPaid],[CreatedByUserId])
+            SELECT OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsPaid],[CreatedByUserId]
             FROM @TbOrderDetails
             WHERE Id = 0
+
+            IF EXISTS (SELECT 1 FROM @tbOrder WHERE IsQuickSale = 1)
+                BEGIN
+                    EXEC Restaurant.ConvertOrder @UserRoleId ,@Id ,@DataDoc ,@Payload = @Payload OUT
+                END
 
         COMMIT TRAN
         SELECT '1' code, 'Actualizado Correctamente' as 'message'

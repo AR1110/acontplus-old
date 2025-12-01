@@ -10,7 +10,11 @@ GO
 -- Create date: 2021-11-24
 -- Description:	SP para registrar facturas
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.ConvertOrder @userRoleId INT ,@json VARCHAR(MAX)
+CREATE OR ALTER PROCEDURE Restaurant.ConvertOrder
+    @UserRoleId INT
+   ,@OrderId INT
+   ,@Json VARCHAR(MAX)
+   ,@Payload NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -19,13 +23,13 @@ BEGIN
 	SET LANGUAGE SPANISH
     
     -- GLOBAL
-	DECLARE @idUsuario INT,@idEntidad INT ,@payload VARCHAR(MAX) ,@idTipoDocumento INT  ,@idDocumento INT
+	DECLARE @idUsuario INT,@idEntidad INT  ,@idTipoDocumento INT  ,@idDocumento INT
 
     --> Data Json
     DECLARE @comprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@formaPago VARCHAR(MAX) ,@impuestos VARCHAR(MAX) ,@infoAdicional VARCHAR(MAX) ,@cuotas VARCHAR(MAX)
 
     --> Convert 
-    DECLARE @serieComprobante VARCHAR(50) ,@docDestino VARCHAR(50) ,@idPuntoEmision INT ,@idProforma INT ,@idEstadoDocumento INT
+    DECLARE @serieComprobante VARCHAR(50) ,@docDestino VARCHAR(50) ,@idPuntoEmision INT ,@idEstadoDocumento INT
 
     --> Facturacion Electronica
 	DECLARE @ruc NVARCHAR(100) ,@fechaEmision DATETIME ,@ambiente INT ,@estab VARCHAR(5) ,@ptoEmi VARCHAR(5) ,@claveAcceso NVARCHAR(50) ,@isAutomatic INT ,@secuencial INT
@@ -42,7 +46,6 @@ BEGIN
 		idCliente INT NOT NULL
 	   ,idPuntoEmision INT NOT NULL
 	   ,idUsuario INT NOT NULL
-       ,idProforma INT NOT NULL
 	   ,idTiempoCredito INT NOT NULL
        ,codDoc VARCHAR(10) NOT NULL 
        ,versionComp VARCHAR(10) NOT NULL DEFAULT '1.1.0'
@@ -135,15 +138,14 @@ BEGIN
 
         --> Comprbante
 		INSERT INTO @tbComprobante
-		      (idCliente,idTiempoCredito,idPuntoEmision,idUsuario,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,docDestino,idProforma,codDoc)
-		SELECT idCliente,idTiempoCredito,idPuntoEmision,idUsuario,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,docDestino,idProforma,codDoc
+		      (idCliente,idTiempoCredito,idPuntoEmision,idUsuario,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,docDestino,codDoc)
+		SELECT idCliente,idTiempoCredito,idPuntoEmision,idUsuario,fechaEmision,fechaVencimiento,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,docDestino,codDoc
 		FROM OPENJSON(@comprobante) WITH
         (
 			 idCliente               INT  
 			,idTiempoCredito         INT 
 			,idPuntoEmision          INT 
 			,idUsuario               INT 
-            ,idProforma              INT
 			,fechaEmision            DATETIME2 
 			,fechaVencimiento        DATETIME2 
 			,subTotalSinImpuestos    NUMERIC(18,5) 
@@ -242,7 +244,6 @@ BEGIN
 			  ,@idPuntoEmision = js.idPuntoEmision
               ,@fechaEmision   = js.fechaEmision
               ,@docDestino     = js.docDestino
-              ,@idProforma     = js.idProforma
               ,@idUsuario	   = IIF(js.idUsuario = 0, @idUsuario, js.idUsuario)
 			  ,@estab          = sr.estab
 			  ,@ptoEmi         = po.ptoEmi
@@ -339,7 +340,7 @@ BEGIN
             BEGIN
                 --> InfoTributaria
 			    INSERT INTO dbo.DocumentoElectronico
-                        (idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEstadoServicio,serieComprobante)
+                       (idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,CustomerId,nroDocumento,claveAcceso,isAutomatic,idUsuario,idEstadoServicio,serieComprobante)
 			    SELECT @idTipoDocumento,idPuntoEmision,fechaEmision,versionComp,@CustomerId,@secuencial,@claveAcceso,@isAutomatic,@idUsuario,@idEstadoServicio,@serieComprobante
                 FROM @tbComprobante
 
@@ -347,7 +348,7 @@ BEGIN
 
 			    --> InfoFactura 
 			    INSERT INTO Factura
-                        (idCliente, idDocumentoElectronico,idUsuario,totalDescuento,porcentajeDescuento,propina,subTotalSinImpuestos,recargo,transporte,total,observacion,fechaRegistro)
+                      (idCliente, idDocumentoElectronico,idUsuario,totalDescuento,porcentajeDescuento,propina,subTotalSinImpuestos,recargo,transporte,total,observacion,fechaRegistro)
 			    SELECT idCliente,@idDocumentoElectronico,idUsuario,totalDescuento,porcentajeDescuento,propina,subTotalSinImpuestos,recargo,transporte,total,observacion,dbo.ufnGetdateEcuador()
 			    FROM @tbComprobante
 
@@ -355,7 +356,7 @@ BEGIN
 
 			    --> Detalle 
 			    INSERT INTO FacturaDetalle WITH (ROWLOCK)
-                            (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto)
+                         (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto)
 			    SELECT @idDocumento,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto
 			    FROM @tblDetails 
                 ORDER BY orderIndex ASC
@@ -378,7 +379,7 @@ BEGIN
             BEGIN
                 --> Comprobante
 			    INSERT INTO NotaEntrega
-			            (idCliente,idPuntoEmision,nroDocumento,idTipoDocumento,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,idUsuario,idEntidad,serieComprobante)
+			          (idCliente,idPuntoEmision,nroDocumento,idTipoDocumento,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,idUsuario,idEntidad,serieComprobante)
 			    SELECT idCliente,idPuntoEmision,@secuencial,@idTipoDocumento,fechaEmision,subTotalSinImpuestos,totalDescuento,porcentajeDescuento,propina,recargo,transporte,total,observacion,@idUsuario,@idEntidad,@serieComprobante
 			    FROM @tbComprobante
 
@@ -393,7 +394,7 @@ BEGIN
 
                 -->Impuestos
                 INSERT INTO Ventas.NotaEntregaImpuesto
-                        (NotaEntregaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
+                     (NotaEntregaId,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount)
                 SELECT @idDocumento,TaxId,TaxPercentId,[Percent],TaxBase,TaxValue,Discount FROM @tbTaxes
             END 
                 
@@ -439,23 +440,38 @@ BEGIN
             
         --> Contabilidad
         INSERT INTO Contabilidad.CuentaPorCobrar
-                (idPuntoEmision,idTiempoCredito,idCliente,codDoc,fechaEmision,fechaVencimiento ,idEstadoPago ,idDocumento ,secuencial ,serieComprobante,importeTotal ,idEntidad ,idUsuario,fechaRegistro)
-	    SELECT  idPuntoEmision,idTiempoCredito,idCliente,codDoc,fechaEmision,fechaVencimiento,@idEstadoPago,@idDocumento,@secuencial,@serieComprobante,total,@idEntidad ,@idUsuario,dbo.ufnGetDateEcuador()
+              (idPuntoEmision,idTiempoCredito,idCliente,codDoc,fechaEmision,fechaVencimiento ,idEstadoPago ,idDocumento ,secuencial ,serieComprobante,importeTotal     ,idEntidad ,idUsuario,fechaRegistro)
+	    SELECT idPuntoEmision,idTiempoCredito,idCliente,codDoc,fechaEmision,fechaVencimiento,@idEstadoPago,@idDocumento,@secuencial,@serieComprobante,total,@idEntidad ,@idUsuario,dbo.ufnGetDateEcuador()
         FROM @tbComprobante
 
         SET @idCuentaPorCobrar = SCOPE_IDENTITY()
 
         INSERT INTO Contabilidad.CuotaPorCobrar
-                (idCuentaPorCobrar,idEstadoPago ,nroCuota,fechaVencimiento,cuota,entrada)
+               (idCuentaPorCobrar ,idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada)
 	    SELECT @idCuentaPorCobrar,@idEstadoPago,nroCuota,fechaVencimiento,cuota,entrada 
         FROM @tbCuotas
         ORDER BY nroCuota ASC
 
-        --> Proforma Documento
-        UPDATE dbo.Proforma WITH (ROWLOCK) SET idEstadoDocumento = @idEstadoDocumento WHERE idProforma = @idProforma
+        --> Order Documento
+        UPDATE Restaurant.[Order] SET IsFinished = 1 WHERE Id = @OrderId
 
-        INSERT INTO Ventas.ProformaDocumento 
-                (ProformaId,TipoDocumentoId,UsuarioId,DocumentoId,SerieComprobante)
-        SELECT idProforma,@idTipoDocumento,@idUsuario,@idDocumento,@SerieComprobante FROM @tbComprobante
+        INSERT INTO Restaurant.OrderDocument(OrderId, DocumentoId, TipoDocumentoId , CreatedByUserId)
+        SELECT @OrderId ,@idDocumento ,@idTipoDocumento ,@idUsuario
+        
+        SET @Payload = (
 
+            SELECT cc.idCuentaPorCobrar as accountsReceivableId
+                  ,cc.codDoc            as codDoc
+                  ,es.codEstab          as codsEstab
+                  ,sv.payAutomatic      as payAutomatic
+                  ,sv.printerAutomatic  as printerAutomatic
+                  ,@orderId             as orderId
+            FROM Contabilidad.CuentaPorCobrar  cc
+            INNER JOIN dbo.PuntoEmision        pe ON pe.idPuntoEmision    = cc.idPuntoEmision
+            INNER JOIN Sri.Establecimiento     es ON es.idEstablecimiento = pe.idEstablecimiento
+             LEFT JOIN Config.v_Sistema_Ventas sv ON sv.idEntidad         = es.idEntidad
+            WHERE idCuentaPorCobrar  = @idCuentaPorCobrar
+
+            FOR JSON PATH
+        )
 END
