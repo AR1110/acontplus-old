@@ -19,6 +19,8 @@ public static class ApplicationServicesExtensions
 
         services.AddControllers();
 
+        services.AddResponseCompression();
+
         JsonConfigurationService.ConfigureAspNetCore(services, false);
 
         JsonConfigurationService.RegisterJsonConfiguration(services);

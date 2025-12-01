@@ -9,7 +9,7 @@ public static class TicketEndpointsExtensions
         // Seat Endpoints Group
         var seatGroup = builder.MapGroup("/api/seats")
             .RequireAuthorization() // Requires authentication for these endpoints
-            .WithOpenApi()          // Enables OpenAPI/Swagger documentation for these endpoints
+                      // Enables OpenAPI/Swagger documentation for these endpoints
             .WithTags("Seats");     // Groups these endpoints under the "Seats" tag in Swagger UI
 
         // GET all seats with pagination
@@ -49,7 +49,7 @@ public static class TicketEndpointsExtensions
         // Work Session Endpoints Group
         var workSessionGroup = builder.MapGroup("/api/work-sessions")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("WorkSessions");
 
         // GET all work sessions with pagination
@@ -88,7 +88,7 @@ public static class TicketEndpointsExtensions
 
         var ticketGroup = builder.MapGroup("/api/tickets")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("Tickets");
 
         // GET all tickets with pagination

@@ -1,4 +1,6 @@
+using Acontplus.Infrastructure.Extensions;
 using Configuration.Api.Endpoints;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -7,72 +9,74 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
-    });
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+    loggerConfiguration.ReadFrom.Services(services);
+  });
 
-    // Use AppConfiguration for loading settings
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  // Use AppConfiguration for loading settings
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddConfigurationServices(builder.Configuration);
+  builder.Services.AddConfigurationServices(builder.Configuration);
 
-    var app = builder.Build();
+  builder.Services.AddInfrastructureHealthChecks();
 
-    app.UseSerilogRequestLogging();
+  var app = builder.Build();
 
-    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+  app.UseSerilogRequestLogging();
 
-    app.UseResponseCompression();
+  if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.MapAllEndpoints();
+  app.MapAllEndpoints();
 
-    app.UseRouting();
+  app.UseRouting();
 
-    app.UseHttpsRedirection();
+  app.UseHttpsRedirection();
 
-    app.UseForwardedHeaders();
+  app.UseForwardedHeaders();
 
-    app.UseAuthentication();
+  app.UseAuthentication();
 
-    app.UseAuthorization();
+  app.UseAuthorization();
 
-    app.MapControllers().RequireAuthorization();
+  app.MapControllers().RequireAuthorization();
 
-    //using var scope = app.Services.CreateScope();
-    //var services = scope.ServiceProvider;
-    //var context = services.GetRequiredService<ConfigContext>();
-    //var logger = services.GetRequiredService<ILogger<Program>>();
+  app.MapHealthCheckEndpoints();
 
-    //try
-    //{
-    //    await context.Database.MigrateAsync();
-    //    await ConfigContextSeed.SeedAsync(context);
-    //}
-    //catch (Exception ex)
-    //{
-    //    logger.LogError(ex, "An error occured during migration");
-    //}
+  //using var scope = app.Services.CreateScope();
+  //var services = scope.ServiceProvider;
+  //var context = services.GetRequiredService<ConfigContext>();
+  //var logger = services.GetRequiredService<ILogger<Program>>();
 
-    await app.RunAsync();
+  //try
+  //{
+  //    await context.Database.MigrateAsync();
+  //    await ConfigContextSeed.SeedAsync(context);
+  //}
+  //catch (Exception ex)
+  //{
+  //    logger.LogError(ex, "An error occured during migration");
+  //}
+
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }

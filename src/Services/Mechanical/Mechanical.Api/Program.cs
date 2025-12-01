@@ -1,3 +1,5 @@
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -6,56 +8,56 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    var builder = WebApplication.CreateBuilder(args);
+  var builder = WebApplication.CreateBuilder(args);
 
-    var environment = builder.Environment.EnvironmentName;
+  var environment = builder.Environment.EnvironmentName;
 
-    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-    {
-        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+  {
+    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-        loggerConfiguration.ReadFrom.Services(services);
-    });
+    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+    loggerConfiguration.ReadFrom.Services(services);
+  });
 
-    // Use AppConfiguration for loading settings
-    var configuration = ApplicationConfigurationBuilder.Load();
-    builder.Configuration.AddConfiguration(configuration);
+  // Use AppConfiguration for loading settings
+  var configuration = ApplicationConfigurationBuilder.Load();
+  builder.Configuration.AddConfiguration(configuration);
 
-    // Add services to the container.
-    builder.Services.AddMechanicalServices(builder.Configuration);
+  // Add services to the container.
+  builder.Services.AddMechanicalServices(builder.Configuration);
 
-    var app = builder.Build();
+  builder.Services.AddInfrastructureHealthChecks();
 
-    if (app.Environment.IsDevelopment()) app.MapOpenApi();
+  var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
+  if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-    app.UseResponseCompression();
+  app.UseSerilogRequestLogging();
 
-    app.UseRateLimiter();
+  app.UseApplicationMiddleware(builder.Environment);
 
-    app.UseApplicationMiddleware(builder.Environment);
+  app.UseRouting();
 
-    app.UseRouting();
+  app.UseHttpsRedirection();
 
-    app.UseHttpsRedirection();
+  app.UseAuthentication();
 
-    app.UseAuthentication();
+  app.UseAuthorization();
 
-    app.UseAuthorization();
+  app.MapControllers().RequireAuthorization();
 
-    app.MapControllers().RequireAuthorization();
+  app.MapHealthCheckEndpoints();
 
-    await app.RunAsync();
+  await app.RunAsync();
 }
 catch (Exception ex)
 {
-    // Catch any critical startup errors
-    Log.Fatal(ex, "API host terminated unexpectedly.");
+  // Catch any critical startup errors
+  Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-    // Ensure all buffered logs are flushed on application shutdown
-    Log.CloseAndFlush();
+  // Ensure all buffered logs are flushed on application shutdown
+  Log.CloseAndFlush();
 }

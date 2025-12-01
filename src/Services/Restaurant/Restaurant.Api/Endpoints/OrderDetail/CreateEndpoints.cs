@@ -9,7 +9,7 @@ public static class CreateEndpoints
         app.MapPost("/api/orderdetails", CreateOrderDetail)
             .WithName("CreateOrderDetail")
             .WithTags("OrderDetails")
-            .WithOpenApi();
+            ;
     }
 
     private static async Task<IResult> CreateOrderDetail(

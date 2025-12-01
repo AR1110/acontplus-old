@@ -1,3 +1,4 @@
+using Acontplus.Infrastructure.Extensions;
 using Acontplus.Logging;
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions.Authentication;
@@ -50,7 +51,8 @@ try
     builder.Configuration.AddConfiguration(configuration);
 
     // Secure Environment Variable Retrieval (consider secret management for sensitive data)
-    var safeOrigins = builder.Configuration.GetSection("SafeOrigins").Get<string>().Split(",");
+    var safeOrigins = builder.Configuration["SafeOrigins"]?.Split(",")
+                      ?? ["http://localhost:3000", "https://localhost:3000"];
 
     // Ocelot Configuration (consider using environment variables for dynamic configuration)
     builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", false, true);
@@ -77,9 +79,7 @@ try
         });
     });
 
-    builder.Services
-        .AddHealthChecks()
-        .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+    builder.Services.AddInfrastructureHealthChecks();
 
     var app = builder.Build();
 
@@ -101,20 +101,11 @@ try
 
     app.UseAuthorization();
 
+    // Map health check endpoints (before Ocelot to avoid auth requirements)
+    app.MapHealthCheckEndpoints();
+
     // Default Route Redirect (consider a more elegant solution)
     app.UseEndpoints(_ => { });
-
-    // Map health check endpoints
-    app.MapHealthChecks("/hc", new HealthCheckOptions
-    {
-        Predicate = _ => true,
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
-
-    app.MapHealthChecks("/liveness", new HealthCheckOptions
-    {
-        Predicate = r => r.Name.Contains("self")
-    });
 
     // Ocelot Integration
     app.UseOcelot().Wait();

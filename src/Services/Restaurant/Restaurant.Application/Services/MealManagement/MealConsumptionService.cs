@@ -1,11 +1,16 @@
+using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+
 namespace Restaurant.Application.Services.MealManagement;
 
-public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionService
+public class MealConsumptionService(IUnitOfWork unitOfWork, ILogger<MealConsumptionService> logger) : IMealConsumptionService
 {
     private readonly IRepository<MealConsumption> _mealConsumptionRepository =
         unitOfWork.GetRepository<MealConsumption>();
 
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
+
+    private readonly ILogger<MealConsumptionService> _logger = logger;
 
     public async Task<Result<MealConsumptionItem, DomainError>> AddAsync(MealConsumptionCreate request,
         CancellationToken cancellationToken = default)
@@ -80,9 +85,19 @@ public class MealConsumptionService(IUnitOfWork unitOfWork) : IMealConsumptionSe
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("CUSTOMER_NOT_FOUND",
-                $"An error occurred while retrieving items. {ex.Message}");
-            return Result<PagedResult<CustomerMealConsumptionItem>, DomainError>.Failure(error);
+            _logger.LogError(ex, "Error searching customer meal consumption for page {PageIndex}, size {PageSize}",
+                paginationRequest.PageIndex, paginationRequest.PageSize);
+
+            return DomainError.Internal(
+                code: "SEARCH_CUSTOMER_MEAL_CONSUMPTION_FAILED",
+                message: "Failed to retrieve customer meal consumption due to an internal error",
+                details: new Dictionary<string, object>
+                {
+                    ["operation"] = "SearchCustomerMealConsumption",
+                    ["pageIndex"] = paginationRequest.PageIndex,
+                    ["pageSize"] = paginationRequest.PageSize
+                }
+            );
         }
     }
 

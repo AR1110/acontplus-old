@@ -15,7 +15,7 @@ public static class UserProfileEndpoints
             .MapToApiVersion(new ApiVersion(3, 0))
             .RequireAuthorization()
             .WithTags("UserProfile V3")
-            .WithOpenApi();
+            ;
 
         // GET user profile by userId
         userProfileGroup.MapGet("/{userId:int}", async (

@@ -1,4 +1,6 @@
 using Accounting.Api.Endpoints.CuotaPorCobrar;
+using Acontplus.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -25,20 +27,17 @@ try
 
     builder.Services.AddAccountingServices(builder.Configuration);
 
+    builder.Services.AddInfrastructureHealthChecks();
+
     var app = builder.Build();
 
     if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
     app.UseSerilogRequestLogging();
 
-    app.UseResponseCompression();
-
-    app.UseRateLimiter();
-
     app.UseApplicationMiddleware(builder.Environment);
 
     app.UseHttpsRedirection();
-
     app.UseRouting();
 
     app.UseAuthentication();
@@ -48,6 +47,8 @@ try
     app.MapContabilidadEndpoints();
 
     app.MapControllers().RequireAuthorization();
+
+    app.MapHealthCheckEndpoints();
 
     //using var scope = app.Services.CreateScope();
     //var services = scope.ServiceProvider;

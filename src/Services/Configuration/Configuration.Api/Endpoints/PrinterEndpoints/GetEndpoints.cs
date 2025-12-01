@@ -8,7 +8,7 @@ public static class GetEndpoints
     {
         var printerGroup = endpointRouteBuilder.MapGroup($"/api/Printer")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("Printer");
 
         printerGroup.MapGet("/", async (string json, IPrinterRepository printerRepository, IUserContext userContext) =>

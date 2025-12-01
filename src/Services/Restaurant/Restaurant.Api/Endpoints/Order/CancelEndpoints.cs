@@ -8,13 +8,13 @@ public static class CancelEndpoints
     {
         var group = app.MapGroup("/api/orders")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithDescription("Endpoints for managing orders.")
             .WithTags("Orders");
 
         group.MapPut("cancel/{id:int}", async (
                 int id,
-                OrderUpdate request,
+                OrderCancel request,
                 IOrderService orderService,
                 IUserContext userContext,
                 CancellationToken cancellationToken) =>

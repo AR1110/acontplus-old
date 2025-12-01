@@ -8,6 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="Acontplus.Persistence.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build;</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

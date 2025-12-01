@@ -8,7 +8,7 @@ public static class DeleteEndpoints
     {
         var printerGroup = endpointRouteBuilder.MapGroup($"/api/Printer")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("Printer");
 
         printerGroup.MapDelete("/{id:int}",

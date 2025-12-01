@@ -8,7 +8,7 @@ public static class BillingEndpointsExtensions
     {
         var notificacionTributariaGroup = endpointRouteBuilder.MapGroup("/api/notificaciontributaria")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("NotificacionTributaria");
 
         notificacionTributariaGroup.MapGet("/{id}",
@@ -22,7 +22,7 @@ public static class BillingEndpointsExtensions
 
         var documentoElectronicoErrorGroup = endpointRouteBuilder.MapGroup("/api/documentoelectronicoerror")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("DocumentoElectronicoError");
 
         documentoElectronicoErrorGroup.MapGet("/{id}",

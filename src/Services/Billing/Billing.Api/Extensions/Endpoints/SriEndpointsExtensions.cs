@@ -8,7 +8,7 @@ public static class SriEndpointsExtensions
     {
         var atsGroup = endpointRouteBuilder.MapGroup("/api/ats")
             .RequireAuthorization()
-            .WithOpenApi()
+            
             .WithTags("Ats");
 
         atsGroup.MapGet("/checkvalidation",
