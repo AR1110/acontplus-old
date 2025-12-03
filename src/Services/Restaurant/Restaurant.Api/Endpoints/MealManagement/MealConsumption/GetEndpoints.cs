@@ -6,7 +6,7 @@ public static class GetEndpoints
     {
         var group = app.MapGroup("/api/meal-consumptions")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing meal consumption records.")
             .WithTags("Meal Consumptions");
         group.MapGet("/",
@@ -18,7 +18,7 @@ public static class GetEndpoints
                     {
                         SortDirection = paginationQuery.SortDirection ?? default
                     };
-                    paginationDto.WithFilter("UserRoleId", userRoleId);
+                    paginationDto = paginationDto.WithFilter("UserRoleId", userRoleId);
 
                     return await mealConsumptionService.GetAsync(paginationDto, cancellationToken)
                         .ToGetMinimalApiResultAsync();
@@ -39,7 +39,7 @@ public static class GetEndpoints
                 {
                     SortDirection = paginationQuery.SortDirection ?? default
                 };
-                paginationDto.WithFilter("UserRoleId", userRoleId);
+                paginationDto = paginationDto.WithFilter("UserRoleId", userRoleId);
 
                 return await mealConsumptionService.SearchCustomerAsync(paginationDto, cancellationToken)
                     .ToGetMinimalApiResultAsync();

@@ -1,4 +1,27 @@
 {
+  // Performance Optimizations
+  "files.watcherExclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.vs": true,
+    "**/dist": true,
+    "**/tmp": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.vs": true,
+    "**/dist": true
+  },
+  "files.exclude": {
+    "**/bin": false,
+    "**/obj": false
+  },
+
   // Preserved your core settings
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
