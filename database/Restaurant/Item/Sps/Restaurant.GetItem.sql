@@ -169,7 +169,7 @@ BEGIN
 
                      SELECT TOP 1 @TotalCount = TotalCount FROM #FilteredItems;
 
-                     SELECT fi.* ' + @Column + N'  FROM #FilteredItems fi '+ @InnerJoin + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                     SELECT fi.* ' + @Column + N'  FROM #FilteredItems fi ' + @InnerJoin + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
 
                      IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems ' ;
 

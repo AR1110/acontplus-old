@@ -113,7 +113,8 @@ BEGIN
         SELECT 'Tables'         as TableName
               ,tb.Id            as Id
 			  ,tb.[Description] as [Value]
-              ,(SELECT ISNULL(tb.Assigned,0) as assigned
+              ,(SELECT tb.RoomId             as roomId
+                      ,ISNULL(tb.Assigned,0) as assigned
                       ,fl.[Description]      as [floor]
                       ,fl.EstablecimientoId  as establishmentId
                       ,ro.[Description]      as room

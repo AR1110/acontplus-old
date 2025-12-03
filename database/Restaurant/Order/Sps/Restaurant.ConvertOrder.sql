@@ -87,6 +87,7 @@ BEGIN
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
         ,estado INT NOT NULL DEFAULT 2
+        ,envioSri BIT NOT NULL 
 	)
 	
     DECLARE @tbTaxes AS TABLE (
@@ -163,8 +164,8 @@ BEGIN
 
 		--> Detalles
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado)
-		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado 
+              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,envioSri)
+		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado,envioSri 
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex             INT
@@ -191,6 +192,7 @@ BEGIN
             ,cantidadTransaccion    NUMERIC(15,5)
             ,conversion             NUMERIC(15,5)
             ,precioCostoFraccionado NUMERIC(15,5)
+            ,envioSri               BIT
 		)
 
         --> Impuestos
@@ -356,8 +358,8 @@ BEGIN
 
 			    --> Detalle 
 			    INSERT INTO FacturaDetalle WITH (ROWLOCK)
-                         (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto)
-			    SELECT @idDocumento,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto
+                         (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto,envioSri)
+			    SELECT @idDocumento,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto,envioSri
 			    FROM @tblDetails 
                 ORDER BY orderIndex ASC
 
@@ -453,7 +455,6 @@ BEGIN
         ORDER BY nroCuota ASC
 
         --> Order Documento
-        UPDATE Restaurant.[Order] SET IsFinished = 1 WHERE Id = @OrderId
 
         INSERT INTO Restaurant.OrderDocument(OrderId, DocumentoId, TipoDocumentoId , CreatedByUserId)
         SELECT @OrderId ,@idDocumento ,@idTipoDocumento ,@idUsuario

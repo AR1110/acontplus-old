@@ -21,7 +21,7 @@ BEGIN
 	SET NOCOUNT ON;
 	SET LANGUAGE SPANISH;
 
-    SET @TableNames = 'order,details'
+    SET @TableNames = 'order,details,orderDocument'
 
     SELECT ro.*
           ,cu.BusinessName
@@ -53,6 +53,7 @@ BEGIN
           ,od.[RemainingQuantity]
           ,od.[IsActive]
 	      ,it.Summary
+          ,it.ProductId
 	      ,ISNULL
            ((
               SELECT af.idMedida
@@ -115,15 +116,39 @@ BEGIN
         ,me.descripcion as Measure
         ,ti.codigo      as CodePercentage
         ,ti.descripcion as Tax
+        ,ti.IdImpuesto  as TaxId
         ,ti.porcentaje  as [Percentage]
-    FROM Restaurant.OrderDetail      od WITH (NOLOCK)
-    INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id               = od.ItemId
-    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa         = od.FeeId
-    INNER JOIN dbo.Medida            me WITH (NOLOCK) ON me.idMedida         = od.MeasureId
-    INNER JOIN Sri.TarifaImpuesto    ti WITH (NOLOCK) ON ti.idTarifaImpuesto = od.TaxPercentId
-    INNER JOIN dbo.Articulo          ar WITH (NOLOCK) ON ar.idArticulo       = it.ProductId
+        ,td.idTipoIva   as TaxPercentOldId
+    FROM Restaurant.OrderDetail      od
+    INNER JOIN Restaurant.Item       it ON it.Id               = od.ItemId
+    INNER JOIN dbo.Tarifa            ta ON ta.idTarifa         = od.FeeId
+    INNER JOIN dbo.Medida            me ON me.idMedida         = od.MeasureId
+    INNER JOIN Sri.TarifaImpuesto    ti ON ti.idTarifaImpuesto = od.TaxPercentId
+    INNER JOIN dbo.Articulo          ar ON ar.idArticulo       = it.ProductId
+    INNER JOIN dbo.TipoIva           td ON td.idTipoIva        = ar.idTipoIva
     WHERE od.IsActive    = 1
       AND od.OrderId = @id
+
+
+    SELECT cc.idCuentaPorCobrar						  as AccountId
+          ,cc.idDocumento                             as DocumentId
+          ,td.codigo							      as CodDoc
+          ,cc.serieComprobante					      as SerieDocument
+	      ,FORMAT(cc.fechaEmision,'dd-MM-yyyy HH:mm') as [Date]
+	      ,cc.importeTotal						      as Total
+	      ,cc.abono								      as PaidAmount 
+	      ,cc.saldo							          as RemainingAmount  
+	      ,ep.descripcion                             as StatusDocument
+          ,cu.IdCard
+		  ,cu.BusinessName
+    FROM  Restaurant.OrderDocument          dt 
+    INNER JOIN dbo.TipoDocumento		    td ON td.idTipoDocumento = dt.TipoDocumentoId
+    INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idDocumento     = dt.DocumentoId AND cc.codDoc = IIF(td.codigo = 'FV','01', td.codigo)
+    INNER JOIN dbo.EstadoPago	            ep ON ep.idEstadoPago    = cc.idEstadoPago
+    INNER JOIN dbo.Cliente                  cl ON cl.idCliente       = cc.idCliente
+    INNER JOIN Customer.Customer            cu ON cu.Id              = cl.CustomerId
+    WHERE dt.OrderId = @Id
+      AND dt.IsActive = 1
 
 END
 GO
