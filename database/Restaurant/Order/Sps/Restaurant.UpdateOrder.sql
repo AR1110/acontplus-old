@@ -34,6 +34,7 @@ BEGIN
        ,[Total] NUMERIC(18,5) NOT NULL
        ,[Obs] VARCHAR(500) NULL
        ,[IsDivided] BIT NOT NULL
+       ,[IsFinished] BIT NOT NULL
        ,[UpdatedByUserId] INT NOT NULL
        ,[IsQuickSale] BIT NULL
        ,[UpdatedAt] DATETIME2 NOT NULL DEFAULT GETDATE()
@@ -75,8 +76,8 @@ BEGIN
         SELECT @OrderDetails = orderDetails FROM OPENJSON(@Json) WITH (orderDetails NVARCHAR(MAX) AS JSON)
 
         INSERT INTO @TbOrder
-              ([Id],[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsQuickSale],[UpdatedByUserId])
-        SELECT @Id ,[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsQuickSale],@UserId
+              ([Id],[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsFinished],[IsQuickSale],[UpdatedByUserId])
+        SELECT @Id ,[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsFinished],[IsQuickSale],@UserId
         FROM OPENJSON(@Json)
         WITH
         (
@@ -88,6 +89,7 @@ BEGIN
            ,[total]             NUMERIC(18,5)
            ,[obs]               VARCHAR(500)
            ,[isDivided]         BIT
+           ,[isFinished]        BIT
            ,[isQuickSale]       BIT
         )
 
@@ -151,6 +153,8 @@ BEGIN
                   ,od.[Discount]          = tb.[Discount]
                   ,od.[Tip]               = tb.[Tip]
                   ,od.[Total]             = tb.[Total]
+                  ,od.[IsDivided]         = tb.[IsDivided]
+                  ,od.[IsFinished]        = tb.[IsFinished]
                   ,od.[Obs]               = tb.[Obs]
                   ,od.[UpdatedByUserId]   = tb.[UpdatedByUserId]
                   ,od.[UpdatedAt]         = tb.[UpdatedAt]
@@ -190,7 +194,7 @@ BEGIN
                 END
 
         COMMIT TRAN
-        SELECT '1' code, 'Actualizado Correctamente' as 'message'
+        SELECT '1' code, 'Actualizado Correctamente' as 'message' ,@Payload as payload
     END TRY
 
     BEGIN CATCH

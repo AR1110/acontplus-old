@@ -359,6 +359,7 @@ BEGIN
                   --,customerId       = @customerId
                   ,fechaEmision     = @fechaEmision
                   ,idEstadoServicio = @idEstadoServicio
+                  ,isAutomatic      = 1
             WHERE idDocumentoElectronico = @idDocumentoElectronico
 
             --> Info Factura
