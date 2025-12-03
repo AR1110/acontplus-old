@@ -19,6 +19,11 @@ Authorization: {{Token}}
 
 ###
 
+POST {{Restaurant.API_HostAddress}}/api/lookups/refresh
+Authorization: {{Token}}
+
+###
+
 GET {{Restaurant.Api_HostAddress}}/api/meal-consumptions/search-customer?searchTerm=2100705371
 Authorization: {{Token}}
 
