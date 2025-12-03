@@ -1,9 +1,12 @@
+using Acontplus.Services.Services.Abstractions;
+
 namespace Restaurant.Api.Endpoints;
 
 public static class LookupEndpoints
 {
     public static void MapLookupEndpoints(this IEndpointRouteBuilder app)
     {
+        var storedProcedureName = "Restaurant.GetLookups";
         var group = app.MapGroup("/api/lookups")
             .RequireAuthorization()
             
@@ -25,7 +28,7 @@ public static class LookupEndpoints
                     filterRequest = filterRequest.WithFilter("userRoleId", userRoleId);
                 }
 
-                return await lookupService.GetLookupsAsync(filterRequest, cancellationToken)
+                return await lookupService.GetLookupsAsync(storedProcedureName, filterRequest, cancellationToken)
                     .ToGetMinimalApiResultAsync();
             })
             .WithName("GetLookups")
@@ -49,7 +52,7 @@ public static class LookupEndpoints
                     filterRequest = filterRequest.WithFilter("userRoleId", userRoleId);
                 }
 
-                return await lookupService.RefreshLookupsAsync(filterRequest, cancellationToken)
+                return await lookupService.RefreshLookupsAsync(storedProcedureName, filterRequest, cancellationToken)
                     .ToGetMinimalApiResultAsync();
             })
             .WithName("RefreshLookups")

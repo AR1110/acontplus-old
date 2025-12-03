@@ -5,14 +5,14 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Acontplus.ApiDocumentation" Version="1.1.0" />
-    <PackageVersion Include="Acontplus.Billing" Version="1.1.1" />
+    <PackageVersion Include="Acontplus.Billing" Version="1.1.2" />
     <PackageVersion Include="Acontplus.Infrastructure" Version="1.2.0" />
-    <PackageVersion Include="Acontplus.Persistence.SqlServer" Version="2.0.1" />
+    <PackageVersion Include="Acontplus.Persistence.SqlServer" Version="2.0.2" />
     <PackageVersion Include="Acontplus.Logging" Version="1.2.1" />
-    <PackageVersion Include="Acontplus.Notifications" Version="1.4.2" />
-    <PackageVersion Include="Acontplus.S3Application" Version="1.2.1" />
-    <PackageVersion Include="Acontplus.Services" Version="2.0.2" />
-    <PackageVersion Include="Acontplus.Utilities" Version="2.0.1" />
+    <PackageVersion Include="Acontplus.Notifications" Version="1.4.4" />
+    <PackageVersion Include="Acontplus.S3Application" Version="1.2.2" />
+    <PackageVersion Include="Acontplus.Services" Version="2.1.0" />
+    <PackageVersion Include="Acontplus.Utilities" Version="2.0.2" />
     <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
     <PackageVersion Include="Humanizer" Version="3.0.1" />
     <PackageVersion Include="Mapster" Version="7.4.0" />

@@ -3,6 +3,7 @@ using Acontplus.Services.Extensions.Authentication;
 using Restaurant.Application.Mapping;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
+using Acontplus.Infrastructure.Extensions;
 
 namespace Restaurant.Api.Extensions;
 
@@ -29,7 +30,12 @@ public static class ApplicationServicesExtensions
 
         JsonConfigurationService.ConfigureAspNetCore(services, false);
 
+        //services.AddLookupService();
+
         services.AddInfrastructure(configuration);
+
+        // Add Caching Services
+        services.AddCachingServices(configuration);
 
         string[] scopedNameSpaces =
         [
@@ -38,7 +44,8 @@ public static class ApplicationServicesExtensions
             "Restaurant.Infrastructure.Persistence.Repositories",
             "Acontplus.S3Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions.Context"
+            "Acontplus.Services.Extensions.Context",
+            "Acontplus.Services.Services.Implementations"
         ];
 
         services.Scan(scan => scan
@@ -50,6 +57,7 @@ public static class ApplicationServicesExtensions
         );
 
         services.AddTransient<S3ObjectCustom>();
+
         return services;
     }
 }
