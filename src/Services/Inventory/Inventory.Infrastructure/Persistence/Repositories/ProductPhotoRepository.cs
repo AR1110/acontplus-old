@@ -16,7 +16,7 @@ public class ProductPhotoRepository : IProductPhotoRepository
         if (!_context.ProductPhotos.Any(x => x.ProductId == productId))
             return new SpResponse { Code = "0", Message = "No se encontraron imagenes!" };
 
-        var photos = await _context.ProductPhotos.Where(x => x.ProductId == productId).ToListAsync();
+        var photos = await _context.ProductPhotos.AsNoTracking().Where(x => x.ProductId == productId).ToListAsync();
         return new SpResponse { Code = "1", Payload = photos };
     }
 

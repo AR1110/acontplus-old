@@ -4,14 +4,16 @@ public class AppTableRepository(RestaurantContext context) : IAppTableRepository
 {
     public async Task<SpResponse> GetByEstabAsync(string codEstab)
     {
-        var rooms = await context.Rooms.Include(x => x.Floor)
+        var rooms = await context.Rooms.AsNoTracking().Include(x => x.Floor)
             .Where(x => x.Floor.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
         var floors = await context.Floors
+            .AsNoTracking()
             .Where(x => x.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
 
         var tables = await context.Tables
+            .AsNoTracking()
             .Include(x => x.Room)
             .Where(x => x.Room.Floor.CodEstab == codEstab && !x.IsDeleted)
             .ToListAsync();
