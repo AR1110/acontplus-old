@@ -12,7 +12,7 @@ public record OrderCreate
     public bool IsDivided { get; init; }
     public bool IsFinished { get; init; }
     public bool IsQuickSale { get; init; }
-    
+
     public int CreatedByUserId { get; init; }
     public ICollection<OrderDetailCreate>? OrderDetails { get; init; }
 
@@ -29,7 +29,7 @@ public record OrderItemDto
     public decimal Total { get; init; }
     public string? Obs { get; init; }
     public bool IsDivided { get; init; }
-    public bool IsFinished { get; init; } 
+    public bool IsFinished { get; init; }
     public bool IsActive { get; init; }
     public string? CreatedByUser { get; init; }
     public string? Table { get; init; }

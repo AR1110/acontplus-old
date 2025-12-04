@@ -8,7 +8,7 @@ public static class UpdateEndpoints
     {
         var group = app.MapGroup("/api/promotions")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing promotions.")
             .WithTags("Promotions");
 

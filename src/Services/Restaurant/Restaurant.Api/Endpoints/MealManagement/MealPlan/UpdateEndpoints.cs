@@ -6,7 +6,7 @@ public static class UpdateEndpoints
     {
         var group = app.MapGroup("/api/meal-plans")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing meal plan records.")
             .WithTags("Meal Plans");
         group.MapPut("/{id:int}",

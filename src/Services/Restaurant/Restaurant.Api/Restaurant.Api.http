@@ -19,10 +19,46 @@ Authorization: {{Token}}
 GET {{Restaurant.Api_HostAddress}}/api/configuration?json={}
 Authorization: {{Token}}
 
-### ========== STATS ========== ###
+### ========== STATISTICS ========== ###
 
-# Get Stats
-GET {{Restaurant.Api_HostAddress}}/api/stats?json={}
+# Get Dashboard Statistics (Last 30 Days)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/dashboard?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[EstablecimientoId]=396&searchTerm=
+Authorization: {{Token}}
+
+###
+
+# Get Dashboard Statistics (Custom Date Range with Language)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/dashboard?filters[StartDate]=2024-06-01&filters[EndDate]=2024-06-30&filters[EstablecimientoId]=396&language=es
+Authorization: {{Token}}
+
+###
+
+# Get Real-Time Statistics
+GET {{Restaurant.Api_HostAddress}}/api/statistics/real-time?filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Aggregated Statistics (Daily Revenue)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/aggregated?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=day&filters[MetricType]=revenue&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Aggregated Statistics (Weekly by Category)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/aggregated?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=week&filters[MetricType]=orders&filters[Category]=beverage&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Trends (Revenue Trend)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/trends?filters[Metric]=revenue&filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=day&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Trends (Customer Satisfaction Trend)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/trends?filters[Metric]=satisfaction&filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=week&filters[EstablecimientoId]=396
 Authorization: {{Token}}
 
 ### ========== FLOORS ========== ###

@@ -9,7 +9,7 @@ public static class LookupEndpoints
         var storedProcedureName = "Restaurant.GetLookups";
         var group = app.MapGroup("/api/lookups")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing restaurant lookups.")
             .WithTags("Lookups");
 

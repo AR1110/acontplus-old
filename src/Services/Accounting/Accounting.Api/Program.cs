@@ -1,6 +1,5 @@
 using Accounting.Api.Endpoints.CuotaPorCobrar;
 using Acontplus.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
