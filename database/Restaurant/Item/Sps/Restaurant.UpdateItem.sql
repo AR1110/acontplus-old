@@ -157,6 +157,16 @@ BEGIN
             FROM Restaurant.ItemComposition rr
             INNER JOIN @TbItemComposition tr ON tr.Id = rr.Id;
 
+            IF EXISTS (SELECT 1 FROM Restaurant.ItemComposition rr WHERE rr.ParentItemId = @Id AND rr.IsOptional = 0 AND rr.UniqueId IS NOT NULL )
+                BEGIN 
+                    UPDATE rr SET
+                           rr.ParentCompositionId = (SELECT TOP 1 sc.Id FROM Restaurant.ItemComposition sc WHERE sc.UniqueId = rr.UniqueId AND sc.ParentItemId = @Id AND sc.IsOptional = 1)
+                          ,rr.UniqueId            = NULL
+                    FROM Restaurant.ItemComposition rr
+                    WHERE rr.ParentItemId = @Id
+                      AND rr.IsOptional = 0
+                      AND rr.UniqueId IS NOT NULL
+                END 
               
 		COMMIT TRAN
         SELECT '1' code, 'Actualizado exitosamente' as 'message'

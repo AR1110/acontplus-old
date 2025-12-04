@@ -128,6 +128,7 @@ BEGIN
               ,tb.Id            as Id
 			  ,tb.[Description] as [Value]
               ,(SELECT ISNULL(tb.Assigned,0) as assigned
+                      ,tb.RoomId             as roomId
                       ,fl.[Description]      as [floor]
                       ,fl.EstablecimientoId  as establishmentId
                       ,ro.[Description]      as room
