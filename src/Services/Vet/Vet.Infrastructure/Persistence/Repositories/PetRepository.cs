@@ -30,7 +30,7 @@ public class PetRepository(VetContext context, IAdoRepository repository) : IPet
 
     public async Task<SpResponse> GetByIdAsync(int id)
     {
-        var pet = await context.Pets.SingleOrDefaultAsync(x => x.Id == id);
+        var pet = await context.Pets.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
         return new SpResponse { Code = "1", Payload = pet };
     }
 

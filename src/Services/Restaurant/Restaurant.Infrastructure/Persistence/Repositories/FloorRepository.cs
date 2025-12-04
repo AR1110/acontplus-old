@@ -59,6 +59,7 @@ public class FloorRepository : IFloorRepository
     public async Task<SpResponse> GetAllAsync()
     {
         var floors = await _context.Floors
+            .AsNoTracking()
             .Where(x => !x.IsDeleted)
             .Include(x => x.Rooms.Where(r => !r.IsDeleted))
             .ToListAsync();
@@ -71,6 +72,7 @@ public class FloorRepository : IFloorRepository
     public async Task<SpResponse> GetByEstabAsync(int establecimientoId)
     {
         var floors = await _context.Floors
+            .AsNoTracking()
             .Where(x => x.EstablecimientoId == establecimientoId && !x.IsDeleted)
             .Include(x => x.Rooms.Where(r => !r.IsDeleted))
             .ThenInclude(r => r.Tables.Where(t => !t.IsDeleted))

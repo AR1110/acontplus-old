@@ -1,6 +1,7 @@
 using Loyalty.Domain.Entities;
 
 namespace Loyalty.Application.Models;
+
 public class LoyaltyCustomerProfile
 {
     public int CompanyCustomerId { get; set; }

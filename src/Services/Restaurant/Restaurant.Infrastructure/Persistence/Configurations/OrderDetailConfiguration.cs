@@ -1,6 +1,4 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Restaurant.Domain.Entities;
 
 namespace Restaurant.Infrastructure.Persistence.Configurations;
 

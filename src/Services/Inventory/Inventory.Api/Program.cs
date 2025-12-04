@@ -1,5 +1,4 @@
 using Acontplus.Infrastructure.Extensions;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -8,64 +7,64 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-  var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
 
-  var environment = builder.Environment.EnvironmentName;
+    var environment = builder.Environment.EnvironmentName;
 
-  builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
-  {
-    loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
+    builder.Host.UseSerilog((hostContext, services, loggerConfiguration) =>
+    {
+        loggerConfiguration.ConfigureAdvancedLogger(hostContext.Configuration, environment);
 
-    loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
-    loggerConfiguration.ReadFrom.Services(services);
-  });
-
-
-  builder.WebHost.ConfigureKestrel(serverOptions =>
-  {
-    serverOptions.Limits.MaxRequestBufferSize = 1048576;
-    serverOptions.Limits.MaxRequestLineSize = 1048576;
-  });
-
-  // Use AppConfiguration for loading settings
-  var configuration = ApplicationConfigurationBuilder.Load();
-  builder.Configuration.AddConfiguration(configuration);
-
-  builder.Services.AddInventoryServices(builder.Configuration);
-
-  builder.Services.AddInfrastructureHealthChecks();
-
-  var app = builder.Build();
-
-  if (app.Environment.IsDevelopment()) app.MapOpenApi();
-
-  app.UseSerilogRequestLogging();
+        loggerConfiguration.ReadFrom.Configuration(hostContext.Configuration);
+        loggerConfiguration.ReadFrom.Services(services);
+    });
 
 
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.Limits.MaxRequestBufferSize = 1048576;
+        serverOptions.Limits.MaxRequestLineSize = 1048576;
+    });
 
-  app.UseApplicationMiddleware(builder.Environment);
+    // Use AppConfiguration for loading settings
+    var configuration = ApplicationConfigurationBuilder.Load();
+    builder.Configuration.AddConfiguration(configuration);
 
-  app.UseRouting();
+    builder.Services.AddInventoryServices(builder.Configuration);
 
-  app.UseHttpsRedirection();
+    builder.Services.AddInfrastructureHealthChecks();
 
-  app.UseAuthentication();
+    var app = builder.Build();
 
-  app.UseAuthorization();
+    if (app.Environment.IsDevelopment()) app.MapOpenApi();
 
-  app.MapControllers().RequireAuthorization();
+    app.UseSerilogRequestLogging();
 
-  app.MapHealthCheckEndpoints();
 
-  await app.RunAsync();
+
+    app.UseApplicationMiddleware(builder.Environment);
+
+    app.UseRouting();
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.MapControllers().RequireAuthorization();
+
+    app.MapHealthCheckEndpoints();
+
+    await app.RunAsync();
 }
 catch (Exception ex)
 {
-  // Catch any critical startup errors
-  Log.Fatal(ex, "API host terminated unexpectedly.");
+    // Catch any critical startup errors
+    Log.Fatal(ex, "API host terminated unexpectedly.");
 }
 finally
 {
-  // Ensure all buffered logs are flushed on application shutdown
-  Log.CloseAndFlush();
+    // Ensure all buffered logs are flushed on application shutdown
+    Log.CloseAndFlush();
 }

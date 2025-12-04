@@ -31,7 +31,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("Dashboard")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -65,7 +65,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("Notificacion")
             .Produces<SpResponse>(200)
             .Produces(400)
@@ -89,7 +89,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("Release")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -129,7 +129,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("User Manual")
             .Produces<SpResponse>(200)
             .Produces(401)
@@ -164,7 +164,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("User Release")
             .Produces<SpResponse>(200)
             .Produces(400)
@@ -202,7 +202,7 @@ public static class RegisterEndpoints
                 }
             })
             .RequireAuthorization()
-            
+
             .WithTags("WhatsApp Message")
             .Produces<SpResponse>(200)
             .Produces(400)

@@ -43,7 +43,7 @@ public class ProductionAreaRepository(RestaurantContext context) : IProductionAr
 
     public async Task<SpResponse> GetAllAsync()
     {
-        var productionAreas = await context.ProductionAreas.Where(x => !x.IsDeleted).ToListAsync();
+        var productionAreas = await context.ProductionAreas.AsNoTracking().Where(x => !x.IsDeleted).ToListAsync();
         return productionAreas.Count > 0
             ? new SpResponse { Code = "1", Payload = productionAreas }
             : new SpResponse { Code = "0", Message = "Not found!" };
@@ -52,6 +52,7 @@ public class ProductionAreaRepository(RestaurantContext context) : IProductionAr
     public async Task<SpResponse> GetByEstabAsync(int establecimientoId)
     {
         var productionAreas = await context.ProductionAreas
+            .AsNoTracking()
             .Where(x => !x.IsDeleted && x.EstablishmentId == establecimientoId).ToListAsync();
         return productionAreas.Count > 0
             ? new SpResponse { Code = "1", Payload = productionAreas }
