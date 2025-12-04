@@ -37,14 +37,14 @@ public record OrderDocumentItem
 
 //conversion a doc (ne,fv)
 
- 
+
 public record OrderDocumentDataDto
 {
     public OrderDocumentHeaderDto Comprobante { get; init; }
 
     public ICollection<OrderDocumentDetailDto> detalles { get; init; }
     public ICollection<TaxDetailDto> impuestos { get; init; }
-    public  PaymentDto formaPago { get; init; }
+    public PaymentDto formaPago { get; init; }
     public ICollection<CuotaDto> cuotas { get; init; }
 
 }

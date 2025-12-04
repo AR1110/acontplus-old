@@ -6,7 +6,7 @@ public static class CreateEndpoints
     {
         var printerGroup = endpointRouteBuilder.MapGroup($"/api/Printer")
             .RequireAuthorization()
-            
+
             .WithTags("Printer");
 
         printerGroup.MapPost("/",

@@ -22,7 +22,7 @@ public class PetTypeRepository(VetContext context) : IPetTypeRepository
 
     public async Task<SpResponse> GetAsync()
     {
-        var response = await context.PetTypes.Where(x => !x.IsDeleted).ToListAsync();
+        var response = await context.PetTypes.AsNoTracking().Where(x => !x.IsDeleted).ToListAsync();
         return response.Count > 0 ? new SpResponse { Code = "1", Payload = response } : new SpResponse { Code = "0", Message = "No data!" };
     }
 

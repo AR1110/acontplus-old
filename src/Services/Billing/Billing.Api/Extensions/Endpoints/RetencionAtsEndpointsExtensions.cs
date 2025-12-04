@@ -6,7 +6,7 @@ public static class RetencionAtsEndpointsExtensions
     {
         var retencionAtsGroup = endpointRouteBuilder.MapGroup("/retencionats")
             .RequireAuthorization()
-            
+
             .WithTags("RetencionAts");
 
         retencionAtsGroup.MapGet("/", async (IRetencionAtsEndpoints retencionAtsEndpoints, string json) =>
@@ -31,7 +31,7 @@ public static class RetencionAtsEndpointsExtensions
 
         var doctSustentoGroup = endpointRouteBuilder.MapGroup("/docsustento")
             .RequireAuthorization()
-            
+
             .WithTags("DocSustento");
 
         doctSustentoGroup.MapGet("/", async (IDocSustentoEndpoints docSustentoEndpoints, string json) =>
@@ -52,7 +52,7 @@ public static class RetencionAtsEndpointsExtensions
 
         var docSustentoImpuestoGroup = endpointRouteBuilder.MapGroup("/docsustentoimpuesto")
             .RequireAuthorization()
-            
+
             .WithTags("DocSustentoImpuesto");
 
         docSustentoImpuestoGroup.MapGet("/",
@@ -77,7 +77,7 @@ public static class RetencionAtsEndpointsExtensions
 
         var docSustentoRetencionGroup = endpointRouteBuilder.MapGroup("/docsustentoretencion")
             .RequireAuthorization()
-            
+
             .WithTags("DocSustentoRetencion");
 
         docSustentoRetencionGroup.MapGet("/",
@@ -102,7 +102,7 @@ public static class RetencionAtsEndpointsExtensions
 
         var docSustentoPagoGroup = endpointRouteBuilder.MapGroup("/docsustentopago")
             .RequireAuthorization()
-            
+
             .WithTags("DocSustentoPago");
 
         docSustentoPagoGroup.MapGet("/",
@@ -127,7 +127,7 @@ public static class RetencionAtsEndpointsExtensions
 
         var retencionAtsInfoAdicionalGroup = endpointRouteBuilder.MapGroup("/retencionatsinfoadicional")
             .RequireAuthorization()
-            
+
             .WithTags("RetencionAtsInfoAdicional");
 
         retencionAtsInfoAdicionalGroup.MapGet("/",

@@ -24,7 +24,7 @@ public record OrderDetailCreate
 
 public record OrderDetailUpdate
 {
-    
+
     public int Id { get; init; }
     public int OrderId { get; init; }
     public int ItemId { get; init; }

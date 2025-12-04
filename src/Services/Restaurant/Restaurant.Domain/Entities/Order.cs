@@ -7,7 +7,7 @@ public class Order : BaseEntity
     public AppTable? AppTable { get; set; }
     public int? TableId { get; set; }
     public int Sequence { get; set; }
-    [Required] [MaxLength(18)] public required string Serie { get; set; }
+    [Required][MaxLength(18)] public required string Serie { get; set; }
     public int CustomerCompanyId { get; set; }
     [Column(TypeName = "decimal(5,2)")] public decimal? Discount { get; set; }
     [Column(TypeName = "decimal(18,5)")] public decimal? Tip { get; set; }

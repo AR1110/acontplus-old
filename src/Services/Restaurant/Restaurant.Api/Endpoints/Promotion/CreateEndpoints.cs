@@ -8,7 +8,7 @@ public static class CreateEndpoints
     {
         var group = app.MapGroup("/api/promotions")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing promotions.")
             .WithTags("promotions");
 

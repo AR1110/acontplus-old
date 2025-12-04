@@ -36,7 +36,7 @@ public class RoomRepository(RestaurantContext context) : IRoomRepository
 
     public async Task<SpResponse> GetAllAsync()
     {
-        var floors = await context.Rooms.Include(x => x.Floor).Where(x => !x.IsDeleted).ToListAsync();
+        var floors = await context.Rooms.AsNoTracking().Include(x => x.Floor).Where(x => !x.IsDeleted).ToListAsync();
         return floors.Count > 0
             ? new SpResponse { Code = "1", Payload = floors }
             : new SpResponse { Code = "0", Message = "Not found!" };
@@ -45,6 +45,7 @@ public class RoomRepository(RestaurantContext context) : IRoomRepository
     public async Task<SpResponse> GetByEstabAsync(int establecimientoId)
     {
         var rooms = await context.Rooms
+            .AsNoTracking()
             .Include(x => x.Floor)
             .Include(x => x.Tables)
             .Where(x => x.Floor.EstablecimientoId == establecimientoId && !x.IsDeleted)

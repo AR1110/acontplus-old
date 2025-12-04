@@ -23,10 +23,6 @@ public static class DependencyInjection
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 x => x.MigrationsAssembly("Restaurant.Infrastructure")));
 
-        // Other registrations...
-        //services.AddScoped<IFloorRepository, FloorRepository>();
-
-
         return services;
     }
 }

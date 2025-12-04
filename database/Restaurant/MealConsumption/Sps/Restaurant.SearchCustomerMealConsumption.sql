@@ -41,7 +41,7 @@ BEGIN
                 FROM OPENJSON(@Filters)
                 WITH
                 (
-                    UserRoleId INT
+                    userRoleId INT
                 );
             END
         ELSE

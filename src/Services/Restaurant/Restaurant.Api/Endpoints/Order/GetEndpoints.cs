@@ -8,7 +8,7 @@ public static class GetEndpoints
     {
         var group = app.MapGroup("/api/orders")
             .RequireAuthorization()
-            
+
             .WithDescription("Endpoints for managing orders.")
             .WithTags("Orders");
 

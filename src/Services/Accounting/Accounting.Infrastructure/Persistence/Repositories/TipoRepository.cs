@@ -32,7 +32,7 @@ public class TipoRepository : ITipoRepository
 
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {
-        var tipos = await _context.Tipos.Where(x => x.IsActive == true).ToListAsync();
+        var tipos = await _context.Tipos.AsNoTracking().Where(x => x.IsActive == true).ToListAsync();
         return tipos.Count == 0
             ? new SpResponse { Code = "0", Message = "Data no existe" }
             : new SpResponse

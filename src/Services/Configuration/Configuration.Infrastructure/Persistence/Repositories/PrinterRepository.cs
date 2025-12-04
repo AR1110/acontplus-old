@@ -12,7 +12,7 @@ public class PrinterRepository(ConfigurationContext context, IAdoRepository repo
 
     public async Task<Printer> GetByIdAsync(int id)
     {
-        return await context.Printers.Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
+        return await context.Printers.AsNoTracking().Include(x => x.Documents).FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<SpResponse> AddAsync(Printer printer)
