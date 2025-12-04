@@ -17,10 +17,13 @@ import { ProductMeasure } from '@inventory/domain/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import {generateUuidv4} from "@core/utils/generate-uuidv4";
+import {Overlay} from "@angular/cdk/overlay";
+import {ComponentPortal} from "@angular/cdk/portal";
+import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-search-dialog";
 
 @Component({
   selector: 'app-item-add-edit',
@@ -44,10 +47,148 @@ export class ItemAddEdit implements OnInit {
   private updateUseCase = inject(ItemUpdateUseCase);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #tS = inject(ToastrNotificationService);
+  overlay = inject(Overlay);
 
   params = inject<{ id: number; acronymCategory: string }>(MAT_DIALOG_DATA);
   itemForm!: FormGroup;
-  itemCompositions = signal<ItemComposition[]>([]);
+  itemCompositions = signal<any[]>([
+    {
+      uuid: generateUuidv4(),
+      id: 1,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      _children: [],
+      feeId: 0,
+      description: 'Producto 1',
+      code: 'COD-1',
+      measures: [],
+      measureId: 0,
+      salePrice: 10,
+      unitPrice: 8,
+      quantity: 1,
+      totalPrice: 10,
+      totalCost: 8,
+      isActive: true,
+      isDeleted: false
+    },
+    {
+      uuid: generateUuidv4(),
+      id: 2,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      feeId: 0,
+      description: 'Producto 2',
+      code: 'COD-2',
+      measures: [],
+      measureId: 0,
+      salePrice: 20,
+      unitPrice: 16,
+      quantity: 2,
+      totalPrice: 40,
+      totalCost: 32,
+      isActive: true,
+      isDeleted: false,
+      _children: [],
+    },
+    {
+      uuid: generateUuidv4(),
+      id: 3,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      feeId: 0,
+      description: 'Producto 3',
+      code: 'COD-3',
+      measures: [],
+      measureId: 0,
+      salePrice: 30,
+      unitPrice: 24,
+      quantity: 3,
+      totalPrice: 90,
+      totalCost: 72,
+      isActive: true,
+      isDeleted: false,
+      _children: [],
+    },
+    {
+      uuid: generateUuidv4(),
+      id: 4,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      feeId: 0,
+      description: 'Producto 4',
+      code: 'COD-4',
+      measures: [],
+      measureId: 0,
+      salePrice: 40,
+      unitPrice: 32,
+      quantity: 4,
+      totalPrice: 160,
+      totalCost: 128,
+      isActive: true,
+      isDeleted: false,
+      _children: [],
+    },
+    {
+      uuid: generateUuidv4(),
+      id: 5,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      feeId: 0,
+      description: 'Producto 5',
+      code: 'COD-5',
+      measures: [],
+      measureId: 0,
+      salePrice: 50,
+      unitPrice: 40,
+      quantity: 5,
+      totalPrice: 250,
+      totalCost: 200,
+      isActive: true,
+      isDeleted: false,
+      _children: [],
+    },
+    {
+      uuid: generateUuidv4(),
+      id: 6,
+      parentItemId: 0,
+      childItemId: 0,
+      fees: [],
+      feeId: 0,
+      description: 'Producto 6',
+      code: 'COD-6',
+      measures: [],
+      measureId: 0,
+      salePrice: 60,
+      unitPrice: 48,
+      quantity: 6,
+      totalPrice: 360,
+      totalCost: 288,
+      isActive: true,
+      isDeleted: false,
+
+      _children: [
+        {
+          id: 5,
+          description: 'Hijo 2-1',
+          salePrice: 25,
+          quantity: 2,
+          totalPrice: 50,
+        },
+        {
+          id: 6,
+          description: 'Hijo 2-2',
+          salePrice: 40,
+          quantity: 1,
+          totalPrice: 40,
+        }
+      ]
+    }
+]);
   itemCompositionsDeleted = signal<ItemComposition[]>([]);
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
@@ -147,6 +288,7 @@ export class ItemAddEdit implements OnInit {
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
+      cellClick: (e:any, cell:any) => this.openOverlay(cell.getRow().getData())
     },
     {
       title: 'Medida',
@@ -273,9 +415,19 @@ export class ItemAddEdit implements OnInit {
   }
 
   itemSearchLabel = this.isCombo() ? 'Buscar Producto' : 'Buscar Ingrediente';
+  openOverlay(rowData: any) {
+    const overlayRef = this.overlay.create({
+      positionStrategy: this.overlay.position()
+        .global().centerHorizontally().centerVertically(),
+      hasBackdrop: true
+    });
 
-  getColumns() {
-    return;
+    const portal = new ComponentPortal(ItemSearchDialog);
+    const component = overlayRef.attach(portal);
+
+  //  component.instance.data = rowData;
+
+    overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
   }
 
   ngOnInit() {
@@ -339,7 +491,7 @@ export class ItemAddEdit implements OnInit {
   private getItemById() {
     this.itemGetByIdUseCase.execute(this.params.id).subscribe((response) => {
       this.itemForm.patchValue(response.item);
-      this.itemCompositions.set(response.itemCompositions);
+     // this.itemCompositions.set(response.itemCompositions);
     });
   }
 

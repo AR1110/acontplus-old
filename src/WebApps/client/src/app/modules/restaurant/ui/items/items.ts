@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { PageEvent } from '@angular/material/paginator';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ItemListUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { FormsModule } from '@angular/forms';
-import { Pagination } from '@acontplus/ng-components';
+import {DataGrid, DataGridColumn, Pagination} from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Button } from '@acontplus/ng-components';

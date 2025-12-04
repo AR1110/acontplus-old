@@ -108,6 +108,7 @@ public record OrderDocumentDetailDto
     public decimal PrecioCostoFraccionado { get; set; }
 
     public int Estado { get; set; }
+    public bool EnvioSri { get; set; }
 
 }
 
