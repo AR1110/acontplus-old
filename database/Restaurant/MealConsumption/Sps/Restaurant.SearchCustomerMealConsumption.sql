@@ -11,13 +11,13 @@ GO
 -- Description:	Search customers for meal consumptions
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.SearchCustomerMealConsumption
-    @Filters NVARCHAR(MAX) 
+    @Filters NVARCHAR(MAX)
    ,@PageIndex INT = 1
    ,@PageSize INT = 10
    ,@SortBy NVARCHAR(50) = 'Id'
    ,@SortDirection NVARCHAR(4) = 'DESC'
    ,@SearchTerm NVARCHAR(100) = NULL
-   ,@TotalCount INT OUTPUT 
+   ,@TotalCount INT OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -105,11 +105,24 @@ BEGIN
         ,ISNULL((SELECT customerCompany.BusinessName
             FROM Customer.Customer customerCompany
             WHERE customerCompany.Id = e.CustomerId), '''') AS CustomerCompanyName
+        ,ISNULL(latestPlan.Id, 0) AS CompanyCustomerMealPlanId
 
         FROM dbo.Cliente cc
         INNER JOIN Customer.Customer c ON cc.CustomerId = c.Id
         LEFT JOIN Administrador.cargo cargo ON cc.idCargo = cargo.idCargo
         LEFT JOIN Administrador.Empresa e ON cc.idEmpresa = e.idEmpresa
+        LEFT JOIN (
+            SELECT ccmp.Id, ccmp.CompanyCustomerId
+            FROM Restaurant.CompanyCustomerMealPlan ccmp
+            INNER JOIN (
+                SELECT CompanyCustomerId, MAX(Id) AS MaxId
+                FROM Restaurant.CompanyCustomerMealPlan
+                WHERE GETDATE() BETWEEN StartDate AND ISNULL(EndDate, ''9999-12-31'')
+                    AND IsDeleted IS NULL
+                GROUP BY CompanyCustomerId
+            ) latest ON ccmp.CompanyCustomerId = latest.CompanyCustomerId
+                AND ccmp.Id = latest.MaxId
+        ) latestPlan ON cc.idCliente = latestPlan.CompanyCustomerId
         ' + @WhereClause + @OrderByClause + N'
         OFFSET @Offset ROWS
         FETCH NEXT @PageSize ROWS ONLY';
@@ -142,15 +155,15 @@ BEGIN
                   ,@SortBy              AS SortBy
                   ,@SortDirection       AS SortDirection
                   ,@SearchTerm          AS SearchTerm
-                  ,JSON_QUERY(@Filters) AS Filters 
+                  ,JSON_QUERY(@Filters) AS Filters
                   ,@Offset              AS Offset
             FOR JSON PATH
         );
- 
+
         INSERT INTO dbo.ErroresSistema
                (token, method, errorNumber, errorSeverity, errorState, errorProcedure, errorLine, errorMessage,errorDate,idUsuario,errorDetails)
         SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId, @ErrorDetails;
-        
+
         -- Re-throw to let backend handle it properly
         THROW;
     END CATCH

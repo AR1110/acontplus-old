@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "https": {
+    "WebUI": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {

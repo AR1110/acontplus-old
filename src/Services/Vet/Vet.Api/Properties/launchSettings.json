@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Vet.API": {
+    "Vet.Api": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

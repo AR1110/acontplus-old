@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Ocelot.API": {
+    "Ocelot.Api": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "health",
