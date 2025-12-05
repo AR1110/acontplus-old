@@ -4,7 +4,8 @@ namespace Restaurant.Application.Dtos.MealManagement;
 
 public record MealConsumptionCreate(
     int MealScheduleSettingId,
-    int CompanyCustomerMealPlanId,
+    int? CompanyCustomerMealPlanId,
+    int CompanyCustomerId,
     DateTime ConsumptionDate,
     int Amount,
     ConsumptionStatus ConsumptionStatus,

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "Purchases.API": {
+    "Purchases.Api": {
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {

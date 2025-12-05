@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Accounting.API": {
+    "Accounting.Api": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

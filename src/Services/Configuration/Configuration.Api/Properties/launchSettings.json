@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Configuration.API": {
+    "Configuration.Api": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
