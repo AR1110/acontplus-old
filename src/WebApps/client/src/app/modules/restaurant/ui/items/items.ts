@@ -18,6 +18,7 @@ import { ValidatorUtils } from '@core/utils/utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { LookupService } from '@restaurant/application/services/lookup-service';
 import {MatTooltip} from "@angular/material/tooltip";
+import {ItemVariantAddEdit} from "@restaurant/ui/items/item-variant-add-edidt/item-variant-add-edit";
 
 @Component({
   selector: 'app-items',
@@ -126,13 +127,22 @@ export class Items implements OnInit {
         id: rowData.id,
         acronymCategory: rowData.acronymCategory,
       },
-    });
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
   }
 
 
   addEditVariant(rowData:any){
-
-    console.log(rowData)
+    this._dgSvc.open(ItemVariantAddEdit, {
+      size: 'xl',
+      data: {
+        id: rowData.id,
+        acronymCategory: rowData.acronymCategory,
+      },
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
   }
 
   getNextPage(e: PageEvent) {

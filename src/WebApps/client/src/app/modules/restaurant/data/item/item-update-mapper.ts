@@ -12,10 +12,11 @@ export class ItemUpdateMapper {
       },
       itemComposition: itemCompositions.map((item: any, index: number) => ({
         index: index + 1,
-        uniqueId: item.uuid,
+        uniqueId: item.id> 0 ?item.uuid:  item.parentUuid,
         id: item.id,
         itemId: item.itemId,
-        parentCompositionId: item.parentCompositionId || null,
+         parentCompositionId: item.parentCompositionId || null,
+       //  parentCompositionId:  item.isOptional ? null: item.id || null,
 
 
         childItemId: item.childItemId,
