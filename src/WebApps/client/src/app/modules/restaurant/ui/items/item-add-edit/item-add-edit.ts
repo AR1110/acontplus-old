@@ -20,7 +20,6 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import {generateUuidv4} from "@core/utils/generate-uuidv4";
 import {Overlay} from "@angular/cdk/overlay";
 import {ComponentPortal} from "@angular/cdk/portal";
 import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-search-dialog";
@@ -309,16 +308,13 @@ export class ItemAddEdit implements OnInit {
     const portal = new ComponentPortal(ItemSearchDialog);
     const componentRef = overlayRef.attach(portal);
 
-    // ✅ Pasar datos al componente
     componentRef.instance.data = rowData;
 
-    // ✅ Suscribirse al evento de cierre
     componentRef.instance.closed.subscribe((result: any) => {
       if(result && typeof result === 'object') this.onSelectItemChildren(result, rowData)
       overlayRef.dispose(); // cerrar overlay
     });
 
-    // ✅ Cerrar al hacer click en el backdrop
     overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
   }
 
@@ -349,42 +345,64 @@ export class ItemAddEdit implements OnInit {
 
   async cellEdited(cell: any): Promise<void> {
     const column = cell.getColumn().getField();
-    const oldValue = parseFloat(cell.getOldValue());
-    const newValue = parseFloat(cell.getValue());
-    const data = { ...cell.getData() }; // copia superficial
-    const oldData = cell.getRow().getData();
+    const rawOld = cell.getOldValue();
+    const rawNew = cell.getValue();
+    const data = { ...cell.getData() };
 
-    if (newValue === oldValue || isNaN(newValue) || cell.getValue() === '' || newValue < 0) {
-      data[column] = oldValue;
-      return;
+    const numericColumns = ['quantity', 'salePrice', 'unitPrice'];
+
+    if (numericColumns.includes(column)) {
+      const value = Number(rawNew);
+      if (isNaN(value) || value < 0) {
+        cell.setValue(rawOld, true);
+        return;
+      }
+      data[column] = value;
     }
 
     if (column === 'measureId') {
-      const dataMeasure = data.measures.find((x: any) => x.measureId === Number(newValue));
-      if (dataMeasure) {
-        data.unitPrice = dataMeasure.costPrice;
-      } else {
-        data.unitPrice = oldValue;
-      }
+      const measureId = Number(rawNew);
+      const dataMeasure = data.measures.find((x: any) => x.id === measureId);
+      if (dataMeasure) data.unitPrice = dataMeasure.costPrice;
     }
 
-    if (column == 'feeId') {
-      const dataFee = data.fees.find((x: any) => x.id == data.feeId);
-      if (dataFee) {
-        data.salePrice = dataFee.salePrice;
-      }
+    if (column === 'feeId') {
+      const feeId = Number(rawNew);
+      const dataFee = data.fees.find((x: any) => x.id === feeId);
+      if (dataFee) data.salePrice = dataFee.salePrice;
     }
+
     data.totalPrice = DecimalUtil.multiplyAsNumber(data.quantity, data.salePrice);
+    data.totalCost = DecimalUtil.multiplyAsNumber(data.quantity, data.unitPrice);
 
-    this.itemCompositions.set(
-      this.itemCompositions().map((item) => (item.uuid === data.uuid ? data : item)),
-    );
+    // ✅ SOLO modificar la fila exacta (padre, hijo o nieto)
+    const list = structuredClone(this.itemCompositions());
+    this.updateTreeRowOnly(list, data);
+    this.itemCompositions.set(list);
+  }
+
+  private updateTreeRowOnly(list: any[], data: any): boolean {
+    for (const item of list) {
+      // ✅ Si es el nodo exacto (padre, hijo o nieto)
+      if (item.uuid === data.uuid) {
+        Object.assign(item, data);
+        return true; // ya se actualizó
+      }
+
+      // ✅ Si tiene hijos, buscar recursivamente
+      if (item.children?.length) {
+        const updated = this.updateTreeRowOnly(item.children, data);
+        if (updated) return true;
+      }
+    }
+
+    return false;
   }
 
   private getItemById() {
     this.itemGetByIdUseCase.execute(this.params.id).subscribe((response) => {
       this.itemForm.patchValue(response.item);
-     // this.itemCompositions.set(response.itemCompositions);
+      this.itemCompositions.set(response.itemCompositions);
     });
   }
 
@@ -449,70 +467,92 @@ export class ItemAddEdit implements OnInit {
   onSelectItemChildren(rowData: any, parentData: ItemComposition): void {
     if (!rowData?.productId) return;
 
+
     this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
       next: (response) => {
-        const { product, taxRates, measures } = response;
-        if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
+        const { product, measures: measuresTemp, taxRates } = response;
+        if (!product || !Array.isArray(measuresTemp) || !Array.isArray(taxRates)) return;
 
-        const compositions = structuredClone(this.itemCompositions());
-        const compositionsChildren = compositions.find(c=>c.uuid === parentData.uuid)?.children ?? [];
+        const measures: ProductMeasure[] = measuresTemp;
+        const defaultMeasure = measures.find(m => m.defaultMeasure);
+        const defaultFee = defaultMeasure?.fees?.find(f => f.isDefault);
 
-        const existingIndex = compositionsChildren.findIndex((x) => x.childItemId === rowData.id);
-
-        const getDefaultMeasure = (): ProductMeasure | undefined =>
-          measures.find((m) => m.defaultMeasure);
-
-        const getDefaultFee = (measure?: ProductMeasure) => measure?.fees?.find((f) => f.isDefault);
-
-        if (existingIndex === -1) {
-          const defaultMeasure = getDefaultMeasure();
-          const defaultFee = getDefaultFee(defaultMeasure);
-
-          if (!defaultMeasure || !defaultFee) {
-            console.error('Datos incompletos para crear la composición del producto.');
-            return;
-          }
-
-          const newComposition = new ItemComposition();
-          newComposition.code = product.code;
-          newComposition.parentItemId = this.params.id;
-          newComposition.parentCompositionId = parentData.childItemId;
-          newComposition.childItemId = rowData.id;
-          newComposition.measures = measures;
-          newComposition.measureId = defaultMeasure.id;
-          newComposition.feeId = defaultFee.id;
-          newComposition.salePrice = defaultFee.salePrice;
-          newComposition.fees = defaultMeasure.fees ?? [];
-          newComposition.description = product.descripcion;
-          newComposition.unitPrice = defaultMeasure.costPrice;
-
-          newComposition.totalPrice = DecimalUtil.multiplyAsNumber(
-            newComposition.quantity,
-            newComposition.salePrice,
-          );
-
-          compositionsChildren.push(newComposition);
-        } else {
-          const existing = compositionsChildren[existingIndex];
-          existing.quantity += 1;
-          existing.totalPrice = DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice);
+        if (!defaultMeasure || !defaultFee) {
+          console.error('Datos incompletos para crear la composición del producto.');
+          return;
         }
 
-        this.itemCompositions.update(items =>
-          items.map(itm =>
-            itm.uuid === parentData.uuid
-              ? {
-            ...itm,
-              isOptional: true,
-                children: compositionsChildren } // crear nuevo objeto
-              : itm
-          )
-        );
+        const newComposition = new ItemComposition();
+        newComposition.parentUuid = parentData.uuid;
+        newComposition.code = product.code;
+        newComposition.parentItemId = this.params.id;
+        newComposition.parentCompositionId = parentData.parentCompositionId;
+        newComposition.childItemId = rowData.id;
+        newComposition.parentUuid = parentData.uuid;
+        newComposition.measures = measures;
+        newComposition.measureId = defaultMeasure.id;
+        newComposition.feeId = defaultFee.id;
+        newComposition.salePrice = defaultFee.salePrice;
+        newComposition.fees = defaultMeasure.fees ?? [];
+        newComposition.description = product.descripcion;
+        newComposition.unitPrice = defaultMeasure.costPrice;
+        newComposition.totalPrice = DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.salePrice);
 
+        const compositions = this.addOrUpdateChild(structuredClone(this.itemCompositions()), parentData.uuid, newComposition)
+
+
+        this.itemCompositions.set(compositions);
       },
       error: (err) => console.error('Error al obtener el producto:', err),
     });
+
+
   }
+
+
+  private addOrUpdateChild(
+    compositions: ItemComposition[],
+    parentUuid: string,
+    newChild: ItemComposition
+  ): ItemComposition[] {
+
+    return compositions.map(node => {
+      if (node.uuid === parentUuid) {
+        node.children = node.children ?? [];
+
+        const existingIndex = node.children.findIndex(x => x.childItemId === newChild.childItemId);
+
+        if (existingIndex === -1) {
+          newChild.level = node.level + 1;
+          node.children.push(newChild);
+        } else {
+          const existing = node.children[existingIndex];
+          existing.quantity += newChild.quantity;
+          existing.totalPrice = DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice);
+        }
+
+        return { ...node, isOptional: true, children: node.children };
+      } else if (node.children) {
+        return { ...node, children: this.addOrUpdateChild(node.children, parentUuid, newChild) };
+      }
+      return node;
+    });
+  }
+
+  private deleteCompositionByUuid(
+    items: ItemComposition[],
+    uuid: string
+  ): ItemComposition[] {
+    return items
+      // eliminar el nodo actual si coincide con el uuid
+      .filter(item => item.uuid !== uuid)
+      .map(item => ({
+        ...item,
+        // si tiene hijos, aplicar recursivamente
+        children: item.children ? this.deleteCompositionByUuid(item.children, uuid) : [],
+      }));
+  }
+
 
   async deleteRow(rowData: ItemComposition) {
     const { isConfirmed } = await Swal.fire({
@@ -521,26 +561,33 @@ export class ItemAddEdit implements OnInit {
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Si',
+      cancelButtonText: 'No',
     });
 
-    if (isConfirmed) {
-      const cloneItemCompositions = JSON.parse(JSON.stringify(this.itemCompositions()));
-      this.itemCompositions.set(cloneItemCompositions.filter((x: any) => x.uuid !== rowData.uuid));
+    if (!isConfirmed) return;
 
-      if (rowData.id > 0) {
-        this.itemCompositionsDeleted.update((x: any) => [
-          ...x,
-          {
-            ...rowData,
-            isActive: false,
-            isDeleted: true,
-          },
-        ]);
-      }
+    // Eliminar recursivamente del árbol principal
+    this.itemCompositions.update(items => this.deleteCompositionByUuid(items, rowData.uuid));
+
+
+    if (rowData.id > 0) {
+      const collectAllDescendants = (item: ItemComposition): ItemComposition[] => {
+        let all: ItemComposition[] = [{ ...item, isActive: false, isDeleted: true }];
+        if (item.children) {
+          for (const child of item.children) {
+            all = all.concat(collectAllDescendants(child));
+          }
+        }
+        return all;
+      };
+
+      const allDeleted = collectAllDescendants(rowData);
+      this.itemCompositionsDeleted.update(x => [...x, ...allDeleted]);
     }
   }
+
+
 
   generateDescription() {
     const summary = this.itemCompositions()
@@ -558,10 +605,14 @@ export class ItemAddEdit implements OnInit {
       });
     }
     const itemCompositionsChildren = this.itemCompositions().flatMap(x => x.children);
+    const itemCompositions = this.itemCompositions().map(x=>({
+      ...x,
+      isOptional: (x.children ?? [])?.length > 0
+    }))
     const dataToSave = {
       item: this.itemForm.value,
       itemCompositions: [
-        ...this.itemCompositions(),
+        ...itemCompositions,
         ...itemCompositionsChildren,
         ...this.itemCompositionsDeleted()
       ],
@@ -577,6 +628,7 @@ export class ItemAddEdit implements OnInit {
         Swal.fire({
           icon: response.code === '1' ? 'success' : 'warning',
           html: response.message,
+          timer: 1000
         });
         if (response.code === '1') {
           this.#modalRef.close(response);
