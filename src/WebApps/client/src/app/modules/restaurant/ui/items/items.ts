@@ -17,6 +17,7 @@ import { MatInput } from '@angular/material/input';
 import { ValidatorUtils } from '@core/utils/utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { LookupService } from '@restaurant/application/services/lookup-service';
+import {MatTooltip} from "@angular/material/tooltip";
 
 @Component({
   selector: 'app-items',
@@ -31,6 +32,7 @@ import { LookupService } from '@restaurant/application/services/lookup-service';
     MatFormField,
     MatLabel,
     MatInput,
+    MatTooltip,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',
@@ -125,6 +127,12 @@ export class Items implements OnInit {
         acronymCategory: rowData.acronymCategory,
       },
     });
+  }
+
+
+  addEditVariant(rowData:any){
+
+    console.log(rowData)
   }
 
   getNextPage(e: PageEvent) {

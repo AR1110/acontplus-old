@@ -15,6 +15,9 @@ export class ItemUpdateMapper {
         uniqueId: item.uuid,
         id: item.id,
         itemId: item.itemId,
+        parentCompositionId: item.parentCompositionId || null,
+
+
         childItemId: item.childItemId,
         quantity: item.quantity,
         price: item.price,
@@ -23,6 +26,7 @@ export class ItemUpdateMapper {
         subtotal: item.subtotal,
         isActive: item.isActive,
         isDeleted: item.isDeleted,
+        isOptional: item.isOptional,
       })),
     };
   }

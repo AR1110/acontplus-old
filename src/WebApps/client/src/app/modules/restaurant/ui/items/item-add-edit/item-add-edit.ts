@@ -51,144 +51,7 @@ export class ItemAddEdit implements OnInit {
 
   params = inject<{ id: number; acronymCategory: string }>(MAT_DIALOG_DATA);
   itemForm!: FormGroup;
-  itemCompositions = signal<any[]>([
-    {
-      uuid: generateUuidv4(),
-      id: 1,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      _children: [],
-      feeId: 0,
-      description: 'Producto 1',
-      code: 'COD-1',
-      measures: [],
-      measureId: 0,
-      salePrice: 10,
-      unitPrice: 8,
-      quantity: 1,
-      totalPrice: 10,
-      totalCost: 8,
-      isActive: true,
-      isDeleted: false
-    },
-    {
-      uuid: generateUuidv4(),
-      id: 2,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      feeId: 0,
-      description: 'Producto 2',
-      code: 'COD-2',
-      measures: [],
-      measureId: 0,
-      salePrice: 20,
-      unitPrice: 16,
-      quantity: 2,
-      totalPrice: 40,
-      totalCost: 32,
-      isActive: true,
-      isDeleted: false,
-      _children: [],
-    },
-    {
-      uuid: generateUuidv4(),
-      id: 3,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      feeId: 0,
-      description: 'Producto 3',
-      code: 'COD-3',
-      measures: [],
-      measureId: 0,
-      salePrice: 30,
-      unitPrice: 24,
-      quantity: 3,
-      totalPrice: 90,
-      totalCost: 72,
-      isActive: true,
-      isDeleted: false,
-      _children: [],
-    },
-    {
-      uuid: generateUuidv4(),
-      id: 4,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      feeId: 0,
-      description: 'Producto 4',
-      code: 'COD-4',
-      measures: [],
-      measureId: 0,
-      salePrice: 40,
-      unitPrice: 32,
-      quantity: 4,
-      totalPrice: 160,
-      totalCost: 128,
-      isActive: true,
-      isDeleted: false,
-      _children: [],
-    },
-    {
-      uuid: generateUuidv4(),
-      id: 5,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      feeId: 0,
-      description: 'Producto 5',
-      code: 'COD-5',
-      measures: [],
-      measureId: 0,
-      salePrice: 50,
-      unitPrice: 40,
-      quantity: 5,
-      totalPrice: 250,
-      totalCost: 200,
-      isActive: true,
-      isDeleted: false,
-      _children: [],
-    },
-    {
-      uuid: generateUuidv4(),
-      id: 6,
-      parentItemId: 0,
-      childItemId: 0,
-      fees: [],
-      feeId: 0,
-      description: 'Producto 6',
-      code: 'COD-6',
-      measures: [],
-      measureId: 0,
-      salePrice: 60,
-      unitPrice: 48,
-      quantity: 6,
-      totalPrice: 360,
-      totalCost: 288,
-      isActive: true,
-      isDeleted: false,
-
-      _children: [
-        {
-          id: 5,
-          description: 'Hijo 2-1',
-          salePrice: 25,
-          quantity: 2,
-          totalPrice: 50,
-        },
-        {
-          id: 6,
-          description: 'Hijo 2-2',
-          salePrice: 40,
-          quantity: 1,
-          totalPrice: 40,
-        }
-      ]
-    }
-]);
+  itemCompositions = signal<ItemComposition[]>([]);
   itemCompositionsDeleted = signal<ItemComposition[]>([]);
 
   comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
@@ -243,29 +106,47 @@ export class ItemAddEdit implements OnInit {
       title: 'Op.',
       formatter: (cell: any) => {
         const rowData = cell.getRow().getData();
+        console.log(rowData);
 
-        // contenedor de botones
+        // Contenedor de botones
         const buttonHolder = document.createElement('div');
         buttonHolder.style.display = 'flex';
-        buttonHolder.style.gap = '4px'; // espacio entre botones
+        buttonHolder.style.gap = '6px';
         buttonHolder.style.justifyContent = 'center';
         buttonHolder.style.alignItems = 'center';
 
         // Botón Eliminar
         const delBtn = document.createElement('button');
         delBtn.type = 'button';
+        delBtn.classList.add('small-button', 'btn-remove', 'text-white');
+        delBtn.setAttribute('title', 'Eliminar');
         delBtn.innerHTML = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
         <path d="M3 6h18" stroke="currentColor" stroke-width="2"/>
         <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" stroke="currentColor" stroke-width="2"/>
         <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" stroke="currentColor" stroke-width="2"/>
       </svg>
     `;
-        delBtn.classList.add('small-button', 'btn-remove', 'text-white');
-        delBtn.addEventListener('click', () => {
-          this.deleteRow(rowData);
-        });
+        delBtn.addEventListener('click', () => this.deleteRow(rowData));
+
+        // Botón Configuración
+        const settingBtn = document.createElement('button');
+        settingBtn.type = 'button';
+        settingBtn.classList.add('small-button', 'btn-setting', 'text-white');
+        settingBtn.setAttribute('title', 'Configurar');
+        settingBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" stroke="currentColor" stroke-width="2"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    `;
+        settingBtn.addEventListener('click', () => this.openOverlay(rowData));
+
         buttonHolder.appendChild(delBtn);
+        if(rowData && rowData.children){
+          buttonHolder.appendChild(settingBtn);
+        }
+
         return buttonHolder;
       },
       width: 100,
@@ -288,7 +169,6 @@ export class ItemAddEdit implements OnInit {
       hozAlign: 'center',
       headerSort: false,
       headerHozAlign: 'center',
-      cellClick: (e:any, cell:any) => this.openOverlay(cell.getRow().getData())
     },
     {
       title: 'Medida',
@@ -415,20 +295,33 @@ export class ItemAddEdit implements OnInit {
   }
 
   itemSearchLabel = this.isCombo() ? 'Buscar Producto' : 'Buscar Ingrediente';
+
+
   openOverlay(rowData: any) {
     const overlayRef = this.overlay.create({
       positionStrategy: this.overlay.position()
-        .global().centerHorizontally().centerVertically(),
+        .global()
+        .centerHorizontally()
+        .centerVertically(),
       hasBackdrop: true
     });
 
     const portal = new ComponentPortal(ItemSearchDialog);
-    const component = overlayRef.attach(portal);
+    const componentRef = overlayRef.attach(portal);
 
-  //  component.instance.data = rowData;
+    // ✅ Pasar datos al componente
+    componentRef.instance.data = rowData;
 
+    // ✅ Suscribirse al evento de cierre
+    componentRef.instance.closed.subscribe((result: any) => {
+      if(result && typeof result === 'object') this.onSelectItemChildren(result, rowData)
+      overlayRef.dispose(); // cerrar overlay
+    });
+
+    // ✅ Cerrar al hacer click en el backdrop
     overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
   }
+
 
   ngOnInit() {
     if (this.isProduct()) {
@@ -531,6 +424,7 @@ export class ItemAddEdit implements OnInit {
           newComposition.fees = defaultMeasure.fees ?? [];
           newComposition.description = product.descripcion;
           newComposition.unitPrice = defaultMeasure.costPrice;
+          newComposition.children = [];
 
           newComposition.totalPrice = DecimalUtil.multiplyAsNumber(
             newComposition.quantity,
@@ -545,6 +439,76 @@ export class ItemAddEdit implements OnInit {
         }
 
         this.itemCompositions.set(compositions);
+      },
+      error: (err) => console.error('Error al obtener el producto:', err),
+    });
+  }
+
+
+
+  onSelectItemChildren(rowData: any, parentData: ItemComposition): void {
+    if (!rowData?.productId) return;
+
+    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+      next: (response) => {
+        const { product, taxRates, measures } = response;
+        if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
+
+        const compositions = structuredClone(this.itemCompositions());
+        const compositionsChildren = compositions.find(c=>c.uuid === parentData.uuid)?.children ?? [];
+
+        const existingIndex = compositionsChildren.findIndex((x) => x.childItemId === rowData.id);
+
+        const getDefaultMeasure = (): ProductMeasure | undefined =>
+          measures.find((m) => m.defaultMeasure);
+
+        const getDefaultFee = (measure?: ProductMeasure) => measure?.fees?.find((f) => f.isDefault);
+
+        if (existingIndex === -1) {
+          const defaultMeasure = getDefaultMeasure();
+          const defaultFee = getDefaultFee(defaultMeasure);
+
+          if (!defaultMeasure || !defaultFee) {
+            console.error('Datos incompletos para crear la composición del producto.');
+            return;
+          }
+
+          const newComposition = new ItemComposition();
+          newComposition.code = product.code;
+          newComposition.parentItemId = this.params.id;
+          newComposition.parentCompositionId = parentData.childItemId;
+          newComposition.childItemId = rowData.id;
+          newComposition.measures = measures;
+          newComposition.measureId = defaultMeasure.id;
+          newComposition.feeId = defaultFee.id;
+          newComposition.salePrice = defaultFee.salePrice;
+          newComposition.fees = defaultMeasure.fees ?? [];
+          newComposition.description = product.descripcion;
+          newComposition.unitPrice = defaultMeasure.costPrice;
+
+          newComposition.totalPrice = DecimalUtil.multiplyAsNumber(
+            newComposition.quantity,
+            newComposition.salePrice,
+          );
+
+          compositionsChildren.push(newComposition);
+        } else {
+          const existing = compositionsChildren[existingIndex];
+          existing.quantity += 1;
+          existing.totalPrice = DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice);
+        }
+
+        this.itemCompositions.update(items =>
+          items.map(itm =>
+            itm.uuid === parentData.uuid
+              ? {
+            ...itm,
+              isOptional: true,
+                children: compositionsChildren } // crear nuevo objeto
+              : itm
+          )
+        );
+
       },
       error: (err) => console.error('Error al obtener el producto:', err),
     });
@@ -593,9 +557,14 @@ export class ItemAddEdit implements OnInit {
         message: 'Revise los datos ingresados',
       });
     }
+    const itemCompositionsChildren = this.itemCompositions().flatMap(x => x.children);
     const dataToSave = {
       item: this.itemForm.value,
-      itemCompositions: [...this.itemCompositions(), ...this.itemCompositionsDeleted()],
+      itemCompositions: [
+        ...this.itemCompositions(),
+        ...itemCompositionsChildren,
+        ...this.itemCompositionsDeleted()
+      ],
       isProduct: this.isProduct(),
       isCombo: this.isCombo(),
     };

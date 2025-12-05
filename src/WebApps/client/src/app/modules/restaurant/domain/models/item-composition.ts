@@ -20,4 +20,7 @@ export class ItemComposition {
   totalCost = 0;
   isActive = true;
   isDeleted = false;
+  children?: ItemComposition[];
+  isOptional = false;
+  parentCompositionId = 0;
 }

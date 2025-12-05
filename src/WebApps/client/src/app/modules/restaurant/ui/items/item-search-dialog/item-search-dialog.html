@@ -1,6 +1,19 @@
-<div class="overlay-box">
-  <h3>{{data?.description}}</h3>
-  <p>Total: {{data?.totalPrice}}</p>
+<div class="overlay-box text-center">
 
-  <button (click)="close()">Cerrar</button>
+  <div class="vstack gap-2 justify-content-center align-content-center">
+    <app-item-search
+      [label]="itemSearchLabel()"
+      (selectedItem)="onSelectItem($event)"
+      [categoryAbbraviation]="categoryAbbraviation()"
+    />
+  <acp-button
+
+    variant="dark"
+    text="Cerrar"
+    (handleClick)="closeOverlay()"
+    matStyle="filled"
+
+  />
+  </div>
+
 </div>

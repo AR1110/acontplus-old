@@ -31,13 +31,22 @@ button svg {
 
 /* Botón Eliminar */
 .btn-remove {
-  background-color: var(--mat-sys-error);
+  background-color: #d91c44;
   color: var(--mat-sys-on-error);
 }
 
 .btn-remove:hover {
   background-color: var(--mat-sys-error-container);
   color: var(--mat-sys-on-error-container);
+}
+
+.btn-setting {
+  background-color: #28ab2e;
+  color: #fff;
+}
+.btn-setting:hover {
+  background-color: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
 }
 
 //celdas filas documentos

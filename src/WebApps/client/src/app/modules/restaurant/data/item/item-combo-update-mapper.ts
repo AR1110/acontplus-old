@@ -12,6 +12,7 @@ export class ItemComboUpdateMapper {
         id: item.id,
         parentItemId: item.parentItemId,
         childItemId: item.childItemId,
+        parentCompositionId: item.parentCompositionId || null,
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         feeId: item.feeId,
@@ -21,6 +22,8 @@ export class ItemComboUpdateMapper {
         totalCost: item.unitPrice * item.quantity,
         isActive: item.isActive,
         isDeleted: item.isDeleted,
+        isOptional: item.isOptional,
+
       })),
     };
   }

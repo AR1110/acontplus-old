@@ -27,10 +27,8 @@
           [dataTreeStartExpanded]="true"
           [columns]="columns"
           [data]="itemCompositions()"
-          [selectableRows]="true"
-          [dataTreeSelectPropagate]="true"
-          [selectable]="true"
           [options]="{
+            dataTreeChildField: 'children',
             height: 'auto',
             rowHeader: {
               formatter: 'rownum',
