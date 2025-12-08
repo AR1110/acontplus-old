@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { PageEvent } from '@angular/material/paginator';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ItemListUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { FormsModule } from '@angular/forms';
-import { Pagination } from '@acontplus/ng-components';
+import {DataGrid, DataGridColumn, Pagination} from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Button } from '@acontplus/ng-components';
@@ -19,6 +17,8 @@ import { MatInput } from '@angular/material/input';
 import { ValidatorUtils } from '@core/utils/utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { LookupService } from '@restaurant/application/services/lookup-service';
+import {MatTooltip} from "@angular/material/tooltip";
+import {ItemVariantAddEdit} from "@restaurant/ui/items/item-variant-add-edidt/item-variant-add-edit";
 
 @Component({
   selector: 'app-items',
@@ -33,6 +33,7 @@ import { LookupService } from '@restaurant/application/services/lookup-service';
     MatFormField,
     MatLabel,
     MatInput,
+    MatTooltip,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',
@@ -126,7 +127,22 @@ export class Items implements OnInit {
         id: rowData.id,
         acronymCategory: rowData.acronymCategory,
       },
-    });
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
+  }
+
+
+  addEditVariant(rowData:any){
+    this._dgSvc.open(ItemVariantAddEdit, {
+      size: 'xl',
+      data: {
+        id: rowData.id,
+        acronymCategory: rowData.acronymCategory,
+      },
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
   }
 
   getNextPage(e: PageEvent) {

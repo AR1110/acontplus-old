@@ -1,7 +1,7 @@
 <app-mat-custom-dialog (close)="onModalClose()" title="Editar Datos del Producto">
   <div ngProjectAs="content">
     <form id="itemForm" (ngSubmit)="onSave()" [formGroup]="itemForm">
-      <div class="vstack">
+      <div class="vstack gap-1">
         <mat-form-field>
           <mat-label>Resumen</mat-label>
           <input type="text" matInput placeholder="..." required="" formControlName="summary" />
@@ -23,9 +23,12 @@
         />
 
         <acp-tabulator-table
+          [dataTree]="true"
+          [dataTreeStartExpanded]="true"
           [columns]="columns"
           [data]="itemCompositions()"
           [options]="{
+            dataTreeChildField: 'children',
             height: 'auto',
             rowHeader: {
               formatter: 'rownum',
@@ -38,7 +41,7 @@
 
         @if (isProduct()) {
           <div
-            class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
+            class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 mt-2"
           >
             <div class="col">
               <mat-form-field class="w-100">

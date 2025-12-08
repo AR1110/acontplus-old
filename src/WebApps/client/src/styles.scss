@@ -11,8 +11,8 @@
 @use 'app/modules/config/styles/shepherd-tour';
 @use '@ng-select/ng-select/themes/material.theme';
 @import 'tabulator-tables/dist/css/tabulator.min.css';
-@import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
-@import 'tabulator-tables/dist/css/tabulator_materialize.min.css';
+//@import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
+//@import 'tabulator-tables/dist/css/tabulator_materialize.min.css';
 
 $light-theme: mat.define-theme(
   (
@@ -125,3 +125,12 @@ table {
   backdrop-filter: blur(6px);
   background: rgba(0, 0, 0, 0.45);
 }
+
+
+.tabulator {
+  font-size: 12px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+

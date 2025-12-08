@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Inventory.API": {
+    "Inventory.Api": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

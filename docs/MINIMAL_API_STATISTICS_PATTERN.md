@@ -36,11 +36,12 @@ This document describes the **minimal API statistics pattern** implemented for h
 
 ### 1. Create DTOs (Application Layer)
 
-Create request and response DTOs in `{Service}.Application/Dtos/Statistics/`:
+Create response DTOs in `{Service}.Application/Dtos/Statistics/`:
 
-**Request DTOs:**
-- `DateRangeRequest.cs` - Base request with start/end dates
-- `AggregationRequest.cs` - Request with grouping options
+**Request Pattern:**
+- Uses `FilterRequest` from `Acontplus.Core.Dtos.Requests`
+- Filters passed via `FilterQuery` and adapted to `FilterRequest`
+- Supports dynamic filtering: `filters[StartDate]=value&filters[EndDate]=value`
 
 **Response DTOs:**
 - `DashboardStatsDto.cs` - Dashboard metrics
@@ -55,10 +56,10 @@ Create `IStatisticsService.cs` in `{Service}.Application/Interfaces/`:
 ```csharp
 public interface IStatisticsService
 {
-    Task<Result<DashboardStatsDto, DomainError>> GetDashboardStatsAsync(DateRangeRequest request, CancellationToken ct = default);
-    Task<Result<RealTimeStatsDto, DomainError>> GetRealTimeStatsAsync(CancellationToken ct = default);
-    Task<Result<List<AggregatedStatsDto>, DomainError>> GetAggregatedStatsAsync(AggregationRequest request, CancellationToken ct = default);
-    Task<Result<List<TrendDto>, DomainError>> GetTrendsAsync(string metric, DateRangeRequest request, CancellationToken ct = default);
+    Task<Result<DashboardStatsDto, DomainError>> GetDashboardStatsAsync(FilterRequest filterRequest, CancellationToken ct = default);
+    Task<Result<RealTimeStatsDto, DomainError>> GetRealTimeStatsAsync(FilterRequest? filterRequest = null, CancellationToken ct = default);
+    Task<Result<List<AggregatedStatsDto>, DomainError>> GetAggregatedStatsAsync(FilterRequest filterRequest, CancellationToken ct = default);
+    Task<Result<List<TrendDto>, DomainError>> GetTrendsAsync(FilterRequest filterRequest, CancellationToken ct = default);
 }
 ```
 
@@ -74,37 +75,43 @@ Create or update `StatsService.cs` in `{Service}.Application/Services/`:
 - Follows existing service patterns in the codebase
 
 ```csharp
-public class StatsService(IAdoRepository adoRepository) : IStatisticsService
+public class StatisticsService(IAdoRepository adoRepository) : IStatisticsService
 {
-    private const string ModuleName = "{Schema}.Stats_";
+    private const string ModuleName = "{Schema}.Statistics";
+    private const string DefaultLanguage = "es";
 
     public async Task<Result<DashboardStatsDto, DomainError>> GetDashboardStatsAsync(
-        DateRangeRequest request, CancellationToken ct = default)
+        FilterRequest filterRequest, CancellationToken ct = default)
     {
         try
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "StartDate", request.EffectiveStartDate },
-                { "EndDate", request.EffectiveEndDate }
-            };
             var commandOptions = new CommandOptionsDto { CommandTimeout = 30 };
 
-            var result = await adoRepository.QuerySingleOrDefaultAsync<DashboardStatsDto>(
-                $"{ModuleName}GetDashboard", parameters, commandOptions);
+            var results = await adoRepository.GetFilteredFromStoredProcedureAsync<DashboardStatsDto>(
+                $"{ModuleName}GetDashboard",
+                filterRequest,
+                commandOptions,
+                ct);
+
+            var result = results.FirstOrDefault();
 
             if (result == null)
             {
                 var error = DomainError.NotFound("DASHBOARD_STATS_NOT_FOUND",
-                    "No dashboard statistics were found.");
+                    "No dashboard statistics were found for the specified date range.");
                 return Result<DashboardStatsDto, DomainError>.Failure(error);
             }
+
+            // Populate localized labels
+            var language = filterRequest.GetFilterValue<string>("Language") ?? DefaultLanguage;
+            result.Labels = StatisticsLocalization.GetDashboardLabels(language);
 
             return Result<DashboardStatsDto, DomainError>.Success(result);
         }
         catch (Exception ex)
         {
-            var error = DomainError.Internal("DASHBOARD_STATS_ERROR", ex.Message);
+            var error = DomainError.Internal("DASHBOARD_STATS_ERROR",
+                $"An error occurred while retrieving dashboard statistics. {ex.Message}");
             return Result<DashboardStatsDto, DomainError>.Failure(error);
         }
     }
@@ -133,11 +140,20 @@ public static void MapStatisticsEndpoints(this IEndpointRouteBuilder app)
 **Handler Pattern:**
 ```csharp
 private static async Task<IResult> GetDashboardStats(
-    [AsParameters] DateRangeRequest request,
+    FilterQuery filterQuery,
     IStatisticsService service,
+    IUserContext userContext,
     CancellationToken cancellationToken)
 {
-    return await service.GetDashboardStatsAsync(request, cancellationToken)
+    var filterRequest = filterQuery.Adapt<FilterRequest>();
+
+    var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+    if (userRoleId != 0)
+    {
+        filterRequest = filterRequest.WithFilter("userRoleId", userRoleId);
+    }
+
+    return await service.GetDashboardStatsAsync(filterRequest, cancellationToken)
         .ToGetMinimalApiResultAsync();
 }
 ```
@@ -174,10 +190,47 @@ app.MapStatisticsEndpoints();
 Create stored procedures in `database/{ServiceName}/Stats_StoredProcedures.sql`:
 
 **Naming Convention:**
-- `{Schema}.Stats_GetDashboard`
-- `{Schema}.Stats_GetRealTime`
-- `{Schema}.Stats_GetAggregated`
-- `{Schema}.Stats_GetTrends`
+- `{Schema}.StatisticsGetDashboard`
+- `{Schema}.StatisticsGetRealTime`
+- `{Schema}.StatisticsGetAggregated`
+- `{Schema}.StatisticsGetTrends`
+
+**Note**: Stored procedures are separated into individual files for better maintainability:
+- `{Schema}.StatisticsGetDashboard.sql`
+- `{Schema}.StatisticsGetRealTime.sql`
+- `{Schema}.StatisticsGetAggregated.sql`
+- `{Schema}.StatisticsGetTrends.sql`
+
+## Localization Support
+
+### StatisticsLocalization Helper
+
+All statistics DTOs include a `Labels` property populated by `StatisticsLocalization` helper:
+
+```csharp
+public static class StatisticsLocalization
+{
+    public static Dictionary<string, string> GetDashboardLabels(string language = "es");
+    public static Dictionary<string, string> GetRealTimeLabels(string language = "es");
+    public static Dictionary<string, string> GetChartTypeLabels(string language = "es");
+}
+```
+
+### Supported Languages
+- **Spanish ("es")** - Default
+- **English ("en")**
+
+### Usage in Frontend
+```javascript
+const labels = response.labels;
+const revenueLabel = labels["TotalRevenue"]; // "Ingresos Totales" (es) or "Total Revenue" (en)
+```
+
+### Label Categories
+- **Metric Labels**: TotalTransactions, TotalRevenue, etc.
+- **Chart Metadata**: Titles, subtitles, axis labels
+- **Chart Legends**: Actual, Target, Forecast, etc.
+- **Chart Tooltips**: Revenue, Orders, Change, etc.
 
 ## Key Benefits
 
@@ -223,8 +276,13 @@ cache.Remove("dashboard_*"); // Consider using cache tags/groups
 
 ### 1. Dashboard Statistics
 ```http
-GET /api/statistics/dashboard?StartDate=2025-01-01&EndDate=2025-01-31
+GET /api/statistics/dashboard?filters[StartDate]=2025-01-01&filters[EndDate]=2025-01-31&filters[EstablecimientoId]=396
 Authorization: Bearer {token}
+```
+
+**Optional Language Parameter:**
+```http
+GET /api/statistics/dashboard?filters[StartDate]=2025-01-01&filters[EndDate]=2025-01-31&filters[Language]=en
 ```
 
 **Response:**
@@ -346,14 +404,19 @@ public async Task GetDashboardStats_ReturnsCachedResult()
 ### Step-by-Step Process
 
 1. **Copy DTOs** from `Restaurant.Application/Dtos/Statistics/` to `{Service}.Application/Dtos/Statistics/`
+   - DashboardStatsDto.cs
+   - RealTimeStatsDto.cs
+   - AggregatedStatsDto.cs
+   - TrendDto.cs
 2. **Copy Interface** from `Restaurant.Application/Interfaces/IStatisticsService.cs` to `{Service}.Application/Interfaces/`
-3. **Update Service** - Add methods to existing `StatsService.cs` or create new one in `{Service}.Application/Services/`
-4. **Copy Endpoints** from `Restaurant.Api/Endpoints/StatisticsEndpoints.cs` to `{Service}.Api/Endpoints/`
-5. **Update namespaces** to match target service
-6. **Update stored procedure names** to match service schema
-7. **Register endpoints** in RegisterEndpoints.cs
-8. **Create stored procedures** in database
-9. **Test endpoints**
+3. **Copy or Update Service** in `{Service}.Application/Services/StatisticsService.cs`
+4. **Copy Localization Helper** from `Restaurant.Application/Helpers/StatisticsLocalization.cs` to `{Service}.Application/Helpers/`
+5. **Copy Endpoints** from `Restaurant.Api/Endpoints/StatisticsEndpoints.cs` to `{Service}.Api/Endpoints/`
+6. **Update namespaces** to match target service
+7. **Update stored procedure names** - Change `Restaurant.Statistics` to `{Schema}.Statistics`
+8. **Register endpoints** in RegisterEndpoints.cs: `app.MapStatisticsEndpoints();`
+9. **Create stored procedures** in database (4 separate files)
+10. **Test endpoints** with proper filter format
 
 ### Checklist
 - [ ] DTOs created and namespaces updated

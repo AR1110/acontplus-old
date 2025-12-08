@@ -119,6 +119,82 @@
         "reveal": "always",
         "panel": "dedicated"
       }
+    },
+    {
+      "label": "publish: staging (FolderProfile)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--configuration", "Release",
+        "/p:PublishProfile=FolderProfile",
+        "--nologo",
+        "/clp:Summary;Verbosity=minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "publish: production (FolderProfile1)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--configuration", "Release",
+        "/p:PublishProfile=FolderProfile1",
+        "--nologo",
+        "/clp:Summary;Verbosity=minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "publish: current project (staging)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${file}",
+        "--configuration", "Release",
+        "/p:PublishProfile=FolderProfile",
+        "--nologo",
+        "/clp:Summary;Verbosity=minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "publish: current project (production)",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${file}",
+        "--configuration", "Release",
+        "/p:PublishProfile=FolderProfile1",
+        "--nologo",
+        "/clp:Summary;Verbosity=minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
     }
   ]
 }

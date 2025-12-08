@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Billing.API": {
+    "Billing.Api": {
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

@@ -3,6 +3,7 @@ import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-mea
 
 export class ItemComposition {
   uuid = generateUuidv4();
+  parentUuid: string|null = null;
   id = 0;
   parentItemId = 0;
   childItemId = 0;
@@ -20,4 +21,12 @@ export class ItemComposition {
   totalCost = 0;
   isActive = true;
   isDeleted = false;
+  children?: ItemComposition[];
+  isOptional = false;
+  parentCompositionId = 0;
+
+  level = 0;
+  constructor(level?: number) {
+    this.level = level ?? 0
+  }
 }

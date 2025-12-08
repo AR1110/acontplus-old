@@ -28,7 +28,7 @@
   </div>
 </ng-template>
 
-<app-data-grid
+<acp-data-grid
   showToolbar="true"
   [toolbarTemplate]="toolbarTpl"
   [data]="list()"
@@ -59,8 +59,16 @@
       variant="success"
       icon="build"
       matStyle="icon"
-      title="Editar"
+      matTooltip="Configurar Composiciones"
       (handleClick)="onEdit(row)"
+    />
+    <acp-button
+      variant="info"
+      icon="difference"
+      matStyle="icon"
+      matTooltip="Configurar Variantes"
+
+      (handleClick)="addEditVariant(row)"
     />
   }
 </ng-template>
