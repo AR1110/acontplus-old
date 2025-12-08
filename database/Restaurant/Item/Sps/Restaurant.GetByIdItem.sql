@@ -108,6 +108,7 @@ BEGIN
           ,ic.TotalCost
           ,ic.UniqueId
           ,ic.TotalPrice
+          ,ic.IsOptional
 	      ,it.Summary
 	      ,ISNULL
            ((

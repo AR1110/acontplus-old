@@ -166,6 +166,8 @@ BEGIN
                     WHERE rr.ParentItemId = @Id
                       AND rr.IsOptional = 0
                       AND rr.UniqueId IS NOT NULL
+
+                    UPDATE Restaurant.ItemComposition SET UniqueId = NULL WHERE ParentItemId = @Id AND IsOptional = 1
                 END 
               
 		COMMIT TRAN
