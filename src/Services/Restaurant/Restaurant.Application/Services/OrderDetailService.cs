@@ -1,6 +1,5 @@
-using Restaurant.Application.Dtos;
+using Restaurant.Application.Dtos.Order;
 using Restaurant.Domain.Repositories;
-using Restaurant.Domain.Entities;
 
 namespace Restaurant.Application.Services;
 

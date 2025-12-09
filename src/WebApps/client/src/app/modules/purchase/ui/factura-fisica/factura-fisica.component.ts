@@ -7,7 +7,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DynamicCard } from '@acontplus/ng-components';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { finalize, switchMap, throwError } from 'rxjs';
@@ -31,6 +31,7 @@ import { FacturaFisicaAddEditModalComponent } from './components/factura-fisica-
 @Component({
   selector: 'app-factura-fisica-page',
   imports: [
+    DynamicCard,
     //modules
     FormsModule,
     MatCardModule,

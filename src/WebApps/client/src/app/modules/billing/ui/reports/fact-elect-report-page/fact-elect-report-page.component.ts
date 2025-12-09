@@ -12,7 +12,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { SharedService } from '@core/services/shared.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { Button } from '@acontplus/ng-components';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -30,8 +30,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     UserSearchComponent,
-    MatCardContent,
-    MatCard,
+    DynamicCard,
     Button,
     MatCheckbox,
     MatFormField,

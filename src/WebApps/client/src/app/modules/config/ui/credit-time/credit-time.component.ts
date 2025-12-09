@@ -2,8 +2,8 @@ import { AddEditCreditTimeComponent } from '@modules/config/ui/credit-time/add-e
 import { DeleteCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/delete-credit-time.use-case';
 import { ListCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/list-credit-time.use-case';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { Button } from '@acontplus/ng-components';
+
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
@@ -20,7 +20,7 @@ import Swal from 'sweetalert2';
   selector: 'app-credit-time',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatButton,
     MatIcon,
     MatIconButton,

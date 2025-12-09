@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
@@ -18,7 +18,7 @@ import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-ca
     MatIconModule,
     MatButtonModule,
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
   ],
   templateUrl: './massive-tax-page.component.html',

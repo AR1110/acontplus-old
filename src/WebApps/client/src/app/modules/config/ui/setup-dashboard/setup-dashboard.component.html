@@ -1,67 +1,63 @@
 <div class="setup-container">
   <!-- Header Section -->
   <div class="setup-header">
-    <mat-card class="header-card" appearance="outlined">
-      <mat-card-content>
-        <div class="header-content">
-          <div class="header-info">
-            <h1 class="setup-title">
-              <mat-icon class="title-icon">rocket_launch</mat-icon>
-              ¡Configuremos tu empresa!
-            </h1>
-            <p class="setup-subtitle">
-              Completa estos pasos para comenzar a usar todas las funcionalidades
-            </p>
-          </div>
-          <div class="header-actions">
-            <button mat-raised-button color="primary" (click)="startTour()" type="button">
-              <ng-container>
-                <mat-icon>help_outline</mat-icon>
-                Tour Guiado
-              </ng-container>
-            </button>
-          </div>
+    <acp-dynamic-card class="header-card">
+      <div class="header-content">
+        <div class="header-info">
+          <h1 class="setup-title">
+            <mat-icon class="title-icon">rocket_launch</mat-icon>
+            ¡Configuremos tu empresa!
+          </h1>
+          <p class="setup-subtitle">
+            Completa estos pasos para comenzar a usar todas las funcionalidades
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="header-actions">
+          <button mat-raised-button color="primary" (click)="startTour()" type="button">
+            <ng-container>
+              <mat-icon>help_outline</mat-icon>
+              Tour Guiado
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </acp-dynamic-card>
   </div>
 
   <!-- Progress Section -->
   <div class="setup-progress" [attr.data-tour]="'progress'">
-    <mat-card class="progress-card" appearance="outlined">
-      <mat-card-content>
-        <div class="progress-content">
-          <div class="progress-info">
-            <h3 class="progress-title">
-              <mat-icon>trending_up</mat-icon>
-              Progreso de Configuración
-            </h3>
-            <mat-progress-bar
-              mode="determinate"
-              [value]="setupStatus.completionPercentage"
-              class="progress-bar"
-            />
-            <div class="progress-details">
-              <span class="progress-text">{{ setupStatus.completionPercentage }}% completado</span>
-              <span class="progress-steps">
-                {{ setupStatus.mandatoryStepsCompleted }}/{{ setupStatus.totalMandatorySteps }}
-                pasos obligatorios
-              </span>
-            </div>
-          </div>
-          <div class="completion-status">
-            <mat-chip-set>
-              <mat-chip [class.completed]="setupStatus.isCompleted">
-                <mat-icon matChipAvatar>{{
-                  setupStatus.isCompleted ? 'check_circle' : 'schedule'
-                }}</mat-icon>
-                {{ setupStatus.isCompleted ? 'Configuración Completa' : 'En Progreso' }}
-              </mat-chip>
-            </mat-chip-set>
+    <acp-dynamic-card class="progress-card">
+      <div class="progress-content">
+        <div class="progress-info">
+          <h3 class="progress-title">
+            <mat-icon>trending_up</mat-icon>
+            Progreso de Configuración
+          </h3>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="setupStatus.completionPercentage"
+            class="progress-bar"
+          />
+          <div class="progress-details">
+            <span class="progress-text">{{ setupStatus.completionPercentage }}% completado</span>
+            <span class="progress-steps">
+              {{ setupStatus.mandatoryStepsCompleted }}/{{ setupStatus.totalMandatorySteps }}
+              pasos obligatorios
+            </span>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="completion-status">
+          <mat-chip-set>
+            <mat-chip [class.completed]="setupStatus.isCompleted">
+              <mat-icon matChipAvatar>{{
+                setupStatus.isCompleted ? 'check_circle' : 'schedule'
+              }}</mat-icon>
+              {{ setupStatus.isCompleted ? 'Configuración Completa' : 'En Progreso' }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </div>
+    </acp-dynamic-card>
   </div>
 
   <!-- Steps Section -->
@@ -80,7 +76,7 @@
 
       <div class="steps-grid">
         @for (step of mandatorySteps; track $index) {
-          <mat-card
+          <acp-dynamic-card
             class="step-card mandatory"
             [class.completed]="step.isCompleted"
             [class.current]="step.isCurrent"
@@ -91,10 +87,9 @@
               step.id > currentStepId
             "
             [attr.data-tour]="'step-' + step.id"
-            appearance="outlined"
           >
-            <mat-card-header>
-              <div mat-card-avatar class="step-avatar">
+            <div slot="cardTitle">
+              <div class="step-avatar">
                 <mat-icon [class.completed]="step.isCompleted" [class.current]="step.isCurrent">
                   {{
                     step.isCompleted
@@ -105,8 +100,8 @@
                   }}
                 </mat-icon>
               </div>
-              <mat-card-title class="step-name">{{ step.name }}</mat-card-title>
-              <mat-card-subtitle class="step-meta">
+              <div class="step-name">{{ step.name }}</div>
+              <div class="step-meta">
                 <mat-chip-set>
                   <mat-chip class="step-code">{{ step.code }}</mat-chip>
                   <mat-chip class="step-time">
@@ -114,23 +109,21 @@
                     {{ step.estimatedTime }}
                   </mat-chip>
                 </mat-chip-set>
-              </mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-              <p class="step-description">{{ step.description }}</p>
-
-              <div class="step-status-indicator">
-                <mat-chip [class.completed]="step.isCompleted" [class.current]="step.isCurrent">
-                  <mat-icon matChipAvatar>
-                    {{ step.isCompleted ? 'check' : step.isCurrent ? 'play_arrow' : 'pending' }}
-                  </mat-icon>
-                  {{ getStepStatusText(step) }}
-                </mat-chip>
               </div>
-            </mat-card-content>
+            </div>
 
-            <mat-card-actions align="end">
+            <p class="step-description">{{ step.description }}</p>
+
+            <div class="step-status-indicator">
+              <mat-chip [class.completed]="step.isCompleted" [class.current]="step.isCurrent">
+                <mat-icon matChipAvatar>
+                  {{ step.isCompleted ? 'check' : step.isCurrent ? 'play_arrow' : 'pending' }}
+                </mat-icon>
+                {{ getStepStatusText(step) }}
+              </mat-chip>
+            </div>
+
+            <div align="end">
               <button
                 mat-raised-button
                 [color]="step.isCompleted ? 'accent' : 'primary'"
@@ -155,8 +148,8 @@
                   </ng-container>
                 }
               </button>
-            </mat-card-actions>
-          </mat-card>
+            </div>
+          </acp-dynamic-card>
         }
       </div>
     </div>
@@ -175,20 +168,19 @@
 
       <div class="steps-grid">
         @for (step of optionalSteps; track $index) {
-          <mat-card
+          <acp-dynamic-card
             class="step-card optional"
             [class.completed]="step.isCompleted"
             [attr.data-tour]="'step-' + step.id"
-            appearance="outlined"
           >
-            <mat-card-header>
-              <div mat-card-avatar class="step-avatar optional">
+            <div slot="cardTitle">
+              <div class="step-avatar optional">
                 <mat-icon [class.completed]="step.isCompleted">
                   {{ step.isCompleted ? 'check_circle' : 'radio_button_unchecked' }}
                 </mat-icon>
               </div>
-              <mat-card-title class="step-name">{{ step.name }}</mat-card-title>
-              <mat-card-subtitle class="step-meta">
+              <div class="step-name">{{ step.name }}</div>
+              <div class="step-meta">
                 <mat-chip-set>
                   <mat-chip class="step-code">{{ step.code }}</mat-chip>
                   <mat-chip class="step-time">
@@ -200,23 +192,21 @@
                     Opcional
                   </mat-chip>
                 </mat-chip-set>
-              </mat-card-subtitle>
-            </mat-card-header>
-
-            <mat-card-content>
-              <p class="step-description">{{ step.description }}</p>
-
-              <div class="step-status-indicator">
-                <mat-chip [class.completed]="step.isCompleted">
-                  <mat-icon matChipAvatar>
-                    {{ step.isCompleted ? 'check' : 'pending' }}
-                  </mat-icon>
-                  {{ getStepStatusText(step) }}
-                </mat-chip>
               </div>
-            </mat-card-content>
+            </div>
 
-            <mat-card-actions align="end">
+            <p class="step-description">{{ step.description }}</p>
+
+            <div class="step-status-indicator">
+              <mat-chip [class.completed]="step.isCompleted">
+                <mat-icon matChipAvatar>
+                  {{ step.isCompleted ? 'check' : 'pending' }}
+                </mat-icon>
+                {{ getStepStatusText(step) }}
+              </mat-chip>
+            </div>
+
+            <div align="end">
               <button
                 mat-stroked-button
                 [color]="step.isCompleted ? 'accent' : 'primary'"
@@ -236,8 +226,8 @@
                   </ng-container>
                 }
               </button>
-            </mat-card-actions>
-          </mat-card>
+            </div>
+          </acp-dynamic-card>
         }
       </div>
     </div>
@@ -246,175 +236,170 @@
     <div class="info-cards-section">
       <div class="info-cards-grid">
         <!-- Help & Support Card -->
-        <mat-card class="info-card help-card" appearance="outlined">
-          <mat-card-header>
-            <div mat-card-avatar class="info-card-avatar help">
+        <acp-dynamic-card class="info-card help-card">
+          <div slot="cardTitle">
+            <div class="info-card-avatar help">
               <mat-icon>help_center</mat-icon>
             </div>
-            <mat-card-title>¿Necesitas ayuda?</mat-card-title>
-            <mat-card-subtitle>Recursos de soporte disponibles</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>
-              Accede a nuestra documentación, tutoriales y soporte técnico para resolver cualquier
-              duda.
-            </p>
-            <div class="info-card-features">
-              <div class="feature-item">
-                <mat-icon>book</mat-icon>
-                <span>Documentación completa</span>
-              </div>
-              <div class="feature-item">
-                <mat-icon>video_library</mat-icon>
-                <span>Tutoriales en video</span>
-              </div>
-              <div class="feature-item">
-                <mat-icon>support_agent</mat-icon>
-                <span>Soporte técnico 24/7</span>
-              </div>
+            <div>¿Necesitas ayuda?</div>
+            <div>Recursos de soporte disponibles</div>
+          </div>
+
+          <p>
+            Accede a nuestra documentación, tutoriales y soporte técnico para resolver cualquier
+            duda.
+          </p>
+          <div class="info-card-features">
+            <div class="feature-item">
+              <mat-icon>book</mat-icon>
+              <span>Documentación completa</span>
             </div>
-          </mat-card-content>
-          <mat-card-actions align="end">
+            <div class="feature-item">
+              <mat-icon>video_library</mat-icon>
+              <span>Tutoriales en video</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>support_agent</mat-icon>
+              <span>Soporte técnico 24/7</span>
+            </div>
+          </div>
+
+          <div align="end">
             <button mat-stroked-button color="primary">
               <ng-container>
                 <mat-icon>open_in_new</mat-icon>
                 Ver Recursos
               </ng-container>
             </button>
-          </mat-card-actions>
-        </mat-card>
-
+          </div>
+        </acp-dynamic-card>
         <!-- Tips & Best Practices Card -->
-        <mat-card class="info-card tips-card" appearance="outlined">
-          <mat-card-header>
-            <div mat-card-avatar class="info-card-avatar tips">
+        <acp-dynamic-card class="info-card tips-card">
+          <div slot="cardTitle">
+            <div class="info-card-avatar tips">
               <mat-icon>lightbulb</mat-icon>
             </div>
-            <mat-card-title>Consejos y Mejores Prácticas</mat-card-title>
-            <mat-card-subtitle>Optimiza tu configuración</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>
-              Sigue estos consejos para obtener el máximo rendimiento de tu sistema empresarial.
-            </p>
-            <div class="info-card-features">
-              <div class="feature-item">
-                <mat-icon>security</mat-icon>
-                <span>Configuración de seguridad</span>
-              </div>
-              <div class="feature-item">
-                <mat-icon>speed</mat-icon>
-                <span>Optimización de rendimiento</span>
-              </div>
-              <div class="feature-item">
-                <mat-icon>backup</mat-icon>
-                <span>Respaldos automáticos</span>
-              </div>
+            <div>Consejos y Mejores Prácticas</div>
+            <div>Optimiza tu configuración</div>
+          </div>
+
+          <p>Sigue estos consejos para obtener el máximo rendimiento de tu sistema empresarial.</p>
+          <div class="info-card-features">
+            <div class="feature-item">
+              <mat-icon>security</mat-icon>
+              <span>Configuración de seguridad</span>
             </div>
-          </mat-card-content>
-          <mat-card-actions align="end">
+            <div class="feature-item">
+              <mat-icon>speed</mat-icon>
+              <span>Optimización de rendimiento</span>
+            </div>
+            <div class="feature-item">
+              <mat-icon>backup</mat-icon>
+              <span>Respaldos automáticos</span>
+            </div>
+          </div>
+
+          <div align="end">
             <button mat-stroked-button color="accent">
               <ng-container>
                 <mat-icon>tips_and_updates</mat-icon>
                 Ver Consejos
               </ng-container>
             </button>
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </acp-dynamic-card>
 
         <!-- System Status Card -->
-        <mat-card class="info-card status-card" appearance="outlined">
-          <mat-card-header>
-            <div mat-card-avatar class="info-card-avatar status">
+        <acp-dynamic-card class="info-card status-card">
+          <div slot="cardTitle">
+            <div class="info-card-avatar status">
               <mat-icon>monitor_heart</mat-icon>
             </div>
-            <mat-card-title>Estado del Sistema</mat-card-title>
-            <mat-card-subtitle>Monitoreo en tiempo real</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <p>Mantén un seguimiento del estado y rendimiento de tu sistema empresarial.</p>
-            <div class="status-indicators">
-              <div class="status-item">
-                <div class="status-dot online"></div>
-                <span>Servicios en línea</span>
-              </div>
-              <div class="status-item">
-                <div class="status-dot good"></div>
-                <span>Rendimiento óptimo</span>
-              </div>
-              <div class="status-item">
-                <div class="status-dot secure"></div>
-                <span>Conexión segura</span>
-              </div>
+            <div>Estado del Sistema</div>
+            <div>Monitoreo en tiempo real</div>
+          </div>
+
+          <p>Mantén un seguimiento del estado y rendimiento de tu sistema empresarial.</p>
+          <div class="status-indicators">
+            <div class="status-item">
+              <div class="status-dot online"></div>
+              <span>Servicios en línea</span>
             </div>
-          </mat-card-content>
-          <mat-card-actions align="end">
+            <div class="status-item">
+              <div class="status-dot good"></div>
+              <span>Rendimiento óptimo</span>
+            </div>
+            <div class="status-item">
+              <div class="status-dot secure"></div>
+              <span>Conexión segura</span>
+            </div>
+          </div>
+
+          <div align="end">
             <button mat-stroked-button color="primary">
               <ng-container>
                 <mat-icon>analytics</mat-icon>
                 Ver Detalles
               </ng-container>
             </button>
-          </mat-card-actions>
-        </mat-card>
+          </div>
+        </acp-dynamic-card>
       </div>
     </div>
   </div>
 
   <!-- Action Buttons -->
   <div class="setup-actions">
-    <mat-card class="actions-card" appearance="outlined">
-      <mat-card-content>
-        <div class="actions-content">
-          <div class="actions-info">
-            <h3 class="actions-title">
-              <mat-icon>rocket_launch</mat-icon>
-              ¿Listo para comenzar?
-            </h3>
-            <p class="actions-description">
-              @if (!setupStatus.isCompleted) {
-                <span>Complete los pasos obligatorios para acceder al sistema completo</span>
-              }
-              @if (setupStatus.isCompleted) {
-                <span>¡Excelente! Ha completado todos los pasos obligatorios</span>
-              }
-            </p>
-          </div>
-          <div class="action-buttons">
-            <!-- Skip Button (only show if optional steps remain) -->
-            @if (!setupStatus.isCompleted && setupStatus.canSkip) {
-              <button mat-stroked-button color="warn" (click)="skipOptionalSetup()" type="button">
-                <ng-container>
-                  <mat-icon>fast_forward</mat-icon>
-                  Saltar Opcionales
-                </ng-container>
-              </button>
+    <acp-dynamic-card class="actions-card">
+      <div class="actions-content">
+        <div class="actions-info">
+          <h3 class="actions-title">
+            <mat-icon>rocket_launch</mat-icon>
+            ¿Listo para comenzar?
+          </h3>
+          <p class="actions-description">
+            @if (!setupStatus.isCompleted) {
+              <span>Complete los pasos obligatorios para acceder al sistema completo</span>
             }
-
-            <!-- Finish Button -->
-            <button
-              mat-raised-button
-              color="primary"
-              [disabled]="!canProceedToNextStep()"
-              (click)="finishSetup()"
-              type="button"
-              class="finish-button"
-            >
-              @if (setupStatus.isCompleted) {
-                <ng-container>
-                  <mat-icon>dashboard</mat-icon>
-                  Ir al Dashboard
-                </ng-container>
-              } @else {
-                <ng-container>
-                  <mat-icon>flag</mat-icon>
-                  Finalizar Configuración
-                </ng-container>
-              }
-            </button>
-          </div>
+            @if (setupStatus.isCompleted) {
+              <span>¡Excelente! Ha completado todos los pasos obligatorios</span>
+            }
+          </p>
         </div>
-      </mat-card-content>
-    </mat-card>
+        <div class="action-buttons">
+          <!-- Skip Button (only show if optional steps remain) -->
+          @if (!setupStatus.isCompleted && setupStatus.canSkip) {
+            <button mat-stroked-button color="warn" (click)="skipOptionalSetup()" type="button">
+              <ng-container>
+                <mat-icon>fast_forward</mat-icon>
+                Saltar Opcionales
+              </ng-container>
+            </button>
+          }
+
+          <!-- Finish Button -->
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="!canProceedToNextStep()"
+            (click)="finishSetup()"
+            type="button"
+            class="finish-button"
+          >
+            @if (setupStatus.isCompleted) {
+              <ng-container>
+                <mat-icon>dashboard</mat-icon>
+                Ir al Dashboard
+              </ng-container>
+            } @else {
+              <ng-container>
+                <mat-icon>flag</mat-icon>
+                Finalizar Configuración
+              </ng-container>
+            }
+          </button>
+        </div>
+      </div>
+    </acp-dynamic-card>
   </div>
 </div>

@@ -15,7 +15,7 @@ import { Pagination } from '@acontplus/ng-components';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
 import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
 
@@ -28,8 +28,7 @@ import { MatButton } from '@angular/material/button';
     MatIcon,
     BreadcrumbComponent,
     DateRangeSelectionComponent,
-    MatCardContent,
-    MatCard,
+    DynamicCard,
     MatButton,
   ],
   templateUrl: './cuenta-por-cobrar.component.html',

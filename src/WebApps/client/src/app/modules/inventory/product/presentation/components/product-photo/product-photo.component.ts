@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
@@ -17,7 +17,7 @@ import { ProductPhotoPutStatusUseCase } from '@inventory/product/application/use
 @Component({
   selector: 'app-product-photo',
   imports: [
-    MatCardModule,
+    DynamicCard,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,

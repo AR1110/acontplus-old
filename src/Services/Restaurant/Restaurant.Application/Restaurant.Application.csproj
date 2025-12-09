@@ -1,23 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Mapping\q43b2vht.n1o~"/>
+    <None Remove="Mapping\q43b2vht.n1o~" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Humanizer"/>
-    <PackageReference Include="Mapster"/>
-    <PackageReference Include="Mapster.DependencyInjection"/>
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj"/>
+    <ProjectReference Include="..\..\..\Shared\Acontplus.Analytics\Acontplus.Analytics.csproj" />
+    <ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 <app-breadcrumb />
-<app-mat-dynamic-card>
+<acp-dynamic-card>
   <div
     class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2"
   >
@@ -67,14 +67,9 @@
     <!-- Video Content -->
     <div class="video-section">
       @if (selectedNode) {
-        <mat-card>
-          <mat-card-header>
-            <mat-card-title>{{ selectedNode?.title }}</mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <quill-view [content]="selectedNode.safeEmbedCode" theme="snow" [sanitize]="true" />
-          </mat-card-content>
-        </mat-card>
+        <acp-dynamic-card [cardTitle]="selectedNode.title" [isHeaderVisible]="true">
+          <quill-view [content]="selectedNode.safeEmbedCode" theme="snow" [sanitize]="true" />
+        </acp-dynamic-card>
       }
     </div>
   </div>
@@ -156,4 +151,4 @@
   <!--                </mat-paginator>-->
   <!--            </div>-->
   <!--        </div>-->
-</app-mat-dynamic-card>
+</acp-dynamic-card>

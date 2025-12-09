@@ -6,7 +6,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import Swal from 'sweetalert2';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { Button } from '@acontplus/ng-components';
 
 @Component({
@@ -18,8 +18,7 @@ import { Button } from '@acontplus/ng-components';
     ReactiveFormsModule,
     MatCheckboxModule,
     BreadcrumbComponent,
-    MatCardContent,
-    MatCard,
+    DynamicCard,
     Button,
   ],
 })

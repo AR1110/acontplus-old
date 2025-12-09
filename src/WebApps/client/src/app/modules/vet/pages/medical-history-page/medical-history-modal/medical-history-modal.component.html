@@ -36,91 +36,87 @@
 
     @if (petSelected.id > 0) {
       <div class="vstack gap-2">
-        <mat-card>
-          <mat-card-content>
-            <h5 class="card-title">Datos del Responsable</h5>
-            <div class="row">
-              <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                <div class="form-group">
-                  <label for="customer">Cliente</label>
-                  <input
-                    [value]="petSelected.customer"
-                    class="form-control"
-                    disabled
-                    id="customer"
-                    name="customer"
-                    type="text"
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="customerIdCard">Ruc</label>
-                  <input
-                    [value]="petSelected.customerIdCard"
-                    class="form-control"
-                    disabled
-                    id="customerIdCard"
-                    name="customerIdCard"
-                    type="text"
-                  />
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label for="email">Email</label>
-                  <input
-                    [value]="petSelected.email"
-                    class="form-control"
-                    disabled
-                    id="email"
-                    name="email"
-                    type="text"
-                  />
-                </div>
+        <acp-dynamic-card>
+          <h5 class="card-title">Datos del Responsable</h5>
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+              <div class="form-group">
+                <label for="customer">Cliente</label>
+                <input
+                  [value]="petSelected.customer"
+                  class="form-control"
+                  disabled
+                  id="customer"
+                  name="customer"
+                  type="text"
+                />
               </div>
             </div>
-          </mat-card-content>
-        </mat-card>
-        <mat-card>
-          <mat-card-content>
-            <h5 class="card-title">Datos de la mascota</h5>
-            <div class="row">
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
-                <div class="form-group">
-                  <label>Nombre</label>
-                  <h5>{{ petSelected.name }}</h5>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label>Tipo</label>
-                  <h5>{{ petSelected.petType }}</h5>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label>Raza</label>
-                  <h5>{{ petSelected.breed }}</h5>
-                </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label for="customerIdCard">Ruc</label>
+                <input
+                  [value]="petSelected.customerIdCard"
+                  class="form-control"
+                  disabled
+                  id="customerIdCard"
+                  name="customerIdCard"
+                  type="text"
+                />
               </div>
             </div>
-            <div class="row">
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label>Sexo</label>
-                  <h5>{{ petSelected.gender }}</h5>
-                </div>
-              </div>
-              <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
-                <div class="form-group">
-                  <label>Color</label>
-                  <h5>{{ petSelected.color }}</h5>
-                </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                  [value]="petSelected.email"
+                  class="form-control"
+                  disabled
+                  id="email"
+                  name="email"
+                  type="text"
+                />
               </div>
             </div>
-          </mat-card-content>
-        </mat-card>
+          </div>
+        </acp-dynamic-card>
+        <acp-dynamic-card>
+          <h5 class="card-title">Datos de la mascota</h5>
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+              <div class="form-group">
+                <label>Nombre</label>
+                <h5>{{ petSelected.name }}</h5>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label>Tipo</label>
+                <h5>{{ petSelected.petType }}</h5>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label>Raza</label>
+                <h5>{{ petSelected.breed }}</h5>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label>Sexo</label>
+                <h5>{{ petSelected.gender }}</h5>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-6">
+              <div class="form-group">
+                <label>Color</label>
+                <h5>{{ petSelected.color }}</h5>
+              </div>
+            </div>
+          </div>
+        </acp-dynamic-card>
       </div>
     }
 

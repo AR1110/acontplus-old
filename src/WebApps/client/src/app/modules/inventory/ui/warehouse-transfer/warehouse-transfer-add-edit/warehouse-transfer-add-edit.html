@@ -108,9 +108,9 @@
       </div>
     </div>
 
-    <app-tabulator
-      [columnNames]="columns()"
-      [tableData]="details()"
+    <acp-tabulator-table
+      [columns]="columns()"
+      [data]="details()"
       [options]="{
         height: '100%',
         dataTreeSelectPropagate: false,

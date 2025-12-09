@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Common.API.Data.Migrations
+namespace Common.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class DefaultValuesBaseColumns : Migration

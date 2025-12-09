@@ -27,7 +27,7 @@ import { CategoryModalComponent } from '../../category-page/category-modal/categ
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogService } from '@core/services/dialog.service';
@@ -37,10 +37,9 @@ import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 @Component({
   selector: 'app-device-modal',
   imports: [
+    DynamicCard,
     ReactiveFormsModule,
     FormsModule,
-    MatCard,
-    MatCardContent,
     MatIcon,
     MatButton,
     Button,

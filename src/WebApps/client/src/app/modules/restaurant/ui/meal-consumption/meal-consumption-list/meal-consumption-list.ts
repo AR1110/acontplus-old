@@ -10,7 +10,7 @@ import { GetCancellationDetailsUseCase } from '@restaurant/application/use-cases
 import { SearchCustomerUseCase } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
 import { CreateMealConsumptionForOtherDateUseCase } from '@restaurant/application/use-cases/meal-consumption/create-meal-consumption-for-other-date.use-case';
 import { PaginationParams } from '@acontplus/core';
-import { Button, Pagination } from '@acontplus/ng-components';
+import { Button, Pagination, DynamicCard } from '@acontplus/ng-components';
 import {
   MealConsumption,
   ConsumptionStatus,
@@ -23,7 +23,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import Swal from 'sweetalert2';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import {
   MatCell,
   MatCellDef,
@@ -53,10 +52,7 @@ import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-set
     MatButton,
     MatIconButton,
     MatCheckbox,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    DynamicCard,
     MatCell,
     MatCellDef,
     MatColumnDef,
@@ -180,28 +176,26 @@ export class MealConsumptionList implements OnInit {
       mealScheduleSettingId: this.selectedConfigId(),
     };
 
-    return this.getUseCase
-      .execute(this.paginationParams())
-      .subscribe({
-        next: (response) => {
-          this.mealConsumptions.set(response.items);
-          this.mealConsumptionConfig.update((current) => {
-            current.totalRecords = response.totalCount;
-            current.pageIndex = response.pageIndex - 1; // API uses 1-based, Material uses 0-based
-            current.pageSize = response.pageSize;
-            return current;
-          });
-          console.log('Meal consumptions loaded:', this.mealConsumptions());
-        },
-        error: (error) => {
-          console.error('Error loading meal consumptions:', error);
-          void Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al cargar los consumos',
-          });
-        },
-      });
+    return this.getUseCase.execute(this.paginationParams()).subscribe({
+      next: (response) => {
+        this.mealConsumptions.set(response.items);
+        this.mealConsumptionConfig.update((current) => {
+          current.totalRecords = response.totalCount;
+          current.pageIndex = response.pageIndex - 1; // API uses 1-based, Material uses 0-based
+          current.pageSize = response.pageSize;
+          return current;
+        });
+        console.log('Meal consumptions loaded:', this.mealConsumptions());
+      },
+      error: (error) => {
+        console.error('Error loading meal consumptions:', error);
+        void Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al cargar los consumos',
+        });
+      },
+    });
   }
 
   onPageChange(event: PageEvent): void {
@@ -232,35 +226,33 @@ export class MealConsumptionList implements OnInit {
     });
 
     if (result.isConfirmed) {
-      this.deleteUseCase
-        .execute({ id: consumption.id })
-        .subscribe({
-          next: (response) => {
-            if (response.code === '1') {
-              void Swal.fire({
-                icon: 'success',
-                title: 'Eliminado',
-                text: response.message || 'Consumo eliminado correctamente',
-                timer: 2000,
-              });
-              this.load();
-            } else {
-              void Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: response.message || 'No se pudo eliminar el consumo',
-              });
-            }
-          },
-          error: (error) => {
-            console.error('Error deleting consumption:', error);
+      this.deleteUseCase.execute({ id: consumption.id }).subscribe({
+        next: (response) => {
+          if (response.code === '1') {
+            void Swal.fire({
+              icon: 'success',
+              title: 'Eliminado',
+              text: response.message || 'Consumo eliminado correctamente',
+              timer: 2000,
+            });
+            this.load();
+          } else {
             void Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'Error al eliminar el consumo',
+              text: response.message || 'No se pudo eliminar el consumo',
             });
-          },
-        });
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting consumption:', error);
+          void Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al eliminar el consumo',
+          });
+        },
+      });
     }
   }
 
@@ -288,93 +280,87 @@ export class MealConsumptionList implements OnInit {
 
     if (result.isConfirmed && result.value) {
       const cancellationReason = result.value as string;
-      this.cancelUseCase
-        .execute({ id: consumption.id, cancellationReason })
-        .subscribe({
-          next: (response) => {
-            if (response.code === '1') {
-              void Swal.fire({
-                icon: 'success',
-                title: 'Anulado',
-                text: response.message || 'Consumo anulado correctamente',
-                timer: 2000,
-              });
-              this.load();
-            } else {
-              void Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: response.message || 'No se pudo anular el consumo',
-              });
-            }
-          },
-          error: (error) => {
-            console.error('Error canceling consumption:', error);
+      this.cancelUseCase.execute({ id: consumption.id, cancellationReason }).subscribe({
+        next: (response) => {
+          if (response.code === '1') {
+            void Swal.fire({
+              icon: 'success',
+              title: 'Anulado',
+              text: response.message || 'Consumo anulado correctamente',
+              timer: 2000,
+            });
+            this.load();
+          } else {
             void Swal.fire({
               icon: 'error',
               title: 'Error',
-              text: 'Error al anular el consumo',
+              text: response.message || 'No se pudo anular el consumo',
             });
-          },
-        });
+          }
+        },
+        error: (error) => {
+          console.error('Error canceling consumption:', error);
+          void Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al anular el consumo',
+          });
+        },
+      });
     }
   }
 
   async printConsumption(consumption: MealConsumption): Promise<void> {
-    this.printUseCase
-      .execute({ id: consumption.id })
-      .subscribe({
-        next: (response) => {
-          if (response.payload) {
-            try {
-              const printData = JSON.parse(response.payload);
-              console.log('Print data:', printData);
-              // TODO: Integrate with actual print service
-            } catch (error) {
-              console.error('Error parsing print data:', error);
-            }
+    this.printUseCase.execute({ id: consumption.id }).subscribe({
+      next: (response) => {
+        if (response.payload) {
+          try {
+            const printData = JSON.parse(response.payload);
+            console.log('Print data:', printData);
+            // TODO: Integrate with actual print service
+          } catch (error) {
+            console.error('Error parsing print data:', error);
           }
-        },
-        error: (error) => {
-          console.error('Error printing consumption:', error);
-          void Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al imprimir el consumo',
-          });
-        },
-      });
+        }
+      },
+      error: (error) => {
+        console.error('Error printing consumption:', error);
+        void Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al imprimir el consumo',
+        });
+      },
+    });
   }
 
   async getCancellationReason(consumption: MealConsumption): Promise<void> {
-    this.getCancellationDetailsUseCase
-      .execute({ id: consumption.id })
-      .subscribe({
-        next: (response) => {
-          if (response.code === '1' && response.details) {
-            void Swal.fire({
-              title: 'Motivo Anulación',
-              icon: 'info',
-              text: response.details.cancellationReason,
-              allowOutsideClick: false,
-            });
-          } else {
-            void Swal.fire({
-              icon: 'warning',
-              title: 'Advertencia',
-              text: response.message || 'No se encontró información de anulación',
-            });
-          }
-        },
-        error: (error) => {
-          console.error('Error getting cancellation reason:', error);
+    this.getCancellationDetailsUseCase.execute({ id: consumption.id }).subscribe({
+      next: (response) => {
+        if (response.code === '1' && response.details) {
           void Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al obtener el motivo de anulación',
+            title: 'Motivo Anulación',
+            icon: 'info',
+            text: response.details.cancellationReason,
+            allowOutsideClick: false,
           });
-        },
-      });
+        } else {
+          void Swal.fire({
+            icon: 'warning',
+            title: 'Advertencia',
+            text: response.message || 'No se encontró información de anulación',
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error getting cancellation reason:', error);
+        void Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al obtener el motivo de anulación',
+        });
+      },
+    });
   }
 
   getStatusLabel(status: ConsumptionStatus): string {
@@ -420,37 +406,35 @@ export class MealConsumptionList implements OnInit {
     this.customer.set(null);
     this.schedules.set([]);
 
-    this.searchCustomerUseCase
-      .execute({ searchTerm: searchValue })
-      .subscribe({
-        next: (response) => {
-          this.clientSearchControl.setValue('');
+    this.searchCustomerUseCase.execute({ searchTerm: searchValue }).subscribe({
+      next: (response) => {
+        this.clientSearchControl.setValue('');
 
-          if (response.customer) {
-            this.customer.set(response.customer);
-            this.schedules.set(response.schedules ?? []);
+        if (response.customer) {
+          this.customer.set(response.customer);
+          this.schedules.set(response.schedules ?? []);
 
-            if (response.customer.idEmpresa === 0) {
-              void Swal.fire({
-                icon: 'warning',
-                title: 'Advertencia',
-                text: 'Cliente aún no tiene asignada una empresa',
-              });
-            } else if (event && response.customer.idEmpresa > 0) {
-              // Auto-save if enter was pressed and has company
-              this.autoSaveAvailableServices();
-            }
+          if (response.customer.idEmpresa === 0) {
+            void Swal.fire({
+              icon: 'warning',
+              title: 'Advertencia',
+              text: 'Cliente aún no tiene asignada una empresa',
+            });
+          } else if (event && response.customer.idEmpresa > 0) {
+            // Auto-save if enter was pressed and has company
+            this.autoSaveAvailableServices();
           }
-        },
-        error: (error) => {
-          console.error('Error searching customer:', error);
-          void Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Error al buscar el cliente',
-          });
-        },
-      });
+        }
+      },
+      error: (error) => {
+        console.error('Error searching customer:', error);
+        void Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al buscar el cliente',
+        });
+      },
+    });
   }
 
   autoSaveAvailableServices(): void {
@@ -528,42 +512,40 @@ export class MealConsumptionList implements OnInit {
       idCliente: customer.idCliente,
     };
 
-    this.createUseCase
-      .execute(request)
-      .subscribe({
-        next: (response) => {
-          if (response.code === '1') {
-            if (response.data) {
-              this.printConsumptionData(JSON.stringify(response.data));
-            }
-
-            void Swal.fire({
-              icon: 'success',
-              title: 'Éxito',
-              text: response.message ?? 'Consumo guardado correctamente',
-              timer: 2000,
-            });
-
-            this.playSound();
-            this.resetRegistrationForm();
-            this.load(); // Refresh the list
-          } else {
-            void Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.message ?? 'No se pudo guardar el consumo',
-            });
+    this.createUseCase.execute(request).subscribe({
+      next: (response) => {
+        if (response.code === '1') {
+          if (response.data) {
+            this.printConsumptionData(JSON.stringify(response.data));
           }
-        },
-        error: (error) => {
-          console.error('Error saving consumption:', error);
+
+          void Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: response.message ?? 'Consumo guardado correctamente',
+            timer: 2000,
+          });
+
+          this.playSound();
+          this.resetRegistrationForm();
+          this.load(); // Refresh the list
+        } else {
           void Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Error al guardar el consumo',
+            text: response.message ?? 'No se pudo guardar el consumo',
           });
-        },
-      });
+        }
+      },
+      error: (error) => {
+        console.error('Error saving consumption:', error);
+        void Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al guardar el consumo',
+        });
+      },
+    });
   }
 
   openOtherDatesDialog(schedule: MealScheduleForCustomer): void {

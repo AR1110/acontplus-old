@@ -34,7 +34,7 @@ BEGIN
     DECLARE @WhereClause NVARCHAR(MAX)
 
     --> Order
-    DECLARE @OrderByClause NVARCHAR(200);
+    DECLARE @OrderByClause NVARCHAR(200) ,@InnerJoin NVARCHAR(MAX)= ' ' ,@Column VARCHAR(MAX) = '';
     
 
     --> Parse JSON filters
@@ -44,6 +44,7 @@ BEGIN
            ,@idSubFamilia INT
            ,@UserId INT
            ,@IncludeDeleted BIT = 0
+           ,@IsPos BIT
 
     BEGIN TRY
         --> Data Json
@@ -53,6 +54,7 @@ BEGIN
                       ,@idSubFamilia   = ISNULL(TRY_CAST(idSubFamilia   AS INT), 0)
                       ,@userRoleId     = ISNULL(TRY_CAST(userRoleId     AS INT), 0)
                       ,@sigla          = sigla
+                      ,@IsPos          = isPos
                 FROM OPENJSON(@Filters)
                 WITH
                 (
@@ -60,6 +62,7 @@ BEGIN
                    ,idSubFamilia   INT         
                    ,userRoleId     INT         
                    ,sigla          VARCHAR(50)
+                   ,isPos          BIT     
                 );
             END
 
@@ -86,6 +89,15 @@ BEGIN
                                           WHEN 'category'    THEN N' ORDER BY ' + QUOTENAME('category')    + N' ' + @SortDirection
                                                              ELSE N' ORDER BY ' + QUOTENAME('Id')          + N' ' + @SortDirection
                              END;
+
+        -->Variables Join
+        IF @IsPos = 1
+            BEGIN
+                SET @InnerJoin = @InnerJoin +  'INNER JOIN dbo.ArticuloPvP pv ON pv.idArticulo = fi.ProductId 
+                                                INNER JOIN dbo.Tarifa      ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = 1  '
+
+                SET @Column = @Column + ',pv.precioConIva AS priceWithTax '
+            END
 
         --> Validate input parameters
         IF @IncludeDeleted = 0
@@ -157,7 +169,7 @@ BEGIN
 
                      SELECT TOP 1 @TotalCount = TotalCount FROM #FilteredItems;
 
-                     SELECT * FROM #FilteredItems ' + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                     SELECT fi.* ' + @Column + N'  FROM #FilteredItems fi ' + @InnerJoin + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
 
                      IF OBJECT_ID(''tempdb..#FilteredItems'') IS NOT NULL DROP TABLE #FilteredItems ' ;
 

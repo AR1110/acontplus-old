@@ -1,95 +1,93 @@
 <app-breadcrumb />
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <app-doc-elect-filters
-      [showMoreOptions]="showMoreOptions()"
-      [filterOptions]="myCustomFilterOptions"
-      (triggerSearch)="onSearch($event)"
-      (selectCliente)="onSelectCliente($event)"
-      (keyupCliente)="onKeyupCliente()"
-      (toggleMoreOptions)="toggleMoreOptions()"
-      (selectUsuario)="onSelectUsuario($event)"
-      (keyupUsuario)="onKeyupUsuario($event)"
-      (dialogOpen)="onDialogOpen()"
-    />
-    <div class="row mb-3">
-      <div class="col">
-        @if (this.retenciones().length > 0) {
-          <div class="table-responsive">
-            <app-mat-dynamic-table
-              [templateOp]="templateOp"
-              [tableData]="retenciones()"
-              [columnDefinitions]="columnsDefs"
-              [visibleColumns]="columns"
-              [showSelectBox]="true"
-            />
-          </div>
-
-          <mat-paginator
-            [length]="pagination().totalRecords"
-            [pageIndex]="pagination().pageIndex"
-            [pageSize]="pagination().pageSize"
-            [pageSizeOptions]="pagination().pageSizeOptions"
-            (page)="onPageChanged($event)"
-            showFirstLastButtons
-            aria-label="Select page"
+<acp-dynamic-card>
+  <app-doc-elect-filters
+    [showMoreOptions]="showMoreOptions()"
+    [filterOptions]="myCustomFilterOptions"
+    (triggerSearch)="onSearch($event)"
+    (selectCliente)="onSelectCliente($event)"
+    (keyupCliente)="onKeyupCliente()"
+    (toggleMoreOptions)="toggleMoreOptions()"
+    (selectUsuario)="onSelectUsuario($event)"
+    (keyupUsuario)="onKeyupUsuario($event)"
+    (dialogOpen)="onDialogOpen()"
+  />
+  <div class="row mb-3">
+    <div class="col">
+      @if (this.retenciones().length > 0) {
+        <div class="table-responsive">
+          <app-mat-dynamic-table
+            [templateOp]="templateOp"
+            [tableData]="retenciones()"
+            [columnDefinitions]="columnsDefs"
+            [visibleColumns]="columns"
+            [showSelectBox]="true"
           />
-        } @else {
-          <h5>No hay registros</h5>
-        }
-      </div>
+        </div>
+
+        <mat-paginator
+          [length]="pagination().totalRecords"
+          [pageIndex]="pagination().pageIndex"
+          [pageSize]="pagination().pageSize"
+          [pageSizeOptions]="pagination().pageSizeOptions"
+          (page)="onPageChanged($event)"
+          showFirstLastButtons
+          aria-label="Select page"
+        />
+      } @else {
+        <h5>No hay registros</h5>
+      }
     </div>
+  </div>
 
-    <ng-template #templateOp let-item="item">
-      <mat-menu #menu="matMenu">
-        @if ([0, 1, 2, 5, 7, 8].includes(item.codEstado)) {
-          <button mat-menu-item (click)="edit(item)">
-            <mat-icon>edit</mat-icon>
-            Editar
-          </button>
-        }
+  <ng-template #templateOp let-item="item">
+    <mat-menu #menu="matMenu">
+      @if ([0, 1, 2, 5, 7, 8].includes(item.codEstado)) {
+        <button mat-menu-item (click)="edit(item)">
+          <mat-icon>edit</mat-icon>
+          Editar
+        </button>
+      }
 
-        @if ([2, 3, 7].includes(item.codEstado)) {
-          <button mat-menu-item (click)="authorize(item)" matTooltip="Autorizar en el SRI">
-            <mat-icon>send</mat-icon>
-            Autorizar
-          </button>
-        }
-        <button mat-menu-item (click)="getRide(item)" matTooltip="Ver PDF de la retención">
-          <mat-icon>picture_as_pdf</mat-icon>
-          Ride
+      @if ([2, 3, 7].includes(item.codEstado)) {
+        <button mat-menu-item (click)="authorize(item)" matTooltip="Autorizar en el SRI">
+          <mat-icon>send</mat-icon>
+          Autorizar
         </button>
-        @if (item.codEstado === 4) {
-          <button (click)="downloadXml(item)" mat-menu-item>
-            <mat-icon>download</mat-icon>
-            Descargar Xml
-          </button>
-        }
-        <button
-          mat-menu-item
-          appSendMailDialog
-          [data]="sendEmail(item)"
-          [notificationSri]="true"
-          matTooltip="Enviar por correo"
-        >
-          <mat-icon>mail</mat-icon>
-          Correo
-        </button>
-        <button mat-menu-item (click)="sendWhatsApp(item)">
-          <mat-icon>chat</mat-icon>
-          Whatsapp
-        </button>
-
-        @if (item.codEstado === 4) {
-          <button mat-menu-item (click)="cancel(item)">
-            <mat-icon>undo</mat-icon>
-            Anular
-          </button>
-        }
-      </mat-menu>
-      <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
-        <mat-icon>menu</mat-icon>
+      }
+      <button mat-menu-item (click)="getRide(item)" matTooltip="Ver PDF de la retención">
+        <mat-icon>picture_as_pdf</mat-icon>
+        Ride
       </button>
-    </ng-template>
-  </mat-card-content>
-</mat-card>
+      @if (item.codEstado === 4) {
+        <button (click)="downloadXml(item)" mat-menu-item>
+          <mat-icon>download</mat-icon>
+          Descargar Xml
+        </button>
+      }
+      <button
+        mat-menu-item
+        appSendMailDialog
+        [data]="sendEmail(item)"
+        [notificationSri]="true"
+        matTooltip="Enviar por correo"
+      >
+        <mat-icon>mail</mat-icon>
+        Correo
+      </button>
+      <button mat-menu-item (click)="sendWhatsApp(item)">
+        <mat-icon>chat</mat-icon>
+        Whatsapp
+      </button>
+
+      @if (item.codEstado === 4) {
+        <button mat-menu-item (click)="cancel(item)">
+          <mat-icon>undo</mat-icon>
+          Anular
+        </button>
+      }
+    </mat-menu>
+    <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button>
+  </ng-template>
+</acp-dynamic-card>

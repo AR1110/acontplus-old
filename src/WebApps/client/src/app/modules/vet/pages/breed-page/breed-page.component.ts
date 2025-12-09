@@ -11,7 +11,7 @@ import { MatButton } from '@angular/material/button';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIcon } from '@angular/material/icon';
 import { DialogService } from '@core/services/dialog.service';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-breed-page',
@@ -23,7 +23,7 @@ import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat
     MatMenuTrigger,
     MatMenuItem,
     MatIcon,
-    MatDynamicCardComponent,
+    DynamicCard,
   ],
   templateUrl: './breed-page.component.html',
   styles: ``,

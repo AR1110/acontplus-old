@@ -1,7 +1,8 @@
-﻿namespace Restaurant.Application.Dtos.MealManagement;
+namespace Restaurant.Application.Dtos.MealManagement;
 
 public record CustomerMealConsumptionItem
 {
+    public int? CompanyCustomerMealPlanId { get; set; }
     public int CompanyCustomerId { get; set; }
     public required string BusinessName { get; set; }
     public required string IdCard { get; set; }

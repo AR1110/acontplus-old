@@ -19,8 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { Button } from '@acontplus/ng-components';
+import { DynamicCard, Button } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -30,7 +29,7 @@ import { MatIconButton } from '@angular/material/button';
   selector: 'app-medical-history-page',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     FormsModule,
     MatMenuModule,
     MatDynamicTableComponent,

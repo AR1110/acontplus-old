@@ -9,19 +9,11 @@ import { WarehouseTransferViewDetailUseCase } from '@inventory/domain/usecases/w
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 @Component({
   selector: 'app-inventory-adjustment-detail',
-  imports: [
-    MatCustomDialogComponent,
-    DataGrid,
-    DecimalPipe,
-    DatePipe,
-    MatCard,
-    MatCardContent,
-    MatIcon,
-  ],
+  imports: [MatCustomDialogComponent, DataGrid, DecimalPipe, DatePipe, MatCard, MatIcon],
   templateUrl: './warehouse-transfer-detail.html',
   styles: `
     .header-card {

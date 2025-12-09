@@ -1,4 +1,4 @@
-﻿using Loyalty.Application.Models;
+using Loyalty.Application.Models;
 
 namespace Loyalty.Application.Interfaces;
 

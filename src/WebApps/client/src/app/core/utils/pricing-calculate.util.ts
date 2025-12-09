@@ -194,10 +194,9 @@ export const pricingCalculateUtil = {
    * @param {*} valorDescuento
    * @returns
    */
-  calcularValorTotalDescuento (cantidad:number, valorDescuento:number) {
+  calcularValorTotalDescuento(cantidad: number, valorDescuento: number) {
     // Calcular el valor total del descuento
     return DecimalUtils.multiplyAsNumber(cantidad, valorDescuento, DECIMALS.GENERAL);
-
   },
 
   // Función para calcular el total antes de aplicar descuentos

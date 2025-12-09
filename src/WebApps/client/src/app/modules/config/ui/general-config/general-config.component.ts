@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ListGeneralConfigUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -8,7 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { Button } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +18,6 @@ import Swal from 'sweetalert2';
 import { UpdateGeneralConfigUseCase } from '@modules/config/application/use-cases/general-config/update-general-config.use-case';
 import { DecimalSelectComponent } from '@modules/config/ui/general-config/decimal-select/decimal-select.component';
 import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
@@ -34,14 +33,14 @@ import { CompanyCustomerEntity } from '@company-customer/domain/entities/company
     MatRadioModule,
     MatSelectModule,
     FormsModule,
-    MatCardModule,
+    DynamicCard,
     MatListModule,
     CompanyCustomerSearchComponent,
     ProductSearchComponent,
     DecimalSelectComponent,
     BreadcrumbComponent,
-    MatDynamicCardComponent,
-    MatInputChipComponent,
+    DynamicCard,
+    InputChip,
     Button,
   ],
   templateUrl: './general-config.component.html',

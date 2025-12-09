@@ -4,7 +4,7 @@ import { InspectionPageComponent } from '@mechanical/ui/pages/inspection-page/in
 import { MechanicalDashboardComponent } from '@mechanical/ui/pages/mechanical-dashboard/mechanical-dashboard.component';
 import { SupportPageComponent } from '@mechanical/ui/pages/support-page/support-page.component';
 import { MechanicalStore } from '@mechanical/application/store/mechanical.store';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatTabsModule } from '@angular/material/tabs';
 import { NgTemplateOutlet } from '@angular/common';
 
@@ -15,7 +15,7 @@ import { NgTemplateOutlet } from '@angular/common';
     MechanicalDashboardComponent,
     SupportPageComponent,
     InspectionPageComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatTabsModule,
     NgTemplateOutlet,
   ],

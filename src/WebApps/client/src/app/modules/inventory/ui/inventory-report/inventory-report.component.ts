@@ -30,13 +30,13 @@ import { formatDateToString } from '@core/utils/date.util';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { NgTemplateOutlet } from '@angular/common';
 import Swal from 'sweetalert2';
 
 const imports = [
   FormsModule,
-  MatCardModule,
+  DynamicCard,
   MatTabsModule,
   MatButtonModule,
   MatIconModule,

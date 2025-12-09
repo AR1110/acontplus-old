@@ -1,3 +1,4 @@
+import { DynamicCard } from '@acontplus/ng-components';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +33,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 const imports = [
+  DynamicCard,
   MatCardModule,
   MatCheckboxModule,
   MatFormFieldModule,

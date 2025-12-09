@@ -20,7 +20,7 @@ import { GithubButton } from '../widgets/github-button';
 import { UserButton } from '../widgets/user-button';
 import { Branding } from '../widgets/branding';
 import { AdminLayoutService } from '@core/services/admin-layout.service';
-import {ThemeToggle} from "@acontplus/ng-components";
+import { ThemeToggle } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-header',

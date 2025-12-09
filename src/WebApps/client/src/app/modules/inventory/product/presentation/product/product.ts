@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -35,7 +35,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
 import { DialogService } from '@core/services/dialog.service';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { ProductStock } from '@inventory/product/presentation/components/product-stock/product-stock';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
@@ -54,7 +53,7 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
     BreadcrumbComponent,
     PrimaryStatusPipe,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatIconModule,
     MatTableModule,
     MatMenuModule,
@@ -62,7 +61,6 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
     MatCheckboxModule,
     MatSelectModule,
     SubCategoryGroupComponent,
-    MatDynamicCardComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,

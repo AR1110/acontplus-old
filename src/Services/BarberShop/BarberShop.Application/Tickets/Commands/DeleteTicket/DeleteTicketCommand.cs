@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Tickets.Commands.DeleteTicket;
+namespace BarberShop.Application.Tickets.Commands.DeleteTicket;
 
 public class DeleteTicketCommand
 {

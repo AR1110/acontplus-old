@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Application.Tickets.Queries.GetTickets
+namespace BarberShop.Application.Tickets.Queries.GetTickets
 {
     internal class GetTicketsQuery
     {

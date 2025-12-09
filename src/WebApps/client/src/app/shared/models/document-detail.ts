@@ -1,6 +1,6 @@
-import DecimalUtils from "@core/utils/decimal.util";
-import { generateUuidv4 } from "@core/utils/generate-uuidv4";
-import { ProductFee, ProductMeasure } from "@inventory/domain/models/product-measure";
+import DecimalUtils from '@core/utils/decimal.util';
+import { generateUuidv4 } from '@core/utils/generate-uuidv4';
+import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-measure';
 
 /**
  * Enumeración para el estado de una línea de detalle del documento.
@@ -266,7 +266,9 @@ export class DocumentDetail implements DocumentDetailModel {
   private determineDiscountType(): DiscountType {
     if (this.discountPercentage > 0 && this.discount > 0) {
       // Ambos están establecidos, priorizar porcentaje
-      console.warn('Tanto discountPercentage como discount están establecidos. Se usará discountPercentage.');
+      console.warn(
+        'Tanto discountPercentage como discount están establecidos. Se usará discountPercentage.',
+      );
       return DiscountType.PERCENTAGE;
     }
 
@@ -300,10 +302,7 @@ export class DocumentDetail implements DocumentDetailModel {
     this.validateInputs();
 
     // 2. Calcular el subtotal bruto (precio × cantidad) antes de descuentos.
-    const grossSubtotal = DecimalUtils.multiplyAsNumber(
-      this.unitPrice,
-      this.quantity
-    );
+    const grossSubtotal = DecimalUtils.multiplyAsNumber(this.unitPrice, this.quantity);
     this._subtotalBeforeDiscount = Number(grossSubtotal.toFixed(5));
 
     // 3. Determinar el tipo de descuento y calcular el monto aplicado
@@ -338,17 +337,11 @@ export class DocumentDetail implements DocumentDetailModel {
     this._taxableBase = Number((grossSubtotal - discountAmount).toFixed(5));
 
     // 5. Calcular el valor del impuesto basado en la base imponible
-    const taxAmount = DecimalUtils.multiplyAsNumber(
-      this._taxableBase,
-      this.taxRate
-    );
+    const taxAmount = DecimalUtils.multiplyAsNumber(this._taxableBase, this.taxRate);
     this._calculatedTaxAmount = Number(taxAmount.toFixed(5));
 
     // 6. Calcular el precio unitario con impuesto incluido
-    const priceWithVat = DecimalUtils.multiplyAsNumber(
-      this.unitPrice,
-      1 + this.taxRate
-    );
+    const priceWithVat = DecimalUtils.multiplyAsNumber(this.unitPrice, 1 + this.taxRate);
     this._unitPriceWithTax = Number(priceWithVat.toFixed(5));
 
     // 7. Calcular el total final de la línea (base imponible + impuesto)
@@ -365,9 +358,7 @@ export class DocumentDetail implements DocumentDetailModel {
   isValid(): boolean {
     try {
       this.validateInputs();
-      return this.quantity > 0 &&
-        this.unitPrice >= 0 &&
-        this.productId > 0;
+      return this.quantity > 0 && this.unitPrice >= 0 && this.productId > 0;
     } catch {
       return false;
     }
@@ -423,7 +414,9 @@ export class DocumentDetail implements DocumentDetailModel {
       // Opcionales
       priceWithoutSubsidy: this.priceWithoutSubsidy,
       notes: this.notes,
-      additionalProductInfo: this.additionalProductInfo ? [...this.additionalProductInfo] : undefined,
+      additionalProductInfo: this.additionalProductInfo
+        ? [...this.additionalProductInfo]
+        : undefined,
       inventoryAdjustments: this.inventoryAdjustments ? [...this.inventoryAdjustments] : undefined,
       status: this.status,
     });

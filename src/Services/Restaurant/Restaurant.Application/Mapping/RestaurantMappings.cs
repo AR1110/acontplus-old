@@ -1,4 +1,3 @@
-using Mapster;
 using MapsterMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurant.Application.Dtos;

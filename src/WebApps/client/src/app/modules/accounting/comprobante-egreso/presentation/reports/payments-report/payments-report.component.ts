@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 
 import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
 import { Subscription } from 'rxjs';
@@ -33,7 +33,7 @@ enum ReportTypeEnum {
   selector: 'app-payments-report',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,

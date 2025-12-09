@@ -11,7 +11,7 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -28,6 +28,7 @@ import Swal from 'sweetalert2';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { NgxColorsModule } from 'ngx-colors';
+import { DynamicCard } from '@acontplus/ng-components';
 import { ProductBarcodePostUseCase } from '@inventory/product/application/use-cases/product-barcode/product-barcode-post.use-case';
 import { ProductBarcodePutUseCase } from '@inventory/product/application/use-cases/product-barcode/product-barcode-put.use-case';
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
@@ -40,7 +41,7 @@ import {
   selector: 'app-product-barcode',
   imports: [
     FormsModule,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     MatFormFieldModule,
     MatIconModule,

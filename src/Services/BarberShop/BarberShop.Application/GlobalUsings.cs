@@ -1,11 +1,11 @@
 global using Acontplus.Core.Dtos.Requests;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Utilities.Mapping;
-global using BarberShop.Application.Seats.DTOs;
+global using BarberShop.Application.Seats.Dtos;
 global using BarberShop.Application.Seats.Interfaces;
-global using BarberShop.Application.Tickets.DTOs;
+global using BarberShop.Application.Tickets.Dtos;
 global using BarberShop.Application.Tickets.Interfaces;
-global using BarberShop.Application.WorkSessions.DTOs;
+global using BarberShop.Application.WorkSessions.Dtos;
 global using BarberShop.Application.WorkSessions.Interfaces;
 global using BarberShop.Domain.Entities;
 global using BarberShop.Domain.Repositories;

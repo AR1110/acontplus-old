@@ -14,8 +14,7 @@ import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
 import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatInput } from '@angular/material/input';
 
 @Component({
@@ -30,7 +29,7 @@ import { MatInput } from '@angular/material/input';
     MatAutocompleteModule,
     AsyncPipe,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatInput,
   ],
 })

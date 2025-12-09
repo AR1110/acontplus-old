@@ -8,7 +8,7 @@ public class AppTable : BaseEntity
 
     [Required] public int NumberTable { get; set; }
 
-    [Required] [MaxLength(100)] public required string Description { get; set; }
+    [Required][MaxLength(100)] public required string Description { get; set; }
 
     [Required] public int Capacity { get; set; }
 

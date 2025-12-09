@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -17,7 +17,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
     RouterLink,
     RouterOutlet,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatDividerModule,
     MatListModule,
     MatIconModule,

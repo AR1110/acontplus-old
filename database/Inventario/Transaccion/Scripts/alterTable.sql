@@ -180,6 +180,10 @@ WITH CTE_Saldos AS (
     FROM Inventario.Transaccion              ts WITH (NOLOCK)
     INNER JOIN Inventario.TransaccionDetalle td WITH (NOLOCK) ON td.idTransaccion     = ts.idTransaccion
     where td.estado = 1
+      AND td.idArticulo in
+      (
+        select idArticulo from Inventario.TransaccionDetalle where idTransaccion = 1648358 
+      )
 
 )
 update td set td.saldo = sa.nuevoSaldo

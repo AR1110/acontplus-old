@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Configuration.API.Data.Migrations
+namespace Configuration.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class LatestVersion : Migration

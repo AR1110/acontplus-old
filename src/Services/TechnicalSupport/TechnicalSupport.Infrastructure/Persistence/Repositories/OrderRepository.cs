@@ -14,7 +14,7 @@ public class OrderRepository : IOrderRepository
 
     public async Task<SpResponse> DeliveryAsync(OrderDeliveryDto deliveryDto, int id)
     {
-        var statuses = await _context.OrderStatuses.Where(x => x.Code == "E").ToListAsync();
+        var statuses = await _context.OrderStatuses.AsNoTracking().Where(x => x.Code == "E").ToListAsync();
         var orderFound = await _context.Orders.FindAsync(id);
         orderFound.OrderStatusId = statuses.FirstOrDefault().Id;
         orderFound.CreatedByUserId = deliveryDto.UserId;

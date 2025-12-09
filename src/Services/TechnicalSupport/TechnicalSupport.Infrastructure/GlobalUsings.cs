@@ -5,6 +5,6 @@ global using Acontplus.Persistence.SqlServer.Context;
 global using Acontplus.Utilities.Data;
 global using Microsoft.EntityFrameworkCore;
 global using System.Data;
-global using TechnicalSupport.Domain.DTOs;
+global using TechnicalSupport.Domain.Dtos;
 global using TechnicalSupport.Domain.Entities;
 global using TechnicalSupport.Domain.Repositories;

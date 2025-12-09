@@ -1,127 +1,119 @@
 <app-breadcrumb />
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <div class="row">
-      <div class="col-lg-4 col-xlg-3 col-md-5">
-        <div style="text-align: center; margin-top: 20px">
-          <img class="rounded-circle" src="/assets/images/users/1.jpg" width="150" />
-          <br />
-          <br />
-          <h4 class="card-title m-t-10">{{ user.nombreCompleto }}</h4>
-          <h6 class="card-subtitle">{{ user.correo }}</h6>
-        </div>
-
-        <mat-card>
-          <mat-card-content>
-            <small class="text-muted">Usuario</small>
-            <h6>{{ user.nombreUsuario }}</h6>
-
-            <small class="text-muted p-t-30 db">Nombre</small>
-            <h6>{{ user.fullName }}</h6>
-
-            <small class="text-muted p-t-30 db">N° de Identificación</small>
-            <h6>{{ user.nroIdentificacion }}</h6>
-
-            <small class="text-muted p-t-30 db">Email</small>
-            <h6>{{ user.correo }}</h6>
-          </mat-card-content>
-        </mat-card>
+<acp-dynamic-card>
+  <div class="row">
+    <div class="col-lg-4 col-xlg-3 col-md-5">
+      <div style="text-align: center; margin-top: 20px">
+        <img class="rounded-circle" src="/assets/images/users/1.jpg" width="150" />
+        <br />
+        <br />
+        <h4 class="card-title m-t-10">{{ user.nombreCompleto }}</h4>
+        <h6 class="card-subtitle">{{ user.correo }}</h6>
       </div>
 
-      <div class="col-lg-8 col-xlg-9 col-md-7">
-        <h4 class="card-title" style="margin-top: 20px">Administración</h4>
-        <h6 class="card-subtitle">Información básica de usuario.</h6>
+      <acp-dynamic-card>
+        <small class="text-muted">Usuario</small>
+        <h6>{{ user.nombreUsuario }}</h6>
 
-        <mat-tab-group>
-          <mat-tab label="Roles">
-            <mat-card appearance="outlined">
-              <mat-card-content>
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Rol</th>
-                        <th>Empresa</th>
-                        <th>Fecha registro</th>
-                        <th>Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @for (item of roles; track $index) {
-                        <tr>
-                          <td>{{ $index + 1 }}</td>
-                          <td>{{ item.name }}</td>
-                          <td>{{ item.companyName }}</td>
-                          <td>{{ item.fechaRegistro }}</td>
-                          <td>
-                            <span class="label label-success">
-                              {{ item.estado ? 'Activo' : 'Inactivo' }}
-                            </span>
-                          </td>
-                        </tr>
-                      }
-                    </tbody>
-                  </table>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </mat-tab>
-          <mat-tab label="Seguridad">
-            <mat-card appearance="outlined">
-              <mat-card-content>
-                <!-- Add grid -->
-                <div class="container">
-                  <div class="row justify-content-md-center">
-                    <div class="col-6 col-lg-6 col-md-6 col-sm-10">
-                      <form [formGroup]="passwordForm" autocomplete="off">
-                        <div class="form-floating mb-3">
-                          <input
-                            (change)="verifyPassword()"
-                            [type]="isShowPassword ? 'text' : 'password'"
-                            class="form-control"
-                            formControlName="password"
-                            id="floatingInput"
-                            placeholder="*******"
-                          />
-                          <label for="floatingInput">Contraseña</label>
-                        </div>
+        <small class="text-muted p-t-30 db">Nombre</small>
+        <h6>{{ user.fullName }}</h6>
 
-                        <div class="form-floating mb-3">
-                          <input
-                            (change)="verifyPassword()"
-                            [type]="isShowPassword ? 'text' : 'password'"
-                            class="form-control"
-                            formControlName="confirmPassword"
-                            id="floatingInputConfirmPass"
-                            placeholder="*******"
-                          />
+        <small class="text-muted p-t-30 db">N° de Identificación</small>
+        <h6>{{ user.nroIdentificacion }}</h6>
 
-                          <label for="floatingInputConfirmPass"> Confirmar contraseña </label>
-                        </div>
-
-                        <section class="example-section">
-                          <mat-checkbox (change)="showPassword()" class="example-margin">
-                            Mostrar contraseña
-                          </mat-checkbox>
-                        </section>
-
-                        <acp-button
-                          variant="success"
-                          icon="save"
-                          text="Actualizar Contraseña"
-                          (handleClick)="confirmUpdate()"
-                          [disabled]="!isVerified"
-                        />
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </mat-card-content>
-            </mat-card>
-          </mat-tab>
-        </mat-tab-group>
-      </div>
+        <small class="text-muted p-t-30 db">Email</small>
+        <h6>{{ user.correo }}</h6>
+      </acp-dynamic-card>
     </div>
-  </mat-card-content>
-</mat-card>
+
+    <div class="col-lg-8 col-xlg-9 col-md-7">
+      <h4 class="card-title" style="margin-top: 20px">Administración</h4>
+      <h6 class="card-subtitle">Información básica de usuario.</h6>
+
+      <mat-tab-group>
+        <mat-tab label="Roles">
+          <acp-dynamic-card>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Rol</th>
+                    <th>Empresa</th>
+                    <th>Fecha registro</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (item of roles; track $index) {
+                    <tr>
+                      <td>{{ $index + 1 }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.companyName }}</td>
+                      <td>{{ item.fechaRegistro }}</td>
+                      <td>
+                        <span class="label label-success">
+                          {{ item.estado ? 'Activo' : 'Inactivo' }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </acp-dynamic-card>
+        </mat-tab>
+        <mat-tab label="Seguridad">
+          <acp-dynamic-card>
+            <!-- Add grid -->
+            <div class="container">
+              <div class="row justify-content-md-center">
+                <div class="col-6 col-lg-6 col-md-6 col-sm-10">
+                  <form [formGroup]="passwordForm" autocomplete="off">
+                    <div class="form-floating mb-3">
+                      <input
+                        (change)="verifyPassword()"
+                        [type]="isShowPassword ? 'text' : 'password'"
+                        class="form-control"
+                        formControlName="password"
+                        id="floatingInput"
+                        placeholder="*******"
+                      />
+                      <label for="floatingInput">Contraseña</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                      <input
+                        (change)="verifyPassword()"
+                        [type]="isShowPassword ? 'text' : 'password'"
+                        class="form-control"
+                        formControlName="confirmPassword"
+                        id="floatingInputConfirmPass"
+                        placeholder="*******"
+                      />
+
+                      <label for="floatingInputConfirmPass"> Confirmar contraseña </label>
+                    </div>
+
+                    <section class="example-section">
+                      <mat-checkbox (change)="showPassword()" class="example-margin">
+                        Mostrar contraseña
+                      </mat-checkbox>
+                    </section>
+
+                    <acp-button
+                      variant="success"
+                      icon="save"
+                      text="Actualizar Contraseña"
+                      (handleClick)="confirmUpdate()"
+                      [disabled]="!isVerified"
+                    />
+                  </form>
+                </div>
+              </div>
+            </div>
+          </acp-dynamic-card>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+  </div>
+</acp-dynamic-card>

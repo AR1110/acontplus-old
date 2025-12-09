@@ -8,7 +8,7 @@
 
 <ng-template #containerTemplate>
   <div class="d-grid gap-2 mt-2">
-    <app-mat-dynamic-card [showHeader]="true" [title]="'Cliente/Conductor'">
+    <acp-dynamic-card [isHeaderVisible]="true" [cardTitle]="'Cliente/Conductor'">
       <div class="d-grid gap-2">
         <app-company-customer-search
           [isAdvancedMode]="true"
@@ -41,9 +41,9 @@
           </div>
         </div>
       </div>
-    </app-mat-dynamic-card>
+    </acp-dynamic-card>
 
-    <app-mat-dynamic-card [showHeader]="true" [title]="'Vehículo'">
+    <acp-dynamic-card [isHeaderVisible]="true" [cardTitle]="'Vehículo'">
       <div class="d-grid gap-2">
         <div
           class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
@@ -216,7 +216,7 @@
           </div>
         </div>
       </div>
-    </app-mat-dynamic-card>
+    </acp-dynamic-card>
   </div>
 </ng-template>
 

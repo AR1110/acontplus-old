@@ -4,22 +4,21 @@
   <div
     class="col-12 col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 offset-xl-3 offset-xxl-3 offset-lg-3 offset-md-3 offset-sm-3"
   >
-    <mat-card appearance="outlined">
-      <mat-card-header>
-        <mat-card-title>ATS</mat-card-title>
-        <mat-card-subtitle>Anexo Transaccional Simplificado</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="row mt-3 mb-3">
-          <div class="col">
-            <app-date-range-selection
-              (onChangeDateRange)="onDateRangeSelection($event)"
-              [from]="dataSearch.fromDate"
-              [to]="dataSearch.toDate"
-            />
-          </div>
+    <acp-dynamic-card
+      [cardTitle]="'ATS'"
+      [cardSubtitle]="'Anexo Transaccional Simplificado'"
+      [isHeaderVisible]="true"
+    >
+      <div class="row mt-3 mb-3">
+        <div class="col">
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+            [from]="dataSearch.fromDate"
+            [to]="dataSearch.toDate"
+          />
         </div>
-        <!-- <div class="form-group">
+      </div>
+      <!-- <div class="form-group">
             <label for="year">Año:</label>
             <select name="year" id="year" class="form-control" ng-model="yearSelected"
                     ng-options="year as year.year for year in years" required>
@@ -32,22 +31,21 @@
                     required>
             </select>
         </div> -->
-        <!--        <div class="form-group">-->
-        <!--          <div class="icheck-info">-->
-        <!--            <input [(ngModel)]="dataSearch.semiannual" id="semestral" name="declaracionSemestral" type="checkbox">-->
-        <!--            <label for="semestral">Declaración semestral</label>-->
-        <!--          </div>-->
-        <!--        </div>-->
+      <!--        <div class="form-group">-->
+      <!--          <div class="icheck-info">-->
+      <!--            <input [(ngModel)]="dataSearch.semiannual" id="semestral" name="declaracionSemestral" type="checkbox">-->
+      <!--            <label for="semestral">Declaración semestral</label>-->
+      <!--          </div>-->
+      <!--        </div>-->
 
-        <acp-button
-          variant="success"
-          icon="download"
-          text="Descargar"
-          title="Descargar Ats"
-          ariaLabel="Descargar Ats Button"
-          (handleClick)="getAts()"
-        />
-      </mat-card-content>
-    </mat-card>
+      <acp-button
+        variant="success"
+        icon="download"
+        text="Descargar"
+        title="Descargar Ats"
+        ariaLabel="Descargar Ats Button"
+        (handleClick)="getAts()"
+      />
+    </acp-dynamic-card>
   </div>
 </div>

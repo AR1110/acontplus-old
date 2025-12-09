@@ -13,8 +13,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { formatDateToString } from '@core/utils/date.util';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,7 +31,7 @@ type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>;
     UserSearchComponent,
     BreadcrumbComponent,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatCheckbox,
     MatDivider,
     MatFormFieldModule,

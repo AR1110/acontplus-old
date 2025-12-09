@@ -3,13 +3,14 @@ import { AddEditElectronicSignatureComponent } from '@modules/config/ui/electron
 import { ListElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/list-electronic-signature.use-case';
 import { DownloadSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/download-signature.use-case';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { ElectronicSignatureList } from '@modules/config/domain/models/electronic-signature.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatButtonModule } from '@angular/material/button';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -21,7 +22,7 @@ import Swal from 'sweetalert2';
   selector: 'app-electronic-signature',
   imports: [
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatButtonModule,
     MatIconModule,
     MatDynamicTableComponent,

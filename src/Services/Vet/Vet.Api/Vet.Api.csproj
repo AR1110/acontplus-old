@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <SatelliteResourceLanguages>en-US;es-ES</SatelliteResourceLanguages>
+    <UserSecretsId>860ac8d1-1fac-45a3-9dfb-5aef72001362</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..\..</DockerfileContext>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Acontplus.Infrastructure" />
+    <PackageReference Include="Acontplus.Logging" />
+    <PackageReference Include="Acontplus.Services" />
+
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build;</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog.AspNetCore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vet.Application\Vet.Application.csproj" />
+    <ProjectReference Include="..\Vet.Infrastructure\Vet.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

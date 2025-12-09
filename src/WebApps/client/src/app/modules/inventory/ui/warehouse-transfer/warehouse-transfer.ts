@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import {
   WarehouseTransferGetByIdUseCase,
@@ -41,7 +41,7 @@ import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
   imports: [
     BreadcrumbComponent,
     DateRangeSelectionComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatFormFieldModule,
     MatIcon,
     MatIconButton,

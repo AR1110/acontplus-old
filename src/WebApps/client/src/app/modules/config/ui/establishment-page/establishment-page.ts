@@ -16,8 +16,7 @@ import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
 import { MatExpansionModule } from '@angular/material/expansion';
 
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { SendMaxEstablishmentsUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { firstValueFrom } from 'rxjs';
@@ -30,14 +29,11 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
     BreadcrumbComponent,
     PrimaryStatusPipe,
     FormsModule,
-    MatCard,
-    MatCardContent,
     MatExpansionModule,
-    MatCardHeader,
     MatRadioGroup,
     MatRadioButton,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     DataGrid,
   ],
   templateUrl: './establishment-page.html',

@@ -95,12 +95,7 @@ module.exports = defineConfig([
     rules: {
       // Angular template recommended rules
       '@angular-eslint/template/no-negated-async': 'error',
-      '@angular-eslint/template/no-call-expression': [
-        'error',
-        {
-          allow: ['signal-calls'],
-        },
-      ],
+      '@angular-eslint/template/no-call-expression': ['off'],
       '@angular-eslint/template/use-track-by-function': 'error',
       '@angular-eslint/template/no-any': 'error',
       '@angular-eslint/template/i18n': 'off',

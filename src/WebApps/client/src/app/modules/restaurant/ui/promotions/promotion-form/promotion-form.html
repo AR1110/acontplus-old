@@ -1,37 +1,31 @@
-<app-mat-custom-dialog
-  icon="local_offer"
-  [title]="modalTitle()"
-(close)="dgClose()">
+<app-mat-custom-dialog icon="local_offer" [title]="modalTitle()" (close)="dgClose()">
   <div ngProjectAs="content">
-
-
     <div class="form-container">
       <div class="form-header">
-        <p class="form-subtitle">
-          Configure los detalles de la promoción, horarios y productos.
-        </p>
+        <p class="form-subtitle">Configure los detalles de la promoción, horarios y productos.</p>
       </div>
 
       <form id="promotionForm" [formGroup]="promotionForm" (ngSubmit)="onSubmit()">
-
         <!-- SECCIÓN 1: Información Básica -->
         <mat-expansion-panel
           [expanded]="openSection() === 'general'"
           (opened)="openSection.set('general')"
-          class="section-panel">
+          class="section-panel"
+        >
           <mat-expansion-panel-header>
             <mat-panel-title class="section-title">
               <mat-icon class="section-icon">attach_money</mat-icon>
               <span>1. Información Básica del Descuento</span>
-              @if (promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched ||
-              promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched) {
+              @if (
+                (promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched) ||
+                (promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched)
+              ) {
                 <mat-chip class="error-chip">¡Revisar!</mat-chip>
               }
             </mat-panel-title>
           </mat-expansion-panel-header>
 
           <div class="section-content">
-
             <div
               class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
             >
@@ -43,7 +37,10 @@
                       <mat-option [value]="item.id">{{ item.value }}</mat-option>
                     }
                   </mat-select>
-                  @if (promotionForm.get('establishmentId')?.invalid && promotionForm.get('establishmentId')?.touched) {
+                  @if (
+                    promotionForm.get('establishmentId')?.invalid &&
+                    promotionForm.get('establishmentId')?.touched
+                  ) {
                     <mat-error>{{ getErrorMessage('establishmentId') }}</mat-error>
                   }
                 </mat-form-field>
@@ -52,7 +49,11 @@
                 <mat-form-field class="w-100">
                   <mat-label>Nombre de la Promoción</mat-label>
                   <mat-icon matPrefix>local_offer</mat-icon>
-                  <input matInput formControlName="name" placeholder="Ej: Super Descuento Black Friday">
+                  <input
+                    matInput
+                    formControlName="name"
+                    placeholder="Ej: Super Descuento Black Friday"
+                  />
                   @if (promotionForm.get('name')?.invalid && promotionForm.get('name')?.touched) {
                     <mat-error>{{ getErrorMessage('name') }}</mat-error>
                   }
@@ -67,23 +68,23 @@
                 <mat-form-field class="w-100">
                   <mat-label>Vigencia (Rango de Fechas)</mat-label>
                   <mat-date-range-input [rangePicker]="picker">
-                    <input matStartDate formControlName="startDate" placeholder="Start date">
-                    <input matEndDate formControlName="endDate" placeholder="End date">
+                    <input matStartDate formControlName="startDate" placeholder="Start date" />
+                    <input matEndDate formControlName="endDate" placeholder="End date" />
                   </mat-date-range-input>
                   <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                  <mat-datepicker-toggle matIconSuffix [for]="picker"/>
-                  <mat-date-range-picker #picker/>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker" />
+                  <mat-date-range-picker #picker />
 
-                  @if (promotionForm.controls["startDate"]?.hasError('matStartDateInvalid')) {
+                  @if (promotionForm.controls['startDate']?.hasError('matStartDateInvalid')) {
                     <mat-error>Invalid start date</mat-error>
                   }
-                  @if (promotionForm.controls["endDate"]?.hasError('matEndDateInvalid')) {
+                  @if (promotionForm.controls['endDate']?.hasError('matEndDateInvalid')) {
                     <mat-error>Invalid end date</mat-error>
                   }
                 </mat-form-field>
               </div>
               <div class="col">
-                <mat-form-field   class="w-100">
+                <mat-form-field class="w-100">
                   <mat-label>Tipo de Descuento</mat-label>
                   <mat-select formControlName="type">
                     @for (type of discountTypes(); track $index) {
@@ -96,14 +97,17 @@
                 <mat-form-field class="w-100">
                   <mat-label>Valor</mat-label>
                   <mat-icon matPrefix>
-                    {{ promotionForm.get('type')?.value === 'percentage' ? 'percent' : 'attach_money' }}
+                    {{
+                      promotionForm.get('type')?.value === 'percentage' ? 'percent' : 'attach_money'
+                    }}
                   </mat-icon>
                   <input
                     matInput
                     type="number"
                     formControlName="value"
                     [min]="0.0"
-                    [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.0">
+                    [step]="promotionForm.get('type')?.value === 'percentage' ? 1 : 0.0"
+                  />
                   @if (promotionForm.get('value')?.invalid && promotionForm.get('value')?.touched) {
                     <mat-error>{{ getErrorMessage('value') }}</mat-error>
                   }
@@ -113,9 +117,12 @@
 
             <mat-form-field class="w-100 mt-3">
               <mat-label>Descripción</mat-label>
-              <textarea matInput placeholder="Ej: 1 gaseosa" formControlName="description"></textarea>
+              <textarea
+                matInput
+                placeholder="Ej: 1 gaseosa"
+                formControlName="description"
+              ></textarea>
             </mat-form-field>
-
           </div>
         </mat-expansion-panel>
 
@@ -123,7 +130,8 @@
         <mat-expansion-panel
           [expanded]="openSection() === 'schedule'"
           (opened)="openSection.set('schedule')"
-          class="section-panel">
+          class="section-panel"
+        >
           <mat-expansion-panel-header>
             <mat-panel-title class="section-title">
               <mat-icon class="section-icon">schedule</mat-icon>
@@ -133,18 +141,20 @@
 
           <div class="section-content">
             <div formArrayName="schedule" class="schedule-list">
-              @for (dayControl of scheduleArray.controls; track $index;let i = $index) {
-
+              @for (dayControl of scheduleArray.controls; track $index; let i = $index) {
                 <div [formGroupName]="i">
                   <mat-card class="day-card" [class.active]="dayControl.get('isActive')?.value">
                     <mat-card-content class="day-content">
-
                       <div class="day-header">
                         <mat-slide-toggle formControlName="isActive" color="primary">
                           <span class="day-name">{{ dayControl.get('day')?.value }}</span>
                         </mat-slide-toggle>
 
-                        <mat-chip [class]="dayControl.get('isActive')?.value ? 'active-chip' : 'inactive-chip'">
+                        <mat-chip
+                          [class]="
+                            dayControl.get('isActive')?.value ? 'active-chip' : 'inactive-chip'
+                          "
+                        >
                           {{ dayControl.get('isActive')?.value ? 'Activo' : 'Inactivo' }}
                         </mat-chip>
                       </div>
@@ -153,28 +163,28 @@
                         <div class="time-inputs">
                           <mat-form-field>
                             <mat-label>Hora Inicio</mat-label>
-                            <input matInput [matTimepicker]="startTime"  formControlName="startTime">
-                            <mat-timepicker-toggle matIconSuffix [for]="startTime"/>
-                            <mat-timepicker interval="30min" #startTime/>
+                            <input
+                              matInput
+                              [matTimepicker]="startTime"
+                              formControlName="startTime"
+                            />
+                            <mat-timepicker-toggle matIconSuffix [for]="startTime" />
+                            <mat-timepicker interval="30min" #startTime />
                           </mat-form-field>
 
                           <mat-form-field>
                             <mat-label>Hora Fin</mat-label>
-                            <input matInput [matTimepicker]="endTime"  formControlName="endTime">
-                            <mat-timepicker-toggle matIconSuffix [for]="endTime"/>
-                            <mat-timepicker #endTime/>
+                            <input matInput [matTimepicker]="endTime" formControlName="endTime" />
+                            <mat-timepicker-toggle matIconSuffix [for]="endTime" />
+                            <mat-timepicker #endTime />
                           </mat-form-field>
                         </div>
                       }
-
                     </mat-card-content>
                   </mat-card>
                 </div>
-
               }
             </div>
-
-
           </div>
         </mat-expansion-panel>
 
@@ -182,7 +192,8 @@
         <mat-expansion-panel
           [expanded]="openSection() === 'products'"
           (opened)="openSection.set('products')"
-          class="section-panel">
+          class="section-panel"
+        >
           <mat-expansion-panel-header>
             <mat-panel-title class="section-title">
               <mat-icon class="section-icon">inventory_2</mat-icon>
@@ -198,10 +209,9 @@
               [label]="'Buscar Producto o Menus'"
               (selectedItem)="onSelectItem($event)"
               [categoryAbbraviation]="getCategoryAbbreviationToSearch()"
-
             />
 
-            <mat-divider class="divider"/>
+            <mat-divider class="divider" />
 
             <!-- Lista de Productos Agregados -->
             <div class="products-list">
@@ -213,21 +223,19 @@
                   <p>No hay productos configurados para esta promoción.</p>
                 </mat-card>
               } @else {
-                <app-tabulator
-                  [columnNames]="columns"
-                  [tableData]="selectedProducts()"
-                  [theme]="'semantic-ui'"
+                <acp-tabulator-table
+                  [columns]="columns"
+                  [data]="selectedProducts()"
                   [options]="{
-                height: 'auto',
-                layout:'fitDataFill',
-              rowHeader: {
-                  formatter: 'rownum',
-                  hozAlign: 'center',
-                },
-              }"
+                    height: 'auto',
+                    layout: 'fitDataFill',
+                    rowHeader: {
+                      formatter: 'rownum',
+                      hozAlign: 'center',
+                    },
+                  }"
                   (cellEdited)="cellEdited($event)"
                 />
-
               }
             </div>
           </div>
@@ -236,41 +244,35 @@
         <!-- Estado Global -->
         <div class="global-status">
           <mat-slide-toggle formControlName="isActive" color="primary" class="status-toggle">
-        <span class="status-label">
-          Estado Global:
-          <strong [class]="promotionForm.get('isActive')?.value ? 'active-text' : 'inactive-text'">
-            {{ promotionForm.get('isActive')?.value ? 'Activa' : 'Inactiva' }}
-          </strong>
-        </span>
+            <span class="status-label">
+              Estado Global:
+              <strong
+                [class]="promotionForm.get('isActive')?.value ? 'active-text' : 'inactive-text'"
+              >
+                {{ promotionForm.get('isActive')?.value ? 'Activa' : 'Inactiva' }}
+              </strong>
+            </span>
           </mat-slide-toggle>
         </div>
 
         <!-- Botón de Envío -->
-        <div class="form-footer">
-
-
-        </div>
+        <div class="form-footer"></div>
       </form>
     </div>
-
   </div>
 
   <div ngProjectAs="actions">
-    @if (isSubmitting()){
-      <acp-button  icon="save"
-                  matStyle="filled"
-                  text="Guardando..."
-                  variant="success"
-
-      />
+    @if (isSubmitting()) {
+      <acp-button icon="save" matStyle="filled" text="Guardando..." variant="success" />
     } @else {
-
-    <acp-button form="promotionForm" type="submit" icon="save"
-                matStyle="filled"
-                [text]="btnTitle()"
-                variant="success"
-
-    />
+      <acp-button
+        form="promotionForm"
+        type="submit"
+        icon="save"
+        matStyle="filled"
+        [text]="btnTitle()"
+        variant="success"
+      />
     }
   </div>
 </app-mat-custom-dialog>

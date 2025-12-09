@@ -12,7 +12,7 @@
 
 <div class="container-seat">
   @for (item of dataSource(); track $index) {
-    <app-mat-dynamic-card class="seat-card">
+    <acp-dynamic-card class="seat-card">
       <div class="seat-card__header hstack justify-content-between">
         <acp-button
           [type]="'button'"
@@ -56,6 +56,6 @@
       <div class="seat-card__info">
         <h3 class="seat-card__title">{{ item.name }}</h3>
       </div>
-    </app-mat-dynamic-card>
+    </acp-dynamic-card>
   }
 </div>

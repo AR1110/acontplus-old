@@ -5,15 +5,12 @@ export interface PromotionListDto {
   isActive: boolean;
 }
 
-
-
 export interface DailySchedule {
   day: string;
   isActive: boolean;
   startTime: string;
   endTime: string;
 }
-
 
 export interface Promotion {
   id?: string;
@@ -34,11 +31,15 @@ export interface DiscountType {
 
 export const DISCOUNT_TYPES: DiscountType[] = [
   { value: 'percentage', label: 'Porcentaje (%)' },
-  { value: 'fixed', label: 'Monto Fijo' }
+  { value: 'fixed', label: 'Monto Fijo' },
 ];
 
 export const DAYS_OF_WEEK: string[] = [
-  'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'
+  'Lunes',
+  'Martes',
+  'Miércoles',
+  'Jueves',
+  'Viernes',
+  'Sábado',
+  'Domingo',
 ];
-
-

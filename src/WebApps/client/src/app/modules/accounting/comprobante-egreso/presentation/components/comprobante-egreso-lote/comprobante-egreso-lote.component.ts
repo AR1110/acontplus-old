@@ -1,6 +1,6 @@
 import { Component, inject, model, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -33,7 +33,7 @@ import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/applica
     FormsModule,
     MatIconModule,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,

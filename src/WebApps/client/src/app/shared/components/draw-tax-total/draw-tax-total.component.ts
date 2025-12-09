@@ -1,9 +1,9 @@
 import { Component, signal, effect, input, ChangeDetectionStrategy } from '@angular/core';
-import { MatDynamicCardComponent } from '../mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-draw-tax-total',
-  imports: [MatDynamicCardComponent],
+  imports: [DynamicCard],
   templateUrl: './draw-tax-total.component.html',
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,

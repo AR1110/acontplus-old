@@ -12,10 +12,10 @@ GO
 -- Restaurant.Order_Document_Insert
 -- =============================================
 ALTER   PROCEDURE [Restaurant].[Order_Document_Insert]
-@userRoleId INT
-,@orderId   INT
-,@json      NVARCHAR(MAX)
-,@payload   NVARCHAR(MAX) OUTPUT
+ @userRoleId INT
+,@orderId    INT
+,@json       NVARCHAR(MAX)
+,@payload    NVARCHAR(MAX) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;

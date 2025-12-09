@@ -22,8 +22,10 @@ public class OrderDetail : BaseEntity
     public int MeasureId { get; set; }
     public bool IsPaid { get; set; }
     [Column(TypeName = "decimal(18,5)")] public decimal? RemainingQuantity { get; set; }
+    public Guid? UniqueId { get; set; }
     public OrderDetailStatus Status { get; set; } = OrderDetailStatus.Pending;
     public ICollection<OrderDetailModifier> Modifiers { get; set; } = [];
+    public ICollection<OrderDetailCompositionModifier> ModifiersComposition { get; set; } = [];
 }
 
 public enum OrderDetailStatus

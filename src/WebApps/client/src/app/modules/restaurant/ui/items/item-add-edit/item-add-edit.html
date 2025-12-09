@@ -1,7 +1,7 @@
 <app-mat-custom-dialog (close)="onModalClose()" title="Editar Datos del Producto">
   <div ngProjectAs="content">
-    <form id="itemForm" (ngSubmit)="onSave()"  [formGroup]="itemForm">
-      <div class="vstack">
+    <form id="itemForm" (ngSubmit)="onSave()" [formGroup]="itemForm">
+      <div class="vstack gap-1">
         <mat-form-field>
           <mat-label>Resumen</mat-label>
           <input type="text" matInput placeholder="..." required="" formControlName="summary" />
@@ -14,21 +14,21 @@
             >
               <mat-icon>wrap_text</mat-icon>
             </button>
-
           </ng-container>
         </mat-form-field>
         <app-item-search
           [label]="itemSearchLabel"
           (selectedItem)="onSelectItem($event)"
           [categoryAbbraviation]="getCategoryAbbreviationToSearch()"
-
         />
 
-        <app-tabulator
-          [columnNames]="columns"
-          [tableData]="itemCompositions()"
-          [theme]="'semantic-ui'"
+        <acp-tabulator-table
+          [dataTree]="true"
+          [dataTreeStartExpanded]="true"
+          [columns]="columns"
+          [data]="itemCompositions()"
           [options]="{
+            dataTreeChildField: 'children',
             height: 'auto',
             rowHeader: {
               formatter: 'rownum',
@@ -40,24 +40,23 @@
         />
 
         @if (isProduct()) {
-        <div
-          class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2"
-        >
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Receta</mat-label>
-              <textarea matInput placeholder="..." formControlName="recipe"></textarea>
-            </mat-form-field>
+          <div
+            class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-2 row-cols-xl-2 row-cols-xxl-2 mt-2"
+          >
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Receta</mat-label>
+                <textarea matInput placeholder="..." formControlName="recipe"></textarea>
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Instrucciones</mat-label>
+                <textarea matInput placeholder="..." formControlName="instructions"></textarea>
+              </mat-form-field>
+            </div>
           </div>
-          <div class="col">
-            <mat-form-field class="w-100">
-              <mat-label>Instrucciones</mat-label>
-              <textarea matInput placeholder="..." formControlName="instructions"></textarea>
-            </mat-form-field>
-          </div>
-        </div>
         }
-
       </div>
     </form>
   </div>
@@ -73,4 +72,3 @@
     />
   </div>
 </app-mat-custom-dialog>
-

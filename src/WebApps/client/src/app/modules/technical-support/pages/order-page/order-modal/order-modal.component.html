@@ -104,7 +104,7 @@
       </div>
     }
     @if (orderDetails().length > 0) {
-      <app-tabulator [columnNames]="columnNames" [tableData]="orderDetails()" />
+      <acp-tabulator-table [columns]="columnNames" [data]="orderDetails()" />
     }
 
     <div class="row">

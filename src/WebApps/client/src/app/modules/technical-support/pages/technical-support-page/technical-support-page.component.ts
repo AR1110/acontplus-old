@@ -2,7 +2,7 @@ import { Component, computed, signal } from '@angular/core';
 import { DashboardComponent } from '@modules/technical-support/components/dashboard/dashboard.component';
 import { OrderListComponent } from '../order-page/order-list/order-list.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatTabsModule } from '@angular/material/tabs';
 
 @Component({
@@ -11,7 +11,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     BreadcrumbComponent,
     DashboardComponent,
     OrderListComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatTabsModule,
   ],
   templateUrl: './technical-support-page.component.html',

@@ -15,8 +15,8 @@ import {
 import { UpdateCompanyCustomerUseCase } from '@company-customer/application/update-company-customer.use-case';
 import { CreateCompanyCustomerUseCase } from '@company-customer/application/create-company-customer.use-case';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+
+import { InputChip } from '@acontplus/ng-components';
 import { CompanyCustomerUseCase } from '@company-customer/application/company-customer.use-case';
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { SriCustomerUseCase } from '@customer/application/usecases/sri-customer.use-case';
@@ -34,6 +34,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatIcon } from '@angular/material/icon';
+import { DynamicCard } from '@acontplus/ng-components';
 import { forkJoin, Observable } from 'rxjs';
 
 @Component({
@@ -47,8 +48,8 @@ import { forkJoin, Observable } from 'rxjs';
     MatSelectModule,
     MatSlideToggleModule,
     MatCustomDialogComponent,
-    MatInputChipComponent,
-    MatDynamicCardComponent,
+    InputChip,
+    DynamicCard,
     ToUpperCaseDirective,
     MatCheckbox,
     MatIcon,

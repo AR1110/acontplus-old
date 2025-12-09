@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { PageEvent } from '@angular/material/paginator';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ItemListUseCase } from '@restaurant/application/use-cases/item.use-case';
 import { FormsModule } from '@angular/forms';
-import { Pagination } from '@acontplus/ng-components';
+import {DataGrid, DataGridColumn, Pagination} from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { Button } from '@acontplus/ng-components';
@@ -15,10 +13,12 @@ import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
-import {MatInput} from "@angular/material/input";
-import {ValidatorUtils} from "@core/utils/utils";
-import {MatFormField, MatLabel} from "@angular/material/form-field";
-import {LookupService} from "@restaurant/application/services/lookup-service";
+import { MatInput } from '@angular/material/input';
+import { ValidatorUtils } from '@core/utils/utils';
+import { MatFormField, MatLabel } from '@angular/material/form-field';
+import { LookupService } from '@restaurant/application/services/lookup-service';
+import {MatTooltip} from "@angular/material/tooltip";
+import {ItemVariantAddEdit} from "@restaurant/ui/items/item-variant-add-edidt/item-variant-add-edit";
 
 @Component({
   selector: 'app-items',
@@ -33,18 +33,19 @@ import {LookupService} from "@restaurant/application/services/lookup-service";
     MatFormField,
     MatLabel,
     MatInput,
+    MatTooltip,
   ],
   templateUrl: './items.html',
   styleUrl: './items.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Items implements OnInit {
-  private lookupSvc = inject(LookupService)
+  private lookupSvc = inject(LookupService);
   private _listUseCase = inject(ItemListUseCase);
   private _dgSvc = inject(DialogService);
 
   columns: DataGridColumn[] = [
-    { header: 'Op.', field: 'op', pinned: 'left', },
+    { header: 'Op.', field: 'op', pinned: 'left' },
     { header: 'Nro.', field: 'index' },
     { header: 'Categoría', field: 'category' },
     { header: 'Imagen', field: 'imageUrl', type: 'image' },
@@ -72,8 +73,7 @@ export class Items implements OnInit {
   isLoading = signal(false);
   pagination = signal(new Pagination());
 
-
-  searchTerm = ''
+  searchTerm = '';
 
   ngOnInit() {
     // this.lookupSvc.lookupListUseCase.execute({
@@ -89,11 +89,10 @@ export class Items implements OnInit {
   }
 
   getList() {
-
     const params = new PaginationParams({
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-        searchTerm: ValidatorUtils.isValidField(this.searchTerm) ?? undefined ,
+      searchTerm: ValidatorUtils.isValidField(this.searchTerm) ?? undefined,
       filters: {
         categoryAbbreviations:
           this.categoryAbbreviationsSelected.length > 0
@@ -110,15 +109,14 @@ export class Items implements OnInit {
         next: (response) => {
           this.list.set(response.items);
           this.pagination.update(
-            (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount)
+            (res) => new Pagination(res.pageIndex, res.pageSize, response.totalCount),
           );
         },
         error: (err) => {
           this.list.set([]);
           console.error('Error al cargar la lista:', err);
-        }
+        },
       });
-
   }
 
   onEdit(rowData: any) {
@@ -129,7 +127,22 @@ export class Items implements OnInit {
         id: rowData.id,
         acronymCategory: rowData.acronymCategory,
       },
-    });
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
+  }
+
+
+  addEditVariant(rowData:any){
+    this._dgSvc.open(ItemVariantAddEdit, {
+      size: 'xl',
+      data: {
+        id: rowData.id,
+        acronymCategory: rowData.acronymCategory,
+      },
+    }).subscribe(result=>{
+      if(result && typeof result === 'object') this.getList()
+    })
   }
 
   getNextPage(e: PageEvent) {

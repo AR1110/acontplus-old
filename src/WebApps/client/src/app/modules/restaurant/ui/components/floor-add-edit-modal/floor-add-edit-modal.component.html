@@ -43,11 +43,10 @@
     <div class="my-2">
       <acp-button icon="plus" variant="info" text="Añadir sala" (handleClick)="addRoom()" />
     </div>
-    <app-tabulator
-      [theme]="'semantic-ui'"
-      [columnNames]="roomColumns"
+    <acp-tabulator-table
+      [columns]="roomColumns"
       [options]="{ reactiveData: true }"
-      [tableData]="rooms"
+      [data]="rooms"
     />
   </form>
 </ng-template>

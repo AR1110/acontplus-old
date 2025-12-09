@@ -1,0 +1,19 @@
+<div class="overlay-box text-center">
+
+  <div class="vstack gap-2 justify-content-center align-content-center">
+    <app-item-search
+      [label]="itemSearchLabel()"
+      (selectedItem)="onSelectItem($event)"
+      [categoryAbbraviation]="categoryAbbraviation()"
+    />
+  <acp-button
+
+    variant="dark"
+    text="Cerrar"
+    (handleClick)="closeOverlay()"
+    matStyle="filled"
+
+  />
+  </div>
+
+</div>

@@ -1,0 +1,14 @@
+<Project>
+  <ItemGroup>
+    <!-- Prevent http-client environment files from being published -->
+    <Content Update="http-client.env.json" CopyToPublishDirectory="Never" />
+    <None Update="http-client.env.json" CopyToPublishDirectory="Never" />
+
+    <Content Update="http-client.private.env.json" CopyToPublishDirectory="Never" />
+    <None Update="http-client.private.env.json" CopyToPublishDirectory="Never" />
+
+    <!-- Prevent .http request files from being published -->
+    <Content Update="**/*.http" CopyToPublishDirectory="Never" />
+    <None Update="**/*.http" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+</Project>

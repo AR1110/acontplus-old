@@ -1,337 +1,249 @@
 <app-breadcrumb />
 
-<mat-card appearance="outlined">
-  <mat-card-content>
-    <mat-tab-group
-      mat-align-tabs="center"
-      [selectedIndex]="selected.value"
-      (selectedIndexChange)="onNavChange($event)"
-    >
-      <mat-tab label="Consumo diario">
-        <ng-template matTabContent>
-          <div class="d-flex flex-column gap-2 p-1">
-            <div class="d-flex justify-content-center gap-4">
-              <mat-checkbox [(ngModel)]="dataSearch.checkboxArticuloFiltro">
-                Articulo
-              </mat-checkbox>
-              <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomer">
-                Cliente
-              </mat-checkbox>
+<acp-dynamic-card>
+  <mat-tab-group
+    mat-align-tabs="center"
+    [selectedIndex]="selected.value"
+    (selectedIndexChange)="onNavChange($event)"
+  >
+    <mat-tab label="Consumo diario">
+      <ng-template matTabContent>
+        <div class="d-flex flex-column gap-2 p-1">
+          <div class="d-flex justify-content-center gap-4">
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxArticuloFiltro"> Articulo </mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomer"> Cliente </mat-checkbox>
 
-              <!--            @if (dataSearch.codTransaccion==='S'){-->
-              <!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>-->
-              <!--            }-->
-              <!--            @if(dataSearch.codTransaccion==='E'){-->
-              <!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxSupplier">Proveedor</mat-checkbox>-->
-              <!--            }-->
-              <mat-checkbox [(ngModel)]="dataSearch.checkboxUsuarioFiltro"> Usuario </mat-checkbox>
-              <mat-checkbox [(ngModel)]="dataSearch.checkboxSubCategoryFilter">
-                Subfamilia
-              </mat-checkbox>
+            <!--            @if (dataSearch.codTransaccion==='S'){-->
+            <!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>-->
+            <!--            }-->
+            <!--            @if(dataSearch.codTransaccion==='E'){-->
+            <!--            <mat-checkbox  [(ngModel)]="dataSearch.checkboxSupplier">Proveedor</mat-checkbox>-->
+            <!--            }-->
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxUsuarioFiltro"> Usuario </mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxSubCategoryFilter">
+              Subfamilia
+            </mat-checkbox>
 
-              <mat-checkbox [(ngModel)]="dataSearch.timePicker"> Hora </mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.timePicker"> Hora </mat-checkbox>
 
-              <mat-checkbox [(ngModel)]="dataSearch.checkboxAgruparArticulo">
-                Agrupar Artículos
-              </mat-checkbox>
-            </div>
-            <mat-divider />
-
-            <div
-              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Establecimiento</mat-label>
-                  <mat-select
-                    (selectionChange)="onChangeEstab()"
-                    [(ngModel)]="dataSearch.idEstablecimiento"
-                  >
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of estabs; track $index) {
-                      <mat-option [value]="item.idEstablecimiento">
-                        {{ item.nombreComercial }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Bodega</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idBodega">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of bodegas; track $index) {
-                      <mat-option [value]="item.idBodega">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col">
-                <app-sub-category-group
-                  [isInputMat]="true"
-                  [subCategoryGroups]="subCategories"
-                  (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()"
-                />
-              </div>
-            </div>
-
-            <div
-              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="col">
-                <app-date-range-selection
-                  [showInputMaterial]="true"
-                  (onChangeDateRange)="onDateRangeSelection($event)"
-                  [options]="{
-                    timePicker: dataSearch.timePicker,
-                    format: dataSearch.timePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD',
-                  }"
-                />
-              </div>
-              <div class="col">
-                <app-product-search
-                  [isInputMat]="true"
-                  (onProductSelected)="onProductSelected($event)"
-                  (emptyInput)="onEmtyDataProduct($event)"
-                />
-              </div>
-              <div class="col">
-                <app-user-search
-                  (userSelected)="onUserSelected($event)"
-                  (clearSearch)="onEmptyInputUserSearch()"
-                />
-              </div>
-            </div>
-
-            <div
-              class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Tipo Documneto</mat-label>
-                  <mat-select [formControl]="tiposDocSelected" multiple>
-                    @for (item of tiposDoc(); track $index) {
-                      <mat-option [value]="item.idTipoDocumento">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-              <div class="col">
-                <app-company-customer-search
-                  (customerSelected)="onCustomerSelected($event)"
-                  (clearSearch)="clearSearchCustomer()"
-                  [isSimpleMode]="true"
-                />
-              </div>
-
-              <div class="col">
-                <mat-checkbox [(ngModel)]="dataSearch.checkboxPrecioCostoFiltro">
-                  Mostrar precio de costo
-                </mat-checkbox>
-              </div>
-            </div>
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxAgruparArticulo">
+              Agrupar Artículos
+            </mat-checkbox>
           </div>
-        </ng-template>
-      </mat-tab>
+          <mat-divider />
 
-      <!-- Report Stock -->
-      <mat-tab label="Stock">
-        <ng-template matTabContent>
-          <div class="d-grid gap-2 p-1">
-            <div class="row gx-1">
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <mat-checkbox
-                  [(ngModel)]="dataSearch.chkProveedor"
-                  (change)="onChangeCheckProveedor()"
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Establecimiento</mat-label>
+                <mat-select
+                  (selectionChange)="onChangeEstab()"
+                  [(ngModel)]="dataSearch.idEstablecimiento"
                 >
-                  Proveedor
-                </mat-checkbox>
-              </div>
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <mat-checkbox [(ngModel)]="dataSearch.checkboxSubCategoryFilter">
-                  Subfamilia
-                </mat-checkbox>
-              </div>
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <mat-checkbox [(ngModel)]="dataSearch.checkboxObtenerRentabilidad">
-                  Obtener Rentabilidad
-                </mat-checkbox>
-              </div>
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of estabs; track $index) {
+                    <mat-option [value]="item.idEstablecimiento">
+                      {{ item.nombreComercial }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
-            <mat-divider />
-
-            <div class="row gx-1">
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Establecimiento</mat-label>
-                  <mat-select
-                    [(ngModel)]="dataSearch.idEstablecimiento"
-                    (selectionChange)="onChangeEstab()"
-                  >
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of estabs; track $index) {
-                      <mat-option [value]="item.idEstablecimiento">
-                        {{ item.nombreComercial }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                <app-supplier-search
-                  [isSimpleMode]="true"
-                  (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierclearSearch($event)"
-                />
-              </div>
-
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                <app-sub-category-group
-                  [isInputMat]="true"
-                  [subCategoryGroups]="subCategories"
-                  (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()"
-                />
-              </div>
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Bodega</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idBodega">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of bodegas; track $index) {
+                    <mat-option [value]="item.idBodega">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
-
-            <div class="row gx-1">
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Bodega</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idBodega">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of bodegas; track $index) {
-                      <mat-option [value]="item.idBodega">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Marcas</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idMarca">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of marcas; track $index) {
-                      <mat-option [value]="item.idMarca">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Stock</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.stockStatusCode">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of stockStatus; track $index) {
-                      <mat-option [value]="item.code">
-                        {{ item.description }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              @if (dataSearch.checkboxObtenerRentabilidad) {
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Tarifa::</mat-label>
-                    <mat-select [(ngModel)]="dataSearch.idTarifa">
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of tarifas; track $index) {
-                        <mat-option [value]="item.idTarifa">
-                          {{ item.descripcion }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              }
-
-              <!-- Added by Ignacio Manchu -->
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-form-field class="w-100">
-                  <mat-label>Tipo Iva:</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idTipoIva">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of taxes(); track $index) {
-                      <mat-option [value]="item.idTipoIva">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
+            <div class="col">
+              <app-sub-category-group
+                [isInputMat]="true"
+                [subCategoryGroups]="subCategories"
+                (onSelected)="onSelectedSubCategory($event)"
+                (onEmptyData)="onEmptyDataSubCategory()"
+              />
             </div>
           </div>
-        </ng-template>
-      </mat-tab>
 
-      <ng-template #rangeDate>
-        <app-date-range-selection
-          [showInputMaterial]="true"
-          (onChangeDateRange)="onDateRangeSelection($event)"
-        />
-      </ng-template>
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <app-date-range-selection
+                [showInputMaterial]="true"
+                (onChangeDateRange)="onDateRangeSelection($event)"
+                [options]="{
+                  timePicker: dataSearch.timePicker,
+                  format: dataSearch.timePicker ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD',
+                }"
+              />
+            </div>
+            <div class="col">
+              <app-product-search
+                [isInputMat]="true"
+                (onProductSelected)="onProductSelected($event)"
+                (emptyInput)="onEmtyDataProduct($event)"
+              />
+            </div>
+            <div class="col">
+              <app-user-search
+                (userSelected)="onUserSelected($event)"
+                (clearSearch)="onEmptyInputUserSearch()"
+              />
+            </div>
+          </div>
 
-      <!-- Report de PvPs -->
-      <mat-tab label="Pvps">
-        <ng-template matTabContent>
-          <div class="d-grid gap-2 p-1">
-            <div class="d-flex gap-3">
-              <mat-checkbox [(ngModel)]="dataSearch.ckFechaModificaccion">
-                Ultimos articulos modificados
+          <div
+            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Tipo Documneto</mat-label>
+                <mat-select [formControl]="tiposDocSelected" multiple>
+                  @for (item of tiposDoc(); track $index) {
+                    <mat-option [value]="item.idTipoDocumento">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col">
+              <app-company-customer-search
+                (customerSelected)="onCustomerSelected($event)"
+                (clearSearch)="clearSearchCustomer()"
+                [isSimpleMode]="true"
+              />
+            </div>
+
+            <div class="col">
+              <mat-checkbox [(ngModel)]="dataSearch.checkboxPrecioCostoFiltro">
+                Mostrar precio de costo
               </mat-checkbox>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Report Stock -->
+    <mat-tab label="Stock">
+      <ng-template matTabContent>
+        <div class="d-grid gap-2 p-1">
+          <div class="row gx-1">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+              <mat-checkbox
+                [(ngModel)]="dataSearch.chkProveedor"
+                (change)="onChangeCheckProveedor()"
+              >
+                Proveedor
+              </mat-checkbox>
+            </div>
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
               <mat-checkbox [(ngModel)]="dataSearch.checkboxSubCategoryFilter">
                 Subfamilia
               </mat-checkbox>
             </div>
-            <mat-divider />
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+              <mat-checkbox [(ngModel)]="dataSearch.checkboxObtenerRentabilidad">
+                Obtener Rentabilidad
+              </mat-checkbox>
+            </div>
+          </div>
+          <mat-divider />
 
-            <div
-              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="col">
-                <ng-container *ngTemplateOutlet="rangeDate" />
-              </div>
-              <div class="col">
-                <app-sub-category-group
-                  [isInputMat]="true"
-                  [subCategoryGroups]="subCategories"
-                  (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()"
-                />
-              </div>
+          <div class="row gx-1">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Establecimiento</mat-label>
+                <mat-select
+                  [(ngModel)]="dataSearch.idEstablecimiento"
+                  (selectionChange)="onChangeEstab()"
+                >
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of estabs; track $index) {
+                    <mat-option [value]="item.idEstablecimiento">
+                      {{ item.nombreComercial }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-              <div class="col">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <app-supplier-search
+                [isSimpleMode]="true"
+                (supplierSelected)="onSupplierSelected($event)"
+                (clearSearch)="supplierclearSearch($event)"
+              />
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <app-sub-category-group
+                [isInputMat]="true"
+                [subCategoryGroups]="subCategories"
+                (onSelected)="onSelectedSubCategory($event)"
+                (onEmptyData)="onEmptyDataSubCategory()"
+              />
+            </div>
+          </div>
+
+          <div class="row gx-1">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Bodega</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idBodega">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of bodegas; track $index) {
+                    <mat-option [value]="item.idBodega">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Marcas</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idMarca">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of marcas; track $index) {
+                    <mat-option [value]="item.idMarca">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Stock</mat-label>
+                <mat-select [(ngModel)]="dataSearch.stockStatusCode">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of stockStatus; track $index) {
+                    <mat-option [value]="item.code">
+                      {{ item.description }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            @if (dataSearch.checkboxObtenerRentabilidad) {
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
                 <mat-form-field class="w-100">
-                  <mat-label>Stock:</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.stockStatusCode">
-                    @for (item of stockStatus; track $index) {
-                      <mat-option [value]="item.code">
-                        {{ item.description }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Tarifa:</mat-label>
+                  <mat-label>Tarifa::</mat-label>
                   <mat-select [(ngModel)]="dataSearch.idTarifa">
                     <mat-option [value]="0">Todos</mat-option>
                     @for (item of tarifas; track $index) {
@@ -342,217 +254,300 @@
                   </mat-select>
                 </mat-form-field>
               </div>
-            </div>
+            }
 
-            <div
-              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Marca:</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idMarca">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of marcas; track $index) {
-                      <mat-option [value]="item.idMarca">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
-
-              <div class="col">
-                <mat-form-field class="w-100">
-                  <mat-label>Tipo Iva:</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.idTipoIva">
-                    <mat-option [value]="0">Todos</mat-option>
-                    @for (item of taxes(); track $index) {
-                      <mat-option [value]="item.idTipoIva">
-                        {{ item.descripcion }}
-                      </mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </div>
+            <!-- Added by Ignacio Manchu -->
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Tipo Iva:</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idTipoIva">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of taxes(); track $index) {
+                    <mat-option [value]="item.idTipoIva">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
-        </ng-template>
-      </mat-tab>
+        </div>
+      </ng-template>
+    </mat-tab>
 
-      <!-- Report Artículos Fraccionados -->
-      <mat-tab label="Artículos fraccionados">
-        <ng-template matTabContent>
-          <div class="d-grid gap-2 p-3">
-            <div class="row gx-1">
-              <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
-                <mat-checkbox [(ngModel)]="dataSearch.checkboxArticuloFiltro">
-                  Artículo
-                </mat-checkbox>
-              </div>
+    <ng-template #rangeDate>
+      <app-date-range-selection
+        [showInputMaterial]="true"
+        (onChangeDateRange)="onDateRangeSelection($event)"
+      />
+    </ng-template>
 
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-checkbox
-                  [(ngModel)]="dataSearch.chkProveedor"
-                  (change)="onChangeCheckProveedor()"
-                >
-                  Proveedor
-                </mat-checkbox>
-              </div>
+    <!-- Report de PvPs -->
+    <mat-tab label="Pvps">
+      <ng-template matTabContent>
+        <div class="d-grid gap-2 p-1">
+          <div class="d-flex gap-3">
+            <mat-checkbox [(ngModel)]="dataSearch.ckFechaModificaccion">
+              Ultimos articulos modificados
+            </mat-checkbox>
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxSubCategoryFilter">
+              Subfamilia
+            </mat-checkbox>
+          </div>
+          <mat-divider />
 
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                @if (!dataSearch.chkProveedor) {
-                  <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro">
-                    SubFamilia
-                  </mat-checkbox>
-                }
-              </div>
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <ng-container *ngTemplateOutlet="rangeDate" />
             </div>
-            <mat-divider />
-            <div class="row">
-              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <app-supplier-search
-                  [isSimpleMode]="true"
-                  (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierclearSearch($event)"
-                />
-              </div>
+            <div class="col">
+              <app-sub-category-group
+                [isInputMat]="true"
+                [subCategoryGroups]="subCategories"
+                (onSelected)="onSelectedSubCategory($event)"
+                (onEmptyData)="onEmptyDataSubCategory()"
+              />
+            </div>
 
-              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <app-sub-category-group
-                  [isInputMat]="true"
-                  [subCategoryGroups]="subCategories"
-                  (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()"
-                />
-              </div>
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Stock:</mat-label>
+                <mat-select [(ngModel)]="dataSearch.stockStatusCode">
+                  @for (item of stockStatus; track $index) {
+                    <mat-option [value]="item.code">
+                      {{ item.description }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
 
-              <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-                <app-product-search
-                  [isInputMat]="true"
-                  (onProductSelected)="onProductSelected($event)"
-                  (emptyInput)="onEmtyDataProduct($event)"
-                />
-              </div>
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Tarifa:</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idTarifa">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of tarifas; track $index) {
+                    <mat-option [value]="item.idTarifa">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
-        </ng-template>
-      </mat-tab>
 
-      <!-- Report Caducidad -->
-      <mat-tab label="Caducidad">
-        <ng-template matTabContent>
-          <div class="d-grid gap-2 p-1">
-            <div class="row gx-1">
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-checkbox
-                  [(ngModel)]="dataSearch.chkProveedor"
-                  (change)="onChangeCheckProveedor()"
-                >
-                  Proveedor
-                </mat-checkbox>
-              </div>
-
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                @if (!dataSearch.chkProveedor) {
-                  <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro">
-                    SubFamilia
-                  </mat-checkbox>
-                }
-              </div>
-
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-checkbox [(ngModel)]="dataSearch.ckFechaCaducidad">
-                  Fecha Caducidad
-                </mat-checkbox>
-              </div>
-
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <mat-checkbox [(ngModel)]="dataSearch.chkUbicacion"> Ubicación </mat-checkbox>
-              </div>
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Marca:</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idMarca">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of marcas; track $index) {
+                    <mat-option [value]="item.idMarca">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
-            <mat-divider />
-            <div class="row gx-1">
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                <app-supplier-search
-                  [isSimpleMode]="true"
-                  (supplierSelected)="onSupplierSelected($event)"
-                  (clearSearch)="supplierclearSearch($event)"
-                />
-              </div>
 
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-                <app-sub-category-group
-                  [isInputMat]="true"
-                  [subCategoryGroups]="subCategories"
-                  (onSelected)="onSelectedSubCategory($event)"
-                  (onEmptyData)="onEmptyDataSubCategory()"
-                />
-              </div>
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Tipo Iva:</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idTipoIva">
+                  <mat-option [value]="0">Todos</mat-option>
+                  @for (item of taxes(); track $index) {
+                    <mat-option [value]="item.idTipoIva">
+                      {{ item.descripcion }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
 
-              @if (dataSearch.chkUbicacion) {
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Establecimiento</mat-label>
-                    <mat-select
-                      [(ngModel)]="dataSearch.idEstablecimiento"
-                      (selectionChange)="onChangeEstab()"
-                    >
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of estabs; track $index) {
-                        <mat-option [value]="item.idEstablecimiento">
-                          {{ item.nombreComercial }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
+    <!-- Report Artículos Fraccionados -->
+    <mat-tab label="Artículos fraccionados">
+      <ng-template matTabContent>
+        <div class="d-grid gap-2 p-3">
+          <div class="row gx-1">
+            <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+              <mat-checkbox [(ngModel)]="dataSearch.checkboxArticuloFiltro">
+                Artículo
+              </mat-checkbox>
+            </div>
 
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Bodega</mat-label>
-                    <mat-select [(ngModel)]="dataSearch.idBodega">
-                      <mat-option [value]="0">Todos</mat-option>
-                      @for (item of bodegas; track $index) {
-                        <mat-option [value]="item.idBodega">
-                          {{ item.descripcion }}
-                        </mat-option>
-                      }
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-                <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
-                  <mat-form-field class="w-100">
-                    <mat-label>Ubicación</mat-label>
-                    <input matInput [(ngModel)]="dataSearch.textUbicacion" />
-                  </mat-form-field>
-                </div>
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-checkbox
+                [(ngModel)]="dataSearch.chkProveedor"
+                (change)="onChangeCheckProveedor()"
+              >
+                Proveedor
+              </mat-checkbox>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              @if (!dataSearch.chkProveedor) {
+                <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro">
+                  SubFamilia
+                </mat-checkbox>
               }
+            </div>
+          </div>
+          <mat-divider />
+          <div class="row">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+              <app-supplier-search
+                [isSimpleMode]="true"
+                (supplierSelected)="onSupplierSelected($event)"
+                (clearSearch)="supplierclearSearch($event)"
+              />
+            </div>
 
-              <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+              <app-sub-category-group
+                [isInputMat]="true"
+                [subCategoryGroups]="subCategories"
+                (onSelected)="onSelectedSubCategory($event)"
+                (onEmptyData)="onEmptyDataSubCategory()"
+              />
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+              <app-product-search
+                [isInputMat]="true"
+                (onProductSelected)="onProductSelected($event)"
+                (emptyInput)="onEmtyDataProduct($event)"
+              />
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+
+    <!-- Report Caducidad -->
+    <mat-tab label="Caducidad">
+      <ng-template matTabContent>
+        <div class="d-grid gap-2 p-1">
+          <div class="row gx-1">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-checkbox
+                [(ngModel)]="dataSearch.chkProveedor"
+                (change)="onChangeCheckProveedor()"
+              >
+                Proveedor
+              </mat-checkbox>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              @if (!dataSearch.chkProveedor) {
+                <mat-checkbox [(ngModel)]="dataSearch.checkboxSubFamiliaFiltro">
+                  SubFamilia
+                </mat-checkbox>
+              }
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-checkbox [(ngModel)]="dataSearch.ckFechaCaducidad">
+                Fecha Caducidad
+              </mat-checkbox>
+            </div>
+
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-checkbox [(ngModel)]="dataSearch.chkUbicacion"> Ubicación </mat-checkbox>
+            </div>
+          </div>
+          <mat-divider />
+          <div class="row gx-1">
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <app-supplier-search
+                [isSimpleMode]="true"
+                (supplierSelected)="onSupplierSelected($event)"
+                (clearSearch)="supplierclearSearch($event)"
+              />
+            </div>
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <app-sub-category-group
+                [isInputMat]="true"
+                [subCategoryGroups]="subCategories"
+                (onSelected)="onSelectedSubCategory($event)"
+                (onEmptyData)="onEmptyDataSubCategory()"
+              />
+            </div>
+
+            @if (dataSearch.chkUbicacion) {
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
                 <mat-form-field class="w-100">
-                  <mat-label>Estado</mat-label>
-                  <mat-select [(ngModel)]="dataSearch.expiredStatusCode">
-                    @for (item of expirationStates; track $index) {
-                      <mat-option [value]="item.code">
-                        {{ item.description }}
+                  <mat-label>Establecimiento</mat-label>
+                  <mat-select
+                    [(ngModel)]="dataSearch.idEstablecimiento"
+                    (selectionChange)="onChangeEstab()"
+                  >
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of estabs; track $index) {
+                      <mat-option [value]="item.idEstablecimiento">
+                        {{ item.nombreComercial }}
                       </mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
               </div>
-            </div>
 
-            <div class="row gx-1">
-              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
-                <ng-container *ngTemplateOutlet="rangeDate" />
+              <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Bodega</mat-label>
+                  <mat-select [(ngModel)]="dataSearch.idBodega">
+                    <mat-option [value]="0">Todos</mat-option>
+                    @for (item of bodegas; track $index) {
+                      <mat-option [value]="item.idBodega">
+                        {{ item.descripcion }}
+                      </mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
               </div>
+              <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6 col-12">
+                <mat-form-field class="w-100">
+                  <mat-label>Ubicación</mat-label>
+                  <input matInput [(ngModel)]="dataSearch.textUbicacion" />
+                </mat-form-field>
+              </div>
+            }
+
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Estado</mat-label>
+                <mat-select [(ngModel)]="dataSearch.expiredStatusCode">
+                  @for (item of expirationStates; track $index) {
+                    <mat-option [value]="item.code">
+                      {{ item.description }}
+                    </mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
-        </ng-template>
-      </mat-tab>
-    </mat-tab-group>
-  </mat-card-content>
-  <mat-card-actions class="d-flex gap-2">
+
+          <div class="row gx-1">
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <ng-container *ngTemplateOutlet="rangeDate" />
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="d-flex gap-2">
     <div class="d-flex flex-row gap-1">
       @if (isReporting) {
         <acp-button
@@ -580,5 +575,5 @@
         />
       }
     </div>
-  </mat-card-actions>
-</mat-card>
+  </div>
+</acp-dynamic-card>

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { OrderService } from '@modules/technical-support/services/order.service';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   selector: 'app-order-document',
   templateUrl: './order-document.component.html',
   styles: ``,
-  imports: [TabulatorComponent, FormsModule, MatCustomDialogComponent],
+  imports: [TabulatorTable, FormsModule, MatCustomDialogComponent],
 })
 export class OrderDocumentComponent implements OnInit {
   private modalRef = inject(MatDialogRef<OrderDocumentComponent>);

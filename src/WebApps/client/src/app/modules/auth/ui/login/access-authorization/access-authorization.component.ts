@@ -5,13 +5,13 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatCard } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@modules/auth/domain/auth.service';
 
 @Component({
   selector: 'app-access-authorization',
-  imports: [MatCustomDialogComponent, MatCard, MatIcon, MatButtonModule, FormsModule],
+  imports: [MatCustomDialogComponent, DynamicCard, MatIcon, MatButtonModule, FormsModule],
   templateUrl: './access-authorization.component.html',
   styleUrl: './access-authorization.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

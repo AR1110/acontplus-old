@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { UserProfileService } from '@modules/config/services/user-profile.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,7 +17,7 @@ import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
   templateUrl: './settings.html',
   styleUrl: './settings.scss',
   imports: [
-    MatCardModule,
+    DynamicCard,
     MatTabsModule,
     MatCheckbox,
     ReactiveFormsModule,

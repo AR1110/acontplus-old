@@ -1,6 +1,6 @@
 -- 1) Listado de FKs cuyo *parent* (tabla que contiene la FK) pertenece al schema 'Restaurant'
 --    y cuya columna FK se llama 'UserId'
-SELECT 
+SELECT
     fk.object_id AS ForeignKeyObjectId,
     fk.name AS ForeignKeyName,
     sch.name AS ParentSchema,
@@ -9,7 +9,7 @@ SELECT
     rs.name AS ReferencedSchema,
     tr.name AS ReferencedTable,
     cr.name AS ReferencedColumn,
-    -- instrucción DROP (lista lista para ejecutar)
+    -- instrucciï¿½n DROP (lista lista para ejecutar)
     'ALTER TABLE [' + sch.name + '].[' + tp.name + '] DROP CONSTRAINT [' + fk.name + '];' AS DropStatement
 FROM sys.foreign_keys fk
 INNER JOIN sys.foreign_key_columns fkc ON fkc.constraint_object_id = fk.object_id
@@ -43,3 +43,4 @@ GO
 --ALTER TABLE [Restaurant].[Recipe] DROP CONSTRAINT [fk_recipe_user_id];
 --ALTER TABLE [Restaurant].[Room] DROP CONSTRAINT [fk_room_user_id];
 --ALTER TABLE [Restaurant].[Table] DROP CONSTRAINT [fk_table_user_id];
+--ALTER TABLE [Restaurant].[Order] DROP CONSTRAINT [fk_estab_order];

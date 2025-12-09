@@ -7,6 +7,4 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './promotion-view-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PromotionViewDetail {
-
-}
+export class PromotionViewDetail {}

@@ -9,8 +9,7 @@ import { SharedService } from '@core/services/shared.service';
 import { getValidId } from '@core/utils/utils';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { ResumenContableUseCase } from '@accounting/resumen-contable/application/resumen-contable.use-case';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
@@ -21,7 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatFormFieldModule,
     MatSelectModule,
   ],

@@ -1,5 +1,5 @@
 <app-breadcrumb />
-<app-mat-dynamic-card>
+<acp-dynamic-card>
   <app-mat-dynamic-table
     [tableData]="dataSource()"
     [columnDefinitions]="columnsDefs"
@@ -9,4 +9,4 @@
   <ng-template #templateOp let-item="item">
     <acp-button variant="info" icon="edit" matStyle="icon" (handleClick)="openModalEdit(item)" />
   </ng-template>
-</app-mat-dynamic-card>
+</acp-dynamic-card>

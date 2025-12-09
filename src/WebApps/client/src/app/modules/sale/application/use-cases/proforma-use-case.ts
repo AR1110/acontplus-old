@@ -33,7 +33,6 @@ export class ProformaInvoiceViewDetailUseCase implements BaseUseCase<number, any
   }
 }
 
-
 @Injectable({
   providedIn: 'root',
 })

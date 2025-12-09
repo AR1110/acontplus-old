@@ -21,7 +21,7 @@ import { Button } from '@acontplus/ng-components';
 import { InventoryAdjustmentSearchAdvancedComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component';
 
 import { ProductAutocompleteAdvancedComponent } from '@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { InventoryAdjustment } from '@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity';
 import {
@@ -48,7 +48,7 @@ import { MatTooltip } from '@angular/material/tooltip';
     ReactiveFormsModule,
     MatDatepickerModule,
     ProductAutocompleteAdvancedComponent,
-    TabulatorComponent,
+    TabulatorTable,
     MatTooltip,
   ],
   templateUrl: './inventory-adjustment-add-edit.component.html',

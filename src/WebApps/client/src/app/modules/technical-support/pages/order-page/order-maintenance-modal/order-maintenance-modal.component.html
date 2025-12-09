@@ -173,8 +173,8 @@
   </div>
   <div class="row">
     <div class="col-12">
-      <app-tabulator
-        [tableData]="orderMaintenances()"
+      <acp-tabulator-table
+        [data]="orderMaintenances()"
         [options]="tabulatorOptions"
         (cellEdited)="cellEdited($event)"
       />

@@ -18,9 +18,7 @@ export class ItemListUseCase implements BaseUseCase<PagedResult<any>, Pagination
 @Injectable({
   providedIn: 'root',
 })
-export class ItemSearchUseCase
-  implements BaseUseCase<PagedResult<any>, PaginationParams>
-{
+export class ItemSearchUseCase implements BaseUseCase<PagedResult<any>, PaginationParams> {
   private repo = inject(ItemRepository);
 
   execute(params: PaginationParams): Observable<any> {
@@ -40,13 +38,11 @@ export class ItemSearchUseCase
     const validCategories = Object.values(CATEGORY_ABBREVIATIONS);
 
     const invalid = categories.filter(
-     ( c:any) => !validCategories.includes(c as CATEGORY_ABBREVIATIONS)
+      (c: any) => !validCategories.includes(c as CATEGORY_ABBREVIATIONS),
     );
 
     if (invalid.length) {
-      return throwError(
-        () => new Error(`Invalid categoryAbbreviation: ${invalid.join(', ')}`)
-      );
+      return throwError(() => new Error(`Invalid categoryAbbreviation: ${invalid.join(', ')}`));
     }
 
     if (!searchTerm) {
@@ -56,7 +52,6 @@ export class ItemSearchUseCase
     return this.repo.search(params);
   }
 }
-
 
 @Injectable({
   providedIn: 'root',
@@ -69,14 +64,12 @@ export class ItemGetBydIdUseCase implements BaseUseCase<any, number> {
   }
 }
 
-
 @Injectable({
   providedIn: 'root',
 })
-export class ItemUpdateUseCase implements BaseUseCase<any, {id: number, data: any}> {
-  execute(params: { id: number; data: any; }): Observable<any> {
-      return this.repo.update(params.id, params.data);
+export class ItemUpdateUseCase implements BaseUseCase<any, { id: number; data: any }> {
+  execute(params: { id: number; data: any }): Observable<any> {
+    return this.repo.update(params.id, params.data);
   }
   private repo = inject(ItemRepository);
-
 }

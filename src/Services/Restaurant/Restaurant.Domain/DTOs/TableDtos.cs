@@ -1,12 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace Restaurant.Domain.DTOs;
+namespace Restaurant.Domain.Dtos;
 
 public record TableCreate
 {
     public int RoomId { get; init; }
     [Required] public int NumberTable { get; init; }
-    [Required] [MaxLength(100)] public required string Description { get; init; }
+    [Required][MaxLength(100)] public required string Description { get; init; }
     [Required] public int Capacity { get; init; }
     public bool? Assigned { get; init; }
 };
@@ -15,7 +13,7 @@ public record TableUpdate
 {
     public int RoomId { get; init; }
     [Required] public int NumberTable { get; init; }
-    [Required] [MaxLength(100)] public required string Description { get; init; }
+    [Required][MaxLength(100)] public required string Description { get; init; }
     [Required] public int Capacity { get; init; }
     public bool? Assigned { get; init; }
 };

@@ -6,20 +6,13 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { NotificacionTributariaService } from '@billing/services/notificacion-tributaria.service';
-import { Button } from '@acontplus/ng-components';
+import { Button, InputChip } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
 
 @Component({
   selector: 'app-send-mail-dialog',
-  imports: [
-    FormsModule,
-    Button,
-    MatCustomDialogComponent,
-    ReactiveFormsModule,
-    MatInputChipComponent,
-  ],
+  imports: [FormsModule, Button, MatCustomDialogComponent, ReactiveFormsModule, InputChip],
   templateUrl: './send-mail-dialog.component.html',
 })
 export class SendMailDialogComponent implements OnInit {

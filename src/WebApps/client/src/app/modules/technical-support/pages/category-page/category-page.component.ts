@@ -5,13 +5,12 @@ import { CategoryService } from '@modules/technical-support/services/category.se
 import { CategoryModalComponent } from './category-modal/category-modal.component';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { Button } from '@acontplus/ng-components';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-category',
-  imports: [BreadcrumbComponent, MatButton, MatIcon, Button, MatDynamicCardComponent],
+  imports: [BreadcrumbComponent, MatButton, MatIcon, Button, DynamicCard],
   templateUrl: './category-page.component.html',
   styles: ``,
 })

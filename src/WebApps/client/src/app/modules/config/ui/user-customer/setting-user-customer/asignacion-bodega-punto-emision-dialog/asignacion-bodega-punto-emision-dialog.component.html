@@ -7,7 +7,7 @@
 
 <ng-template #body>
   <div class="d-grid gap-2">
-    <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Puntos de Emisión'">
+    <acp-dynamic-card [isHeaderVisible]="true" [cardSubtitle]="'Puntos de Emisión'">
       <app-mat-dynamic-table
         [tableData]="dataSourcePuntoEmision()"
         [columnDefinitions]="columnsDefsPuntoEmision"
@@ -35,9 +35,9 @@
           />
         }
       </ng-template>
-    </app-mat-dynamic-card>
+    </acp-dynamic-card>
 
-    <app-mat-dynamic-card [showHeader]="true" [subtitle]="'Bodegas'">
+    <acp-dynamic-card [isHeaderVisible]="true" [cardSubtitle]="'Bodegas'">
       <app-mat-dynamic-table
         [tableData]="dataSourceBodega()"
         [columnDefinitions]="columnsDefsBodega"
@@ -64,7 +64,7 @@
           />
         }
       </ng-template>
-    </app-mat-dynamic-card>
+    </acp-dynamic-card>
   </div>
 </ng-template>
 <ng-template #footer />

@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-using Restaurant.Domain.Entities;
-using Restaurant.Domain.Repositories;
-
 namespace Restaurant.Infrastructure.Persistence.Repositories;
 
 public class OrderDetailRepository(RestaurantContext context) : IOrderDetailRepository
@@ -36,6 +32,7 @@ public class OrderDetailRepository(RestaurantContext context) : IOrderDetailRepo
     public async Task<IEnumerable<OrderDetail>> GetByOrderIdAsync(int orderId)
     {
         return await context.OrderDetails
+            .AsNoTracking()
             .Where(od => od.OrderId == orderId)
             .Include(od => od.Item)
             .Include(od => od.Modifiers)
@@ -45,6 +42,7 @@ public class OrderDetailRepository(RestaurantContext context) : IOrderDetailRepo
     public async Task<IEnumerable<OrderDetail>> GetByStatusAsync(OrderDetailStatus status)
     {
         return await context.OrderDetails
+            .AsNoTracking()
             .Where(od => od.Status == status)
             .Include(od => od.Order)
             .Include(od => od.Item)
@@ -54,6 +52,7 @@ public class OrderDetailRepository(RestaurantContext context) : IOrderDetailRepo
     public async Task<IEnumerable<OrderDetail>> GetPendingByOrderIdAsync(int orderId)
     {
         return await context.OrderDetails
+            .AsNoTracking()
             .Where(od => od.OrderId == orderId && od.Status == OrderDetailStatus.Pending)
             .Include(od => od.Item)
             .ToListAsync();

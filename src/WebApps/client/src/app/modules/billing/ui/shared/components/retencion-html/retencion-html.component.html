@@ -8,52 +8,48 @@
     <div class="row">
       <!-- Left Column -->
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-        <mat-card appearance="outlined">
-          <mat-card-content>
-            <!--            <img alt="NO LOGO" height="150" src="">-->
-            <h5>{{ infoTributaria.razonSocial }}</h5>
-            <h5>{{ infoTributaria.nombreComercial }}</h5>
-            <h5>Dirección Matriz: {{ infoTributaria.dirMatriz }}</h5>
-            <h5>Dirección Sucursal: {{ infoCompRetencion.dirEstablecimiento }}</h5>
-            @if (infoCompRetencion.contribuyenteEspecial?.length) {
-              <h5>
-                Contribuyente Especial Nro.:
-                {{ infoCompRetencion.contribuyenteEspecial }}
-              </h5>
-            }
+        <acp-dynamic-card>
+          <!--            <img alt="NO LOGO" height="150" src="">-->
+          <h5>{{ infoTributaria.razonSocial }}</h5>
+          <h5>{{ infoTributaria.nombreComercial }}</h5>
+          <h5>Dirección Matriz: {{ infoTributaria.dirMatriz }}</h5>
+          <h5>Dirección Sucursal: {{ infoCompRetencion.dirEstablecimiento }}</h5>
+          @if (infoCompRetencion.contribuyenteEspecial?.length) {
             <h5>
-              OBLIGADO A LLEVAR CONTABILIDAD:
-              {{ infoCompRetencion.obligadoContabilidad }}
+              Contribuyente Especial Nro.:
+              {{ infoCompRetencion.contribuyenteEspecial }}
             </h5>
-          </mat-card-content>
-        </mat-card>
+          }
+          <h5>
+            OBLIGADO A LLEVAR CONTABILIDAD:
+            {{ infoCompRetencion.obligadoContabilidad }}
+          </h5>
+        </acp-dynamic-card>
       </div>
 
       <!-- Right Column -->
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-        <mat-card appearance="outlined">
-          <mat-card-content>
-            <h5>RUC: {{ infoTributaria.ruc }}</h5>
-            <h4>COMPROBANTE DE RETENCIÓN</h4>
-            <h5>
-              No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{
-                infoTributaria.secuencial
-              }}
-            </h5>
-            <label>NÚMERO DE AUTORIZACIÓN:</label>
-            <small>{{ infoTributaria.claveAcceso }}</small>
-            <label>FECHA Y HORA DE AUTORIZACIÓN:</label>
-            <small>{{ selected[0]?.fechaAutorizacion }}</small>
-            <h5>
-              AMBIENTE:
-              <span [innerHTML]="infoTributaria.ambiente | ambienteSri"></span>
-            </h5>
-            <h5>EMISIÓN: <span [innerHTML]="infoTributaria.tipoEmision"></span></h5>
-            <label>CLAVE DE ACCESSO:</label><br />
-            <!--            <img alt="" id="barcodeImg" src="">-->
-            <small>{{ infoTributaria.claveAcceso }}</small>
-          </mat-card-content>
-        </mat-card>
+        <acp-dynamic-card>
+          <h5>RUC: {{ infoTributaria.ruc }}</h5>
+          <h4>COMPROBANTE DE RETENCIÓN</h4>
+          <h5>
+            No.: {{ infoTributaria.estab }}-{{ infoTributaria.ptoEmi }}-{{
+              infoTributaria.secuencial
+            }}
+          </h5>
+          <label>NÚMERO DE AUTORIZACIÓN:</label>
+          <small>{{ infoTributaria.claveAcceso }}</small>
+          <label>FECHA Y HORA DE AUTORIZACIÓN:</label>
+          <small>{{ selected[0]?.fechaAutorizacion }}</small>
+          <h5>
+            AMBIENTE:
+            <span [innerHTML]="infoTributaria.ambiente | ambienteSri"></span>
+          </h5>
+          <h5>EMISIÓN: <span [innerHTML]="infoTributaria.tipoEmision"></span></h5>
+          <label>CLAVE DE ACCESSO:</label><br />
+          <!--            <img alt="" id="barcodeImg" src="">-->
+          <small>{{ infoTributaria.claveAcceso }}</small>
+        </acp-dynamic-card>
       </div>
     </div>
 
@@ -92,26 +88,24 @@
     <!-- Additional Information Section -->
     <div class="row">
       <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-6">
-        <mat-card appearance="outlined">
-          <mat-card-content>
-            <table class="table table-borderless">
-              <thead>
+        <acp-dynamic-card>
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of infoAdicional; track $index) {
                 <tr>
-                  <th>Nombre</th>
-                  <th>Valor</th>
+                  <td>{{ item.nombre }}</td>
+                  <td>{{ item.valor }}</td>
                 </tr>
-              </thead>
-              <tbody>
-                @for (item of infoAdicional; track $index) {
-                  <tr>
-                    <td>{{ item.nombre }}</td>
-                    <td>{{ item.valor }}</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </mat-card-content>
-        </mat-card>
+              }
+            </tbody>
+          </table>
+        </acp-dynamic-card>
       </div>
     </div>
 

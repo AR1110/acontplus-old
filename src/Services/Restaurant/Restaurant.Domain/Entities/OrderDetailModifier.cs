@@ -16,6 +16,8 @@ public class OrderDetailModifier : BaseEntity
     public ModifierAction Action { get; set; }
 
     [MaxLength(500)] public string? Instructions { get; set; }
+
+    public Guid? UniqueId { get; set; }
 }
 
 public enum ModifierAction

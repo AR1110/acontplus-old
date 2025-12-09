@@ -17,7 +17,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { MatInputChipComponent } from '@shared/components/mat-input-chip/mat-input-chip.component';
+import { InputChip } from '@acontplus/ng-components';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -33,7 +33,7 @@ import { MatIcon } from '@angular/material/icon';
     MatSelectModule,
     MatIconButton,
     MatIcon,
-    MatInputChipComponent,
+    InputChip,
   ],
   templateUrl: './estab-add-edit-modal.component.html',
   styles: ``,

@@ -4,7 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { TranslateModule } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
@@ -22,7 +22,7 @@ import { AccessAuthorizationComponent } from '@modules/auth/ui/login/access-auth
     FormsModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,

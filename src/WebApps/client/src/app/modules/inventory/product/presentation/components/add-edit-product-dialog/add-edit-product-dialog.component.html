@@ -221,8 +221,8 @@
 
           <div class="row m-0 p-0">
             <div class="col-lg-9 col-md-9 col-12">
-              <app-tabulator
-                [tableData]="productTarifa"
+              <acp-tabulator-table
+                [data]="productTarifa"
                 [options]="tabulatorOptions"
                 (cellEdited)="cellEdited($event)"
               />

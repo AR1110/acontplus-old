@@ -22,7 +22,7 @@ public class BreedRepository(VetContext context) : IBreedRepository
 
     public async Task<SpResponse> GetAsync()
     {
-        var response = await context.Breeds.Include(t => t.PetType).Where(x => !x.IsDeleted).ToListAsync();
+        var response = await context.Breeds.AsNoTracking().Include(t => t.PetType).Where(x => !x.IsDeleted).ToListAsync();
         return response.Count > 0 ? new SpResponse { Code = "1", Payload = response } : new SpResponse { Code = "0", Message = "No data!" };
     }
 

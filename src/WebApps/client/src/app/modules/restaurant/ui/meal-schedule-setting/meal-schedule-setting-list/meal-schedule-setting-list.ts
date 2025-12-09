@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import {
   MatCell,
   MatCellDef,
@@ -28,10 +28,7 @@ import { MealScheduleSettingDialog } from '@restaurant/ui/meal-schedule-setting/
   selector: 'app-meal-schedule-setting-list',
   imports: [
     MatButton,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
-    MatCardTitle,
+    DynamicCard,
     MatCell,
     MatCellDef,
     MatColumnDef,

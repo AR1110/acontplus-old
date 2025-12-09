@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -17,7 +17,7 @@ import { MatIconButton } from '@angular/material/button';
 import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
 import { SearchDialogService } from '@shared/services/search-dialog';
 import { MatIcon } from '@angular/material/icon';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
@@ -32,15 +32,15 @@ import Swal from 'sweetalert2';
 import { getStockQuantity, mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
 import { firstValueFrom } from 'rxjs';
 import { ProductFee } from '@inventory/domain/models/tarifa.model';
-import {ProformaInvoiceGetFormDataUseCase} from "@sale/application/use-cases/proforma-use-case";
-import {GroupedEstablishment} from "@core/models/establishment";
-import {EmissionPointEstablishment} from "@core/models/emission-point";
-import {WarehouseEstablishment} from "@core/models/warehouse";
-import {ToastrNotificationService} from "@core/services/toastr-notification.service";
-import {Fee} from "@inventory/domain/models/fee";
-import {TaxRate} from "@core/models/tax-rate";
-import {ProductMeasure} from "@inventory/domain/models/product-measure";
-import {ProformaDetail} from "@sale/domain/models/proforma-detail";
+import { ProformaInvoiceGetFormDataUseCase } from '@sale/application/use-cases/proforma-use-case';
+import { GroupedEstablishment } from '@core/models/establishment';
+import { EmissionPointEstablishment } from '@core/models/emission-point';
+import { WarehouseEstablishment } from '@core/models/warehouse';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { Fee } from '@inventory/domain/models/fee';
+import { TaxRate } from '@core/models/tax-rate';
+import { ProductMeasure } from '@inventory/domain/models/product-measure';
+import { ProformaDetail } from '@sale/domain/models/proforma-detail';
 
 @Component({
   selector: 'app-proforma-add-edit',
@@ -57,7 +57,7 @@ import {ProformaDetail} from "@sale/domain/models/proforma-detail";
     AddEditProductDirective,
     MatIcon,
     MatIconButton,
-    TabulatorComponent,
+    TabulatorTable,
     DataGrid,
   ],
   templateUrl: './proforma-add-edit.html',
@@ -67,16 +67,16 @@ import {ProformaDetail} from "@sale/domain/models/proforma-detail";
 })
 export class ProformaAddEdit implements OnInit {
   private dgRef = inject(MatDialogRef<ProformaAddEdit>);
-  private params = inject<{id: number, operation: 'add' | 'edit' | 'duplicate'}>(MAT_DIALOG_DATA);
+  private params = inject<{ id: number; operation: 'add' | 'edit' | 'duplicate' }>(MAT_DIALOG_DATA);
 
   //services
   private searchService = inject(SearchDialogService);
-  private notiSvc = inject(ToastrNotificationService)
+  private notiSvc = inject(ToastrNotificationService);
 
   //use cases
   private _productSaleUseCase = inject(GetProductSaleUseCase);
   private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
-  private $getFormData = inject(ProformaInvoiceGetFormDataUseCase)
+  private $getFormData = inject(ProformaInvoiceGetFormDataUseCase);
 
   //variables form
   vatRates = signal<any[]>([]);
@@ -101,7 +101,6 @@ export class ProformaAddEdit implements OnInit {
 
   priceDecimals = signal(2);
 
-
   estabs = signal<GroupedEstablishment[]>([]);
   emissionPoints = signal<EmissionPointEstablishment[]>([]);
   warehouses = signal<WarehouseEstablishment[]>([]);
@@ -116,13 +115,13 @@ export class ProformaAddEdit implements OnInit {
 
     const editor: any = document.createElement('select');
     const options = {
-      "measureId": data.measures,
-      "taxRateId": this.taxRates(),
-      "feeId": data.fees,
-      "warehouseId": this.warehouses(),
-    }
+      measureId: data.measures,
+      taxRateId: this.taxRates(),
+      feeId: data.fees,
+      warehouseId: this.warehouses(),
+    };
 
-    if (["measureId", "taxRateId", "feeId", "warehouseId"].includes(column)) {
+    if (['measureId', 'taxRateId', 'feeId', 'warehouseId'].includes(column)) {
       for (const m of options[column as keyof typeof options]) {
         const opt = document.createElement('option');
         opt.value = m.id.toString();
@@ -267,13 +266,13 @@ export class ProformaAddEdit implements OnInit {
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      formatter:  (cell: any)=> {
+      formatter: (cell: any) => {
         for (const m of this.taxRates()) {
           if (m.id == cell.getValue()) {
             return m.name;
           }
         }
-        return  ''
+        return '';
       },
       validator: 'required',
       width: '9px',
@@ -285,14 +284,14 @@ export class ProformaAddEdit implements OnInit {
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      formatter:  (cell: any)=> {
-        console.log(cell.getData())
-        for (const m of (cell.getData().fees ?? [])) {
+      formatter: (cell: any) => {
+        console.log(cell.getData());
+        for (const m of cell.getData().fees ?? []) {
           if (m.id == cell.getValue()) {
             return m.name;
           }
         }
-        return  ''
+        return '';
       },
       validator: 'required',
       width: '9px',
@@ -364,18 +363,18 @@ export class ProformaAddEdit implements OnInit {
       headerSort: false,
       headerHozAlign: 'center',
       width: '7px',
-      editor:false,
+      editor: false,
       editorParams: {
         selectContents: true,
         verticalNavigation: 'table',
       },
       formatterParams: { precision: false },
-      formatter: (cell:any) => {
+      formatter: (cell: any) => {
         const value = cell.getValue(); // valor interno: ej. 12.34567
         return Number(value).toFixed(2); // solo vista: 12.35
       },
-      hozAlign: "right",
-      tooltip: true
+      hozAlign: 'right',
+      tooltip: true,
     },
     {
       title: 'V. Imp.',
@@ -407,18 +406,18 @@ export class ProformaAddEdit implements OnInit {
       headerSort: false,
       headerHozAlign: 'center',
       editor: this.comboEditor,
-      formatter:  (cell: any)=> {
+      formatter: (cell: any) => {
         for (const m of this.warehouses()) {
           if (m.id == cell.getValue()) {
             return m.name;
           }
         }
-        return  ''
+        return '';
       },
       validator: 'required',
       width: '9px',
-    }
-  ])
+    },
+  ]);
 
   displayedTotalsColumns: DataGridColumn[] = [
     { header: '', field: 'label' },
@@ -433,71 +432,69 @@ export class ProformaAddEdit implements OnInit {
     { header: 'Valor', field: 'value' },
   ];
 
-  loadFormData(){
-    this.$getFormData.execute().subscribe(data => {
-      const {estabs} = data;
+  loadFormData() {
+    this.$getFormData.execute().subscribe((data) => {
+      const { estabs } = data;
       this.estabs.set(estabs);
       this.fees.set(data.fees);
       this.taxRates.set(data.taxRates);
 
-      const dataEstab = this.estabs().find(e => e.isDefault);
-      const defaultFee = this.fees().find(e => e.isDefault);
+      const dataEstab = this.estabs().find((e) => e.isDefault);
+      const defaultFee = this.fees().find((e) => e.isDefault);
 
-      if(!dataEstab){
+      if (!dataEstab) {
         this.notiSvc.warning({
-          message: 'No se encontró establecimiento por defecto'
+          message: 'No se encontró establecimiento por defecto',
         });
-        return
+        return;
       }
 
-      if(!defaultFee){
+      if (!defaultFee) {
         this.notiSvc.warning({
-          message: 'No se encontró tarifa por defecto'
+          message: 'No se encontró tarifa por defecto',
         });
-        return
+        return;
       }
 
       this.emissionPoints.set(dataEstab?.emissionPoints ?? []);
       this.warehouses.set(dataEstab?.warehouses ?? []);
 
-      const defaultEmissionPoint = this.emissionPoints().find(e => e.isDefault);
-      const defaultWarehouse = this.warehouses().find(e => e.isDefault);
+      const defaultEmissionPoint = this.emissionPoints().find((e) => e.isDefault);
+      const defaultWarehouse = this.warehouses().find((e) => e.isDefault);
 
-      if(!defaultEmissionPoint){
+      if (!defaultEmissionPoint) {
         this.notiSvc.warning({
-          message: 'No se encontró punto de emisión por defecto'
+          message: 'No se encontró punto de emisión por defecto',
         });
-        return
+        return;
       }
 
-      if(!defaultWarehouse){
+      if (!defaultWarehouse) {
         this.notiSvc.warning({
-          message: 'No se encontró bodega por defecto'
+          message: 'No se encontró bodega por defecto',
         });
-        return
+        return;
       }
 
-
-      this.dataForm.establishmentId  = dataEstab?.id ?? 0;
+      this.dataForm.establishmentId = dataEstab?.id ?? 0;
       this.dataForm.emissionPointId = defaultEmissionPoint?.id ?? 0;
       this.dataFormGeneral.warehouseId = defaultWarehouse?.id ?? 0;
       this.dataFormGeneral.feeId = defaultFee?.id ?? 0;
 
-
       if (['edit', 'duplicate'].includes(this.params.operation)) {
-
       }
 
-
-      console.log(data)
-    })
+      console.log(data);
+    });
   }
 
   ngOnInit() {
-    console.log(new ProformaDetail({
-      unitPrice: 12,
-      discount: 6
-    }).calculate())
+    console.log(
+      new ProformaDetail({
+        unitPrice: 12,
+        discount: 6,
+      }).calculate(),
+    );
     this.loadFormData();
     const items: any[] = [
       {
@@ -562,10 +559,10 @@ export class ProformaAddEdit implements OnInit {
 
           //  Tarifa (fee)
           const feeId = this.dataFormGeneral.feeId;
-          const fee = defaultMeasure.fees.find((f) => (f.id === feeId) || f.isDefault);
-          const dataTaxRate = this.taxRates().find(t => t.code == product.codigoPorcentaje);
+          const fee = defaultMeasure.fees.find((f) => f.id === feeId || f.isDefault);
+          const dataTaxRate = this.taxRates().find((t) => t.code == product.codigoPorcentaje);
           if (!fee) throw new Error('No se encontró la tarifa por defecto');
-          if(!dataTaxRate){
+          if (!dataTaxRate) {
             throw new Error('No se encontró el tipo impuesto');
           }
           let rowData: ProformaDetail;
@@ -605,7 +602,7 @@ export class ProformaAddEdit implements OnInit {
           }
           //  Si NO lleva inventario → siempre agregar
           else {
-            rowData = ProformaDetail.create()
+            rowData = ProformaDetail.create();
             rowData.quantity = 1;
             shouldAddRow = true;
           }
@@ -740,7 +737,7 @@ export class ProformaAddEdit implements OnInit {
     // 1. Convertir a modelo
     const detail = new ProformaDetail(raw).calculate();
 
-    console.log(detail)
+    console.log(detail);
 
     this.updateDetailInList(raw.uuid, detail);
   }

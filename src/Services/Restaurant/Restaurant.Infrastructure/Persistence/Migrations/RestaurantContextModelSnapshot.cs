@@ -17,7 +17,7 @@ namespace Restaurant.Api.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -2194,6 +2194,9 @@ namespace Restaurant.Api.Data.Migrations
                         .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
+                    b.Property<Guid?>("UniqueId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
@@ -2243,6 +2246,87 @@ namespace Restaurant.Api.Data.Migrations
                         .HasDatabaseName("IX_OrderDetail_OrderId_Status");
 
                     b.ToTable("OrderDetail", "Restaurant");
+                });
+
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailCompositionModifier", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("DeletedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("ExtraCharge")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<string>("Instructions")
+                        .HasMaxLength(500)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMobileRequest")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ModifierCompositionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid?>("UniqueId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(100)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ModifierCompositionId");
+
+                    b.HasIndex("OrderDetailId");
+
+                    b.ToTable("OrderDetailCompositionModifier", "Restaurant");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
@@ -2315,6 +2399,9 @@ namespace Restaurant.Api.Data.Migrations
                     b.Property<decimal>("Quantity")
                         .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
+
+                    b.Property<Guid?>("UniqueId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasPrecision(7)
@@ -3716,6 +3803,25 @@ namespace Restaurant.Api.Data.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailCompositionModifier", b =>
+                {
+                    b.HasOne("Restaurant.Domain.Entities.ItemComposition", "ModifierComposition")
+                        .WithMany()
+                        .HasForeignKey("ModifierCompositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Restaurant.Domain.Entities.OrderDetail", "OrderDetail")
+                        .WithMany("ModifiersComposition")
+                        .HasForeignKey("OrderDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ModifierComposition");
+
+                    b.Navigation("OrderDetail");
+                });
+
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetailModifier", b =>
                 {
                     b.HasOne("Restaurant.Domain.Entities.Item", "ModifierItem")
@@ -3924,6 +4030,8 @@ namespace Restaurant.Api.Data.Migrations
             modelBuilder.Entity("Restaurant.Domain.Entities.OrderDetail", b =>
                 {
                     b.Navigation("Modifiers");
+
+                    b.Navigation("ModifiersComposition");
                 });
 
             modelBuilder.Entity("Restaurant.Domain.Entities.Promotion", b =>

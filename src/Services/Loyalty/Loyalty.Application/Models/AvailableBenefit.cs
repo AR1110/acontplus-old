@@ -1,4 +1,4 @@
-﻿using Loyalty.Domain.Enums;
+using Loyalty.Domain.Enums;
 
 namespace Loyalty.Application.Models;
 

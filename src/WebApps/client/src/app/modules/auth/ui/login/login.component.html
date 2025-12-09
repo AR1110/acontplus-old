@@ -1,74 +1,73 @@
 <div class="d-flex w-full h-full">
-  <mat-card class="m-auto" style="max-width: 380px">
-    <mat-card-header class="m-b-24">
-      <mat-card-title>AcontPlus S.A.S</mat-card-title>
-    </mat-card-header>
+  <acp-dynamic-card
+    class="m-auto"
+    style="max-width: 380px"
+    [cardTitle]="'AcontPlus S.A.S'"
+    [isHeaderVisible]="true"
+  >
+    <form class="form-field-full" [formGroup]="loginForm">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'username' | translate }}</mat-label>
+        <input matInput placeholder="..." formControlName="username" required />
+        @if (username.invalid) {
+          <mat-error>
+            @if (username.errors && username.errors['required']) {
+              <span>
+                {{ 'please_enter' | translate }}
+                <strong>username</strong>
+              </span>
+            }
+            @if (username.errors && username.errors['remote']) {
+              <span>{{ username.errors['remote'] }}</span>
+            }
+          </mat-error>
+        }
+      </mat-form-field>
 
-    <mat-card-content>
-      <form class="form-field-full" [formGroup]="loginForm">
-        <mat-form-field appearance="outline">
-          <mat-label>{{ 'username' | translate }}</mat-label>
-          <input matInput placeholder="..." formControlName="username" required />
-          @if (username.invalid) {
-            <mat-error>
-              @if (username.errors && username.errors['required']) {
-                <span>
-                  {{ 'please_enter' | translate }}
-                  <strong>username</strong>
-                </span>
-              }
-              @if (username.errors && username.errors['remote']) {
-                <span>{{ username.errors['remote'] }}</span>
-              }
-            </mat-error>
-          }
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>{{ 'password' | translate }}</mat-label>
-          <input
-            [type]="hide() ? 'password' : 'text'"
-            matInput
-            formControlName="password"
-            placeholder="Contraseña"
-          />
-          @if (password.invalid) {
-            <mat-error>
-              @if (password.errors && password.errors['required']) {
-                <span>
-                  {{ 'please_enter' | translate }}
-                  <strong>password</strong>
-                </span>
-              }
-              @if (password.errors && password.errors['remote']) {
-                <span>{{ password.errors['remote'] }}</span>
-              }
-            </mat-error>
-          }
-          <button
-            type="button"
-            mat-icon-button
-            matSuffix
-            (click)="clickEvent($event)"
-            [attr.aria-label]="'Hide password'"
-          >
-            <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-        </mat-form-field>
-
-        <mat-checkbox formControlName="rememberMe">
-          {{ 'remember_me' | translate }}
-        </mat-checkbox>
-
+      <mat-form-field>
+        <mat-label>{{ 'password' | translate }}</mat-label>
+        <input
+          [type]="hide() ? 'password' : 'text'"
+          matInput
+          formControlName="password"
+          placeholder="Contraseña"
+        />
+        @if (password.invalid) {
+          <mat-error>
+            @if (password.errors && password.errors['required']) {
+              <span>
+                {{ 'please_enter' | translate }}
+                <strong>password</strong>
+              </span>
+            }
+            @if (password.errors && password.errors['remote']) {
+              <span>{{ password.errors['remote'] }}</span>
+            }
+          </mat-error>
+        }
         <button
-          class="w-full m-y-16"
-          mat-flat-button
-          [disabled]="!!loginForm.invalid"
-          (click)="login()"
+          type="button"
+          mat-icon-button
+          matSuffix
+          (click)="clickEvent($event)"
+          [attr.aria-label]="'Hide password'"
         >
-          {{ 'login' | translate }}
+          <mat-icon>{{ hide() ? 'visibility_off' : 'visibility' }}</mat-icon>
         </button>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="rememberMe">
+        {{ 'remember_me' | translate }}
+      </mat-checkbox>
+
+      <button
+        class="w-full m-y-16"
+        mat-flat-button
+        [disabled]="!!loginForm.invalid"
+        (click)="login()"
+      >
+        {{ 'login' | translate }}
+      </button>
+    </form>
+  </acp-dynamic-card>
 </div>

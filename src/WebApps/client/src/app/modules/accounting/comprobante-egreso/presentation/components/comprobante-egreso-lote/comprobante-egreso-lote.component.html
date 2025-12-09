@@ -12,51 +12,47 @@
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
     >
       <div class="col">
-        <mat-card appearance="outlined">
-          <mat-card-content>
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="vstack">
-                <small class="fw-semibold">Proveedor: </small>
-                <small>{{ comprobanteEgresoStore.dataCuentaPorPagar().nombreComprador }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Nro. Identificación</small>
-                <small>{{
-                  comprobanteEgresoStore.dataCuentaPorPagar().identificacionComprador
-                }}</small>
-              </div>
+        <acp-dynamic-card>
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="vstack">
+              <small class="fw-semibold">Proveedor: </small>
+              <small>{{ comprobanteEgresoStore.dataCuentaPorPagar().nombreComprador }}</small>
             </div>
-          </mat-card-content>
-        </mat-card>
+            <div class="vstack">
+              <small class="fw-semibold">Nro. Identificación</small>
+              <small>{{
+                comprobanteEgresoStore.dataCuentaPorPagar().identificacionComprador
+              }}</small>
+            </div>
+          </div>
+        </acp-dynamic-card>
       </div>
 
       <div class="col">
-        <mat-card appearance="outlined">
-          <mat-card-content>
-            <div
-              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
-            >
-              <div class="vstack">
-                <small class="fw-semibold">Total</small>
-                <small>{{ comprobanteEgresoStore.total() }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Abono</small>
-                <small>{{ comprobanteEgresoStore.abono() }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Saldo</small>
-                <small>{{ comprobanteEgresoStore.saldo() }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Diferencia</small>
-                <small>{{ comprobanteEgresoStore.valorDiferencia() }}</small>
-              </div>
+        <acp-dynamic-card>
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="vstack">
+              <small class="fw-semibold">Total</small>
+              <small>{{ comprobanteEgresoStore.total() }}</small>
             </div>
-          </mat-card-content>
-        </mat-card>
+            <div class="vstack">
+              <small class="fw-semibold">Abono</small>
+              <small>{{ comprobanteEgresoStore.abono() }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Saldo</small>
+              <small>{{ comprobanteEgresoStore.saldo() }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Diferencia</small>
+              <small>{{ comprobanteEgresoStore.valorDiferencia() }}</small>
+            </div>
+          </div>
+        </acp-dynamic-card>
       </div>
     </div>
     <div class="row g-4">
@@ -97,12 +93,11 @@
               >
                 @for (item of comprobanteEgresoStore.formasPago(); track $index) {
                   <div class="col">
-                    <mat-card appearance="outlined">
-                      <mat-card-header class="d-flex align-items-center justify-content-between">
-                        <mat-card-subtitle class="small"
-                          >{{ item.nombreFormaPago }}
-                        </mat-card-subtitle>
-
+                    <acp-dynamic-card
+                      [cardTitle]="item.nombreFormaPago || ''"
+                      [isHeaderVisible]="true"
+                    >
+                      <div class="d-flex align-items-center justify-content-end mb-2">
                         <button
                           mat-icon-button
                           matTooltip="Eliminar forma de pago agregado"
@@ -110,68 +105,67 @@
                         >
                           <mat-icon>delete</mat-icon>
                         </button>
-                      </mat-card-header>
-                      <mat-card-content>
-                        <div class="d-flex flex-column gap-1">
-                          <div class="hstack">
-                            <small class="fw-semibold me-2">Fecha Emisión</small>
-                            <small> {{ item.fechaEmision | date: ' dd-MM-yyyy HH:mm' }}</small>
+                      </div>
+
+                      <div class="d-flex flex-column gap-1">
+                        <div class="hstack">
+                          <small class="fw-semibold me-2">Fecha Emisión</small>
+                          <small> {{ item.fechaEmision | date: ' dd-MM-yyyy HH:mm' }}</small>
+                        </div>
+
+                        <div class="d-flex flex-row">
+                          <div class="vstack">
+                            <small class="fw-semibold">Valor</small>
+                            <small>{{ item.valorAbonoInput | currency }}</small>
                           </div>
 
-                          <div class="d-flex flex-row">
-                            <div class="vstack">
-                              <small class="fw-semibold">Valor</small>
-                              <small>{{ item.valorAbonoInput | currency }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Abono</small>
-                              <small>{{ item.abono | currency }}</small>
-                            </div>
-                          </div>
-                          <mat-divider />
-
-                          <div
-                            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
-                          >
-                            <div class="vstack">
-                              <small class="fw-semibold">Ciudad:</small>
-                              <small>{{ item.nombreCiudad }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Banco:</small>
-                              <small>{{ item.nombreBanco }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Referencia:</small>
-                              <small>{{ item.referencia }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Nro:</small>
-                              <small>{{ item.nro }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Lote:</small>
-                              <small>{{ item.lote }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Aprobación:</small>
-                              <small>{{ item.aprobacion }}</small>
-                            </div>
-
-                            <div class="vstack">
-                              <small class="fw-semibold">Posfechado:</small>
-                              <small>{{ item.nombrePosfechado }}</small>
-                            </div>
+                          <div class="vstack">
+                            <small class="fw-semibold">Abono</small>
+                            <small>{{ item.abono | currency }}</small>
                           </div>
                         </div>
-                      </mat-card-content>
-                    </mat-card>
+                        <mat-divider />
+
+                        <div
+                          class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
+                        >
+                          <div class="vstack">
+                            <small class="fw-semibold">Ciudad:</small>
+                            <small>{{ item.nombreCiudad }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Banco:</small>
+                            <small>{{ item.nombreBanco }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Referencia:</small>
+                            <small>{{ item.referencia }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Nro:</small>
+                            <small>{{ item.nro }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Lote:</small>
+                            <small>{{ item.lote }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Aprobación:</small>
+                            <small>{{ item.aprobacion }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Posfechado:</small>
+                            <small>{{ item.nombrePosfechado }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </acp-dynamic-card>
                   </div>
                 }
               </div>
@@ -189,31 +183,24 @@
         </div>
       </div>
       <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
-        <mat-card appearance="outlined">
-          <mat-card-header>
-            <mat-card-title-group>
-              <mat-card-subtitle>Seleccione el Método de Pago </mat-card-subtitle>
-            </mat-card-title-group>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-list>
+        <acp-dynamic-card [cardTitle]="'Seleccione el Método de Pago'" [isHeaderVisible]="true">
+          <mat-list>
+            <mat-divider />
+            @for (item of comprobanteEgresoStore.entidadesFinanciera(); track $index) {
+              <mat-list-item
+                [disabled]="comprobanteEgresoStore.saldo() === 0"
+                style="cursor: pointer"
+                (click)="openFormaPago(item)"
+              >
+                <div class="d-inline-flex justify-content-between w-100 small">
+                  <div>{{ item.descripcion }}</div>
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </div>
+              </mat-list-item>
               <mat-divider />
-              @for (item of comprobanteEgresoStore.entidadesFinanciera(); track $index) {
-                <mat-list-item
-                  [disabled]="comprobanteEgresoStore.saldo() === 0"
-                  style="cursor: pointer"
-                  (click)="openFormaPago(item)"
-                >
-                  <div class="d-inline-flex justify-content-between w-100 small">
-                    <div>{{ item.descripcion }}</div>
-                    <mat-icon>keyboard_arrow_right</mat-icon>
-                  </div>
-                </mat-list-item>
-                <mat-divider />
-              }
-            </mat-list>
-          </mat-card-content>
-        </mat-card>
+            }
+          </mat-list>
+        </acp-dynamic-card>
       </div>
     </div>
   </div>

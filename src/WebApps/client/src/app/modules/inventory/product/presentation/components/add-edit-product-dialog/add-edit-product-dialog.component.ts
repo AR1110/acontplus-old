@@ -11,7 +11,7 @@ import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoIvaSelectHtmlOnly } from '@inventory/domain/models/tipo-iva.model';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { TabulatorTable } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -67,7 +67,7 @@ interface ProductTarifa {
     FormsModule,
 
     //Components
-    TabulatorComponent,
+    TabulatorTable,
     MatCustomDialogComponent,
     ProductUbicationComponent,
     Button,

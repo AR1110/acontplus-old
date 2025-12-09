@@ -1,3 +1,4 @@
+import { DynamicCard } from '@acontplus/ng-components';
 import { Component, OnInit, inject } from '@angular/core';
 import { isApiResponse } from '@core/models/api-response-legacy';
 
@@ -10,7 +11,7 @@ Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [OrderListComponent, MatCard, MatCardContent, MatIcon],
+  imports: [DynamicCard, OrderListComponent, MatIcon],
   templateUrl: './dashboard.component.html',
   styles: ``,
 })

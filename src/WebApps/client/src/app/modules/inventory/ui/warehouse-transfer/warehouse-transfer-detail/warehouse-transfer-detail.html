@@ -7,39 +7,37 @@
 <ng-template #body>
   <!-- Información del encabezado -->
   <mat-card class="header-card header-split" appearance="outlined">
-    <mat-card-content class="header-content flex flex-wrap justify-between items-start gap-4">
-      <!-- Columna Origen -->
-      <div class="header-column">
-        <h6 class="fw-semibold mb-2 text-primary">Origen</h6>
-        <div><span class="label">Establecimiento:</span> {{ header.sourceEstablishment }}</div>
-        <div><span class="label">Bodega:</span> {{ header.sourceWarehouse }}</div>
-      </div>
+    <!-- Columna Origen -->
+    <div class="header-column">
+      <h6 class="fw-semibold mb-2 text-primary">Origen</h6>
+      <div><span class="label">Establecimiento:</span> {{ header.sourceEstablishment }}</div>
+      <div><span class="label">Bodega:</span> {{ header.sourceWarehouse }}</div>
+    </div>
 
-      <!-- Icono de transferencia -->
-      <div class="header-icon text-center mx-4">
-        <mat-icon class="text-primary text-3xl">compare_arrows</mat-icon>
-        <div><span class="label">Pto. Emisión:</span> {{ header.ptoEmi }}</div>
-      </div>
+    <!-- Icono de transferencia -->
+    <div class="header-icon text-center mx-4">
+      <mat-icon class="text-primary text-3xl">compare_arrows</mat-icon>
+      <div><span class="label">Pto. Emisión:</span> {{ header.ptoEmi }}</div>
+    </div>
 
-      <!-- Columna Destino -->
-      <div class="header-column text-end">
-        <h6 class="fw-semibold mb-2 text-primary">Destino</h6>
-        <div><span class="label">Establecimiento:</span> {{ header.destinationEstablishment }}</div>
-        <div><span class="label">Bodega:</span> {{ header.destinationWarehouse }}</div>
-      </div>
+    <!-- Columna Destino -->
+    <div class="header-column text-end">
+      <h6 class="fw-semibold mb-2 text-primary">Destino</h6>
+      <div><span class="label">Establecimiento:</span> {{ header.destinationEstablishment }}</div>
+      <div><span class="label">Bodega:</span> {{ header.destinationWarehouse }}</div>
+    </div>
 
-      <!-- Columna Extra -->
-      <div class="header-column text-end ml-4">
-        <div>
-          <span class="label">Fecha Emisión:</span>
-          {{ header.issueDate | date: 'yyyy-MM-dd HH:mm' }}
-        </div>
-        <div><span class="label">Observación:</span> {{ header.observation || '—' }}</div>
-        <div class="fw-bold total mt-1">
-          <span class="label">Total:</span> {{ header.total | number: '1.2-2' }}
-        </div>
+    <!-- Columna Extra -->
+    <div class="header-column text-end ml-4">
+      <div>
+        <span class="label">Fecha Emisión:</span>
+        {{ header.issueDate | date: 'yyyy-MM-dd HH:mm' }}
       </div>
-    </mat-card-content>
+      <div><span class="label">Observación:</span> {{ header.observation || '—' }}</div>
+      <div class="fw-bold total mt-1">
+        <span class="label">Total:</span> {{ header.total | number: '1.2-2' }}
+      </div>
+    </div>
   </mat-card>
 
   <!-- Tabla de detalles -->

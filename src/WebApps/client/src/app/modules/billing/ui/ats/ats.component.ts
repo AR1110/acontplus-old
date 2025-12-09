@@ -7,12 +7,12 @@ import { AtsService } from '@billing/services/ats.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { addDay, monthStart } from '@formkit/tempo';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-ats',
-  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent, MatCardModule, Button],
+  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent, DynamicCard, Button],
   templateUrl: './ats.component.html',
   styles: ``,
 })

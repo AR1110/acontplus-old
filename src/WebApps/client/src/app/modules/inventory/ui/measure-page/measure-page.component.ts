@@ -1,6 +1,6 @@
 import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -23,7 +23,7 @@ import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
     MeasureAddEditDirective,
     PrimaryStatusPipe,
     MatButtonModule,
-    MatCardModule,
+    DynamicCard,
     MatIconModule,
     MatTableModule,
     CustomTableContainerComponent,

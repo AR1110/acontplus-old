@@ -4,12 +4,12 @@ import { Chart, registerables } from 'chart.js';
 import { SupportPageComponent } from '../support-page/support-page.component';
 import { SupportUseCase } from '@mechanical/application/use-cases/support.use-case';
 import { MechanicalStore } from '@mechanical/application/store/mechanical.store';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIcon } from '@angular/material/icon';
 Chart.register(...registerables);
 @Component({
   selector: 'app-mechanical-dashboard',
-  imports: [SupportPageComponent, MatDynamicCardComponent, MatIcon],
+  imports: [SupportPageComponent, DynamicCard, MatIcon],
   templateUrl: './mechanical-dashboard.component.html',
 })
 export class MechanicalDashboardComponent implements OnInit {

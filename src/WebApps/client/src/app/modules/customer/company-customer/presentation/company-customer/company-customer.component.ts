@@ -5,12 +5,10 @@ import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isValidField } from '@core/utils/utils';
 
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, Button, DynamicCard } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { MatIconModule } from '@angular/material/icon';
-import { Button } from '@acontplus/ng-components';
 import { MatButtonModule, MatIconButton } from '@angular/material/button';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { ListCompanyCustomerUseCase } from '@company-customer/application/list-company-customer.use-case';
@@ -32,7 +30,7 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
     BreadcrumbComponent,
     CompanyCustomerAddEditDirective,
     Button,
-    MatDynamicCardComponent,
+    DynamicCard,
     MatDynamicTableComponent,
     FormsModule,
     MatFormFieldModule,

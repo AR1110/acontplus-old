@@ -1,0 +1,538 @@
+@Restaurant.Api_HostAddress = https://localhost:7111
+@Token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1heHh5M0Bob3RtYWlsLmNvbSIsImdpdmVuX25hbWUiOiJBUlJPWU8gQ0FNUEFTIENFTkVJREEiLCJqdGkiOiIzZWEzZjU0NS01MTdlLTQ2MjYtYTk3ZC1kYWQ3YjljYTA2ZDYiLCJuYW1lIjoiQVJST1lPIENBTVBBUyBDRU5FSURBIiwibmFtZWlkIjoiODciLCJyb2xlIjoiQURNSU5JU1RSQURPUiIsInN1YiI6Ijg3IiwidW5pcXVlX25hbWUiOiJjZW5laWRhLmFycm95byIsInVzZXJSb2xlSWQiOiIxMDkiLCJpZENhcmRDb21wYW55IjoiMDgwMTIyMjQzMTAwMSIsImNvbXBhbnlJZCI6IjgxIiwidHJhZGVOYW1lIjoiUkVTVEFVUkFOVEUgRUwgQ0FSQUNPTCAtIENBTElGSUNBQ0lPTiBBUlRFU0FOQUw6IDA2NDQyNSIsImJ1c2luZXNzTmFtZSI6IkFSUk9ZTyBDQU1QQVMgQ0VORUlEQSIsInVybEdhdGV3YXkiOiJodHRwczovL2xvY2FsaG9zdDo3MDYwIiwibmJmIjoxNzY0MTg5ODAwLCJleHAiOjE3NzE5NjU4MDAsImlhdCI6MTc2NDE4OTgwMCwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA2MCIsImF1ZCI6Im9jZWxvdC5zZXJ2aWNlIn0.AuAgCXfE0m-9GoQKhsgrGECbwxEcQFcIa-7VsyphuHM-vylKKERFObzKTGdnsZz8p1lZrnQ7rD4HhtMJuRmD0A
+
+### ========== LOOKUPS ========== ###
+
+# Get Lookups
+GET {{Restaurant.Api_HostAddress}}/api/lookups?filters[module]=order&filters[context]=filters
+Authorization: {{Token}}
+
+###
+
+# Refresh Lookups Cache
+POST {{Restaurant.Api_HostAddress}}/api/lookups/refresh
+Authorization: {{Token}}
+
+### ========== CONFIGURATION ========== ###
+
+# Get Configuration
+GET {{Restaurant.Api_HostAddress}}/api/configuration?json={}
+Authorization: {{Token}}
+
+### ========== STATISTICS ========== ###
+
+# Get Dashboard Statistics (Last 30 Days)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/dashboard?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[EstablecimientoId]=396&searchTerm=
+Authorization: {{Token}}
+
+###
+
+# Get Dashboard Statistics (Custom Date Range with Language)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/dashboard?filters[StartDate]=2024-06-01&filters[EndDate]=2024-06-30&filters[EstablecimientoId]=396&language=es
+Authorization: {{Token}}
+
+###
+
+# Get Real-Time Statistics
+GET {{Restaurant.Api_HostAddress}}/api/statistics/real-time?filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Aggregated Statistics (Daily Revenue)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/aggregated?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=day&filters[MetricType]=revenue&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Aggregated Statistics (Weekly by Category)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/aggregated?filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=week&filters[MetricType]=orders&filters[Category]=beverage&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Trends (Revenue Trend)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/trends?filters[Metric]=revenue&filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=day&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+###
+
+# Get Trends (Customer Satisfaction Trend)
+GET {{Restaurant.Api_HostAddress}}/api/statistics/trends?filters[Metric]=satisfaction&filters[StartDate]=2024-01-01&filters[EndDate]=2024-12-31&filters[GroupBy]=week&filters[EstablecimientoId]=396
+Authorization: {{Token}}
+
+### ========== FLOORS ========== ###
+
+# Get All Floors
+GET {{Restaurant.Api_HostAddress}}/api/floor/Get
+Authorization: {{Token}}
+
+###
+
+# Get Floors by Establishment
+@establecimientoId=396
+GET {{Restaurant.Api_HostAddress}}/api/floor/GetByEstab/{{establecimientoId}}
+Authorization: {{Token}}
+
+###
+
+# Create Floor
+POST {{Restaurant.Api_HostAddress}}/api/floor
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Main Floor",
+  "establecimientoId": 396,
+  "isActive": true
+}
+
+###
+
+# Update Floor
+PUT {{Restaurant.Api_HostAddress}}/api/floor/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "id": 1,
+  "name": "Updated Floor",
+  "establecimientoId": 396,
+  "isActive": true
+}
+
+###
+
+# Delete Floor
+DELETE {{Restaurant.Api_HostAddress}}/api/floor/1
+Authorization: {{Token}}
+
+### ========== ROOMS ========== ###
+
+# Get All Rooms
+GET {{Restaurant.Api_HostAddress}}/api/room/Get
+Authorization: {{Token}}
+
+###
+
+# Get Rooms by Establishment
+GET {{Restaurant.Api_HostAddress}}/api/room/GetByEstab/396
+Authorization: {{Token}}
+
+###
+
+# Create Room
+POST {{Restaurant.Api_HostAddress}}/api/room
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "VIP Room",
+  "establecimientoId": 396,
+  "floorId": 1,
+  "isActive": true
+}
+
+###
+
+# Update Room
+PUT {{Restaurant.Api_HostAddress}}/api/room/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "id": 1,
+  "name": "Updated Room",
+  "establecimientoId": 396,
+  "floorId": 1,
+  "isActive": true
+}
+
+###
+
+# Delete Room
+DELETE {{Restaurant.Api_HostAddress}}/api/room/1
+Authorization: {{Token}}
+
+### ========== TABLES ========== ###
+
+# Get Tables by Establishment Code
+GET {{Restaurant.Api_HostAddress}}/api/table/GetByEstab/001
+Authorization: {{Token}}
+
+###
+
+# Create Table
+POST {{Restaurant.Api_HostAddress}}/api/table
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Table 1",
+  "roomId": 1,
+  "capacity": 4,
+  "isActive": true
+}
+
+###
+
+# Update Table
+PUT {{Restaurant.Api_HostAddress}}/api/table/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "id": 1,
+  "name": "Table 1 Updated",
+  "roomId": 1,
+  "capacity": 6,
+  "isActive": true
+}
+
+###
+
+# Unassign Table
+PUT {{Restaurant.Api_HostAddress}}/api/table/Unassign/1
+Authorization: {{Token}}
+
+###
+
+# Delete Table
+DELETE {{Restaurant.Api_HostAddress}}/api/table/1
+Authorization: {{Token}}
+
+### ========== PRODUCTION AREAS ========== ###
+
+# Get All Production Areas
+GET {{Restaurant.Api_HostAddress}}/api/productionarea/Get
+Authorization: {{Token}}
+
+###
+
+# Get Production Areas by Establishment
+GET {{Restaurant.Api_HostAddress}}/api/productionarea/GetByEstab/396
+Authorization: {{Token}}
+
+###
+
+# Create Production Area
+POST {{Restaurant.Api_HostAddress}}/api/productionarea
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Kitchen",
+  "establecimientoId": 396,
+  "isActive": true
+}
+
+###
+
+# Update Production Area
+PUT {{Restaurant.Api_HostAddress}}/api/productionarea/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "id": 1,
+  "name": "Main Kitchen",
+  "establecimientoId": 396,
+  "isActive": true
+}
+
+###
+
+# Delete Production Area
+DELETE {{Restaurant.Api_HostAddress}}/api/productionarea/1
+Authorization: {{Token}}
+
+### ========== ITEMS ========== ###
+
+# Get All Items (Paginated)
+GET {{Restaurant.Api_HostAddress}}/api/items?page=1&pageSize=10&sortBy=id&sortDirection=desc
+Authorization: {{Token}}
+
+###
+
+# Get Item by ID
+GET {{Restaurant.Api_HostAddress}}/api/items/1
+Authorization: {{Token}}
+
+###
+
+# Update Item
+PUT {{Restaurant.Api_HostAddress}}/api/items/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Updated Item",
+  "description": "Updated description",
+  "price": 15.99
+}
+
+### ========== PROMOTIONS ========== ###
+
+# Get All Promotions (Paginated)
+GET {{Restaurant.Api_HostAddress}}/api/promotions?page=1&pageSize=10&sortBy=id&sortDirection=desc
+Authorization: {{Token}}
+
+###
+
+# Get Promotion by ID
+GET {{Restaurant.Api_HostAddress}}/api/promotions/1
+Authorization: {{Token}}
+
+###
+
+# Create Promotion
+POST {{Restaurant.Api_HostAddress}}/api/promotions
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Happy Hour",
+  "description": "50% off drinks",
+  "discountPercentage": 50,
+  "startDate": "2025-01-01",
+  "endDate": "2025-12-31"
+}
+
+###
+
+# Update Promotion
+PUT {{Restaurant.Api_HostAddress}}/api/promotions/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Updated Happy Hour",
+  "description": "60% off drinks",
+  "discountPercentage": 60,
+  "startDate": "2025-01-01",
+  "endDate": "2025-12-31"
+}
+
+### ========== ORDERS ========== ###
+
+# Get All Orders (Paginated)
+GET {{Restaurant.Api_HostAddress}}/api/orders?page=1&pageSize=10&sortBy=id&sortDirection=desc
+Authorization: {{Token}}
+
+###
+
+# Get Order by ID
+GET {{Restaurant.Api_HostAddress}}/api/orders/1
+Authorization: {{Token}}
+
+###
+
+# Create Order
+POST {{Restaurant.Api_HostAddress}}/api/orders
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "tableId": 1,
+  "customerId": 100,
+  "notes": "No onions"
+}
+
+###
+
+# Update Order
+PUT {{Restaurant.Api_HostAddress}}/api/orders/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "tableId": 1,
+  "customerId": 100,
+  "notes": "Updated notes",
+  "status": 2
+}
+
+###
+
+# Cancel Order
+PUT {{Restaurant.Api_HostAddress}}/api/orders/cancel/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "reason": "Customer request"
+}
+
+### ========== ORDER DETAILS ========== ###
+
+# Get Order Detail by ID
+GET {{Restaurant.Api_HostAddress}}/api/orderdetails/1
+Authorization: {{Token}}
+
+###
+
+# Get Order Details by Order ID
+GET {{Restaurant.Api_HostAddress}}/api/orderdetails/order/1
+Authorization: {{Token}}
+
+###
+
+# Get Order Details by Status
+GET {{Restaurant.Api_HostAddress}}/api/orderdetails/status/1
+Authorization: {{Token}}
+
+###
+
+# Create Order Detail
+POST {{Restaurant.Api_HostAddress}}/api/orderdetails
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "orderId": 1,
+  "itemId": 10,
+  "quantity": 2,
+  "unitPrice": 15.99,
+  "notes": "Extra cheese"
+}
+
+###
+
+# Update Order Detail
+PUT {{Restaurant.Api_HostAddress}}/api/orderdetails/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "orderId": 1,
+  "itemId": 10,
+  "quantity": 3,
+  "unitPrice": 15.99,
+  "notes": "Extra cheese and bacon"
+}
+
+###
+
+# Update Order Detail Status
+PATCH {{Restaurant.Api_HostAddress}}/api/orderdetails/1/status/2
+Authorization: {{Token}}
+
+###
+
+# Delete Order Detail
+DELETE {{Restaurant.Api_HostAddress}}/api/orderdetails/1
+Authorization: {{Token}}
+
+### ========== MEAL CONSUMPTIONS ========== ###
+
+# Get All Meal Consumptions (Paginated)
+GET {{Restaurant.Api_HostAddress}}/api/meal-consumptions?page=1&pageSize=10
+Authorization: {{Token}}
+
+###
+
+# Search Customer for Meal Consumption
+GET {{Restaurant.Api_HostAddress}}/api/meal-consumptions/search-customer?searchTerm=2100705371
+Authorization: {{Token}}
+
+###
+
+# Update Meal Consumption
+PUT {{Restaurant.Api_HostAddress}}/api/meal-consumptions/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "customerId": 100,
+  "mealPlanId": 5,
+  "consumptionDate": "2025-12-04"
+}
+
+###
+
+# Delete Meal Consumption
+DELETE {{Restaurant.Api_HostAddress}}/api/meal-consumptions/1
+Authorization: {{Token}}
+
+### ========== MEAL PLANS ========== ###
+
+# Get All Meal Plans by Establishment
+GET {{Restaurant.Api_HostAddress}}/api/meal-plans/396
+Authorization: {{Token}}
+
+###
+
+# Create Meal Plan
+POST {{Restaurant.Api_HostAddress}}/api/meal-plans
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Breakfast Plan",
+  "description": "Daily breakfast service",
+  "establishmentId": 396,
+  "price": 5.99
+}
+
+###
+
+# Update Meal Plan
+PUT {{Restaurant.Api_HostAddress}}/api/meal-plans/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Updated Breakfast Plan",
+  "description": "Premium breakfast service",
+  "price": 7.99
+}
+
+###
+
+# Delete Meal Plan
+DELETE {{Restaurant.Api_HostAddress}}/api/meal-plans/1
+Authorization: {{Token}}
+
+### ========== MEAL SCHEDULE SETTINGS ========== ###
+
+# Get All Meal Schedule Settings by Establishment
+GET {{Restaurant.Api_HostAddress}}/api/meal-schedule-settings/396
+Authorization: {{Token}}
+
+###
+
+# Create Meal Schedule Setting
+POST {{Restaurant.Api_HostAddress}}/api/meal-schedule-settings
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "establishmentId": 396,
+  "mealType": "Breakfast",
+  "startTime": "07:00",
+  "endTime": "10:00",
+  "daysOfWeek": [1, 2, 3, 4, 5]
+}
+
+###
+
+# Update Meal Schedule Setting
+PUT {{Restaurant.Api_HostAddress}}/api/meal-schedule-settings/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "establishmentId": 396,
+  "mealType": "Breakfast",
+  "startTime": "07:30",
+  "endTime": "10:30",
+  "daysOfWeek": [1, 2, 3, 4, 5, 6, 7]
+}
+
+###
+
+# Delete Meal Schedule Setting
+DELETE {{Restaurant.Api_HostAddress}}/api/meal-schedule-settings/1
+Authorization: {{Token}}
+
+###

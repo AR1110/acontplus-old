@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Accounting.API.Data.Migrations
+namespace Accounting.Api.Data.Migrations
 {
     /// <inheritdoc />
     public partial class Accounting_Initial : Migration

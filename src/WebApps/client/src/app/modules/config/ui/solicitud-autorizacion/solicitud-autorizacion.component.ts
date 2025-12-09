@@ -21,7 +21,7 @@ import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { SolicitudUsuarioUseCase } from '@modules/config/application/use-cases/solicitud-usuario.use-case';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -45,7 +45,7 @@ import { UpdateSolicitudAutorizacionUseCase } from '@modules/config/application/
     MatTooltipModule,
     MatIconModule,
     MatButtonModule,
-    MatDynamicCardComponent,
+    DynamicCard,
     BreadcrumbComponent,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,

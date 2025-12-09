@@ -1,6 +1,6 @@
 <app-breadcrumb />
 
-<app-mat-dynamic-card>
+<acp-dynamic-card>
   <mat-accordion>
     @for (item of entidadesFinanciera; track $index) {
       <mat-expansion-panel (opened)="showAccordion(item)">
@@ -26,7 +26,7 @@
       </mat-expansion-panel>
     }
   </mat-accordion>
-</app-mat-dynamic-card>
+</acp-dynamic-card>
 
 <ng-template #templateOp let-item="item">
   <button type="button" mat-icon-button (click)="openDialog(item)">

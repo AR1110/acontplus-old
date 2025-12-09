@@ -9,9 +9,9 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DynamicCard } from '@acontplus/ng-components';
 import { ListComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/list-comprobante-egreso.use-case';
 import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -46,7 +46,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatMenuModule,
 
     BreadcrumbComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     DateRangeSelectionComponent,
     MatDynamicTableComponent,
     MatMenu,

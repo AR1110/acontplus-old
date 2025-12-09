@@ -1,4 +1,4 @@
-﻿namespace Loyalty.Application.Models;
+namespace Loyalty.Application.Models;
 
 public class TierEvaluationResult
 {

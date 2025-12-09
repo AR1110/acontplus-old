@@ -1,6 +1,6 @@
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { GetFormDataExcelImportUseCase } from '@modules/config/application/use-cases/excel-import/get-form-data-excel-import.use-case';
@@ -19,15 +19,15 @@ import { SaveExcelImportUseCase } from '@modules/config/application/use-cases/ex
 import { NgClass } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Button } from '@acontplus/ng-components';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 @Component({
   selector: 'app-excel-import',
   imports: [
+    DynamicCard,
     MatSelectModule,
     MatFormFieldModule,
     MatCheckboxModule,
     BreadcrumbComponent,
-    MatDynamicCardComponent,
     MatIconModule,
     MatButtonModule,
     MatInput,

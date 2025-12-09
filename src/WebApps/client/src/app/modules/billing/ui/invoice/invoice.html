@@ -1,186 +1,184 @@
 <app-breadcrumb />
 
-<mat-card>
-  <mat-card-content>
-    <div class="d-flex flex-column gap-2">
-      <div class="row">
-        <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
-          <div
-            class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
-          >
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Establecimiento</mat-label>
-                <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="onEstabChange()">
-                  @for (item of estabs; track $index) {
-                    <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Punto Emisión</mat-label>
-                <mat-select [(ngModel)]="dataSearch.idPuntoEmision" (selectionChange)="refresh()">
-                  @for (item of puntosEmision; track $index) {
-                    <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <app-date-range-selection
-                (onChangeDateRange)="onDateRangeSelection($event)"
-                (onCheckboxChange)="refresh()"
-                [(checkbox)]="dataSearch.checkBoxDate"
-                [showInputMaterial]="true"
-                [showMatPrefix]="true"
-              />
-            </div>
+<acp-dynamic-card>
+  <div class="d-flex flex-column gap-2">
+    <div class="row">
+      <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="onEstabChange()">
+                @for (item of estabs; track $index) {
+                  <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
           </div>
-        </div>
-        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-          <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
-            <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
-              <mat-icon>add</mat-icon>
-              Nuevo
-            </button>
-            <button mat-icon-button (click)="refresh()">
-              <mat-icon>refresh</mat-icon>
-            </button>
-            <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
-              <mat-icon>filter_list</mat-icon>
-            </button>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Punto Emisión</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idPuntoEmision" (selectionChange)="refresh()">
+                @for (item of puntosEmision; track $index) {
+                  <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <app-date-range-selection
+              (onChangeDateRange)="onDateRangeSelection($event)"
+              (onCheckboxChange)="refresh()"
+              [(checkbox)]="dataSearch.checkBoxDate"
+              [showInputMaterial]="true"
+              [showMatPrefix]="true"
+            />
           </div>
         </div>
       </div>
-
-      @if (isSearchAdvanced()) {
-        <div class="border-top">
-          <div class="d-flex justify-content-center gap-3 pb-2">
-            <mat-checkbox [(ngModel)]="dataSearch.esBuscarCliente">Ciente </mat-checkbox>
-            <mat-checkbox [(ngModel)]="dataSearch.esBuscarUsuario">Usuario</mat-checkbox>
-            <mat-checkbox [(ngModel)]="dataSearch.esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
-            <mat-checkbox [(ngModel)]="dataSearch.esDatoAdicional">Dato Adicional</mat-checkbox>
-            <mat-checkbox [(ngModel)]="dataSearch.isTransferredToDoc" (change)="refresh()"
-              >Doc. Transferida</mat-checkbox
-            >
-          </div>
-          <div
-            class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
-          >
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Cliente</mat-label>
-                <input matInput />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Usuario</mat-label>
-                <input matInput />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Buscar por Nro. Doc</mat-label>
-                <input matInput />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Datos Adicionales</mat-label>
-                <input matInput />
-              </mat-form-field>
-            </div>
-            <div class="col">
-              <mat-form-field class="w-100">
-                <mat-label>Estado</mat-label>
-                <mat-select [(ngModel)]="dataSearch.idEstadoDoc" (selectionChange)="refresh()">
-                  <mat-option [value]="0">Todos</mat-option>
-                  @for (item of estadosDoc; track $index) {
-                    <mat-option [value]="item.idEstadoPago">{{ item.descripcion }}</mat-option>
-                  }
-                </mat-select>
-              </mat-form-field>
-            </div>
-          </div>
+      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+        <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
+          <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
+            <mat-icon>add</mat-icon>
+            Nuevo
+          </button>
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
+            <mat-icon>filter_list</mat-icon>
+          </button>
         </div>
-      }
+      </div>
     </div>
 
-    <app-custom-table-container
-      [pagination]="pagination()"
-      [isLoadingResults]="isLoadingResults()"
-      (onPageEvent)="handlePageEvent($event)"
-    >
-      <app-mat-dynamic-table
-        [templateOp]="templateOp"
-        [tableData]="dataSource.data"
-        [columnDefinitions]="columnsDefs"
-        [visibleColumns]="columns"
-      />
-    </app-custom-table-container>
+    @if (isSearchAdvanced()) {
+      <div class="border-top">
+        <div class="d-flex justify-content-center gap-3 pb-2">
+          <mat-checkbox [(ngModel)]="dataSearch.esBuscarCliente">Ciente </mat-checkbox>
+          <mat-checkbox [(ngModel)]="dataSearch.esBuscarUsuario">Usuario</mat-checkbox>
+          <mat-checkbox [(ngModel)]="dataSearch.esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
+          <mat-checkbox [(ngModel)]="dataSearch.esDatoAdicional">Dato Adicional</mat-checkbox>
+          <mat-checkbox [(ngModel)]="dataSearch.isTransferredToDoc" (change)="refresh()"
+            >Doc. Transferida</mat-checkbox
+          >
+        </div>
+        <div
+          class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Cliente</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Usuario</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Buscar por Nro. Doc</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Datos Adicionales</mat-label>
+              <input matInput />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Estado</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idEstadoDoc" (selectionChange)="refresh()">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of estadosDoc; track $index) {
+                  <mat-option [value]="item.idEstadoPago">{{ item.descripcion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
 
-    <ng-template #templateOp let-item="item">
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-        <mat-icon>more_vert</mat-icon>
+  <app-custom-table-container
+    [pagination]="pagination()"
+    [isLoadingResults]="isLoadingResults()"
+    (onPageEvent)="handlePageEvent($event)"
+  >
+    <app-mat-dynamic-table
+      [templateOp]="templateOp"
+      [tableData]="dataSource.data"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+    />
+  </app-custom-table-container>
+
+  <ng-template #templateOp let-item="item">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item appNotaEntregaDetalleDialog [id]="item.idDocumento">
+        <mat-icon>list_alt</mat-icon>
+        <span>Detalle</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon>clear</mat-icon>
+        <span>Anular</span>
       </button>
 
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item appNotaEntregaDetalleDialog [id]="item.idDocumento">
-          <mat-icon>list_alt</mat-icon>
-          <span>Detalle</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>clear</mat-icon>
-          <span>Anular</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>file_copy</mat-icon>
-          <span>Duplicar</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>payment</mat-icon>
-          <span>Cobro</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>attach_money</mat-icon>
-          <span>Cuota</span>
-        </button>
-
-        <button mat-menu-item>
-          <mat-icon>swap_horiz</mat-icon>
-          <span>Convertir a FV</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon> attach_money</mat-icon>
-          <span>Cuenta por cobrar</span>
-        </button>
-
-        <button mat-menu-item [matMenuTriggerFor]="shared">
-          <mat-icon>share</mat-icon>
-          <span>Compartir</span>
-        </button>
-      </mat-menu>
-      <button mat-icon-button matTooltip="Editar">
-        <mat-icon>edit</mat-icon>
+      <button mat-menu-item>
+        <mat-icon>file_copy</mat-icon>
+        <span>Duplicar</span>
       </button>
 
-      <button mat-icon-button matTooltip="Imprimir">
-        <mat-icon>print</mat-icon>
+      <button mat-menu-item>
+        <mat-icon>payment</mat-icon>
+        <span>Cobro</span>
       </button>
-      <button mat-icon-button matTooltip="Descargar">
-        <mat-icon>save_alt</mat-icon>
-      </button>
-    </ng-template>
 
-    <mat-menu #shared="matMenu">
-      <button mat-menu-item>Correo</button>
-      <button mat-menu-item>WhatsApp</button>
+      <button mat-menu-item>
+        <mat-icon>attach_money</mat-icon>
+        <span>Cuota</span>
+      </button>
+
+      <button mat-menu-item>
+        <mat-icon>swap_horiz</mat-icon>
+        <span>Convertir a FV</span>
+      </button>
+      <button mat-menu-item>
+        <mat-icon> attach_money</mat-icon>
+        <span>Cuenta por cobrar</span>
+      </button>
+
+      <button mat-menu-item [matMenuTriggerFor]="shared">
+        <mat-icon>share</mat-icon>
+        <span>Compartir</span>
+      </button>
     </mat-menu>
-  </mat-card-content>
-</mat-card>
+    <button mat-icon-button matTooltip="Editar">
+      <mat-icon>edit</mat-icon>
+    </button>
+
+    <button mat-icon-button matTooltip="Imprimir">
+      <mat-icon>print</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Descargar">
+      <mat-icon>save_alt</mat-icon>
+    </button>
+  </ng-template>
+
+  <mat-menu #shared="matMenu">
+    <button mat-menu-item>Correo</button>
+    <button mat-menu-item>WhatsApp</button>
+  </mat-menu>
+</acp-dynamic-card>

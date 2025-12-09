@@ -131,10 +131,10 @@
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
           >
             <div class="col">
-              <app-mat-input-chip [chips]="emails" [labelText]="'Correo'" />
+              <acp-input-chip [chips]="emails" [labelText]="'Correo'" />
             </div>
             <div class="col">
-              <app-mat-input-chip [chips]="telephones" [labelText]="'Teléfono'" />
+              <acp-input-chip [chips]="telephones" [labelText]="'Teléfono'" />
             </div>
           </div>
 
@@ -154,7 +154,7 @@
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
           >
             <div class="col">
-              <app-mat-dynamic-card title="Información Básica" [showHeader]="true">
+              <acp-dynamic-card cardTitle="Información Básica" isHeaderVisible="true">
                 <div
                   class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
                 >
@@ -242,10 +242,10 @@
                     </mat-form-field>
                   </div>
                 </div>
-              </app-mat-dynamic-card>
+              </acp-dynamic-card>
             </div>
             <div class="col">
-              <app-mat-dynamic-card title="Información Laboral" [showHeader]="true">
+              <acp-dynamic-card cardTitle="Información Laboral" isHeaderVisible="true">
                 <div
                   class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
                 >
@@ -286,14 +286,14 @@
                     </mat-form-field>
                   </div>
                 </div>
-              </app-mat-dynamic-card>
+              </acp-dynamic-card>
             </div>
           </div>
           <div
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
           >
             <div class="col">
-              <app-mat-dynamic-card title="Configuración Financiera" [showHeader]="true">
+              <acp-dynamic-card cardTitle="Configuración Financiera" isHeaderVisible="true">
                 <div
                   class="row row-cols-xxl-1 row-cols-xl-1 row-cols-lg-1 row-cols-md-1 row-cols-sm-1 row-cols-1 g-2 mt-2"
                 >
@@ -313,7 +313,7 @@
                   </div>
 
                   <div class="col">
-                    <app-mat-input-chip labelText="Placa" [chips]="placas()" />
+                    <acp-input-chip labelText="Placa" [chips]="placas()" />
                   </div>
 
                   <div class="col w-100">
@@ -327,7 +327,7 @@
                     </mat-checkbox>
                   </div>
                 </div>
-              </app-mat-dynamic-card>
+              </acp-dynamic-card>
             </div>
             <div class="col"></div>
           </div>
@@ -339,7 +339,7 @@
             class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-1"
           >
             <div class="col">
-              <app-mat-dynamic-card title="Información Personal" [showHeader]="true">
+              <acp-dynamic-card cardTitle="Información Personal" isHeaderVisible="true">
                 <div
                   formGroupName="dataInfoCred"
                   class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2"
@@ -392,10 +392,10 @@
                     </mat-form-field>
                   </div>
                 </div>
-              </app-mat-dynamic-card>
+              </acp-dynamic-card>
             </div>
             <div class="col">
-              <app-mat-dynamic-card title="Información de Vivienda" [showHeader]="true">
+              <acp-dynamic-card cardTitle="Información de Vivienda" isHeaderVisible="true">
                 <div
                   formGroupName="dataInfoCred"
                   class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2 mt-2"
@@ -454,7 +454,7 @@
                     </mat-form-field>
                   </div>
                 </div>
-              </app-mat-dynamic-card>
+              </acp-dynamic-card>
             </div>
           </div>
         </div>

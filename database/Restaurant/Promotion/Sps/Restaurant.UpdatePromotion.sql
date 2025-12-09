@@ -26,7 +26,7 @@ BEGIN
     DECLARE @idEntidad INT ,@UserId INT ,@PromotionId INT
 
      --> Data Json
-    DECLARE @Promotion NVARCHAR(MAX) ,@PromotionDetails NVARCHAR(MAX)
+    DECLARE @Details NVARCHAR(MAX)
 
 
     DECLARE @TbPromotion AS TABLE
@@ -77,19 +77,13 @@ BEGIN
         --> Variables Globales
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
 
-        --> DataJson
-        SELECT @Promotion        = Promotion
-              ,@PromotionDetails = PromotionDetails
-        FROM OPENJSON(@json)  WITH
-        (
-            promotion        NVARCHAR(MAX) AS JSON 
-           ,promotionDetails NVARCHAR(MAX) AS JSON
-        )
+         --> DataJson
+        SELECT @Details = Details FROM OPENJSON(@json) WITH (details NVARCHAR(MAX) AS JSON)
 
         INSERT INTO @TbPromotion
-               (Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted ,ImageUrl  ,ImageKey)
-        SELECT @Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted,@ImageUrl ,@ImageKey
-        FROM OPENJSON(@Promotion)
+               (Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted ,ImageUrl  ,ImageKey, UpdatedByUserId)
+        SELECT @Id,EstablishmentId,Name,Description,ApplicableDays,MaxTotalUses,MaxUsesPerCustomer,StartTime,StartDate,EndDate,IsActive,IsDeleted,@ImageUrl ,@ImageKey, @UserId
+        FROM OPENJSON(@Json)
         WITH
         (
              [establishmentId]       INT
@@ -108,7 +102,7 @@ BEGIN
         INSERT INTO @TbPromotionDetails
               (Id,PromotionId,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,IsActive,IsDeleted,CreatedByUserId,UpdatedByUserId)
         SELECT Id,@Id        ,ItemId,FeeId,TaxId,MeasureId,UnitPrice,PromotionalPrice,DiscountPercent,Discount,Subtotal,BuyQuantity,GetQuantity,Notes,RequiredQuantity,IsActive,IsDeleted,@UserId        ,@UserId
-        FROM OPENJSON(@PromotionDetails)
+        FROM OPENJSON(@Details)
         WITH
         (
              id                      INT

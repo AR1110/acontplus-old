@@ -9,7 +9,7 @@ using TechnicalSupport.Infrastructure.Persistence;
 
 #nullable disable
 
-namespace TechnicalSupport.API.Data.Migrations
+namespace TechnicalSupport.Api.Data.Migrations
 {
     [DbContext(typeof(TechnicalSupportContext))]
     [Migration("20240811174604_FromMobileColumnTS")]
@@ -25,7 +25,7 @@ namespace TechnicalSupport.API.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Brand", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Brand", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,7 +77,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Brand", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Category", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,7 +127,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Category", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Device", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -178,7 +178,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Device", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceCustomer", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.DeviceCustomer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -233,7 +233,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("DeviceCustomer", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceSpecs", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.DeviceSpecs", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -280,7 +280,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("DeviceSpecs", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Modelo", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Modelo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -340,7 +340,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Modelo", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -440,7 +440,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Order", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -496,7 +496,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderDetail", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDocument", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -542,7 +542,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderDocument", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderMaintenance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -629,7 +629,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderMaintenance", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderStatus", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderStatus", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -683,7 +683,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("OrderStatus", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Serie", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Serie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -738,7 +738,7 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("Serie", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.WarrantyHistory", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.WarrantyHistory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -784,9 +784,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.ToTable("WarrantyHistory", "TechnicalSupport");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Brand", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Brand", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Category", "Category")
+                    b.HasOne("TechnicalSupport.Api.Entities.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -795,9 +795,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Device", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Modelo", "Modelo")
+                    b.HasOne("TechnicalSupport.Api.Entities.Modelo", "Modelo")
                         .WithMany()
                         .HasForeignKey("ModeloId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -806,9 +806,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Modelo");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceCustomer", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.DeviceCustomer", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
+                    b.HasOne("TechnicalSupport.Api.Entities.Device", "Device")
                         .WithMany("Customers")
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -817,26 +817,26 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.DeviceSpecs", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.DeviceSpecs", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
+                    b.HasOne("TechnicalSupport.Api.Entities.Device", "Device")
                         .WithOne("Specs")
-                        .HasForeignKey("TechnicalSupport.API.Entities.DeviceSpecs", "DeviceId")
+                        .HasForeignKey("TechnicalSupport.Api.Entities.DeviceSpecs", "DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Device");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Modelo", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Modelo", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Brand", "Brand")
+                    b.HasOne("TechnicalSupport.Api.Entities.Brand", "Brand")
                         .WithMany()
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechnicalSupport.API.Entities.Serie", "Serie")
+                    b.HasOne("TechnicalSupport.Api.Entities.Serie", "Serie")
                         .WithMany()
                         .HasForeignKey("SerieId");
 
@@ -845,9 +845,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Serie");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Order", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.OrderStatus", "OrderStatus")
+                    b.HasOne("TechnicalSupport.Api.Entities.OrderStatus", "OrderStatus")
                         .WithMany()
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -856,15 +856,15 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("OrderStatus");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderDetail", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Device", "Device")
+                    b.HasOne("TechnicalSupport.Api.Entities.Device", "Device")
                         .WithMany()
                         .HasForeignKey("DeviceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TechnicalSupport.API.Entities.Order", "Order")
+                    b.HasOne("TechnicalSupport.Api.Entities.Order", "Order")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -875,9 +875,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDocument", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderDocument", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Order", "Order")
+                    b.HasOne("TechnicalSupport.Api.Entities.Order", "Order")
                         .WithMany()
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -886,9 +886,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderMaintenance", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderMaintenance", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.OrderDetail", "OrderDetail")
+                    b.HasOne("TechnicalSupport.Api.Entities.OrderDetail", "OrderDetail")
                         .WithMany("OrderMaintenances")
                         .HasForeignKey("OrderDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -897,9 +897,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("OrderDetail");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Serie", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Serie", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.Brand", "Brand")
+                    b.HasOne("TechnicalSupport.Api.Entities.Brand", "Brand")
                         .WithMany("Series")
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -908,9 +908,9 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.WarrantyHistory", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.WarrantyHistory", b =>
                 {
-                    b.HasOne("TechnicalSupport.API.Entities.DeviceCustomer", "DeviceCustomer")
+                    b.HasOne("TechnicalSupport.Api.Entities.DeviceCustomer", "DeviceCustomer")
                         .WithMany()
                         .HasForeignKey("DeviceCustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -919,24 +919,24 @@ namespace TechnicalSupport.API.Data.Migrations
                     b.Navigation("DeviceCustomer");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Brand", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Brand", b =>
                 {
                     b.Navigation("Series");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Device", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Device", b =>
                 {
                     b.Navigation("Customers");
 
                     b.Navigation("Specs");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.Order", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails");
                 });
 
-            modelBuilder.Entity("TechnicalSupport.API.Entities.OrderDetail", b =>
+            modelBuilder.Entity("TechnicalSupport.Api.Entities.OrderDetail", b =>
                 {
                     b.Navigation("OrderMaintenances");
                 });

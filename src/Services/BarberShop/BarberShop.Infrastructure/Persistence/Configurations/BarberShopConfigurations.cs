@@ -1,4 +1,4 @@
-﻿namespace BarberShop.Infrastructure.Persistence.Configurations;
+namespace BarberShop.Infrastructure.Persistence.Configurations;
 
 public class WorkSessionConfiguration : BaseEntityTypeConfiguration<WorkSession>
 {

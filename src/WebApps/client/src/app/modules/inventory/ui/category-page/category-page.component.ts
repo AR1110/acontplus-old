@@ -4,11 +4,11 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { CategoryRead } from '@inventory/domain/models/category.model';
 import { CategoryService } from '@inventory/data/services/category.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-category',
-  imports: [FormsModule, BreadcrumbComponent, PrimaryStatusPipe, MatCardContent, MatCard],
+  imports: [FormsModule, BreadcrumbComponent, PrimaryStatusPipe, DynamicCard],
   templateUrl: './category-page.component.html',
   styles: ``,
 })

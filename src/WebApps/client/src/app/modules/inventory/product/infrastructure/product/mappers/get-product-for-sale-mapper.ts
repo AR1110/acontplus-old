@@ -1,9 +1,9 @@
-import {mergeMeasureUtil, mergeProductMeasures} from '@inventory/domain/utils/merge-measure.util';
+import { mergeMeasureUtil, mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
 import { ProductSale } from '@inventory/product/domain/entities/product.entity';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { ProductMapper } from '@inventory/product/infrastructure/product/mappers/product.mapper';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import {ProductMeasure} from "@inventory/domain/models/product-measure";
+import { ProductMeasure } from '@inventory/domain/models/product-measure';
 
 export class GetProductForSaleMapper {
   static toJson(obj: { id?: number; search?: string }) {
@@ -44,11 +44,11 @@ export class GetProductForSaleMapper {
         code: productTemp.codigoArticulo,
         description: productTemp.descripcion,
         taxCode: productTemp.codigoPorcentaje,
-      }
+      };
 
       results.medidas = mergeMeasureUtil(measures, fractionedMeasures);
 
-      results.measures = mergeProductMeasures(measures, fractionedMeasures)
+      results.measures = mergeProductMeasures(measures, fractionedMeasures);
 
       const consolidacionesFecha = inventoryAdjustment.map((data: any) => ({
         ...data,
@@ -68,12 +68,11 @@ export class GetProductForSaleMapper {
         status: item.estado,
       }));
 
-
       results.taxRates = taxes.map((item: any) => ({
         id: item.idTarifaImpuesto,
         code: item.codigoPorcentaje,
         name: item.descripcion,
-      }))
+      }));
     }
     console.log(results);
 

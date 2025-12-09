@@ -1,10 +1,9 @@
-import {BaseUseCase} from "@core/base-use-case";
-import {inject, Injectable} from "@angular/core";
-import {Observable} from "rxjs";
-import {PromotionRepository} from "@restaurant/domain/repositories/promotion-repository";
-import {PagedResult} from "@acontplus/core";
-import {PromotionListDto} from "@restaurant/domain/models/promotion";
-
+import { BaseUseCase } from '@core/base-use-case';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { PromotionRepository } from '@restaurant/domain/repositories/promotion-repository';
+import { PagedResult } from '@acontplus/core';
+import { PromotionListDto } from '@restaurant/domain/models/promotion';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +14,6 @@ export class PromotionListUseCase implements BaseUseCase<PagedResult<PromotionLi
     return this.#repo.list(params);
   }
 }
-
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +34,6 @@ export class PromotionUpdateUseCase implements BaseUseCase<any, any> {
     return this.#repo.update(params);
   }
 }
-
 
 @Injectable({
   providedIn: 'root',

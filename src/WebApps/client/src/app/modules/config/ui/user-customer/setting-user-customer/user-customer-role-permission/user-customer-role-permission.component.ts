@@ -10,7 +10,7 @@ import { ListUserCustomerPermissionUseCase } from '@modules/config/application/u
 import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';
 import Swal from 'sweetalert2';
 import { Button } from '@acontplus/ng-components';
-import { MatCard, MatCardContent, MatCardHeader } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
@@ -22,9 +22,7 @@ import { MatIcon } from '@angular/material/icon';
     MatSelectModule,
     ReactiveFormsModule,
     Button,
-    MatCard,
-    MatCardContent,
-    MatCardHeader,
+    DynamicCard,
     MatIcon,
   ],
   templateUrl: './user-customer-role-permission.component.html',

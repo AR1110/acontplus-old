@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import {LookupType} from "@core/models/lookup-type";
+import { LookupType } from '@core/models/lookup-type';
 
 @Injectable({ providedIn: 'root' })
 export class LookupCache {
-
   // module → context → object with multiple lookup lists
   private cache = new Map<string, Map<string, Record<string, any>>>();
 
@@ -30,7 +29,7 @@ export class LookupCache {
 
     if (!contextCache) return undefined;
 
-    const keysArray = keys.split(',').map(k => k.trim());
+    const keysArray = keys.split(',').map((k) => k.trim());
     const result: Record<string, any> = {};
 
     for (const key of keysArray) {

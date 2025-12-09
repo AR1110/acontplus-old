@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AmbienteSriPipe } from '@shared/pipes/ambiente-sri.pipe';
 import { DatePipe } from '@angular/common';
-import { MatCard, MatCardContent } from '@angular/material/card';
+import { DynamicCard } from '@acontplus/ng-components';
 import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-retencion-html',
-  imports: [FormsModule, AmbienteSriPipe, DatePipe, MatCard, MatCardContent, Button],
+  imports: [FormsModule, AmbienteSriPipe, DatePipe, DynamicCard, Button],
   templateUrl: './retencion-html.component.html',
   styles: ``,
 })

@@ -1,7 +1,7 @@
 import { Component, inject, signal, ViewChild, ViewEncapsulation, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { TabulatorComponent } from '@core/components/tabulator/tabulator.component';
+import { Button, TabulatorTable } from '@acontplus/ng-components';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -24,7 +24,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';
-import { Button } from '@acontplus/ng-components';
+
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
@@ -38,7 +38,7 @@ import { DialogService } from '@core/services/dialog.service';
 
     CompanyCustomerSearchComponent,
     DeviceSearchComponent,
-    TabulatorComponent,
+    TabulatorTable,
     MatIcon,
     MatButton,
     Button,

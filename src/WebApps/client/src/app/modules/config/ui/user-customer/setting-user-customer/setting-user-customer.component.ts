@@ -7,7 +7,7 @@ import { UserCustomerStore } from '@modules/config/application/store/user-custom
 import { ListUserCustomerRoleUseCase } from '@modules/config/application/use-cases/user-customer-role/list-user-customer-role.use-case';
 import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
 import { MatListModule } from '@angular/material/list';
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 
@@ -21,7 +21,7 @@ import { UserCustomerAccessComponent } from '@modules/config/ui/user-customer/se
     MatTabsModule,
     MatListModule,
     MatCustomDialogComponent,
-    MatDynamicCardComponent,
+    DynamicCard,
     ListAsignacionEstabComponent,
     MatIconButton,
     MatIcon,

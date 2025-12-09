@@ -1,205 +1,203 @@
 <app-breadcrumb />
-<mat-card>
-  <mat-card-content>
-    <div
-      class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
-    >
-      <div class="col">
-        <div class="form-group">
-          <label for="estab">Establecimiento:</label>
+<acp-dynamic-card>
+  <div
+    class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+  >
+    <div class="col">
+      <div class="form-group">
+        <label for="estab">Establecimiento:</label>
+        <select
+          (change)="onChangeEstab()"
+          [(ngModel)]="dataSearch.codEstab"
+          class="form-select border-select"
+          id="estab"
+        >
+          @for (item of establecimientos; track $index) {
+            <option [ngValue]="item.codEstab">
+              {{ item.nombreComercial }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <app-date-range-selection
+          (onChangeDateRange)="onDateRangeSelection($event)"
+          [inputGroupDateChecked]="true"
+        />
+      </div>
+    </div>
+    <div class="col">
+      <div class="form-group">
+        <label for="tipoComprobante"> Tipo Comprobante</label>
+        <div class="input-group">
           <select
-            (change)="onChangeEstab()"
-            [(ngModel)]="dataSearch.codEstab"
+            (change)="onChangeTipoDoc()"
+            [(ngModel)]="dataSearch.codDoc"
             class="form-select border-select"
-            id="estab"
+            id="tipoComprobante"
           >
-            @for (item of establecimientos; track $index) {
-              <option [ngValue]="item.codEstab">
-                {{ item.nombreComercial }}
+            <option [ngValue]="">Todos</option>
+            @for (item of documentTypes; track $index) {
+              <option [ngValue]="item.codigoSri">
+                {{ item.descripcion }}
+              </option>
+            }
+          </select>
+          <div class="input-group-append">
+            <acp-button
+              [icon]="extraOptionsIcon"
+              matStyle="icon"
+              title="Más Opciones"
+              (handleClick)="onClickBtnMore()"
+            />
+            <acp-button
+              variant="success"
+              icon="refresh"
+              matStyle="icon"
+              (handleClick)="loadData()"
+              title="Recargar"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if (moreOptionsFilter) {
+    <div class="row mb-3">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <app-supplier-search
+          [textSearch]="textSearch"
+          (supplierSelected)="onSupplierSelected($event)"
+        />
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="claveAcceso">Clave Acceso:</label>
+          <input class="form-control" id="claveAcceso" name="claveAcceso" type="text" />
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="serieComprobante">Nro. Documento:</label>
+          <input
+            type="text"
+            class="form-control border-select"
+            id="serieComprobante"
+            (change)="onChangeSerieComprobante()"
+            appInputNumber
+            [(ngModel)]="dataSearch.serieComprobante"
+          />
+        </div>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="subcategoryId">Subcategoría:</label>
+          <select
+            class="form-select border-select"
+            id="subcategoryId"
+            [(ngModel)]="dataSearch.subcategoryId"
+            (change)="loadData()"
+          >
+            <option [ngValue]="">Todos</option>
+            @for (item of subcategories; track $index) {
+              <option [ngValue]="item.id">
+                {{ item.name }}
               </option>
             }
           </select>
         </div>
       </div>
-      <div class="col">
-        <div class="form-group">
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-            [inputGroupDateChecked]="true"
-          />
-        </div>
-      </div>
-      <div class="col">
-        <div class="form-group">
-          <label for="tipoComprobante"> Tipo Comprobante</label>
-          <div class="input-group">
-            <select
-              (change)="onChangeTipoDoc()"
-              [(ngModel)]="dataSearch.codDoc"
-              class="form-select border-select"
-              id="tipoComprobante"
-            >
-              <option [ngValue]="">Todos</option>
-              @for (item of documentTypes; track $index) {
-                <option [ngValue]="item.codigoSri">
-                  {{ item.descripcion }}
-                </option>
-              }
-            </select>
-            <div class="input-group-append">
-              <acp-button
-                [icon]="extraOptionsIcon"
-                matStyle="icon"
-                title="Más Opciones"
-                (handleClick)="onClickBtnMore()"
-              />
-              <acp-button
-                variant="success"
-                icon="refresh"
-                matStyle="icon"
-                (handleClick)="loadData()"
-                title="Recargar"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
-    @if (moreOptionsFilter) {
-      <div class="row mb-3">
-        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-          <app-supplier-search
-            [textSearch]="textSearch"
-            (supplierSelected)="onSupplierSelected($event)"
-          />
-        </div>
-        <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-          <div class="form-group">
-            <label for="claveAcceso">Clave Acceso:</label>
-            <input class="form-control" id="claveAcceso" name="claveAcceso" type="text" />
-          </div>
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-          <div class="form-group">
-            <label for="serieComprobante">Nro. Documento:</label>
-            <input
-              type="text"
-              class="form-control border-select"
-              id="serieComprobante"
-              (change)="onChangeSerieComprobante()"
-              appInputNumber
-              [(ngModel)]="dataSearch.serieComprobante"
-            />
-          </div>
-        </div>
-        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-          <div class="form-group">
-            <label for="subcategoryId">Subcategoría:</label>
-            <select
-              class="form-select border-select"
-              id="subcategoryId"
-              [(ngModel)]="dataSearch.subcategoryId"
-              (change)="loadData()"
-            >
-              <option [ngValue]="">Todos</option>
-              @for (item of subcategories; track $index) {
-                <option [ngValue]="item.id">
-                  {{ item.name }}
-                </option>
-              }
-            </select>
-          </div>
-        </div>
-      </div>
-    }
-    <div class="row">
-      <div class="col">
-        <button (click)="openModalAutomaticUpload()" mat-raised-button type="button">
-          <mat-icon>download</mat-icon>
-          Importación Automatica
-        </button>
-        <button (click)="openModalManualUpload()" mat-raised-button class="m-2" type="button">
-          <mat-icon>mouse</mat-icon>
-          Importación Manual
-        </button>
-        <button (click)="openModalChangeEstab()" mat-raised-button class="m-2" type="button">
-          <<mat-icon>upload_file</mat-icon>
-          Migrar Comprobantes
-        </button>
-        <button (click)="editSubcategory()" mat-raised-button type="button">
-          <mat-icon>edit</mat-icon>
-          Modificar Subcategoría
-        </button>
-      </div>
-    </div>
-
-    <div class="row mt-3">
-      <div class="col">
-        @if (this.documents.length > 0) {
-          <div class="table-responsive">
-            <app-mat-dynamic-table
-              [templateOp]="templateOp"
-              [tableData]="documents"
-              [columnDefinitions]="columnsDefs"
-              [visibleColumns]="columns"
-              [showSelectBox]="true"
-            />
-          </div>
-
-          <mat-paginator
-            #paginator
-            [length]="pagination().totalRecords"
-            [pageIndex]="pagination().pageIndex"
-            [pageSize]="pagination().pageSize"
-            [pageSizeOptions]="pagination().pageSizeOptions"
-            (page)="onPageChanged($event)"
-            showFirstLastButtons
-            aria-label="Select page"
-          />
-        } @else {
-          <h5>No hay registros</h5>
-        }
-      </div>
-    </div>
-
-    <ng-template #templateOp let-item="item">
-      <mat-menu #menu="matMenu">
-        <button (click)="openModalDocument(item)" mat-menu-item>
-          <mat-icon>upload</mat-icon>
-          Visualizar Comprobante
-        </button>
-        <button (click)="getMergedDocs(item)" mat-menu-item>
-          <mat-icon>link</mat-icon>
-          Docs. Relacionados
-        </button>
-        @if (!item.complete) {
-          <button mat-menu-item (click)="putXml(item)">
-            <mat-icon>sync</mat-icon>
-            Actualizar Xml
-          </button>
-        }
-
-        <button (click)="downloadXml(item)" mat-menu-item>
-          <mat-icon>download</mat-icon>
-          Descargar Xml
-        </button>
-        @if (!item.complete) {
-          <button mat-menu-item (click)="askToDelete(item)">
-            <mat-icon>delete</mat-icon>
-            Eliminar
-          </button>
-        }
-        @if (item.codDoc === '01') {
-          <button mat-menu-item (click)="getRide(item)">
-            <mat-icon>picture_as_pdf</mat-icon>
-            Ride
-          </button>
-        }
-      </mat-menu>
-
-      <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
-        <mat-icon>menu</mat-icon>
+  }
+  <div class="row">
+    <div class="col">
+      <button (click)="openModalAutomaticUpload()" mat-raised-button type="button">
+        <mat-icon>download</mat-icon>
+        Importación Automatica
       </button>
-    </ng-template>
-  </mat-card-content>
-</mat-card>
+      <button (click)="openModalManualUpload()" mat-raised-button class="m-2" type="button">
+        <mat-icon>mouse</mat-icon>
+        Importación Manual
+      </button>
+      <button (click)="openModalChangeEstab()" mat-raised-button class="m-2" type="button">
+        <<mat-icon>upload_file</mat-icon>
+        Migrar Comprobantes
+      </button>
+      <button (click)="editSubcategory()" mat-raised-button type="button">
+        <mat-icon>edit</mat-icon>
+        Modificar Subcategoría
+      </button>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      @if (this.documents.length > 0) {
+        <div class="table-responsive">
+          <app-mat-dynamic-table
+            [templateOp]="templateOp"
+            [tableData]="documents"
+            [columnDefinitions]="columnsDefs"
+            [visibleColumns]="columns"
+            [showSelectBox]="true"
+          />
+        </div>
+
+        <mat-paginator
+          #paginator
+          [length]="pagination().totalRecords"
+          [pageIndex]="pagination().pageIndex"
+          [pageSize]="pagination().pageSize"
+          [pageSizeOptions]="pagination().pageSizeOptions"
+          (page)="onPageChanged($event)"
+          showFirstLastButtons
+          aria-label="Select page"
+        />
+      } @else {
+        <h5>No hay registros</h5>
+      }
+    </div>
+  </div>
+
+  <ng-template #templateOp let-item="item">
+    <mat-menu #menu="matMenu">
+      <button (click)="openModalDocument(item)" mat-menu-item>
+        <mat-icon>upload</mat-icon>
+        Visualizar Comprobante
+      </button>
+      <button (click)="getMergedDocs(item)" mat-menu-item>
+        <mat-icon>link</mat-icon>
+        Docs. Relacionados
+      </button>
+      @if (!item.complete) {
+        <button mat-menu-item (click)="putXml(item)">
+          <mat-icon>sync</mat-icon>
+          Actualizar Xml
+        </button>
+      }
+
+      <button (click)="downloadXml(item)" mat-menu-item>
+        <mat-icon>download</mat-icon>
+        Descargar Xml
+      </button>
+      @if (!item.complete) {
+        <button mat-menu-item (click)="askToDelete(item)">
+          <mat-icon>delete</mat-icon>
+          Eliminar
+        </button>
+      }
+      @if (item.codDoc === '01') {
+        <button mat-menu-item (click)="getRide(item)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          Ride
+        </button>
+      }
+    </mat-menu>
+
+    <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+    </button>
+  </ng-template>
+</acp-dynamic-card>

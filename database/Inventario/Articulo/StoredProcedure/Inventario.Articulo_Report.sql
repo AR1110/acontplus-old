@@ -448,15 +448,16 @@ BEGIN
 
 				    IF @timePicker = 1
 				    BEGIN
-					    SET @sql = @sql + '
+					  /*  SET @sql = @sql + '
 						    AND CAST(tt.fechaRegistro AS time)
 							    BETWEEN CAST(@fechaInicio AS time)
 							    AND CAST(@fechaFin AS time)
-					    '
+					    '*/
 
 					    /*
 					    -- Opción B: Si necesitas manejar rangos que cruzan medianoche,
 					    -- usa este bloque en lugar del anterior:
+					    */
 					    SET @sql = @sql + '
 						    AND (
 							       (CAST(tt.fechaRegistro AS time) >= CAST(@fechaInicio AS time)
@@ -465,7 +466,6 @@ BEGIN
 								    AND CAST(tt.fechaRegistro AS time) <= CAST(@fechaFin AS time))
 							    )
 					    '
-					    */
 				    END
 			    END
 
