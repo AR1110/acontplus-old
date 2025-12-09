@@ -1,6 +1,9 @@
 using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
+using Restaurant.Application.BackgroundServices;
+using Restaurant.Application.Infrastructure;
 using Restaurant.Application.Mapping;
+using Restaurant.Domain.Events;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
 using System.Text.Json;
@@ -12,23 +15,30 @@ public static class ApplicationServicesExtensions
     public static IServiceCollection AddRestaurantServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddAcontplusServices(configuration);
+        services.AddApplicationServices(configuration);
 
-        services.AddAdvancedLoggingOptions(configuration);
+    services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddJwtAuthentication(configuration);
+    services.AddJwtAuthentication(configuration);
 
-        services.AddOpenApi();
+    services.AddOpenApi();
 
-        services.AddHttpContextAccessor();
+    services.AddHttpContextAccessor();
+
+        services.AddResponseCompression();
 
         // Register Application Mappings -> Mapster
 
-        services.RegisterMappings();
+    services.RegisterMappings();
 
-        JsonConfigurationService.ConfigureAspNetCore(services, false);
+    JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+        //services.AddLookupService();
 
         services.AddInfrastructure(configuration);
+
+        // Add Caching Services
+        services.AddCachingServices(configuration);
 
         string[] scopedNameSpaces =
         [
@@ -37,18 +47,20 @@ public static class ApplicationServicesExtensions
             "Restaurant.Infrastructure.Persistence.Repositories",
             "Acontplus.S3Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions.Context"
+            "Acontplus.Services.Extensions.Context",
+            "Acontplus.Services.Services.Implementations"
         ];
 
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime()
-        );
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
 
         services.AddTransient<S3ObjectCustom>();
+
         return services;
     }
 }
