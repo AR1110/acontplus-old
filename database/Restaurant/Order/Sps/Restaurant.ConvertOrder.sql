@@ -87,7 +87,8 @@ BEGIN
         ,precioCosto NUMERIC(18,5) NOT NULL
         ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
         ,estado INT NOT NULL DEFAULT 2
-        ,envioSri BIT NOT NULL 
+        ,envioSri BIT NOT NULL
+        ,ShouldRegister BIT NOT NULL
 	)
 	
     DECLARE @tbTaxes AS TABLE (
@@ -164,8 +165,8 @@ BEGIN
 
 		--> Detalles
 		INSERT INTO @tblDetails
-              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,envioSri)
-		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion*-1,conversion,precioCostoFraccionado,envioSri 
+              (orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,envioSri,shouldRegister)
+		SELECT orderIndex,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioCosto,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,llevaInventario,cantidadTransaccion,conversion,precioCostoFraccionado,envioSri,shouldRegister
 		FROM OPENJSON (@detalles) WITH 
         (
 		     orderIndex             INT
@@ -193,6 +194,7 @@ BEGIN
             ,conversion             NUMERIC(15,5)
             ,precioCostoFraccionado NUMERIC(15,5)
             ,envioSri               BIT
+            ,shouldRegister         BIT
 		)
 
         --> Impuestos
@@ -360,7 +362,8 @@ BEGIN
 			    INSERT INTO FacturaDetalle WITH (ROWLOCK)
                          (idFactura,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto,envioSri)
 			    SELECT @idDocumento,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,precioSinSubsidio,valorDescuento,porcentajeDescuento,codigoPorcentaje,tarifa,valorImpuesto,precioTotalSinImpuesto,nota,descripcion,precioCosto,envioSri
-			    FROM @tblDetails 
+			    FROM @tblDetails
+                WHERE shouldRegister = 1
                 ORDER BY orderIndex ASC
 
                 --> Impuestos
@@ -392,6 +395,7 @@ BEGIN
 				        (idNotaEntrega,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,tarifa,codigoPorcentaje,nota,descripcion,valorImpuesto,precioCosto)
 			    SELECT @idDocumento,idArticulo,idTarifa,idBodega,idMedida,idTipoIva,ice,cantidad,precioUnitario,valorDescuento,porcentajeDescuento,precioTotalSinImpuesto,tarifa,codigoPorcentaje,nota,descripcion,valorImpuesto,precioCosto
 			    FROM @tblDetails
+                WHERE shouldRegister = 1    
 			    ORDER BY orderIndex ASC 
 
                 -->Impuestos

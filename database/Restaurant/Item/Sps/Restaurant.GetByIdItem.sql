@@ -170,11 +170,13 @@ BEGIN
         ,ar.codigo      as code
         ,ta.descripcion as fee
         ,me.descripcion as measure
-    FROM Restaurant.ItemComposition  ic WITH (NOLOCK)
-    INNER JOIN Restaurant.Item       it WITH (NOLOCK) ON it.Id               = ic.ChildItemId
-     LEFT JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa         = ic.FeeId
-     LEFT JOIN dbo.Medida            me WITH (NOLOCK) ON me.idMedida         = ic.MeasureId
-    INNER JOIN dbo.Articulo          ar WITH (NOLOCK) ON ar.idArticulo       = it.ProductId
+        ,pp.S3ObjectUrl as ImageUrl
+    FROM Restaurant.ItemComposition    ic 
+    INNER JOIN Restaurant.Item         it ON it.Id         = ic.ChildItemId
+     LEFT JOIN dbo.Tarifa              ta ON ta.idTarifa   = ic.FeeId
+     LEFT JOIN dbo.Medida              me ON me.idMedida   = ic.MeasureId
+    INNER JOIN dbo.Articulo            ar ON ar.idArticulo = it.ProductId
+    INNER JOIN Inventario.ProductPhoto pp ON ar.idArticulo = pp.ProductId AND pp.IsDefault = 1
     WHERE ic.IsActive     = 1
       AND ic.ParentItemId = @id
 

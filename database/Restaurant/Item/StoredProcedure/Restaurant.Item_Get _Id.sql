@@ -96,9 +96,10 @@ BEGIN
                 FOR JSON PATH
 
         ),'[]') as principal
-    FROM Restaurant.Recipe           re WITH (NOLOCK)
-    INNER JOIN Restaurant.Ingredient ig WITH (NOLOCK) ON ig.Id         = re.IngredientId
-    INNER JOIN dbo.Articulo          ia WITH (NOLOCK) ON ia.idArticulo = ig.ProductId
+    FROM Restaurant.Recipe             re 
+    INNER JOIN Restaurant.Ingredient   ig ON ig.Id         = re.IngredientId
+    INNER JOIN dbo.Articulo            ia ON ia.idArticulo = ig.ProductId
+    
     WHERE re.IsActive = 1
       AND re.ItemId = @id
 
