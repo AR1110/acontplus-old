@@ -15,8 +15,8 @@ public record OrderCreate
 
     public int CreatedByUserId { get; init; }
     public ICollection<OrderDetailCreate>? OrderDetails { get; init; }
-
-    public OrderDocumentDataDto DataDoc { get; init; }
+    public ICollection<OrderDetailCompositionModifier>? OrderDetails { get; init; }
+    public OrderDocumentDataDto? DataDoc { get; init; }
 }
 //Temp name OrderItemDto - to be changed to OrderItem
 public record OrderItemDto
