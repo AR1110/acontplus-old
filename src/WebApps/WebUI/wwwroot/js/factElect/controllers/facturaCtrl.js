@@ -2232,10 +2232,11 @@
                 if (isConfirmed) {
                     $scope.dataClone.idBodega = $scope.data.idBodega;
 
-                    if ($scope.gridOptions.data.length === 0) return;
+                    if ($scope.gridOptions.data.length >0){
+                        setIdBodegaInDetalle();
+                        resetCantidadToZeroAndRecalculateTotals();
+                    } 
 
-                    setIdBodegaInDetalle();
-                    resetCantidadToZeroAndRecalculateTotals();
                     $scope.$apply();
                 } else {
                     $scope.data.idBodega = $scope.dataClone.idBodega;
