@@ -12,8 +12,8 @@ using Restaurant.Infrastructure.Persistence;
 namespace Restaurant.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(RestaurantContext))]
-    [Migration("20251209164255_OrderDetailCompositionModifier")]
-    partial class OrderDetailCompositionModifier
+    [Migration("20251209224801_OrderDetailItemCompositionModifier")]
+    partial class OrderDetailItemCompositionModifier
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2260,7 +2260,10 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasPrecision(7)
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<string>("CreatedBy")
                         .HasMaxLength(100)
@@ -2271,6 +2274,7 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DeletedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DeletedBy")
@@ -2282,7 +2286,7 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("ExtraCharge")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<string>("Instructions")
@@ -2291,13 +2295,19 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsMobileRequest")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("ModifierCompositionId")
                         .HasColumnType("int");
@@ -2306,13 +2316,14 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Quantity")
-                        .HasPrecision(18, 2)
+                        .HasPrecision(18, 5)
                         .HasColumnType("decimal(18,5)");
 
                     b.Property<Guid?>("UniqueId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasPrecision(7)
                         .HasColumnType("datetime2");
 
                     b.Property<string>("UpdatedBy")
@@ -2325,9 +2336,34 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModifierCompositionId");
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_CreatedAt");
 
-                    b.HasIndex("OrderDetailId");
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_CreatedByUserId");
+
+                    b.HasIndex("IsActive")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_IsActive");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_IsDeleted");
+
+                    b.HasIndex("ModifierCompositionId")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_ModifierCompositionId");
+
+                    b.HasIndex("OrderDetailId")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_OrderDetailId");
+
+                    b.HasIndex("UniqueId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_UniqueId")
+                        .HasFilter("[UniqueId] IS NOT NULL");
+
+                    b.HasIndex("IsActive", "IsDeleted")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_Status");
+
+                    b.HasIndex("OrderDetailId", "ModifierCompositionId")
+                        .HasDatabaseName("IX_OrderDetailCompositionModifier_OrderDetail_Modifier");
 
                     b.ToTable("OrderDetailCompositionModifier", "Restaurant");
                 });
@@ -3811,7 +3847,7 @@ namespace Restaurant.Infrastructure.Persistence.Migrations
                     b.HasOne("Restaurant.Domain.Entities.ItemComposition", "ModifierComposition")
                         .WithMany()
                         .HasForeignKey("ModifierCompositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Restaurant.Domain.Entities.OrderDetail", "OrderDetail")

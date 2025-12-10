@@ -21,6 +21,7 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<OrderDetail> OrderDetails { get; set; }
     public DbSet<OrderDetailModifier> OrderDetailModifiers { get; set; }
+    public DbSet<OrderDetailCompositionModifier> OrderDetailCompositionModifiers { get; set; }
     public DbSet<OrderKitchen> OrderKitchens { get; set; }
     public DbSet<OrderDocument> OrderDocuments { get; set; }
     public DbSet<Promotion> Promotions { get; set; }

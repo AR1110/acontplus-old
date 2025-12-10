@@ -55,6 +55,13 @@
     self.addEventListener('fetch', function (event) {
         var request = event.request;
 
+        // Allow print server and local network requests to bypass service worker entirely
+        // This prevents CORS/Private Network Access errors
+        if (/^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|acontplusprint\.com)/i.test(request.url)) {
+            // Don't call event.respondWith() - let browser handle it directly
+            return;
+        }
+
         // Always fetch non-GET requests from the network
         if (request.method !== 'GET' || request.url.match(/\/browserLink/ig)) {
             event.respondWith(
