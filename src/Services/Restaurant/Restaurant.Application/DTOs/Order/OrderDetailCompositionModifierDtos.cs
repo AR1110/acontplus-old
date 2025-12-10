@@ -4,6 +4,7 @@ public record OrderDetailCompositionModifierCreate
     public decimal Quantity { get; set; }
     public decimal ExtraCharge { get; set; }
     public string? Instructions { get; set; }
+    public string UniqueId { get; init; }
 }
 
 public record OrderDetailCompositionModifierUpdate

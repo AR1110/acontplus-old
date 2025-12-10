@@ -20,6 +20,7 @@ public record OrderDetailCreate
     public bool IsPaid { get; init; }
     public decimal? RemainingQuantity { get; init; }
     public int Status { get; init; }
+    public string UniqueId { get; init; }
 }
 
 public record OrderDetailUpdate
@@ -46,6 +47,7 @@ public record OrderDetailUpdate
     public int Status { get; init; }
     public bool IsActive { get; init; }
     public bool IsDeleted { get; init; }
+    public string UniqueId { get; init; }
 }
 
 public record OrderDetailItem
