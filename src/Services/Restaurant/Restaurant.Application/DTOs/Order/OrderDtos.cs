@@ -52,6 +52,8 @@ public record OrderUpdate
     public bool IsFinished { get; init; }
     public bool IsQuickSale { get; init; }
     public ICollection<OrderDetailUpdate> OrderDetails { get; init; }
+    public ICollection<OrderDetailCompositionModifierUpdate>? OrderDetailCompositionModifiers { get; init; }
+
     public OrderDocumentDataDto? DataDoc { get; init; }
 }
 

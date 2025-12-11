@@ -10,7 +10,6 @@
     let fS = {};
     let modalSvc = {};
     let tipoDoc = {};
-    const NUM_CONSUMIDOR_FINAL = "9999999999999";
     let nombreModalVenta = {};
 
     app.controller("facturaCtrl", facturaCtrl);
@@ -28,7 +27,8 @@
         nombreModalVenta = $injector.get("nombreModalVenta");
 
         const nombreModalCommon = $injector.get('nombreModalCommon');
-        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService')
+        const $solicitudAutorizacionSvc = $injector.get('solicitudAutorizacionService');
+        const policyService = $injector.get('PolicyService');
 
         let DOC_TYPE = $injector.get("DOC_TYPE");
         const CODE_REPORT = $injector.get("CODE_REPORT");
@@ -310,6 +310,9 @@
 
         $scope.openModalInvoiceNew = async () => {
             try {
+
+                await policyService.sendMaxDocuments();
+
                 modalSvc
                     .openModalCustom({
                         controller: "modalFacturaCtrl",
@@ -450,6 +453,9 @@
 
         $scope.openModalInvoiceDuplicate = async (item) => {
             try {
+
+                await policyService.sendMaxDocuments();
+
                 facturaSvc
                     .getId(item.idDocumento)
                     .then((response) => {
@@ -2226,10 +2232,11 @@
                 if (isConfirmed) {
                     $scope.dataClone.idBodega = $scope.data.idBodega;
 
-                    if ($scope.gridOptions.data.length === 0) return;
+                    if ($scope.gridOptions.data.length > 0) {
+                        setIdBodegaInDetalle();
+                        resetCantidadToZeroAndRecalculateTotals();
+                    }
 
-                    setIdBodegaInDetalle();
-                    resetCantidadToZeroAndRecalculateTotals();
                     $scope.$apply();
                 } else {
                     $scope.data.idBodega = $scope.dataClone.idBodega;
@@ -2807,6 +2814,18 @@
                 );
                 return;
             }
+
+            for (let item of $scope.gridOptions.data) {
+                if (item.precioSinSubsidio > 0 && item.precioUnitario >= item.precioSinSubsidio) {
+                    tS.toastr({
+                        type: "warning",
+                        message: `Artículo ${item.descripcion}: El precio de venta no puede ser mayor o igual al precio sin subsidio.`,
+                    });
+                    throw new Error(`Artículo ${item.descripcion}: El precio de venta no puede ser mayor o igual al precio sin subsidio.`);
+                }
+            }
+
+
 
             // if (
             //     $scope.gridOptions.data.some((item) =>
