@@ -19,7 +19,7 @@ BEGIN
    DECLARE @Payload NVARCHAR(MAX)
 
     --> Data Json
-    DECLARE @OrderDetails NVARCHAR(MAX) ,@DataDoc NVARCHAR(MAX)
+    DECLARE @OrderDetails NVARCHAR(MAX) ,@OrderDetailCompositionModifiers NVARCHAR(MAX) ,@DataDoc NVARCHAR(MAX)
 
     --> Varialbles BD
     DECLARE @UserId INT 
@@ -61,9 +61,26 @@ BEGIN
        ,[IsPaid] BIT NOT NULL DEFAULT 0
        ,[RemainingQuantity] NUMERIC(18,5) NULL
        ,[Status] INT NOT NULL
+       ,[UniqueId] UNIQUEIDENTIFIER NULL
        ,[IsActive] BIT NOT NULL
        ,[IsDeleted] BIT NOT NULL
        ,[CreatedByUserId] INT NOT NULL
+       ,[UpdatedByUserId] INT NOT NULL
+       ,[UpdatedAt] DATETIME2 NOT NULL DEFAULT GETDATE()
+    )
+
+
+    DECLARE @TbOrderDetailCompositionModifiers AS TABLE
+    (
+        [Id] INT NOT NULL
+       ,[OrderDetailId] INT NOT NULL
+       ,[ModifierCompositionId] INT NOT NULL
+       ,[Quantity] NUMERIC(18,5) NOT NULL
+       ,[ExtraCharge] NUMERIC(18,5) NOT NULL
+       ,[Instructions] VARCHAR(500) NULL
+       ,[UniqueId] UNIQUEIDENTIFIER NULL
+       ,[IsActive] BIT NOT NULL
+       ,[IsDeleted] BIT NOT NULL
        ,[UpdatedByUserId] INT NOT NULL
        ,[UpdatedAt] DATETIME2 NOT NULL DEFAULT GETDATE()
     )
@@ -73,7 +90,14 @@ BEGIN
         SELECT TOP 1 @UserId = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @UserRoleId
 
         --> Data json
-        SELECT @OrderDetails = orderDetails FROM OPENJSON(@Json) WITH (orderDetails NVARCHAR(MAX) AS JSON)
+        SELECT @OrderDetails                     = orderDetails
+              ,@OrderDetailCompositionModifiers  = OrderDetailCompositionModifiers
+        FROM OPENJSON(@Json) WITH
+        (
+             orderDetails                    NVARCHAR(MAX) AS JSON
+            ,orderDetailCompositionModifiers NVARCHAR(MAX) AS JSON
+
+        )
 
         INSERT INTO @TbOrder
               ([Id],[TableId],[customerCompanyId],[discount],[tip],[total],[obs],[IsDivided],[IsFinished],[IsQuickSale],[UpdatedByUserId])
@@ -94,8 +118,8 @@ BEGIN
         )
 
         INSERT INTO @TbOrderDetails
-              ([Id],[OrderId],[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],[CreatedByUserId],[UpdatedByUserId])
-        SELECT [Id],@Id      ,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsActive],[IsDeleted],@UserId          ,@UserId
+              ([Id],[OrderId],[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[UniqueId],[IsActive],[IsDeleted],[CreatedByUserId],[UpdatedByUserId])
+        SELECT [Id],@Id      ,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[UniqueId],[IsActive],[IsDeleted],@UserId          ,@UserId
         FROM OPENJSON(@OrderDetails)
         WITH
         (
@@ -116,8 +140,26 @@ BEGIN
            ,[obs]               VARCHAR(1000)
            ,[remainingQuantity] NUMERIC(18,5)
            ,[status]            INT
+           ,[uniqueId]          UNIQUEIDENTIFIER
            ,[isActive]          BIT 
            ,[isDeleted]         BIT
+        )
+
+        INSERT INTO @TbOrderDetailCompositionModifiers
+              ([Id],[OrderDetailId],[ModifierCompositionId],[Quantity],[ExtraCharge],[Instructions],[UniqueId],[IsActive],[IsDeleted],[UpdatedByUserId])
+        SELECT [Id],[OrderDetailId],[ModifierCompositionId],[Quantity],[ExtraCharge],[Instructions],[UniqueId],[IsActive],[IsDeleted],@UserId 
+        FROM OPENJSON(@OrderDetailCompositionModifiers)
+        WITH
+        (
+            [id]                    INT
+           ,[orderDetailId]         INT
+           ,[modifierCompositionId] INT
+           ,[quantity]              NUMERIC(18,5)
+           ,[extraCharge]           NUMERIC(18,5)
+           ,[instructions]          VARCHAR(500)
+           ,[uniqueId]              UNIQUEIDENTIFIER
+           ,[isActive]              BIT 
+           ,[isDeleted]             BIT
         )
 
         --> Variables dependientes
@@ -187,6 +229,46 @@ BEGIN
             SELECT OrderId,[ItemId],[TaxPercentId],[FeeId],[WarehouseId],[MeasureId],[TaxValue],[Quantity],[UnitPrice],[SalePrice],[Discount],[DiscountPercent],[Subtotal],[Total],[Obs],[RemainingQuantity],[Status],[IsPaid],[CreatedByUserId]
             FROM @TbOrderDetails
             WHERE Id = 0
+
+            --> Cuando quiten una composicion seleccionada le damos de baja
+            IF EXISTS (SELECT 1 FROM @TbOrderDetailCompositionModifiers WHERE Id > 0)
+                BEGIN
+                    UPDATE cm SET
+                           cm.IsActive          = t1.IsActive
+                          ,cm.IsDeleted         = t1.IsDeleted
+                          ,cm.[UpdatedAt]       = t1.[UpdatedAt]
+                          ,cm.[UpdatedByUserId] = t1.[UpdatedByUserId]
+                    FROM Restaurant.OrderDetailCompositionModifier cm
+                    INNER JOIN @TbOrderDetailCompositionModifiers  t1 ON t1.Id = cm.Id
+                END 
+
+            --> Cuando sea un dato nuevo
+            IF EXISTS (SELECT 1 FROM @TbOrderDetailCompositionModifiers WHERE Id = 0)
+                BEGIN
+                    --> cuando sea uno nuevo pero ya venia de un detalle existente ese dato debe venir en el json
+                    IF EXISTS (SELECT 1 FROM @TbOrderDetailCompositionModifiers WHERE OrderDetailId > 0)
+                        BEGIN
+                            INSERT INTO Restaurant.OrderDetailCompositionModifier
+                                  ([OrderDetailId],[ModifierCompositionId],[Quantity],[ExtraCharge],[Instructions])
+                            SELECT [OrderDetailId],[ModifierCompositionId],[Quantity],[ExtraCharge],[Instructions] 
+                            FROM @TbOrderDetailCompositionModifiers
+                            WHERE Id = 0
+                        END
+
+                    --> Cuando la compisicion venga de un detalle nuevo debe igualarse con el uniqueId
+                    IF EXISTS (SELECT 1 FROM @TbOrderDetailCompositionModifiers WHERE OrderDetailId = 0)
+                        BEGIN
+                            INSERT INTO Restaurant.OrderDetailCompositionModifier
+                                  ([OrderDetailId],[ModifierCompositionId]   ,[Quantity],[ExtraCharge],[Instructions])
+                            SELECT od.Id          ,[ModifierCompositionId],cm.[Quantity],[ExtraCharge],[Instructions] 
+                            FROM @TbOrderDetailCompositionModifiers cm
+                            INNER JOIN Restaurant.OrderDetail       od ON od.UniqueId = cm.UniqueId
+                            WHERE od.OrderId = @Id
+
+                            UPDATE Restaurant.OrderDetail SET UniqueId = NULL WHERE OrderId = @Id
+                        END 
+
+                END 
 
             IF EXISTS (SELECT 1 FROM @tbOrder WHERE IsQuickSale = 1)
                 BEGIN

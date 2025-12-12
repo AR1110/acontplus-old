@@ -456,13 +456,16 @@ BEGIN
                               ,valorPorcentajeRentabilidad = CAST((( IIF(tt.precioCostoFraccionado >0, (tt.precioUnitario / tt.precioCostoFraccionado), 0) * 100) - 100) as numeric(18,2))
                               ,totalPrecioCosto            = CAST((tt.cantidad * tt.precioCostoFraccionado) as numeric(18,2))
                               ,totalValorRentabilidad      = CAST( (tt.cantidad * (tt.precioUnitario - tt.precioCostoFraccionado)) as numeric(18,2))
-						FROM v_InventarioTransaccion tt WITH (NOLOCK)
-                        INNER JOIN dbo.Medida        me WITH (NOLOCK) ON me.idMedida   = tt.idMedida
-                        INNER JOIN dbo.Articulo      ar WITH (NOLOCK) ON ar.idArticulo = tt.idArticulo 
+						FROM v_InventarioTransaccion            tt 
+                        INNER JOIN dbo.Medida                   me ON me.idMedida     = tt.idMedida
+                        INNER JOIN dbo.Articulo                 ar ON ar.idArticulo   = tt.idArticulo
+                        INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idDocumento  = tt.idDocumento AND cc.codDoc = IIF(tt.codDoc = ''FE'',''01'', tt.codDoc)
+                        INNER JOIN dbo.EstadoPago               ep ON ep.idEstadoPago = cc.idEstadoPago
 						WHERE tt.idEntidad = @idEntidad 
                           AND tt.estado = 1 
                           AND tt.codTransaccion =''S'' 
-                          AND tt.codDoc IN (''FE'', ''NE'') '
+                          AND tt.codDoc IN (''FE'', ''NE'')
+                          AND ep.codigo NOT IN (''A'') '
 
 			SELECT @ckFecha            = checkBoxFecha
 				  ,@idArticulo         = idArticulo

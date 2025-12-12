@@ -42,6 +42,7 @@ BEGIN
                                 ,pv.precioConIva
                                 ,UPPER(ta.descripcion) as tarifa
                                 ,ta.ventaPorMayor
+                                ,ta.predeterminada
 					    FROM dbo.ArticuloFraccionadoPvP  pv WITH (NOLOCK)
 					    INNER JOIN dbo.Tarifa            ta WITH (NOLOCK) ON ta.idTarifa = pv.idTarifa
 					    WHERE pv.idArticuloFraccionado = af.idArticuloFraccionado
@@ -70,7 +71,8 @@ BEGIN
                                   ,ap.precioVenta
                                   ,ap.precioConIva
                                   ,UPPER(ta.descripcion) as tarifa
-                                  ,ta.ventaPorMayor 
+                                  ,ta.ventaPorMayor
+                                  ,ta.predeterminada
 					        FROM dbo.ArticuloPvP  ap WITH (NOLOCK)
 					        INNER JOIN dbo.Tarifa ta WITH (NOLOCK) ON ta.idTarifa = ap.idTarifa
 					        WHERE ap.idArticulo = sc.idArticulo
@@ -176,7 +178,7 @@ BEGIN
      LEFT JOIN dbo.Tarifa              ta ON ta.idTarifa   = ic.FeeId
      LEFT JOIN dbo.Medida              me ON me.idMedida   = ic.MeasureId
     INNER JOIN dbo.Articulo            ar ON ar.idArticulo = it.ProductId
-    INNER JOIN Inventario.ProductPhoto pp ON ar.idArticulo = pp.ProductId AND pp.IsDefault = 1
+     LEFT JOIN Inventario.ProductPhoto pp ON ar.idArticulo = pp.ProductId AND pp.IsDefault = 1
     WHERE ic.IsActive     = 1
       AND ic.ParentItemId = @id
 
