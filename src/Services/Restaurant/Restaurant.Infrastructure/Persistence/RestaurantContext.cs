@@ -63,7 +63,6 @@ public class RestaurantContext(DbContextOptions<RestaurantContext> options) : Ba
             typeof(ItemProductionArea),
             typeof(MenuItem),
             typeof(OrderDocument),
-            typeof(OrderDetailCompositionModifier),
             typeof(OrderKitchen),
             typeof(PrinterSetting),
             typeof(PromotionDetail),

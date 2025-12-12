@@ -109,6 +109,7 @@ public record OrderDocumentDetailDto
 
     public int Estado { get; set; }
     public bool EnvioSri { get; set; }
+    public bool ShouldRegister { get; set; }
 
 }
 
