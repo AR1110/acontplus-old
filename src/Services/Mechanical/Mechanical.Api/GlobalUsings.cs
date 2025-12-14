@@ -11,3 +11,7 @@ global using Mechanical.Application.Services;
 global using Mechanical.Domain.Repositories;
 global using Mechanical.Infrastructure.Persistence;
 global using Mechanical.Infrastructure.Persistence.Repositiories;
+global using Acontplus.Services.Extensions.Context;
+global using Mechanical.Application.Dtos;
+global using Acontplus.Persistence.SqlServer.Utilities;
+global using Acontplus.Utilities.Data;
