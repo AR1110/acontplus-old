@@ -1,3 +1,5 @@
+using Configuration.Application.Dtos;
+
 namespace Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 
 public static class CreateEndpoints
@@ -6,14 +8,22 @@ public static class CreateEndpoints
     {
         var printerGroup = endpointRouteBuilder.MapGroup($"/api/PrinterDocument")
             .RequireAuthorization()
-
             .WithTags("PrinterDocument");
 
         printerGroup.MapPost("/",
-            async (PrinterDocument printerDocument, IPrinterDocumentRepository printerDocumentRepository,
+            async (PrinterDocumentCreate printerDocumentDto, IPrinterDocumentRepository printerDocumentRepository,
                 IUserContext userContext) =>
             {
-                printerDocument.CreatedByUserId = userContext.GetUserId();
+                var printerDocument = new PrinterDocument
+                {
+                    Id = 0,
+                    PrinterId = printerDocumentDto.PrinterId,
+                    CodDoc = printerDocumentDto.CodDoc,
+                    Copies = printerDocumentDto.Copies,
+                    CreatedByUserId = userContext.GetUserId(),
+                    Printer = null!
+                };
+                
                 var result = await printerDocumentRepository.AddAsync(printerDocument);
                 return Results.Ok(result);
             });

@@ -1,3 +1,5 @@
+using Accounting.Application.Dtos;
+
 namespace Accounting.Api.Controllers;
 
 public class CategoryController(ICategoryRepository categoryService) : BaseApiController
@@ -13,16 +15,20 @@ public class CategoryController(ICategoryRepository categoryService) : BaseApiCo
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Category category)
+    public async Task<IActionResult> Post([FromBody] CategoryCreate categoryDto)
     {
+        var category = categoryDto.Adapt<Category>();
         category.CreatedByUserId = User.GetUserId();
+        
         return Ok(await categoryService.AddAsync(category));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] Category category)
+    public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdate categoryDto)
     {
+        var category = categoryDto.Adapt<Category>();
         category.UpdatedByUserId = User.GetUserId();
+        
         return Ok(await categoryService.UpdateAsync(id, category));
     }
 

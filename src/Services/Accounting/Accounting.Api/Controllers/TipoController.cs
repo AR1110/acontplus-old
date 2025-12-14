@@ -1,3 +1,5 @@
+using Accounting.Application.Dtos;
+
 namespace Accounting.Api.Controllers;
 
 public class TipoController(ITipoRepository tipoService) : BaseApiController
@@ -13,16 +15,20 @@ public class TipoController(ITipoRepository tipoService) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Tipo tipo)
+    public async Task<IActionResult> Post([FromBody] TipoCreate tipoDto)
     {
+        var tipo = tipoDto.Adapt<Tipo>();
         tipo.CreatedByUserId = User.GetUserId();
+        
         return Ok(await tipoService.AddAsync(tipo));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] Tipo tipo)
+    public async Task<IActionResult> Put(int id, [FromBody] TipoUpdate tipoDto)
     {
+        var tipo = tipoDto.Adapt<Tipo>();
         tipo.UpdatedByUserId = User.GetUserId();
+        
         return Ok(await tipoService.UpdateAsync(id, tipo));
     }
 
