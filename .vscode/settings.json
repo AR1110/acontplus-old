@@ -61,6 +61,8 @@
   // Preserved your Git settings
   "git.confirmSync": false,
   "git.autofetch": true,
+  "git.branchProtection": ["main"],
+  "git.branchProtectionPrompt": "alwaysPrompt",
 
   "prettier.configPath": ".prettierrc",
   "prettier.requireConfig": true,
