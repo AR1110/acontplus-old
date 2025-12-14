@@ -1,4 +1,3 @@
-using Acontplus.Infrastructure.Extensions;
 using Billing.Api.Endpoints;
 using Serilog;
 

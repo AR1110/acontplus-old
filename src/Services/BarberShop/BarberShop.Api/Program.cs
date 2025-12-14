@@ -1,4 +1,4 @@
-using Acontplus.Infrastructure.Extensions;
+using BarberShop.Api.Endpoints;
 using BarberShop.Api.Extensions;
 using BarberShop.Api.Extensions.Endpoints;
 using Serilog;
@@ -43,6 +43,7 @@ try
 
     app.UseAuthorization();
 
+    app.MapAllEndpoints();
     app.MapTicketEndpoints();
 
     app.MapHealthCheckEndpoints();

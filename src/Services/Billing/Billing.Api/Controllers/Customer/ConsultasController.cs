@@ -1,5 +1,3 @@
-using Acontplus.Utilities.Extensions;
-
 namespace Billing.Api.Controllers.Customer;
 
 public class ConsultasController(

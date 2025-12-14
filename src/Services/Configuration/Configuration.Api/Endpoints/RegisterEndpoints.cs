@@ -9,6 +9,7 @@ public static class RegisterEndpoints
 {
     public static void MapAllEndpoints(this IEndpointRouteBuilder app)
     {
+        app.MapLookupEndpoints();
         app.MapPrinterEndpoints();
         app.MapPrinterDocumentEndpoints();
         app.MapPrinterTypeEndpoints();

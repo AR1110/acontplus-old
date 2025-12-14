@@ -14,7 +14,7 @@ public record OrderCreate
     public bool IsQuickSale { get; init; }
 
     public int CreatedByUserId { get; init; }
-    public ICollection<OrderDetailCreate>? OrderDetails { get; init; } 
+    public ICollection<OrderDetailCreate>? OrderDetails { get; init; }
     public ICollection<OrderDetailCompositionModifierCreate>? OrderDetailCompositionModifiers { get; init; }
 
     public OrderDocumentDataDto? DataDoc { get; init; }

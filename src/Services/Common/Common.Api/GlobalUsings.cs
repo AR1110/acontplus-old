@@ -1,6 +1,13 @@
+global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Core.Dtos.Requests;
 global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Extensions;
 global using Acontplus.Logging;
+global using Acontplus.Services.Services.Abstractions;
+global using Acontplus.Utilities.Dtos;
+global using Acontplus.Utilities.Extensions;
 global using Common.Api.Extensions;
 global using Common.Application.Dtos;
 global using Common.Application.Interfaces;
+global using Mapster;
 global using Microsoft.EntityFrameworkCore;

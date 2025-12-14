@@ -1,4 +1,3 @@
-using Acontplus.Infrastructure.Extensions;
 using Configuration.Api.Endpoints;
 using Serilog;
 

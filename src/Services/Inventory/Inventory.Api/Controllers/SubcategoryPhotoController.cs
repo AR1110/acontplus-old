@@ -1,5 +1,3 @@
-using Acontplus.Core.Extensions;
-
 namespace Inventory.Api.Controllers;
 
 public class SubcategoryPhotoController(

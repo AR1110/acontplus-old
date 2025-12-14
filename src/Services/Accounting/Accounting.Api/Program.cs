@@ -1,5 +1,5 @@
+using Accounting.Api.Endpoints;
 using Accounting.Api.Endpoints.CuotaPorCobrar;
-using Acontplus.Infrastructure.Extensions;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -43,6 +43,7 @@ try
 
     app.UseAuthorization();
 
+    app.MapAllEndpoints();
     app.MapContabilidadEndpoints();
 
     app.MapControllers().RequireAuthorization();

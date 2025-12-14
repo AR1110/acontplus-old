@@ -1,4 +1,4 @@
-using Acontplus.Infrastructure.Extensions;
+using Purchases.Api.Endpoints;
 using Purchases.Api.Extensions;
 using Serilog;
 
@@ -44,6 +44,8 @@ try
     app.UseAuthentication();
 
     app.UseAuthorization();
+
+    app.MapAllEndpoints();
 
     app.MapControllers().RequireAuthorization();
 
