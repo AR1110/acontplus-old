@@ -2,9 +2,19 @@ namespace BarberShop.Application.WorkSessions.Services;
 
 public class WorkSessionService(IWorkSessionRepository workSessionRepository) : IWorkSessionService
 {
-    public Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationRequest paginationRequest)
+    public async Task<PagedResult<WorkSessionDto>> GetWorkSessionAsync(PaginationRequest paginationRequest)
     {
-        throw new NotImplementedException();
+        var pagedSessions = await workSessionRepository.GetWorkSessionsAsync(paginationRequest);
+
+        var sessions = pagedSessions.Items.Select(ObjectMapper.Map<WorkSession, WorkSessionDto>).ToList();
+
+        return new PagedResult<WorkSessionDto>
+        {
+            Items = sessions,
+            PageIndex = pagedSessions.PageIndex,
+            PageSize = pagedSessions.PageSize,
+            TotalCount = pagedSessions.TotalCount
+        };
     }
 
     public async Task<SpResponse> GetWorkSessionByIdAsync(int id)
