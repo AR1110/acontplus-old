@@ -2,28 +2,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Purchases.Application.Dtos
 {
-    public record TaxDto
-    {
-        [Required]
-        public int TaxId { get; init; }
+  public record TaxDto
+  {
+    public required int TaxId { get; init; }
 
-        [Required]
-        public int TaxPercentId { get; init; }
+    public required int TaxPercentId { get; init; }
 
-        [Required]
+    public required decimal Percent { get; init; }
 
-        public decimal Percent { get; init; }
+    public required decimal TaxBase { get; init; }
 
-        [Required]
+    public required decimal TaxValue { get; init; }
 
-        public decimal TaxBase { get; init; }
-
-        [Required]
-
-        public decimal TaxValue { get; init; }
-
-        [Required]
-
-        public decimal Discount { get; init; }
-    }
+    public required decimal Discount { get; init; }
+  }
 }

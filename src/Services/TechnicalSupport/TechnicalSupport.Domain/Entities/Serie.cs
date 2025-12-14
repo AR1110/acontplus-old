@@ -6,12 +6,12 @@ namespace TechnicalSupport.Domain.Entities;
 [Table("Serie", Schema = "TechnicalSupport")]
 public class Serie : BaseEntity
 {
-    public required Brand Brand { get; set; }
-    public int BrandId { get; set; }
+  public required Brand Brand { get; set; }
+  public int BrandId { get; set; }
 
-    [Required][MaxLength(25)] public required string Code { get; set; }
+  [MaxLength(25)] public required string Code { get; set; }
 
-    [Required][MaxLength(150)] public required string Name { get; set; }
+  [MaxLength(150)] public required string Name { get; set; }
 
-    public int? Year { get; set; }
+  public int? Year { get; set; }
 }
