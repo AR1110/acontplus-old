@@ -7,7 +7,7 @@ namespace Mechanical.Domain.Entities;
 [Table("Vehicle", Schema = "Mechanical")]
 public class Vehicle : BaseEntity
 {
-  public VehicleType VehicleType { get; set; }
+  public required VehicleType VehicleType { get; set; }
   public int VehicleTypeId { get; set; }
 
   public int CountryId { get; set; }
@@ -17,7 +17,7 @@ public class Vehicle : BaseEntity
   [MaxLength(100)] public required string Brand { get; set; }
 
 
-  [MaxLength(100)] public string Model { get; set; }
+  [MaxLength(100)] public string? Model { get; set; }
 
   public int Year { get; set; }
 
@@ -27,5 +27,5 @@ public class Vehicle : BaseEntity
 
   [MaxLength(150)] public required string Chassis { get; set; }
 
-  [MaxLength(150)] public string Cylindraje { get; set; }
+  [MaxLength(150)] public string? Cylindraje { get; set; }
 }

@@ -7,7 +7,7 @@ namespace Mechanical.Domain.Entities;
 [Table("SupportDetail", Schema = "Mechanical")]
 public class SupportDetail : BaseEntity
 {
-  public Support support { get; set; }
+  public required Support support { get; set; }
   public int SupportId { get; set; }
   public int ArticuloId { get; set; }
   public int TarifaId { get; set; }
@@ -36,5 +36,5 @@ public class SupportDetail : BaseEntity
   [Column(TypeName = "decimal(18,5)")]
   public required decimal Total { get; set; }
 
-  [MaxLength(300)] public string Obs { get; set; }
+  [MaxLength(300)] public string? Obs { get; set; }
 }

@@ -5,7 +5,7 @@ namespace Loyalty.Domain.Entities;
 public class LoyaltyTierBenefit : BaseEntity
 {
   public int LoyaltyTierId { get; set; }
-  public LoyaltyTier LoyaltyTier { get; set; }
+  public required LoyaltyTier LoyaltyTier { get; set; }
 
   [MaxLength(100)] public required string Name { get; set; }
 

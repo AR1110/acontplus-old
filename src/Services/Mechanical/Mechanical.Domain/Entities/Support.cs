@@ -12,9 +12,9 @@ public class Support : BaseEntity
   public required DateTime Date { get; set; }
 
   public int Sequence { get; set; }
-  public VehicleCompany VehicleCompany { get; set; }
+  public required VehicleCompany VehicleCompany { get; set; }
   public int VehicleCompanyId { get; set; }
-  public SupportStatus SupportStatus { get; set; }
+  public required SupportStatus SupportStatus { get; set; }
   public int SupportStatusId { get; set; }
   public int CustomerId { get; set; }
   public int CompanyId { get; set; }
@@ -26,5 +26,5 @@ public class Support : BaseEntity
   [Column(TypeName = "decimal(18,5)")]
   public required decimal Total { get; set; }
 
-  [MaxLength(500)] public string Obs { get; set; }
+  [MaxLength(500)] public string? Obs { get; set; }
 }

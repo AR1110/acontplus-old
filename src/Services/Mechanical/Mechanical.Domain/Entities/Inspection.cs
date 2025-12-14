@@ -7,7 +7,7 @@ namespace Mechanical.Domain.Entities;
 [Table("Inspection", Schema = "Mechanical")]
 public class Inspection : BaseEntity
 {
-  public Support support { get; set; }
+  public required Support Support { get; set; }
   public int SupportId { get; set; }
   public DateTime Date { get; set; }
   public int Mileage { get; set; }
@@ -30,7 +30,7 @@ public class Inspection : BaseEntity
 
   public required string Suspension { get; set; }
 
-  [MaxLength(300)] public string Obs { get; set; }
+  [MaxLength(300)] public string? Obs { get; set; }
 
   public int CompanyId { get; set; }
   public int Status { get; set; } = 0;

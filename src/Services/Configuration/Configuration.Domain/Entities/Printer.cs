@@ -3,7 +3,7 @@ namespace Configuration.Domain.Entities;
 [Table("Printer", Schema = "Config")]
 public class Printer : BaseEntity
 {
-  public PrinterType PrinterType { get; set; }
+  public required PrinterType PrinterType { get; set; }
 
   public int PrinterTypeId { get; set; }
 
@@ -14,7 +14,7 @@ public class Printer : BaseEntity
   [MaxLength(100)] public required string IpAddress { get; set; }
 
 
-  [MaxLength(300)] public string Domain { get; set; }
+  [MaxLength(300)] public string? Domain { get; set; }
 
   public bool IsDefault { get; set; }
 
@@ -22,7 +22,7 @@ public class Printer : BaseEntity
 
   public bool? ServerDevice { get; set; }
 
-  [MaxLength(17)] public string MacAddress { get; set; }
+  [MaxLength(17)] public string? MacAddress { get; set; }
 
-  public List<PrinterDocument> Documents { get; set; }
+    public ICollection<PrinterDocument> Documents { get; set; } = [];
 }

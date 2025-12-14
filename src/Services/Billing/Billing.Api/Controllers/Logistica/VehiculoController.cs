@@ -25,10 +25,10 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "placa", data.placa },
-            { "marca", data.marca },
-            { "modelo", data.modelo },
-            { "observacion", data.observacion }
+            { "placa", data.Placa },
+            { "marca", data.Marca },
+            { "modelo", data.Modelo },
+            { "observacion", data.Observacion }
         };
         return Ok(await vehiculoService.AddAsync(parameters));
     }
@@ -40,10 +40,10 @@ public class VehiculoController(IVehiculoService vehiculoService) : BaseApiContr
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "placa", data.placa },
-            { "marca", data.marca },
-            { "modelo", data.modelo },
-            { "observacion", data.observacion }
+            { "placa", data.Placa },
+            { "marca", data.Marca },
+            { "modelo", data.Modelo },
+            { "observacion", data.Observacion }
         };
         return Ok(await vehiculoService.UpdateAsync(parameters));
     }

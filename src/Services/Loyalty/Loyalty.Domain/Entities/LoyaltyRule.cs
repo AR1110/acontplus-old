@@ -5,7 +5,7 @@ namespace Loyalty.Domain.Entities;
 public class LoyaltyRule : CompanyEntity
 {
   public int LoyaltyProgramId { get; set; }
-  public LoyaltyProgram LoyaltyProgram { get; set; }
+  public required LoyaltyProgram LoyaltyProgram { get; set; }
 
   [MaxLength(100)] public required string Name { get; set; }
 

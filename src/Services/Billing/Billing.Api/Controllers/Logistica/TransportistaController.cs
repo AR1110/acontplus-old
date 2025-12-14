@@ -25,9 +25,9 @@ public class TransportistaController(ITransportistaService transportistaService)
         var parameters = new Dictionary<string, object>
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
-            { "idTipoIdentificacion", data.idTipoIdentificacion },
-            { "nroIdentificacion", data.nroIdentificacion },
-            { "nombre", data.nombre }
+            { "idTipoIdentificacion", data.IdTipoIdentificacion },
+            { "nroIdentificacion", data.NroIdentificacion },
+            { "nombre", data.Nombre }
         };
         return Ok(await transportistaService.AddAsync(parameters));
     }
@@ -39,8 +39,8 @@ public class TransportistaController(ITransportistaService transportistaService)
         {
             { "userRoleId", User.GetClaimValue<int>("userRoleId") },
             { "id", id },
-            { "nroIdentificacion", data.nroIdentificacion },
-            { "nombre", data.nombre }
+            { "nroIdentificacion", data.NroIdentificacion },
+            { "nombre", data.Nombre }
         };
         return Ok(await transportistaService.UpdateAsync(parameters));
     }
