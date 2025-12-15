@@ -313,8 +313,8 @@ BEGIN
 			IF @siglaFamilia IN ('RES' ,'POR', 'ING' ,'COM')
 				BEGIN
 					INSERT INTO Restaurant.Item
-					       (ProductId ,Cooking ,Title ,Summary ,CreatedAt ,CreatedByUserId)
-                    SELECT @idArticulo,1 ,descripcion ,descripcion ,GETDATE() ,@idUsuario FROM @tbArticle
+					       (ProductId ,Summary     ,CreatedByUserId)
+                    SELECT @idArticulo,descripcion ,@idUsuario FROM @tbArticle
 				END
 
             UPDATE SubFamilia SET ultimoSecuencial = ultimoSecuencial + 1 WHERE idSubFamilia = @idSubFamilia
