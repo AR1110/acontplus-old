@@ -398,14 +398,13 @@ BEGIN
                     IF NOT EXISTS (SELECT 1 FROM Restaurant.Item WHERE ProductId = @id)
                         BEGIN
                             INSERT INTO Restaurant.Item
-					                (ProductId ,Cooking ,Title ,Summary ,CreatedAt ,CreatedByUserId)
-                            SELECT   @id,1 ,descripcion ,descripcion ,GETDATE() ,@idUsuario FROM @tbArticle
+					                (ProductId ,Summary      ,CreatedByUserId)
+                            SELECT   @id       ,descripcion  ,@idUsuario FROM @tbArticle
                         END
                     ELSE
                         BEGIN
                             UPDATE Restaurant.Item SET
                                 Summary = (SELECT descripcion FROM @tbArticle)
-                               ,Title   = (SELECT descripcion FROM @tbArticle)
                             WHERE ProductId = @id
                         END
                 END
