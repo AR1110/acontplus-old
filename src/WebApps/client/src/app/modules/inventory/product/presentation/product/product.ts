@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { DynamicCard } from '@acontplus/ng-components';
+import {DataGrid, DataGridColumn, DynamicCard} from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -37,11 +37,8 @@ import { AddEditProductDirective } from '@inventory/product/presentation/directi
 import { DialogService } from '@core/services/dialog.service';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { ProductStock } from '@inventory/product/presentation/components/product-stock/product-stock';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { HasPermissionDirective } from '@core/directives/permission';
 import { INVENTORY_MODULES_CODE } from '@inventory/domain/enums/inventory.enum';
-import { usePermissions } from '@core/composables/use-permissions';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 @Component({

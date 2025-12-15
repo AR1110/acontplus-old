@@ -17,9 +17,6 @@ import { ProductMeasure } from '@inventory/domain/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
 import {Overlay} from "@angular/cdk/overlay";
 import {ComponentPortal} from "@angular/cdk/portal";
 import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-search-dialog";
@@ -33,9 +30,6 @@ import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-sea
     MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,
-    MatIconButton,
-    MatTooltip,
-    MatIcon,
   ],
   templateUrl: './item-variant-add-edit.html',
   styles: ``,
