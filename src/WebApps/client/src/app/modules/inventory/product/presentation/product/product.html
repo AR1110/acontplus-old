@@ -185,7 +185,7 @@
     }
   </div>
 
-  <app-data-grid
+  <acp-data-grid
     [data]="list()"
     [columns]="columns"
     [length]="total()"
@@ -271,8 +271,6 @@
   <ng-template #stockTemplate let-row>
     @let bgSuccess = row.stock > 0;
     @let bgDanger = row.stock <= 0;
-    @let bgWarning = row.stock > 0 && row.stock <= 5;
-    @let bgInfo = row.stock > 5;
 
     <span
       [class.bg-success]="bgSuccess"

@@ -68,7 +68,6 @@ BEGIN
        ,[ExtraCharge] NUMERIC(18,5) NOT NULL
        ,[Instructions] VARCHAR(500) NULL
        ,[UniqueId] UNIQUEIDENTIFIER NULL
-       ,[CreatedAt] DATETIME2 DEFAULT GETDATE()
     )
 
     BEGIN TRY
@@ -204,11 +203,13 @@ BEGIN
             IF EXISTS (SELECT 1 FROM @TbOrderDetailCompositionModifiers)
                 BEGIN
                     INSERT INTO Restaurant.OrderDetailCompositionModifier
-                          ([OrderDetailId],[ModifierCompositionId]   ,[Quantity],[ExtraCharge]   ,[CreatedAt],[Instructions])
-                    SELECT Id             ,[ModifierCompositionId],cm.[Quantity],[ExtraCharge],cm.[CreatedAt],[Instructions] 
+                          ([OrderDetailId],[ModifierCompositionId]   ,[Quantity],[ExtraCharge],[Instructions])
+                    SELECT Id             ,[ModifierCompositionId],cm.[Quantity],[ExtraCharge],[Instructions] 
                     FROM @TbOrderDetailCompositionModifiers cm
                     INNER JOIN Restaurant.OrderDetail       od ON od.UniqueId = cm.UniqueId
                     WHERE od.OrderId = @OrderId
+
+                    UPDATE Restaurant.OrderDetail SET UniqueId = NULL WHERE OrderId = @OrderId
                 END 
 
             IF EXISTS (SELECT 1 FROM @tbOrder WHERE IsQuickSale = 1)

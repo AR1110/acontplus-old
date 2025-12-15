@@ -9,13 +9,13 @@ public record AsignacionCajaDto
 public record CreateCajaDto
 {
     public AsignacionCajaDto[] Asignacion { get; init; } = Array.Empty<AsignacionCajaDto>();
-    public string Descripcion { get; init; }
+    public string? Descripcion { get; init; }
 }
 
 public record UpdateCajaDto
 {
     public AsignacionCajaDto[] Asignacion { get; init; } = Array.Empty<AsignacionCajaDto>();
-    public string Descripcion { get; init; }
+    public string? Descripcion { get; init; }
 }
 
 public record AsignacionCajaUpdateDto
@@ -28,5 +28,5 @@ public record AsignacionCajaUpdateDto
 public record UpdateCajaWithAsignacionDto
 {
     public AsignacionCajaUpdateDto[] Asignacion { get; init; } = Array.Empty<AsignacionCajaUpdateDto>();
-    public string Descripcion { get; init; }
+    public string? Descripcion { get; init; }
 }

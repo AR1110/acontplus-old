@@ -16,9 +16,7 @@ import {
   debounceTime,
   finalize,
 } from 'rxjs';
-import { JsonPipe } from '@angular/common';
 import { ItemSearchUseCase } from '@restaurant/application/use-cases/item.use-case';
-import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
 import { PaginationParams } from '@acontplus/core';
 
 @Component({
@@ -31,7 +29,6 @@ import { PaginationParams } from '@acontplus/core';
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    JsonPipe,
   ],
   templateUrl: './item-search.html',
   styles: ``,

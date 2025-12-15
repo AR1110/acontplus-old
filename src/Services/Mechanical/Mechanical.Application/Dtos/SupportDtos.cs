@@ -7,7 +7,7 @@ public record CreateSupportDto
     public int CustomerId { get; init; }
     public int SupportTypeId { get; init; }
     public int UserAssignedId { get; init; }
-    public string Obs { get; init; }
+    public string? Obs { get; init; }
     public DateTime Date { get; init; }
 }
 
@@ -18,7 +18,7 @@ public record UpdateSupportDto
     public int CustomerId { get; init; }
     public int SupportTypeId { get; init; }
     public int UserAssignedId { get; init; }
-    public string Obs { get; init; }
+    public string? Obs { get; init; }
     public DateTime Date { get; init; }
 }
 

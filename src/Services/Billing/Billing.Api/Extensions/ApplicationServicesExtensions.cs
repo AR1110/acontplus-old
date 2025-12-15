@@ -40,7 +40,6 @@ public static class ApplicationServicesExtensions
             "Billing.Application.Services.Logistica",
             "Billing.Application.Services.RetencionAts",
             "Billing.Application.Services.Sri",
-            "Billing.Api.Endpoints.Implementations",
             "Acontplus.Persistence.SqlServer.Repositories",
             "Acontplus.Services.Extensions.Context",
             "Billing.Infrastructure.Persistence.Repositories"

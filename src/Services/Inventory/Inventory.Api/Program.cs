@@ -1,4 +1,4 @@
-using Acontplus.Infrastructure.Extensions;
+using Inventory.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -51,6 +51,8 @@ try
     app.UseAuthentication();
 
     app.UseAuthorization();
+
+    app.MapAllEndpoints();
 
     app.MapControllers().RequireAuthorization();
 

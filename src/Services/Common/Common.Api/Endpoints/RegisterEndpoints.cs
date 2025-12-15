@@ -1,4 +1,3 @@
-using Acontplus.Core.Abstractions.Context;
 using Acontplus.Utilities.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,6 +9,8 @@ public static class RegisterEndpoints
 
     public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder builder)
     {
+        builder.MapLookupEndpoints();
+
         builder.MapGet("/dashboard", async (
                 IDashboardService dashboardService,
                 IUserContext userContext,

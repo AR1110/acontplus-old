@@ -1,3 +1,5 @@
+using Accounting.Application.Dtos;
+
 namespace Accounting.Api.Controllers;
 
 public class AccountController(IAccountRepository accountService) : BaseApiController
@@ -13,16 +15,20 @@ public class AccountController(IAccountRepository accountService) : BaseApiContr
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Account account)
+    public async Task<IActionResult> Post([FromBody] AccountCreate accountDto)
     {
+        var account = accountDto.Adapt<Account>();
         account.CreatedByUserId = User.GetUserId();
+        
         return Ok(await accountService.AddAsync(account));
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromBody] Account account)
+    public async Task<IActionResult> Put(int id, [FromBody] AccountUpdate accountDto)
     {
+        var account = accountDto.Adapt<Account>();
         account.UpdatedByUserId = User.GetUserId();
+        
         return Ok(await accountService.UpdateAsync(id, account));
     }
 

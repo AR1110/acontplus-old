@@ -1,9 +1,8 @@
-import { Component, EventEmitter, inject, Input, Output, output } from '@angular/core';
+import { Component, inject, Input, output } from '@angular/core';
 import {
   AutocompleteConfig,
   PRODUCT_AUTOCOMPLETE_CONFIG,
 } from '@shared/models/autocomplete.interfaces';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
 import { AutocompleteService } from '@shared/services/autocomplete.service';
 import { ReusableAutocompleteComponent } from '@shared/components/reusable-autocomplete/reusable-autocomplete.component';
 import { MatTooltipModule } from '@angular/material/tooltip';

@@ -2,10 +2,10 @@ namespace Billing.Domain.Models;
 
 public class Vehiculo
 {
-    public int idVehiculo { get; set; }
-    public string placa { get; set; }
-    public string marca { get; set; }
-    public string modelo { get; set; }
-    public string observacion { get; set; }
-    public bool estado { get; set; }
+    public int IdVehiculo { get; set; }
+    public required string Placa { get; set; }
+    public required string Marca { get; set; }
+    public required string Modelo { get; set; }
+    public required string Observacion { get; set; }
+    public bool Estado { get; set; }
 }

@@ -9,12 +9,13 @@
     <DockerfileContext>..\..\..\..</DockerfileContext>
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Acontplus.Billing" />
     <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
+    <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />

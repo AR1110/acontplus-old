@@ -1,4 +1,3 @@
-<h1>{{ isLoading() }}</h1>
 <div
   class="product-image-container"
   [class.loading]="isLoading()"
@@ -15,7 +14,7 @@
   }
 
   <!-- Imagen principal -->
-  @if (!isLoading) {
+  @if (!isLoading()) {
     <div class="image-wrapper">
       <img
         [src]="currentImageUrl"

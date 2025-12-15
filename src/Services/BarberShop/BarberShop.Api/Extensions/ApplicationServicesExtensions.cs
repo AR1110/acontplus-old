@@ -4,33 +4,32 @@ namespace BarberShop.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddBarberShopServices(this IServiceCollection services,
-        IConfiguration configuration)
+  public static IServiceCollection AddBarberShopServices(this IServiceCollection services,
+      IConfiguration configuration)
+  {
+    services.AddApplicationServices(configuration);
+
+    services.AddAdvancedLoggingOptions(configuration);
+
+    services.AddJwtAuthentication(configuration);
+
+    services.AddOpenApi();
+
+    services.AddHttpContextAccessor();
+
+    JsonConfigurationService.ConfigureAspNetCore(services, false);
+
+    JsonConfigurationService.RegisterJsonConfiguration(services);
+
+    services.AddDbContextPool<BarberShopContext>(opt =>
     {
-        services.AddApplicationServices(configuration);
+      opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+              x => x.MigrationsAssembly("BarberShop.Infrastructure"));
+    });
 
-        services.AddAdvancedLoggingOptions(configuration);
-
-        services.AddJwtAuthentication(configuration);
-
-        services.AddOpenApi();
-
-        services.AddHttpContextAccessor();
-
-        JsonConfigurationService.ConfigureAspNetCore(services, false);
-
-        JsonConfigurationService.RegisterJsonConfiguration(services);
-
-        services.AddDbContextPool<BarberShopContext>(opt =>
-        {
-            opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                x => x.MigrationsAssembly("BarberShop.Infrastructure"));
-        });
-
-        string[] scopedNameSpaces =
-        [
-            "BarberShop.Api.Endpoints.Implementations",
-            "BarberShop.Application.Seats.Services",
+    string[] scopedNameSpaces =
+    [
+        "BarberShop.Application.Seats.Services",
             "BarberShop.Application.Tickets.Services",
             "BarberShop.Application.WorkSessions.Services",
             "BarberShop.Application.Services",
@@ -38,15 +37,15 @@ public static class ApplicationServicesExtensions
             "BarberShop.Infrastructure.Persistence.Repositories",
 
             "Acontplus.Services.Extensions.Context"
-        ];
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime()
-        );
+    ];
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
 
-        return services;
-    }
+    return services;
+  }
 }

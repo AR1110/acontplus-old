@@ -6,9 +6,9 @@ namespace TechnicalSupport.Domain.Entities;
 [Table("OrderStatus", Schema = "TechnicalSupport")]
 public class OrderStatus : BaseEntity
 {
-    [Required][MaxLength(5)] public required string Code { get; set; }
+  [MaxLength(5)] public required string Code { get; set; }
 
-    [Required][MaxLength(100)] public required string Name { get; set; }
+  [MaxLength(100)] public required string Name { get; set; }
 
-    public int Order { get; set; }
+  public int Order { get; set; }
 }
