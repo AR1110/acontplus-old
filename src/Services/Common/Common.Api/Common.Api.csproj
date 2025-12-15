@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
+    <PackageReference Include="Mapster" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>

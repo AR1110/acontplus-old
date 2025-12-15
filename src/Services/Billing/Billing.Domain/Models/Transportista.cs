@@ -2,9 +2,9 @@ namespace Billing.Domain.Models;
 
 public class Transportista
 {
-    public int idTransportista { get; set; }
-    public int idTipoIdentificacion { get; set; }
-    public string nroIdentificacion { get; set; }
-    public string nombre { get; set; }
-    public bool estado { get; set; }
+    public int IdTransportista { get; set; }
+    public int IdTipoIdentificacion { get; set; }
+    public required string NroIdentificacion { get; set; }
+    public required string Nombre { get; set; }
+    public bool Estado { get; set; }
 }

@@ -1,4 +1,4 @@
-using Acontplus.Infrastructure.Extensions;
+using Billing.Api.Endpoints;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -40,17 +40,13 @@ try
 
     app.UseHttpsRedirection();
 
-    app.MapRetencionAtsEndpoints();
-
-    app.MapBillingEndpoints();
-
-    app.MapSriEndpoints();
-
     app.UseRouting();
 
     app.UseAuthentication();
 
     app.UseAuthorization();
+
+    app.MapAllEndpoints();
 
     app.MapControllers().RequireAuthorization();
 

@@ -1,12 +1,18 @@
 global using Acontplus.Core.Abstractions.Context;
 global using Acontplus.Core.Dtos.Common;
+global using Acontplus.Core.Dtos.Requests;
 global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Extensions;
+global using Acontplus.Infrastructure.Extensions;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Utilities;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
 global using Acontplus.Services.Extensions.Context;
+global using Acontplus.Services.Services.Abstractions;
 global using Acontplus.Utilities.Data;
+global using Acontplus.Utilities.Dtos;
+global using Acontplus.Utilities.Extensions;
 global using Acontplus.Utilities.Format;
 global using Acontplus.Utilities.IO;
 global using Acontplus.Utilities.Mapping;
@@ -22,6 +28,7 @@ global using Configuration.Domain.Entities;
 global using Configuration.Domain.Models;
 global using Configuration.Domain.Repositories;
 global using Configuration.Infrastructure.Persistence;
+global using Mapster;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 

@@ -1,5 +1,3 @@
-using Acontplus.Core.Extensions;
-
 namespace Sales.Api.Controllers;
 
 public class ClienteController(IClienteService clienteService) : BaseApiController

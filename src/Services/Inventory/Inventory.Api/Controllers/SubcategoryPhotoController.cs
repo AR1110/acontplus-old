@@ -1,5 +1,3 @@
-using Acontplus.Core.Extensions;
-
 namespace Inventory.Api.Controllers;
 
 public class SubcategoryPhotoController(
@@ -29,7 +27,9 @@ public class SubcategoryPhotoController(
             var data = new SubcategoryPhoto
             {
                 CreatedByUserId = User.GetUserId(),
-                Id = 0
+                Id = 0,
+                S3ObjectKey = string.Empty,
+                S3ObjectUrl = string.Empty
             };
             if (file != null)
                 await s3ObjectCustom.Initialize($"{User.GetClaimValue<string>(IdCardCompany)}{BucketDirectory}", file);
@@ -62,7 +62,9 @@ public class SubcategoryPhotoController(
         {
             var data = new SubcategoryPhoto
             {
-                Id = 0
+                Id = 0,
+                S3ObjectKey = string.Empty,
+                S3ObjectUrl = string.Empty
             };
             data = JsonExtensions.DeserializeOptimized<SubcategoryPhoto>(json);
             data.UpdatedByUserId = User.GetUserId();

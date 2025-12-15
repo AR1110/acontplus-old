@@ -16,6 +16,7 @@
     <PackageReference Include="Acontplus.Notifications" />
     <PackageReference Include="Acontplus.S3Application" />
     <PackageReference Include="Acontplus.Services" />
+    <PackageReference Include="Mapster" />
 
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
