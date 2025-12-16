@@ -65,7 +65,7 @@
 
         $scope.resultRangeFilter = function (item) {
             $scope.dataSearch.fechaInicio = item.startDate,
-                $scope.dataSearch.fechaFin = item.endDate
+            $scope.dataSearch.fechaFin     = item.endDate
             $scope.getNotaCreditos();
         }
 
@@ -1572,6 +1572,12 @@
             if (fS.validateDateIsAfterCurrentDate($scope.data.fechaEmision)) {
                 tS.toastr('warning', 'La fecha de emisión del documento no puede ser posterior a la fecha actual.')
                 return
+            }
+
+            // * Validar vendedor
+            if ($scope.data.idUsuario <= 0) {
+              tS.toastr('warning', 'Seleccione el vendedor');
+              return
             }
 
             let ajusteFechaEmision = fS.ajustarFechaEmision(isUpdate(), $scope.data.fechaEmision, $scope.data.fechaEmisionDocCreado);
