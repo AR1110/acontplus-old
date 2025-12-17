@@ -1,3 +1,4 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Scrutor;
 
 namespace Accounting.Api.Extensions;
@@ -25,10 +26,10 @@ public static class ApplicationServicesExtensions
 
     JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<AccountingContext>(options =>
+    services.AddSqlServerPersistence<AccountingContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-
+    services.AddCachingServices(configuration);
     string[] scopedNameSpaces =
     [
         "Accounting.Infrastructure.Persistence.Repositories",

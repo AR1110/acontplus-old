@@ -1,3 +1,4 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions.Authentication;
 using Scrutor;
 
@@ -24,8 +25,10 @@ public static class ApplicationServicesExtensions
 
     JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<PurchasesContext>(options =>
+    services.AddSqlServerPersistence<PurchasesContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+    services.AddCachingServices(configuration);
 
     string[] scopedNameSpaces =
     [

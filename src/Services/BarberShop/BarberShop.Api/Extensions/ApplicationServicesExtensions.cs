@@ -1,3 +1,4 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Scrutor;
 
 namespace BarberShop.Api.Extensions;
@@ -21,11 +22,13 @@ public static class ApplicationServicesExtensions
 
     JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<BarberShopContext>(opt =>
+    services.AddSqlServerPersistence<BarberShopContext>(opt =>
     {
       opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
               x => x.MigrationsAssembly("BarberShop.Infrastructure"));
     });
+
+    services.AddCachingServices(configuration);
 
     string[] scopedNameSpaces =
     [

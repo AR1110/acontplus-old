@@ -1,4 +1,6 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Scrutor;
 
 namespace Mechanical.Api.Extensions;
 
@@ -23,15 +25,28 @@ public static class ApplicationServicesExtensions
 
     JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<MechanicalContext>(options =>
+    services.AddSqlServerPersistence<MechanicalContext>(options =>
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-    services.AddLookupService();
-    services.AddScoped<IAdoRepository, AdoRepository>();
-    services.AddScoped<IVehicleRepository, VehicleRepository>();
-    services.AddScoped<ISupportRepository, SupportRepository>();
-    services.AddScoped<ISupportDetailService, SupportDetailService>();
-    services.AddScoped<IInspectionService, InspectionService>();
+    services.AddCachingServices(configuration);
+
+    string[] scopedNameSpaces =
+    [
+        "Mechanical.Infrastructure.Persistence.Repositiories",
+        "Mechanical.Application.Services",
+        "Acontplus.Persistence.SqlServer.Repositories",
+        "Acontplus.Services.Extensions.Context",
+        "Acontplus.Services.Services.Implementations"
+    ];
+
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
+
     return services;
   }
 }

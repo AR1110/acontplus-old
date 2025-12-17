@@ -1,3 +1,4 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Scrutor;
 
 namespace Billing.Api.Extensions;
@@ -29,11 +30,11 @@ public static class ApplicationServicesExtensions
 
     services.AddHttpClient();
 
-    services.AddDbContextPool<BillingContext>(options =>
+    services.AddSqlServerPersistence<BillingContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                     x => x.MigrationsAssembly("Billing.Infrastructure"))); //Migrations in infrastructure library
 
-
+    services.AddCachingServices(configuration);
     string[] scopedNameSpaces =
     [
         "Billing.Application.Services",

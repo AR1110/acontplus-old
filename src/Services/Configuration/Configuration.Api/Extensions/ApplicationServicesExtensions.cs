@@ -1,3 +1,4 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions.Authentication;
 using Scrutor;
 
@@ -24,11 +25,13 @@ public static class ApplicationServicesExtensions
 
     JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<ConfigurationContext>(opt =>
+    services.AddSqlServerPersistence<ConfigurationContext>(opt =>
     {
       opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
               x => x.MigrationsAssembly("Configuration.Infrastructure"));
     });
+
+    services.AddCachingServices(configuration);
 
     // Services that should be scoped (have dependencies on ConfigContext)
     string[] scopedNamespaces =
