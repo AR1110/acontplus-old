@@ -1,195 +1,283 @@
+# Development environment overrides
+# Automatically merged with docker-compose.yml when running: docker-compose up
+# Uses .env or .env.development for configuration
+#
+# Configuration Priority (highest to lowest):
+# 1. Environment Variables from .env file
+# 2. User Secrets (mounted from local machine)
+# 3. appsettings.Development.json (copied into image)
+# 4. appsettings.json (copied into image)
+
 services:
-  gatewayacontplus.api:
+  ocelot.api:
+    container_name: ocelot-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - SafeOrigins=${SAFE_ORIGINS}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_GATEWAY}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+      - ServiceUrls__IdentityApi=${SERVICE_URL_IDENTITY:-http://identity.api:8080}
+      - ServiceUrls__AccountingApi=${SERVICE_URL_ACCOUNTING:-http://accounting.api:8080}
+      - ServiceUrls__BillingApi=${SERVICE_URL_BILLING:-http://billing.api:8080}
+      - ServiceUrls__SalesApi=${SERVICE_URL_SALES:-http://sales.api:8080}
+      - ServiceUrls__InventoryApi=${SERVICE_URL_INVENTORY:-http://inventory.api:8080}
+      - ServiceUrls__PurchasesApi=${SERVICE_URL_PURCHASES:-http://purchases.api:8080}
+      - ServiceUrls__CommonApi=${SERVICE_URL_COMMON:-http://common.api:8080}
+      - ServiceUrls__ConfigurationApi=${SERVICE_URL_CONFIGURATION:-http://configuration.api:8080}
+      - ServiceUrls__RestaurantApi=${SERVICE_URL_RESTAURANT:-http://restaurant.api:8080}
+      - ServiceUrls__MechanicalApi=${SERVICE_URL_MECHANICAL:-http://mechanical.api:8080}
+      - ServiceUrls__VetApi=${SERVICE_URL_VET:-http://vet.api:8080}
+      - ServiceUrls__BarberShopApi=${SERVICE_URL_BARBERSHOP:-http://barbershop.api:8080}
+      - ServiceUrls__TechnicalSupportApi=${SERVICE_URL_TECHSUPPORT:-http://technicalsupport.api:8080}
     ports:
-      - "8080"
-      - "8081"
+      - "${GATEWAY_PORT:-5000}:8080"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/ocelot:/app/logs
+    restart: ${RESTART_POLICY:-no}
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-50m}
+        max-file: ${LOG_MAX_FILE:-5}
+
+  accounting.api:
+    container_name: accounting-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_ACCOUNTING}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./logs/accounting:/app/logs
+    restart: ${RESTART_POLICY:-no}
+
   barbershop.api:
+    container_name: barbershop-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_BARBERSHOP}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/barbershop:/app/logs
+    restart: ${RESTART_POLICY:-no}
+
+  billing.api:
+    container_name: billing-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_BILLING}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./logs/billing:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
   common.api:
+    container_name: common-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_COMMON}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/common:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
-  compras.api:
+  configuration.api:
+    container_name: configuration-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_CONFIGURATION}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  configuracion.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  contabilidad.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  factelect.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/configuration:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
   identity.api:
+    container_name: identity-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_IDENTITY}
+      - JwtSettings__AccessExpiration=${JWT_ACCESS_EXPIRATION}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/identity:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
-  inventario.api:
+  inventory.api:
+    container_name: inventory-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_INVENTORY}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/inventory:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
   mechanical.api:
+    container_name: mechanical-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_MECHANICAL}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/mechanical:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
-  technicalsupport.api:
+  purchases.api:
+    container_name: purchases-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_PURCHASES}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  ventas.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-
-  webui:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
-    volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/purchases:/app/logs
+    restart: ${RESTART_POLICY:-no}
 
   restaurant.api:
+    container_name: restaurant-api
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-    ports:
-      - "8080"
-      - "8081"
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_RESTAURANT}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ./logs/restaurant:/app/logs
+    restart: ${RESTART_POLICY:-no}
+
+  sales.api:
+    container_name: sales-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_SALES}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./logs/sales:/app/logs
+    restart: ${RESTART_POLICY:-no}
+
+  technicalsupport.api:
+    container_name: technicalsupport-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_TECHSUPPORT}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./logs/technicalsupport:/app/logs
+    restart: ${RESTART_POLICY:-no}
+
+  vet.api:
+    container_name: vet-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-true}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Information}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecurityKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE_VET}
+      - ApiGateways__Acontplus=${APIGATEWAY_ACONTPLUS}
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./logs/vet:/app/logs
+    restart: ${RESTART_POLICY:-no}

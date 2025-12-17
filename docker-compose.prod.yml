@@ -1,0 +1,330 @@
+# Production environment overrides
+# Use with: docker-compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production up -d
+# Configured via .env.production file
+
+services:
+  ocelot.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - SafeOrigins=${SAFE_ORIGINS}
+      - ServiceUrls__IdentityApi=${SERVICE_URL_IDENTITY}
+      - ServiceUrls__AccountingApi=${SERVICE_URL_ACCOUNTING}
+      - ServiceUrls__BillingApi=${SERVICE_URL_BILLING}
+      - ServiceUrls__SalesApi=${SERVICE_URL_SALES}
+      - ServiceUrls__InventoryApi=${SERVICE_URL_INVENTORY}
+      - ServiceUrls__PurchasesApi=${SERVICE_URL_PURCHASES}
+      - ServiceUrls__CommonApi=${SERVICE_URL_COMMON}
+      - ServiceUrls__ConfigurationApi=${SERVICE_URL_CONFIGURATION}
+      - ServiceUrls__RestaurantApi=${SERVICE_URL_RESTAURANT}
+      - ServiceUrls__MechanicalApi=${SERVICE_URL_MECHANICAL}
+      - ServiceUrls__VetApi=${SERVICE_URL_VET}
+      - ServiceUrls__BarberShopApi=${SERVICE_URL_BARBERSHOP}
+      - ServiceUrls__TechnicalSupportApi=${SERVICE_URL_TECHSUPPORT}
+    ports:
+      - "${GATEWAY_PORT:-80}:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  accounting.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  barbershop.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  billing.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  common.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  configuration.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  identity.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__AccessExpiration=${JWT_ACCESS_EXPIRATION}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  inventory.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  mechanical.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  purchases.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  restaurant.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  sales.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  technicalsupport.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}
+
+  vet.api:
+    restart: ${RESTART_POLICY:-always}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Production}
+      - AdvancedLogging__LocalFilePath=${LOG_PATH:-/app/logs/log-.txt}
+      - AdvancedLogging__EnableLocalFile=${ENABLE_LOCAL_FILE_LOGGING:-false}
+      - Serilog__MinimumLevel__Default=${LOG_LEVEL:-Warning}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+    deploy:
+      resources:
+        limits:
+          cpus: ${CPU_LIMIT:-'1'}
+          memory: ${MEMORY_LIMIT:-512M}
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: ${LOG_DRIVER:-json-file}
+      options:
+        max-size: ${LOG_MAX_SIZE:-10m}
+        max-file: ${LOG_MAX_FILE:-3}

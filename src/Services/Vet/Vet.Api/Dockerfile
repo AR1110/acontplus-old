@@ -1,34 +1,35 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8002
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_SKIP_POLICY_LOADING=true
-
 WORKDIR /src
+
+# Copy solution files
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
-COPY ["src/Services/Vet/Vet.API/Vet.API.csproj", "src/Services/Vet/Vet.API/"]
-RUN dotnet restore "./src/Services/Vet/Vet.API/Vet.API.csproj"
+
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
+COPY ["src/Services/Vet/Vet.Api/Vet.Api.csproj", "src/Services/Vet/Vet.Api/"]
+COPY ["src/Services/Vet/Vet.Application/Vet.Application.csproj", "src/Services/Vet/Vet.Application/"]
+COPY ["src/Services/Vet/Vet.Domain/Vet.Domain.csproj", "src/Services/Vet/Vet.Domain/"]
+COPY ["src/Services/Vet/Vet.Infrastructure/Vet.Infrastructure.csproj", "src/Services/Vet/Vet.Infrastructure/"]
+RUN dotnet restore "src/Services/Vet/Vet.Api/Vet.Api.csproj"
+
+# Copy source and build
 COPY . .
-WORKDIR "/src/src/Services/Vet/Vet.API"
-RUN dotnet build "./Vet.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Services/Vet/Vet.Api"
+RUN dotnet publish "Vet.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
 
-RUN ls /app/build
-
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Vet.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Vet.API.dll"]
+EXPOSE 8080
+
+# Run as non-root user
+USER $APP_UID
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Vet.Api.dll"]
+

@@ -4,64 +4,65 @@ namespace Billing.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddBillingServices(this IServiceCollection services,
-        IConfiguration configuration, IWebHostEnvironment environment)
-    {
-        services.AddApplicationServices(configuration);
+  public static IServiceCollection AddBillingServices(this IServiceCollection services,
+      IConfiguration configuration, IWebHostEnvironment environment)
+  {
+    services.AddApplicationServices(configuration);
 
-        services.AddAdvancedLoggingOptions(configuration);
+    services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddJwtAuthentication(configuration);
+    services.AddJwtAuthentication(configuration);
 
-        services.AddOpenApi();
+    services.AddOpenApi();
 
-        services.AddHttpContextAccessor();
+    services.AddHttpContextAccessor();
 
-        services.AddControllers();
+    services.AddControllers();
 
-        JsonConfigurationService.ConfigureAspNetCore(services, false);
+    JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-        JsonConfigurationService.RegisterJsonConfiguration(services);
+    JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
+    services.AddHostedService<DocumentoElectronicoErrorCleanupBackgroundService>();
 
-        services.AddMemoryCache();
+    services.AddMemoryCache();
 
-        services.AddHttpClient();
+    services.AddHttpClient();
 
-        services.AddDbContextPool<BillingContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                        x => x.MigrationsAssembly("Billing.Infrastructure"))); //Migrations in infrastructure library
+    services.AddDbContextPool<BillingContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                    x => x.MigrationsAssembly("Billing.Infrastructure"))); //Migrations in infrastructure library
 
 
-        string[] scopedNameSpaces =
-        [
-            "Billing.Application.Services",
+    string[] scopedNameSpaces =
+    [
+        "Billing.Application.Services",
             "Billing.Application.Services.Logistica",
             "Billing.Application.Services.RetencionAts",
             "Billing.Application.Services.Sri",
             "Acontplus.Persistence.SqlServer.Repositories",
             "Acontplus.Services.Extensions.Context",
-            "Billing.Infrastructure.Persistence.Repositories"
-        ];
+            "Billing.Infrastructure.Persistence.Repositories",
+            "Acontplus.Services.Services.Implementations"
+    ];
 
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime()
-        );
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
 
-        services.AddSingleton<IDocumentConverter, DocumentConverter>();
-        services.AddScoped<ICookieService, CookieService>();
-        services.AddScoped<ICaptchaService, CaptchaService>();
-        services.AddScoped<IRucService, RucService>();
-        services.AddScoped<ICedulaService, CedulaService>();
+    services.AddSingleton<IDocumentConverter, DocumentConverter>();
+    services.AddScoped<ICookieService, CookieService>();
+    services.AddScoped<ICaptchaService, CaptchaService>();
+    services.AddScoped<IRucService, RucService>();
+    services.AddScoped<ICedulaService, CedulaService>();
 
-        services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
-        services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
+    services.AddSingleton<SriAuthenticationOptions>(new SriAuthenticationOptions());
+    services.AddTransient<ISriAuthenticationService, SriAuthenticationService>();
 
-        return services;
-    }
+    return services;
+  }
 }

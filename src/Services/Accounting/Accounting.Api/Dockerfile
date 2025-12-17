@@ -1,32 +1,35 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+
+# Copy solution files
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
-COPY ["src/Services/Contabilidad/Accounting.API/Accounting.API.csproj", "src/Services/Contabilidad/Accounting.API/"]
-RUN dotnet restore "./src/Services/Contabilidad/Accounting.API/Accounting.API.csproj"
+
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
+COPY ["src/Services/Accounting/Accounting.Api/Accounting.Api.csproj", "src/Services/Accounting/Accounting.Api/"]
+COPY ["src/Services/Accounting/Accounting.Application/Accounting.Application.csproj", "src/Services/Accounting/Accounting.Application/"]
+COPY ["src/Services/Accounting/Accounting.Domain/Accounting.Domain.csproj", "src/Services/Accounting/Accounting.Domain/"]
+COPY ["src/Services/Accounting/Accounting.Infrastructure/Accounting.Infrastructure.csproj", "src/Services/Accounting/Accounting.Infrastructure/"]
+RUN dotnet restore "src/Services/Accounting/Accounting.Api/Accounting.Api.csproj"
+
+# Copy source and build
 COPY . .
-WORKDIR "/src/src/Services/Contabilidad/Accounting.API"
-RUN dotnet build "./Accounting.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Services/Accounting/Accounting.Api"
+RUN dotnet publish "Accounting.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
 
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Accounting.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Accounting.API.dll"]
+EXPOSE 8080
+
+# Run as non-root user
+USER $APP_UID
+
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Accounting.Api.dll"]
+
