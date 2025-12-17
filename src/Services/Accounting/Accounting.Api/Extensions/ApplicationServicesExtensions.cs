@@ -4,46 +4,46 @@ namespace Accounting.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddAccountingServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddApplicationServices(configuration);
+  public static IServiceCollection AddAccountingServices(this IServiceCollection services,
+      IConfiguration configuration)
+  {
+    services.AddApplicationServices(configuration);
 
-        services.AddAdvancedLoggingOptions(configuration);
+    services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddJwtAuthentication(configuration);
+    services.AddJwtAuthentication(configuration);
 
-        services.AddOpenApi();
+    services.AddOpenApi();
 
-        services.AddHttpContextAccessor();
+    services.AddHttpContextAccessor();
 
-        services.AddControllers();
+    services.AddControllers();
 
-        services.AddResponseCompression();
+    services.AddResponseCompression();
 
-        JsonConfigurationService.ConfigureAspNetCore(services, false);
+    JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-        JsonConfigurationService.RegisterJsonConfiguration(services);
+    JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddDbContextPool<AccountingContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    services.AddDbContextPool<AccountingContext>(options =>
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 
-        string[] scopedNameSpaces =
-        [
-            "Accounting.Infrastructure.Persistence.Repositories",
+    string[] scopedNameSpaces =
+    [
+        "Accounting.Infrastructure.Persistence.Repositories",
             "Acontplus.Persistence.SqlServer.Repositories",
+            "Acontplus.Services.Extensions.Context",
+            "Acontplus.Services.Services.Implementations"
+    ];
 
-            "Acontplus.Services.Extensions.Context"
-        ];
-
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime()
-        );
-        return services;
-    }
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
+    return services;
+  }
 }
