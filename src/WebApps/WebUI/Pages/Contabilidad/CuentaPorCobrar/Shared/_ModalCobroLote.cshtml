@@ -87,7 +87,7 @@
             <!-- Botón "Nuevo Abono" -->
             <div class="row mt-3">
                 <div class="col-12 text-right">
-                    <button class="btn btn-success btn-sm" ng-click="openModalFormaCobro()">
+                    <button class="btn btn-success btn-sm" ng-if="!isLoading" ng-click="openModalFormaCobro()">
                         <i class="fa fa-plus"></i> Nuevo Abono
                     </button>
                 </div>
@@ -238,6 +238,12 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-success" ng-click="save()"> <i class="ti-save"></i> Guardar</button>
+    <button type="button" class="btn btn-success" ng-if="!isSaving" ng-click="save()"> <i class="ti-save"></i>
+        Guardar</button>
+
+    <button type="button" class="btn btn-success" ng-if="isSaving" disabled> <i class="fa fa-spinner fa-spin"></i>
+        Guardando...</button>
+
+
     <button type="button" class="btn btn-dark" ng-click="closeModal()"> &times; Cerrar</button>
 </div>
