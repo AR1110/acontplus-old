@@ -1,16 +1,3 @@
-USE Acontplus
-GO
--- ================================================
--- Template generated from Template Explorer using:
--- Create Procedure (New Menu).SQL
---
--- Use the Specify Values for Template Parameters 
--- command (Ctrl-Shift-M) to fill in the parameter 
--- values below.
---
--- This block of comments will not be included in
--- the definition of the procedure.
--- ================================================
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -20,7 +7,7 @@ GO
 -- Create date: 2024/05/15
 -- Description:	REPORT FOR COBROS
 -- =============================================
--- EXEC Contabilidad.ComprobanteIngreso_Report 343, '{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000237","codDoc": "FV","idSubEntidadFinanciera":0,"idCustomer":null,"idPuntoEmision":246,"fechaInicio":"2023-09-01 00:00:00 AM","fechaFin":"2023-09-30 23:59:59 PM","dateChecked":true,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
+-- Contabilidad.ComprobanteIngreso_Report 343, '{"tipo":1,"format":"pdf","codEstab":"ESTAB-000000237","codDoc":"NE","idSubEntidadFinanciera":0,"idCustomer":null,"idPuntoEmision":246,"fechaInicio":"2023-09-01 00:00:00 AM","fechaFin":"2023-09-30 23:59:59 PM","dateChecked":true,"idBanco":0,"nroDocChecked":false,"nroDocument":"","referenceChecked":false,"reference":"","loteChecked":false,"lote":""}', ''
 CREATE OR ALTER PROC Contabilidad.ComprobanteIngreso_Report
 	 @userRoleId INT
 	,@json	     VARCHAR(MAX)

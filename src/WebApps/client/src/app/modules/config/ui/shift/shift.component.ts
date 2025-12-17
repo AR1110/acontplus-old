@@ -1,4 +1,5 @@
-import { Button, DynamicCard } from '@acontplus/ng-components';
+import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
+import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -6,6 +7,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { ShiftList } from '@modules/config/domain/models/shift.models';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButton, MatIconButton } from '@angular/material/button';
+import { DialogService } from '@core/services/dialog.service';
 import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -28,6 +30,7 @@ import Swal from 'sweetalert2';
 export class ShiftComponent implements OnInit {
   private readonly $shiftUseCase = inject(ShiftUseCase);
   private readonly _tS = inject(ToastrNotificationService);
+  private _dialogSvc = inject(DialogService);
 
   shifts = signal<ShiftList[]>([]);
 
@@ -43,6 +46,18 @@ export class ShiftComponent implements OnInit {
     this.shifts.set([]);
     this.$shiftUseCase.listShifts({ pageIndex: 1, pageSize: 10 }).subscribe((response) => {
       this.shifts.set(response.data);
+    });
+  }
+
+  openModalAddUpdate(item?: ShiftList) {
+    const ref = this._dialogSvc.open(ShiftAddEditModalComponent, {
+      size: 'lg',
+      data: structuredClone(item) || {},
+    });
+    ref.subscribe((result) => {
+      if (result && typeof result === 'object') {
+        this.resetShifts();
+      }
     });
   }
 
