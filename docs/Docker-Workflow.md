@@ -2050,6 +2050,159 @@ docker logs -f sales-api
 
 ---
 
+### ❓ **¿Cómo gestiona Ocelot Gateway el enrutamiento a los servicios en Docker?**
+
+**Respuesta:** Ocelot usa **DNS de Docker** para comunicarse con los servicios.
+
+#### Configuración de Ocelot para Docker
+
+**Archivo:** `ocelot.Docker.json` o `ocelot.Development.json`
+
+**Diferencias clave entre desarrollo local y Docker:**
+
+| Aspecto | Desarrollo Local | Docker |
+|---------|-----------------|--------|
+| **Host** | `localhost` | Nombre del servicio (ej: `sales.api`) |
+| **Puerto** | Variable (5001, 7001, etc.) | Siempre `8080` (puerto interno) |
+| **Esquema** | `https` | `http` (HTTPS en edge) |
+
+**Ejemplo de configuración para Docker:**
+
+```json
+{
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/api/sales/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "sales.api",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    }
+  ]
+}
+```
+
+**Cómo funciona:**
+
+```
+Cliente → http://localhost:5000/api/sales/products
+    ↓
+Ocelot Gateway (ocelot.api)
+    ↓ Lee ocelot.Development.json
+    ↓ Encuentra ruta: /api/sales/{everything}
+    ↓ Resuelve DNS: sales.api → IP del contenedor
+    ↓
+http://sales.api:8080/api/products
+    ↓
+Contenedor sales-api responde
+```
+
+#### Archivos de Configuración Disponibles
+
+1. **`ocelot.Development.json`** - Desarrollo local (localhost, puertos variables)
+2. **`ocelot.Docker.json`** - Docker Compose (nombres de servicios, puerto 8080)
+3. **`ocelot.Production.json`** - Producción (IPs/dominios reales)
+
+**El Dockerfile copia todos los archivos:**
+
+```dockerfile
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Development.json ./
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Docker.json ./
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Production.json ./
+```
+
+**Program.cs carga el archivo según ASPNETCORE_ENVIRONMENT:**
+
+```csharp
+builder.Configuration.AddJsonFile(
+    $"ocelot.{builder.Environment.EnvironmentName}.json",
+    optional: false,
+    reloadOnChange: true
+);
+```
+
+#### Verificar Configuración de Ocelot
+
+```bash
+# Ver qué archivo está usando
+docker exec ocelot-api ls -la /app/*.json
+
+# Ver contenido del archivo activo
+docker exec ocelot-api cat /app/ocelot.Development.json
+
+# Ver logs de Ocelot
+docker logs ocelot-api | grep -i "ocelot"
+```
+
+#### Agregar un Nuevo Servicio a Ocelot
+
+**1. Actualizar `ocelot.Docker.json` o `ocelot.Development.json`:**
+
+```json
+{
+  "UpstreamPathTemplate": "/api/nuevo-servicio/{everything}",
+  "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+  "DownstreamPathTemplate": "/api/{everything}",
+  "DownstreamScheme": "http",
+  "DownstreamHostAndPorts": [
+    {
+      "Host": "nuevo-servicio.api",
+      "Port": 8080
+    }
+  ]
+}
+```
+
+**2. Rebuild Ocelot:**
+
+```bash
+docker-compose build ocelot.api
+docker-compose up -d ocelot.api
+```
+
+**3. Verificar:**
+
+```bash
+curl http://localhost:5000/api/nuevo-servicio/health
+```
+
+#### Troubleshooting Enrutamiento
+
+**Problema: "503 Service Unavailable"**
+
+```bash
+# Verificar que el servicio downstream está corriendo
+docker ps | grep sales-api
+
+# Verificar logs de Ocelot
+docker logs ocelot-api --tail 50
+
+# Verificar conectividad desde Ocelot
+docker exec ocelot-api ping sales.api
+docker exec ocelot-api curl http://sales.api:8080/health
+```
+
+**Problema: Cambios en ocelot.json no se aplican**
+
+```bash
+# Rebuild Ocelot (los archivos .json se copian en build)
+docker-compose build ocelot.api
+docker-compose up -d ocelot.api
+
+# Verificar que el archivo se actualizó
+docker exec ocelot-api cat /app/ocelot.Development.json
+```
+
+---
+
 ### ❓ **Modifiqué el código. ¿Debo hacer `docker-compose up -d` de nuevo?**
 
 **Respuesta:** **NO directamente**. Primero debes **rebuild**:
