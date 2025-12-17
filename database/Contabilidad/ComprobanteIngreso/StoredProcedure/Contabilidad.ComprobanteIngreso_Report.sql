@@ -42,9 +42,8 @@ BEGIN
            ,@loteChecked            BIT
            ,@lote                   VARCHAR(30)
            ,@id                     INT
-		    ,@byIngreso              BIT
+		       ,@byIngreso              BIT
            ,@tipoDoc                VARCHAR(20)
-           ,@userId                 INT 
 
 	--> Variables
     SELECT TOP 1 @idEntidad = idEntidad ,@usuario = nombreUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -86,7 +85,6 @@ BEGIN
                 , @reference                = reference
                 , @loteChecked              = loteChecked
                 , @lote                     = lote
-                ,@userId                    = userId
             FROM OPENJSON(@json) WITH (
                 codEstab                    VARCHAR(20)
                 , codDoc                    VARCHAR(5)
@@ -104,7 +102,6 @@ BEGIN
                 , reference                 VARCHAR(30)
                 , loteChecked               BIT
                 , lote                      VARCHAR(30)
-                ,userId                     INT
             )
 
             SET @params = '@idEntidad              INT 
@@ -118,9 +115,7 @@ BEGIN
                           ,@idBanco                INT
                           ,@nroDocument            VARCHAR(30)
                           ,@reference              VARCHAR(30)
-                          ,@lote                   VARCHAR(30)
-                          ,@userId                 INT
-                          '
+                          ,@lote                   VARCHAR(30)'
 
             SET @sql = 'SELECT * FROM (SELECT ci.idComprobanteIngreso
                                             , ci.idUsuario
@@ -129,7 +124,6 @@ BEGIN
                                             , se.nombreComercial
                                             , se.codEstab
                                             , ''CI'' +''-''+ se.estab +''-''+ Helper.F_Auto_Sequential(ci.nroDocumento)	                AS serie
-                                            ,cc.idCuentaPorCobrar
                                             , FORMAT(ci.fechaRegistro, ''dd/MM/yyyy HH:mm'')         								                    AS fechaRegistro
                                             , CAST(ci.abono  AS NUMERIC(18,2))															                            AS abono
                                             , CAST(ci.total  AS NUMERIC(18,2))															                            AS total
@@ -231,12 +225,6 @@ BEGIN
                     SET @sql = @sql + 'AND dt.lote = @lote '
                 END
 
-            IF @userId >0
-                BEGIN
-                    SET @sql = @sql + ' AND dt.idUsuario = @userId '
-                    
-                END 
-
             IF @dateChecked = 1
                 BEGIN
                     SET @sql = @sql + 'AND CAST(dt.fechaRegistro AS DATE) BETWEEN CAST(@fechaInicio AS DATE) AND CAST(@fechaFin AS DATE) '
@@ -272,7 +260,6 @@ BEGIN
                               ,@nroDocument                 = @nroDocument
                               ,@reference                   = @reference
                               ,@lote                        = @lote
-                              ,@userId                      = @userId
 			RETURN
 		END
 	
