@@ -1,35 +1,31 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+# Copy solution files
+COPY ["Directory.Packages.props", "."]
+COPY ["Nuget.config", "."]
+
+# Copy project file and restore
+COPY ["src/ApiGateways/Ocelot.Api/Ocelot.Api.csproj", "src/ApiGateways/Ocelot.Api/"]
+RUN dotnet restore "src/ApiGateways/Ocelot.Api/Ocelot.Api.csproj"
+
+# Copy source and build
+COPY . .
+WORKDIR "/src/src/ApiGateways/Ocelot.Api"
+RUN dotnet publish "Ocelot.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_SKIP_POLICY_LOADING=true
-WORKDIR /src
+# Run as non-root user
+USER $APP_UID
 
-COPY ["Directory.Packages.props", "."]
-COPY ["Nuget.config", "."]
-COPY ["src/ApiGateways/Ocelot.API/Ocelot.API.csproj", "src/ApiGateways/Ocelot.API/"]
-RUN dotnet restore "./src/ApiGateways/Ocelot.API/Ocelot.API.csproj"
-COPY . .
-WORKDIR "/src/src/ApiGateways/Ocelot.API"
-RUN dotnet build "./Ocelot.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-RUN ls /app/build
-
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Ocelot.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-COPY src/ApiGateways/Ocelot.API/ocelot.Production.json /app/ocelot.Production.json
-ENTRYPOINT ["dotnet", "Ocelot.API.dll"]
+COPY --from=build /app/publish .
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Production.json ./ocelot.Production.json
+ENTRYPOINT ["dotnet", "Ocelot.Api.dll"]
