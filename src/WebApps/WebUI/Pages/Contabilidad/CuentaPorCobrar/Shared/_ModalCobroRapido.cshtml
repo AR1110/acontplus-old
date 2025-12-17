@@ -8,7 +8,7 @@
             <div class="col-lg-12">
                 <div class="precio-cobro p-3 rounded d-flex justify-content-between">
                     <div class="images d-flex flex-row align-items-center">
-                        <div class="d-flex flex-column"> 
+                        <div class="d-flex flex-column">
                             <span class="entidad">Cliente</span>
                             <span class="text-muted">{{comprobante.identificacionComprador}}</span>
                             <span class="text-muted">{{comprobante.razonSocialComprador}}</span>
@@ -31,21 +31,28 @@
 
         <div class="row mt-2">
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <button type ="button" id="btnSaveCobroRapido" class="btn btn-success btn-block btn-lg" ng-click="save()">
+                <button type="button" ng-if="!(isLoading || isSaving)" class="btn btn-success btn-block btn-lg"
+                    ng-click="save()">
                     <i class="ti-save"></i> Guardar
-                </button> 
+                </button>
+
+                <button type="button" ng-if="isSaving" class="btn btn-success btn-block btn-lg" disabled>
+                    Procesando...
+                </button>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <button type ="button"  class="btn btn-warning btn-block btn-lg" ng-click="openModalCobroAvanzado()">
+                <button type="button" ng-if="!isLoading" class="btn btn-warning btn-block btn-lg"
+                    ng-click="openModalCobroAvanzado()">
                     Cobro avanzado
-                </button> 
+                </button>
             </div>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
-                <button type="button" class="btn btn-dark btn-block btn-lg" ng-click="closeModal()">&times; Cerrar</button>
+                <button type="button" class="btn btn-dark btn-block btn-lg" ng-click="closeModal()">&times;
+                    Cerrar</button>
             </div>
-        </div>  
+        </div>
         <hr />
-        <div class="row">
+        <div class="row" ng-if="!isLoading">
             <div class="col-lg-12 col-md-12 col-sm-12 col-12">
                 <div class="list-group list-group-horizontal-xl list-group-horizontal-lg list-group-horizontal-md">
                     <a href="javascript:void(0)" data-toggle="list" class="list-group-item list-group-item-action"
@@ -73,7 +80,8 @@
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-6 col-12">
                                     <div class="form-group">
-                                        <label class="text-muted" for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+                                        <label class="text-muted" for="fechaEmision">Fecha Emisión: <span
+                                                class="text-danger">*</span></label>
                                         <input type="date" ng-model="cobro.fechaEmision" ng-required="true"
                                             class="form-control border-select">
                                     </div>
@@ -82,8 +90,8 @@
                                     <div class="form-group">
                                         <label class="text-danger" for="valorACancelar">Valor a cancelar</label>
                                         <input type="text" ng-model="cobro.valorAbono" ng-keyup="setValorEfectivo()"
-                                            class="form-control border-select" ng-enter="onSave()" ng-required="true"
-                                            decimal placeholder="0.00"  onClick="select();"/>
+                                            class="form-control border-select" ng-enter="save()" ng-required="true"
+                                            decimal placeholder="0.00" onClick="select();" />
                                     </div>
                                 </div>
                             </div>
@@ -110,8 +118,8 @@
                                 <div class="form-group col-lg-4">
                                     <label class="text-danger">Valor a cancelar</label>
                                     <input type="text" ng-model="cobro.valorAbono" ng-keyup="setValorEfectivo()"
-                                        class="form-control border-select" ng-enter="onSave()" ng-required="true"
-                                        decimal placeholder="0.00" onClick="select();" />
+                                        class="form-control border-select" ng-enter="save()" ng-required="true" decimal
+                                        placeholder="0.00" onClick="select();" />
                                 </div>
                             </div>
                             <div class="row">
@@ -134,8 +142,9 @@
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                     <div class="form-group">
                                         <label class="text-muted">Referencia: </label>
-                                        <input type="text" ng-model="cobro.referencia" class="form-control border-select" />
-                                    </div> 
+                                        <input type="text" ng-model="cobro.referencia"
+                                            class="form-control border-select" />
+                                    </div>
                                 </div>
                                 <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                                     <div class="form-group">
@@ -167,15 +176,16 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label class="text-muted" for="fechaEmision">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label class="text-muted" for="fechaEmision">Fecha Emisión: <span
+                                            class="text-danger">*</span></label>
                                     <input type="date" ng-model="cobro.fechaEmision" ng-required="true"
                                         class="form-control border-select">
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label class="text-danger">Valor a cancelar</label>
                                     <input type="text" ng-model="cobro.valorAbono" ng-keyup="setValorEfectivo()"
-                                        class="form-control border-select" ng-enter="onSave()" ng-required="true"
-                                        decimal placeholder="0.00" onClick="select();" />
+                                        class="form-control border-select" ng-enter="save()" ng-required="true" decimal
+                                        placeholder="0.00" onClick="select();" />
                                 </div>
                             </div>
                             <div class="row">
@@ -211,15 +221,16 @@
                                     </select>
                                 </div>
                                 <div class="form-group col-lg-4">
-                                    <label class="control-label">Fecha Emisión: <span class="text-danger">*</span></label>
+                                    <label class="control-label">Fecha Emisión: <span
+                                            class="text-danger">*</span></label>
                                     <input type="date" ng-model="cobro.fechaEmision" ng-required="true"
                                         class="form-control border-select">
                                 </div>
                                 <div class="form-group col-lg-4">
                                     <label class="text-danger">Valor a cancelar</label>
                                     <input type="text" ng-model="cobro.valorAbono" ng-keyup="setValorEfectivo()"
-                                        class="form-control border-select" ng-enter="onSave()" ng-required="true"
-                                        decimal placeholder="0.00" onclick="select();" />
+                                        class="form-control border-select" ng-enter="save()" ng-required="true" decimal
+                                        placeholder="0.00" onclick="select();" />
                                 </div>
                             </div>
 
@@ -275,14 +286,15 @@
 
                 <div class="form-group ">
                     <label for="observacion">Observación: </label>
-                    <input type="text" class="form-control border-select" ng-model="cobro.observacion" placeholder="...">
+                    <input type="text" class="form-control border-select" ng-model="cobro.observacion"
+                        placeholder="...">
                 </div>
             </div>
         </div>
 
 
 
-        <div class="row justify-content-center mt-1">
+        <div class="row justify-content-center mt-1" ng-if="!isLoading">
             <div class="col-lg-4">
                 <div class="table-responsive">
                     <table class="table table-condensed table-no-bordered table-sm" width="100%">
@@ -322,14 +334,11 @@
                 </div>
             </div>
         </div>
-
-
-        <div class="row mt-2">
-            <div class="col-md-4"></div>
-            <div class="col-md-4 d-flex justify-content-end">
-
+        <div class="row justify-content-center mt-2" ng-if="isLoading">
+            <div class="col-md-4">
+                Cargando...
             </div>
-            <div class="col-md-4"></div>
+
         </div>
     </form>
 </div>
