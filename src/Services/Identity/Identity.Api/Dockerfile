@@ -1,34 +1,30 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+# Copy solution files
+COPY ["Directory.Packages.props", "."]
+COPY ["Nuget.config", "."]
+
+# Copy project files and restore
+COPY ["src/Services/Identity/Identity.Api/Identity.Api.csproj", "src/Services/Identity/Identity.Api/"]
+RUN dotnet restore "src/Services/Identity/Identity.Api/Identity.Api.csproj"
+
+# Copy source and build
+COPY . .
+WORKDIR "/src/src/Services/Identity/Identity.Api"
+RUN dotnet publish "Identity.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
 
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_SKIP_POLICY_LOADING=true
+# Run as non-root user
+USER $APP_UID
 
-WORKDIR /src
-COPY ["Directory.Packages.props", "."]
-COPY ["Nuget.config", "."]
-COPY ["src/Services/Identity/Identity.API/Identity.API.csproj", "src/Services/Identity/Identity.API/"]
-RUN dotnet restore "./src/Services/Identity/Identity.API/Identity.API.csproj"
-COPY . .
-WORKDIR "/src/src/Services/Identity/Identity.API"
-RUN dotnet build "./Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-RUN ls /app/build
-
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Identity.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Identity.API.dll"]
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Identity.Api.dll"]

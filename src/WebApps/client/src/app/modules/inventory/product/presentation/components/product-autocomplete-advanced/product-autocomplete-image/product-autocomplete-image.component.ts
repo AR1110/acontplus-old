@@ -1,10 +1,8 @@
 import {
   Component,
-  EventEmitter,
   input,
   Input,
   output,
-  Output,
   signal,
   OnInit,
   OnDestroy,
@@ -80,10 +78,8 @@ export class ProductAutocompleteImageComponent implements OnInit, OnDestroy {
     if (images.length === 0) {
       return this.getPlaceholderImage();
     }
-    console.log(images);
 
     const currentImage = images[this.currentImageIndex];
-    console.log(currentImage);
     return currentImage?.thumbnailUrl || currentImage?.url || this.getPlaceholderImage();
   }
 

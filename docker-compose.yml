@@ -1,91 +1,89 @@
+# Base configuration - shared across all environments
+# Use with: docker-compose up (development - auto-merges override.yml)
+#           docker-compose -f docker-compose.yml -f docker-compose.prod.yml up (production)
+
 services:
-  gatewayacontplus.api:
-    image: ${DOCKER_REGISTRY-}gatewayacontplusapi
-    container_name: ocelot-api
+  ocelot.api:
+    image: ${DOCKER_REGISTRY-}ocelot-api
     build:
       context: .
-      dockerfile: src/ApiGateways/GatewayAcontplus.API/Dockerfile
-      args:
-        - Configuration=Release
-    volumes:
-      - ./config/ocelot.json:/app/ocelot.json
+      dockerfile: src/ApiGateways/Ocelot.Api/Dockerfile
+
+  accounting.api:
+    image: ${DOCKER_REGISTRY-}accounting-api
+    build:
+      context: .
+      dockerfile: src/Services/Accounting/Accounting.Api/Dockerfile
 
   barbershop.api:
-    image: ${DOCKER_REGISTRY-}barbershopapi
+    image: ${DOCKER_REGISTRY-}barbershop-api
     build:
       context: .
-      dockerfile: src/Services/BarberShop/BarberShop.API/Dockerfile
+      dockerfile: src/Services/BarberShop/BarberShop.Api/Dockerfile
+
+  billing.api:
+    image: ${DOCKER_REGISTRY-}billing-api
+    build:
+      context: .
+      dockerfile: src/Services/Billing/Billing.Api/Dockerfile
 
   common.api:
-    image: ${DOCKER_REGISTRY-}commonapi
-    container_name: common-api
+    image: ${DOCKER_REGISTRY-}common-api
     build:
       context: .
-      dockerfile: src/Services/Common/Common.API/Dockerfile
+      dockerfile: src/Services/Common/Common.Api/Dockerfile
 
-  compras.api:
-    image: ${DOCKER_REGISTRY-}comprasapi
+  configuration.api:
+    image: ${DOCKER_REGISTRY-}configuration-api
     build:
       context: .
-      dockerfile: src/Services/Compras/Compras.API/Dockerfile
-
-  configuracion.api:
-    image: ${DOCKER_REGISTRY-}configuracionapi
-    build:
-      context: .
-      dockerfile: src/Services/Configuracion/Configuracion.API/Dockerfile
-
-  contabilidad.api:
-    image: ${DOCKER_REGISTRY-}contabilidadapi
-    build:
-      context: .
-      dockerfile: src/Services/Contabilidad/Contabilidad.API/Dockerfile
-
-  factelect.api:
-    image: ${DOCKER_REGISTRY-}factelectapi
-    build:
-      context: .
-      dockerfile: src/Services/Facturacion/FactElect.API/Dockerfile
+      dockerfile: src/Services/Configuration/Configuration.Api/Dockerfile
 
   identity.api:
-    image: ${DOCKER_REGISTRY-}identityapi
+    image: ${DOCKER_REGISTRY-}identity-api
     build:
       context: .
-      dockerfile: src/Services/Identity/Identity.API/Dockerfile
+      dockerfile: src/Services/Identity/Identity.Api/Dockerfile
 
-  inventario.api:
-    image: ${DOCKER_REGISTRY-}inventarioapi
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventory-api
     build:
       context: .
-      dockerfile: src/Services/Inventario/Inventario.API/Dockerfile
+      dockerfile: src/Services/Inventory/Inventory.Api/Dockerfile
 
   mechanical.api:
-    image: ${DOCKER_REGISTRY-}mechanicalapi
+    image: ${DOCKER_REGISTRY-}mechanical-api
     build:
       context: .
-      dockerfile: src/Services/Mechanical/Mechanical.API/Dockerfile
+      dockerfile: src/Services/Mechanical/Mechanical.Api/Dockerfile
 
-  technicalsupport.api:
-    image: ${DOCKER_REGISTRY-}technicalsupportapi
+  purchases.api:
+    image: ${DOCKER_REGISTRY-}purchases-api
     build:
       context: .
-      dockerfile: src/Services/TechnicalSupport/TechnicalSupport.API/Dockerfile
-
-  ventas.api:
-    image: ${DOCKER_REGISTRY-}ventasapi
-    build:
-      context: .
-      dockerfile: src/Services/Ventas/Ventas.API/Dockerfile
-
-  webui:
-    image: ${DOCKER_REGISTRY-}webui
-    build:
-      context: .
-      dockerfile: src/WebApps/WebUI/Dockerfile
+      dockerfile: src/Services/Purchases/Purchases.Api/Dockerfile
 
   restaurant.api:
-    image: ${DOCKER_REGISTRY-}restaurantapi
+    image: ${DOCKER_REGISTRY-}restaurant-api
     build:
-      context: src
-      dockerfile: Services/Restaurant/Restaurant.Api/Dockerfile
+      context: .
+      dockerfile: src/Services/Restaurant/Restaurant.Api/Dockerfile
+
+  sales.api:
+    image: ${DOCKER_REGISTRY-}sales-api
+    build:
+      context: .
+      dockerfile: src/Services/Sales/Sales.Api/Dockerfile
+
+  technicalsupport.api:
+    image: ${DOCKER_REGISTRY-}technicalsupport-api
+    build:
+      context: .
+      dockerfile: src/Services/TechnicalSupport/TechnicalSupport.Api/Dockerfile
+
+  vet.api:
+    image: ${DOCKER_REGISTRY-}vet-api
+    build:
+      context: .
+      dockerfile: src/Services/Vet/Vet.Api/Dockerfile
 

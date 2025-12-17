@@ -5,44 +5,45 @@ namespace Inventory.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddInventoryServices(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddApplicationServices(configuration);
+  public static IServiceCollection AddInventoryServices(this IServiceCollection services,
+      IConfiguration configuration)
+  {
+    services.AddApplicationServices(configuration);
 
-        services.AddAdvancedLoggingOptions(configuration);
+    services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddJwtAuthentication(configuration);
+    services.AddJwtAuthentication(configuration);
 
-        services.AddOpenApi();
+    services.AddOpenApi();
 
-        services.AddHttpContextAccessor();
+    services.AddHttpContextAccessor();
 
-        JsonConfigurationService.ConfigureAspNetCore(services, false);
+    JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-        JsonConfigurationService.RegisterJsonConfiguration(services);
+    JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddDbContextPool<InventoryContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    services.AddDbContextPool<InventoryContext>(options =>
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-        string[] scopedNameSpaces =
-        [
-            "Inventory.Application.Services",
+    string[] scopedNameSpaces =
+    [
+        "Inventory.Application.Services",
             "Inventory.Infrastructure.Repositories",
             "Acontplus.S3Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
-            "Acontplus.Services.Extensions.Context"
-        ];
+            "Acontplus.Services.Extensions.Context",
+            "Acontplus.Services.Services.Implementations"
+    ];
 
-        services.Scan(scan => scan
-            .FromApplicationDependencies()
-            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            .AsImplementedInterfaces()
-            .WithScopedLifetime()
-        );
+    services.Scan(scan => scan
+        .FromApplicationDependencies()
+        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+        .AsImplementedInterfaces()
+        .WithScopedLifetime()
+    );
 
-        services.AddTransient<S3ObjectCustom>();
-        return services;
-    }
+    services.AddTransient<S3ObjectCustom>();
+    return services;
+  }
 }

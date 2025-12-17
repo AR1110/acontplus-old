@@ -2,7 +2,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MatCard, MatCardContent } from '@angular/material/card';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 
@@ -36,8 +35,6 @@ import { Button } from '@acontplus/ng-components';
     DynamicCard,
     MatDynamicTableComponent,
     BreadcrumbComponent,
-    MatCard,
-    MatCardContent,
     DateRangeSelectionComponent,
     SupplierSearchComponent,
     FormsModule,

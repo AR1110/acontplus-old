@@ -1,103 +1,72 @@
 ﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+# AcontPlus .gitignore
 ################################################################################
-node_modules
-bin-debug/
-bin-release/
+
+## .NET Build Outputs
 [Oo]bj/
 [Bb]in/
-/.vs
-/src/packages
-/src/.vs
-/src/01.common/Common.Logs/bin
-/src/01.common/Common.Logs/obj
-/src/01.common/DataAccess/bin
-/src/01.common/DataAccess/obj
-/src/01.common/FactElect/bin
-/src/01.common/FactElect/obj
-/src/01.common/Helpers/bin
-/src/01.common/Helpers/obj
-/src/01.common/HelpersNS20/bin
-/src/01.common/HelpersNS20/obj
-/src/01.common/Logs/bin
-/src/01.common/Logs/obj
-/src/02.business_logic/BL.Admin/obj
-/src/02.domain/Domain/bin
-/src/02.domain/Domain/obj
-/src/02.domain/Domain.Admin/bin
-/src/02.domain/Domain.Admin/obj
-/src/02.domain/Domain.Auth/bin
-/src/02.domain/Domain.Auth/obj
-/src/03.business_logic/BL.Admin/bin
-/src/03.business_logic/BL.Admin/obj
-/src/03.business_logic/BL.JwtAuthenticationManger/bin
-/src/03.business_logic/BL.JwtAuthenticationManger/obj
-/src/03.business_logic/BL.Proveedores/bin
-/src/03.business_logic/BL.Proveedores/obj
-/src/04.services/ApiAuth/.config
-/src/04.services/ApiAuth/bin
-/src/04.services/ApiAuth/obj
-/src/04.services/ApiCompras/bin/Debug/net6.0
-/src/04.services/ApiConfig/bin
-/src/04.services/ApiConfig/obj
-/src/04.services/ApiFactElect/bin
-/src/04.services/ApiFactElect/obj
-/src/04.services/ApiGateway/.config
-/src/04.services/ApiGateway/bin
-/src/04.services/ApiGateway/obj
-/src/04.services/ApiLogistica/bin
-/src/04.services/ApiLogistica/obj
-/src/04.services/ApiProveedores/bin
-/src/04.services/ApiProveedores/obj
-/src/04.services/ApiReports/bin
-/src/04.services/ApiReports/obj
-/src/04.services/ApiVentas/bin
-/src/04.services/ApiVentas/obj
-/src/05.web_apps/AdminUI/.config
-/src/05.web_apps/AdminUI/.vscode
-/src/05.web_apps/AdminUI/ClientApp/.angular/cache/15.1.4
-/src/05.web_apps/WebUI/.config
-/src/05.web_apps/WebUI/bin
-/src/05.web_apps/WebUI/obj
-/src/06.windows_services/AuthorizerWS/bin
-/src/06.windows_services/AuthorizerWS/obj
-/src/06.windows_services/NotifierWS/bin
-/src/06.windows_services/NotifierWS/obj
-/src/06.windows_services/PrinterWS/bin
-/src/06.windows_services/PrinterWS/obj
-/src/06.windows_services/SignerWS/bin
-/src/06.windows_services/SignerWS/obj
-/src/06.windows_services/ValidatorWS/bin
-/src/06.windows_services/ValidatorWS/obj
-/src/07.worker_services/WS_DocumentoRecibido/bin/Debug/net6.0
-/src/07.worker_services/WS_DocumentoRecibido/obj
-/src/WebApps/RestaurantUI/.vs/RestaurantUI/FileContentIndex
-/src/WebApps/RestaurantUI/.vs/RestaurantUI/v17
-/src/WebApps/RestaurantUI/.vs
+bin-debug/
+bin-release/
+
+## IDEs and Editors
+# Visual Studio
+.vs/
 *.user
-/src/WebApps/WebUI/wwwroot/build
-/src/services/Restaurant/Restaurant.API/wwwroot
-/src/Services/Configuracion/ApiConfig/ApiConfig.csproj.user
-/src/Services/Identity/Identity.API/Identity.API.csproj.user
-/src/src/WebApps/WebUI.sln
-/src/WebApps/WebUI/.vs/WebUI/FileContentIndex
-/src/Services/Facturacion/ApiFactElect/ApiFactElect.csproj.user
-/src/Services/Ventas/ApiVentas/ApiVentas.csproj.user
-/src/WebApps/RestaurantUI/dev-dist/sw.js
-/src/WebApps/RestaurantUI/dev-dist/workbox-5357ef54.js
-/src/Services/Customer/Customer.API/Customer.API.csproj.user
-/src/WebApps/WebUI/dist
-/src/.idea/.idea.AcontPlus/.idea
-/src/WebApps/client-sveltekit/.idea
-/src/WebApps/WebUI/.vscode
-/src/AcontPlus.sln.DotSettings
-/src/WebApps/client/.fleet
-.DS_Store
-shared/sharedsettings.Development.json
-/src/WebApps/client/src/output.txt
-/.idea/.idea.AcontPlus/.idea
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.fleet/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+AcontPlus.sln.DotSettings
+AcontPlus.slnLaunch
+
+## Node.js / Angular
+node_modules/
+npm-debug.log
+yarn-error.log
+.angular/
+/src/WebApps/client/dist/
+/src/WebApps/client/.angular/
+/src/WebApps/WebUI/wwwroot/build/
+
+## Application-specific
+# User Secrets & Environment
+.env
+.env.local
+.env.*.local
+sharedsettings.Development.json
+
+# Logs
+logs/
+*.log
+
+# Build Artifacts
 *.zip
-/AcontPlus.slnLaunch
-/src/WebApps/WebUI/WebUI.sln
-/AcontPlus.slnLaunch
-/AcontPlus.slnLaunch
+publish/
+
+# Docker
+docker-compose.override.local.yml
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+output.txt

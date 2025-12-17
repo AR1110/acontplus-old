@@ -56,6 +56,10 @@
         </div>
       </div>
     </div>
+
+    <mat-slide-toggle [(ngModel)]="data.estado">
+      {{data.estado?'Activo': 'Inactivo'}}
+    </mat-slide-toggle>
   </div>
 </ng-template>
 <ng-template #actionsTemplate>

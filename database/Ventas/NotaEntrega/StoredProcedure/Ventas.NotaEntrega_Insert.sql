@@ -77,7 +77,7 @@ BEGIN
         ,idTipoIva INT NOT NULL
         ,ice NUMERIC (18,5) NOT NULL
         ,cantidad NUMERIC (18,5) NOT NULL
-        ,precioUnitario NUMERIC (18,5)  NOT NULL
+        ,precioUnitario NUMERIC (18,6)  NOT NULL
         ,precioCosto NUMERIC (18,5)  NOT NULL
         ,valorDescuento NUMERIC (18,5) NOT NULL
         ,porcentajeDescuento NUMERIC (18,5) NOT NULL
@@ -188,7 +188,7 @@ BEGIN
 			,ice                    NUMERIC(10,5) 
 			,cantidad               NUMERIC(15,5)
 			,precioCosto            NUMERIC(15,5) 
-			,precioUnitario         NUMERIC(15,5) 
+			,precioUnitario         NUMERIC(18,6) 
 			,valorDescuento         NUMERIC(15,5) 
 			,precioTotalSinImpuesto NUMERIC(15,5) 
             ,codigoPorcentaje       VARCHAR(5) 

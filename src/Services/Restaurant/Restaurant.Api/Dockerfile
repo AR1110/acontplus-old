@@ -1,39 +1,35 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+# Copy solution files
+COPY ["Directory.Packages.props", "."]
+COPY ["Nuget.config", "."]
+
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
+COPY ["src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj", "src/Services/Restaurant/Restaurant.Api/"]
+COPY ["src/Services/Restaurant/Restaurant.Application/Restaurant.Application.csproj", "src/Services/Restaurant/Restaurant.Application/"]
+COPY ["src/Services/Restaurant/Restaurant.Domain/Restaurant.Domain.csproj", "src/Services/Restaurant/Restaurant.Domain/"]
+COPY ["src/Services/Restaurant/Restaurant.Infrastructure/Restaurant.Infrastructure.csproj", "src/Services/Restaurant/Restaurant.Infrastructure/"]
+RUN dotnet restore "src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj"
+
+# Copy source and build
+COPY . .
+WORKDIR "/src/src/Services/Restaurant/Restaurant.Api"
+RUN dotnet publish "Restaurant.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish \
+    --no-restore \
+    /p:UseAppHost=false
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 EXPOSE 8080
 
+# Run as non-root user
+USER $APP_UID
 
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "Restaurant.Api.dll"]
 
-RUN groupadd -g 2000 dotnet \
-    && useradd -m -u 2000 -g 2000 dotnet
-USER dotnet
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
-ARG DOTNET_SKIP_POLICY_LOADING=true
-
-WORKDIR /src
-COPY ["Directory.Packages.props", "."]
-COPY ["Nuget.config", "."]
-COPY ["src/Services/Restaurant/Restaurant.Api/Restaurant.API.csproj", "src/Services/Restaurant/Restaurant.Api/"]
-RUN dotnet restore "./src/Services/Restaurant/Restaurant.Api/Restaurant.API.csproj"
-COPY . .
-WORKDIR "/src/src/Services/Restaurant/Restaurant.Api"
-RUN dotnet build "./Restaurant.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-RUN ls /app/build
-
-# This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Restaurant.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
-
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Restaurant.API.dll"]

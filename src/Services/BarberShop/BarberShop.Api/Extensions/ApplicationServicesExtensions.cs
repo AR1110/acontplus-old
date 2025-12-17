@@ -35,8 +35,8 @@ public static class ApplicationServicesExtensions
             "BarberShop.Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
             "BarberShop.Infrastructure.Persistence.Repositories",
-
-            "Acontplus.Services.Extensions.Context"
+            "Acontplus.Services.Extensions.Context",
+            "Acontplus.Services.Services.Implementations"
     ];
     services.Scan(scan => scan
         .FromApplicationDependencies()
