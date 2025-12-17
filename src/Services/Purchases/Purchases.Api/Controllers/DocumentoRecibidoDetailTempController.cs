@@ -1,6 +1,6 @@
 namespace Purchases.Api.Controllers;
 
-public class DocRecDetailTempController(IDocRecDetailTempRepository detailTempService) : BaseApiController
+public class DocumentoRecibidoDetailTempController(IDocRecDetailTempRepository detailTempService) : BaseApiController
 {
     private const string UserRoleClaimType = "userRoleId";
 

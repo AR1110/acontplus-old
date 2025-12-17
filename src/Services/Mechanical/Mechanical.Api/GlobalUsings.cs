@@ -1,12 +1,10 @@
 
 global using Acontplus.Core.Abstractions.Context;
-global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.Dtos.Requests;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Extensions;
 global using Acontplus.Infrastructure.Extensions;
 global using Acontplus.Logging;
-global using Acontplus.Persistence.SqlServer.Repositories;
 global using Acontplus.Persistence.SqlServer.Utilities;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions;
@@ -20,7 +18,5 @@ global using Mapster;
 global using Mechanical.Api.Extensions;
 global using Mechanical.Application.Dtos;
 global using Mechanical.Application.Interfaces;
-global using Mechanical.Application.Services;
 global using Mechanical.Domain.Repositories;
 global using Mechanical.Infrastructure.Persistence;
-global using Mechanical.Infrastructure.Persistence.Repositiories;

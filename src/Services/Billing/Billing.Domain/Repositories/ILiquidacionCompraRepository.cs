@@ -1,4 +1,4 @@
-namespace Purchases.Domain.Repositories;
+namespace Billing.Domain.Repositories;
 
 public interface ILiquidacionCompraRepository
 {

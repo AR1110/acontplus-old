@@ -7,11 +7,11 @@ namespace Sales.Infrastructure.Extensions;
 
 public static class DependencyInjection
 {
-  public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-  {
-    services.AddSqlServerPersistence<SalesContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSqlServerPersistence<SalesContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-    return services;
-  }
+        return services;
+    }
 }

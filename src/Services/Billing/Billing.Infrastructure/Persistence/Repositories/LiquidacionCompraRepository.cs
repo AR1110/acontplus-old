@@ -1,4 +1,4 @@
-namespace Purchases.Infrastructure.Persistence.Repositories;
+namespace Billing.Infrastructure.Persistence.Repositories;
 
 public class LiquidacionCompraRepository(IAdoRepository adoRepository) : ILiquidacionCompraRepository
 {

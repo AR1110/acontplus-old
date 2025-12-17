@@ -1,4 +1,4 @@
-namespace Purchases.Api.Controllers;
+namespace Billing.Api.Controllers;
 
 public class LiquidacionCompraController(ILiquidacionCompraRepository _svc) : BaseApiController
 {

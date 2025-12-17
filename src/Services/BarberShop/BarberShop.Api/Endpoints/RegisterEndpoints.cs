@@ -6,11 +6,11 @@ namespace BarberShop.Api.Endpoints;
 
 public static class RegisterEndpoints
 {
-  public static void MapAllEndpoints(this IEndpointRouteBuilder app)
-  {
-    app.MapSeatEndpoints();
-    app.MapWorkSessionEndpoints();
-    app.MapTicketEndpoints();
-    app.MapLookupEndpoints();
-  }
+    public static void MapAllEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.MapSeatEndpoints();
+        app.MapWorkSessionEndpoints();
+        app.MapTicketEndpoints();
+        app.MapLookupEndpoints();
+    }
 }
