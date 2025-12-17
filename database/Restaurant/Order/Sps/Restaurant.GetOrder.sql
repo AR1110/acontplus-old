@@ -33,7 +33,6 @@ BEGIN
 
     --> Order
     DECLARE @OrderByClause NVARCHAR(200);
-    
 
     --> Parse JSON filters
     DECLARE @idEntidad INT
@@ -48,7 +47,6 @@ BEGIN
            ,@EndDate DATETIME2
 
     BEGIN TRY
-
         --> Data Json
         IF @Filters IS NOT NULL AND ISJSON(@Filters) = 1
             BEGIN
