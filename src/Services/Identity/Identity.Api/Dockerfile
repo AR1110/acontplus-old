@@ -7,7 +7,7 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
 COPY ["src/Services/Identity/Identity.Api/Identity.Api.csproj", "src/Services/Identity/Identity.Api/"]
 RUN dotnet restore "src/Services/Identity/Identity.Api/Identity.Api.csproj"
 

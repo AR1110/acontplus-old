@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj", "src/Services/Restaurant/Restaurant.Api/"]
+COPY ["src/Services/Restaurant/Restaurant.Application/Restaurant.Application.csproj", "src/Services/Restaurant/Restaurant.Application/"]
+COPY ["src/Services/Restaurant/Restaurant.Domain/Restaurant.Domain.csproj", "src/Services/Restaurant/Restaurant.Domain/"]
+COPY ["src/Services/Restaurant/Restaurant.Infrastructure/Restaurant.Infrastructure.csproj", "src/Services/Restaurant/Restaurant.Infrastructure/"]
 RUN dotnet restore "src/Services/Restaurant/Restaurant.Api/Restaurant.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Restaurant.Api.dll"]
+

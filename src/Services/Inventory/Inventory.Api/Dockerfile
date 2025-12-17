@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Inventory/Inventory.Api/Inventory.Api.csproj", "src/Services/Inventory/Inventory.Api/"]
+COPY ["src/Services/Inventory/Inventory.Application/Inventory.Application.csproj", "src/Services/Inventory/Inventory.Application/"]
+COPY ["src/Services/Inventory/Inventory.Domain/Inventory.Domain.csproj", "src/Services/Inventory/Inventory.Domain/"]
+COPY ["src/Services/Inventory/Inventory.Infrastructure/Inventory.Infrastructure.csproj", "src/Services/Inventory/Inventory.Infrastructure/"]
 RUN dotnet restore "src/Services/Inventory/Inventory.Api/Inventory.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Inventory.Api.dll"]
+

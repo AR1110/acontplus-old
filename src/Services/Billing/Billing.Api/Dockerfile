@@ -8,6 +8,7 @@ COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
 # Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Billing/Billing.Api/Billing.Api.csproj", "src/Services/Billing/Billing.Api/"]
 COPY ["src/Services/Billing/Billing.Application/Billing.Application.csproj", "src/Services/Billing/Billing.Application/"]
 COPY ["src/Services/Billing/Billing.Infrastructure/Billing.Infrastructure.csproj", "src/Services/Billing/Billing.Infrastructure/"]
@@ -31,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Billing.Api.dll"]
+

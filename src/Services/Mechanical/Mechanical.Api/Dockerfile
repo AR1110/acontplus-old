@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Mechanical/Mechanical.Api/Mechanical.Api.csproj", "src/Services/Mechanical/Mechanical.Api/"]
+COPY ["src/Services/Mechanical/Mechanical.Application/Mechanical.Application.csproj", "src/Services/Mechanical/Mechanical.Application/"]
+COPY ["src/Services/Mechanical/Mechanical.Domain/Mechanical.Domain.csproj", "src/Services/Mechanical/Mechanical.Domain/"]
+COPY ["src/Services/Mechanical/Mechanical.Infrastructure/Mechanical.Infrastructure.csproj", "src/Services/Mechanical/Mechanical.Infrastructure/"]
 RUN dotnet restore "src/Services/Mechanical/Mechanical.Api/Mechanical.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Mechanical.Api.dll"]
+

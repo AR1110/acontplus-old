@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Accounting/Accounting.Api/Accounting.Api.csproj", "src/Services/Accounting/Accounting.Api/"]
+COPY ["src/Services/Accounting/Accounting.Application/Accounting.Application.csproj", "src/Services/Accounting/Accounting.Application/"]
+COPY ["src/Services/Accounting/Accounting.Domain/Accounting.Domain.csproj", "src/Services/Accounting/Accounting.Domain/"]
+COPY ["src/Services/Accounting/Accounting.Infrastructure/Accounting.Infrastructure.csproj", "src/Services/Accounting/Accounting.Infrastructure/"]
 RUN dotnet restore "src/Services/Accounting/Accounting.Api/Accounting.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Accounting.Api.dll"]
+

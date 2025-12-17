@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/TechnicalSupport/TechnicalSupport.Api/TechnicalSupport.Api.csproj", "src/Services/TechnicalSupport/TechnicalSupport.Api/"]
+COPY ["src/Services/TechnicalSupport/TechnicalSupport.Application/TechnicalSupport.Application.csproj", "src/Services/TechnicalSupport/TechnicalSupport.Application/"]
+COPY ["src/Services/TechnicalSupport/TechnicalSupport.Domain/TechnicalSupport.Domain.csproj", "src/Services/TechnicalSupport/TechnicalSupport.Domain/"]
+COPY ["src/Services/TechnicalSupport/TechnicalSupport.Infrastructure/TechnicalSupport.Infrastructure.csproj", "src/Services/TechnicalSupport/TechnicalSupport.Infrastructure/"]
 RUN dotnet restore "src/Services/TechnicalSupport/TechnicalSupport.Api/TechnicalSupport.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "TechnicalSupport.Api.dll"]
+

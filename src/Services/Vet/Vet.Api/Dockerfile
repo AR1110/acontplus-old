@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Vet/Vet.Api/Vet.Api.csproj", "src/Services/Vet/Vet.Api/"]
+COPY ["src/Services/Vet/Vet.Application/Vet.Application.csproj", "src/Services/Vet/Vet.Application/"]
+COPY ["src/Services/Vet/Vet.Domain/Vet.Domain.csproj", "src/Services/Vet/Vet.Domain/"]
+COPY ["src/Services/Vet/Vet.Infrastructure/Vet.Infrastructure.csproj", "src/Services/Vet/Vet.Infrastructure/"]
 RUN dotnet restore "src/Services/Vet/Vet.Api/Vet.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Vet.Api.dll"]
+

@@ -8,6 +8,7 @@ COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
 # Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Configuration/Configuration.Api/Configuration.Api.csproj", "src/Services/Configuration/Configuration.Api/"]
 COPY ["src/Services/Configuration/Configuration.Application/Configuration.Application.csproj", "src/Services/Configuration/Configuration.Application/"]
 COPY ["src/Services/Configuration/Configuration.Infrastructure/Configuration.Infrastructure.csproj", "src/Services/Configuration/Configuration.Infrastructure/"]
@@ -31,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Configuration.Api.dll"]
+

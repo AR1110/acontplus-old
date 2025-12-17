@@ -7,8 +7,12 @@ WORKDIR /src
 COPY ["Directory.Packages.props", "."]
 COPY ["Nuget.config", "."]
 
-# Copy project file and restore
+# Copy project files and restore
+COPY ["src/Shared/Acontplus.Analytics/Acontplus.Analytics.csproj", "src/Shared/Acontplus.Analytics/"]
 COPY ["src/Services/Purchases/Purchases.Api/Purchases.Api.csproj", "src/Services/Purchases/Purchases.Api/"]
+COPY ["src/Services/Purchases/Purchases.Application/Purchases.Application.csproj", "src/Services/Purchases/Purchases.Application/"]
+COPY ["src/Services/Purchases/Purchases.Domain/Purchases.Domain.csproj", "src/Services/Purchases/Purchases.Domain/"]
+COPY ["src/Services/Purchases/Purchases.Infrastructure/Purchases.Infrastructure.csproj", "src/Services/Purchases/Purchases.Infrastructure/"]
 RUN dotnet restore "src/Services/Purchases/Purchases.Api/Purchases.Api.csproj"
 
 # Copy source and build
@@ -28,3 +32,4 @@ USER $APP_UID
 
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Purchases.Api.dll"]
+
