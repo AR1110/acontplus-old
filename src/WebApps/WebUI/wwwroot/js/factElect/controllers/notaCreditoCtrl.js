@@ -532,9 +532,9 @@
                     }
 
                     if ($scope.vendedores.length > 0) {
-                        // $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario
-
-                        // Nota: Se deshabilita la asignación automática del vendedor por defecto
+                        if (!$scope.config.multipleVendedor) {
+                            $scope.data.idUsuario = $scope.vendedores.find(item => (item.predeterminado)).idUsuario;
+                        }
                     } else {
                         $scope.data.idUsuario = 0;
                     }
