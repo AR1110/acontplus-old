@@ -1,3 +1,5 @@
+global using System.Data;
+global using System.Xml;
 global using Acontplus.Billing.Interfaces.Services;
 global using Acontplus.Billing.Models.Documents;
 global using Acontplus.Billing.Services.Conversion;
@@ -20,12 +22,9 @@ global using Acontplus.Utilities.Data;
 global using Acontplus.Utilities.Dtos;
 global using Acontplus.Utilities.Extensions;
 global using Mapster;
-global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Purchases.Api.Utils;
 global using Purchases.Application.Dtos;
 global using Purchases.Application.Interfaces;
 global using Purchases.Domain.Repositories;
 global using Purchases.Infrastructure.Persistence;
-global using System.Data;
-global using System.Xml;

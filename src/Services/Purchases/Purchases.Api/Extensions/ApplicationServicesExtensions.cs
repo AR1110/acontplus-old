@@ -19,8 +19,6 @@ public static class ApplicationServicesExtensions
 
         services.AddHttpContextAccessor();
 
-        services.AddControllers();
-
         JsonConfigurationService.ConfigureAspNetCore(services, false);
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
