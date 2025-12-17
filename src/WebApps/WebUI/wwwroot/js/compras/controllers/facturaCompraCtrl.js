@@ -1,3 +1,4 @@
+//@ts-check
 (function () {
 
     "use strict"
@@ -73,13 +74,13 @@
             $scope.saldo = fS.roundNumber(saldo, 5);
         };
 
-        $scope.refresh = function(){
+        $scope.refresh = function () {
             $scope.getFacturas();
         }
 
         $scope.getFacturas = function () {
             try {
-                 
+
                 const dataSearch = {
                     codEstab: $scope.dataSearch.codEstab,
                     checkBoxFecha: $scope.dataSearch.checkBoxFecha,
@@ -187,7 +188,10 @@
                     controller: 'modalFacturaCompraCtrl',
                     template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                     size: 'xl',
-                    params: {},
+                    params: {
+                        type: 'new',
+                        data: {}
+                    },
                     windowClass: 'uibModalFullScreen',
                     isRenderRazorPartial: true
                 }).result.then(result => {
@@ -222,16 +226,21 @@
             }
         }
 
-        $scope.openModalEditar = async (item) => {
+        $scope.openModalDuplicate = async (item) => {
             try {
                 showLoader();
                 facturaCompraSvc.getId(item.id).then(
-                    response => { 
+                    response => {
                         modalSvc.openModalCustom({
                             controller: 'modalFacturaCompraCtrl',
                             template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
                             size: 'xl',
-                            params: response,
+                            params: {
+                                type: 'duplicate',
+                                data: {
+                                    ...response
+                                }
+                            },
                             windowClass: 'uibModalFullScreen',
                             isRenderRazorPartial: true
                         }).result.then(result => {
@@ -241,6 +250,33 @@
                         })
                     }
                 ).finally(() => hideLoader())
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        $scope.openModalEditar = async (item) => {
+            try {
+                facturaCompraSvc.getId(item.id).then(
+                    response => {
+                        modalSvc.openModalCustom({
+                            controller: 'modalFacturaCompraCtrl',
+                            template: `${TEMPLATE_URL}_ModalAddUpdate.cshtml`,
+                            size: 'xl',
+                            params: {
+                                type: 'edit',
+                                data: {
+                                    ...response
+                                }
+                            },
+                            windowClass: 'uibModalFullScreen',
+                        }).result.then(result => {
+                            if (result && typeof result == 'object') {
+                                $scope.getFacturas();
+                            }
+                        })
+                    }
+                )
             } catch (error) {
                 console.log(error);
             }
@@ -426,11 +462,24 @@
             );
         };
 
+        function isNew() {
+            return 'type' in params && params.type === 'new';
+        }
+
+        function isEdit() {
+            return 'type' in params && params.type === 'edit';
+        }
+
+        function isDuplicate() {
+            return 'type' in params && params.type === 'duplicate';
+        }
+
         function calculateTotalItems(items) {
             return items.map((item) => {
                 let total = item.precioTotalSinImpuesto + item.valorImpuesto;
                 return {
                     ...item,
+                    idFacturaCompraDetalle: isDuplicate() ? 0 : item.idFacturaCompraDetalle,
                     total: fS.roundNumber(total, $scope.decimal.nroTotalDetalle),
                 };
             });
@@ -460,12 +509,7 @@
                 $scope.sustentosTributario = sustentosTributario;
                 $scope.subcategories = subcategories
 
-                if (
-                    !(
-                        "comprobante" in params &&
-                        params.comprobante.idFacturaCompra > 0
-                    )
-                ) {
+                if (isNew()) {
                     if ($scope.establecimientos.length > 0) {
                         let dataEstab = $scope.establecimientos.find(
                             (estab) => estab.defaultEstab
@@ -511,19 +555,20 @@
                     }
                 }
 
-                if (
-                    "comprobante" in params &&
-                    params.comprobante.idFacturaCompra > 0
-                ) {
+                if (isEdit() || isDuplicate()) {
                     const {
                         comprobante,
                         proveedor,
                         detalles,
                         datosAdicionalesArticulo,
                         cuotas
-                    } = params;
+                    } = params.data;
 
-                    $scope.data = comprobante;
+                    $scope.data = {
+                        ...comprobante,
+                        idFacturaCompra: isDuplicate() ? 0 : comprobante.idFacturaCompra,
+                    };
+
                     $scope.dataClone.codEstab = $scope.data.codEstab;
 
                     $scope.proveedor = proveedor;
@@ -566,7 +611,7 @@
                     cellTemplate: `<a  ng-click="grid.appScope.deleteRow(row.entity)" style="cursor:pointer;" class="btn btn-danger btn-xs text-white" title="Eliminar Item agregada"><i class="fa fa-trash"></i></a>
                            <a  ng-click="grid.appScope.openModalArticle(row.entity)" style="cursor:pointer;" class="btn btn-success btn-xs text-white" title = "Editar Articulo" ><i class="fa fa-edit"></i></a >
 
-                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >                                  
+                           <a  btn-data-adicional-articulo entity="row.entity" datos-adicionales="grid.appScope.datosAdicionalesArticulo" style="cursor:pointer;" ng-if='row.entity.datosAdicionales' class= "btn btn-info btn-xs text-white" title = "Agregar Dato Adicional al Articulo" > <i class="fas fa-tags"></i></a >
                         `
                 },
                 {
@@ -1099,12 +1144,12 @@
                 let dataTarifaImpuesto = $scope.tarifasImpuesto.find(
                     (ti) => ti.codigoPorcentaje === articulo.codigoPorcentaje
                 );
- 
+
 
                 entity.idArticulo = articulo.idArticulo;
                 entity.codigo = articulo.codigoArticulo;
                 entity.descripcion = articulo.descripcion;
-               
+
                 entity.etiquetas = etiquetas;
 
                 //Medidas
@@ -1112,7 +1157,7 @@
                 entity.idMedida = dataMedida.idMedida;
                 entity.conversion = dataMedida.conversion;
                 entity.precioCosto = dataMedida.precioCosto;
-                 
+
                 entity.precioUnitario = fS.roundNumber(
                     dataMedida.precioUnitario,
                     $scope.decimal.nroPrecio
@@ -1278,8 +1323,8 @@
             $scope.infoAdicionalDocumento = result;
         };
 
-        const isRegister = () => !($scope.data.idFacturaCompra > 0);
-        const isUpdate = () => $scope.data.idFacturaCompra > 0;
+        const isRegister = () => isNew() || isDuplicate();
+        const isUpdate = () => isEdit();
 
 
         const validateCuota = function () {
@@ -1458,7 +1503,7 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
 
-                        
+
 
                         const query = facturaCompraSvc.queryMapper({
                             data: $scope.data,

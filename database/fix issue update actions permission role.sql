@@ -40,7 +40,6 @@ SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = 490
 --INNER JOIN AcontplusAdmin.Config.Menu m ON lad.MenuId = m.Id
 --WHERE m.Code = 'IMP-I';
 
-
 UPDATE lad
 SET lad.Actions = '[
   {"code":"LEER","name":"leer"},
