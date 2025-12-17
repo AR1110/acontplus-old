@@ -437,6 +437,22 @@ Authorization: {{Token}}
 
 ###
 
+# Create Meal Consumption
+POST {{Restaurant.Api_HostAddress}}/api/meal-consumptions
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "mealScheduleSettingId": 1,
+  "companyCustomerMealPlanId": null,
+  "companyCustomerId": 11190,
+  "consumptionDate": "2025-12-15T12:00:00",
+  "amount": 1,
+  "consumptionStatus": 1
+}
+
+###
+
 # Update Meal Consumption
 PUT {{Restaurant.Api_HostAddress}}/api/meal-consumptions/1
 Content-Type: application/json
