@@ -277,11 +277,16 @@
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
             <div class="row justify-content-end">
                 <div class="col-lg-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                    <button type="button" class="btn btn-block btn-lg btn-success mt-4" id="btnSaveAndUpdateDocument"
-                        ng-click="onSave()">
+                    <button type="button" ng-if="!isSaving" class="btn btn-block btn-lg btn-success mt-4"
+                        id="btnSaveAndUpdateDocument" ng-click="onSave()">
                         <i class="{{data.idFactura>0?'ti-pencil': 'ti-save'}}"></i>
                         {{data.idFactura>0?'Actualizar': 'Guardar'}}
                     </button>
+
+                    <button type="button" ng-if="isSaving" class="btn btn-block btn-lg btn-success mt-4" disabled>
+                        <i class="fa fa-spinner fa-spin fa-fw"></i> Guardando...
+                    </button>
+
                 </div>
             </div>
         </div>

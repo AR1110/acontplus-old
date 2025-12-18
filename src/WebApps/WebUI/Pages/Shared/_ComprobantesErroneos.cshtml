@@ -1,8 +1,7 @@
-﻿
-<div class="modal-header">
+﻿<div class="modal-header">
     <h5 class="modal-title">
-    <i class="fa fa-warning text-danger"></i> 
-    Comprobantes Electrónicos Pendientes - {{dataSearch.totalRecords}} docs.
+        <i class="fa fa-warning text-danger"></i>
+        Comprobantes Electrónicos Pendientes - {{dataSearch.totalRecords}} docs.
     </h5>
     <button type="button" class="close" ng-click="onClose()">&times;</button>
 </div>
@@ -10,23 +9,26 @@
     <div class="row">
         <div class="col-lg-4">
             <span class="form-group pull-left page-size form-inline">
-                <select class="form-control form-control-sm control-color"
-                        ng-model="dataSearch.pageSize"
-                        ng-change="changePageSize()"
-                        ng-options="ra for ra in dataSearch.recordsQuantity">
+                <select class="form-control form-control-sm control-color" ng-model="dataSearch.pageSize"
+                    ng-change="changePageSize()" ng-options="ra for ra in dataSearch.recordsQuantity">
                 </select>
             </span>
         </div>
         <div class="col-lg-8 d-flex justify-content-end">
-             <div class="pull-right">
-                <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize" ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize" class="pagination" boundary-links="true" rotate="false"></ul>
+            <div class="pull-right">
+                <ul uib-pagination total-items="dataSearch.totalRecords" items-Per-Page="dataSearch.pageSize"
+                    ng-change="pageChanged()" ng-model="dataSearch.pageIndex" max-size="dataSearch.maxSize"
+                    class="pagination" boundary-links="true" rotate="false"></ul>
             </div>
         </div>
     </div>
-    
+
     <div class="table-responsive">
         <table class="table table-sm table-bordered">
-            <caption><h5 class="text-danger">Se encontraron los siguientes comprobantes sin autorizar o posiblemente con errores, por favor verifique!</h5></caption>
+            <caption>
+                <h5 class="text-danger">Se encontraron los siguientes comprobantes sin autorizar o posiblemente con
+                    errores, por favor verifique!</h5>
+            </caption>
             <thead>
                 <tr class="small text-center">
                     <th>N°</th>
@@ -54,6 +56,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-info btn-sm" ng-click="fixDocs()"><i class="ti-settings"></i> Corregir</button>
+    <button type="button" class="btn btn-info btn-sm" ng-click="fixDocs()"><i class="ti-hand-point-right"></i>
+        Revisar</button>
     <button type="button" class="btn btn-dark btn-sm" ng-click="onClose()">&times; Cerrar</button>
 </div>
