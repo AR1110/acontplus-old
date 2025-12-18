@@ -1,5 +1,3 @@
-using Accounting.Application.Dtos;
-
 namespace Accounting.Api.Controllers;
 
 public class CategoryController(ICategoryRepository categoryService) : BaseApiController
@@ -19,7 +17,7 @@ public class CategoryController(ICategoryRepository categoryService) : BaseApiCo
     {
         var category = categoryDto.Adapt<Category>();
         category.CreatedByUserId = User.GetUserId();
-        
+
         return Ok(await categoryService.AddAsync(category));
     }
 
@@ -28,7 +26,7 @@ public class CategoryController(ICategoryRepository categoryService) : BaseApiCo
     {
         var category = categoryDto.Adapt<Category>();
         category.UpdatedByUserId = User.GetUserId();
-        
+
         return Ok(await categoryService.UpdateAsync(id, category));
     }
 

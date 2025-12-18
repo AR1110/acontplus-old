@@ -1,4 +1,3 @@
-global using System.Data;
 global using Acontplus.Core.Abstractions.Messaging;
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.Domain.Common.Results;
@@ -12,3 +11,4 @@ global using Restaurant.Application.Interfaces;
 global using Restaurant.Application.Interfaces.MealManagement;
 global using Restaurant.Domain.Entities;
 global using Restaurant.Domain.Entities.MealManagement;
+global using System.Data;

@@ -1,5 +1,3 @@
-using Accounting.Application.Dtos;
-
 namespace Accounting.Api.Controllers;
 
 public class TipoController(ITipoRepository tipoService) : BaseApiController
@@ -19,7 +17,7 @@ public class TipoController(ITipoRepository tipoService) : BaseApiController
     {
         var tipo = tipoDto.Adapt<Tipo>();
         tipo.CreatedByUserId = User.GetUserId();
-        
+
         return Ok(await tipoService.AddAsync(tipo));
     }
 
@@ -28,7 +26,7 @@ public class TipoController(ITipoRepository tipoService) : BaseApiController
     {
         var tipo = tipoDto.Adapt<Tipo>();
         tipo.UpdatedByUserId = User.GetUserId();
-        
+
         return Ok(await tipoService.UpdateAsync(id, tipo));
     }
 

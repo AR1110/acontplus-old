@@ -1,44 +1,52 @@
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions.Authentication;
+using Scrutor;
 
 namespace TechnicalSupport.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-  public static IServiceCollection AddTechnicalSupportServices(this IServiceCollection services,
-      IConfiguration configuration)
-  {
-    services.AddApplicationServices(configuration);
+    public static IServiceCollection AddTechnicalSupportServices(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddApplicationServices(configuration);
 
-    services.AddAdvancedLoggingOptions(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
-    services.AddJwtAuthentication(configuration);
+        services.AddJwtAuthentication(configuration);
 
-    services.AddOpenApi();
+        services.AddOpenApi();
 
-    services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
 
-    services.AddControllers();
+        services.AddControllers();
 
-    JsonConfigurationService.ConfigureAspNetCore(services, false);
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-    JsonConfigurationService.RegisterJsonConfiguration(services);
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<TechnicalSupportContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddSqlServerPersistence<TechnicalSupportContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-    services.AddLookupService();
-    services.AddScoped<IAdoRepository, AdoRepository>();
-    services.AddScoped<IBrandRepository, BrandRepository>();
-    services.AddScoped<ICategoryRepository, CategoryRepository>();
-    services.AddScoped<IDeviceSpecRepository, DeviceSpecRepository>();
-    services.AddScoped<IDeviceRepository, DeviceRepository>();
-    services.AddScoped<IModeloRepository, ModeloRepository>();
-    services.AddScoped<IOrderRepository, OrderRepository>();
-    services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
-    services.AddScoped<IOrderMaintenanceRepository, OrderMaintenanceRepository>();
-    services.AddScoped<ISerieRepository, SerieRepository>();
-    services.AddScoped<IStatsService, StatsService>();
+        services.AddCachingServices(configuration);
 
-    return services;
-  }
+        string[] scopedNameSpaces =
+        [
+            "TechnicalSupport.Infrastructure.Persistence.Repositories",
+        "TechnicalSupport.Application.Services",
+        "Acontplus.Persistence.SqlServer.Repositories",
+        "Acontplus.Services.Extensions.Context",
+        "Acontplus.Services.Services.Implementations"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        return services;
+    }
 }

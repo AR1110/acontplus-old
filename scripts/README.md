@@ -1,11 +1,75 @@
-# API Directory Renaming - Complete Automation Package
-## Master Index & Getting Started Guide
+# Scripts de Automatización para AcontPlus
+## Índice de Herramientas de Desarrollo
 
 ---
 
-## 📂 Files in This Package
+## 📂 Contenido
 
-### 🤖 **Automation Scripts** (The Tools)
+### 🐳 **Scripts de Docker** (NUEVOS - Desarrollo Eficiente)
+
+#### 1. `docker-profiles.ps1` ⭐ PERFILES DE DOCKER
+- **Propósito:** Ejecutar builds y deployments selectivos por módulo
+- **Tipo:** PowerShell Script
+- **Ejecución:**
+  ```powershell
+  .\scripts\docker-profiles.ps1 -Profile Sales -Action build
+  .\scripts\docker-profiles.ps1 -Profile Restaurant -Action up
+  ```
+- **Perfiles Disponibles:**
+  - `Core` - Infraestructura básica (Gateway, Identity, Configuration, Common)
+  - `Sales` - Módulo de ventas (Gateway + Sales + Billing + Inventory)
+  - `Inventory` - Gestión de inventario (Gateway + Inventory + Purchases + Accounting)
+  - `Financial` - Contabilidad (Gateway + Accounting + Billing + Purchases)
+  - `Restaurant` - Restaurante (Gateway + Restaurant + Sales + Inventory)
+  - `Automotive` - Automotriz (Gateway + Mechanical + Vet + TechnicalSupport)
+  - `Services` - Servicios (Gateway + BarberShop + TechnicalSupport)
+  - `Gateway` - Solo API Gateway
+  - `All` - Todos los 14 servicios
+- **Acciones:**
+  - `build` - Construir imágenes Docker
+  - `up` - Iniciar contenedores
+  - `restart` - Reiniciar servicios
+  - `stop` - Detener servicios
+  - `start` - Iniciar servicios detenidos
+  - `logs` - Ver logs
+- **Opciones:**
+  - `-Parallel` - Build paralelo (más rápido)
+  - `-NoBuild` - Up sin rebuild
+  - `-Follow` - Logs en tiempo real
+- **Tiempo:** 2-3 min por perfil (vs 25-30 min para todos)
+
+#### 2. `quick-start.ps1` 🚀 INICIO RÁPIDO
+- **Propósito:** Iniciar un perfil completo con un comando
+- **Tipo:** PowerShell Script
+- **Ejecución:**
+  ```powershell
+  .\scripts\quick-start.ps1              # Inicia perfil Core
+  .\scripts\quick-start.ps1 -Profile Sales
+  ```
+- **Qué hace:**
+  1. Build paralelo del perfil
+  2. Inicia contenedores
+  3. Muestra estado
+- **Mejor para:** Comenzar a trabajar rápidamente
+
+**Ejemplos de Uso:**
+```powershell
+# Desarrollo de módulo de ventas
+.\scripts\quick-start.ps1 -Profile Sales
+
+# Solo infraestructura
+.\scripts\quick-start.ps1 -Profile Core
+
+# Ver logs en tiempo real
+.\scripts\docker-profiles.ps1 -Profile Sales -Action logs -Follow
+
+# Rebuild + Restart
+.\scripts\docker-profiles.ps1 -Profile Sales -Action up
+```
+
+---
+
+### 🤖 **Scripts de Renombrado** (Migración de Nombres)
 
 #### 1. `Rename-API-Directories.ps1` ⭐ MAIN SCRIPT
 - **Purpose:** Core renaming automation engine

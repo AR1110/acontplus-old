@@ -1,5 +1,3 @@
-using Accounting.Application.Dtos;
-
 namespace Accounting.Api.Controllers;
 
 public class SubcategoryController(ISubcategoryRepository subcategoryService) : BaseApiController
@@ -20,7 +18,7 @@ public class SubcategoryController(ISubcategoryRepository subcategoryService) : 
         var subcategory = subcategoryDto.Adapt<Subcategory>();
         subcategory.CreatedByUserId = User.GetUserId();
         subcategory.CompanyId = User.GetClaimValue<int>("companyId");
-        
+
         return Ok(await subcategoryService.AddAsync(subcategory));
     }
 
@@ -29,7 +27,7 @@ public class SubcategoryController(ISubcategoryRepository subcategoryService) : 
     {
         var subcategory = subcategoryDto.Adapt<Subcategory>();
         subcategory.UpdatedByUserId = User.GetUserId();
-        
+
         return Ok(await subcategoryService.UpdateAsync(id, subcategory));
     }
 

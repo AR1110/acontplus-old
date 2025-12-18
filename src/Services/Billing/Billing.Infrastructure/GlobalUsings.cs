@@ -1,5 +1,9 @@
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Context;
+global using Acontplus.Utilities.Data;
 global using Billing.Domain.Entities;
 global using Billing.Domain.Entities.Sri;
+global using Billing.Domain.Repositories;
 global using Microsoft.EntityFrameworkCore;

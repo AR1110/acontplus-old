@@ -1,3 +1,5 @@
+using Acontplus.Infrastructure.Extensions;
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
@@ -8,42 +10,44 @@ namespace Common.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-  public static IServiceCollection AddCommonApplicationServices(this IServiceCollection services,
-      IConfiguration configuration)
-  {
-    services.AddApplicationServices(configuration);
+    public static IServiceCollection AddCommonApplicationServices(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddApplicationServices(configuration);
 
-    services.AddAdvancedLoggingOptions(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
-    services.AddJwtAuthentication(configuration);
+        services.AddJwtAuthentication(configuration);
 
-    services.AddOpenApi();
+        services.AddOpenApi();
 
-    services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
 
-    JsonConfigurationService.ConfigureAspNetCore(services, false);
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-    JsonConfigurationService.RegisterJsonConfiguration(services);
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<CommonContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddSqlServerPersistence<CommonContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-    string[] scopedNameSpaces =
-    [
-        "Common.Application.Services",
+        services.AddCachingServices(configuration);
+
+        string[] scopedNameSpaces =
+        [
+            "Common.Application.Services",
             "Acontplus.Persistence.SqlServer.Repositories",
             "Acontplus.Services.Extensions.Context",
             "Acontplus.Services.Services.Implementations"
-    ];
+        ];
 
-    services.Scan(scan => scan
-        .FromApplicationDependencies()
-        .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
-        .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-        .AsImplementedInterfaces()
-        .WithScopedLifetime()
-    );
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
 
-    return services;
-  }
+        return services;
+    }
 }

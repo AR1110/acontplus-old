@@ -21,11 +21,11 @@ try
 
     const string corsPolicy = "RestaurantCorsPolicy";
 
-    var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>().Split(",");
-
     // Use AppConfiguration for loading settings
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
+
+    var safeOrigins = builder.Configuration.GetSection("AllowedCorsOrigins").Get<string>()?.Split(",") ?? ["*"];
 
     builder.Services.AddRestaurantServices(builder.Configuration);
 

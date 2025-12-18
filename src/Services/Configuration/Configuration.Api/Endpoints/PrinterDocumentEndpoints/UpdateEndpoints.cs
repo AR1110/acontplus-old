@@ -1,5 +1,3 @@
-using Configuration.Application.Dtos;
-
 namespace Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 
 public static class UpdateEndpoints
@@ -16,7 +14,7 @@ public static class UpdateEndpoints
             {
                 var printerDocument = printerDocumentDto.Adapt<PrinterDocument>();
                 printerDocument.UpdatedByUserId = userContext.GetUserId();
-                
+
                 var result = await printerDocumentRepository.UpdateAsync(id, printerDocument);
                 return Results.Ok(result);
             });
