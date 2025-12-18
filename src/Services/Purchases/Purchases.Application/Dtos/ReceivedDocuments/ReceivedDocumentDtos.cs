@@ -2,20 +2,20 @@ namespace Purchases.Application.Dtos.ReceivedDocuments;
 
 public record ReceivedDocumentCreate(
     ReceivedDocumentReceiptDto Receipt,
-    string EstablishmentCode,
+    int EstablishmentId,
     int SubcategoryId,
     int CreatedByUserId);
 
 public record ReceivedDocumentUpdate(
     int Id,
     ReceivedDocumentReceiptDto Receipt,
-    string EstablishmentCode,
+    int EstablishmentId,
     int SubcategoryId);
 
 public record ReceivedDocumentItem(
     int Id,
     ReceivedDocumentReceiptDto Receipt,
-    string EstablishmentCode,
+    int EstablishmentId,
     int SubcategoryId,
     bool IsActive,
     DateTime CreatedAt);
