@@ -13,7 +13,7 @@ export class AddEditProductDirective {
   id = input(0);
 
   @HostListener('click') onClick() {
-    let data: any = {};
+    let data: unknown = {};
     if (this.data() && typeof this.data() === 'object') {
       data = this.data();
     }
