@@ -5,7 +5,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { getValidId, isValidField } from '@core/utils/utils';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { InventarioModeloUseCase } from '@inventory/domain/usecases/inventario-modelo.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -38,7 +38,7 @@ export class ModelAddEditComponent implements OnInit {
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);
-  private _productUseCase = inject(ProductUseCase);
+  private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
   private _modeloUseCase = inject(InventarioModeloUseCase);
 
@@ -91,7 +91,7 @@ export class ModelAddEditComponent implements OnInit {
   }
 
   private getDataForm() {
-    this._productUseCase.getDataForm().subscribe((response) => {
+    this._PRODUCT_SERVICE.getDataForm().subscribe((response) => {
       this.marcas.set(response.marcas);
     });
   }

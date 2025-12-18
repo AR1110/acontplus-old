@@ -37,8 +37,8 @@ export const routes: Route[] = [
     path: INVENTORY_ROUTES.products,
     title: 'Productos',
     loadComponent: () =>
-      import('@inventory/ui/fracc-product-page/fracc-product-page.component').then(
-        (m) => m.FraccProductPageComponent,
+      import('@inventory/ui/product/product').then(
+        (m) => m.Product,
       ),
     canActivate: [permissionGuard],
     data: {

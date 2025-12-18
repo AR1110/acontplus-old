@@ -13,7 +13,7 @@ import { isValidField } from '@core/utils/utils';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { InventoryAdjustmentService } from '@inventory/inventory-adjustment/domain/services/inventory-adjustment.service';
-import { ProductAutocompleteAdvancedComponent } from '@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
+import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ExcelImportService } from '@modules/config/application/services/excel-import.service';
 import Swal from 'sweetalert2';

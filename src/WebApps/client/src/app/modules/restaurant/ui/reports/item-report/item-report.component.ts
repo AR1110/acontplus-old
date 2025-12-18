@@ -13,7 +13,7 @@ import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatInput } from '@angular/material/input';
 
@@ -45,10 +45,10 @@ export class ItemReportComponent implements OnInit {
   };
   private sharedSvc = inject(SharedService);
   private itemSvc = inject(ItemService);
-  private _productUseCase = inject(ProductUseCase);
+  private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe((response) => {
+    this._PRODUCT_SERVICE.getDataReport().subscribe((response) => {
       const { estabs, subCategorias } = response;
       this.establecimientos.set(estabs);
       this.subCategorias.set(subCategorias);

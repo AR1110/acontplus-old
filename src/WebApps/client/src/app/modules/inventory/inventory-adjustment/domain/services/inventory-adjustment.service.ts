@@ -4,7 +4,7 @@ import {
   CreateInventoryAdjustmentUseCase,
 } from '@inventory/inventory-adjustment/domain/use-cases/create-inventory-adjustment.use-case';
 
-import { GetProductPurchaseUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { InventoryAdjustmentStore } from '@inventory/inventory-adjustment/domain/store/inventory-adjustment.store';
 import { DialogService } from '@core/services/dialog.service';
 import {
@@ -21,7 +21,7 @@ export class InventoryAdjustmentService {
   readonly createUseCase = inject(CreateInventoryAdjustmentUseCase);
   readonly getAllUseCase = inject(GetAllInventoryAdjustmentsUseCase);
   readonly formDataUseCase = inject(InventoryAdjustmentFormDataUseCase);
-  readonly getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
+  readonly productService = inject(PRODUCT_SERVICE);
   readonly inventoryAdjustmentListProductsUseCase = inject(InventoryAdjustmentListProductsUseCase);
   readonly inventoryAdjustmentDetailUseCase = inject(InventoryAdjustmentDetailUseCase);
   readonly inventoryAdjustmentStore = inject(InventoryAdjustmentStore);
@@ -71,7 +71,7 @@ export class InventoryAdjustmentService {
   // }
 
   getProductById(id: number) {
-    return this.getProductPurchaseUseCase.execute(id);
+    return this.productService.getForPurchase(id);
   }
 
   getProductListImported(params: any) {

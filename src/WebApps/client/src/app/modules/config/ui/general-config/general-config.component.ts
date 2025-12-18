@@ -19,7 +19,7 @@ import { UpdateGeneralConfigUseCase } from '@modules/config/application/use-case
 import { DecimalSelectComponent } from '@modules/config/ui/general-config/decimal-select/decimal-select.component';
 import { MatListModule } from '@angular/material/list';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 
 @Component({

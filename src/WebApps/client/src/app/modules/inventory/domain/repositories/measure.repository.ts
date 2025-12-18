@@ -1,4 +1,4 @@
-import { Product } from '@inventory/product/domain/entities/product.entity';
+import { Product } from '@inventory/domain/models/product.entity';
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
