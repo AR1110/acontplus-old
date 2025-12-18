@@ -12,7 +12,7 @@ public static class CrudEndpoints
     group.MapPost("/{idDocumento:int}/{idArticulo:int}", async (
         int idDocumento,
         int idArticulo,
-        IDocumentoDetalleRepository documentoDetalleRepository,
+        IDocumentDetailService documentDetailService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -22,7 +22,7 @@ public static class CrudEndpoints
                 { "idDocumento", idDocumento },
                 { "idArticulo", idArticulo }
         };
-      return Results.Ok(await documentoDetalleRepository.AddAsync(parameters));
+      return Results.Ok(await documentDetailService.AddAsync(parameters));
     })
         .WithName("CreateDocumentDetail")
         .WithSummary("Create a document detail")
@@ -33,7 +33,7 @@ public static class CrudEndpoints
 
     group.MapDelete("/{id:int}", async (
         int id,
-        IDocumentoDetalleRepository documentoDetalleRepository,
+        IDocumentDetailService documentDetailService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -42,7 +42,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "id", id }
         };
-      return Results.Ok(await documentoDetalleRepository.DeleteAsync(parameters));
+      return Results.Ok(await documentDetailService.DeleteAsync(parameters));
     })
         .WithName("DeleteDocumentDetail")
         .WithSummary("Delete a document detail")

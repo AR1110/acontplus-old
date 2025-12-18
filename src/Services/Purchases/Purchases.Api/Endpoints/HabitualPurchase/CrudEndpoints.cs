@@ -11,7 +11,7 @@ public static class CrudEndpoints
 
     group.MapGet("/", async (
         string json,
-        ICompraHabitualRepository compraHabitualRepository,
+        IHabitualPurchaseService habitualPurchaseService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await compraHabitualRepository.GetAsync(parameters));
+      return Results.Ok(await habitualPurchaseService.GetAsync(parameters));
     })
         .WithName("GetHabitualPurchases")
         .WithSummary("Get all habitual purchases")
@@ -31,7 +31,7 @@ public static class CrudEndpoints
 
     group.MapPost("/", async (
         CompraHabitualDto compraHabitualDto,
-        ICompraHabitualRepository compraHabitualRepository,
+        IHabitualPurchaseService habitualPurchaseService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -40,7 +40,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraHabitualDto>(compraHabitualDto)) }
         };
-      return Results.Ok(await compraHabitualRepository.AddAsync(parameters));
+      return Results.Ok(await habitualPurchaseService.AddAsync(parameters));
     })
         .WithName("CreateHabitualPurchase")
         .WithSummary("Create a new habitual purchase")
@@ -52,7 +52,7 @@ public static class CrudEndpoints
     group.MapPut("/{id:int}", async (
         int id,
         string json,
-        ICompraHabitualRepository compraHabitualRepository,
+        IHabitualPurchaseService habitualPurchaseService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -62,7 +62,7 @@ public static class CrudEndpoints
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await compraHabitualRepository.UpdateAsync(parameters));
+      return Results.Ok(await habitualPurchaseService.UpdateAsync(parameters));
     })
         .WithName("UpdateHabitualPurchase")
         .WithSummary("Update a habitual purchase")
@@ -74,7 +74,7 @@ public static class CrudEndpoints
 
     group.MapDelete("/", async (
         string json,
-        ICompraHabitualRepository compraHabitualRepository,
+        IHabitualPurchaseService habitualPurchaseService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -83,7 +83,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await compraHabitualRepository.DeleteAsync(parameters));
+      return Results.Ok(await habitualPurchaseService.DeleteAsync(parameters));
     })
         .WithName("DeleteHabitualPurchase")
         .WithSummary("Delete a habitual purchase")

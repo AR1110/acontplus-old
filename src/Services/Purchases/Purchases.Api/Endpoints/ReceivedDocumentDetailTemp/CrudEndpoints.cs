@@ -11,7 +11,7 @@ public static class CrudEndpoints
 
     group.MapGet("/{idDocumento:int}", async (
         int idDocumento,
-        IDocRecDetailTempRepository detailTempRepository,
+        IReceivedDocumentDetailTempService receivedDocumentDetailTempService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -21,7 +21,7 @@ public static class CrudEndpoints
                 { "idDocumento", idDocumento },
                 { "jsonData", "" }
         };
-      return Results.Ok(await detailTempRepository.GetAsync(parameters));
+      return Results.Ok(await receivedDocumentDetailTempService.GetAsync(parameters));
     })
         .WithName("GetReceivedDocumentDetailTemp")
         .WithSummary("Get temporary document details")
@@ -32,7 +32,7 @@ public static class CrudEndpoints
 
     group.MapPost("/", async (
         DocDetailleTemporalDto data,
-        IDocRecDetailTempRepository detailTempRepository,
+        IReceivedDocumentDetailTempService receivedDocumentDetailTempService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -41,7 +41,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
         };
-      return Results.Ok(await detailTempRepository.AddAsync(parameters));
+      return Results.Ok(await receivedDocumentDetailTempService.AddAsync(parameters));
     })
         .WithName("CreateReceivedDocumentDetailTemp")
         .WithSummary("Create temporary document detail")
@@ -52,7 +52,7 @@ public static class CrudEndpoints
 
     group.MapPut("/", async (
         DocDetailleTemporalDto data,
-        IDocRecDetailTempRepository detailTempRepository,
+        IReceivedDocumentDetailTempService receivedDocumentDetailTempService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -61,7 +61,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "jsonData", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocDetailleTemporalDto>(data)) }
         };
-      return Results.Ok(await detailTempRepository.UpdateAsync(parameters));
+      return Results.Ok(await receivedDocumentDetailTempService.UpdateAsync(parameters));
     })
         .WithName("UpdateReceivedDocumentDetailTemp")
         .WithSummary("Update temporary document detail")

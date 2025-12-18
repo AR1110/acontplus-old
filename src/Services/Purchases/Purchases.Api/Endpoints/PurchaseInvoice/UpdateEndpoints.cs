@@ -12,7 +12,7 @@ public static class UpdateEndpoints
     group.MapPut("/{id:int}", async (
         int id,
         FacturaCompraDto facturaCompraDto,
-        IFacturaCompraRepository facturaCompraRepository,
+        IPurchaseInvoiceService purchaseInvoiceService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -22,7 +22,7 @@ public static class UpdateEndpoints
                 { "id", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<FacturaCompraDto>(facturaCompraDto)) }
         };
-      return Results.Ok(await facturaCompraRepository.UpdateAsync(parameters));
+      return Results.Ok(await purchaseInvoiceService.UpdateAsync(parameters));
     })
         .WithName("UpdatePurchaseInvoice")
         .WithSummary("Update a purchase invoice")

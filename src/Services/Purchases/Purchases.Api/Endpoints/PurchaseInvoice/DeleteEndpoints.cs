@@ -11,7 +11,7 @@ public static class DeleteEndpoints
 
     group.MapDelete("/{id:int}", async (
         int id,
-        IFacturaCompraRepository facturaCompraRepository,
+        IPurchaseInvoiceService purchaseInvoiceService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class DeleteEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "id", id }
         };
-      return Results.Ok(await facturaCompraRepository.DeleteAsync(parameters));
+      return Results.Ok(await purchaseInvoiceService.DeleteAsync(parameters));
     })
         .WithName("DeletePurchaseInvoice")
         .WithSummary("Delete a purchase invoice")

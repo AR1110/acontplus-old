@@ -11,7 +11,7 @@ public static class CreateEndpoints
 
     group.MapPost("/", async (
         string json,
-        ICategoriaCompraRepository categoriaCompraRepository,
+        IPurchaseCategoryService purchaseCategoryService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class CreateEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await categoriaCompraRepository.AddAsync(parameters));
+      return Results.Ok(await purchaseCategoryService.AddAsync(parameters));
     })
         .WithName("CreatePurchaseCategory")
         .WithSummary("Create a new purchase category")

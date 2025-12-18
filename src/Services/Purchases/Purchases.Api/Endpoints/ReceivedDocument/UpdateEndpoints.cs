@@ -12,7 +12,7 @@ public static class UpdateEndpoints
     group.MapPut("/{id:int}", async (
         int id,
         DocumentoRecibidoDto documentoRecibido,
-        IDocumentoRecibidoRepository docRecibidoRepository,
+        IReceivedDocumentService receivedDocumentService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -22,7 +22,7 @@ public static class UpdateEndpoints
                 { "idDocumento", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido)) }
         };
-      return Results.Ok(await docRecibidoRepository.UpdateAsync(parameters));
+      return Results.Ok(await receivedDocumentService.UpdateAsync(parameters));
     })
         .WithName("UpdateReceivedDocument")
         .WithSummary("Update a received document")
@@ -34,7 +34,7 @@ public static class UpdateEndpoints
 
     group.MapPut("/migrate", async (
         DocumentoRecibidoMigrateDto data,
-        IDocumentoRecibidoRepository docRecibidoRepository,
+        IReceivedDocumentService receivedDocumentService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -43,7 +43,7 @@ public static class UpdateEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoMigrateDto>(data)) }
         };
-      return Results.Ok(await docRecibidoRepository.MigrateAsync(parameters));
+      return Results.Ok(await receivedDocumentService.MigrateAsync(parameters));
     })
         .WithName("MigrateReceivedDocument")
         .WithSummary("Migrate a received document")
@@ -54,7 +54,7 @@ public static class UpdateEndpoints
 
     group.MapPut("/subcategory", async (
         DocumentoRecibidoCategoria data,
-        IDocumentoRecibidoRepository docRecibidoRepository,
+        IReceivedDocumentService receivedDocumentService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -63,7 +63,7 @@ public static class UpdateEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoCategoria>(data)) }
         };
-      return Results.Ok(await docRecibidoRepository.UpdateSubcategoryAsync(parameters));
+      return Results.Ok(await receivedDocumentService.UpdateSubcategoryAsync(parameters));
     })
         .WithName("UpdateReceivedDocumentSubcategory")
         .WithSummary("Update received document subcategory")

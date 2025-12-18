@@ -1,6 +1,6 @@
-namespace Purchases.Domain.Repositories;
+namespace Purchases.Application.Interfaces;
 
-public interface IProveedorRepository
+public interface IPurchaseCategoryService
 {
     Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
     Task<SpResponse> AddAsync(Dictionary<string, object> parameters);

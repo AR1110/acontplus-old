@@ -11,7 +11,7 @@ public static class DeleteEndpoints
 
     group.MapDelete("/{id:int}", async (
         int id,
-        IDocumentoRecibidoRepository docRecibidoRepository,
+        IReceivedDocumentService receivedDocumentService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class DeleteEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "idDocumento", id }
         };
-      return Results.Ok(await docRecibidoRepository.DeleteAsync(parameters));
+      return Results.Ok(await receivedDocumentService.DeleteAsync(parameters));
     })
         .WithName("DeleteReceivedDocument")
         .WithSummary("Delete a received document")

@@ -11,7 +11,7 @@ public static class GetEndpoints
 
     group.MapGet("/", async (
         string json,
-        IFacturaCompraRepository facturaCompraRepository,
+        IPurchaseInvoiceService purchaseInvoiceService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class GetEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      var response = await facturaCompraRepository.GetAsync(parameters);
+      var response = await purchaseInvoiceService.GetAsync(parameters);
       if (response == null)
         return Results.NoContent();
 
@@ -35,7 +35,7 @@ public static class GetEndpoints
 
     group.MapGet("/{id:int}", async (
         int id,
-        IFacturaCompraRepository facturaCompraRepository,
+        IPurchaseInvoiceService purchaseInvoiceService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -44,7 +44,7 @@ public static class GetEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "id", id }
         };
-      var response = await facturaCompraRepository.GetByIdAsync(parameters);
+      var response = await purchaseInvoiceService.GetByIdAsync(parameters);
       if (response == null)
         return Results.NoContent();
 

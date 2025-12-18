@@ -1,6 +1,6 @@
-namespace Purchases.Domain.Repositories;
+namespace Purchases.Application.Interfaces;
 
-public interface IFacturaCompraRepository
+public interface IPurchaseInvoiceService
 {
     Task<object> GetAsync(Dictionary<string, object> parameters);
     Task<SpResponse> AddAsync(Dictionary<string, object> parameters);

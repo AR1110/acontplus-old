@@ -11,7 +11,7 @@ public static class CreateEndpoints
 
     group.MapPost("/", async (
         OrdenCompraDto ordenCompraDto,
-        IOrdenCompraRepository ordenCompraRepository,
+        IPurchaseOrderService purchaseOrderService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class CreateEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<OrdenCompraDto>(ordenCompraDto)) }
         };
-      return Results.Ok(await ordenCompraRepository.AddAsync(parameters));
+      return Results.Ok(await purchaseOrderService.AddAsync(parameters));
     })
         .WithName("CreatePurchaseOrder")
         .WithSummary("Create a new purchase order")

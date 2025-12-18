@@ -26,5 +26,5 @@ global using Microsoft.EntityFrameworkCore;
 global using Purchases.Api.Utils;
 global using Purchases.Application.Dtos;
 global using Purchases.Application.Interfaces;
-global using Purchases.Domain.Repositories;
+global using Purchases.Application.Services;
 global using Purchases.Infrastructure.Persistence;

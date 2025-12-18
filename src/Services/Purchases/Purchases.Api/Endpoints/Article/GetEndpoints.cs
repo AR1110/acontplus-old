@@ -11,7 +11,7 @@ public static class GetEndpoints
 
     group.MapGet("/", async (
         string json,
-        IArticuloRepository articuloRepository,
+        IArticleService articleService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class GetEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "jsonData", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await articuloRepository.GetAsync(parameters));
+      return Results.Ok(await articleService.GetAsync(parameters));
     })
         .WithName("GetArticles")
         .WithSummary("Get all articles")

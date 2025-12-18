@@ -11,7 +11,7 @@ public static class GetEndpoints
 
     group.MapGet("/", async (
         string json,
-        ICategoriaCompraRepository categoriaCompraRepository,
+        IPurchaseCategoryService purchaseCategoryService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class GetEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await categoriaCompraRepository.GetAsync(parameters));
+      return Results.Ok(await purchaseCategoryService.GetAsync(parameters));
     })
         .WithName("GetPurchaseCategories")
         .WithSummary("Get all purchase categories")

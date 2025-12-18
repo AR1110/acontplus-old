@@ -11,7 +11,7 @@ public static class CrudEndpoints
 
     group.MapGet("/", async (
         string json,
-        IDatoAdicionalArticuloRepository datoAdicionalArticuloRepository,
+        IAdditionalArticleDataService additionalArticleDataService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -20,7 +20,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "json", SqlStringParam.Sanitize(json) }
         };
-      return Results.Ok(await datoAdicionalArticuloRepository.GetAsync(parameters));
+      return Results.Ok(await additionalArticleDataService.GetAsync(parameters));
     })
         .WithName("GetAdditionalArticleData")
         .WithSummary("Get all additional article data")
@@ -32,7 +32,7 @@ public static class CrudEndpoints
     group.MapPost("/{id:int}", async (
         int id,
         InfoAdicionalDto data,
-        IDatoAdicionalArticuloRepository datoAdicionalArticuloRepository,
+        IAdditionalArticleDataService additionalArticleDataService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -42,7 +42,7 @@ public static class CrudEndpoints
                 { "idDocumento", id },
                 { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<InfoAdicionalDto>(data)) }
         };
-      return Results.Ok(await datoAdicionalArticuloRepository.AddAsync(parameters));
+      return Results.Ok(await additionalArticleDataService.AddAsync(parameters));
     })
         .WithName("CreateAdditionalArticleData")
         .WithSummary("Create additional article data")
@@ -53,7 +53,7 @@ public static class CrudEndpoints
 
     group.MapDelete("/{idInfoAdicional:int}", async (
         int idInfoAdicional,
-        IDatoAdicionalArticuloRepository datoAdicionalArticuloRepository,
+        IAdditionalArticleDataService additionalArticleDataService,
         IUserContext userContext,
         CancellationToken cancellationToken) =>
     {
@@ -62,7 +62,7 @@ public static class CrudEndpoints
                 { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
                 { "idInfoAdicional", idInfoAdicional }
         };
-      return Results.Ok(await datoAdicionalArticuloRepository.DeleteAsync(parameters));
+      return Results.Ok(await additionalArticleDataService.DeleteAsync(parameters));
     })
         .WithName("DeleteAdditionalArticleData")
         .WithSummary("Delete additional article data")
