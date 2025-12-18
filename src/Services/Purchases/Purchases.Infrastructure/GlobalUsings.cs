@@ -1,10 +1,2 @@
-global using Acontplus.Core.Abstractions.Persistence;
-global using Acontplus.Core.Dtos.Responses;
-global using Acontplus.Core.Validation;
 global using Acontplus.Persistence.SqlServer.Context;
-global using Acontplus.Utilities.Data;
 global using Microsoft.EntityFrameworkCore;
-global using Purchases.Domain.Repositories;
-global using System.Data;
-global using System.Text;
-global using System.Xml;

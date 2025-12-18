@@ -31,7 +31,6 @@ public static class ApplicationServicesExtensions
         string[] scopedNameSpaces =
         [
             "Purchases.Application.Services",
-            "Purchases.Infrastructure.Persistence.Repositories",
             "Acontplus.Persistence.SqlServer.Repositories",
             "Acontplus.Services.Extensions.Context",
             "Acontplus.Services.Services.Implementations"

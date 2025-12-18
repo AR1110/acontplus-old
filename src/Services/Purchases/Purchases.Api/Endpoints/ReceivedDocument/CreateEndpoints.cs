@@ -10,17 +10,17 @@ public static class CreateEndpoints
             .WithTags("Received Documents");
 
         group.MapPost("/", async (
-            DocumentoRecibidoDto documentoRecibido,
-            IDocumentoRecibidoRepository docRecibidoRepository,
+            ReceivedDocumentCreate request,
+            IReceivedDocumentService receivedDocumentService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<DocumentoRecibidoDto>(documentoRecibido)) }
-            };
-            return Results.Ok(await docRecibidoRepository.AddAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var requestWithUser = request with { CreatedByUserId = userRoleId };
+
+            return await receivedDocumentService
+                .AddAsync(requestWithUser, cancellationToken)
+                .ToMinimalApiResultAsync();
         })
             .WithName("CreateReceivedDocument")
             .WithSummary("Create a new received document")
@@ -104,7 +104,7 @@ public static class CreateEndpoints
 
         group.MapPost("/upload-xml", async (
             HttpContext httpContext,
-            IDocumentoRecibidoRepository docRecibidoRepository,
+            IReceivedDocumentService receivedDocumentService,
             IXmlSriFileService xmlSriFileService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
@@ -120,17 +120,21 @@ public static class CreateEndpoints
             if (dataComprobante?.XmlSri == null)
                 return Results.BadRequest("No se pudo obtener el xml");
 
-            var parameters = new Dictionary<string, object>
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+
+            using var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+            if (!jsonDoc.RootElement.TryGetProperty("id", out var idElement) &&
+            !jsonDoc.RootElement.TryGetProperty("Id", out idElement))
             {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) },
-                { "codDoc", dataComprobante.CodDoc ?? string.Empty },
-                { "claveAcceso", dataComprobante.ClaveAcceso ?? string.Empty },
-                { "versionComp", dataComprobante.VersionComp ?? string.Empty },
-                { "fechaEmision", dataComprobante.FechaEmision ?? string.Empty },
-                { "XmlDoc", dataComprobante.XmlSri.OuterXml }
-            };
-            return Results.Ok(await docRecibidoRepository.UploadXmlAsync(parameters));
+                return Results.BadRequest("No se pudo obtener el identificador del documento");
+            }
+
+            var documentId = idElement.GetInt32();
+            var xmlContent = dataComprobante.XmlSri.OuterXml;
+
+            return await receivedDocumentService
+                .UploadXmlAsync(documentId, xmlContent, userRoleId, cancellationToken)
+                .ToMinimalApiResultAsync();
         })
             .DisableAntiforgery()
             .WithName("UploadReceivedDocumentXml")
