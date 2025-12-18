@@ -1,18 +1,18 @@
 namespace Purchases.Application.Dtos.HabitualPurchases;
 
 public record HabitualPurchaseCreate(
-    CompraBaseDto CompraBase,
-    List<DetalleBaseDto> Detalles,
+    PurchaseBaseDto CompraBase,
+    List<PurchaseDetailBaseDto> Detalles,
     int CreatedByUserId);
 
 public record HabitualPurchaseUpdate(
     int Id,
-    CompraBaseDto CompraBase,
-    List<DetalleBaseDto> Detalles);
+    PurchaseBaseDto CompraBase,
+    List<PurchaseDetailBaseDto> Detalles);
 
 public record HabitualPurchaseItem(
     int Id,
-    CompraBaseDto CompraBase,
-    List<DetalleBaseDto> Detalles,
+    PurchaseBaseDto CompraBase,
+    List<PurchaseDetailBaseDto> Detalles,
     bool IsActive,
     DateTime CreatedAt);

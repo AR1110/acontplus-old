@@ -10,15 +10,15 @@ public record ArticleItem(
 
 public record AdditionalArticleDataCreate(
     int DocumentId,
-    List<InfoAdicionalDto> InfoAdicional,
+    List<AdditionalInfoDto> InfoAdicional,
     int CreatedByUserId);
 
 public record AdditionalArticleDataUpdate(
     int Id,
     int DocumentId,
-    List<InfoAdicionalDto> InfoAdicional);
+    List<AdditionalInfoDto> InfoAdicional);
 
 public record AdditionalArticleDataItem(
     int Id,
     int DocumentId,
-    List<InfoAdicionalDto> InfoAdicional);
+    List<AdditionalInfoDto> InfoAdicional);

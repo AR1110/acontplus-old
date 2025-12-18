@@ -1,18 +1,18 @@
 namespace Purchases.Application.Dtos.NonHabitualPurchases;
 
 public record NonHabitualPurchaseCreate(
-    DocumentIngresoDto DocumentoIngreso,
-    List<DocumentoIngresoDetalleDto> Detalles,
+    IncomingDocumentDto DocumentoIngreso,
+    List<IncomingDocumentDetailDto> Detalles,
     int CreatedByUserId);
 
 public record NonHabitualPurchaseUpdate(
     int Id,
-    DocumentIngresoDto DocumentoIngreso,
-    List<DocumentoIngresoDetalleDto> Detalles);
+    IncomingDocumentDto DocumentoIngreso,
+    List<IncomingDocumentDetailDto> Detalles);
 
 public record NonHabitualPurchaseItem(
     int Id,
-    DocumentIngresoDto DocumentoIngreso,
-    List<DocumentoIngresoDetalleDto> Detalles,
+    IncomingDocumentDto DocumentoIngreso,
+    List<IncomingDocumentDetailDto> Detalles,
     bool IsActive,
     DateTime CreatedAt);

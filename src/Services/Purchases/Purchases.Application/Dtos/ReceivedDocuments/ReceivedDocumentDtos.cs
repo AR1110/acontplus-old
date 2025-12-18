@@ -1,20 +1,20 @@
 namespace Purchases.Application.Dtos.ReceivedDocuments;
 
 public record ReceivedDocumentCreate(
-    DocumentoRecibidoComprobanteDto Comprobante,
+    ReceivedDocumentReceiptDto Comprobante,
     string CodEstab,
     int SubCategoryId,
     int CreatedByUserId);
 
 public record ReceivedDocumentUpdate(
     int Id,
-    DocumentoRecibidoComprobanteDto Comprobante,
+    ReceivedDocumentReceiptDto Comprobante,
     string CodEstab,
     int SubCategoryId);
 
 public record ReceivedDocumentItem(
     int Id,
-    DocumentoRecibidoComprobanteDto Comprobante,
+    ReceivedDocumentReceiptDto Comprobante,
     string CodEstab,
     int SubCategoryId,
     bool IsActive,
