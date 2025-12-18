@@ -1,9 +1,12 @@
+using Purchases.Application.Dtos.NonHabitualPurchases;
+
+
 namespace Purchases.Application.Interfaces;
 
 public interface INonHabitualPurchaseService
 {
-  Task<object> GetAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<Result<PagedResult<NonHabitualPurchaseItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default);
+    Task<Result<NonHabitualPurchaseItem, DomainError>> AddAsync(NonHabitualPurchaseCreate request, CancellationToken cancellationToken = default);
+    Task<Result<NonHabitualPurchaseItem, DomainError>> UpdateAsync(int id, NonHabitualPurchaseUpdate request, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
 }

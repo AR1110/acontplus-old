@@ -10,17 +10,22 @@ public static class GetEndpoints
             .WithTags("Received Documents");
 
         group.MapGet("/", async (
-            string json,
+            PaginationQuery paginationQuery,
             IReceivedDocumentService receivedDocumentService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var paginationRequest = paginationQuery.Adapt<PaginationRequest>() with
             {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) }
+                SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
             };
-            return Results.Ok(await receivedDocumentService.GetAsync(parameters));
+
+            paginationRequest = paginationRequest.WithFilter("userRoleId", userRoleId);
+
+            return await receivedDocumentService
+                .GetAsync(paginationRequest, cancellationToken)
+                .ToGetMinimalApiResultAsync();
         })
             .WithName("GetReceivedDocuments")
             .WithSummary("Get all received documents")
@@ -32,37 +37,13 @@ public static class GetEndpoints
         group.MapGet("/{id:int}", async (
             int id,
             IReceivedDocumentService receivedDocumentService,
-            IDocumentTempService documentTempService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var response = new SpResponse { Code = string.Empty };
-            var ceXml = new ComprobanteElectronico();
-            var sms = string.Empty;
-            var getXmlSriData = new DataXmlComprobante();
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-            };
-            var xdoc = await receivedDocumentService.GetByIdXmlAsync(parameters);
-
-            if (xdoc == null || !getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
-                return Results.Ok(response);
-
-            if (ceXml.CodDoc is "01" or "04")
-            {
-                var details = new Dictionary<string, object>
-                {
-                    { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                    { "idDocumento", id },
-                    { "jsonData", JsonExtensions.SerializeOptimized(ceXml.Detalles) },
-                    { "impuestos", JsonExtensions.SerializeOptimized(ceXml.Impuestos) }
-                };
-                await documentTempService.AddAsync(details);
-            }
-
-            return Results.Ok(new SpResponse { Code = "1", Payload = ceXml });
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await receivedDocumentService
+                .GetByIdAsync(id, userRoleId, cancellationToken)
+                .ToGetMinimalApiResultAsync();
         })
             .AllowAnonymous()
             .WithName("GetReceivedDocumentById")
@@ -131,13 +112,10 @@ public static class GetEndpoints
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-            };
-            var response = await receivedDocumentService.DownloadAsync(parameters);
-            return Results.File(response, "text/xml");
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await receivedDocumentService
+          .DownloadAsync(id, userRoleId, cancellationToken)
+          .ToMinimalApiResultAsync();
         })
             .WithName("DownloadReceivedDocumentXml")
             .WithSummary("Download received document XML")

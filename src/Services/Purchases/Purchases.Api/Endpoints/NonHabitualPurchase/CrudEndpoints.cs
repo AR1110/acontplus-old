@@ -10,21 +10,19 @@ public static class CrudEndpoints
             .WithTags("Non-Habitual Purchases");
 
         group.MapGet("/", async (
-            string json,
+            PaginationQuery paginationQuery,
             INonHabitualPurchaseService nonHabitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
+            var paginationRequest = paginationQuery.Adapt<PaginationRequest>() with
             {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) }
+                SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
             };
-            var response = await nonHabitualPurchaseService.GetAsync(parameters);
-            if (response == null)
-                return Results.NoContent();
 
-            return Results.Ok(new { code = "1", payload = response });
+            return await nonHabitualPurchaseService
+                .GetAsync(paginationRequest, cancellationToken)
+                .ToGetMinimalApiResultAsync();
         })
             .WithName("GetNonHabitualPurchases")
             .WithSummary("Get all non-habitual purchases")
@@ -34,17 +32,17 @@ public static class CrudEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/", async (
-            CompraNoHabitualDto compraNoHabitualDto,
+            NonHabitualPurchaseCreate request,
             INonHabitualPurchaseService nonHabitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
-            };
-            return Results.Ok(await nonHabitualPurchaseService.AddAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var requestWithUser = request with { CreatedByUserId = userRoleId };
+
+            return await nonHabitualPurchaseService
+                .AddAsync(requestWithUser, cancellationToken)
+                .ToMinimalApiResultAsync();
         })
             .WithName("CreateNonHabitualPurchase")
             .WithSummary("Create a new non-habitual purchase")
@@ -55,18 +53,16 @@ public static class CrudEndpoints
 
         group.MapPut("/{id:int}", async (
             int id,
-            CompraNoHabitualDto compraNoHabitualDto,
+            NonHabitualPurchaseUpdate request,
             INonHabitualPurchaseService nonHabitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraNoHabitualDto>(compraNoHabitualDto)) }
-            };
-            return Results.Ok(await nonHabitualPurchaseService.UpdateAsync(parameters));
+            var requestWithId = request with { Id = id };
+
+            return await nonHabitualPurchaseService
+                .UpdateAsync(id, requestWithId, cancellationToken)
+                .ToMinimalApiResultAsync();
         })
             .WithName("UpdateNonHabitualPurchase")
             .WithSummary("Update a non-habitual purchase")
@@ -82,12 +78,10 @@ public static class CrudEndpoints
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-            };
-            return Results.Ok(await nonHabitualPurchaseService.DeleteAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await nonHabitualPurchaseService
+                .DeleteAsync(id, userRoleId, cancellationToken)
+                .ToMinimalApiResultAsync();
         })
             .WithName("DeleteNonHabitualPurchase")
             .WithSummary("Delete a non-habitual purchase")

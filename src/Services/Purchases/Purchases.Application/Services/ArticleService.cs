@@ -1,3 +1,5 @@
+using Purchases.Application.Dtos.Articles;
+
 namespace Purchases.Application.Services;
 
 public class ArticleService(IUnitOfWork unitOfWork) : IArticleService
@@ -5,11 +7,17 @@ public class ArticleService(IUnitOfWork unitOfWork) : IArticleService
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
     private const string ModuleName = "Compra.Articulo_";
 
-    public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
+    public async Task<Result<IReadOnlyList<ArticleItem>, DomainError>> GetAsync(int userRoleId, CancellationToken cancellationToken = default)
     {
-        var ds = await _adoRepository.GetDataSetAsync($"{ModuleName}Get", parameters);
-        return DataValidation.DataSetIsNull(ds)
-            ? new SpResponse { Code = "0", Message = "Can't get data" }
-            : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
+        try
+        {
+            var parameters = new Dictionary<string, object> { { "userRoleId", userRoleId } };
+            var articles = await _adoRepository.QueryAsync<ArticleItem>($"{ModuleName}Get", parameters);
+            return Result<IReadOnlyList<ArticleItem>, DomainError>.Success(articles.ToList().AsReadOnly());
+        }
+        catch (Exception ex)
+        {
+            return Result<IReadOnlyList<ArticleItem>, DomainError>.Failure(DomainError.Internal("ARTICLE_GET_ERROR", ex.Message));
+        }
     }
 }

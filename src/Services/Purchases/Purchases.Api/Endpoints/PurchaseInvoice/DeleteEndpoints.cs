@@ -2,31 +2,29 @@ namespace Purchases.Api.Endpoints.PurchaseInvoice;
 
 public static class DeleteEndpoints
 {
-  public static void MapDeleteEndpoints(this IEndpointRouteBuilder app)
-  {
-    var group = app.MapGroup("/api/purchase-invoices")
-        .RequireAuthorization()
-        .WithDescription("Endpoints for deleting purchase invoices.")
-        .WithTags("Purchase Invoices");
-
-    group.MapDelete("/{id:int}", async (
-        int id,
-        IPurchaseInvoiceService purchaseInvoiceService,
-        IUserContext userContext,
-        CancellationToken cancellationToken) =>
+    public static void MapDeleteEndpoints(this IEndpointRouteBuilder app)
     {
-      var parameters = new Dictionary<string, object>
+        var group = app.MapGroup("/api/purchase-invoices")
+            .RequireAuthorization()
+            .WithDescription("Endpoints for deleting purchase invoices.")
+            .WithTags("Purchase Invoices");
+
+        group.MapDelete("/{id:int}", async (
+            int id,
+            IPurchaseInvoiceService purchaseInvoiceService,
+            IUserContext userContext,
+            CancellationToken cancellationToken) =>
         {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-        };
-      return Results.Ok(await purchaseInvoiceService.DeleteAsync(parameters));
-    })
-        .WithName("DeletePurchaseInvoice")
-        .WithSummary("Delete a purchase invoice")
-        .WithDescription("Delete a purchase invoice record by its ID.")
-        .Produces<object>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status404NotFound)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
-  }
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await purchaseInvoiceService
+          .DeleteAsync(id, userRoleId, cancellationToken)
+          .ToMinimalApiResultAsync();
+        })
+            .WithName("DeletePurchaseInvoice")
+            .WithSummary("Delete a purchase invoice")
+            .WithDescription("Delete a purchase invoice record by its ID.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+    }
 }

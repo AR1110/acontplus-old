@@ -2,8 +2,8 @@ namespace Purchases.Application.Interfaces;
 
 public interface IDocumentDetailService
 {
-    Task<object> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<Result<IReadOnlyList<object>, DomainError>> GetAsync(int documentId, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<object, DomainError>> AddAsync(object request, CancellationToken cancellationToken = default);
+    Task<Result<object, DomainError>> UpdateAsync(int id, object request, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
 }

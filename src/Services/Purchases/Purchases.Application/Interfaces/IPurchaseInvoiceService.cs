@@ -1,10 +1,13 @@
+using Purchases.Application.Dtos.PurchaseInvoices;
+
+
 namespace Purchases.Application.Interfaces;
 
 public interface IPurchaseInvoiceService
 {
-    Task<object> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<object> GetByIdAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<Result<PagedResult<PurchaseInvoiceItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default);
+    Task<Result<PurchaseInvoiceItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<PurchaseInvoiceItem, DomainError>> AddAsync(PurchaseInvoiceCreate request, CancellationToken cancellationToken = default);
+    Task<Result<PurchaseInvoiceItem, DomainError>> UpdateAsync(int id, PurchaseInvoiceUpdate request, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
 }

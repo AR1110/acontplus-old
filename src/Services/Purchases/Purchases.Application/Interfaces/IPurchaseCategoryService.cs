@@ -1,9 +1,11 @@
+using Purchases.Application.Dtos.PurchaseCategories;
+
 namespace Purchases.Application.Interfaces;
 
 public interface IPurchaseCategoryService
 {
-    Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-    Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
+    Task<Result<IReadOnlyList<PurchaseCategoryItem>, DomainError>> GetAsync(int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<PurchaseCategoryItem, DomainError>> AddAsync(PurchaseCategoryCreate request, CancellationToken cancellationToken = default);
+    Task<Result<PurchaseCategoryItem, DomainError>> UpdateAsync(int id, PurchaseCategoryUpdate request, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
 }

@@ -2,94 +2,92 @@ namespace Purchases.Api.Endpoints.HabitualPurchase;
 
 public static class CrudEndpoints
 {
-  public static void MapCrudEndpoints(this IEndpointRouteBuilder app)
-  {
-    var group = app.MapGroup("/api/habitual-purchases")
-        .RequireAuthorization()
-        .WithDescription("Endpoints for managing habitual purchases.")
-        .WithTags("Habitual Purchases");
-
-    group.MapGet("/", async (
-        string json,
-        IHabitualPurchaseService habitualPurchaseService,
-        IUserContext userContext,
-        CancellationToken cancellationToken) =>
+    public static void MapCrudEndpoints(this IEndpointRouteBuilder app)
     {
-      var parameters = new Dictionary<string, object>
-        {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) }
-        };
-      return Results.Ok(await habitualPurchaseService.GetAsync(parameters));
-    })
-        .WithName("GetHabitualPurchases")
-        .WithSummary("Get all habitual purchases")
-        .WithDescription("Retrieve a list of habitual purchases.")
-        .Produces<object>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status404NotFound)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
+        var group = app.MapGroup("/api/habitual-purchases")
+            .RequireAuthorization()
+            .WithDescription("Endpoints for managing habitual purchases.")
+            .WithTags("Habitual Purchases");
 
-    group.MapPost("/", async (
-        CompraHabitualDto compraHabitualDto,
-        IHabitualPurchaseService habitualPurchaseService,
-        IUserContext userContext,
-        CancellationToken cancellationToken) =>
-    {
-      var parameters = new Dictionary<string, object>
+        group.MapGet("/", async (
+            PaginationQuery paginationQuery,
+            IHabitualPurchaseService habitualPurchaseService,
+            IUserContext userContext,
+            CancellationToken cancellationToken) =>
         {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<CompraHabitualDto>(compraHabitualDto)) }
-        };
-      return Results.Ok(await habitualPurchaseService.AddAsync(parameters));
-    })
-        .WithName("CreateHabitualPurchase")
-        .WithSummary("Create a new habitual purchase")
-        .WithDescription("Create a new habitual purchase record.")
-        .Produces<object>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
+            var paginationRequest = paginationQuery.Adapt<PaginationRequest>() with
+            {
+                SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
+            };
 
-    group.MapPut("/{id:int}", async (
-        int id,
-        string json,
-        IHabitualPurchaseService habitualPurchaseService,
-        IUserContext userContext,
-        CancellationToken cancellationToken) =>
-    {
-      var parameters = new Dictionary<string, object>
-        {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id },
-                { "json", SqlStringParam.Sanitize(json) }
-        };
-      return Results.Ok(await habitualPurchaseService.UpdateAsync(parameters));
-    })
-        .WithName("UpdateHabitualPurchase")
-        .WithSummary("Update a habitual purchase")
-        .WithDescription("Update an existing habitual purchase record.")
-        .Produces<object>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .ProducesProblem(StatusCodes.Status404NotFound)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
+            return await habitualPurchaseService
+          .GetAsync(paginationRequest, cancellationToken)
+          .ToGetMinimalApiResultAsync();
+        })
+            .WithName("GetHabitualPurchases")
+            .WithSummary("Get all habitual purchases")
+            .WithDescription("Retrieve a list of habitual purchases.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-    group.MapDelete("/", async (
-        string json,
-        IHabitualPurchaseService habitualPurchaseService,
-        IUserContext userContext,
-        CancellationToken cancellationToken) =>
-    {
-      var parameters = new Dictionary<string, object>
+        group.MapPost("/", async (
+            HabitualPurchaseCreate request,
+            IHabitualPurchaseService habitualPurchaseService,
+            IUserContext userContext,
+            CancellationToken cancellationToken) =>
         {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) }
-        };
-      return Results.Ok(await habitualPurchaseService.DeleteAsync(parameters));
-    })
-        .WithName("DeleteHabitualPurchase")
-        .WithSummary("Delete a habitual purchase")
-        .WithDescription("Delete a habitual purchase record.")
-        .Produces<object>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status404NotFound)
-        .ProducesProblem(StatusCodes.Status500InternalServerError);
-  }
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var requestWithUser = request with { CreatedByUserId = userRoleId };
+
+            return await habitualPurchaseService
+          .AddAsync(requestWithUser, cancellationToken)
+          .ToMinimalApiResultAsync();
+        })
+            .WithName("CreateHabitualPurchase")
+            .WithSummary("Create a new habitual purchase")
+            .WithDescription("Create a new habitual purchase record.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapPut("/{id:int}", async (
+            int id,
+            HabitualPurchaseUpdate request,
+            IHabitualPurchaseService habitualPurchaseService,
+            IUserContext userContext,
+            CancellationToken cancellationToken) =>
+        {
+            var requestWithId = request with { Id = id };
+
+            return await habitualPurchaseService
+          .UpdateAsync(id, requestWithId, cancellationToken)
+          .ToMinimalApiResultAsync();
+        })
+            .WithName("UpdateHabitualPurchase")
+            .WithSummary("Update a habitual purchase")
+            .WithDescription("Update an existing habitual purchase record.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        group.MapDelete("/{id:int}", async (
+            int id,
+            IHabitualPurchaseService habitualPurchaseService,
+            IUserContext userContext,
+            CancellationToken cancellationToken) =>
+        {
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await habitualPurchaseService
+          .DeleteAsync(id, userRoleId, cancellationToken)
+          .ToMinimalApiResultAsync();
+        })
+            .WithName("DeleteHabitualPurchase")
+            .WithSummary("Delete a habitual purchase")
+            .WithDescription("Delete a habitual purchase record.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+    }
 }

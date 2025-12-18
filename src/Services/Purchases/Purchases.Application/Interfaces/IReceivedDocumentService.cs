@@ -1,15 +1,18 @@
+using Purchases.Application.Dtos.ReceivedDocuments;
+
+
 namespace Purchases.Application.Interfaces;
 
 public interface IReceivedDocumentService
 {
-  Task<object> GetAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> AddAsync(Dictionary<string, object> parameters);
-  Task<object> GetByIdAsync(Dictionary<string, object> parameters);
-  Task<XmlDocument> GetByIdXmlAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> MigrateAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> UpdateSubcategoryAsync(Dictionary<string, object> parameters);
-  Task<byte[]> DownloadAsync(Dictionary<string, object> parameters);
-  Task<SpResponse> UploadXmlAsync(Dictionary<string, object> parameters);
+    Task<Result<PagedResult<ReceivedDocumentItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default);
+    Task<Result<ReceivedDocumentItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<string, DomainError>> GetByIdXmlAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<ReceivedDocumentItem, DomainError>> AddAsync(ReceivedDocumentCreate request, CancellationToken cancellationToken = default);
+    Task<Result<ReceivedDocumentItem, DomainError>> UpdateAsync(int id, ReceivedDocumentUpdate request, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> UpdateSubcategoryAsync(int id, ReceivedDocumentCategoryUpdate request, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<ReceivedDocumentItem, DomainError>> MigrateAsync(ReceivedDocumentMigrate request, CancellationToken cancellationToken = default);
+    Task<Result<byte[], DomainError>> DownloadAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
+    Task<Result<bool, DomainError>> UploadXmlAsync(int id, string xmlContent, int userRoleId, CancellationToken cancellationToken = default);
 }
