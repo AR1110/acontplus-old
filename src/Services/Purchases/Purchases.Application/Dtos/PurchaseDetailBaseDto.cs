@@ -2,47 +2,47 @@ namespace Purchases.Application.Dtos
 {
   public record PurchaseDetailBaseDto
   {
-    public required int IdArticulo { get; set; }
+    public required int ArticleId { get; set; }
 
-    public required int IdBodega { get; set; }
+    public required int WarehouseId { get; set; }
 
-    public int? IdMedida { get; set; }
+    public int? UnitId { get; set; }
 
-    public required int IdTipoIva { get; set; }
+    public required int VatTypeId { get; set; }
 
 
     public required decimal Ice { get; set; }
 
 
-    public required decimal Cantidad { get; set; }
+    public required decimal Quantity { get; set; }
 
 
-    public required decimal PrecioUnitario { get; set; }
+    public required decimal UnitPrice { get; set; }
 
 
-    public required decimal PorcentajeDescuento { get; set; }
+    public required decimal DiscountPercentage { get; set; }
 
-    public required string CodigoPorcentaje { get; set; }
-
-
-    public required decimal Tarifa { get; set; }
+    public required string PercentageCode { get; set; }
 
 
-    public required decimal ValorImpuesto { get; set; }
+    public required decimal Rate { get; set; }
 
 
-    public required decimal PrecioTotalSinImpuesto { get; set; }
-
-    public string? Nota { get; set; }
-
-    public required string Descripcion { get; set; }
+    public required decimal TaxAmount { get; set; }
 
 
-    public decimal? ValorDescuento { get; set; }
+    public required decimal TotalPriceExcludingTax { get; set; }
+
+    public string? Note { get; set; }
+
+    public required string Description { get; set; }
 
 
-    public decimal? Descuento { get; set; }
+    public decimal? DiscountValue { get; set; }
 
-    public bool? Estado { get; set; } = true;
+
+    public decimal? DiscountAmount { get; set; }
+
+    public bool? IsActive { get; set; } = true;
   }
 }

@@ -4,37 +4,37 @@ namespace Purchases.Application.Dtos
 {
   public record PurchaseInvoiceReceiptDto : PurchaseBaseDto
   {
-    public required int IdFacturaCompra { get; set; }
-    public required int IdSustentoTributario { get; set; }
+    public required int PurchaseInvoiceId { get; set; }
+    public required int TaxSupportId { get; set; }
 
     [MaxLength(100)]
-    public required string CodEstab { get; set; }
+    public required string EstablishmentCode { get; set; }
 
     [MaxLength(50)]
-    public required string PuntoEmision { get; set; }
+    public required string EmissionPoint { get; set; }
 
     [MaxLength(50)]
-    public required string NroAutorizacion { get; set; }
+    public required string AuthorizationNumber { get; set; }
 
     [MaxLength(100)]
-    public required string CodDoc { get; set; }
+    public required string DocumentCode { get; set; }
 
-    public required DateTime FechaVencimiento { get; set; }
-
-
-    public required decimal SubTotalSinImpuestos { get; set; }
+    public required DateTime DueDate { get; set; }
 
 
-    public required decimal TotalDescuento { get; set; }
+    public required decimal SubtotalExcludingTaxes { get; set; }
 
 
-    public required decimal Propina { get; set; }
+    public required decimal TotalDiscount { get; set; }
 
 
-    public required decimal Recargo { get; set; }
+    public required decimal Tip { get; set; }
 
 
-    public required decimal Transporte { get; set; }
+    public required decimal Surcharge { get; set; }
+
+
+    public required decimal Freight { get; set; }
 
 
     public required decimal Total { get; set; }

@@ -5,197 +5,197 @@ namespace Purchases.Application.Services;
 
 public class ReceivedDocumentService(IUnitOfWork unitOfWork) : IReceivedDocumentService
 {
-    private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-    private const string ModuleName = "Compra.DocumentoRecibido_";
+  private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
+  private const string ModuleName = "Compra.DocumentoRecibido_";
 
-    public async Task<Result<PagedResult<ReceivedDocumentItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
+  public async Task<Result<PagedResult<ReceivedDocumentItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
+  {
+    try
     {
-        try
-        {
-            var response = await _adoRepository.GetPagedFromStoredProcedureAsync<ReceivedDocumentItem>(
-              $"{ModuleName}Get", paginationRequest, cancellationToken: cancellationToken);
+      var response = await _adoRepository.GetPagedFromStoredProcedureAsync<ReceivedDocumentItem>(
+        $"{ModuleName}Get", paginationRequest, cancellationToken: cancellationToken);
 
-            if (response.Items.Any())
-            {
-                return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Success(response);
-            }
+      if (response.Items.Any())
+      {
+        return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Success(response);
+      }
 
-            var error = DomainError.NotFound("RECEIVED_DOCUMENT_NOT_FOUND", "No items were found.");
-            return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Failure(error);
-        }
-        catch (Exception ex)
-        {
-            var error = DomainError.Internal("RECEIVED_DOCUMENT_GET_ERROR",
-              $"An error occurred while retrieving items. {ex.Message}");
-            return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Failure(error);
-        }
+      var error = DomainError.NotFound("RECEIVED_DOCUMENT_NOT_FOUND", "No items were found.");
+      return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Failure(error);
     }
-
-    public async Task<Result<ReceivedDocumentItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var document = await _adoRepository.QuerySingleOrDefaultAsync<ReceivedDocumentItem>($"{ModuleName}GetById", parameters);
-            return document != null
-              ? Result<ReceivedDocumentItem, DomainError>.Success(document)
-              : Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.NotFound("RECEIVED_DOCUMENT_NOT_FOUND", "Received document not found"));
-        }
-        catch (Exception ex)
-        {
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_GETBYID_ERROR", ex.Message));
-        }
+      var error = DomainError.Internal("RECEIVED_DOCUMENT_GET_ERROR",
+        $"An error occurred while retrieving items. {ex.Message}");
+      return Result<PagedResult<ReceivedDocumentItem>, DomainError>.Failure(error);
     }
+  }
 
-    public async Task<Result<string, DomainError>> GetByIdXmlAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  public async Task<Result<ReceivedDocumentItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var ds = await _adoRepository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters);
-            var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
-            if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
-            {
-                var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
-                return !string.IsNullOrEmpty(xmlDoc)
-                  ? Result<string, DomainError>.Success(xmlDoc)
-                  : Result<string, DomainError>.Failure(DomainError.NotFound("XML_NOT_FOUND", "XML document not found"));
-            }
-            return Result<string, DomainError>.Failure(DomainError.NotFound("XML_NOT_FOUND", "XML document not found"));
-        }
-        catch (Exception ex)
-        {
-            return Result<string, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_GETXML_ERROR", ex.Message));
-        }
+      var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
+      var document = await _adoRepository.QuerySingleOrDefaultAsync<ReceivedDocumentItem>($"{ModuleName}GetById", parameters);
+      return document != null
+        ? Result<ReceivedDocumentItem, DomainError>.Success(document)
+        : Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.NotFound("RECEIVED_DOCUMENT_NOT_FOUND", "Received document not found"));
     }
-
-    public async Task<Result<ReceivedDocumentItem, DomainError>> AddAsync(ReceivedDocumentCreate request, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_GETBYID_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<string, DomainError>> GetByIdXmlAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
+      var ds = await _adoRepository.GetDataSetAsync("Recepcion.Documento_Get_Id", parameters);
+      var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
+      if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
+      {
+        var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
+        return !string.IsNullOrEmpty(xmlDoc)
+          ? Result<string, DomainError>.Success(xmlDoc)
+          : Result<string, DomainError>.Failure(DomainError.NotFound("XML_NOT_FOUND", "XML document not found"));
+      }
+      return Result<string, DomainError>.Failure(DomainError.NotFound("XML_NOT_FOUND", "XML document not found"));
+    }
+    catch (Exception ex)
+    {
+      return Result<string, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_GETXML_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<ReceivedDocumentItem, DomainError>> AddAsync(ReceivedDocumentCreate request, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object>
       {
         { "userRoleId", request.CreatedByUserId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
-            if (response?.Code == "1")
-            {
-                return await GetByIdAsync(Convert.ToInt32(response.Payload), request.CreatedByUserId, cancellationToken);
-            }
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_ADD_ERROR", response?.Message ?? "Failed to add received document"));
-        }
-        catch (Exception ex)
-        {
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_ADD_ERROR", ex.Message));
-        }
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
+      if (response?.Code == "1")
+      {
+        return await GetByIdAsync(Convert.ToInt32(response.Payload), request.CreatedByUserId, cancellationToken);
+      }
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_ADD_ERROR", response?.Message ?? "Failed to add received document"));
     }
-
-    public async Task<Result<ReceivedDocumentItem, DomainError>> UpdateAsync(int id, ReceivedDocumentUpdate request, int userRoleId, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_ADD_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<ReceivedDocumentItem, DomainError>> UpdateAsync(int id, ReceivedDocumentUpdate request, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object>
       {
         { "userRoleId", userRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
-            if (response?.Code == "1")
-            {
-                return await GetByIdAsync(id, userRoleId, cancellationToken);
-            }
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_ERROR", response?.Message ?? "Failed to update received document"));
-        }
-        catch (Exception ex)
-        {
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPDATE_ERROR", ex.Message));
-        }
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
+      if (response?.Code == "1")
+      {
+        return await GetByIdAsync(id, userRoleId, cancellationToken);
+      }
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_ERROR", response?.Message ?? "Failed to update received document"));
     }
-
-    public async Task<Result<bool, DomainError>> UpdateSubcategoryAsync(int id, ReceivedDocumentCategoryUpdate request, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubCategoryId }, { "idUsuario", id } };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UpdateSubcategory", parameters);
-            return response?.Code == "1"
-              ? Result<bool, DomainError>.Success(true)
-              : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", response?.Message ?? "Failed to update category"));
-        }
-        catch (Exception ex)
-        {
-            return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", ex.Message));
-        }
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPDATE_ERROR", ex.Message));
     }
+  }
 
-    public async Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  public async Task<Result<bool, DomainError>> UpdateSubcategoryAsync(int id, ReceivedDocumentCategoryUpdate request, CancellationToken cancellationToken = default)
+  {
+    try
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
-            return response?.Code == "1"
-              ? Result<bool, DomainError>.Success(true)
-              : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_DELETE_ERROR", response?.Message ?? "Failed to delete received document"));
-        }
-        catch (Exception ex)
-        {
-            return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_DELETE_ERROR", ex.Message));
-        }
+      var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubcategoryId }, { "idUsuario", id } };
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UpdateSubcategory", parameters);
+      return response?.Code == "1"
+        ? Result<bool, DomainError>.Success(true)
+        : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", response?.Message ?? "Failed to update category"));
     }
-
-    public async Task<Result<ReceivedDocumentItem, DomainError>> MigrateAsync(ReceivedDocumentMigrate request, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object>
+      return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
+      return response?.Code == "1"
+        ? Result<bool, DomainError>.Success(true)
+        : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_DELETE_ERROR", response?.Message ?? "Failed to delete received document"));
+    }
+    catch (Exception ex)
+    {
+      return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_DELETE_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<ReceivedDocumentItem, DomainError>> MigrateAsync(ReceivedDocumentMigrate request, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object>
       {
         { "userRoleId", request.CreatedByUserId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Migrate", parameters);
-            if (response?.Code == "1")
-            {
-                return await GetByIdAsync(request.Id, request.CreatedByUserId, cancellationToken);
-            }
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_MIGRATE_ERROR", response?.Message ?? "Failed to migrate document"));
-        }
-        catch (Exception ex)
-        {
-            return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_MIGRATE_ERROR", ex.Message));
-        }
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Migrate", parameters);
+      if (response?.Code == "1")
+      {
+        return await GetByIdAsync(request.Id, request.CreatedByUserId, cancellationToken);
+      }
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_MIGRATE_ERROR", response?.Message ?? "Failed to migrate document"));
     }
-
-    public async Task<Result<byte[], DomainError>> DownloadAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+    catch (Exception ex)
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}Download", parameters);
-            return data != null
-              ? Result<byte[], DomainError>.Success(data)
-              : Result<byte[], DomainError>.Failure(DomainError.NotFound("DOCUMENT_FILE_NOT_FOUND", "Document file not found"));
-        }
-        catch (Exception ex)
-        {
-            return Result<byte[], DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_DOWNLOAD_ERROR", ex.Message));
-        }
+      return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_MIGRATE_ERROR", ex.Message));
     }
+  }
 
-    public async Task<Result<bool, DomainError>> UploadXmlAsync(int id, string xmlContent, int userRoleId, CancellationToken cancellationToken = default)
+  public async Task<Result<byte[], DomainError>> DownloadAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
     {
-        try
-        {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "xmlContent", xmlContent }, { "userRoleId", userRoleId } };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXml", parameters);
-            return response?.Code == "1"
-              ? Result<bool, DomainError>.Success(true)
-              : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", response?.Message ?? "Failed to upload XML"));
-        }
-        catch (Exception ex)
-        {
-            return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", ex.Message));
-        }
+      var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
+      var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}Download", parameters);
+      return data != null
+        ? Result<byte[], DomainError>.Success(data)
+        : Result<byte[], DomainError>.Failure(DomainError.NotFound("DOCUMENT_FILE_NOT_FOUND", "Document file not found"));
     }
+    catch (Exception ex)
+    {
+      return Result<byte[], DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_DOWNLOAD_ERROR", ex.Message));
+    }
+  }
+
+  public async Task<Result<bool, DomainError>> UploadXmlAsync(int id, string xmlContent, int userRoleId, CancellationToken cancellationToken = default)
+  {
+    try
+    {
+      var parameters = new Dictionary<string, object> { { "id", id }, { "xmlContent", xmlContent }, { "userRoleId", userRoleId } };
+      var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXml", parameters);
+      return response?.Code == "1"
+        ? Result<bool, DomainError>.Success(true)
+        : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", response?.Message ?? "Failed to upload XML"));
+    }
+    catch (Exception ex)
+    {
+      return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", ex.Message));
+    }
+  }
 }

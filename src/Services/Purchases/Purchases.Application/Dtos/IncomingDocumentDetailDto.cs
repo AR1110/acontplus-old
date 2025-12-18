@@ -1,27 +1,27 @@
 namespace Purchases.Application.Dtos
 {
-    public record IncomingDocumentDetailDto : PurchaseDetailBaseDto
-    {
-        public required int OrderIndex { get; set; }
+  public record IncomingDocumentDetailDto : PurchaseDetailBaseDto
+  {
+    public required int OrderIndex { get; set; }
 
-        public int? IdDocumentoIngresoDetail { get; set; }
+    public int? IncomingDocumentDetailId { get; set; }
 
-        public required bool LlevaInventario { get; set; }
-
-
-        public required decimal CantidadTransaccion { get; set; }
+    public required bool TracksInventory { get; set; }
 
 
-        public required decimal Conversion { get; set; }
+    public required decimal TransactionQuantity { get; set; }
 
 
-        public required decimal PrecioCosto { get; set; }
+    public required decimal ConversionRate { get; set; }
 
 
-        public required decimal PrecioCostoFraccionado { get; set; }
+    public required decimal CostPrice { get; set; }
 
-        // * Para otras clases con mínimas diferencias
-        public int? IdLiquidacionCompraDetalle { get; set; }
-        public required int? IdFacturaCompraDetalle { get; set; }
-    }
+
+    public required decimal FractionalCostPrice { get; set; }
+
+    // * Para otras clases con mínimas diferencias
+    public int? PurchaseSettlementDetailId { get; set; }
+    public required int? PurchaseInvoiceDetailId { get; set; }
+  }
 }

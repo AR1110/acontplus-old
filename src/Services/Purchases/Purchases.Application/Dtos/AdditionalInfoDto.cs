@@ -2,9 +2,9 @@ namespace Purchases.Application.Dtos
 {
   public record AdditionalInfoDto
   {
-    public required int IdInfoAdicional { get; set; }
-    public required int IdArticulo { get; set; }
-    public required int IdEtiqueta { get; set; }
-    public required string JsonAdicional { get; set; }
+    public required int AdditionalInfoId { get; set; }
+    public required int ArticleId { get; set; }
+    public required int TagId { get; set; }
+    public required string AdditionalDataJson { get; set; }
   }
 }

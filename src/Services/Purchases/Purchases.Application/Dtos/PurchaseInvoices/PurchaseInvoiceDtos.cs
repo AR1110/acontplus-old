@@ -1,27 +1,27 @@
 namespace Purchases.Application.Dtos.PurchaseInvoices;
 
 public record PurchaseInvoiceCreate(
-    PurchaseInvoiceReceiptDto Comprobante,
-    List<IncomingDocumentDetailDto> Documentos,
-    List<TaxDto> Impuestos,
-    List<ArticleAdditionalInfoDto> ArticulosInfoAdicional,
-    List<InstallmentDto> Cuotas,
+    PurchaseInvoiceReceiptDto Receipt,
+    List<IncomingDocumentDetailDto> Documents,
+    List<TaxDto> Taxes,
+    List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
+    List<InstallmentDto> Installments,
     int CreatedByUserId);
 
 public record PurchaseInvoiceUpdate(
     int Id,
-    PurchaseInvoiceReceiptDto Comprobante,
-    List<IncomingDocumentDetailDto> Documentos,
-    List<TaxDto> Impuestos,
-    List<ArticleAdditionalInfoDto> ArticulosInfoAdicional,
-    List<InstallmentDto> Cuotas);
+    PurchaseInvoiceReceiptDto Receipt,
+    List<IncomingDocumentDetailDto> Documents,
+    List<TaxDto> Taxes,
+    List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
+    List<InstallmentDto> Installments);
 
 public record PurchaseInvoiceItem(
     int Id,
-    PurchaseInvoiceReceiptDto Comprobante,
-    List<IncomingDocumentDetailDto> Documentos,
-    List<TaxDto> Impuestos,
-    List<ArticleAdditionalInfoDto> ArticulosInfoAdicional,
-    List<InstallmentDto> Cuotas,
+    PurchaseInvoiceReceiptDto Receipt,
+    List<IncomingDocumentDetailDto> Documents,
+    List<TaxDto> Taxes,
+    List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
+    List<InstallmentDto> Installments,
     bool IsActive,
     DateTime CreatedAt);

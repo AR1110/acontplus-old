@@ -1,22 +1,22 @@
 namespace Purchases.Application.Dtos.ReceivedDocuments;
 
 public record ReceivedDocumentCreate(
-    ReceivedDocumentReceiptDto Comprobante,
-    string CodEstab,
-    int SubCategoryId,
+    ReceivedDocumentReceiptDto Receipt,
+    string EstablishmentCode,
+    int SubcategoryId,
     int CreatedByUserId);
 
 public record ReceivedDocumentUpdate(
     int Id,
-    ReceivedDocumentReceiptDto Comprobante,
-    string CodEstab,
-    int SubCategoryId);
+    ReceivedDocumentReceiptDto Receipt,
+    string EstablishmentCode,
+    int SubcategoryId);
 
 public record ReceivedDocumentItem(
     int Id,
-    ReceivedDocumentReceiptDto Comprobante,
-    string CodEstab,
-    int SubCategoryId,
+    ReceivedDocumentReceiptDto Receipt,
+    string EstablishmentCode,
+    int SubcategoryId,
     bool IsActive,
     DateTime CreatedAt);
 
@@ -27,4 +27,4 @@ public record ReceivedDocumentMigrate(
 
 public record ReceivedDocumentCategoryUpdate(
     int Id,
-    int SubCategoryId);
+    int SubcategoryId);

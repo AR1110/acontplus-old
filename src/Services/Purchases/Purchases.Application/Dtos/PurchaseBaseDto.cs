@@ -4,23 +4,23 @@ namespace Purchases.Application.Dtos
 {
   public record PurchaseBaseDto
   {
-    public required int IdProveedor { get; set; }
+    public required int SupplierId { get; set; }
 
-    public int? IdTiempoCredito { get; set; }
+    public int? CreditTermId { get; set; }
 
-    public required DateTime FechaEmision { get; set; }
-
-
-    public required decimal TotalSinImpuestos { get; set; }
+    public required DateTime IssueDate { get; set; }
 
 
-    public required decimal PorcentajeDescuento { get; set; }
+    public required decimal TotalExcludingTaxes { get; set; }
 
 
-    public required decimal ImporteTotal { get; set; }
+    public required decimal DiscountPercentage { get; set; }
+
+
+    public required decimal TotalAmount { get; set; }
 
     [MaxLength(300, ErrorMessage = "La observación no puede exceder los 300 caracteres.")]
-    public string? Observacion { get; set; }
+    public string? Note { get; set; }
 
   }
 }
