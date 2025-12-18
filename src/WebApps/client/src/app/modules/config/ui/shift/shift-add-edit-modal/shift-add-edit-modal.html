@@ -21,9 +21,11 @@
             placeholder="Ejemplo: Turno mañana"
             maxlength="50"
           />
-          <mat-error *ngIf="!data.descripcion || data.descripcion.length === 0">
-            La descripción es obligatoria.
-          </mat-error>
+          @if(!data.descripcion || data.descripcion.length === 0){
+            <mat-error>
+              La descripción es obligatoria.
+            </mat-error>
+          }
         </mat-form-field>
       </div>
     </div>
@@ -79,7 +81,7 @@
 </ng-template>
 
 <ng-template #footer>
-  <app-theme-button
+  <acp-button
     [variant]="'success'"
     [icon]="'save'"
     [text]="'Guardar'"

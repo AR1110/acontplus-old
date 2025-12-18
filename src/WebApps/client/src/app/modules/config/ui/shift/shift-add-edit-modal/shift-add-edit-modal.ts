@@ -1,6 +1,5 @@
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ScheduleUseCase } from '@modules/config/application/use-cases/schedule/schedule.use.case';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
 import { Shift, ShiftList } from '@modules/config/domain/models/shift.models';
@@ -11,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-shift-add-edit-modal',
@@ -19,10 +19,10 @@ import Swal from 'sweetalert2';
     MatFormFieldModule,
     MatInputModule,
     MatSlideToggleModule,
-    ThemeButtonComponent,
+    Button,
     MatCustomDialogComponent,
   ],
-  templateUrl: './shift-add-edit-modal.component.html',
+  templateUrl: './shift-add-edit-modal.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShiftAddEditModalComponent implements OnInit {

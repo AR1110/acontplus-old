@@ -1,5 +1,4 @@
-import { MatDynamicCardComponent } from '@shared/components/mat-dynamic-card/mat-dynamic-card.component';
-import { ThemeButtonComponent } from '@shared/components/theme-button/theme-button.component';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -11,6 +10,8 @@ import { DialogService } from '@core/services/dialog.service';
 import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { Button, DynamicCard } from '@acontplus/ng-components';
+import { ShiftAddEditModalComponent } from './shift-add-edit-modal/shift-add-edit-modal';
 
 @Component({
   selector: 'app-shift',
