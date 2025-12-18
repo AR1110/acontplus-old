@@ -10,17 +10,17 @@ public static class CreateEndpoints
             .WithTags("Suppliers");
 
         group.MapPost("/", async (
-            ProveedorDto proveedorDto,
-            IProveedorRepository proveedorRepository,
+            SupplierCreate request,
+            ISupplierService supplierService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<ProveedorDto>(proveedorDto)) }
-            };
-            return Results.Ok(await proveedorRepository.AddAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var requestWithUser = request with { CreatedByUserId = userRoleId };
+
+            return await supplierService
+          .AddAsync(requestWithUser, cancellationToken)
+          .ToMinimalApiResultAsync();
         })
             .WithName("CreateSupplier")
             .WithSummary("Create a new supplier")

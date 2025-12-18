@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mapster" />
+  </ItemGroup>
+
+  <ItemGroup>
+        <ProjectReference Include="..\Purchases.Domain\Purchases.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

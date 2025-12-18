@@ -14,19 +14,19 @@ namespace Purchases.Api.Endpoints;
 
 public static class RegisterEndpoints
 {
-  public static void MapAllEndpoints(this IEndpointRouteBuilder app)
-  {
-    app.MapLookupEndpoints();
-    app.MapPurchaseOrderEndpoints();
-    app.MapSupplierEndpoints();
-    app.MapArticleEndpoints();
-    app.MapPurchaseInvoiceEndpoints();
-    app.MapReceivedDocumentEndpoints();
-    app.MapPurchaseCategoryEndpoints();
-    app.MapHabitualPurchaseEndpoints();
-    app.MapNonHabitualPurchaseEndpoints();
-    app.MapAdditionalArticleDataEndpoints();
-    app.MapDocumentDetailEndpoints();
-    app.MapReceivedDocumentDetailTempEndpoints();
-  }
+    public static void MapAllEndpoints(this IEndpointRouteBuilder app)
+    {
+        app.MapLookupEndpoints();
+        app.MapPurchaseOrderEndpoints();
+        app.MapSupplierEndpoints();
+        app.MapArticleEndpoints();
+        app.MapPurchaseInvoiceEndpoints();
+        app.MapReceivedDocumentEndpoints();
+        app.MapPurchaseCategoryEndpoints();
+        app.MapHabitualPurchaseEndpoints();
+        app.MapNonHabitualPurchaseEndpoints();
+        app.MapAdditionalArticleDataEndpoints();
+        app.MapDocumentDetailEndpoints();
+        app.MapReceivedDocumentDetailTempEndpoints();
+    }
 }

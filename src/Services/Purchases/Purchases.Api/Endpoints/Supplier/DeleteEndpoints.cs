@@ -11,16 +11,14 @@ public static class DeleteEndpoints
 
         group.MapDelete("/{id:int}", async (
             int id,
-            IProveedorRepository proveedorRepository,
+            ISupplierService supplierService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-            };
-            return Results.Ok(await proveedorRepository.DeleteAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await supplierService
+          .DeleteAsync(id, userRoleId, cancellationToken)
+          .ToMinimalApiResultAsync();
         })
             .WithName("DeleteSupplier")
             .WithSummary("Delete a supplier")

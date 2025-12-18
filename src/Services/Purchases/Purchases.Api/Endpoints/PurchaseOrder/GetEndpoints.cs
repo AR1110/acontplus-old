@@ -10,17 +10,25 @@ public static class GetEndpoints
             .WithTags("Purchase Orders");
 
         group.MapGet("/", async (
-            string json,
-            IOrdenCompraRepository ordenCompraRepository,
+            PaginationQuery paginationQuery,
+            IPurchaseOrderService purchaseOrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            var paginationRequest = paginationQuery.Adapt<PaginationRequest>() with
             {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "json", SqlStringParam.Sanitize(json) }
+                SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
             };
-            return Results.Ok(await ordenCompraRepository.GetAsync(parameters));
+
+            if (userRoleId != 0)
+            {
+                paginationRequest = paginationRequest.WithFilter("userRoleId", userRoleId);
+            }
+
+            return await purchaseOrderService
+          .GetAsync(paginationRequest, cancellationToken)
+          .ToGetMinimalApiResultAsync();
         })
             .WithName("GetPurchaseOrders")
             .WithSummary("Get all purchase orders")
@@ -31,16 +39,14 @@ public static class GetEndpoints
 
         group.MapGet("/{id:int}", async (
             int id,
-            IOrdenCompraRepository ordenCompraRepository,
+            IPurchaseOrderService purchaseOrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
-            var parameters = new Dictionary<string, object>
-            {
-                { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },
-                { "id", id }
-            };
-            return Results.Ok(await ordenCompraRepository.GetByIdAsync(parameters));
+            var userRoleId = userContext.GetClaimValue<int>("userRoleId");
+            return await purchaseOrderService
+          .GetByIdAsync(id, userRoleId, cancellationToken)
+          .ToGetMinimalApiResultAsync();
         })
             .WithName("GetPurchaseOrderById")
             .WithSummary("Get a purchase order by ID")
