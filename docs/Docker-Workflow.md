@@ -197,22 +197,22 @@ Ver [scripts/README.md](../scripts/README.md) para documentación detallada de t
 
 ---
 
-## Ambientes: Desarrollo vs Producción
+## Ambientes: Desarrollo vs Staging vs Producción
 
 ### Resumen de Diferencias
 
-| Aspecto | Desarrollo | Producción |
-|---------|------------|------------|
-| **Archivo Compose** | `docker-compose.yml` + `docker-compose.override.yml` | `docker-compose.yml` + `docker-compose.prod.yml` |
-| **Variables de Entorno** | `.env.development` | `.env.production` |
-| **User Secrets** | ✅ Montados desde máquina local | ❌ No disponibles (usar variables de entorno) |
-| **Logging Level** | `Information` / `Debug` | `Warning` / `Error` |
-| **Puertos Expuestos** | Múltiples servicios (debugging) | Solo Ocelot Gateway |
-| **Recursos Limitados** | ❌ Sin límites | ✅ CPU y memoria limitados |
-| **Restart Policy** | `no` / `on-failure` | `always` |
-| **Log a Archivos** | ✅ Habilitado (`ENABLE_LOCAL_FILE_LOGGING=true`) | ❌ Deshabilitado (usar agregadores externos) |
-| **Hot Reload** | ✅ Posible (con volúmenes) | ❌ Requiere rebuild |
-| **Orquestación** | Docker Compose | Kubernetes / Docker Swarm |
+| Aspecto | Desarrollo | Staging | Producción |
+|---------|------------|---------|------------|
+| **Archivo Compose** | `docker-compose.yml` + `docker-compose.override.yml` | `docker-compose.yml` + `docker-compose.staging.yml` | `docker-compose.yml` + `docker-compose.prod.yml` |
+| **Variables de Entorno** | `.env` (template) | `.env.staging` (**gitignored**) | `.env.production` (**gitignored**) |
+| **Logging Level** | `Information` / `Debug` | `Information` | `Warning` / `Error` |
+| **Swagger** | ✅ Habilitado | ✅ Habilitado | ❌ Deshabilitado |
+| **Puertos Expuestos** | Múltiples servicios | Solo Gateway | Solo Gateway |
+| **Recursos Limitados** | ❌ Sin límites | CPU: 1.5, RAM: 512M | CPU: 2, RAM: 1G |
+| **Restart Policy** | `unless-stopped` | `unless-stopped` | `always` |
+| **Log a Archivos** | ✅ Habilitado | ✅ Habilitado | ❌ Deshabilitado |
+| **Puerto Gateway** | `5000` | `80` | `80` |
+| **Base de Datos** | Dev/Local | Staging Server | Production Server |
 
 ---
 
@@ -226,26 +226,23 @@ Ver [scripts/README.md](../scripts/README.md) para documentación detallada de t
 ```
 docker-compose.yml          # Configuración base
 docker-compose.override.yml # Sobreescrituras de desarrollo (auto-merged)
-.env.development            # Variables de entorno
+.env                        # Variables de entorno (template, en git)
 ```
 
 **Comando de Inicio:**
 ```bash
-# Docker Compose automáticamente fusiona override.yml
+# Docker Compose automáticamente usa .env y override.yml
 docker-compose up -d
 
-# O especificando archivo .env
-docker-compose --env-file .env.development up -d
+# O con scripts de perfiles para servicios específicos
+.\scripts\quick-start.ps1 -Profile Sales
 ```
 
 **Características:**
-1. **User Secrets Montados:**
-   ```yaml
-   volumes:
-     - ~/.microsoft/usersecrets:/root/.microsoft/usersecrets:ro
-   ```
-   - Permite usar secretos locales sin hardcodearlos
-   - Prioridad sobre `appsettings.json`
+1. **Archivo .env en Git (Seguro):**
+   - Contiene valores de ejemplo/desarrollo
+   - NO contiene credenciales reales
+   - Sirve como template para otros ambientes
 
 2. **Puertos Múltiples Expuestos:**
    ```yaml
@@ -264,9 +261,10 @@ docker-compose --env-file .env.development up -d
 
 4. **Variables de Conexión Simplificadas:**
    ```bash
-   # .env.development
+   # .env
    SERVICE_URL_SALES=http://sales.api:8080
-   CONNECTION_STRING=Server=localhost;Database=AcontPlus_Dev;...
+   DB_SERVER=3.17.16.153
+   DB_NAME=AcontPlus
    ```
 
 5. **Sin Límites de Recursos:**
@@ -275,27 +273,93 @@ docker-compose --env-file .env.development up -d
 
 **Flujo de Trabajo:**
 ```bash
-# 1. Copiar configuración
-cp .env.example .env
+# 1. Archivo .env ya existe (en git)
+# Solo edita si necesitas cambiar DB o secrets
 
-# 2. Editar .env con valores locales
-# (ConnectionString, JWT secrets, etc.)
-
-# 3. Iniciar servicios
+# 2. Iniciar servicios
 docker-compose up -d
 
-# 4. Ver logs en tiempo real
+# 3. Ver logs en tiempo real
 docker-compose logs -f sales.api
 
-# 5. Hacer cambios en código
-# (editar archivos .cs)
-
-# 6. Rebuild solo el servicio modificado
+# 4. Rebuild solo el servicio modificado
 docker-compose build sales.api
 docker-compose up -d sales.api
+```
 
-# 7. Verificar cambios
-curl http://localhost:5001/api/sales/...
+---
+
+#### 🧪 **STAGING** (Pre-producción)
+
+**Propósito:** Ambiente de pruebas que replica producción con logging detallado.
+
+**Archivos Usados:**
+```
+docker-compose.yml          # Configuración base
+docker-compose.staging.yml  # Overrides para staging
+.env.staging                # Variables sensibles (GITIGNORED)
+```
+
+**Comando de Inicio:**
+```bash
+# Especificar compose file y env file
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+
+# Build + Up
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d --build
+```
+
+**Características:**
+1. **Archivo .env.staging Git-Ignored:**
+   - Contiene credenciales reales de staging
+   - NO está en control de versiones
+   - Se crea manualmente en servidor
+
+2. **Logging Detallado (como Dev):**
+   ```bash
+   LOG_LEVEL=Information
+   ENABLE_LOCAL_FILE_LOGGING=true
+   LOG_MAX_SIZE=20m
+   LOG_MAX_FILE=5
+   ```
+
+3. **Swagger Habilitado (Para Testing):**
+   ```bash
+   ENABLE_SWAGGER=true
+   ```
+
+4. **Límites de Recursos Moderados:**
+   ```yaml
+   deploy:
+     resources:
+       limits:
+         cpus: '1.5'
+         memory: 512M
+   ```
+
+5. **Restart Policy:**
+   ```yaml
+   restart: unless-stopped  # No reinicia automáticamente al boot
+   ```
+
+**Setup Inicial en Servidor Staging:**
+```bash
+# 1. Copiar template
+cp .env.example .env.staging
+
+# 2. Editar con credenciales reales de staging
+nano .env.staging
+
+# Configurar:
+# - DB_SERVER=staging-db-server.com
+# - DB_PASSWORD=RealStagingPassword123!
+# - JWT_SECRET_KEY=$(openssl rand -base64 64)
+
+# 3. Iniciar
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+
+# 4. Verificar
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml ps
 ```
 
 ---
@@ -307,8 +371,8 @@ curl http://localhost:5001/api/sales/...
 **Archivos Usados:**
 ```
 docker-compose.yml       # Configuración base
-docker-compose.prod.yml  # Sobreescrituras de producción (manual)
-.env.production          # Variables de entorno (NO en Git)
+docker-compose.prod.yml  # Sobreescrituras de producción
+.env.production          # Variables sensibles (GITIGNORED)
 ```
 
 **Comando de Inicio:**
@@ -319,8 +383,6 @@ docker-compose \
   -f docker-compose.prod.yml \
   --env-file .env.production \
   up -d
-
-# Con registry privado
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
@@ -336,10 +398,11 @@ docker-compose \
 
 **Características:**
 
-1. **Sin User Secrets:**
-   - Variables de entorno desde `.env.production` o secretos de orquestador
-   - En Kubernetes: ConfigMaps y Secrets
-   - En Docker Swarm: Docker Secrets
+**Características:**
+1. **Archivo .env.production Git-Ignored:**
+   - Contiene credenciales reales de producción
+   - NO está en control de versiones
+   - Se gestiona via secrets manager (Azure Key Vault, AWS Secrets, etc.)
 
 2. **Solo Gateway Expuesto:**
    ```yaml
@@ -354,26 +417,26 @@ docker-compose \
 
 3. **Restart Policy:**
    ```yaml
-   restart: always  # Reinicia automáticamente si falla
+   restart: always  # Reinicia automáticamente si falla o en boot
    ```
 
-4. **Límites de Recursos:**
+4. **Límites de Recursos Agresivos:**
    ```yaml
    deploy:
      resources:
        limits:
-         cpus: '1'
-         memory: 512M
+         cpus: '2'
+         memory: 1G
        reservations:
-         cpus: '0.25'
-         memory: 128M
+         cpus: '0.5'
+         memory: 256M
    ```
 
 5. **Logging Optimizado:**
    ```yaml
    environment:
      - LOG_LEVEL=Warning
-     - ENABLE_LOCAL_FILE_LOGGING=false
+     - ENABLE_LOCAL_FILE_LOGGING=false  # Solo Docker logs
 
    logging:
      driver: json-file
@@ -382,37 +445,37 @@ docker-compose \
        max-file: 3
    ```
 
-6. **Variables de Conexión Seguras:**
+6. **Swagger Deshabilitado:**
    ```bash
-   # .env.production (NO COMMITEAR en Git)
-   CONNECTION_STRING=Server=db.production.com;Database=AcontPlus;User Id=${DB_USER};Password=${DB_PASSWORD};
-   JWT_SECRET_KEY=${SECURE_JWT_KEY_FROM_VAULT}
-   DOCKER_REGISTRY=myregistry.azurecr.io/
+   ENABLE_SWAGGER=false
    ```
 
-**Flujo de Trabajo:**
-
+**Setup Inicial en Servidor Producción:**
 ```bash
-# 1. En servidor de producción, crear .env.production
-nano .env.production
-# (configurar con valores seguros)
+# 1. Copiar template
+cp .env.example .env.production
 
-# 2. Pull imágenes desde registry
-docker login myregistry.azurecr.io
+# 2. Editar con credenciales reales de producción
+nano .env.production
+
+# Configurar:
+# - DB_SERVER=production-db-server.com
+# - DB_PASSWORD=SecureProductionPassword!
+# - JWT_SECRET_KEY=$(openssl rand -base64 64)
+# - SAFE_ORIGINS=https://app.acontplus.com
+
+# 3. Pull imágenes desde registry (si aplica)
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
 
-# 3. Iniciar con configuración de producción
+# 4. Iniciar
 docker-compose \
   -f docker-compose.yml \
   -f docker-compose.prod.yml \
   --env-file .env.production \
   up -d
 
-# 4. Verificar estado
-docker ps
-
-# 5. Monitorear logs (limitados)
-docker logs ocelot-api --tail 100
+# 5. Verificar
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps
 
 # 6. Health check
 curl http://localhost/health
@@ -421,6 +484,123 @@ curl http://localhost/health
 ---
 
 ### Comparativa de Archivos de Configuración
+
+#### `.env` (Desarrollo - EN GIT)
+```bash
+# Development - safe to commit
+COMPOSE_PROJECT_NAME=acontplus-dev
+ASPNETCORE_ENVIRONMENT=Development
+GATEWAY_PORT=5000
+LOG_LEVEL=Information
+ENABLE_SWAGGER=true
+
+# DB con valores de ejemplo
+DB_SERVER=localhost
+DB_PASSWORD=DevPassword123  # No es credencial real
+```
+
+#### `.env.staging` (GITIGNORED)
+```bash
+# Staging - NEVER COMMIT
+COMPOSE_PROJECT_NAME=acontplus-staging
+ASPNETCORE_ENVIRONMENT=Staging
+GATEWAY_PORT=80
+LOG_LEVEL=Information
+ENABLE_SWAGGER=true
+
+# DB con credenciales reales de staging
+DB_SERVER=staging-db.internal
+DB_PASSWORD=RealStagingPassword!@#
+JWT_SECRET_KEY=ActualSecretKeyForStaging...
+```
+
+#### `.env.production` (GITIGNORED)
+```bash
+# Production - NEVER COMMIT
+COMPOSE_PROJECT_NAME=acontplus-prod
+ASPNETCORE_ENVIRONMENT=Production
+GATEWAY_PORT=80
+LOG_LEVEL=Warning
+ENABLE_SWAGGER=false
+
+# DB con credenciales reales de producción
+DB_SERVER=prod-db.internal
+DB_PASSWORD=SecureProductionPassword!@#
+JWT_SECRET_KEY=ProductionSecretKey...
+```
+
+---
+
+### Comandos por Ambiente
+
+#### Desarrollo
+```bash
+# Iniciar (usa .env automáticamente)
+docker-compose up -d
+
+# Con perfiles específicos
+.\scripts\quick-start.ps1 -Profile Sales
+
+# Logs
+docker-compose logs -f
+
+# Rebuild un servicio
+docker-compose build sales.api
+docker-compose up -d sales.api
+
+# Detener
+docker-compose down
+```
+
+#### Staging
+```bash
+# Iniciar
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d
+
+# Build y up
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d --build
+
+# Logs
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml logs -f
+
+# Detener
+docker-compose -f docker-compose.yml -f docker-compose.staging.yml down
+```
+
+#### Producción
+```bash
+# Iniciar
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production up -d
+
+# Pull y up (sin build, usa imágenes pre-built)
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+# Rolling update de un servicio
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull sales.api
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d --no-deps sales.api
+
+# Logs limitados
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100
+
+# Detener (graceful shutdown)
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml down --timeout 30
+```
+
+---
+
+### Tabla de Comparación Rápida
+
+| Comando | Desarrollo | Staging | Producción |
+|---------|-----------|---------|------------|
+| **Up** | `docker-compose up -d` | `docker-compose -f docker-compose.yml -f docker-compose.staging.yml --env-file .env.staging up -d` | `docker-compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.production up -d` |
+| **Down** | `docker-compose down` | `docker-compose -f docker-compose.yml -f docker-compose.staging.yml down` | `docker-compose -f docker-compose.yml -f docker-compose.prod.yml down` |
+| **Logs** | `docker-compose logs -f` | `docker-compose -f docker-compose.yml -f docker-compose.staging.yml logs -f` | `docker-compose -f docker-compose.yml -f docker-compose.prod.yml logs --tail=100` |
+| **Build** | `docker-compose build` | `docker-compose -f docker-compose.yml -f docker-compose.staging.yml build` | `docker-compose -f docker-compose.yml -f docker-compose.prod.yml build` |
+
+---
+
+### Comparativa de Archivos docker-compose
 
 #### `docker-compose.override.yml` (Desarrollo)
 ```yaml
