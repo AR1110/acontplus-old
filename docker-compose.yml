@@ -4,85 +4,85 @@
 
 services:
   ocelot.api:
-    image: ${DOCKER_REGISTRY-}ocelot-api
+    image: ${DOCKER_REGISTRY-acontplus/}ocelot-api
     build:
       context: .
       dockerfile: src/ApiGateways/Ocelot.Api/Dockerfile
 
   accounting.api:
-    image: ${DOCKER_REGISTRY-}accounting-api
+    image: ${DOCKER_REGISTRY-acontplus/}accounting-api
     build:
       context: .
       dockerfile: src/Services/Accounting/Accounting.Api/Dockerfile
 
   barbershop.api:
-    image: ${DOCKER_REGISTRY-}barbershop-api
+    image: ${DOCKER_REGISTRY-acontplus/}barbershop-api
     build:
       context: .
       dockerfile: src/Services/BarberShop/BarberShop.Api/Dockerfile
 
   billing.api:
-    image: ${DOCKER_REGISTRY-}billing-api
+    image: ${DOCKER_REGISTRY-acontplus/}billing-api
     build:
       context: .
       dockerfile: src/Services/Billing/Billing.Api/Dockerfile
 
   common.api:
-    image: ${DOCKER_REGISTRY-}common-api
+    image: ${DOCKER_REGISTRY-acontplus/}common-api
     build:
       context: .
       dockerfile: src/Services/Common/Common.Api/Dockerfile
 
   configuration.api:
-    image: ${DOCKER_REGISTRY-}configuration-api
+    image: ${DOCKER_REGISTRY-acontplus/}configuration-api
     build:
       context: .
       dockerfile: src/Services/Configuration/Configuration.Api/Dockerfile
 
   identity.api:
-    image: ${DOCKER_REGISTRY-}identity-api
+    image: ${DOCKER_REGISTRY-acontplus/}identity-api
     build:
       context: .
       dockerfile: src/Services/Identity/Identity.Api/Dockerfile
 
   inventory.api:
-    image: ${DOCKER_REGISTRY-}inventory-api
+    image: ${DOCKER_REGISTRY-acontplus/}inventory-api
     build:
       context: .
       dockerfile: src/Services/Inventory/Inventory.Api/Dockerfile
 
   mechanical.api:
-    image: ${DOCKER_REGISTRY-}mechanical-api
+    image: ${DOCKER_REGISTRY-acontplus/}mechanical-api
     build:
       context: .
       dockerfile: src/Services/Mechanical/Mechanical.Api/Dockerfile
 
   purchases.api:
-    image: ${DOCKER_REGISTRY-}purchases-api
+    image: ${DOCKER_REGISTRY-acontplus/}purchases-api
     build:
       context: .
       dockerfile: src/Services/Purchases/Purchases.Api/Dockerfile
 
   restaurant.api:
-    image: ${DOCKER_REGISTRY-}restaurant-api
+    image: ${DOCKER_REGISTRY-acontplus/}restaurant-api
     build:
       context: .
       dockerfile: src/Services/Restaurant/Restaurant.Api/Dockerfile
 
   sales.api:
-    image: ${DOCKER_REGISTRY-}sales-api
+    image: ${DOCKER_REGISTRY-acontplus/}sales-api
     build:
       context: .
       dockerfile: src/Services/Sales/Sales.Api/Dockerfile
 
   technicalsupport.api:
-    image: ${DOCKER_REGISTRY-}technicalsupport-api
+    image: ${DOCKER_REGISTRY-acontplus/}technicalsupport-api
     build:
       context: .
       dockerfile: src/Services/TechnicalSupport/TechnicalSupport.Api/Dockerfile
 
   vet.api:
-    image: ${DOCKER_REGISTRY-}vet-api
+    image: ${DOCKER_REGISTRY-acontplus/}vet-api
     build:
       context: .
       dockerfile: src/Services/Vet/Vet.Api/Dockerfile
