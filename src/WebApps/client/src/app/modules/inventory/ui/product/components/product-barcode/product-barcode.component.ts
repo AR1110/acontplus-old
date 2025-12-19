@@ -108,7 +108,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
       });
   }
 
-  // resultModalMedida(result: unknown) {
+  // resultModalMedida(result: any) {
   //   try {
   //     if (result && typeof result !== 'object') return;
   //
@@ -134,7 +134,6 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   }
 
   openColor() {
-    console.log('open');
     const el = document.getElementById('ngx-colors-overlay');
 
     if (el) {

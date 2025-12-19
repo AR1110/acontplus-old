@@ -1,4 +1,4 @@
-import { Component, inject, Input, signal, OnInit } from '@angular/core';
+import { Component, inject, Input, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
@@ -10,10 +10,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
+import { MEASURE_SERVICE } from '@inventory/tokens/inventory-token';
 import { finalize } from 'rxjs/operators';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-measure-add-edit-modal',
   imports: [
     FormsModule,
@@ -34,7 +35,7 @@ export class MeasureAddEditModalComponent implements OnInit {
     descripcion: null | string;
   }>(MAT_DIALOG_DATA);
   tS = inject(ToastrNotificationService);
-  private _measureUseCase = inject(MeasureUseCase);
+  private measureService = inject(MEASURE_SERVICE);
 
   btnText = 'Guardar';
   titleModal = 'Nueva Medida';
@@ -81,7 +82,7 @@ export class MeasureAddEditModalComponent implements OnInit {
 
       if (this.data.id > 0) {
         this.loading.set(true);
-        this._measureUseCase
+        this.measureService
           .put(this.data.id, this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);
@@ -89,7 +90,7 @@ export class MeasureAddEditModalComponent implements OnInit {
 
       if (!(this.data.id > 0)) {
         this.loading.set(true);
-        this._measureUseCase
+        this.measureService
           .post(this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);

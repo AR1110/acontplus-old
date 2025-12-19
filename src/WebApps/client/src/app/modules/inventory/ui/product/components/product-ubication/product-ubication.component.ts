@@ -167,7 +167,7 @@ export class ProductUbicationComponent implements OnInit {
     console.log(this.data());
   }
 
-  async askToDelete(item: unknown) {
+  async askToDelete(item: any) {
     const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,

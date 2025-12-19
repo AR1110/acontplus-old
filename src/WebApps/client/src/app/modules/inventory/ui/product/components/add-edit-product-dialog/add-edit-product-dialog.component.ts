@@ -466,7 +466,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalSubFamilia(result: unknown) {
+  resultModalSubFamilia(result: any) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -496,7 +496,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalMedida(result: unknown) {
+  resultModalMedida(result: any) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -520,7 +520,7 @@ export class AddEditProductDialogComponent implements OnInit {
     }
   }
 
-  resultModalTag(result: unknown) {
+  resultModalTag(result: any) {
     try {
       if (result && typeof result !== 'object') return;
 
@@ -719,7 +719,6 @@ export class AddEditProductDialogComponent implements OnInit {
     }
 
     const utilidad = pricingCalculateUtil.getValueUtility(precioVenta, this.data.precioCosto);
-    console.log(utilidad);
 
     precioVenta = roundNumber(precioVenta, this.decimal.nroPrecio);
     precioConIva = roundNumber(precioConIva, this.decimal.nroPrecio);

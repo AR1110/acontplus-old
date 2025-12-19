@@ -11,7 +11,7 @@ export class ProductAddEditDirective {
     const modalRef = this.modalSvc.open(AddEditProductDialogComponent, {
       size: 'xl',
     });
-    modalRef.subscribe((result: unknown) => {
+    modalRef.subscribe((result: any) => {
       if (this.resultModalHandler && typeof result === 'object') {
         this.resultModalHandler.emit(result);
       }

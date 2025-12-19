@@ -1,10 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { DynamicCard } from '@acontplus/ng-components';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ListWarehouseUseCase } from '@inventory/domain/usecases/warehouse/list-warehouse.use-case';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -12,12 +11,13 @@ import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { AddEditWarehouseComponent } from '@inventory/ui/warehouse/add-edit-warehouse/add-edit-warehouse.component';
 import Swal from 'sweetalert2';
-import { DeleteWarehouseUseCase } from '@inventory/domain/usecases/warehouse/delete-warehouse.use-case';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SendMaxWarehousesUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { firstValueFrom } from 'rxjs';
+import { WAREHOUSE_SERVICE } from '@inventory/tokens/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-warehouse',
   imports: [
     DynamicCard,
@@ -32,8 +32,7 @@ import { firstValueFrom } from 'rxjs';
   styles: ``,
 })
 export class WarehouseComponent implements OnInit {
-  private $listUseCase = inject(ListWarehouseUseCase);
-  private $deleteUseCase = inject(DeleteWarehouseUseCase);
+  private warehouseService = inject(WAREHOUSE_SERVICE);
   private $sendMaxWarehousesUseCase = inject(SendMaxWarehousesUseCase);
 
   private _dialogSvc = inject(DialogService);
@@ -73,7 +72,7 @@ export class WarehouseComponent implements OnInit {
       pageIndex: 1,
       pageSize: 25,
     };
-    this.$listUseCase.execute(dataSearch).subscribe((response) => {
+    this.warehouseService.list(dataSearch).subscribe((response) => {
       this.dataSource.set(response.data);
     });
   }
@@ -95,7 +94,7 @@ export class WarehouseComponent implements OnInit {
 
     if (!isConfirmed) return;
 
-    this.$deleteUseCase.execute({ idBodega: item.idBodega }).subscribe((response) => {
+    this.warehouseService.delete({ idBodega: item.idBodega }).subscribe((response) => {
       if (response.code === '0') {
         this._tS.show({
           type: 'warning',

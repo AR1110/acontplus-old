@@ -6,7 +6,7 @@ import { isValidField } from '@core/utils/utils';
 import { InputChip } from '@acontplus/ng-components';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
+import { TAG_SERVICE } from '@inventory/tokens/inventory-token';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -40,7 +40,7 @@ export class TagsAddEditModalComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);
-  private _tagUseCase = inject(TagUseCase);
+  private tagService = inject(TAG_SERVICE);
 
   btnText = 'Guardar';
   titleModal = signal('Nuevo');
@@ -109,9 +109,9 @@ export class TagsAddEditModalComponent implements OnInit {
       };
 
       if (this.data.idEtiqueta > 0) {
-        this._tagUseCase.put(this.data.idEtiqueta, data).subscribe(this.successReponse);
+        this.tagService.put(this.data.idEtiqueta, data).subscribe(this.successReponse);
       } else {
-        this._tagUseCase.post(data).subscribe(this.successReponse);
+        this.tagService.post(data).subscribe(this.successReponse);
       }
     } catch (error) {
       console.log(error);

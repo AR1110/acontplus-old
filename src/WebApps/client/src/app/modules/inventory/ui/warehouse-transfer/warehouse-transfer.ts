@@ -1,14 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DynamicCard, Pagination } from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
-import {
-  WarehouseTransferGetByIdUseCase,
-  WarehouseTransferUpdateStatusUseCase,
-  WarehouseTransferUseCase,
-} from '@inventory/domain/usecases/warehouse-transfer.use-case';
-import { Pagination } from '@acontplus/ng-components';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/tokens/inventory-token';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
@@ -59,9 +54,7 @@ export class WarehouseTransfer implements OnInit {
   inventory_modules_code = signal(INVENTORY_MODULES_CODE);
   action_aliases = signal(ACTION_ALIASES);
   public perms = usePermissions(this.inventory_modules_code().WAREHOUSE_TRANSFER);
-  private _useCase = inject(WarehouseTransferUseCase);
-  private _getByIdUseCase = inject(WarehouseTransferGetByIdUseCase);
-  private _updateStatusUseCase = inject(WarehouseTransferUpdateStatusUseCase);
+  private warehouseTransferService = inject(WAREHOUSE_TRANSFER_SERVICE);
   private _reportUseCase = inject(GenerateReportUseCase);
   private noti = inject(ToastrNotificationService);
   private dgSvc = inject(DialogService);
@@ -134,7 +127,7 @@ export class WarehouseTransfer implements OnInit {
 
             if (!isConfirmed) return;
 
-            this._updateStatusUseCase.execute(item.id).subscribe((response) => {
+            this.warehouseTransferService.updateStatus(item.id).subscribe((response) => {
               if (response.success) {
                 this.noti.success({
                   message: response.message,
@@ -247,7 +240,6 @@ export class WarehouseTransfer implements OnInit {
         },
       })
       .subscribe((result) => {
-        console.log(result);
         if (result && typeof result === 'object') {
           this.refresh();
         }
@@ -292,7 +284,7 @@ export class WarehouseTransfer implements OnInit {
       });
     }
     this.isLoadingResults.set(true);
-    this._useCase
+    this.warehouseTransferService
       .getAll(this.getParams())
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
@@ -309,7 +301,7 @@ export class WarehouseTransfer implements OnInit {
 
   private getFilterData() {
     this.isLoadingResults.set(true);
-    this._useCase
+    this.warehouseTransferService
       .getDataFilter()
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
@@ -336,13 +328,13 @@ export class WarehouseTransfer implements OnInit {
   }
 
   handleDuplicated(rowData: any) {
-    this._getByIdUseCase.execute(rowData.id).subscribe((response) => {
+    this.warehouseTransferService.getById(rowData.id).subscribe((response) => {
       this.openAddEditDialog('duplicate', rowData.id, response);
     });
   }
 
   handleEdit(rowData: any) {
-    this._getByIdUseCase.execute(rowData.id).subscribe((response) => {
+    this.warehouseTransferService.getById(rowData.id).subscribe((response) => {
       this.openAddEditDialog('edit', rowData.id, response);
     });
   }

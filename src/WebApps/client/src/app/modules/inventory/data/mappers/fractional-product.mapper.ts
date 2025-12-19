@@ -93,7 +93,7 @@ export class FractionalProductPostMapper {
   static toJson(obj: FractionalProductDataSave) {
     const { data } = obj;
 
-    const pvps = obj.pvps.map((item: unknown, index: number) => {
+    const pvps = obj.pvps.map((item: any, index: number) => {
       return {
         idTarifa: item.idTarifa,
         precioVenta: item.precioVenta,

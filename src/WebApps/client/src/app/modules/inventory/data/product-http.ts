@@ -202,7 +202,7 @@ export class ProductHttp implements ProductRepository {
     throw new Error('Method not implemented.');
   }
 
-  listProductWithPrices(params: unknown): Observable<unknown> {
+  listProductWithPrices(params: any): Observable<any> {
     const json = ListProductWithPricesMapper.toJson(params);
 
     return this._http

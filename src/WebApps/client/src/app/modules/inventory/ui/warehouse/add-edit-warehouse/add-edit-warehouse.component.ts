@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
@@ -12,11 +12,11 @@ import { getValidId, isValidField } from '@core/utils/utils';
 import { WarehouseList } from '@inventory/domain/models/warehouse.model';
 import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { UpdateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/update-warehouse.use-case';
-import { CreateWarehouseUseCase } from '@inventory/domain/usecases/warehouse/create-warehouse.use-case';
+import { WAREHOUSE_SERVICE } from '@inventory/tokens/inventory-token';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-add-edit-warehouse',
   imports: [
     MatFormFieldModule,
@@ -35,9 +35,7 @@ export class AddEditWarehouseComponent implements OnInit {
   private params = inject<WarehouseList>(MAT_DIALOG_DATA);
   private sharedSvc = inject(SharedService);
   private _tS = inject(ToastrNotificationService);
-
-  private $updateUseCase = inject(UpdateWarehouseUseCase);
-  private $createUseCase = inject(CreateWarehouseUseCase);
+  private warehouseService = inject(WAREHOUSE_SERVICE);
 
   title = 'Nueva Bodega';
   btnText = 'Guardar';
@@ -83,10 +81,10 @@ export class AddEditWarehouseComponent implements OnInit {
     }
 
     if (getValidId(this.params.idBodega)) {
-      this.$updateUseCase.execute(this.data).subscribe(this.successResponse);
+      this.warehouseService.update(this.data).subscribe(this.successResponse);
       return;
     }
-    this.$createUseCase.execute(this.data).subscribe(this.successResponse);
+    this.warehouseService.create(this.data).subscribe(this.successResponse);
   }
 
   successResponse = (response: ApiResponseLegacy) => {

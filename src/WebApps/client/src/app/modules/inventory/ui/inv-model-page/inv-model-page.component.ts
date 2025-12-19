@@ -13,7 +13,7 @@ import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { InventarioModeloUseCase } from '@inventory/domain/usecases/inventario-modelo.use-case';
+import { INVENTARIO_MODELO_SERVICE } from '@inventory/tokens/inventory-token';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -31,7 +31,7 @@ import { finalize } from 'rxjs/operators';
   styles: ``,
 })
 export class InvModelPageComponent implements OnInit {
-  private _modeloUseCase = inject(InventarioModeloUseCase);
+  private modeloService = inject(INVENTARIO_MODELO_SERVICE);
   pagination = signal(new Pagination());
   isLoadingResults = signal(false);
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -60,7 +60,7 @@ export class InvModelPageComponent implements OnInit {
     if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
-    this._modeloUseCase
+    this.modeloService
       .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
@@ -103,7 +103,7 @@ export class InvModelPageComponent implements OnInit {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this._modeloUseCase.updateStatus(data.idModelo).subscribe((response) => {
+          this.modeloService.updateStatus(data.idModelo).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

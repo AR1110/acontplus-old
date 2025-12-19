@@ -21,7 +21,7 @@ export class MeasureAddEditDirective {
         id: this.params.idMedida,
       },
     });
-    modalRef.subscribe((result: unknown) => {
+    modalRef.subscribe((result: any) => {
       if (this.onResultModal && typeof result === 'object') {
         this.onResultModal.emit(result);
       }
@@ -29,6 +29,6 @@ export class MeasureAddEditDirective {
   }
 
   /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
+  constructor(...args: any[]);
   constructor() {}
 }

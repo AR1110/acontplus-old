@@ -7,10 +7,10 @@ import { ProductMeasure } from '@inventory/domain/models/product-measure';
  * This legacy version remains for backward compatibility.
  */
 export const mergeMeasureUtil = function (
-  principalMedidas: unknown,
-  fraccionadoMedidas: unknown,
+  principalMedidas: any,
+  fraccionadoMedidas: any,
 ): MedidaProducto[] {
-  const parseMedidas = (medidas: unknown): any[] => {
+  const parseMedidas = (medidas: any): any[] => {
     if (typeof medidas === 'string') {
       try {
         return JSON.parse(medidas) || [];
@@ -92,13 +92,13 @@ export const mergeMeasureUtil = function (
  * Replaces `mergeMeasureUtil`
  */
 export const mergeProductMeasures = function (
-  mainMeasures: unknown,
-  fractionalMeasures: unknown,
+  mainMeasures: any,
+  fractionalMeasures: any,
 ): ProductMeasure[] {
-  const parseMeasures = (measures: unknown): any[] => {
+  const parseMeasures = (measures: any): any[] => {
     if (typeof measures === 'string') {
       try {
-        return JSON.parse(measures) || [];
+        return JSON.parse(measures) ?? [];
       } catch {
         return [];
       }
@@ -111,7 +111,7 @@ export const mergeProductMeasures = function (
   const mainParsed: any[] = parseMeasures(mainMeasures);
   const fractionalParsed: any[] = parseMeasures(fractionalMeasures);
 
-  const parseFees = (fees: unknown): any[] => {
+  const parseFees = (fees: any): any[] => {
     const parsed = typeof fees === 'string' ? JSON.parse(fees) : fees;
     if (!Array.isArray(parsed)) return [];
     return parsed.map((f) => ({

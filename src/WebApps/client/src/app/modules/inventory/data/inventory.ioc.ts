@@ -1,36 +1,36 @@
 import { Provider } from '@angular/core';
-import { BrandRepository } from '@inventory/domain/repositories/brand.repository';
-import { BrandWebRepository } from '@inventory/data/brand/brand-web.repository';
+import { BrandWebRepository } from '@inventory/data/brand-web.repository';
 import { FractionalProductHttp } from '@inventory/data/fractional-product-http';
-import { InventarioModeloRepository } from '@inventory/domain/repositories/inventario-modelo.repository';
-import { InventarioModeloWebRepository } from '@inventory/data/inventario-modelo/inventario-modelo-web.repository';
-import { MassiveTaxRepository } from '@inventory/domain/repositories/massive-tax.repository';
-import { MassiveTaxWebRepository } from '@inventory/data/massive-tax/massive-tax-web.repository';
-import { MeasureRepository } from '@inventory/domain/repositories/measure.repository';
-import { MeasureWebRepository } from '@inventory/data/measure/measure-web.repository';
+import { InventarioModeloHttp } from '@inventory/data/inventario-modelo-http';
+import { MassiveTaxHttp } from '@inventory/data/massive-tax-http';
+import { MeasureHttp } from '@inventory/data/measure-http';
 import { ProductHttp } from '@inventory/data/product-http';
 import { ProductBarcodeHttp } from '@inventory/data/product-barcode-http';
 import { ProductPhotoHttp } from '@inventory/data/product-photo-http';
 import { ProductUbicationHttp } from '@inventory/data/product-ubication-http';
-import { TagRepository } from '@inventory/domain/repositories/tag.repository';
-import { TagWebRepository } from '@inventory/data/tag/tag-web.repository';
-import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
-import { WarehouseTransferHttpRepository } from '@inventory/data/warehouse-transfer/warehouse-transfer-http.repository';
-import { WarehouseRepository } from '@inventory/domain/repositories/warehouse.repository';
-import { WarehouseRepositoryImpl } from '@inventory/data/warehouse/warehouse-repository.impl';
+import { TagHttp } from '@inventory/data/tag-http';
+import { WarehouseTransferHttp } from '@inventory/data/warehouse-transfer-http';
+import { WarehouseHttp } from '@inventory/data/warehouse-http';
 import {
   FRACTIONAL_PRODUCT_SERVICE,
   PRODUCT_SERVICE,
   PRODUCT_BARCODE_SERVICE,
   PRODUCT_PHOTO_SERVICE,
   PRODUCT_UBICATION_SERVICE,
+  INVENTORY_ADJUSTMENT_SERVICE,
+  BRAND_SERVICE,
+  MEASURE_SERVICE,
+  TAG_SERVICE,
+  WAREHOUSE_SERVICE,
+  WAREHOUSE_TRANSFER_SERVICE,
+  MASSIVE_TAX_SERVICE,
+  INVENTARIO_MODELO_SERVICE,
 } from '@inventory/tokens/inventory-token';
-import { InventoryAdjustmentRepository } from '@inventory/inventory-adjustment/domain/repositories/inventory-adjustment.repository';
-import { InventoryAdjustmentRepositoryImpl } from '@inventory/inventory-adjustment/infrastructure/inventory-adjustment-repository.impl';
+import { InventoryAdjustmentHttp } from '@inventory/data/inventory-adjustment-http';
 
 export const DATA_INVENTORY_IOC: Provider[] = [
   {
-    provide: BrandRepository,
+    provide: BRAND_SERVICE,
     useClass: BrandWebRepository,
   },
   {
@@ -38,22 +38,21 @@ export const DATA_INVENTORY_IOC: Provider[] = [
     useClass: FractionalProductHttp,
   },
   {
-    provide: InventarioModeloRepository,
-    useClass: InventarioModeloWebRepository,
+    provide: INVENTARIO_MODELO_SERVICE,
+    useClass: InventarioModeloHttp,
   },
   {
-    provide: MassiveTaxRepository,
-    useClass: MassiveTaxWebRepository,
+    provide: MASSIVE_TAX_SERVICE,
+    useClass: MassiveTaxHttp,
   },
   {
-    provide: MeasureRepository,
-    useClass: MeasureWebRepository,
+    provide: MEASURE_SERVICE,
+    useClass: MeasureHttp,
   },
   {
     provide: PRODUCT_SERVICE,
     useClass: ProductHttp,
   },
-
   {
     provide: PRODUCT_BARCODE_SERVICE,
     useClass: ProductBarcodeHttp,
@@ -67,19 +66,19 @@ export const DATA_INVENTORY_IOC: Provider[] = [
     useClass: ProductUbicationHttp,
   },
   {
-    provide: TagRepository,
-    useClass: TagWebRepository,
+    provide: TAG_SERVICE,
+    useClass: TagHttp,
   },
   {
-    provide: WarehouseTransferRepository,
-    useClass: WarehouseTransferHttpRepository,
+    provide: WAREHOUSE_TRANSFER_SERVICE,
+    useClass: WarehouseTransferHttp,
   },
   {
-    provide: WarehouseRepository,
-    useClass: WarehouseRepositoryImpl,
+    provide: WAREHOUSE_SERVICE,
+    useClass: WarehouseHttp,
   },
   {
-    provide: InventoryAdjustmentRepository,
-    useClass: InventoryAdjustmentRepositoryImpl,
+    provide: INVENTORY_ADJUSTMENT_SERVICE,
+    useClass: InventoryAdjustmentHttp,
   },
 ];

@@ -7,7 +7,7 @@ export interface ProductPhotoRepository {
   put(obj: ProductPhotoSaveParam): Observable<ApiResponseLegacy>;
   getByProductId(productId: number): Observable<
     ApiResponseLegacy<{
-      productPhotos: unknown[];
+      productPhotos: any[];
     }>
   >;
   setDefault(id: number, isDefault: boolean): Observable<ApiResponseLegacy>;

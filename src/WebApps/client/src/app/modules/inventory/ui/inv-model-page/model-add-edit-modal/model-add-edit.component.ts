@@ -1,12 +1,11 @@
-import { Component, inject, Input, signal, OnInit } from '@angular/core';
+import { Component, inject, Input, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
-import { InventarioModeloUseCase } from '@inventory/domain/usecases/inventario-modelo.use-case';
+import { PRODUCT_SERVICE, INVENTARIO_MODELO_SERVICE } from '@inventory/tokens/inventory-token';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,6 +17,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-model-add-edit-modal',
   templateUrl: './model-add-edit.component.html',
   imports: [
@@ -39,8 +39,7 @@ export class ModelAddEditComponent implements OnInit {
 
   tS = inject(ToastrNotificationService);
   private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
-
-  private _modeloUseCase = inject(InventarioModeloUseCase);
+  private modeloService = inject(INVENTARIO_MODELO_SERVICE);
 
   btnText = 'Guardar';
   titleModal = signal('Nuevo');
@@ -111,7 +110,7 @@ export class ModelAddEditComponent implements OnInit {
 
       if (this.data.idModelo > 0) {
         this.loading.set(true);
-        this._modeloUseCase
+        this.modeloService
           .put(this.data.idModelo, this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);
@@ -119,7 +118,7 @@ export class ModelAddEditComponent implements OnInit {
 
       if (!(this.data.idModelo > 0)) {
         this.loading.set(true);
-        this._modeloUseCase
+        this.modeloService
           .post(this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);

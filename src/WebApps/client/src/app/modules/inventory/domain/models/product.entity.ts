@@ -47,7 +47,7 @@ export interface ProductSearch {
   fraccionado: boolean;
   style: string;
   tarifas: TarifaProductSearch[];
-  warehouses: unknown;
+  warehouses: any;
   precioSinSubsidio: number;
   imagen?: string;
   s3ObjectUrl: string;
@@ -93,7 +93,9 @@ export class ProductDataForm {
   tiposIce: any[] = [];
   tiposIva: any[] = [];
 
-  constructor() {}
+  constructor() {
+    /* empty */
+  }
 }
 
 export class ProductGetIdResult {

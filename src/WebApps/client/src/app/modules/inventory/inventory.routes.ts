@@ -144,7 +144,7 @@ export const routes: Route[] = [
     path: 'inventory-adjustments',
     loadComponent: () =>
       import(
-        '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component'
+        '@inventory/ui/inventory-adjustment/inventory-adjustment.component'
       ).then((m) => m.InventoryAdjustmentComponent),
     data: {
       breadcrumb: 'Ajuste Inventario',

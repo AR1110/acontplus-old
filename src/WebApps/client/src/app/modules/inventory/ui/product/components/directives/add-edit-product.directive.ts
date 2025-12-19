@@ -13,7 +13,7 @@ export class AddEditProductDirective {
   id = input(0);
 
   @HostListener('click') onClick() {
-    let data: unknown = {};
+    let data: any = {};
     if (this.data() && typeof this.data() === 'object') {
       data = this.data();
     }
@@ -26,7 +26,7 @@ export class AddEditProductDirective {
       size: 'xl',
       data,
     });
-    modalRef.subscribe((result: unknown) => {
+    modalRef.subscribe((result: any) => {
       if (result && typeof result === 'object') {
         this.onResult.emit(result);
       }
