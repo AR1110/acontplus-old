@@ -25,7 +25,7 @@ public static class CreateEndpoints
             .WithName("CreateReceivedDocument")
             .WithSummary("Create a new received document")
             .WithDescription("Create a new received document record.")
-            .Produces<object>(StatusCodes.Status200OK)
+            .Produces<bool>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -107,6 +107,8 @@ public static class CreateEndpoints
             IReceivedDocumentService receivedDocumentService,
             IXmlSriFileService xmlSriFileService,
             IUserContext userContext,
+            int establishmentId,
+            int subcategoryId,
             CancellationToken cancellationToken) =>
         {
             var form = await httpContext.Request.ReadFormAsync(cancellationToken);
@@ -133,7 +135,7 @@ public static class CreateEndpoints
             var xmlContent = dataComprobante.XmlSri.OuterXml;
 
             return await receivedDocumentService
-                .UploadXmlAsync(documentId, xmlContent, userRoleId, cancellationToken)
+                .UploadXmlAsync(documentId, xmlContent, establishmentId, subcategoryId, userRoleId, cancellationToken)
                 .ToMinimalApiResultAsync();
         })
             .DisableAntiforgery()

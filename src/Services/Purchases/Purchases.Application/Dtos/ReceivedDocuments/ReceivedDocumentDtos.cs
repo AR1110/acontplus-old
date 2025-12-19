@@ -1,10 +1,21 @@
 namespace Purchases.Application.Dtos.ReceivedDocuments;
 
 public record ReceivedDocumentCreate(
-    ReceivedDocumentReceiptDto Receipt,
+    string AccessKey,
     int EstablishmentId,
     int SubcategoryId,
     int CreatedByUserId);
+
+// Internal model for file processing with retry tracking
+public record ReceivedDocumentFileMessage(
+    string AccessKey,
+    int EstablishmentId,
+    int SubcategoryId,
+    int CreatedByUserId,
+    int IdDocumento,
+    int RetryCount = 0,
+    DateTime? LastRetryAt = null,
+    string? LastError = null);
 
 public record ReceivedDocumentUpdate(
     int Id,
@@ -14,7 +25,7 @@ public record ReceivedDocumentUpdate(
 
 public record ReceivedDocumentItem(
     int Id,
-    ReceivedDocumentReceiptDto Receipt,
+    string AccessKey,
     int EstablishmentId,
     int SubcategoryId,
     bool IsActive,

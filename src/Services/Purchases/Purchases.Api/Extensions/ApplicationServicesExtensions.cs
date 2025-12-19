@@ -1,5 +1,6 @@
 using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions.Authentication;
+using Purchases.Application.BackgroundServices;
 using Scrutor;
 
 namespace Purchases.Api.Extensions;
@@ -47,6 +48,9 @@ public static class ApplicationServicesExtensions
         services.AddTransient<IWebServiceSri, WebServiceSri>();
         services.AddTransient<IXmlSriFileService, XmlSriFileService>();
         services.AddSingleton<IDocumentConverter, DocumentConverter>();
+
+        // Register Background Service for processing received documents
+        services.AddHostedService<ReceivedDocumentProcessor>();
 
         return services;
     }
