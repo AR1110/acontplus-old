@@ -24,6 +24,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.48.0" />
     <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageVersion Include="Ocelot" Version="24.0.1" />
     <PackageVersion Include="Scrutor" Version="7.0.0" />

@@ -8,6 +8,7 @@ public class SriController : BaseApiController
     {
         _sriAuth = sriAuth;
     }
+
     [AllowAnonymous]
     [HttpPost("authenticate")]
     public async Task<ActionResult<SriAuthenticationResult>> Authenticate(
@@ -19,5 +20,14 @@ public class SriController : BaseApiController
             request.AdditionalCi);
 
         return result.IsSuccess ? (ActionResult<SriAuthenticationResult>)Ok(result) : (ActionResult<SriAuthenticationResult>)BadRequest(result);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("documents/received")]
+    public async Task<ActionResult<SriDocumentsResponse>> GetReceivedDocuments(
+        [FromBody] SriDocumentsRequest request)
+    {
+        var result = await _sriAuth.GetReceivedDocumentsAsync(request);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 }

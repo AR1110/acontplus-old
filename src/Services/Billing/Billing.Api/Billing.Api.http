@@ -6,3 +6,120 @@ Accept: application/json
 Authorization: {{Token}}
 
 ###
+
+# SRI Authentication
+POST {{Billing.Api_HostAddress}}/api/sri/authenticate
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605"
+}
+
+###
+
+# SRI Get Received Documents (Electronic Invoices)
+# Note: reCAPTCHA token may be required for production use
+POST {{Billing.Api_HostAddress}}/api/sri/documents/received
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605",
+  "year": 2025,
+  "month": 12,
+  "day": 0,
+  "documentType": 1,
+  "recaptchaToken": null,
+  "cookies": null,
+  "useBrowserAutomation": true,
+  "browserAutomationHeadless": true,
+  "browserAutomationTimeoutSeconds": 180,
+  "useRecaptchaSolver": true,
+  "captureRecaptchaValues": true
+}
+
+###
+
+# SRI Get Received Documents (Reusing Browser Cookies)
+POST {{Billing.Api_HostAddress}}/api/sri/documents/received
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605",
+  "year": 2025,
+  "month": 12,
+  "day": 0,
+  "documentType": 1,
+  "recaptchaToken": null,
+  "cookies": {
+    "KC_RESTART": "<copy-from-browser>",
+    "AUTH_SESSION_ID": "<copy-from-browser>",
+    "BIGipServerDecla_Sesion": "<copy-from-browser>",
+    "TS01ed1cee": "<copy-from-browser>",
+    "TS01d1411e": "<copy-from-browser>"
+  }
+}
+
+###
+
+# SRI Get Received Documents - Credit Notes
+POST {{Billing.Api_HostAddress}}/api/sri/documents/received
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605",
+  "year": 2025,
+  "month": 12,
+  "day": 18,
+  "documentType": 3,
+  "recaptchaToken": null
+}
+
+###
+
+# SRI Get Received Documents (Playwright scraping)
+POST {{Billing.Api_HostAddress}}/api/sri/documents/received
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605",
+  "year": 2025,
+  "month": 12,
+  "day": 0,
+  "documentType": 1,
+  "useBrowserAutomation": true,
+  "browserAutomationHeadless": true,
+  "browserAutomationTimeoutSeconds": 180,
+  "captureRecaptchaValues": false
+}
+
+###
+
+# SRI Get Received Documents (Playwright headful + manual reCAPTCHA)
+POST {{Billing.Api_HostAddress}}/api/sri/documents/received
+Content-Type: application/json
+
+{
+  "username": "1105246605001",
+  "password": "@09IfJf0618",
+  "additionalCi": "1105246605",
+  "year": 2025,
+  "month": 12,
+  "day": 0,
+  "documentType": 1,
+  "useBrowserAutomation": true,
+  "browserAutomationHeadless": false,
+  "browserAutomationTimeoutSeconds": 300,
+  "captureRecaptchaValues": true
+}
+
+###
