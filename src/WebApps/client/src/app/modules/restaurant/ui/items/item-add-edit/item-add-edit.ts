@@ -12,7 +12,7 @@ import {
   ItemGetBydIdUseCase,
   ItemUpdateUseCase,
 } from '@restaurant/application/use-cases/item.use-case';
-import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { ProductMeasure } from '@inventory/domain/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
@@ -20,9 +20,9 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
-import {Overlay} from "@angular/cdk/overlay";
-import {ComponentPortal} from "@angular/cdk/portal";
-import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-search-dialog";
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { ItemSearchDialog } from '@restaurant/ui/items/item-search-dialog/item-search-dialog';
 
 @Component({
   selector: 'app-item-add-edit',
@@ -42,7 +42,7 @@ import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-sea
 })
 export class ItemAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
-  private productSaleUseCase = inject(GetProductSaleUseCase);
+  private productService = inject(PRODUCT_SERVICE);
   private updateUseCase = inject(ItemUpdateUseCase);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
   #tS = inject(ToastrNotificationService);
@@ -142,7 +142,7 @@ export class ItemAddEdit implements OnInit {
         settingBtn.addEventListener('click', () => this.openOverlay(rowData));
 
         buttonHolder.appendChild(delBtn);
-        if(rowData && rowData.children){
+        if (rowData && rowData.children) {
           buttonHolder.appendChild(settingBtn);
         }
 
@@ -295,14 +295,10 @@ export class ItemAddEdit implements OnInit {
 
   itemSearchLabel = this.isCombo() ? 'Buscar Producto' : 'Buscar Ingrediente';
 
-
   openOverlay(rowData: any) {
     const overlayRef = this.overlay.create({
-      positionStrategy: this.overlay.position()
-        .global()
-        .centerHorizontally()
-        .centerVertically(),
-      hasBackdrop: true
+      positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
+      hasBackdrop: true,
     });
 
     const portal = new ComponentPortal(ItemSearchDialog);
@@ -311,13 +307,12 @@ export class ItemAddEdit implements OnInit {
     componentRef.instance.data = rowData;
 
     componentRef.instance.closed.subscribe((result: any) => {
-      if(result && typeof result === 'object') this.onSelectItemChildren(result, rowData)
+      if (result && typeof result === 'object') this.onSelectItemChildren(result, rowData);
       overlayRef.dispose(); // cerrar overlay
     });
 
     overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
   }
-
 
   ngOnInit() {
     if (this.isProduct()) {
@@ -409,7 +404,7 @@ export class ItemAddEdit implements OnInit {
   onSelectItem(rowData: any): void {
     if (!rowData?.productId) return;
 
-    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+    this.productService.getForSale({ id: rowData.productId }).subscribe({
       next: (response) => {
         const { product, taxRates, measures } = response;
         if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
@@ -462,20 +457,17 @@ export class ItemAddEdit implements OnInit {
     });
   }
 
-
-
   onSelectItemChildren(rowData: any, parentData: ItemComposition): void {
     if (!rowData?.productId) return;
 
-
-    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+    this.productService.getForSale({ id: rowData.productId }).subscribe({
       next: (response) => {
         const { product, measures: measuresTemp, taxRates } = response;
         if (!product || !Array.isArray(measuresTemp) || !Array.isArray(taxRates)) return;
 
         const measures: ProductMeasure[] = measuresTemp;
-        const defaultMeasure = measures.find(m => m.defaultMeasure);
-        const defaultFee = defaultMeasure?.fees?.find(f => f.isDefault);
+        const defaultMeasure = measures.find((m) => m.defaultMeasure);
+        const defaultFee = defaultMeasure?.fees?.find((f) => f.isDefault);
 
         if (!defaultMeasure || !defaultFee) {
           console.error('Datos incompletos para crear la composición del producto.');
@@ -496,31 +488,35 @@ export class ItemAddEdit implements OnInit {
         newComposition.fees = defaultMeasure.fees ?? [];
         newComposition.description = product.descripcion;
         newComposition.unitPrice = defaultMeasure.costPrice;
-        newComposition.totalPrice = DecimalUtil.multiplyAsNumber(newComposition.quantity, newComposition.salePrice);
+        newComposition.totalPrice = DecimalUtil.multiplyAsNumber(
+          newComposition.quantity,
+          newComposition.salePrice,
+        );
 
-        const compositions = this.addOrUpdateChild(structuredClone(this.itemCompositions()), parentData.uuid, newComposition)
-
+        const compositions = this.addOrUpdateChild(
+          structuredClone(this.itemCompositions()),
+          parentData.uuid,
+          newComposition,
+        );
 
         this.itemCompositions.set(compositions);
       },
       error: (err) => console.error('Error al obtener el producto:', err),
     });
-
-
   }
-
 
   private addOrUpdateChild(
     compositions: ItemComposition[],
     parentUuid: string,
-    newChild: ItemComposition
+    newChild: ItemComposition,
   ): ItemComposition[] {
-
-    return compositions.map(node => {
+    return compositions.map((node) => {
       if (node.uuid === parentUuid) {
         node.children = node.children ?? [];
 
-        const existingIndex = node.children.findIndex(x => x.childItemId === newChild.childItemId);
+        const existingIndex = node.children.findIndex(
+          (x) => x.childItemId === newChild.childItemId,
+        );
 
         if (existingIndex === -1) {
           newChild.level = node.level + 1;
@@ -539,20 +535,18 @@ export class ItemAddEdit implements OnInit {
     });
   }
 
-  private deleteCompositionByUuid(
-    items: ItemComposition[],
-    uuid: string
-  ): ItemComposition[] {
-    return items
-      // eliminar el nodo actual si coincide con el uuid
-      .filter(item => item.uuid !== uuid)
-      .map(item => ({
-        ...item,
-        // si tiene hijos, aplicar recursivamente
-        children: item.children ? this.deleteCompositionByUuid(item.children, uuid) : [],
-      }));
+  private deleteCompositionByUuid(items: ItemComposition[], uuid: string): ItemComposition[] {
+    return (
+      items
+        // eliminar el nodo actual si coincide con el uuid
+        .filter((item) => item.uuid !== uuid)
+        .map((item) => ({
+          ...item,
+          // si tiene hijos, aplicar recursivamente
+          children: item.children ? this.deleteCompositionByUuid(item.children, uuid) : [],
+        }))
+    );
   }
-
 
   async deleteRow(rowData: ItemComposition) {
     const { isConfirmed } = await Swal.fire({
@@ -568,8 +562,7 @@ export class ItemAddEdit implements OnInit {
     if (!isConfirmed) return;
 
     // Eliminar recursivamente del árbol principal
-    this.itemCompositions.update(items => this.deleteCompositionByUuid(items, rowData.uuid));
-
+    this.itemCompositions.update((items) => this.deleteCompositionByUuid(items, rowData.uuid));
 
     if (rowData.id > 0) {
       const collectAllDescendants = (item: ItemComposition): ItemComposition[] => {
@@ -583,11 +576,9 @@ export class ItemAddEdit implements OnInit {
       };
 
       const allDeleted = collectAllDescendants(rowData);
-      this.itemCompositionsDeleted.update(x => [...x, ...allDeleted]);
+      this.itemCompositionsDeleted.update((x) => [...x, ...allDeleted]);
     }
   }
-
-
 
   generateDescription() {
     const summary = this.itemCompositions()
@@ -604,17 +595,17 @@ export class ItemAddEdit implements OnInit {
         message: 'Revise los datos ingresados',
       });
     }
-    const itemCompositionsChildren = this.itemCompositions().flatMap(x => x.children);
-    const itemCompositions = this.itemCompositions().map(x=>({
+    const itemCompositionsChildren = this.itemCompositions().flatMap((x) => x.children);
+    const itemCompositions = this.itemCompositions().map((x) => ({
       ...x,
-      isOptional: (x.children ?? [])?.length > 0
-    }))
+      isOptional: (x.children ?? [])?.length > 0,
+    }));
     const dataToSave = {
       item: this.itemForm.value,
       itemCompositions: [
         ...itemCompositions,
         ...itemCompositionsChildren,
-        ...this.itemCompositionsDeleted()
+        ...this.itemCompositionsDeleted(),
       ],
       isProduct: this.isProduct(),
       isCombo: this.isCombo(),
@@ -628,7 +619,7 @@ export class ItemAddEdit implements OnInit {
         Swal.fire({
           icon: response.code === '1' ? 'success' : 'warning',
           html: response.message,
-          timer: 1000
+          timer: 1000,
         });
         if (response.code === '1') {
           this.#modalRef.close(response);

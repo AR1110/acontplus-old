@@ -25,8 +25,8 @@ export const routes: Route[] = [
     path: 'subcategories',
     title: 'SubCategoria',
     loadComponent: () =>
-      import('@inventory/ui/sub-category/sub-category.component').then(
-        (m) => m.SubCategoryComponent,
+      import('@inventory/ui/sub-category/sub-category').then(
+        (m) => m.SubCategory,
       ),
     data: {
       breadcrumb: 'Sub Categorias',
@@ -37,8 +37,8 @@ export const routes: Route[] = [
     path: INVENTORY_ROUTES.products,
     title: 'Productos',
     loadComponent: () =>
-      import('@inventory/ui/fracc-product-page/fracc-product-page.component').then(
-        (m) => m.FraccProductPageComponent,
+      import('@inventory/ui/product/product').then(
+        (m) => m.Product,
       ),
     canActivate: [permissionGuard],
     data: {
@@ -144,7 +144,7 @@ export const routes: Route[] = [
     path: 'inventory-adjustments',
     loadComponent: () =>
       import(
-        '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component'
+        '@inventory/ui/inventory-adjustment/inventory-adjustment.component'
       ).then((m) => m.InventoryAdjustmentComponent),
     data: {
       breadcrumb: 'Ajuste Inventario',

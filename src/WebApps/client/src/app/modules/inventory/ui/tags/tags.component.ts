@@ -1,4 +1,11 @@
-import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ViewChild,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,9 +19,10 @@ import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edi
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
+import { TAG_SERVICE } from '@inventory/tokens/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-tags',
   imports: [
     BreadcrumbComponent,
@@ -30,7 +38,7 @@ import { TagUseCase } from '@inventory/domain/usecases/tag.use-case';
   styles: ``,
 })
 export class TagsComponent implements OnInit {
-  private _tagUseCase = inject(TagUseCase);
+  private tagService = inject(TAG_SERVICE);
   pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'description', 'etiquetas', 'estado'];
   dataSource = signal<any[]>([]);
@@ -46,7 +54,7 @@ export class TagsComponent implements OnInit {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this._tagUseCase.getAll(params).subscribe({
+    this.tagService.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.tags);
@@ -90,7 +98,7 @@ export class TagsComponent implements OnInit {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this._tagUseCase.updateStatus(data.idEtiqueta).subscribe((response) => {
+          this.tagService.updateStatus(data.idEtiqueta).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

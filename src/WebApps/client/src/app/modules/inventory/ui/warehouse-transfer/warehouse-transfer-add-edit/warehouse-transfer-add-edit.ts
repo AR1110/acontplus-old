@@ -9,7 +9,7 @@ import {
 import { DialogRef } from '@angular/cdk/dialog';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { Button } from '@acontplus/ng-components';
+import { Button, TabulatorTable } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import {
@@ -21,12 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
-import {
-  WarehouseTransferDataFormUseCase,
-  WarehouseTransferEditUseCase,
-  WarehouseTransferGenerateSerieUseCase,
-  WarehouseTransferSaveUseCase,
-} from '@inventory/domain/usecases/warehouse-transfer.use-case';
+import { WAREHOUSE_TRANSFER_SERVICE, PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import {
   GroupedEstab,
   GroupedEstabBodega,
@@ -35,19 +30,15 @@ import {
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { SearchDialogService } from '@shared/services/search-dialog';
-import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
-import {
-  GetProductPurchaseUseCase,
-  ValidateProductStockUseCase,
-} from '@inventory/product/application/use-cases/product/get-product.use-case';
-import { TabulatorTable } from '@acontplus/ng-components';
+import { ProductSearchDialog } from '@inventory/ui/product/components/product-search-dialog/product-search-dialog';
+
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import DecimalUtil from '@core/utils/decimal.util';
-import { mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
+import { mergeStockItems } from '@inventory/domain/utils/stock.utils';
 import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
@@ -84,14 +75,10 @@ interface CommonType {
 })
 export class WarehouseTransferAddEdit implements OnInit {
   private dgSvc = inject(DialogService);
-  private dataFormUseCase = inject(WarehouseTransferDataFormUseCase);
+  private warehouseTransferService = inject(WAREHOUSE_TRANSFER_SERVICE);
   private notiSvc = inject(ToastrNotificationService);
   private searchService = inject(SearchDialogService);
-  private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
-  private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
-  private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
-  private saveUseCase = inject(WarehouseTransferSaveUseCase);
-  private editUseCase = inject(WarehouseTransferEditUseCase);
+  private productService = inject(PRODUCT_SERVICE);
 
   private dialogRef = inject(DialogRef<WarehouseTransferAddEdit>);
   private params = inject<{ id: number; operation: 'add' | 'edit' | 'duplicate'; data: any }>(
@@ -130,7 +117,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   details = signal<any[]>([]);
   detailsDeleted = signal<any[]>([]);
 
-  comboEditor = (cell: any, onRendered: any, success: any, cancel: any, editorParams: any) => {
+  comboEditor = (cell: any, onRendered: any, success: any, _cancel: any, _editorParams: any) => {
     const column: any = cell.getColumn().getField();
     const data: any = cell.getData();
     // const oldValue = cell.getOldValue();
@@ -211,7 +198,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     `;
         editBtn.classList.add('small-button', 'btn-edit');
         editBtn.addEventListener('click', () => {
-          console.log('Editar:', rowData);
+          // Edit functionality
         });
 
         // Agregar botones al contenedor
@@ -363,7 +350,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
 
   loadDataForm() {
-    this.dataFormUseCase.execute().subscribe({
+    this.warehouseTransferService.getDataForm().subscribe({
       next: (response) => {
         this.initializeBaseData(response);
 
@@ -377,7 +364,7 @@ export class WarehouseTransferAddEdit implements OnInit {
           this.setDataEditOrDuplicate();
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.notiSvc.error({ message: 'Error al cargar datos del formulario' });
         console.error(err);
       },
@@ -417,7 +404,7 @@ export class WarehouseTransferAddEdit implements OnInit {
     this.details.set(isDuplicate ? details.map((d: any) => ({ ...d, id: 0 })) : details);
 
     if (isDuplicate) {
-      console.log('Duplicando registro:', structuredClone(header));
+      // Duplicating record
     }
   }
 
@@ -558,8 +545,8 @@ export class WarehouseTransferAddEdit implements OnInit {
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
 
-    this.getProductPurchaseUseCase
-      .execute(result.id)
+    this.productService
+      .getForPurchase(result.id)
       .pipe(take(1))
       .subscribe({
         next: (response) => {
@@ -572,7 +559,6 @@ export class WarehouseTransferAddEdit implements OnInit {
 
           const tempDetails = structuredClone(this.details());
           const existingIndex = tempDetails.findIndex((v: any) => v.productId === data.id);
-          console.log(existingIndex);
 
           const measure =
             existingIndex !== -1
@@ -621,7 +607,7 @@ export class WarehouseTransferAddEdit implements OnInit {
 
           this.details.set(tempDetails);
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error getting product:', err);
         },
       });
@@ -632,7 +618,7 @@ export class WarehouseTransferAddEdit implements OnInit {
       const dataMergeStock = mergeStockItems(details);
 
       const response = await firstValueFrom(
-        this.$validateProductStockUseCase.execute({
+        this.productService.checkNotificationStock({
           cantidad: dataMergeStock.quantity,
           idArticulo: dataMergeStock.productId,
           idBodega: dataMergeStock.warehouseId,
@@ -727,7 +713,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   }
   private validateStockAsync(details: any[]): Promise<boolean> {
     return new Promise((resolve) => {
-      this.validateStock(details, (cont: boolean) => resolve(cont));
+      void this.validateStock(details, (cont: boolean) => resolve(cont));
     });
   }
 
@@ -826,7 +812,7 @@ export class WarehouseTransferAddEdit implements OnInit {
       if (this.isAdd() || this.isDuplicate()) {
         // Obtener número secuencial
         serieComprobante = await firstValueFrom(
-          this.generateSerieUseCase.execute({
+          this.warehouseTransferService.generateSerie({
             puntoEmisionId: this.dataForm.puntoEmisionId,
           }),
         );
@@ -870,22 +856,32 @@ export class WarehouseTransferAddEdit implements OnInit {
 
       this.isSaving.set(true);
 
-      const save = this.isAdd() || this.isDuplicate() ? this.saveUseCase : this.editUseCase;
+      const saveObservable =
+        this.isAdd() || this.isDuplicate()
+          ? this.warehouseTransferService.post({
+              id: this.dataForm.id,
+              data: {
+                ...this.dataForm,
+                total: this.total(),
+              },
+              details: this.details(),
+              transactionTypes: this.transactionTypes(),
+              documentTypes: this.documentTypes(),
+              detailsDeleted: this.detailsDeleted(),
+            })
+          : this.warehouseTransferService.put(this.dataForm.id, {
+              id: this.dataForm.id,
+              data: {
+                ...this.dataForm,
+                total: this.total(),
+              },
+              details: this.details(),
+              transactionTypes: this.transactionTypes(),
+              documentTypes: this.documentTypes(),
+              detailsDeleted: this.detailsDeleted(),
+            });
 
-      save
-        .execute({
-          id: this.dataForm.id,
-          data: {
-            ...this.dataForm,
-            total: this.total(),
-          },
-          details: this.details(),
-          transactionTypes: this.transactionTypes(),
-          documentTypes: this.documentTypes(),
-          detailsDeleted: this.detailsDeleted(),
-        })
-        .pipe(finalize(() => this.isSaving.set(false)))
-        .subscribe(this.commonResponse);
+      saveObservable.pipe(finalize(() => this.isSaving.set(false))).subscribe(this.commonResponse);
     } catch (error) {
       console.error('Error al guardar la transferencia:', error);
       this.notiSvc.error({ message: 'Ocurrió un error inesperado al guardar la transferencia.' });

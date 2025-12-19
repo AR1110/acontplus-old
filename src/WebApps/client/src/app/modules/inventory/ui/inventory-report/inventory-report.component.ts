@@ -1,12 +1,12 @@
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
-import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { Button } from '@acontplus/ng-components';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -48,7 +48,7 @@ const imports = [
   ReactiveFormsModule,
   NgTemplateOutlet,
   BreadcrumbComponent,
-  SubCategoryGroupComponent,
+  SubCategoryGroup,
   ProductSearchComponent,
   DateRangeSelectionComponent,
   SupplierSearchComponent,
@@ -71,7 +71,7 @@ export class InventoryReportComponent implements OnInit {
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
 
-  private readonly _productUseCase = inject(ProductUseCase);
+  private readonly _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
   protected readonly FORMAT_REPORT = REPORT_FORMAT;
 
   isReporting = false;
@@ -144,7 +144,7 @@ export class InventoryReportComponent implements OnInit {
   tiposDocSelected = new FormControl([]);
 
   getDatFormReport() {
-    this._productUseCase.getDataReport().subscribe((response) => {
+    this._PRODUCT_SERVICE.getDataReport().subscribe((response) => {
       const { estabs, subCategorias, marcas } = response;
       this.estabs = estabs;
       this.subCategories = subCategorias;

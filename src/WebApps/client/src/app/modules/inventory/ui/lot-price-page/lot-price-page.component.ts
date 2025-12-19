@@ -10,8 +10,8 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
-import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { SubCategorySelectMultiple } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple';
 import { LotPrice, LotPriceTarifa } from '@inventory/domain/models/lot-price.model';
 import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
@@ -47,7 +47,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     MatRadioModule,
     BreadcrumbComponent,
     TabulatorTable,
-    SubCategorySelectMultipleComponent,
+    SubCategorySelectMultiple,
     ProductSearchComponent,
     SupplierSearchComponent,
     Button,

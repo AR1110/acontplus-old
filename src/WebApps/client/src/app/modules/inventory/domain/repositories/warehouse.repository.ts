@@ -1,9 +1,9 @@
 import { Observable } from 'rxjs';
 import { ListWarehouseResponse } from '@inventory/domain/models/warehouse.model';
 
-export abstract class WarehouseRepository {
-  abstract list(params: any): Observable<ListWarehouseResponse>;
-  abstract create(warehouse: any): Observable<any>;
-  abstract update(warehouse: any): Observable<any>;
-  abstract delete(warehouse: any): Observable<any>;
+export interface WarehouseRepository {
+  list(params: any): Observable<ListWarehouseResponse>;
+  create(warehouse: any): Observable<any>;
+  update(warehouse: any): Observable<any>;
+  delete(warehouse: any): Observable<any>;
 }

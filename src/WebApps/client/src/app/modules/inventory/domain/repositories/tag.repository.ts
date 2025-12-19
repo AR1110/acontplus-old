@@ -1,10 +1,9 @@
-import { Product } from '@inventory/product/domain/entities/product.entity';
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
-export abstract class TagRepository {
-  abstract getAll<T>(obj: T): Observable<any>;
-  abstract post<T>(obj: T): Observable<ApiResponseLegacy>;
-  abstract put<T>(id: number, obj: T): Observable<ApiResponseLegacy>;
-  abstract updateStatus(id: number): Observable<ApiResponseLegacy>;
+export interface TagRepository {
+  getAll<T>(obj: T): Observable<any>;
+  post<T>(obj: T): Observable<ApiResponseLegacy>;
+  put<T>(id: number, obj: T): Observable<ApiResponseLegacy>;
+  updateStatus(id: number): Observable<ApiResponseLegacy>;
 }

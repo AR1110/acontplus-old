@@ -5,7 +5,7 @@ import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { FormsModule } from '@angular/forms';
 
-import { ProductSearchOverlayComponent } from '@inventory/product/presentation/components/product-search-overlay/product-search-overlay.component';
+import { ProductSearchOverlayComponent } from '@inventory/ui/product/components/product-search-overlay/product-search-overlay.component';
 import {
   ColSupportMaintenanceDetail,
   SupportMaintenanceDetail,
@@ -17,7 +17,7 @@ import { SalesDetailCalculationService } from '@shared/services/sales-detail-cal
 import { SupportDetailUseCase } from '@mechanical/application/use-cases/support-detail.use-case';
 import { getCantidadStock, mergeProductStock } from '@inventory/domain/utils/product-stock.util';
 import { Button } from '@acontplus/ng-components';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { ConsolidacionBodega } from '@inventory/domain/models/consolidacion-bodega.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
@@ -54,7 +54,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
 
   modal = inject(MatDialogRef<SupportMaintenanceModalComponent>);
-  private _productUseCase = inject(ProductUseCase);
+  private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
   private salesDetailCalculationSvc = inject(SalesDetailCalculationService);
 
@@ -661,7 +661,7 @@ export class SupportMaintenanceModalComponent implements OnInit {
         cantidadStock: dataProductMerge.cantidadStock,
         consolidacionesFecha: row.consolidacionesBodega,
       });
-      this._productUseCase
+      this._PRODUCT_SERVICE
         .checkNotificationStock({
           idArticulo: row.productId,
           idBodega: this.data.bodegaId,

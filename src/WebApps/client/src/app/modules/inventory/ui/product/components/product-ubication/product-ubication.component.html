@@ -1,0 +1,70 @@
+<acp-dynamic-card>
+  <div class="d-grid gap-2">
+    <div
+      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-2 row-cols-1 g-2"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento: </mat-label>
+          <mat-select
+            [(ngModel)]="data().idEstablecimiento"
+            (selectionChange)="onChangeEstab.emit()"
+          >
+            @for (item of estabs(); track $index) {
+              <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Bodega: </mat-label>
+          <mat-select [(ngModel)]="data().idBodega">
+            @for (item of bodegas(); track $index) {
+              <mat-option [value]="item.idBodega">{{ item.descripcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <div class="d-flex gap-2">
+          <mat-form-field class="w-100">
+            <mat-label>Ubicación</mat-label>
+            <input matInput [(ngModel)]="data().ubicacion" placeholder="..." appToUpperCase />
+          </mat-form-field>
+
+          <div class="hstack gap-1">
+            <button type="button" mat-mini-fab aria-label="Add || Edit" (click)="save()">
+              @if (productUbicationId > 0) {
+                <mat-icon>edit</mat-icon>
+              } @else {
+                <mat-icon>save</mat-icon>
+              }
+            </button>
+            <button mat-mini-fab aria-label="Clear" (click)="clear()">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <app-mat-dynamic-table
+      [templateOp]="templateOp"
+      [tableData]="dataSource()"
+      [columnDefinitions]="columnsDefs"
+      [visibleColumns]="columns"
+    />
+
+    <ng-template #templateOp let-item="item">
+      <div class="d-flex gap-1">
+        <button type="button" mat-icon-button (click)="edit(item)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button type="button" mat-icon-button (click)="askToDelete(item)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</acp-dynamic-card>
