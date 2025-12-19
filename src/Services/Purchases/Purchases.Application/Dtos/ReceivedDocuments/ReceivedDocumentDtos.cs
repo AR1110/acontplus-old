@@ -25,11 +25,17 @@ public record ReceivedDocumentUpdate(
 
 public record ReceivedDocumentItem(
     int Id,
-    string AccessKey,
     int EstablishmentId,
     int SubcategoryId,
-    bool IsActive,
-    DateTime CreatedAt);
+    string SubcategoryName,
+    string DocumentType,
+    string DocumentCode,
+    decimal TotalAmount,
+    string AccessKey,
+    DateTime IssueDate,
+    DateTime AuthorizationDate,
+    string IssuerBusiness,
+    bool IsProcessed);
 
 public record ReceivedDocumentMigrate(
     int Id,

@@ -30,7 +30,7 @@ public static class GetEndpoints
             .WithName("GetReceivedDocuments")
             .WithSummary("Get all received documents")
             .WithDescription("Retrieve a list of received documents.")
-            .Produces<object>(StatusCodes.Status200OK)
+            .Produces<ReceivedDocumentItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
