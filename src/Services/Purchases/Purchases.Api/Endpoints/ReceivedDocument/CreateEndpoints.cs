@@ -41,7 +41,7 @@ public static class CreateEndpoints
             var file = form.Files.FirstOrDefault();
 
             if (file == null || file.ContentType != "text/plain")
-                return Results.BadRequest(new SpResponse { Code = "0", Message = "Formato de archivo no soportado" });
+                return Results.BadRequest(new SpResponse { Code = "UNSUPPORTED_FILE_FORMAT", Message = "Formato de archivo no soportado" });
 
             var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
             if (!DataValidation.DataTableIsNull(dt))
@@ -51,28 +51,28 @@ public static class CreateEndpoints
 
                 var dtExistent = dsExistentDocument.Tables.Count > 0 ? dsExistentDocument.Tables[0] : new DataTable();
                 if (DataValidation.DataTableIsNull(dt))
-                    return Results.BadRequest(new SpResponse { Code = "1", Payload = DataConverters.DataTableToJson(dt) });
+                    return Results.BadRequest(new SpResponse { Code = "INVALID_DATA", Message = "Los datos proporcionados no son válidos", Payload = DataConverters.DataTableToJson(dt) });
 
                 if (dt.Rows.Count == dtExistent.Rows.Count)
                 {
-                    response.Code = "0";
+                    response.Code = "DOCUMENTS_ALREADY_REGISTERED";
                     response.Message = "Los registros que intenta importar ya se encuentran registrados, intente con otro archivo!";
                 }
                 else
                 {
                     var diff = (from row1 in dt.AsEnumerable()
-                                join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["claveAcceso"] } equals new { Column1 = row2["claveAcceso"] } into gj
+                                join row2 in dtExistent.AsEnumerable() on new { Column1 = row1["accessKey"] } equals new { Column1 = row2["accessKey"] } into gj
                                 from subRow2 in gj.DefaultIfEmpty()
                                 where subRow2 == null
                                 select row1).ToList();
                     var filteredDataTable = diff.CopyToDataTable();
-                    response.Code = "1";
+                    response.Code = "0";
                     response.Payload = DataConverters.DataTableToJson(filteredDataTable);
                 }
             }
             else
             {
-                response.Code = "0";
+                response.Code = "NO_RECORDS_TO_IMPORT";
                 response.Message = "No se encontraron registros para importar";
             }
 
@@ -87,12 +87,12 @@ public static class CreateEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         group.MapPost("/check-existence-xml", async (
-            string claveAcceso,
+            string accessKey,
             IWebServiceSri webServiceSri,
             IConfiguration configuration,
             CancellationToken cancellationToken) =>
         {
-            var response = await webServiceSri.CheckExistenceAsync(claveAcceso, configuration["UrlSriComprobantes"] ?? string.Empty);
+            var response = await webServiceSri.CheckExistenceAsync(accessKey, configuration["UrlSriComprobantes"] ?? string.Empty);
             return Results.Ok(response);
         })
             .WithName("CheckReceivedDocumentXmlExistence")
@@ -116,11 +116,11 @@ public static class CreateEndpoints
             var json = form["json"].ToString();
 
             if (file == null || file.ContentType != "text/xml")
-                return Results.BadRequest("Formato de archivo no soportado");
+                return Results.BadRequest(new SpResponse { Code = "UNSUPPORTED_FILE_FORMAT", Message = "Formato de archivo no soportado" });
 
             var dataComprobante = await xmlSriFileService.GetAsync(file);
             if (dataComprobante?.XmlSri == null)
-                return Results.BadRequest("No se pudo obtener el xml");
+                return Results.BadRequest(new SpResponse { Code = "XML_RETRIEVAL_ERROR", Message = "No se pudo obtener el xml" });
 
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
 
@@ -128,7 +128,7 @@ public static class CreateEndpoints
             if (!jsonDoc.RootElement.TryGetProperty("id", out var idElement) &&
             !jsonDoc.RootElement.TryGetProperty("Id", out idElement))
             {
-                return Results.BadRequest("No se pudo obtener el identificador del documento");
+                return Results.BadRequest(new SpResponse { Code = "DOCUMENT_ID_NOT_FOUND", Message = "No se pudo obtener el identificador del documento" });
             }
 
             var documentId = idElement.GetInt32();

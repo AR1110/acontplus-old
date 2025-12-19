@@ -109,7 +109,7 @@ public class ReceivedDocumentService(
                 EstablishmentId: request.EstablishmentId,
                 SubcategoryId: request.SubcategoryId,
                 CreatedByUserId: request.CreatedByUserId,
-                IdDocumento: 0  // Will be set after DB insert by worker
+                DocumentId: 0  // Will be set after DB insert by worker
             );
 
             var jsonContent = JsonExtensions.SerializeOptimized(fileMessage);
@@ -152,7 +152,7 @@ public class ReceivedDocumentService(
     {
         try
         {
-            var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubcategoryId }, { "idUsuario", id } };
+            var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubcategoryId }, { "userId", id } };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UpdateSubcategoryReceivedDocument", parameters);
             return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
