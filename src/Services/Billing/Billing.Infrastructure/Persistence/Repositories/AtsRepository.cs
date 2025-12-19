@@ -1,7 +1,4 @@
-using Acontplus.Core.Abstractions.Persistence;
 using Acontplus.Core.Dtos.Requests;
-using Acontplus.Core.Dtos.Responses;
-using Billing.Domain.Repositories;
 using System.Data;
 
 namespace Billing.Infrastructure.Persistence.Repositories;

@@ -47,8 +47,6 @@ try
 
     app.MapAllEndpoints();
 
-    app.MapControllers().RequireAuthorization();
-
     app.MapHealthCheckEndpoints();
 
     await app.RunAsync();

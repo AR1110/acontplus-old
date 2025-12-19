@@ -20,7 +20,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { Button } from '@acontplus/ng-components';
 import { InventoryAdjustmentSearchAdvancedComponent } from '@inventory/inventory-adjustment/presentation/inventory-adjustment-add-edit/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component';
 
-import { ProductAutocompleteAdvancedComponent } from '@inventory/product/presentation/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
+import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { InventoryAdjustment } from '@inventory/inventory-adjustment/domain/entities/inventory-adjustment.entity';
@@ -33,7 +33,7 @@ import { InventoryAdjustmentService } from '@inventory/inventory-adjustment/doma
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ValidationException } from '@core/domain';
 import { setDateWithCurrentTime } from '@core/utils/date.util';
-import { ValidateProductStockUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import DecimalUtil from '@core/utils/decimal.util';
 import { MatTooltip } from '@angular/material/tooltip';
 
@@ -56,7 +56,7 @@ import { MatTooltip } from '@angular/material/tooltip';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryAdjustmentAddEditComponent implements OnInit {
-  private $validateProductStock = inject(ValidateProductStockUseCase);
+  private $productService = inject(PRODUCT_SERVICE);
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentAddEditComponent>);
   private params = inject(MAT_DIALOG_DATA);
@@ -606,8 +606,8 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
 
     if (column === 'quantity') {
       if (this.esBajaInventario() && value > oldValue) {
-        this.$validateProductStock
-          .execute({
+        this.$productService
+          .checkNotificationStock({
             cantidad: DecimalUtil.multiplyAsNumber(data.quantity, data.unitConversion),
             idArticulo: data.productId,
             idBodega: data.warehouseId,

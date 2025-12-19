@@ -2499,10 +2499,14 @@
 
 
 
+        $scope.isSaving = false;
 
 
         $scope.onSave = async function () {
             try {
+
+                if ($scope.isSaving) return;
+
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
                 let validateForm = isValidForm()
 
@@ -2571,8 +2575,9 @@
 
                     const managedRegister = fS.fetchManager(registerAndUpdateNotaEntrega);
 
-                    // Llamar a la función gestionada para registrar
+                    $scope.isSaving = true;
                     managedRegister(query).then(response => {
+                        $scope.isSaving = false;
                         if (response) { // Verificar si hay respuesta
                             if (response.code === '0') {
                                 fS.sweetAlert('warning', response.message, response.titleSms);
@@ -2587,16 +2592,21 @@
                             }
                         }
                     }).catch(error => {
+                        $scope.isSaving = false;
                         console.log(error); // Manejo de errores
-                    })
+                    }).finally(() => {
+                        $scope.isSaving = false;
+                    });
                 }
 
                 //Update Doc
                 if (isUpdate()) {
 
                     const managedUpdate = fS.fetchManager(registerAndUpdateNotaEntrega);
-                    // Llamar a la función gestionada para actualizar
+
+                    $scope.isSaving = true;
                     managedUpdate(query).then(response => {
+                        $scope.isSaving = false;
                         if (response) { // Verificar si hay respuesta
                             if (response.code === '0') {
                                 fS.sweetAlert('warning', response.message, response.titleSms);
@@ -2607,12 +2617,16 @@
                             }
                         }
                     }).catch(error => {
+                        $scope.isSaving = false;
                         console.log(error); // Manejo de errores
-                    })
+                    }).finally(() => {
+                        $scope.isSaving = false;
+                    });
 
 
                 }
             } catch (error) {
+                $scope.isSaving = false;
                 console.log(error)
             }
         }
@@ -2627,6 +2641,9 @@
         }
         $scope.onSaveInvoice = async function () {
             try {
+
+                if ($scope.isSaving) return;
+
                 let serieComprobante = null, titleSwal = '', htmlSwal = '', confirmButtonText = '';
                 let validateForm = isValidForm()
 
@@ -2769,8 +2786,10 @@
                             if (isRegister()) {
 
                                 const managedRegister = fS.fetchManager(facturaSvc.save);
+                                $scope.isSaving = true;
 
                                 managedRegister(params).then(response => {
+                                    $scope.isSaving = false;
                                     if (response.code === '0') {
                                         fS.sweetAlert('warning', response.message, response.titleSms);
                                     }
@@ -2783,17 +2802,22 @@
                                         $uibModalInstance.close(mainData)
                                     }
                                 }).catch(error => {
+                                    $scope.isSaving = false;
                                     console.error(error);
+                                }).finally(() => {
+                                    $scope.isSaving = false;
                                 })
                             }
 
                         } catch (error) {
+                            $scope.isSaving = false;
                             console.log(error)
                         }
 
                     }
                 })
             } catch (error) {
+                $scope.isSaving = false;
                 console.warn(error)
             }
         }

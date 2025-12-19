@@ -7,7 +7,6 @@ import { Button, DynamicCard } from '@acontplus/ng-components';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
-import { SvgIconComponent } from '@shared/components/svg-icon/svg-icon.component';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { Pagination } from '@acontplus/ng-components';
@@ -25,8 +24,7 @@ import Swal from 'sweetalert2';
     MatIcon,
     MatIconButton,
     MatDynamicTableComponent,
-    SvgIconComponent,
-    ThemeButtonComponent,
+    Button,
   ],
   templateUrl: './credit-time.component.html',
   styles: ``,

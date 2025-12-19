@@ -3,7 +3,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ProductSearchComponent } from '@inventory/product/presentation/components/product-search/product-search.component';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -19,7 +19,7 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 
 import { DynamicCard, Button } from '@acontplus/ng-components';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -88,11 +88,11 @@ export class RentabilidadPageComponent implements OnInit {
   };
   private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
-  private _productUseCase = inject(ProductUseCase);
+  private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
   private _tokenUseCase = inject(TokenUseCase);
 
   ngOnInit() {
-    this._productUseCase.getDataReport().subscribe((response) => {
+    this._PRODUCT_SERVICE.getDataReport().subscribe((response) => {
       const { estabs, tarifas, tiposDoc, subCategorias, taxes } = response;
       this.establecimientos.set(estabs);
       this.tarifas.set(tarifas);

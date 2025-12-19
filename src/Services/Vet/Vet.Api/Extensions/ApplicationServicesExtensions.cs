@@ -1,44 +1,53 @@
-using Acontplus.Persistence.SqlServer.Repositories;
+using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions.Authentication;
+using Scrutor;
 using Vet.Infrastructure.Persistence;
-using Vet.Infrastructure.Persistence.Repositories;
 
 namespace Vet.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-  public static IServiceCollection AddVetServices(this IServiceCollection services,
-      IConfiguration configuration)
-  {
-    services.AddApplicationServices(configuration);
+    public static IServiceCollection AddVetServices(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddApplicationServices(configuration);
 
-    services.AddAdvancedLoggingOptions(configuration);
+        services.AddAdvancedLoggingOptions(configuration);
 
-    services.AddJwtAuthentication(configuration);
+        services.AddJwtAuthentication(configuration);
 
-    services.AddOpenApi();
+        services.AddOpenApi();
 
-    services.AddHttpContextAccessor();
+        services.AddHttpContextAccessor();
 
-    services.AddControllers();
+        services.AddControllers();
 
-    JsonConfigurationService.ConfigureAspNetCore(services, false);
+        JsonConfigurationService.ConfigureAspNetCore(services, false);
 
-    JsonConfigurationService.RegisterJsonConfiguration(services);
+        JsonConfigurationService.RegisterJsonConfiguration(services);
 
-    services.AddDbContextPool<VetContext>(options =>
-        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddSqlServerPersistence<VetContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-    services.AddLookupService();
-    services.AddScoped<IAdoRepository, AdoRepository>();
-    services.AddScoped<IBehaviorTestRepository, BehaviorTestRepository>();
-    services.AddScoped<IBreedRepository, BreedRepository>();
-    services.AddScoped<IHealthCheckRepository, HealthCheckRepository>();
-    services.AddScoped<IMedicalHistoryRepository, MedicalHistoryRepository>();
-    services.AddScoped<IPetRepository, PetRepository>();
-    services.AddScoped<IPetTypeRepository, PetTypeRepository>();
-    services.AddScoped<IStatsService, StatsService>();
+        services.AddCachingServices(configuration);
 
-    return services;
-  }
+        string[] scopedNameSpaces =
+        [
+            "Vet.Infrastructure.Persistence.Repositories",
+        "Vet.Application.Services",
+        "Acontplus.Persistence.SqlServer.Repositories",
+        "Acontplus.Services.Extensions.Context",
+        "Acontplus.Services.Services.Implementations"
+        ];
+
+        services.Scan(scan => scan
+            .FromApplicationDependencies()
+            .AddClasses(classes => classes.InNamespaces(scopedNameSpaces))
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
+
+        return services;
+    }
 }

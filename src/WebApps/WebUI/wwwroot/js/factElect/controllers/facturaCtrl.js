@@ -2979,9 +2979,13 @@
             }
         };
 
+        $scope.isSaving = false;
 
         $scope.onSave = async function () {
             try {
+
+                if ($scope.isSaving) return;
+
                 let serieComprobante = null,
                     titleSwal = "",
                     htmlSwal = "",
@@ -3059,7 +3063,9 @@
                 if (isRegister()) {
                     const managedRegister = fS.fetchManager(registerAndUpdate);
 
+                    $scope.isSaving = true;
                     managedRegister(params).then(response => {
+                        $scope.isSaving = false;
                         if (!response) return
 
                         if (response.code === "0") {
@@ -3080,12 +3086,19 @@
                         }
 
 
+                    }).catch(error => {
+                        $scope.isSaving = false;
+                        console.log(error);
+                    }).finally(() => {
+                        $scope.isSaving = false;
                     })
                 }
                 if (isUpdate()) {
                     const managedUpdate = fS.fetchManager(registerAndUpdate);
 
+                    $scope.isSaving = true;
                     managedUpdate(params).then(response => {
+                        $scope.isSaving = false;
                         if (!response) return;
 
                         if (response.code === "0") {
@@ -3104,7 +3117,13 @@
                             });
                         }
 
-                    })
+                    }).catch(error => {
+                        $scope.isSaving = false;
+                        console.log(error);
+                    }
+                    ).finally(() => {
+                        $scope.isSaving = false;
+                    });
                 }
             } catch (error) {
                 console.log(error);

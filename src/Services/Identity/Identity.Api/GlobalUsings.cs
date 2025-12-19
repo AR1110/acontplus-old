@@ -10,7 +10,6 @@ global using Acontplus.Core.Validation;
 global using Acontplus.Infrastructure.Extensions;
 global using Acontplus.Logging;
 global using Acontplus.Persistence.SqlServer.Configurations;
-global using Acontplus.Persistence.SqlServer.Repositories;
 global using Acontplus.Services.Configuration;
 global using Acontplus.Services.Extensions.Authentication;
 global using Acontplus.Services.Services.Abstractions;

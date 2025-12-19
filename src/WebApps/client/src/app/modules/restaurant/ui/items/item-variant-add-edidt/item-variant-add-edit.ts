@@ -12,14 +12,14 @@ import {
   ItemGetBydIdUseCase,
   ItemUpdateUseCase,
 } from '@restaurant/application/use-cases/item.use-case';
-import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { ProductMeasure } from '@inventory/domain/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
-import {Overlay} from "@angular/cdk/overlay";
-import {ComponentPortal} from "@angular/cdk/portal";
-import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-search-dialog";
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
+import { ItemSearchDialog } from '@restaurant/ui/items/item-search-dialog/item-search-dialog';
 
 @Component({
   selector: 'app-item-variant-add-edit',
@@ -36,7 +36,7 @@ import {ItemSearchDialog} from "@restaurant/ui/items/item-search-dialog/item-sea
 })
 export class ItemVariantAddEdit implements OnInit {
   private itemGetByIdUseCase = inject(ItemGetBydIdUseCase);
-  private productSaleUseCase = inject(GetProductSaleUseCase);
+  private productService = inject(PRODUCT_SERVICE);
   private updateUseCase = inject(ItemUpdateUseCase);
   #modalRef = inject(MatDialogRef<ItemVariantAddEdit>);
   #tS = inject(ToastrNotificationService);
@@ -267,10 +267,8 @@ export class ItemVariantAddEdit implements OnInit {
     return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.COMBO;
   }
 
-
   getCategoryAbbreviationToSearch() {
-      return CATEGORY_ABBREVIATIONS.RESTAURANT;
-
+    return CATEGORY_ABBREVIATIONS.RESTAURANT;
   }
 
   rowDeleted(row: any) {
@@ -281,14 +279,10 @@ export class ItemVariantAddEdit implements OnInit {
 
   itemSearchLabel = this.isCombo() ? 'Buscar Producto' : 'Buscar Ingrediente';
 
-
   openOverlay(rowData: any) {
     const overlayRef = this.overlay.create({
-      positionStrategy: this.overlay.position()
-        .global()
-        .centerHorizontally()
-        .centerVertically(),
-      hasBackdrop: true
+      positionStrategy: this.overlay.position().global().centerHorizontally().centerVertically(),
+      hasBackdrop: true,
     });
 
     const portal = new ComponentPortal(ItemSearchDialog);
@@ -299,14 +293,13 @@ export class ItemVariantAddEdit implements OnInit {
 
     // ✅ Suscribirse al evento de cierre
     componentRef.instance.closed.subscribe((result: any) => {
-      if(result && typeof result === 'object') this.onSelectItemChildren(result, rowData)
+      if (result && typeof result === 'object') this.onSelectItemChildren(result, rowData);
       overlayRef.dispose(); // cerrar overlay
     });
 
     // ✅ Cerrar al hacer click en el backdrop
     overlayRef.backdropClick().subscribe(() => overlayRef.dispose());
   }
-
 
   ngOnInit() {
     if (this.isProduct()) {
@@ -376,7 +369,7 @@ export class ItemVariantAddEdit implements OnInit {
   onSelectItem(rowData: any): void {
     if (!rowData?.productId) return;
 
-    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+    this.productService.getForSale({ id: rowData.productId }).subscribe({
       next: (response) => {
         const { product, taxRates, measures } = response;
         if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
@@ -429,18 +422,17 @@ export class ItemVariantAddEdit implements OnInit {
     });
   }
 
-
-
   onSelectItemChildren(rowData: any, parentData: ItemComposition): void {
     if (!rowData?.productId) return;
 
-    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+    this.productService.getForSale({ id: rowData.productId }).subscribe({
       next: (response) => {
         const { product, taxRates, measures } = response;
         if (!product || !Array.isArray(measures) || !Array.isArray(taxRates)) return;
 
         const compositions = structuredClone(this.itemCompositions());
-        const compositionsChildren = compositions.find(c=>c.uuid === parentData.uuid)?.children ?? [];
+        const compositionsChildren =
+          compositions.find((c) => c.uuid === parentData.uuid)?.children ?? [];
 
         const existingIndex = compositionsChildren.findIndex((x) => x.childItemId === rowData.id);
 
@@ -483,17 +475,17 @@ export class ItemVariantAddEdit implements OnInit {
           existing.totalPrice = DecimalUtil.multiplyAsNumber(existing.quantity, existing.salePrice);
         }
 
-        this.itemCompositions.update(items =>
-          items.map(itm =>
+        this.itemCompositions.update((items) =>
+          items.map((itm) =>
             itm.uuid === parentData.uuid
               ? {
-                ...itm,
-                isOptional: true,
-                children: compositionsChildren } // crear nuevo objeto
-              : itm
-          )
+                  ...itm,
+                  isOptional: true,
+                  children: compositionsChildren,
+                } // crear nuevo objeto
+              : itm,
+          ),
         );
-
       },
       error: (err) => console.error('Error al obtener el producto:', err),
     });
@@ -542,13 +534,13 @@ export class ItemVariantAddEdit implements OnInit {
         message: 'Revise los datos ingresados',
       });
     }
-    const itemCompositionsChildren = this.itemCompositions().flatMap(x => x.children);
+    const itemCompositionsChildren = this.itemCompositions().flatMap((x) => x.children);
     const dataToSave = {
       item: this.itemForm.value,
       itemCompositions: [
         ...this.itemCompositions(),
         ...itemCompositionsChildren,
-        ...this.itemCompositionsDeleted()
+        ...this.itemCompositionsDeleted(),
       ],
       isProduct: this.isProduct(),
       isCombo: this.isCombo(),

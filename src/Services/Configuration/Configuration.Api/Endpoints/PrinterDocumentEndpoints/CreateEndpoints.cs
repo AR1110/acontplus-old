@@ -1,5 +1,3 @@
-using Configuration.Application.Dtos;
-
 namespace Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 
 public static class CreateEndpoints
@@ -23,7 +21,7 @@ public static class CreateEndpoints
                     CreatedByUserId = userContext.GetUserId(),
                     Printer = null!
                 };
-                
+
                 var result = await printerDocumentRepository.AddAsync(printerDocument);
                 return Results.Ok(result);
             });

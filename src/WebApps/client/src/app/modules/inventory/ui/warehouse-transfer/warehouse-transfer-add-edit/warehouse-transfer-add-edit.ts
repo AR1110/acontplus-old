@@ -35,19 +35,16 @@ import {
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { SearchDialogService } from '@shared/services/search-dialog';
-import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
-import {
-  GetProductPurchaseUseCase,
-  ValidateProductStockUseCase,
-} from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { ProductSearchDialog } from '@inventory/ui/product/components/product-search-dialog/product-search-dialog';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import DecimalUtil from '@core/utils/decimal.util';
-import { mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
+import { mergeStockItems } from '@inventory/domain/utils/stock.utils';
 import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
@@ -87,8 +84,7 @@ export class WarehouseTransferAddEdit implements OnInit {
   private dataFormUseCase = inject(WarehouseTransferDataFormUseCase);
   private notiSvc = inject(ToastrNotificationService);
   private searchService = inject(SearchDialogService);
-  private getProductPurchaseUseCase = inject(GetProductPurchaseUseCase);
-  private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
+  private productService = inject(PRODUCT_SERVICE);
   private generateSerieUseCase = inject(WarehouseTransferGenerateSerieUseCase);
   private saveUseCase = inject(WarehouseTransferSaveUseCase);
   private editUseCase = inject(WarehouseTransferEditUseCase);
@@ -558,8 +554,8 @@ export class WarehouseTransferAddEdit implements OnInit {
   private handleSearchResult(result: any): void {
     if (!result || typeof result !== 'object') return;
 
-    this.getProductPurchaseUseCase
-      .execute(result.id)
+    this.productService
+      .getForPurchase(result.id)
       .pipe(take(1))
       .subscribe({
         next: (response) => {
@@ -632,7 +628,7 @@ export class WarehouseTransferAddEdit implements OnInit {
       const dataMergeStock = mergeStockItems(details);
 
       const response = await firstValueFrom(
-        this.$validateProductStockUseCase.execute({
+        this.productService.checkNotificationStock({
           cantidad: dataMergeStock.quantity,
           idArticulo: dataMergeStock.productId,
           idBodega: dataMergeStock.warehouseId,

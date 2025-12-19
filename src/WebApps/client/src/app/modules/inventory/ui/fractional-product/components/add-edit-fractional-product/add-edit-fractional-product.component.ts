@@ -1,4 +1,4 @@
-import { Component, inject, input, signal, OnInit } from '@angular/core';
+import { Component, inject, input, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,19 +16,14 @@ import { roundNumber } from '@core/utils/round-number.utils';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DECIMALS } from '@core/constants/global.constants';
 import { getValidId } from '@core/utils/utils';
-import { FractionalProductPostUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-post.use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { FractionalProductPutUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-put.use-case';
-import { FractionalProductGetIdUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-id.use-case';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import Swal from 'sweetalert2';
-import {
-  ProductDataFormUseCase,
-  ProductGetIdUseCase,
-} from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { FRACTIONAL_PRODUCT_SERVICE, PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-add-edit-fractional-product',
   imports: [
     MatFormFieldModule,
@@ -56,11 +51,8 @@ export class AddEditFractionalProductComponent implements OnInit {
     isCalledFromProductModal: boolean;
   }>(MAT_DIALOG_DATA);
 
-  private $productDataFormUseCase = inject(ProductDataFormUseCase);
-  private $productGetIdUseCase = inject(ProductGetIdUseCase);
-  private $fractionalProductPostUseCase = inject(FractionalProductPostUseCase);
-  private $fractionalProductPutUseCase = inject(FractionalProductPutUseCase);
-  private $fractionalProductGetIdUseCase = inject(FractionalProductGetIdUseCase);
+  private $productService = inject(PRODUCT_SERVICE);
+  private $fractionalProductService = inject(FRACTIONAL_PRODUCT_SERVICE);
   private tS = inject(ToastrNotificationService);
 
   title = signal('Nuevo Artículo Fraccionado');
@@ -164,7 +156,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     try {
       if (result && typeof result !== 'object') return;
 
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productService.getDataForm().subscribe((response) => {
         this.medidas.set(response.medidas);
         this.data.idMedida = this.medidas().at(this.medidas().length - 1).idMedida;
       });
@@ -176,7 +168,7 @@ export class AddEditFractionalProductComponent implements OnInit {
     $event.stopPropagation();
     try {
       $event.stopPropagation();
-      this.$productDataFormUseCase.execute().subscribe((response) => {
+      this.$productService.getDataForm().subscribe((response) => {
         this.medidas.set(response.medidas);
       });
     } catch (error) {
@@ -269,7 +261,7 @@ export class AddEditFractionalProductComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.$productDataFormUseCase.execute().subscribe((response) => {
+    this.$productService.getDataForm().subscribe((response) => {
       this.medidas.set(response.medidas);
       this.data.idMedida = this.medidas().length > 0 ? this.medidas()[0].idMedida : 0;
 
@@ -288,7 +280,7 @@ export class AddEditFractionalProductComponent implements OnInit {
   }
 
   private loadDataUpdate() {
-    this.$fractionalProductGetIdUseCase.execute(this.params.id).subscribe((response) => {
+    this.$fractionalProductService.getId(this.params.id).subscribe((response) => {
       if (response.payload) {
         const { data, productPvps } = response.payload;
         this.data = data;
@@ -310,7 +302,7 @@ export class AddEditFractionalProductComponent implements OnInit {
 
   private selectProduct(idArticulo: number) {
     try {
-      this.$productGetIdUseCase.execute(idArticulo).subscribe((response) => {
+      this.$productService.getId(idArticulo).subscribe((response) => {
         this.data = response.data;
 
         const productoTarifas = structuredClone(response.productPvps);
@@ -478,11 +470,11 @@ export class AddEditFractionalProductComponent implements OnInit {
     };
 
     if (this.isAdd()) {
-      this.$fractionalProductPostUseCase.execute(data).subscribe(this.successResponse);
+      this.$fractionalProductService.post(data).subscribe(this.successResponse);
     }
 
     if (this.isUpdate()) {
-      this.$fractionalProductPutUseCase.execute(data).subscribe(this.successResponse);
+      this.$fractionalProductService.put(data).subscribe(this.successResponse);
     }
   }
 

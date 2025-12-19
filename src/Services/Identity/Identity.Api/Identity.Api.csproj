@@ -22,6 +22,7 @@
     <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="Acontplus.Utilities" />
     <PackageReference Include="Mapster" />
+    <PackageReference Include="Scrutor" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
 
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />

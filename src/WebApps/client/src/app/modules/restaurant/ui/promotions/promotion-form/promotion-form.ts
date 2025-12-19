@@ -33,7 +33,7 @@ import { TabulatorTable } from '@acontplus/ng-components';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import Swal from 'sweetalert2';
 import { ProductMeasure } from '@inventory/domain/models/product-measure';
-import { GetProductSaleUseCase } from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { LookupItem } from '@core/models/lookup-type';
 import { LookupService } from '@restaurant/application/services/lookup-service';
 import { PromotionDetail } from '@restaurant/domain/models/promotion-detail';
@@ -74,7 +74,7 @@ export class PromotionForm implements OnInit {
   dgRef = inject(MatDialogRef<PromotionForm>);
   params = inject<{ id: number }>(MAT_DIALOG_DATA);
   private lookupSvc = inject(LookupService);
-  private productSaleUseCase = inject(GetProductSaleUseCase);
+  private productService = inject(PRODUCT_SERVICE);
   #getByIdUseCase = inject(PromotionGetByIdUseCase);
 
   private notiSvc = inject(ToastrNotificationService);
@@ -441,7 +441,7 @@ export class PromotionForm implements OnInit {
   onSelectItem(rowData: any): void {
     if (!rowData?.productId) return;
 
-    this.productSaleUseCase.execute({ id: rowData.productId }).subscribe({
+    this.productService.getForSale({ id: rowData.productId }).subscribe({
       next: (response) => {
         const { product, measures } = response;
         if (!product || !Array.isArray(measures)) return;

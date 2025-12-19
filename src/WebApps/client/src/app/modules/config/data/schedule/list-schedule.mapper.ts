@@ -1,8 +1,8 @@
 import { ListScheduleResponse } from '@modules/config/domain/models/schedule.model';
-import { ApiResponse } from '@core/models/api-response';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ScheduleMapper {
-  static fromJson(response: ApiResponse): ListScheduleResponse {
+  static fromJson(response: ApiResponseLegacy): ListScheduleResponse {
     const result = new ListScheduleResponse();
     if (response.code === '1') {
       const shifts = JSON.parse(response.payload as any);

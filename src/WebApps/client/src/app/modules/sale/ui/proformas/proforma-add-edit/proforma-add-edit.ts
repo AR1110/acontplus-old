@@ -12,24 +12,21 @@ import {
 } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { AddEditProductDirective } from '@inventory/product/presentation/directives/add-edit-product.directive';
+import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
 import { MatIconButton } from '@angular/material/button';
-import { ProductSearchDialog } from '@inventory/product/presentation/components/product-search-dialog/product-search-dialog';
+import { ProductSearchDialog } from '@inventory/ui/product/components/product-search-dialog/product-search-dialog';
 import { SearchDialogService } from '@shared/services/search-dialog';
 import { MatIcon } from '@angular/material/icon';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
-import {
-  GetProductSaleUseCase,
-  ValidateProductStockUseCase,
-} from '@inventory/product/application/use-cases/product/get-product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import Swal from 'sweetalert2';
-import { getStockQuantity, mergeStockItems } from '@inventory/product/domain/utils/stock.utils';
+import { getStockQuantity, mergeStockItems } from '@inventory/domain/utils/stock.utils';
 import { firstValueFrom } from 'rxjs';
 import { ProductFee } from '@inventory/domain/models/tarifa.model';
 import { ProformaInvoiceGetFormDataUseCase } from '@sale/application/use-cases/proforma-use-case';
@@ -74,8 +71,7 @@ export class ProformaAddEdit implements OnInit {
   private notiSvc = inject(ToastrNotificationService);
 
   //use cases
-  private _productSaleUseCase = inject(GetProductSaleUseCase);
-  private $validateProductStockUseCase = inject(ValidateProductStockUseCase);
+  private _productService = inject(PRODUCT_SERVICE);
   private $getFormData = inject(ProformaInvoiceGetFormDataUseCase);
 
   //variables form
@@ -545,7 +541,7 @@ export class ProformaAddEdit implements OnInit {
 
     this.isLoadingProduct.set(true);
 
-    this._productSaleUseCase.execute({ id: result.id }).subscribe({
+    this._productService.getForSale({ id: result.id }).subscribe({
       next: async (response) => {
         try {
           const { product, inventoryAdjustments, additionalInfo } = response;
@@ -696,7 +692,7 @@ export class ProformaAddEdit implements OnInit {
       });
 
       const response = await firstValueFrom(
-        this.$validateProductStockUseCase.execute({
+        this._productService.checkNotificationStock({
           cantidad: quantity,
           idArticulo: productId,
           idBodega: warehouseId,

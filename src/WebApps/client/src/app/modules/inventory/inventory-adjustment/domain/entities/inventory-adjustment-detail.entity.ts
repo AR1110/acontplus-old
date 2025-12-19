@@ -1,6 +1,6 @@
 import { Quantity } from '@inventory/inventory-adjustment/domain/value-objects/quantity.vo';
 import { Money } from '@inventory/inventory-adjustment/domain/value-objects/money.vo';
-import { ProductId } from '@inventory/product/domain/product-id';
+import { ProductId } from '@inventory/domain/product-id';
 import { MedidaProducto } from '@inventory/domain/models/measure.model';
 
 export class InventoryAdjustmentDetail {

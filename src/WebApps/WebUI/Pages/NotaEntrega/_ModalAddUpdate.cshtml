@@ -297,17 +297,16 @@
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
                 <div class="row justify-content-end">
                     <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12">
-                        <button ng-if="!(data.idNotaEntrega>0)" type="button"
-                            class="btn btn-block btn-lg btn-success mt-4" id="btnSaveAndUpdateDocument"
-                            ng-click="onSave()">
-                            <i class="ti-save"></i> Guardar
+                        <button type="button" class="btn btn-block btn-lg btn-success mt-4"
+                            id="btnSaveAndUpdateDocument" ng-click="onSave()" ng-if="!isSaving">
+                            <i class="ti-save"></i> {{isRegister() ? 'Guardar' : 'Actualizar'}}
                         </button>
-                        <button ng-if="data.idNotaEntrega>0" type="button" class="btn btn-block btn-lg btn-success mt-4"
-                            id="btnSaveAndUpdateDocument" ng-click="onSave()">
-                            <i class="ti-pencil"></i> Actualizar
+
+                        <button type="button" class="btn btn-block btn-lg btn-success mt-4" ng-if="isSaving">
+                            Cargando...
                         </button>
                     </div>
-                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12" ng-if="!(isDisabledFormField)">
+                    <div class="col-lg-5 col-lg-5 col-md-6 col-sm-12 col-12" ng-if="!(isSaving || isDisabledFormField)">
                         <button type="button" class="btn btn-block btn-lg btn-info mt-4" ng-click="onSaveInvoice()">
                             <i class="ti-files"></i> Facturar
                         </button>

@@ -46,7 +46,10 @@ yarn-error.log
 
 ## Application-specific
 # User Secrets & Environment
-.env
+# Keep .env (development template) and .env.example (documentation)
+# Ignore sensitive environment files
+.env.staging
+.env.production
 .env.local
 .env.*.local
 sharedsettings.Development.json

@@ -11,7 +11,6 @@ global using Billing.Application.Interfaces.RetencionAts;
 global using Billing.Application.Interfaces.Sri;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
-global using System.ComponentModel.DataAnnotations;
 global using System.Data;
 global using System.Text;
 global using System.Web;

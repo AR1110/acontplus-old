@@ -27,5 +27,13 @@ EXPOSE 8080
 USER $APP_UID
 
 COPY --from=build /app/publish .
+
+# Copy Ocelot configuration files for different environments
+# Docker: Usa service names (sales.api:8080)
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Docker.json ./ocelot.Docker.json
+# Development: Usa localhost con puertos variables (opcional para debugging)
+COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Development.json ./ocelot.Development.json
+# Production: Usa IPs/dominios reales (opcional para mismo image en prod)
 COPY --from=build /src/src/ApiGateways/Ocelot.Api/ocelot.Production.json ./ocelot.Production.json
+
 ENTRYPOINT ["dotnet", "Ocelot.Api.dll"]

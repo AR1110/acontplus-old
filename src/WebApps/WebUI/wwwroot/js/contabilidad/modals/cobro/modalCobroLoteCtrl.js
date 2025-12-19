@@ -21,8 +21,10 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
 
+    $scope.isLoading = false;
+    $scope.isSaving = false;
 
-    //Columns  
+    //Columns
     $scope.columnDefs = [
         { name: '#', field: "index", width: 50, },
         { name: 'Tipo Doc.', field: "codDoc", width: 100, },
@@ -31,10 +33,10 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         { name: 'Fecha', field: "fechaEmision", width: 150, },
         { name: 'Total', field: "importeTotal" },
     ];
-    //Used to bind ui-grid  
-    //$scope.selectedItem = null;  
+    //Used to bind ui-grid
+    //$scope.selectedItem = null;
     $scope.gridOptions = {
-        //For inline filter  
+        //For inline filter
         enableGridMenu: false,
         enableRowHeaderSelection: false,
         treeRowHeaderAlwaysVisible: false,
@@ -42,18 +44,18 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         enableColumnReordering: false,
         showGridFooter: false,
 
-        // This code used to expand the grid  
+        // This code used to expand the grid
         expandableRowTemplate: '<div class="subgrid-wrapper" ui-grid="row.entity.subGridOptions"  ></div>',
-        //expandableRowHeight: 150,  
-        //subGridVariable will be available in subGrid scope  
+        //expandableRowHeight: 150,
+        //subGridVariable will be available in subGrid scope
         expandableRowScope: {
             subGridVariable: 'subGridScopeVariable'
         },
-        //End here  
+        //End here
         onRegisterApi: function (gridApi) {
             $scope.gridApi = gridApi;
             gridApi.expandable.on.rowExpandedStateChanged($scope, function (row) {
-                 
+
                 if (row.isExpanded) {
                     row.entity.subGridOptions = {
                         appScopeProvider: $scope, // ← 🔥 Esto es clave
@@ -119,7 +121,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 }
             });
         },
-        //end here  
+        //end here
         columnDefs: $scope.columnDefs,
     };
 
@@ -177,8 +179,9 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 idCliente = selectedDocumentos[0].idCliente;
             }
 
-            showLoader();
+            $scope.isLoading = true;
             comprobanteIngresoSvc.paymentFormData({ idCuentaPorCobrar, idCliente }).then(response => {
+                $scope.isLoading = false;
                 $scope.configCobro = response.configCobro;
                 dataFormaCobro = response;
                 modalCobroSvc.setEstadoCobro(dataFormaCobro.estadosPago);
@@ -233,8 +236,11 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                 getTotalesCuota();
 
             }).catch(error => {
+                $scope.isLoading = false;
                 console.log(error)
-            }).finally(() => hideLoader());
+            }).finally(() => {
+                $scope.isLoading = false;
+            });
         } catch (error) {
             console.log(error)
         }
@@ -273,7 +279,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         $scope.data.saldoActualDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
         $scope.data.totalSaldoDoc = fS.roundNumber(saldoActualDoc.toNumber(), fS.max_dos)
 
-        //cuando se realiza cobro desde modulo de comprobante ingreso  
+        //cuando se realiza cobro desde modulo de comprobante ingreso
         $scope.dataCuentaPorCobrar.importeTotal = $scope.data.importeTotal
         $scope.dataCuentaPorCobrar.abono = $scope.data.totalAbonoAnterior
         $scope.dataCuentaPorCobrar.saldo = $scope.data.totalSaldo
@@ -307,8 +313,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         message = `<table class="table table-bordered table-sm">
                                 <thead>
                                     <tr class="small">
-                                        <th>N°</th>                                
-                                        <th>Entidad Financiera</th>                                
+                                        <th>N°</th>
+                                        <th>Entidad Financiera</th>
                                         <th>Abono</th>
                                         <th>Saldo</th>
                                         <th>PosFechado</th>
@@ -317,8 +323,8 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                                 <tbody>`
         for (const item of infoCobrosDetalle) {
             message += `<tr class="small">
-                                    <td>${index++}</td>                                                            
-                                    <td>${item.subEntidadFinanciera}</td>                                                            
+                                    <td>${index++}</td>
+                                    <td>${item.subEntidadFinanciera}</td>
                                     <td>${item.abono}</td>
                                     <td>${item.saldo}</td>
                                     <td>${item.posfechado}</td>
@@ -406,7 +412,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
         })
     }
 
-    //Calculo de abono y saldo una vez agregado el forma pago 
+    //Calculo de abono y saldo una vez agregado el forma pago
     function calculoTotales() {
 
         let { totalValorAbono, totalValorAbonoEfectivo } = $scope.datosCobro.reduce((prev, curr) => {
@@ -458,7 +464,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     let index = $scope.datosCobro.indexOf(item);
                     $scope.datosCobro.splice(index, 1);
 
-                    //Todas las cuotas en su estado original                     
+                    //Todas las cuotas en su estado original
                     // for (let item of $scope.selectedDocumentos) {
                     //     item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                     // }
@@ -466,7 +472,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     // modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
 
                     for (let item of $scope.gridOptions.data) {
-                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone); 
+                        item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                         if (item.subGridOptions) {
                             item.subGridOptions.data = structuredClone(item.cuotasCalculadasClone);
                         }
@@ -477,7 +483,7 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     getTotalesCuota();
 
 
-                    //Recalculamos las cuotas con los abonos restantes   
+                    //Recalculamos las cuotas con los abonos restantes
                     let uniqueIndex = 0;
                     modalCobroSvc.uniqueIndex = uniqueIndex;
                     for (let item of $scope.datosCobro) {
@@ -526,15 +532,15 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
                     <tr>
                         <td><b>Aprobación:</b></td>
                         <td>${item.aprobacion || '...'}</td>
-                    </tr>   
+                    </tr>
                     <tr>
                         <td><b>Posfechado:</b></td>
                         <td>${item.posfechad ? 'SI' : 'NO'}</td>
-                    </tr> 
+                    </tr>
                     <tr>
                         <td><b>Banco:</b></td>
                         <td>${item.banco || "..."}</td>
-                    </tr>                      
+                    </tr>
                 </tbody>
             </table>
         </div>`
@@ -578,6 +584,9 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
     async function save() {
         try {
+
+            if ($scope.isSaving) return;
+
             if (!isValidForm()) return;
 
             let { isConfirmed } = await Swal.fire({
@@ -660,8 +669,10 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
 
                 const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
+                $scope.isSaving = true;
 
                 managedRegister(params).then((response) => {
+                    $scope.isSaving = false;
                     if (!response) return;
 
                     if (response.code === '0') {
@@ -673,14 +684,16 @@ function modalCobroLoteCtrl($scope, $uibModalInstance, $injector, params) {
 
                     }
                 }).catch(error => {
+                    $scope.isSaving = false;
                     console.log(error)
-                })
+                }).finally(() => {
+                    $scope.isSaving = false;
+                });
 
 
             }
         } catch (error) {
             console.log(error)
-            hideLoader();
         }
 
     }

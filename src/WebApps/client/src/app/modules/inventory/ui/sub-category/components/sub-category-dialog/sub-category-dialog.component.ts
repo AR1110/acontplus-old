@@ -1,7 +1,7 @@
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
 import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
-import { ProductUseCase } from '@inventory/product/application/use-cases/product.use-case';
+import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { SubCategoryService } from '@inventory/data/services/sub-category.service';
@@ -17,7 +17,7 @@ import { MatButton } from '@angular/material/button';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
-import {MatSlideToggle} from "@angular/material/slide-toggle";
+import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-sub-category-dialog',
@@ -39,7 +39,7 @@ export class SubCategoryDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<SubCategoryDialogComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
-  private _productUseCase = inject(ProductUseCase);
+  private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
   private subCategorySvc = inject(SubCategoryService);
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
@@ -72,7 +72,7 @@ export class SubCategoryDialogComponent implements OnInit {
   }
 
   private getDataForm() {
-    this._productUseCase.getDataForm().subscribe((response) => {
+    this._PRODUCT_SERVICE.getDataForm().subscribe((response) => {
       this.categorias.set(response.categorias);
     });
   }

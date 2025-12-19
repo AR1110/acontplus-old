@@ -8,7 +8,8 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { Pagination, Button, DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FractionalProductGetAllUseCase } from '@inventory/product/application/use-cases/fractional-product/fractional-product-get-all.use-case';
+import { FRACTIONAL_PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';
 import { DialogService } from '@core/services/dialog.service';
@@ -30,7 +31,7 @@ import { AddEditFractionalProductComponent } from '@inventory/ui/fractional-prod
   styles: ``,
 })
 export class FraccProductListComponent implements OnInit {
-  private $fractionalProductGetAllUseCase = inject(FractionalProductGetAllUseCase);
+  private $fractionalProductService = inject(FRACTIONAL_PRODUCT_SERVICE);
   private dialogSvc = inject(DialogService);
 
   productId = input(0);
@@ -70,8 +71,8 @@ export class FraccProductListComponent implements OnInit {
     if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
-    this.$fractionalProductGetAllUseCase
-      .execute(params)
+    this.$fractionalProductService
+      .getAll(params)
       .pipe(finalize(() => this.isLoadingResults.set(false)))
       .subscribe((response) => {
         this.dataSource.set(response.payload?.data ?? []);
