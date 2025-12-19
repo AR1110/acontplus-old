@@ -41,7 +41,7 @@ public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPu
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var newId = Convert.ToInt32(response.Payload);
         var item = new NonHabitualPurchaseItem(newId, request.IncomingDocument, request.Details, true, DateTime.UtcNow);
@@ -65,7 +65,7 @@ public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPu
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var item = new NonHabitualPurchaseItem(id, request.IncomingDocument, request.Details, true, DateTime.UtcNow);
         return Result<NonHabitualPurchaseItem, DomainError>.Success(item);
@@ -84,7 +84,7 @@ public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPu
     {
       var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
-      return response?.Code == "1"
+      return response?.Code == "0"
         ? Result<bool, DomainError>.Success(true)
         : Result<bool, DomainError>.Failure(DomainError.Validation("NON_HABITUAL_PURCHASE_DELETE_ERROR", response?.Message ?? "Failed to delete non-habitual purchase"));
     }

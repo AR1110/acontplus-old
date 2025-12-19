@@ -136,7 +136,7 @@ public class ReceivedDocumentService(
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
-            if (response?.Code == "1")
+            if (response?.Code == "0")
             {
                 return await GetByIdAsync(id, userRoleId, cancellationToken);
             }
@@ -154,7 +154,7 @@ public class ReceivedDocumentService(
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubcategoryId }, { "idUsuario", id } };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UpdateSubcategoryReceivedDocument", parameters);
-            return response?.Code == "1"
+            return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", response?.Message ?? "Failed to update category"));
         }
@@ -170,7 +170,7 @@ public class ReceivedDocumentService(
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}DeleteReceivedDocument", parameters);
-            return response?.Code == "1"
+            return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_DELETE_ERROR", response?.Message ?? "Failed to delete received document"));
         }
@@ -190,7 +190,7 @@ public class ReceivedDocumentService(
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}MigrateReceivedDocument", parameters);
-            if (response?.Code == "1")
+            if (response?.Code == "0")
             {
                 return await GetByIdAsync(request.Id, request.CreatedByUserId, cancellationToken);
             }
@@ -232,7 +232,7 @@ public class ReceivedDocumentService(
                 { "userRoleId", userRoleId }
             };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXml", parameters);
-            return response?.Code == "1"
+            return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", response?.Message ?? "Failed to upload XML"));
         }

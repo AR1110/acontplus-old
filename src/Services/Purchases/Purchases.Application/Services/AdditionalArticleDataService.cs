@@ -31,7 +31,7 @@ public class AdditionalArticleDataService(IUnitOfWork unitOfWork) : IAdditionalA
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var newId = Convert.ToInt32(response.Payload);
         var item = new AdditionalArticleDataItem(newId, request.DocumentId, request.AdditionalInfo);
@@ -55,7 +55,7 @@ public class AdditionalArticleDataService(IUnitOfWork unitOfWork) : IAdditionalA
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var item = new AdditionalArticleDataItem(id, request.DocumentId, request.AdditionalInfo);
         return Result<AdditionalArticleDataItem, DomainError>.Success(item);
@@ -74,7 +74,7 @@ public class AdditionalArticleDataService(IUnitOfWork unitOfWork) : IAdditionalA
     {
       var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
-      return response?.Code == "1"
+      return response?.Code == "0"
         ? Result<bool, DomainError>.Success(true)
         : Result<bool, DomainError>.Failure(DomainError.Validation("ADDITIONAL_DATA_DELETE_ERROR", response?.Message ?? "Failed to delete data"));
     }
