@@ -48,6 +48,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
     $scope.isLoading = false;
     $scope.isSaving = false;
+    $scope.isSubmitting = false; // lock to prevent multiple confirmations / duplicate submissions
 
     $scope.findSubEntidad = findSubEntidad;
     $scope.openModalCobroAvanzado = openModalCobroAvanzado;
@@ -219,7 +220,9 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     async function save() {
         try {
 
-            if ($scope.isSaving) return;
+            if ($scope.isSaving || $scope.isSubmitting) return;
+            // mark that we're processing a save action (pre-confirmation lock)
+            $scope.isSubmitting = true;
 
             if (!modalCobroSvc.isValidForm($scope.cobro, $scope.entidadFinanciera.codigo)) throw 'Form invalid'
 
@@ -236,6 +239,12 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                 allowEscapeKey: true
             })
 
+
+            if (!isConfirmed) {
+                // user cancelled, release pre-confirmation lock
+                $scope.isSubmitting = false;
+                return;
+            }
 
             if (isConfirmed) {
                 try {
@@ -316,9 +325,12 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
                     const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
 
+                    // actual network/save in progress (shows "Procesando...")
                     $scope.isSaving = true;
                     managedRegister(params).then((response) => {
+                        // release both flags on completion
                         $scope.isSaving = false;
+                        $scope.isSubmitting = false;
 
                         if (!response) return;
                         if (response.code === '0') {
@@ -330,16 +342,21 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         }
                     }).catch(error => {
                         $scope.isSaving = false;
+                        $scope.isSubmitting = false;
                         console.log(error)
                     })
                 } catch (error) {
                     $scope.isSaving = false;
+                    $scope.isSubmitting = false;
                     console.log(error)
                 }
 
             }
 
         } catch (error) {
+            // fallback: ensure locks are released on unexpected errors
+            $scope.isSaving = false;
+            $scope.isSubmitting = false;
             console.log(error)
         }
     }
