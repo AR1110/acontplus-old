@@ -63,8 +63,13 @@
   </div>
 </ng-template>
 <ng-template #actionsTemplate>
-  <button type="button" mat-flat-button (click)="save()">
-    <mat-icon>save</mat-icon>
-    Guardar
-  </button>
+
+  <acp-button
+    type="button"
+    icon="save"
+    variant="primary"
+    matStyle="filled"
+    text="Guardar"
+    (handleClick)="save()"
+  />
 </ng-template>

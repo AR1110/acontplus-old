@@ -1,5 +1,5 @@
 import { Provider } from '@angular/core';
-import { BrandWebRepository } from '@inventory/data/brand-web.repository';
+import { BrandHttp } from '@inventory/data/brand-http';
 import { FractionalProductHttp } from '@inventory/data/fractional-product-http';
 import { InventarioModeloHttp } from '@inventory/data/inventario-modelo-http';
 import { MassiveTaxHttp } from '@inventory/data/massive-tax-http';
@@ -25,13 +25,15 @@ import {
   WAREHOUSE_TRANSFER_SERVICE,
   MASSIVE_TAX_SERVICE,
   INVENTARIO_MODELO_SERVICE,
+  SUB_CATEGORY_SERVICE,
 } from '@inventory/tokens/inventory-token';
 import { InventoryAdjustmentHttp } from '@inventory/data/inventory-adjustment-http';
+import { SubCategoryHttp } from '@inventory/data/sub-category-http';
 
 export const DATA_INVENTORY_IOC: Provider[] = [
   {
     provide: BRAND_SERVICE,
-    useClass: BrandWebRepository,
+    useClass: BrandHttp,
   },
   {
     provide: FRACTIONAL_PRODUCT_SERVICE,
@@ -80,5 +82,9 @@ export const DATA_INVENTORY_IOC: Provider[] = [
   {
     provide: INVENTORY_ADJUSTMENT_SERVICE,
     useClass: InventoryAdjustmentHttp,
+  },
+  {
+    provide: SUB_CATEGORY_SERVICE,
+    useClass: SubCategoryHttp,
   },
 ];

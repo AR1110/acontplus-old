@@ -8,7 +8,7 @@ import { isValidField } from '@core/utils/utils';
 import { Observable, tap } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-interface SubCategoryGroup {
+interface   ISubCategoryGroup {
   familia: string;
   subFamilias: any[];
 }
@@ -29,11 +29,11 @@ const _filter = (opt: any[], value: string): string[] => {
     MatAutocompleteModule,
     AsyncPipe,
   ],
-  templateUrl: './sub-category-group.component.html',
+  templateUrl: './sub-category-group.html',
   styles: ``,
 })
-export class SubCategoryGroupComponent implements OnChanges {
-  @Input({ required: true }) subCategoryGroups: SubCategoryGroup[] = [];
+export class SubCategoryGroup implements OnChanges {
+  @Input({ required: true }) subCategoryGroups: ISubCategoryGroup[] = [];
   isInputMat = input(false);
   onSelected = output<number>();
   onEmptyData = output();
@@ -43,7 +43,7 @@ export class SubCategoryGroupComponent implements OnChanges {
     subCategoryGroup: '',
   });
 
-  stateGroupOptions!: Observable<SubCategoryGroup[]>;
+  stateGroupOptions!: Observable<ISubCategoryGroup[]>;
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['subCategoryGroups']) {
@@ -63,7 +63,7 @@ export class SubCategoryGroupComponent implements OnChanges {
     this.onSelected.emit(item.idSubFamilia);
   }
 
-  private _filterGroup(value: string): SubCategoryGroup[] {
+  private _filterGroup(value: string): ISubCategoryGroup[] {
     if (value) {
       return this.subCategoryGroups
         .map((group) => ({

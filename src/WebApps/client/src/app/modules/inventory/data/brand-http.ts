@@ -12,7 +12,7 @@ import { BrandRepository } from '@inventory/domain/repositories/brand.repository
 @Injectable({
   providedIn: 'root',
 })
-export class BrandWebRepository implements BrandRepository {
+export class BrandHttp implements BrandRepository {
   private _url = `${PATHS_API.INVENTORY}${INVENTORY_PATHS.BRAND}`;
   private _http = inject(HttpClient);
 

@@ -5,7 +5,7 @@ import {
   model,
   output,
   OnInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -59,7 +59,7 @@ export class ProductUbicationComponent implements OnInit {
 
   loading = false;
 
-  dataSource = new MatTableDataSource<any>([]);
+  dataSource = signal<any>([])
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
@@ -88,7 +88,7 @@ export class ProductUbicationComponent implements OnInit {
       .getId(this.productId())
       .pipe(finalize(() => (this.loading = false)))
       .subscribe((response) => {
-        this.dataSource = new MatTableDataSource(response?.productLocations || []);
+        this.dataSource.set(response?.productLocations || []);
       });
   }
 
@@ -100,7 +100,6 @@ export class ProductUbicationComponent implements OnInit {
         ubicacion: null,
       };
     });
-    console.log(this.data());
   }
 
   edit(item: any) {

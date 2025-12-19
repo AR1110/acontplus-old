@@ -13,7 +13,7 @@ import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +26,7 @@ import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components
     MatIconModule,
     MatButtonModule,
     MatCustomDialogComponent,
-    SubCategoryGroupComponent,
+    SubCategoryGroup,
     ToUpperCaseDirective,
   ],
   templateUrl: './massive-tax-dialog.component.html',

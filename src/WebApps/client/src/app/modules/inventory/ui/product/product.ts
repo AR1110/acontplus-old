@@ -21,7 +21,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 import { ProductKardexModalDirective } from '@inventory/ui/product/components/directives/product-kardex-modal.directive';
 import { StockService } from '@inventory/data/services/stock.service';
 import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
@@ -58,7 +58,7 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
     MatTooltipModule,
     MatCheckboxModule,
     MatSelectModule,
-    SubCategoryGroupComponent,
+    SubCategoryGroup,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
@@ -118,7 +118,6 @@ export class Product implements OnInit {
     {
       header: 'Descripción',
       field: 'dataDescription',
-      width: '300px',
     },
     { header: 'Imagen', field: 's3ObjectUrl', type: 'image' },
     { header: 'SubFamilia', field: 'subFamilia' },

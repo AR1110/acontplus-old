@@ -1,6 +1,6 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
 import { DialogService } from '@core/services/dialog.service';
-import { AddEditProductDialogComponent } from '@inventory/ui/product/components/add-edit-product-dialog/add-edit-product-dialog.component';
+import { AddEditProduct } from '@inventory/ui/product/components/add-edit-product/add-edit-product';
 
 @Directive({
   selector: '[appAddEditProduct]',
@@ -22,7 +22,7 @@ export class AddEditProductDirective {
       data.id = this.id();
     }
 
-    const modalRef = this.dialogSvc.open(AddEditProductDialogComponent, {
+    const modalRef = this.dialogSvc.open(AddEditProduct, {
       size: 'xl',
       data,
     });

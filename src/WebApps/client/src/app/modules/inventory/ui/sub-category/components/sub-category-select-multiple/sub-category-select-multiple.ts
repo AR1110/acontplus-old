@@ -6,10 +6,10 @@ import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
 
 @Component({
   selector: 'app-sub-category-select-multiple',
-  templateUrl: './sub-category-select-multiple.component.html',
+  templateUrl: './sub-category-select-multiple.html',
   imports: [MatFormFieldModule, MatSelectModule, ReactiveFormsModule, FormsModule],
 })
-export class SubCategorySelectMultipleComponent {
+export class SubCategorySelectMultiple {
   isMat = input(false);
   @Input() checkedSubCategorias = new FormControl([]);
   @Input() subCategorias: GroupedSubFamilia[] = [];

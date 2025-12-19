@@ -37,7 +37,6 @@ export class ProductHttp implements ProductRepository {
     return this._http
       .get<ApiResponseLegacy>(`${this._url}`, {
         params,
-        context: getNoLoader(),
       })
       .pipe(
         map((response) => {

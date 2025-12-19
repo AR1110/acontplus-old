@@ -1,5 +1,5 @@
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
@@ -48,7 +48,7 @@ const imports = [
   ReactiveFormsModule,
   NgTemplateOutlet,
   BreadcrumbComponent,
-  SubCategoryGroupComponent,
+  SubCategoryGroup,
   ProductSearchComponent,
   DateRangeSelectionComponent,
   SupplierSearchComponent,

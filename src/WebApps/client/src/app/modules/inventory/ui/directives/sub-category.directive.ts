@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { SubCategoryDialogComponent } from '@inventory/ui/sub-category/components/sub-category-dialog/sub-category-dialog.component';
+import { SubCategoryAddEdit } from '@inventory/ui/sub-category/components/sub-category-add-edit/sub-category-add-edit';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
@@ -10,8 +10,9 @@ export class SubCategoryModalDirective {
   params = input({});
   private dialogSvc = inject(DialogService);
 
-  @HostListener('click') onClick() {
-    const modalRef = this.dialogSvc.open(SubCategoryDialogComponent, {
+  @HostListener('click',  ['$event']) onClick($event:MouseEvent) {
+    $event.stopPropagation();
+    const modalRef = this.dialogSvc.open(SubCategoryAddEdit, {
       data: this.params() || {},
     });
     modalRef.subscribe((result: any) => {

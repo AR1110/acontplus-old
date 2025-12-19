@@ -575,6 +575,7 @@
     [variant]="'success'"
     [icon]="isUpdate() ? 'edit' : 'save'"
     [text]="btnText"
+    matStyle="filled"
     (handleClick)="save()"
   />
   <acp-button
@@ -582,6 +583,7 @@
     [variant]="'dark'"
     [icon]="'clear'"
     [text]="'Cerrar'"
+    matStyle="filled"
     (handleClick)="close()"
   />
 </ng-template>

@@ -12,6 +12,7 @@ import { WarehouseRepository } from '@inventory/domain/repositories/warehouse.re
 import { WarehouseTransferRepository } from '@inventory/domain/repositories/warehouse-transfer.repository';
 import { MassiveTaxRepository } from '@inventory/domain/repositories/massive-tax.repository';
 import { InventarioModeloRepository } from '@inventory/domain/repositories/inventario-modelo.repository';
+import { SubCategoryRepository } from '@inventory/domain/repositories/sub-category.repository';
 
 export const FRACTIONAL_PRODUCT_SERVICE = new InjectionToken<FractionalProductRepository>(
   'FRACTIONAL_PRODUCT_SERVICE',
@@ -51,4 +52,8 @@ export const MASSIVE_TAX_SERVICE = new InjectionToken<MassiveTaxRepository>('MAS
 
 export const INVENTARIO_MODELO_SERVICE = new InjectionToken<InventarioModeloRepository>(
   'INVENTARIO_MODELO_SERVICE',
+);
+
+export const SUB_CATEGORY_SERVICE = new InjectionToken<SubCategoryRepository>(
+  'SUB_CATEGORY_SERVICE',
 );

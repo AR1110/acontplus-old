@@ -4,7 +4,7 @@ import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-ph
 import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { SubCategoryService } from '@inventory/data/services/sub-category.service';
+import { SubCategoryHttp } from '@inventory/data/sub-category-http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Component, inject, signal, OnInit } from '@angular/core';
@@ -13,14 +13,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButton } from '@angular/material/button';
-import { NgxFileDropEntry } from 'ngx-file-drop';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import {SubCategoryListDto} from "@inventory/domain/models/sub-category.model";
+import {Button} from "@acontplus/ng-components";
 
 @Component({
-  selector: 'app-sub-category-dialog',
+  selector: 'app-sub-category-add-edit',
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -29,27 +29,24 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatCustomDialogComponent,
     UploadImageComponent,
     ToUpperCaseDirective,
-    MatButton,
     MatIconModule,
     MatSlideToggle,
+    Button,
   ],
-  templateUrl: './sub-category-dialog.component.html',
+  templateUrl: './sub-category-add-edit.html',
 })
-export class SubCategoryDialogComponent implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<SubCategoryDialogComponent>);
-  readonly params = inject<any>(MAT_DIALOG_DATA);
+export class SubCategoryAddEdit implements OnInit {
+  readonly dialogRef = inject(MatDialogRef<SubCategoryAddEdit>);
+  readonly params = inject<SubCategoryListDto>(MAT_DIALOG_DATA);
 
   private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
-  private subCategorySvc = inject(SubCategoryService);
+  private subCategorySvc = inject(SubCategoryHttp);
   private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
   private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nueva SubFamilia';
   categorias = signal<any[]>([]);
-
-  files: NgxFileDropEntry[] = [];
-  croppedImage: any;
 
   imageUrl = signal(imgDefault());
   selectedFile = signal<any>('');
@@ -63,12 +60,10 @@ export class SubCategoryDialogComponent implements OnInit {
     montoObjetivo: 0,
     ultimoSecuencial: 0,
     estado: true,
-    s3ObjectKey: null,
-    s3ObjectUrl: null,
-  };
+  }as SubCategoryListDto
 
   private esEditar() {
-    return this.params.idSubFamilia > 0;
+    return this.params.id > 0;
   }
 
   private getDataForm() {
@@ -82,7 +77,7 @@ export class SubCategoryDialogComponent implements OnInit {
     if (typeof this.params === 'object' && this.esEditar()) {
       this.titleModal = 'Editar SubFamilia';
       this.data = structuredClone(this.params);
-      this.imageUrl.set(this.params.s3ObjectUrl || imgDefault());
+      this.imageUrl.set(this.params.imageUrl ?? imgDefault());
     }
   }
 
@@ -158,7 +153,7 @@ export class SubCategoryDialogComponent implements OnInit {
         estado: this.data.estado,
         secuencial: this.data.ultimoSecuencial || 0,
       };
-      const id = this.params.idSubFamilia as number;
+      const id = this.params.id;
       if (id > 0) {
         this.subCategorySvc.put(id, data).subscribe(this.successResponse);
       } else {
@@ -170,11 +165,11 @@ export class SubCategoryDialogComponent implements OnInit {
   }
 
   private uploadFile() {
-    if (this.data.subcategoryPhotoId > 0 && this.selectedFile()) {
+    if (this.data?.subcategoryPhotoId && this.selectedFile()) {
       const obj = {
         id: this.data.subcategoryPhotoId,
         s3ObjectKey: this.data.s3ObjectKey,
-        s3ObjectUrl: this.data.s3ObjectUrl,
+        s3ObjectUrl: this.data.imageUrl,
       };
       this.subCategoryPhotoSvc
         .put(obj, this.data.subcategoryPhotoId, this.selectedFile())
@@ -196,7 +191,7 @@ export class SubCategoryDialogComponent implements OnInit {
     }
     if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
       this.subCategoryPhotoSvc
-        .post(this.params.idSubFamilia, this.selectedFile())
+        .post(this.params.id, this.selectedFile())
         .subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
@@ -208,6 +203,7 @@ export class SubCategoryDialogComponent implements OnInit {
             Swal.fire({
               icon: 'success',
               html: response.message,
+              timer: 1000
             });
             this.isRefresh.set(true);
           }

@@ -46,7 +46,7 @@ interface ProductTarifa {
   utilidad: number;
 }
 @Component({
-  selector: 'app-add-edit-product-dialog',
+  selector: 'app-add-edit-product',
   imports: [
     MatTabsModule,
     MatIconModule,
@@ -76,13 +76,13 @@ interface ProductTarifa {
     ToUpperCaseDirective,
     ModelAddEditDirective,
   ],
-  templateUrl: './add-edit-product-dialog.component.html',
+  templateUrl: './add-edit-product.html',
   styles: ``,
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddEditProductDialogComponent implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<AddEditProductDialogComponent>);
+export class AddEditProduct implements OnInit {
+  readonly dialogRef = inject(MatDialogRef<AddEditProduct>);
   readonly params = inject<{
     id: number;
     isImport?: number;

@@ -25,8 +25,8 @@ export const routes: Route[] = [
     path: 'subcategories',
     title: 'SubCategoria',
     loadComponent: () =>
-      import('@inventory/ui/sub-category/sub-category.component').then(
-        (m) => m.SubCategoryComponent,
+      import('@inventory/ui/sub-category/sub-category').then(
+        (m) => m.SubCategory,
       ),
     data: {
       breadcrumb: 'Sub Categorias',
