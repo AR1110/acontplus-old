@@ -207,7 +207,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}Download", parameters);
+            var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}DownloadReceivedDocument", parameters);
             return data != null
               ? Result<byte[], DomainError>.Success(data)
               : Result<byte[], DomainError>.Failure(DomainError.NotFound("DOCUMENT_FILE_NOT_FOUND", "Document file not found"));
@@ -231,7 +231,7 @@ public class ReceivedDocumentService(
                 { "subcategoryId", subcategoryId },
                 { "userRoleId", userRoleId }
             };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXml", parameters);
+            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXmlReceivedDocument", parameters);
             return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", response?.Message ?? "Failed to upload XML"));
