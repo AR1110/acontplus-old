@@ -11,7 +11,7 @@ GO
 -- Create date: 2022-07-31
 -- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS 
 -- =============================================
-CREATE OR ALTER PROCEDURE Purchases.GetDocumentReceived
+CREATE OR ALTER PROCEDURE Purchases.GetReceivedDocument
     @Filters NVARCHAR(MAX) 
    ,@PageIndex INT = 1
    ,@PageSize INT = 10
