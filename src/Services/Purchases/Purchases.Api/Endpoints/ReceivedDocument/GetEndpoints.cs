@@ -57,7 +57,7 @@ public static class GetEndpoints
             int id,
             IReceivedDocumentService receivedDocumentService,
             IAdoRepository adoRepository,
-            IDocumentConverter documentoXmlToHtml,
+            IDocumentConverter documentXmlToHtml,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -73,7 +73,7 @@ public static class GetEndpoints
             var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
             if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
             {
-                response.Code = "1";
+                response.Code = "0";
                 var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
                 var xdoc = new XmlDocument();
                 if (xmlDoc != null) xdoc.LoadXml(xmlDoc);
@@ -83,18 +83,18 @@ public static class GetEndpoints
                 var getXmlSriData = new DataXmlComprobante();
                 if (!getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
                 {
-                    response.Code = "0";
+                    response.Code = "XML_PARSE_ERROR";
                     response.Message = sms;
                 }
                 else
                 {
-                    response.Payload = documentoXmlToHtml.CreateHtml(ceXml);
+                    response.Payload = documentXmlToHtml.CreateHtml(ceXml);
                 }
             }
             else
             {
-                response.Code = "0";
-                response.Message = "No se encontro xml";
+                response.Code = "XML_NOT_FOUND";
+                response.Message = "No se encontró xml";
             }
 
             return Results.Ok(response);
