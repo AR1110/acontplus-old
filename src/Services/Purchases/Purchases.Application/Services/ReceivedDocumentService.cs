@@ -109,7 +109,7 @@ public class ReceivedDocumentService(
                 EstablishmentId: request.EstablishmentId,
                 SubcategoryId: request.SubcategoryId,
                 CreatedByUserId: request.CreatedByUserId,
-                IdDocumento: 0  // Will be set after DB insert by worker
+                DocumentId: 0  // Will be set after DB insert by worker
             );
 
             var jsonContent = JsonExtensions.SerializeOptimized(fileMessage);

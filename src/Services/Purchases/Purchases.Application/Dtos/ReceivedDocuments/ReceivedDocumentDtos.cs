@@ -12,7 +12,7 @@ public record ReceivedDocumentFileMessage(
     int EstablishmentId,
     int SubcategoryId,
     int CreatedByUserId,
-    int IdDocumento,
+    int DocumentId,
     int RetryCount = 0,
     DateTime? LastRetryAt = null,
     string? LastError = null);
