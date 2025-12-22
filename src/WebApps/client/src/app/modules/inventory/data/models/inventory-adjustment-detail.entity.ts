@@ -1,6 +1,3 @@
-import { Quantity } from '@inventory/domain/value-objects/quantity.vo';
-import { Money } from '@inventory/domain/value-objects/money.vo';
-import { ProductId } from '@inventory/domain/value-objects/product-id';
 import { MedidaProducto } from '@inventory/data/models/measure.model';
 
 /**
@@ -11,18 +8,18 @@ import { MedidaProducto } from '@inventory/data/models/measure.model';
 export class InventoryAdjustmentDetail {
   private constructor(
     private _orderIndex: number,
-    private readonly _productId: ProductId,
+    private readonly _productId: number,
     private readonly _code: string,
     private _warehouseId: number,
     private _unitOfMeasureId: number,
     private _measures: MedidaProducto[],
-    private _quantity: Quantity,
-    private _transactionQuantity: Quantity,
-    private _unitConversion: Quantity,
-    private _unitPrice: Money,
-    private _costPrice: Money,
-    private _fractionalCostPrice: Money,
-    private _total: Money,
+    private _quantity: number,
+    private _transactionQuantity: number,
+    private _unitConversion: number,
+    private _unitPrice: number,
+    private _costPrice: number,
+    private _fractionalCostPrice: number,
+    private _total: number,
     private readonly _description: string,
     private _notes?: string,
     private _status = true,
@@ -48,28 +45,31 @@ export class InventoryAdjustmentDetail {
       throw new Error('Description cannot be empty');
     }
 
-    // ✨ Value Objects creation with automatic validation
-    const productId = ProductId.from(params.productId);
-    const quantity = Quantity.from(params.quantity);
-    const unitConversion = Quantity.from(params.unitConversion);
-    const unitPrice = Money.from(params.unitPrice);
-    const costPrice = Money.from(params.costPrice);
-    const fractionalCostPrice = Money.from(params.fractionalCostPrice);
+    // Validation
+    if (params.productId <= 0) {
+      throw new Error('Product ID must be a positive number');
+    }
+    if (params.quantity < 0) {
+      throw new Error('Quantity cannot be negative');
+    }
+    if (params.unitPrice < 0) {
+      throw new Error('Unit price cannot be negative');
+    }
 
     const detail = new InventoryAdjustmentDetail(
       params.orderIndex,
-      productId,
+      params.productId,
       params.code,
       params.warehouseId,
       params.unitOfMeasureId,
       params.measures,
-      quantity,
-      Quantity.zero(),
-      unitConversion,
-      unitPrice,
-      costPrice,
-      fractionalCostPrice,
-      Money.zero(), // ← Will be calculated
+      params.quantity,
+      0, // transactionQuantity - will be calculated
+      params.unitConversion,
+      params.unitPrice,
+      params.costPrice,
+      params.fractionalCostPrice,
+      0, // total - will be calculated
       params.description.trim(),
       params.notes?.trim(),
       params.status,
@@ -82,7 +82,7 @@ export class InventoryAdjustmentDetail {
   get orderIndex(): number {
     return this._orderIndex;
   }
-  get productId(): ProductId {
+  get productId(): number {
     return this._productId;
   }
   get code(): string {
@@ -98,25 +98,25 @@ export class InventoryAdjustmentDetail {
   get measures(): MedidaProducto[] {
     return this._measures;
   }
-  get quantity(): Quantity {
+  get quantity(): number {
     return this._quantity;
   }
-  get transactionQuantity(): Quantity {
+  get transactionQuantity(): number {
     return this._transactionQuantity;
   }
-  get unitConversion(): Quantity {
+  get unitConversion(): number {
     return this._unitConversion;
   }
-  get unitPrice(): Money {
+  get unitPrice(): number {
     return this._unitPrice;
   }
-  get costPrice(): Money {
+  get costPrice(): number {
     return this._costPrice;
   }
-  get fractionalCostPrice(): Money {
+  get fractionalCostPrice(): number {
     return this._fractionalCostPrice;
   }
-  get total(): Money {
+  get total(): number {
     return this._total;
   }
   get description(): string {
@@ -129,25 +129,30 @@ export class InventoryAdjustmentDetail {
     return this._status;
   }
 
-  // ✨ Type-safe operations with Value Objects
+  // Operations with numbers
   updateQuantity(newQuantity: number): void {
-    this._quantity = Quantity.from(newQuantity);
+    if (newQuantity < 0) {
+      throw new Error('Quantity cannot be negative');
+    }
+    this._quantity = newQuantity;
     this.calculateTotal();
   }
 
   updateMeasure(unitOfMeasureId: number) {
-    console.log('udpate meadoe', unitOfMeasureId);
     const dataMedida = this._measures.find((val) => val.idMedida === unitOfMeasureId);
     this._unitOfMeasureId = unitOfMeasureId;
-    this._unitPrice = Money.from(dataMedida?.precioUnitario || 0);
-    this._costPrice = Money.from(dataMedida?.precioCosto || 0);
-    this._fractionalCostPrice = Money.from(dataMedida?.precioCostoFraccionado || 0);
+    this._unitPrice = dataMedida?.precioUnitario || 0;
+    this._costPrice = dataMedida?.precioCosto || 0;
+    this._fractionalCostPrice = dataMedida?.precioCostoFraccionado || 0;
     this.calculateTotal();
   }
 
   updatePricing(unitPrice: number, costPrice: number): void {
-    this._unitPrice = Money.from(unitPrice);
-    this._costPrice = Money.from(costPrice);
+    if (unitPrice < 0 || costPrice < 0) {
+      throw new Error('Prices cannot be negative');
+    }
+    this._unitPrice = unitPrice;
+    this._costPrice = costPrice;
     this.calculateTotal();
   }
 
@@ -160,42 +165,44 @@ export class InventoryAdjustmentDetail {
   }
 
   calculateTotal(): void {
-    this._transactionQuantity = this._unitConversion.multiply(this._quantity.value);
-    this._total = this._unitPrice.multiply(this._quantity.value);
+    this._transactionQuantity = this._unitConversion * this._quantity;
+    this._total = this._unitPrice * this._quantity;
   }
 
-  getAdjustedCostValue(): Money {
-    // ✨ Rich Value Object operations
-    return this._costPrice.multiply(this._transactionQuantity.value);
+  getAdjustedCostValue(): number {
+    return this._costPrice * this._transactionQuantity;
   }
 
-  isQuantitySufficient(required: Quantity): boolean {
-    return this._quantity.canSatisfy(required);
+  isQuantitySufficient(required: number): boolean {
+    return this._quantity >= required;
   }
 
-  applyDiscount(percentage: number): Money {
-    return this._unitPrice.multiply(1 - percentage / 100);
+  applyDiscount(percentage: number): number {
+    return this._unitPrice * (1 - percentage / 100);
   }
 
   getQuantityRatio(): number {
-    return this._transactionQuantity.ratioTo(this._quantity);
+    if (this._quantity === 0) {
+      throw new Error('Cannot calculate ratio with zero quantity');
+    }
+    return this._transactionQuantity / this._quantity;
   }
 
   toPlainObject() {
     return {
       orderIndex: this.orderIndex,
-      productId: this.productId.value,
+      productId: this.productId,
       code: this.code,
       warehouseId: this.warehouseId,
       unitOfMeasureId: this.unitOfMeasureId,
       measures: this.measures,
-      quantity: this.quantity.value,
-      transactionQuantity: this.transactionQuantity.value,
-      unitConversion: this.unitConversion.value,
-      fractionalCostPrice: this.fractionalCostPrice.value,
-      unitPrice: this.unitPrice.value,
-      costPrice: this.costPrice.value,
-      total: this.total.value,
+      quantity: this.quantity,
+      transactionQuantity: this.transactionQuantity,
+      unitConversion: this.unitConversion,
+      fractionalCostPrice: this.fractionalCostPrice,
+      unitPrice: this.unitPrice,
+      costPrice: this.costPrice,
+      total: this.total,
       description: this.description,
       notes: this.notes,
       status: this._status,

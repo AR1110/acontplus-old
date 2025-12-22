@@ -24,10 +24,7 @@ import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/comp
 import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { InventoryAdjustment } from '@inventory/data/models/inventory-adjustment.entity';
-import {
-  InventoryDocumentType,
-  InventoryTransactionType,
-} from '@inventory/inventory.const';
+import { InventoryDocumentType, InventoryTransactionType } from '@inventory/inventory.const';
 
 import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -758,7 +755,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
         codEstab,
         emissionDate: setDateWithCurrentTime(formValue.emissionDate),
         observations: formValue.observations,
-        total: this.currentAdjustment.total.value,
+        total: this.currentAdjustment.total,
         details,
       };
       console.log(saveCommand);

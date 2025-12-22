@@ -1,9 +1,6 @@
 import { ValidationException } from '@core/domain/domain-exception';
 import { InventoryAdjustmentDetail } from '@inventory/data/models/inventory-adjustment-detail.entity';
-import { Money } from '@inventory/domain/value-objects/money.vo';
-import { Quantity } from '@inventory/domain/value-objects/quantity.vo';
 import { MedidaProducto } from '@inventory/data/models/measure.model';
-
 
 /**
  * @deprecated no usar
@@ -18,7 +15,7 @@ export class InventoryAdjustment {
     private readonly _transactionTypeId: number,
     private _emissionDate: Date,
     private _observations: string | undefined,
-    private _total: Money,
+    private _total: number,
     private readonly _registrationDate: Date,
   ) {}
 
@@ -36,7 +33,7 @@ export class InventoryAdjustment {
       params.transactionTypeId,
       params.emissionDate,
       params.observations,
-      Money.zero(),
+      0, // total starts at zero
       new Date(),
     );
   }
@@ -60,7 +57,7 @@ export class InventoryAdjustment {
   get observations(): string | undefined {
     return this._observations;
   }
-  get total(): Money {
+  get total(): number {
     return this._total;
   }
   get registrationDate(): Date {
@@ -91,7 +88,7 @@ export class InventoryAdjustment {
       orderIndex: this._details.length + 1,
     });
     detail.calculateTotal();
-    console.log(detail);
+
     this._details.push(detail);
     this.recalculateTotal();
   }
@@ -124,8 +121,8 @@ export class InventoryAdjustment {
 
   updateDetail(detailIndex: number, additionalQuantity = 1) {
     return this.executeDetailUpdate(detailIndex, (detail) => {
-      const newQuantity = detail.quantity.add(Quantity.from(additionalQuantity));
-      detail.updateQuantity(newQuantity.value);
+      const newQuantity = detail.quantity + additionalQuantity;
+      detail.updateQuantity(newQuantity);
     });
   }
 
@@ -143,7 +140,7 @@ export class InventoryAdjustment {
 
   updatePricing(detailIndex: number, unitPrice: number) {
     return this.executeDetailUpdate(detailIndex, (detail) => {
-      detail.updatePricing(unitPrice, detail.costPrice.value);
+      detail.updatePricing(unitPrice, detail.costPrice);
     });
   }
 
@@ -188,7 +185,7 @@ export class InventoryAdjustment {
   }
 
   private recalculateTotal(): void {
-    this._total = this._details.reduce((sum, detail) => sum.add(detail.total), Money.zero());
+    this._total = this._details.reduce((sum, detail) => sum + detail.total, 0);
   }
 
   private reorderDetails(): void {
