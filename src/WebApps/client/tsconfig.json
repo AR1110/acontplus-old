@@ -22,6 +22,7 @@
       "@technical-support/*": ["src/app/modules/technical-support/*"],
       "@inventory/*": ["src/app/modules/inventory/*", "src/app/modules/inventory/shared/*"],
       "@purchase/*": ["src/app/modules/purchase/*"],
+      "@purchases/*": ["src/app/modules/purchases/*"],
       "@sale/*": ["src/app/modules/sale/*", "src/app/modules/inventory/shared/*"],
       "@restaurant/*": ["src/app/modules/restaurant/*"],
       "@billing/*": ["src/app/modules/billing/*"],

@@ -16,7 +16,10 @@
         "/maxcpucount"
       ],
       "problemMatcher": "$msCompile",
-      "group": { "kind": "build", "isDefault": true },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
       "presentation": {
         "reveal": "silent",
         "panel": "dedicated",
@@ -81,7 +84,13 @@
       "label": "clean (aggressive)",
       "command": "dotnet",
       "type": "process",
-      "args": ["clean", "${workspaceFolder}/AcontPlus.sln", "--nologo", "--verbosity minimal", "/t:Clean"],
+      "args": [
+        "clean",
+        "${workspaceFolder}/AcontPlus.sln",
+        "--nologo",
+        "--verbosity minimal",
+        "/t:Clean"
+      ],
       "problemMatcher": "$msCompile",
       "presentation": {
         "echo": false,
@@ -127,7 +136,8 @@
       "args": [
         "publish",
         "${workspaceFolder}/AcontPlus.sln",
-        "--configuration", "Release",
+        "--configuration",
+        "Release",
         "/p:PublishProfile=FolderProfile",
         "--nologo",
         "/clp:Summary;Verbosity=minimal"
@@ -146,7 +156,8 @@
       "args": [
         "publish",
         "${workspaceFolder}/AcontPlus.sln",
-        "--configuration", "Release",
+        "--configuration",
+        "Release",
         "/p:PublishProfile=FolderProfile1",
         "--nologo",
         "/clp:Summary;Verbosity=minimal"
@@ -165,7 +176,8 @@
       "args": [
         "publish",
         "${file}",
-        "--configuration", "Release",
+        "--configuration",
+        "Release",
         "/p:PublishProfile=FolderProfile",
         "--nologo",
         "/clp:Summary;Verbosity=minimal"
@@ -184,7 +196,8 @@
       "args": [
         "publish",
         "${file}",
-        "--configuration", "Release",
+        "--configuration",
+        "Release",
         "/p:PublishProfile=FolderProfile1",
         "--nologo",
         "/clp:Summary;Verbosity=minimal"
@@ -194,6 +207,85 @@
         "reveal": "always",
         "panel": "dedicated",
         "clear": true
+      }
+    },
+    {
+      "label": "test-services (macOS/Linux)",
+      "type": "shell",
+      "command": "./.vscode/test-services.sh",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "test-services (Windows)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        ".vscode/test-services.ps1"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      }
+    },
+    {
+      "label": "run-webui-only",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "src/WebApps/WebUI"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "options": {
+        "env": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
+      }
+    },
+    {
+      "label": "open-browser",
+      "type": "shell",
+      "command": "open",
+      "args": [
+        "https://localhost:7166"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "never"
+      },
+      "windows": {
+        "command": "start",
+        "args": [
+          "https://localhost:7166"
+        ]
+      },
+      "linux": {
+        "command": "xdg-open",
+        "args": [
+          "https://localhost:7166"
+        ]
       }
     }
   ]
