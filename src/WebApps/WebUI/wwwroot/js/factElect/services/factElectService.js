@@ -219,7 +219,6 @@
             return mS
                 .getData("get", `${url}?json=${json}`, null, true)
                 .then(async (response) => {
-                .then(async (response) => {
                     if (response.code !== "1") {
                         throw new Error(response.message || "Error al validar normativa SRI.");
                     }
@@ -242,13 +241,6 @@
                             });
                             return parsed;
                         }
-                        if (accion === 'anular') {
-                            await Swal.fire({
-                                icon: 'warning',
-                                html: response.message,
-                            });
-                            return parsed;
-                        }
                         Swal.fire({
                             icon: 'warning',
                             html: parsed.message,
@@ -256,7 +248,6 @@
                         throw new Error("Operación restringida por normativa SRI.");
                     }
 
-                    return parsed; //  Devuelve el objeto si todo fue exitoso
                     return parsed; //  Devuelve el objeto si todo fue exitoso
 
                 })
