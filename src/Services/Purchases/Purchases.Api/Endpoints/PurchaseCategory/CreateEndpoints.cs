@@ -16,10 +16,10 @@ public static class CreateEndpoints
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-            var requestWithUser = request with { CreatedByUserId = userRoleId };
+            var requestWithUserRole = request with { UserRoleId = userRoleId };
 
             return await purchaseCategoryService
-          .AddAsync(requestWithUser, cancellationToken)
+          .AddAsync(requestWithUserRole, cancellationToken)
           .ToMinimalApiResultAsync();
         })
             .WithName("CreatePurchaseCategory")

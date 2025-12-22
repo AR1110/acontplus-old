@@ -34,7 +34,7 @@ public static class CrudEndpoints
         CancellationToken cancellationToken) =>
     {
       var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-      var requestWithContext = request with { DocumentId = id, CreatedByUserId = userRoleId };
+      var requestWithContext = request with { DocumentId = id, UserRoleId = userRoleId };
 
       return await additionalArticleDataService
         .AddAsync(requestWithContext, cancellationToken)

@@ -6,7 +6,7 @@ public record PurchaseInvoiceCreate(
     List<TaxDto> Taxes,
     List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
     List<InstallmentDto> Installments,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record PurchaseInvoiceUpdate(
     int Id,

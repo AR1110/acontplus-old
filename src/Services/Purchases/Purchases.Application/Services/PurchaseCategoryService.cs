@@ -27,7 +27,7 @@ public class PurchaseCategoryService(IUnitOfWork unitOfWork) : IPurchaseCategory
     {
       var parameters = new Dictionary<string, object>
       {
-        { "userRoleId", request.CreatedByUserId },
+        { "userRoleId", request.UserRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
