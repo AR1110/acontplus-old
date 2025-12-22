@@ -108,8 +108,7 @@ public class ReceivedDocumentService(
                 AccessKey: request.AccessKey,
                 EstablishmentId: request.EstablishmentId,
                 SubcategoryId: request.SubcategoryId,
-                UserRoleId: request.UserRoleId,
-                DocumentId: 0  // Will be set after DB insert by worker
+                UserRoleId: request.UserRoleId
             );
 
             var jsonContent = JsonExtensions.SerializeOptimized(fileMessage);
@@ -218,27 +217,35 @@ public class ReceivedDocumentService(
         }
     }
 
-    public async Task<Result<bool, DomainError>> UploadXmlAsync(int id, string xmlContent, int establishmentId, int subcategoryId, int userRoleId, CancellationToken cancellationToken = default)
+    public async Task<Result<bool, DomainError>> UploadXmlAsync(string xmlContent, string accessKey, int establishmentId, int subcategoryId, int userRoleId, CancellationToken cancellationToken = default)
     {
         try
         {
-            // XML sanitization handled by database function f_sanitize_xml
+            // Create new document first
             var parameters = new Dictionary<string, object>
             {
-                { "id", id },
+                { "userRoleId", userRoleId },
                 { "xmlContent", xmlContent },
                 { "establishmentId", establishmentId },
                 { "subcategoryId", subcategoryId },
-                { "userRoleId", userRoleId }
             };
+
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXmlReceivedDocument", parameters);
-            return response?.Code == "0"
-              ? Result<bool, DomainError>.Success(true)
-              : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", response?.Message ?? "Failed to upload XML"));
+            
+            if (response?.Code != "0")
+            {
+                return Result<bool, DomainError>.Failure(
+                    DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", 
+                    response?.Message ?? "Failed to upload XML"));
+            }
+
+            return Result<bool, DomainError>.Success(true);
         }
         catch (Exception ex)
         {
-            return Result<bool, DomainError>.Failure(DomainError.Internal("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", ex.Message));
+            _logger.LogError(ex, "Error uploading XML. AccessKey: {AccessKey}", accessKey);
+            return Result<bool, DomainError>.Failure(
+                DomainError.Internal("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", ex.Message));
         }
     }
 }

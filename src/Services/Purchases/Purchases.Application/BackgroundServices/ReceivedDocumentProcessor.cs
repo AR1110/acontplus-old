@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Purchases.Application.Dtos.ReceivedDocuments;
 using Purchases.Application.Interfaces;
-using Purchases.Application.Services;
 
 namespace Purchases.Application.BackgroundServices;
 
@@ -163,7 +162,6 @@ public class ReceivedDocumentProcessor : BackgroundService
     private async Task ProcessFileAsync(string filePath, ReceivedDocumentFileMessage message, CancellationToken cancellationToken)
     {
         using var scope = _serviceProvider.CreateScope();
-        var adoRepository = scope.ServiceProvider.GetRequiredService<IAdoRepository>();
         var sriService = scope.ServiceProvider.GetRequiredService<IWebServiceSri>();
         var receivedDocService = scope.ServiceProvider.GetRequiredService<IReceivedDocumentService>();
 
@@ -172,11 +170,8 @@ public class ReceivedDocumentProcessor : BackgroundService
             _logger.LogInformation("🔄 Processing: {AccessKey} (Attempt {Retry})",
                 message.AccessKey, message.RetryCount + 1);
 
-            // Step 1: Insert basic document record to get ID
-            var documentId = await InsertBasicDocumentAsync(message, adoRepository);
-
-            // Step 2: Download and save XML from SRI using service method
-            await DownloadAndSaveXmlAsync(documentId, message, sriService, receivedDocService, cancellationToken);
+            // Download XML from SRI and save using service method (which will insert the document)
+            await DownloadAndSaveXmlAsync(message, sriService, receivedDocService, cancellationToken);
 
             _logger.LogInformation("✅ Successfully processed: {AccessKey}", message.AccessKey);
 
@@ -190,7 +185,7 @@ public class ReceivedDocumentProcessor : BackgroundService
         }
     }
 
-    private async Task DownloadAndSaveXmlAsync(int documentId, ReceivedDocumentFileMessage message,
+    private async Task DownloadAndSaveXmlAsync(ReceivedDocumentFileMessage message,
         IWebServiceSri sriService, IReceivedDocumentService receivedDocService,
         CancellationToken cancellationToken)
     {
@@ -206,10 +201,10 @@ public class ReceivedDocumentProcessor : BackgroundService
             throw new Exception("XML response from SRI is too short or invalid");
         }
 
-        // Use service's UploadXmlAsync which handles all XML cleaning and saving
+        // Use service's UploadXmlAsync which handles document creation and XML upload
         var result = await receivedDocService.UploadXmlAsync(
-            documentId,
             xml,
+            message.AccessKey,
             message.EstablishmentId,
             message.SubcategoryId,
             message.UserRoleId,
@@ -219,31 +214,6 @@ public class ReceivedDocumentProcessor : BackgroundService
         {
             throw new Exception(result.Error.Message ?? "Failed to upload XML to document");
         }
-    }
-
-    private async Task<int> InsertBasicDocumentAsync(ReceivedDocumentFileMessage message, IAdoRepository adoRepository)
-    {
-        // Insert basic document record without XML (will be updated by UploadXmlAsync)
-        var parameters = new Dictionary<string, object>
-        {
-            { "userRoleId", message.UserRoleId },
-            { "json", JsonExtensions.SerializeOptimized(new
-            {
-                accessKey = message.AccessKey,
-                establishmentId = message.EstablishmentId,
-                subcategoryId = message.SubcategoryId
-            }) }
-        };
-
-        var response = await adoRepository.QuerySingleOrDefaultAsync<SpResponse>(
-            "Compra.DocumentoRecibido_Insert", parameters);
-
-        if (response?.Code != "1" || !int.TryParse(response.Message, out var documentId))
-        {
-            throw new Exception(response?.Message ?? "Failed to insert basic document");
-        }
-
-        return documentId;
     }
 
     private async Task HandleFailureAsync(string filePath, ReceivedDocumentFileMessage message,

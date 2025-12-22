@@ -113,7 +113,6 @@ public static class CreateEndpoints
         {
             var form = await httpContext.Request.ReadFormAsync(cancellationToken);
             var file = form.Files.FirstOrDefault();
-            var json = form["json"].ToString();
 
             if (file == null || file.ContentType != "text/xml")
                 return Results.BadRequest(new SpResponse { Code = "UNSUPPORTED_FILE_FORMAT", Message = "Formato de archivo no soportado" });
@@ -123,19 +122,14 @@ public static class CreateEndpoints
                 return Results.BadRequest(new SpResponse { Code = "XML_RETRIEVAL_ERROR", Message = "No se pudo obtener el xml" });
 
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-
-            using var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
-            if (!jsonDoc.RootElement.TryGetProperty("id", out var idElement) &&
-            !jsonDoc.RootElement.TryGetProperty("Id", out idElement))
-            {
-                return Results.BadRequest(new SpResponse { Code = "DOCUMENT_ID_NOT_FOUND", Message = "No se pudo obtener el identificador del documento" });
-            }
-
-            var documentId = idElement.GetInt32();
             var xmlContent = dataComprobante.XmlSri.OuterXml;
+            var accessKey = dataComprobante.ClaveAcceso ?? string.Empty;
+
+            if (string.IsNullOrEmpty(accessKey))
+                return Results.BadRequest(new SpResponse { Code = "ACCESS_KEY_NOT_FOUND", Message = "No se pudo obtener la clave de acceso del XML" });
 
             return await receivedDocumentService
-                .UploadXmlAsync(documentId, xmlContent, establishmentId, subcategoryId, userRoleId, cancellationToken)
+                .UploadXmlAsync(xmlContent, accessKey, establishmentId, subcategoryId, userRoleId, cancellationToken)
                 .ToMinimalApiResultAsync();
         })
             .DisableAntiforgery()

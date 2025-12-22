@@ -12,7 +12,6 @@ public record ReceivedDocumentFileMessage(
     int EstablishmentId,
     int SubcategoryId,
     int UserRoleId,
-    int DocumentId,
     int RetryCount = 0,
     DateTime? LastRetryAt = null,
     string? LastError = null);

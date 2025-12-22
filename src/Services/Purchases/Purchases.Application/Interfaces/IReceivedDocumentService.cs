@@ -14,5 +14,5 @@ public interface IReceivedDocumentService
   Task<Result<bool, DomainError>> DeleteAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
   Task<Result<ReceivedDocumentItem, DomainError>> MigrateAsync(ReceivedDocumentMigrate request, CancellationToken cancellationToken = default);
   Task<Result<byte[], DomainError>> DownloadAsync(int id, int userRoleId, CancellationToken cancellationToken = default);
-  Task<Result<bool, DomainError>> UploadXmlAsync(int id, string xmlContent, int establishmentId, int subcategoryId, int userRoleId, CancellationToken cancellationToken = default);
+  Task<Result<bool, DomainError>> UploadXmlAsync(string xmlContent, string accessKey, int establishmentId, int subcategoryId, int userRoleId, CancellationToken cancellationToken = default);
 }
