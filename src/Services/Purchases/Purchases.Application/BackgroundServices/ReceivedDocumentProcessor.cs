@@ -64,6 +64,8 @@ public class ReceivedDocumentProcessor : BackgroundService
 
         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
+        await RecoverOrphanedFilesAsync(stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -99,7 +101,7 @@ public class ReceivedDocumentProcessor : BackgroundService
             try
             {
                 var json = await File.ReadAllTextAsync(file, cancellationToken);
-                var message = JsonSerializer.Deserialize<ReceivedDocumentFileMessage>(json);
+                var message = json.DeserializeOptimized<ReceivedDocumentFileMessage>();
 
                 if (message == null) continue;
 
@@ -141,7 +143,7 @@ public class ReceivedDocumentProcessor : BackgroundService
                 File.Move(file, processingPath, true);
 
                 var json = await File.ReadAllTextAsync(processingPath, cancellationToken);
-                var message = JsonSerializer.Deserialize<ReceivedDocumentFileMessage>(json);
+                var message = json.DeserializeOptimized<ReceivedDocumentFileMessage>();
 
                 if (message == null)
                 {
@@ -193,7 +195,7 @@ public class ReceivedDocumentProcessor : BackgroundService
 
         // Get XML from SRI
         var xmlResponse = await sriService.CheckExistenceAsync(message.AccessKey, urlSri);
-        var xml = xmlResponse?.ToString() ?? string.Empty;
+        var xml = xmlResponse.XmlSri ?? string.Empty;
 
         if (xml.Trim().Length <= 500)
         {
@@ -295,6 +297,32 @@ public class ReceivedDocumentProcessor : BackgroundService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during file cleanup");
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task RecoverOrphanedFilesAsync(CancellationToken cancellationToken)
+    {
+        var orphanedFiles = Directory.GetFiles(_processingFolder, "*.json");
+        if (orphanedFiles.Length > 0)
+        {
+            _logger.LogWarning("🔄 Found {Count} orphaned files in processing folder, moving back to pending", orphanedFiles.Length);
+
+            foreach (var file in orphanedFiles)
+            {
+                try
+                {
+                    var fileName = Path.GetFileName(file);
+                    var pendingPath = Path.Combine(_pendingFolder, fileName);
+                    File.Move(file, pendingPath, true);
+                    _logger.LogInformation("↩️ Recovered orphaned file: {File}", fileName);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to recover orphaned file: {File}", Path.GetFileName(file));
+                }
+            }
         }
 
         await Task.CompletedTask;
