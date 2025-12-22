@@ -3,7 +3,7 @@ namespace Purchases.Application.Dtos.HabitualPurchases;
 public record HabitualPurchaseCreate(
     PurchaseBaseDto PurchaseBase,
     List<PurchaseDetailBaseDto> Details,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record HabitualPurchaseUpdate(
     int Id,

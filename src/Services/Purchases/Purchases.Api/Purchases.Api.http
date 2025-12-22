@@ -328,10 +328,9 @@ Content-Type: application/json
 Authorization: {{Token}}
 
 {
-  "documentNumber": "DOC-001",
-  "documentDate": "2025-12-19",
-  "supplierId": 1,
-  "totalAmount": 500.00
+  "accessKey": "1812202501210030268200120020020000267871190081711",
+  "establishmentId": 553,
+  "subcategoryId": 110
 }
 
 ### Read Received Documents File (Upload Text File)

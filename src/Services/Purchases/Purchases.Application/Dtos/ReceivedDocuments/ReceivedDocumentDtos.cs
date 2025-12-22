@@ -4,14 +4,14 @@ public record ReceivedDocumentCreate(
     string AccessKey,
     int EstablishmentId,
     int SubcategoryId,
-    int CreatedByUserId);
+    int UserRoleId);
 
 // Internal model for file processing with retry tracking
 public record ReceivedDocumentFileMessage(
     string AccessKey,
     int EstablishmentId,
     int SubcategoryId,
-    int CreatedByUserId,
+    int UserRoleId,
     int DocumentId,
     int RetryCount = 0,
     DateTime? LastRetryAt = null,
@@ -40,7 +40,7 @@ public record ReceivedDocumentItem(
 public record ReceivedDocumentMigrate(
     int Id,
     List<int> DocumentIds,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record ReceivedDocumentCategoryUpdate(
     int Id,

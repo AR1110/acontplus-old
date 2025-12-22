@@ -1,103 +1,81 @@
 {
-  // Performance Optimizations
-  "files.watcherExclude": {
+  // .NET Configuration
+  "dotnet.defaultSolution": "AcontPlus.sln",
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "dotnet.server.useOmnisharp": false,
+
+  // C# Configuration
+  "csharp.semanticHighlighting.enabled": true,
+  "csharp.format.enable": true,
+  "csharp.inlayHints.enableInlayHintsForParameters": true,
+  "csharp.inlayHints.enableInlayHintsForLiteralParameters": true,
+  "csharp.inlayHints.enableInlayHintsForIndexerParameters": true,
+  "csharp.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+  "csharp.inlayHints.enableInlayHintsForOtherParameters": true,
+  "csharp.inlayHints.enableInlayHintsForTypes": true,
+  "csharp.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
+  "csharp.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
+  "csharp.inlayHints.enableInlayHintsForImplicitObjectCreation": true,
+
+  // File associations
+  "files.associations": {
+    "*.cshtml": "razor",
+    "*.razor": "razor"
+  },
+
+  // Exclude patterns for better performance
+  "files.exclude": {
     "**/bin": true,
     "**/obj": true,
-    "**/node_modules": true,
-    "**/.git": true,
     "**/.vs": true,
-    "**/dist": true,
-    "**/tmp": true
+    "**/node_modules": true,
+    "**/.git": true
   },
+
+  // Search exclude patterns
   "search.exclude": {
     "**/bin": true,
     "**/obj": true,
     "**/node_modules": true,
     "**/.git": true,
-    "**/.vs": true,
-    "**/dist": true
-  },
-  "files.exclude": {
-    "**/bin": false,
-    "**/obj": false
+    "**/wwwroot/lib": true
   },
 
-  // Preserved your core settings
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // Auto save
+  "files.autoSave": "onFocusChange",
+
+  // Terminal configuration
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.defaultProfile.linux": "bash",
+
+  // Editor configuration
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports.angular": "explicit"
+    "source.organizeImports": "explicit"
   },
-  "editor.tabSize": 2,
-  "editor.detectIndentation": false,
-  "files.eol": "\n",
 
-// Vertical Alignment Core
-  "editor.wrappingIndent": "indent",
-  "editor.autoIndent": "full",
-  "editor.autoClosingOvertype": "always",
-  "editor.stickyScroll.enabled": true,
-
-  // TypeScript Vertical Rules
-  "typescript.format.enable": true,
-  "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
-  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
-  "typescript.preferences.importModuleSpecifierEnding": "minimal",
-
-  // HTML Vertical Rules
-  "html.format.wrapLineLength": 120,
-  "html.format.extraLiners": "head, body, /html",
-  "html.format.wrapAttributes": "force-expand-multiline",
-
-  // ➕ ENHANCED TypeScript/Angular
-  "typescript.preferences.importModuleSpecifier": "shortest",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always",
-
-  // ➕ ENHANCED C#/.NET
-  "csharp.suppressDotnetRestoreNotification": true,
-
-  // Preserved your Git settings
-  "git.confirmSync": false,
-  "git.autofetch": true,
-  "git.branchProtection": ["main"],
-  "git.branchProtectionPrompt": "alwaysPrompt",
-
-  "prettier.configPath": ".prettierrc",
-  "prettier.requireConfig": true,
-
-  // Language-specific
+  // Language specific settings
   "[csharp]": {
     "editor.defaultFormatter": "ms-dotnettools.csharp",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.csharp": "explicit"
-    }
-  },
-   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true
   },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "text": "Generate commit messages using conventional commit format, keeping the entire message to 50 characters or less. Analyze the changes and use appropriate type prefixes:\n- feat: for new features or significant additions\n- fix: for bug fixes\n- docs: for documentation changes\n- style: for code style/formatting changes\n- refactor: for code restructuring without functionality changes\n- test: for adding or modifying tests\n- chore: for maintenance tasks, build changes, or tooling updates\n- perf: for performance improvements\n- ci: for CI/CD configuration changes\n- build: for build system or dependency changes\n\nBe concise but detailed about what changed, include affected components/libraries, and use relevant emojis. Structure as: type(scope): description\n\nExamples:\n- feat(ng-auth): add JWT refresh 🔐\n- fix(core): fix tax calc bug 🐛\n- docs(ng-comp): update README 📚\n- refactor(utils): restructure converters 🔄"
-    }
-  ],
+
+  // Extensions recommendations
+  "extensions.recommendations": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-vscode.vscode-json",
+    "ms-vscode.powershell",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense"
+  ]
 }

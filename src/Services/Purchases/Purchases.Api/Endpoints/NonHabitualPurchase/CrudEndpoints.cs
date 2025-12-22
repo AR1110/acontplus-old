@@ -38,10 +38,10 @@ public static class CrudEndpoints
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-            var requestWithUser = request with { CreatedByUserId = userRoleId };
+            var requestWithUserRole = request with { UserRoleId = userRoleId };
 
             return await nonHabitualPurchaseService
-                .AddAsync(requestWithUser, cancellationToken)
+                .AddAsync(requestWithUserRole, cancellationToken)
                 .ToMinimalApiResultAsync();
         })
             .WithName("CreateNonHabitualPurchase")

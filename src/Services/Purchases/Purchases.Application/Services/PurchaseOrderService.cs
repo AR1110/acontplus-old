@@ -53,13 +53,13 @@ public class PurchaseOrderService(IUnitOfWork unitOfWork) : IPurchaseOrderServic
     {
       var parameters = new Dictionary<string, object>
       {
-        { "userRoleId", request.CreatedByUserId },
+        { "userRoleId", request.UserRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
       if (response?.Code == "0")
       {
-        return await GetByIdAsync(Convert.ToInt32(response.Payload), request.CreatedByUserId, cancellationToken);
+        return await GetByIdAsync(Convert.ToInt32(response.Payload), request.UserRoleId, cancellationToken);
       }
       return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Validation("PURCHASE_ORDER_ADD_ERROR", response?.Message ?? "Failed to add purchase order"));
     }

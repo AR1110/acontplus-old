@@ -30,9 +30,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Identity/Identity.Api/bin/Debug/net10.0/Identity.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net10.0/Identity.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.Api",
+      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -48,9 +48,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.Api/bin/Debug/net10.0/GatewayAcontplus.Api.dll",
+      "program": "${workspaceFolder}/src/ApiGateways/Ocelot.API/bin/Debug/net10.0/Ocelot.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.Api",
+      "cwd": "${workspaceFolder}/src/ApiGateways/Ocelot.API",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -66,9 +66,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Configuration/Configuration.Api/bin/Debug/net10.0/Configuration.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Configuration/Configuration.API/bin/Debug/net10.0/Configuration.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Configuration/Configuration.Api",
+      "cwd": "${workspaceFolder}/src/Services/Configuration/Configuration.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -80,9 +80,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Inventory/Inventory.Api/bin/Debug/net10.0/Inventory.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Inventory/Inventory.API/bin/Debug/net10.0/Inventory.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Inventory/Inventory.Api",
+      "cwd": "${workspaceFolder}/src/Services/Inventory/Inventory.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -94,9 +94,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api/bin/Debug/net10.0/Restaurant.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net10.0/Restaurant.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api",
+      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -108,9 +108,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Billing/Billing.Api/bin/Debug/net10.0/Billing.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Billing/Billing.API/bin/Debug/net10.0/Billing.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.Api",
+      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -122,9 +122,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Sales/Sales.Api/bin/Debug/net10.0/Sales.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Sales/Sales.API/bin/Debug/net10.0/Sales.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Sales/Sales.Api",
+      "cwd": "${workspaceFolder}/src/Services/Sales/Sales.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -136,9 +136,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Common/Common.Api/bin/Debug/net10.0/Common.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Common/Common.API/bin/Debug/net10.0/Common.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Common/Common.Api",
+      "cwd": "${workspaceFolder}/src/Services/Common/Common.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -150,9 +150,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Accounting/Accounting.Api/bin/Debug/net10.0/Accounting.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Accounting/Accounting.API/bin/Debug/net10.0/Accounting.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Accounting/Accounting.Api",
+      "cwd": "${workspaceFolder}/src/Services/Accounting/Accounting.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -164,7 +164,10 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
+      "runtimeArgs": [
+        "run",
+        "start"
+      ],
       "cwd": "${workspaceFolder}/src/WebApps/client"
     },
     {
@@ -172,14 +175,23 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start-with-admin"],
+      "runtimeArgs": [
+        "run",
+        "start-with-admin"
+      ],
       "cwd": "${workspaceFolder}/src/WebApps/pos"
     }
   ],
   "compounds": [
     {
       "name": "Basic Profile",
-      "configurations": ["GatewayApi", "IdentityApi", "CommonApi", "FrontEnd", "ConfigurationApi"],
+      "configurations": [
+        "GatewayApi",
+        "IdentityApi",
+        "CommonApi",
+        "FrontEnd",
+        "ConfigurationApi"
+      ],
       "stopAll": true
     },
     {
@@ -213,15 +225,16 @@
     {
       "name": "AcontPlus MacOs",
       "configurations": [
-        "LegacyFrontEnd",
         "GatewayApi",
+        "LegacyFrontEnd",
         "ConfigurationApi",
         "IdentityApi",
         "InventoryApi",
         "BillingApi",
         "SalesApi",
         "CommonApi",
-        "AccountingApi"
+        "AccountingApi",
+        "FrontEnd"
       ],
       "stopAll": true
     }

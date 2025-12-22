@@ -13,7 +13,7 @@ public record SupplierCreate(
     string? Address,
     string? Phone,
     string? Email,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record SupplierUpdate(
     int Id,

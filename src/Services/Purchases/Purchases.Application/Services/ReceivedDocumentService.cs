@@ -108,7 +108,7 @@ public class ReceivedDocumentService(
                 AccessKey: request.AccessKey,
                 EstablishmentId: request.EstablishmentId,
                 SubcategoryId: request.SubcategoryId,
-                CreatedByUserId: request.CreatedByUserId,
+                UserRoleId: request.UserRoleId,
                 DocumentId: 0  // Will be set after DB insert by worker
             );
 
@@ -186,13 +186,13 @@ public class ReceivedDocumentService(
         {
             var parameters = new Dictionary<string, object>
       {
-        { "userRoleId", request.CreatedByUserId },
+        { "userRoleId", request.UserRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}MigrateReceivedDocument", parameters);
             if (response?.Code == "0")
             {
-                return await GetByIdAsync(request.Id, request.CreatedByUserId, cancellationToken);
+                return await GetByIdAsync(request.Id, request.UserRoleId, cancellationToken);
             }
             return Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_MIGRATE_ERROR", response?.Message ?? "Failed to migrate document"));
         }

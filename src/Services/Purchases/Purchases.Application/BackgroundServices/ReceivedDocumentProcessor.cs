@@ -212,7 +212,7 @@ public class ReceivedDocumentProcessor : BackgroundService
             xml,
             message.EstablishmentId,
             message.SubcategoryId,
-            message.CreatedByUserId,
+            message.UserRoleId,
             cancellationToken);
 
         if (!result.IsSuccess)
@@ -226,7 +226,7 @@ public class ReceivedDocumentProcessor : BackgroundService
         // Insert basic document record without XML (will be updated by UploadXmlAsync)
         var parameters = new Dictionary<string, object>
         {
-            { "userRoleId", message.CreatedByUserId },
+            { "userRoleId", message.UserRoleId },
             { "json", JsonExtensions.SerializeOptimized(new
             {
                 accessKey = message.AccessKey,
