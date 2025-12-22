@@ -1,4 +1,4 @@
-export interface ReceivedDocument {
+export interface ReceivedDocumentList {
   idDocumento: number;
   idEstablecimiento: number;
   comprobante?: string;

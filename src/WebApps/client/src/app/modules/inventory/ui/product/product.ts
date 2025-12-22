@@ -319,7 +319,7 @@ export class Product implements OnInit {
     this.refresh();
   }
 }
-import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
+import { CompraHabitualHistorialDirective } from '@purchases/shared/directives/compra-habitual-historial.directive';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { finalize, forkJoin } from 'rxjs';
 import Swal from 'sweetalert2';

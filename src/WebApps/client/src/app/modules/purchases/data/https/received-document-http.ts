@@ -4,7 +4,7 @@ import { PURCHASE_PATHS } from '@purchases/purchases.const';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
-import { DocumentReceived } from '@purchase/domain/document-received.model';
+import { DocumentReceived } from '@purchases/data/models/document-received.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {ReceivedDocumentRepository} from "@purchases/data/repositories/received-document";
 

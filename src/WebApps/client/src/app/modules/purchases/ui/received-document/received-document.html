@@ -1,1 +1,187 @@
-<p>received-document works!</p>
+<app-breadcrumb />
+<acp-dynamic-card>
+  <div
+    class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
+  >
+    <div class="col">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
+          @for (item of establecimientos; track $index) {
+            <mat-option [value]="item.codEstab">
+              {{ item.nombreComercial }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col">
+      <app-date-range-selection
+        (onChangeDateRange)="onDateRangeSelection($event)"
+        [inputGroupDateChecked]="true"
+      />
+    </div>
+    <div class="col">
+      <div class="d-flex gap-2 align-items-end">
+        <mat-form-field appearance="outline" class="flex-grow-1">
+          <mat-label>Tipo Comprobante</mat-label>
+          <mat-select (selectionChange)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc">
+            <mat-option value="">Todos</mat-option>
+            @for (item of documentTypes; track $index) {
+              <mat-option [value]="item.codigoSri">
+                {{ item.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <div class="d-flex gap-1">
+          <acp-button
+            [icon]="extraOptionsIcon"
+            matStyle="icon"
+            title="Más Opciones"
+            (handleClick)="onClickBtnMore()"
+          />
+          <acp-button
+            variant="success"
+            icon="refresh"
+            matStyle="icon"
+            (handleClick)="loadData()"
+            title="Recargar"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  @if (moreOptionsFilter) {
+    <div class="row mb-3">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <app-supplier-search
+          [textSearch]="textSearch"
+          (supplierSelected)="onSupplierSelected($event)"
+        />
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Clave Acceso</mat-label>
+          <input matInput [(ngModel)]="dataSearch.claveAcceso" />
+        </mat-form-field>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Nro. Documento</mat-label>
+          <input
+            matInput
+            type="text"
+            (change)="onChangeSerieComprobante()"
+            appInputNumber
+            [(ngModel)]="dataSearch.serieComprobante"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Subcategoría</mat-label>
+          <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
+            <mat-option value="">Todos</mat-option>
+            @for (item of subcategories; track $index) {
+              <mat-option [value]="item.id">
+                {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  }
+  <div class="row">
+    <div class="col">
+      <button (click)="openModalAutomaticUpload()" mat-raised-button type="button">
+        <mat-icon>download</mat-icon>
+        Importación Automatica
+      </button>
+      <button (click)="openModalManualUpload()" mat-raised-button class="m-2" type="button">
+        <mat-icon>mouse</mat-icon>
+        Importación Manual
+      </button>
+      <button (click)="openModalChangeEstab()" mat-raised-button class="m-2" type="button">
+        <mat-icon>upload_file</mat-icon>
+        Migrar Comprobantes
+      </button>
+      <button (click)="editSubcategory()" mat-raised-button type="button">
+        <mat-icon>edit</mat-icon>
+        Modificar Subcategoría
+      </button>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <acp-data-grid
+        [data]="documents()"
+        [columns]="columns"
+        [length]="pageCount"
+        [pageIndex]="page"
+        [pageSize]="pageSize"
+        (page)="onPageChanged($event)"
+        [cellTemplate]="{
+          actions: actionsTpl,
+        }"
+      />
+    </div>
+  </div>
+
+  <ng-template #actionsTpl let-data>
+    <acp-button
+      type="button"
+      icon="visibility"
+      variant="primary"
+      matStyle="icon"
+      title="Ver Comprobante"
+      (handleClick)="openModalDocument(data)"
+    />
+    <acp-button
+      type="button"
+      icon="link"
+      variant="secondary"
+      matStyle="icon"
+      title="Docs. Relacionados"
+      (handleClick)="getMergedDocs(data)"
+    />
+    <acp-button
+      type="button"
+      icon="download"
+      variant="secondary"
+      matStyle="icon"
+      title="Descargar XML"
+      (handleClick)="downloadXml(data)"
+    />
+    @if (!data.complete) {
+      <acp-button
+        type="button"
+        icon="sync"
+        variant="warning"
+        matStyle="icon"
+        title="Actualizar XML"
+        (handleClick)="putXml(data)"
+      />
+      <acp-button
+        type="button"
+        icon="delete"
+        variant="danger"
+        matStyle="icon"
+        title="Eliminar"
+        (handleClick)="askToDelete(data)"
+      />
+    }
+    @if (data.codDoc === '01') {
+      <acp-button
+        type="button"
+        icon="picture_as_pdf"
+        variant="info"
+        matStyle="icon"
+        title="RIDE"
+        (handleClick)="getRide(data)"
+      />
+    }
+  </ng-template>
+</acp-dynamic-card>

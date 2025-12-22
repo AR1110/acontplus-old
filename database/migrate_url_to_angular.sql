@@ -121,3 +121,30 @@ SELECT @FactElectParentId = Id FROM AcontplusAdmin.Config.Menu WHERE Code=@FactE
 --UPDATE AcontplusAdmin.Config.Menu SET Url='sales' WHERE  Code=@SaleCode
 --UPDATE AcontplusAdmin.Config.Menu SET Url='delivery-notes' WHERE  Code='NE'
 --UPDATE AcontplusAdmin.Config.Menu SET Url='proforma-invoices' WHERE  Code='PF'
+
+
+
+--Compras
+DECLARE @PurchaseCode CHAR(2) = 'GC', @PurchaseParentId INT, @importacionParentId INT
+select * from  AcontplusAdmin.Config.Menu WHERE Code = @PurchaseCode--ParentId IS NULL AND Code LIKE '%C' 
+ 
+SELECT @PurchaseParentId = Id FROM AcontplusAdmin.Config.Menu WHERE Code=@PurchaseCode 
+SELECT * FROM AcontplusAdmin.Config.Menu WHERE ParentId=@PurchaseParentId
+
+--SELECT *
+--FROM AcontplusAdmin.Config.Menu
+--WHERE ParentId IN (
+--    SELECT Id
+--    FROM AcontplusAdmin.Config.Menu
+--    WHERE Code = @SaleCode
+--);
+
+
+SELECT @importacionParentId=Id FROM AcontplusAdmin.Config.Menu WHERE Code ='IMP'
+SELECT * FROM AcontplusAdmin.Config.Menu WHERE ParentId=@importacionParentId
+UPDATE AcontplusAdmin.Config.Menu SET Url='purchases' WHERE  Code=@PurchaseCode
+UPDATE AcontplusAdmin.Config.Menu SET Url='received-documents', ParentId = @PurchaseParentId WHERE  Code='IMP-I'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='delivery-notes' WHERE  Code='NE'
+--UPDATE AcontplusAdmin.Config.Menu SET Url='proforma-invoices' WHERE  Code='PF'
+
+

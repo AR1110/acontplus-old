@@ -3,7 +3,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { Subcategory } from '@accounting/sub-category/domain/subcategory';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import {ReceivedDocument} from "@purchases/data/models/received-document";
+import {ReceivedDocumentList} from "@purchases/data/models/received-document";
 
 export interface ReceivedDocumentRepository {
    getDataFilter(): Observable<{
@@ -12,7 +12,7 @@ export interface ReceivedDocumentRepository {
     documentTypes: TipoDoc[];
   }>;
    get<T>(parameters: T): Observable<{
-    documents: ReceivedDocument[];
+    documents: ReceivedDocumentList[];
   }>;
    getById(id: number): Observable<unknown>;
    create<T>(data: T): Observable<ApiResponseLegacy>;

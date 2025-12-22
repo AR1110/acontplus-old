@@ -150,10 +150,7 @@ export const routes: Routes = [
     // SIN canActivate - la autenticación ya fue validada en app.ts
     children: [
       // Las rutas legacy se cargarán dinámicamente según los lazy loaded modules
-      {
-        path: 'purchase',
-        loadChildren: () => import('@modules/purchase/purchase.routes').then((r) => r.routes),
-      },
+
       {
         path: 'purchases',
         loadChildren: () => import('@modules/purchases/purchases.routes').then((r) => r.routes),
@@ -228,14 +225,7 @@ export const routes: Routes = [
       // { path: '403', component: Error403 },
       // { path: '404', component: Error404 },
       // { path: '500', component: Error500 },
-      {
-        path: 'purchase',
-        title: 'App - Compras',
-        loadChildren: () => import('@modules/purchase/purchase.routes').then((r) => r.routes),
-        data: {
-          breadcrumb: 'Compras',
-        },
-      },
+
       {
         path: 'purchases',
         loadChildren: () => import('@modules/purchases/purchases.routes').then((r) => r.routes),

@@ -2,7 +2,6 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
 import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
-import { purchaseProviders } from '@purchase/providers';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
@@ -37,7 +36,6 @@ export const infrastructureProviders = [
 export const featureProviders = [
   ...DATA_INVENTORY_IOC,
   ...DATA_ACCOUNTING_IOC,
-  ...purchaseProviders,
   ...authMainProvider,
   ...commonProviders,
   ...DATA_MECHANICAL_IOC,
