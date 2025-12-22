@@ -155,6 +155,10 @@ export const routes: Routes = [
         loadChildren: () => import('@modules/purchase/purchase.routes').then((r) => r.routes),
       },
       {
+        path: 'purchases',
+        loadChildren: () => import('@modules/purchases/purchases.routes').then((r) => r.routes),
+      },
+      {
         path: 'config',
         loadChildren: () => import('@modules/config/config.routes').then((r) => r.routes),
       },
@@ -231,6 +235,10 @@ export const routes: Routes = [
         data: {
           breadcrumb: 'Compras',
         },
+      },
+      {
+        path: 'purchases',
+        loadChildren: () => import('@modules/purchases/purchases.routes').then((r) => r.routes),
       },
       {
         path: 'config',

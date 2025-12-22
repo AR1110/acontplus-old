@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
+import { PURCHASE_PATHS } from '@purchases/purchases.const';
 import { CompraHabitual } from '@purchase/domain/compra-habitual.model';
 import { map } from 'rxjs';
 

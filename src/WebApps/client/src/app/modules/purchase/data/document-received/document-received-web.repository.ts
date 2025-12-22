@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { PURCHASE_PATHS } from '@purchase/domain/enums/purchase.constants';
+import { PURCHASE_PATHS } from '@purchases/purchases.const';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
