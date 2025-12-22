@@ -6,7 +6,7 @@ import { AddEditProduct } from '@inventory/ui/product/components/add-edit-produc
   selector: '[appProductList]',
 })
 export class ProductAddEditDirective {
-  resultModalHandler = output<unknown>();
+  resultModalHandler = output<any>();
   @HostListener('click') onClick() {
     const modalRef = this.modalSvc.open(AddEditProduct, {
       size: 'xl',

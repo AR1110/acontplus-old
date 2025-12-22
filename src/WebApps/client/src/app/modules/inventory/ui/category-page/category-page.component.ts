@@ -1,12 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CategoryRead } from '@inventory/domain/models/category.model';
-import { CategoryService } from '@inventory/data/services/category.service';
+import { CategoryRead } from '@inventory/data/models/category.model';
+import { CATEGORY_SERVICE } from '@inventory/data/inventory-token';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { DynamicCard } from '@acontplus/ng-components';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-category',
   imports: [FormsModule, BreadcrumbComponent, PrimaryStatusPipe, DynamicCard],
   templateUrl: './category-page.component.html',
@@ -21,7 +22,7 @@ export class CategoryPageComponent implements OnInit {
   };
   recordsQuantity = [25, 50, 100];
   categories: CategoryRead[] = [];
-  private categorySvc = inject(CategoryService);
+  private categorySvc = inject(CATEGORY_SERVICE);
 
   getCatgories() {
     const params = {

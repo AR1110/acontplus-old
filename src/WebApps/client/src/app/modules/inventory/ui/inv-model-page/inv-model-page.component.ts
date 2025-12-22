@@ -13,7 +13,7 @@ import { Pagination } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { INVENTARIO_MODELO_SERVICE } from '@inventory/tokens/inventory-token';
+import { INVENTARIO_MODELO_SERVICE } from '@inventory/data/inventory-token';
 import { finalize } from 'rxjs/operators';
 
 @Component({

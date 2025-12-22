@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DynamicCard, Pagination } from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
-import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
@@ -22,7 +22,7 @@ import { DataGridColumn, DataGridRowClassFormatter } from '@shared/components/da
 import {
   INVENTORY_CODE_REPORT,
   INVENTORY_MODULES_CODE,
-} from '@inventory/domain/enums/inventory.enum';
+} from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 import { HasPermissionDirective } from '@core/directives/permission';
 import { usePermissions } from '@core/composables/use-permissions';

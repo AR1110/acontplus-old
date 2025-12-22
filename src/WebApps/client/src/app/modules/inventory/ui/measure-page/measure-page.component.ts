@@ -17,11 +17,11 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
-import { MeasureRead } from '@inventory/domain/models/measure.model';
+import { MeasureRead } from '@inventory/data/models/measure.model';
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { MEASURE_SERVICE } from '@inventory/tokens/inventory-token';
+import { MEASURE_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

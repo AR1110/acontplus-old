@@ -7,11 +7,11 @@ import { ProductSearchComponent } from '@inventory/ui/product/components/product
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
+import { TarifaSelectHtmlOnly } from '@inventory/data/models/tarifa.model';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
+import { GroupedSubFamilia } from '@inventory/data/models/sub-category.model';
 import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
@@ -19,7 +19,7 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 
 import { DynamicCard, Button } from '@acontplus/ng-components';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatCheckbox } from '@angular/material/checkbox';

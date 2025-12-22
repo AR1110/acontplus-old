@@ -4,9 +4,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { InventoryAdjustmentService } from '@inventory/domain/services/inventory-adjustment.service';
+import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 
 @Component({
   selector: 'app-inventory-adjustment-detail',

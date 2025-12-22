@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MEASURE_SERVICE } from '@inventory/tokens/inventory-token';
+import { MEASURE_SERVICE } from '@inventory/data/inventory-token';
 import { finalize } from 'rxjs/operators';
 
 @Component({

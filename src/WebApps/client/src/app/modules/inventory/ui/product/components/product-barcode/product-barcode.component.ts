@@ -30,7 +30,7 @@ import { NgxColorsModule } from 'ngx-colors';
 import { DynamicCard } from '@acontplus/ng-components';
 
 import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
-import { PRODUCT_SERVICE, PRODUCT_BARCODE_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE, PRODUCT_BARCODE_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

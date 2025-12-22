@@ -21,9 +21,9 @@ import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { InventoryAdjustmentDetailComponent } from '@inventory/ui/inventory-adjustment/inventory-adjustment-detail/inventory-adjustment-detail.component';
-import { InventoryAdjustmentStore } from '@inventory/domain/store/inventory-adjustment.store';
+import { InventoryAdjustmentStore } from '@inventory/store/inventory-adjustment.store';
 
-import { InventoryAdjustmentService } from '@inventory/domain/services/inventory-adjustment.service';
+import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 import {
   InventoryAdjustmentFormDataDto,
   InventoryAdjustmentListDto,

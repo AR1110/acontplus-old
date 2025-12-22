@@ -8,7 +8,7 @@ import { GroupedEstabBodega } from '@core/models/estab.model';
 import { Button } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
-import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ValidatorUtils } from '@core/utils/utils';
 import { PageEvent } from '@angular/material/paginator';

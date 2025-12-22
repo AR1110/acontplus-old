@@ -1,13 +1,12 @@
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
-import { SubcategoryPhotoService } from '@inventory/data/services/subcategory-photo.service';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { SUBCATEGORY_PHOTO_SERVICE, PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { SubCategoryHttp } from '@inventory/data/sub-category-http';
+import { SubCategoryHttp } from '@inventory/data/https/sub-category-http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { imgDefault, isValidField } from '@core/utils/utils';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -16,10 +15,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import {SubCategoryListDto} from "@inventory/domain/models/sub-category.model";
-import {Button} from "@acontplus/ng-components";
+import { SubCategoryListDto } from '@inventory/data/models/sub-category.model';
+import { Button } from '@acontplus/ng-components';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-sub-category-add-edit',
   imports: [
     FormsModule,
@@ -42,7 +42,7 @@ export class SubCategoryAddEdit implements OnInit {
   private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
 
   private subCategorySvc = inject(SubCategoryHttp);
-  private subCategoryPhotoSvc = inject(SubcategoryPhotoService);
+  private subCategoryPhotoSvc = inject(SUBCATEGORY_PHOTO_SERVICE);
   private tS = inject(ToastrNotificationService);
 
   titleModal = 'Nueva SubFamilia';
@@ -60,7 +60,7 @@ export class SubCategoryAddEdit implements OnInit {
     montoObjetivo: 0,
     ultimoSecuencial: 0,
     estado: true,
-  }as SubCategoryListDto
+  } as SubCategoryListDto;
 
   private esEditar() {
     return this.params.id > 0;
@@ -190,24 +190,22 @@ export class SubCategoryAddEdit implements OnInit {
         });
     }
     if (this.esEditar() && this.data.subcategoryPhotoId == 0 && this.selectedFile()) {
-      this.subCategoryPhotoSvc
-        .post(this.params.id, this.selectedFile())
-        .subscribe((response) => {
-          if (response.code === '0') {
-            Swal.fire({
-              icon: 'warning',
-              html: response.message,
-            });
-          }
-          if (response.code === '1') {
-            Swal.fire({
-              icon: 'success',
-              html: response.message,
-              timer: 1000
-            });
-            this.isRefresh.set(true);
-          }
-        });
+      this.subCategoryPhotoSvc.post(this.params.id, this.selectedFile()).subscribe((response) => {
+        if (response.code === '0') {
+          Swal.fire({
+            icon: 'warning',
+            html: response.message,
+          });
+        }
+        if (response.code === '1') {
+          Swal.fire({
+            icon: 'success',
+            html: response.message,
+            timer: 1000,
+          });
+          this.isRefresh.set(true);
+        }
+      });
     }
   }
 

@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MASSIVE_TAX_SERVICE } from '@inventory/tokens/inventory-token';
+import { MASSIVE_TAX_SERVICE } from '@inventory/data/inventory-token';
 import { finalize } from 'rxjs/operators';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';

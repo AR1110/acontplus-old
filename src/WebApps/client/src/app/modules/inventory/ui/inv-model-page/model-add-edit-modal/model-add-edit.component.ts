@@ -5,7 +5,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { getValidId, isValidField } from '@core/utils/utils';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { PRODUCT_SERVICE, INVENTARIO_MODELO_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE, INVENTARIO_MODELO_SERVICE } from '@inventory/data/inventory-token';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

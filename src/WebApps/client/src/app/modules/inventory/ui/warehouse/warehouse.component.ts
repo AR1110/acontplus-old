@@ -4,7 +4,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { ActionAddDirective } from '@shared/directives/permission/action-add.directive';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { WarehouseList } from '@inventory/domain/models/warehouse.model';
+import { WarehouseList } from '@inventory/data/models/warehouse.model';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { Button } from '@acontplus/ng-components';
@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SendMaxWarehousesUseCase } from '@modules/config/application/use-cases/general-config/list-general-config.use-case';
 import { firstValueFrom } from 'rxjs';
-import { WAREHOUSE_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

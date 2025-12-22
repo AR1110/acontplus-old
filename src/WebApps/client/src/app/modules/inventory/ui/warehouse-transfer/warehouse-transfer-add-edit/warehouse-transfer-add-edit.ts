@@ -21,7 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferFilterAdvanced } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-filter-advanced/warehouse-transfer-filter-advanced';
-import { WAREHOUSE_TRANSFER_SERVICE, PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_TRANSFER_SERVICE, PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import {
   GroupedEstab,
   GroupedEstabBodega,
@@ -38,12 +38,12 @@ import { ProductSearchDialog } from '@inventory/ui/product/components/product-se
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import DecimalUtil from '@core/utils/decimal.util';
-import { mergeStockItems } from '@inventory/domain/utils/stock.utils';
+import { mergeStockItems } from '@inventory/utils/stock.utils';
 import { firstValueFrom, take } from 'rxjs';
 import { ValidatorUtils } from '@core/utils/utils';
 import { ajustarFechaEmisionModificada, dateIsAfterCurrentDate } from '@core/utils/date.util';
 import { finalize } from 'rxjs/operators';
-import { WarehouseTransferDataFormResult } from '@inventory/domain/models/warehouse-transfer';
+import { WarehouseTransferDataFormResult } from '@inventory/data/models/warehouse-transfer';
 
 interface CommonType {
   id: number;

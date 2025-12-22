@@ -1,6 +1,6 @@
 import { formatDateToString } from '@core/utils/date.util';
 import DecimalUtil from '@core/utils/decimal.util';
-import { InventoryTransactionType } from '@inventory/domain/enums/inventory.enum';
+import { InventoryTransactionType } from '@inventory/inventory.const';
 import { DOC_TYPE } from '@core/constants/global.constants';
 
 export class WarehouseTransferSaveMapper {

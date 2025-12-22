@@ -19,7 +19,7 @@ import { TagsAddEditModalDirective } from '@inventory/ui/directives/tags-add-edi
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { TAG_SERVICE } from '@inventory/tokens/inventory-token';
+import { TAG_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

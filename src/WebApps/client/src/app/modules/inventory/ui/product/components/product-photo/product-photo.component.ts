@@ -8,7 +8,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { PRODUCT_PHOTO_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_PHOTO_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

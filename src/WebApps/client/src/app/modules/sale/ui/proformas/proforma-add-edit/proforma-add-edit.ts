@@ -21,22 +21,22 @@ import { TabulatorTable } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { TotalizadorUtil } from '@core/utils/totalizador.util';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
+import { MedidaProducto } from '@inventory/data/models/measure.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { roundNumber } from '@core/utils/round-number.utils';
 import Swal from 'sweetalert2';
-import { getStockQuantity, mergeStockItems } from '@inventory/domain/utils/stock.utils';
+import { getStockQuantity, mergeStockItems } from '@inventory/utils/stock.utils';
 import { firstValueFrom } from 'rxjs';
-import { ProductFee } from '@inventory/domain/models/tarifa.model';
+import { ProductFee } from '@inventory/data/models/tarifa.model';
 import { ProformaInvoiceGetFormDataUseCase } from '@sale/application/use-cases/proforma-use-case';
 import { GroupedEstablishment } from '@core/models/establishment';
 import { EmissionPointEstablishment } from '@core/models/emission-point';
 import { WarehouseEstablishment } from '@core/models/warehouse';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { Fee } from '@inventory/domain/models/fee';
+import { Fee } from '@inventory/data/models/fee';
 import { TaxRate } from '@core/models/tax-rate';
-import { ProductMeasure } from '@inventory/domain/models/product-measure';
+import { ProductMeasure } from '@inventory/data/models/product-measure';
 import { ProformaDetail } from '@sale/domain/models/proforma-detail';
 
 @Component({

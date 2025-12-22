@@ -8,7 +8,7 @@ import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
 import { billingProviders } from '@billing/providers';
 import { barberShopProviders } from '@barber-shop/providers';
-import { DATA_INVENTORY_IOC } from '@inventory/data/inventory.ioc';
+import { DATA_INVENTORY_IOC } from '@inventory/data/inventory-provider';
 import { DATA_CONFIG_IOC } from '@modules/config/data/data-config.ioc';
 import { DATA_RESTAURANT_IOC } from '@restaurant/data/data-restaurant.ioc';
 import { DATA_ACCOUNTING_IOC } from '@accounting/data-accounting.ioc';

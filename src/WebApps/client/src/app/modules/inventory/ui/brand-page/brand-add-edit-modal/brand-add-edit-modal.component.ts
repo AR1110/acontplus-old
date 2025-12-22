@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { finalize } from 'rxjs/operators';
-import { BRAND_SERVICE } from '@inventory/tokens/inventory-token';
+import { BRAND_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   selector: 'app-brand-add-edit-modal',

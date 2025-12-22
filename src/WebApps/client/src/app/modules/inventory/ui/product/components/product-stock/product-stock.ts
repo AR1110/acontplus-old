@@ -8,7 +8,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-product-stock',

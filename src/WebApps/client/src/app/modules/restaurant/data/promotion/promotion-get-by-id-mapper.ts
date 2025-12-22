@@ -1,7 +1,7 @@
 import { formatDate } from '@core/utils/date.util';
 import { DiscountType } from '@restaurant/domain/models/promotion';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
+import { mergeProductMeasures } from '@inventory/utils/merge-measure.util';
 
 export class PromotionGetByIdMapper {
   static fromJson(response: any) {

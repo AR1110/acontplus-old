@@ -4,13 +4,13 @@ import {
   GetProductPurchaseResult,
   ProductGetIdResult,
   ProductSale,
-} from '@inventory/domain/models/product.entity';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
-import { ProductMeasure } from '@inventory/domain/models/product-measure';
-import { mergeMeasureUtil, mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
+} from '@inventory/data/models/product.entity';
+import { MedidaProducto } from '@inventory/data/models/measure.model';
+import { ProductMeasure } from '@inventory/data/models/product-measure';
+import { mergeMeasureUtil, mergeProductMeasures } from '@inventory/utils/merge-measure.util';
 import { imgDefault } from '@core/utils/utils';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { groupSubCategoryUtil } from '@inventory/domain/utils/group-sub-category.util';
+import { groupSubCategoryUtil } from '@inventory/utils/group-sub-category.util';
 import { formatDate } from '@core/utils/date.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 

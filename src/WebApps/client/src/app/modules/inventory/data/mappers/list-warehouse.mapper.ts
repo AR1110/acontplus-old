@@ -1,5 +1,5 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ListWarehouseResponse } from '@inventory/domain/models/warehouse.model';
+import { ListWarehouseResponse } from '@inventory/data/models/warehouse.model';
 
 export class ListWarehouseMapper {
   static fromJson(response: ApiResponseLegacy): ListWarehouseResponse {

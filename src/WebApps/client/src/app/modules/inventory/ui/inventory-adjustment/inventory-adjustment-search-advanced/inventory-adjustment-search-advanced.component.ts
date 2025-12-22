@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { isValidField } from '@core/utils/utils';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { InventoryAdjustmentService } from '@inventory/domain/services/inventory-adjustment.service';
+import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ExcelImportService } from '@modules/config/application/services/excel-import.service';

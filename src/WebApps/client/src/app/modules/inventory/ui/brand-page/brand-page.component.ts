@@ -20,7 +20,7 @@ import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.d
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { BRAND_SERVICE } from '@inventory/tokens/inventory-token';
+import { BRAND_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,5 +1,5 @@
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-measure';
+import { ProductFee, ProductMeasure } from '@inventory/data/models/product-measure';
 
 export class ItemComposition {
   uuid = generateUuidv4();

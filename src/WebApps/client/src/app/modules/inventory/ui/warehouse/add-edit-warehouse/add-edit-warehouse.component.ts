@@ -9,10 +9,10 @@ import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.direct
 import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { WarehouseList } from '@inventory/domain/models/warehouse.model';
+import { WarehouseList } from '@inventory/data/models/warehouse.model';
 import { Button } from '@acontplus/ng-components';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { WAREHOUSE_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_SERVICE } from '@inventory/data/inventory-token';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({

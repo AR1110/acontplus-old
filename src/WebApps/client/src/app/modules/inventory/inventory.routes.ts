@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
-import { INVENTORY_MODULES_CODE, INVENTORY_ROUTES } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_MODULES_CODE, INVENTORY_ROUTES } from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 export const routes: Route[] = [

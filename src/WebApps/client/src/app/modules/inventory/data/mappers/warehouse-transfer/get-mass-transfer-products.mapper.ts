@@ -1,4 +1,4 @@
-import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
 import DecimalUtils from '@core/utils/decimal.util';
 
 export class GetMassTransferProductsMapper {

@@ -23,17 +23,17 @@ import { InventoryAdjustmentSearchAdvancedComponent } from '@inventory/ui/invent
 import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { GroupedEstabBodega, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { InventoryAdjustment } from '@inventory/domain/entities/inventory-adjustment.entity';
+import { InventoryAdjustment } from '@inventory/data/models/inventory-adjustment.entity';
 import {
   InventoryDocumentType,
   InventoryTransactionType,
-} from '@inventory/domain/enums/inventory.enum';
+} from '@inventory/inventory.const';
 
-import { InventoryAdjustmentService } from '@inventory/domain/services/inventory-adjustment.service';
+import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { ValidationException } from '@core/domain';
 import { setDateWithCurrentTime } from '@core/utils/date.util';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import DecimalUtil from '@core/utils/decimal.util';
 import { MatTooltip } from '@angular/material/tooltip';
 

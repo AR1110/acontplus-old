@@ -3,9 +3,9 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/tokens/inventory-token';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DatePipe, DecimalPipe } from '@angular/common';

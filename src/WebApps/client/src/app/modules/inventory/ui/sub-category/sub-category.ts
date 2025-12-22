@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { DataGrid, Pagination, Button} from '@acontplus/ng-components';
+import { DataGrid, Pagination, Button } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
@@ -8,8 +8,8 @@ import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { SubCategoryModalDirective } from '@inventory/ui/directives/sub-category.directive';
 import { DataGridColumn } from '@shared/components/data-grid/types';
-import { SUB_CATEGORY_SERVICE } from '@inventory/tokens/inventory-token';
-import { SubCategoryListDto } from '@inventory/domain/models/sub-category.model';
+import { SUB_CATEGORY_SERVICE } from '@inventory/data/inventory-token';
+import { SubCategoryListDto } from '@inventory/data/models/sub-category.model';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,7 +27,6 @@ import Swal from 'sweetalert2';
     :host ::ng-deep .data-grid {
       height: 500px;
     }
-
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -55,7 +54,6 @@ export class SubCategory implements OnInit {
       header: 'Op.',
       field: 'actions',
       sortable: false,
-
     },
     {
       header: 'Categoría',
@@ -68,7 +66,6 @@ export class SubCategory implements OnInit {
       width: '100px',
       sortable: false,
       type: 'image',
-
     },
     {
       header: 'Código',
@@ -98,7 +95,7 @@ export class SubCategory implements OnInit {
     },
   ];
 
-  onResultModal(_$event: unknown) {
+  onResultModal(_$event: any) {
     this.refresh();
   }
 
@@ -116,7 +113,7 @@ export class SubCategory implements OnInit {
         this.isLoadingResults.set(false);
         this.list.set(categories);
 
-        this.pageCount = this.list().length>0? this.list()[0].totalRecords: 0
+        this.pageCount = this.list().length > 0 ? this.list()[0].totalRecords : 0;
       },
       error: (err) => {
         this.isLoadingResults.set(false);
@@ -133,8 +130,8 @@ export class SubCategory implements OnInit {
     this.getSubcategories();
   }
   handlePageEvent(e: PageEvent) {
-      this.page = e.pageIndex;
-      this.pageSize = e.pageSize;
+    this.page = e.pageIndex;
+    this.pageSize = e.pageSize;
 
     this.getSubcategories();
   }

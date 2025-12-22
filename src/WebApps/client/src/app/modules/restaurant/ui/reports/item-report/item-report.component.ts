@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab } from '@core/models/estab.model';
-import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
+import { GroupedSubFamilia } from '@inventory/data/models/sub-category.model';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -13,7 +13,7 @@ import { AsyncPipe } from '@angular/common';
 import { ItemService } from '@restaurant/data/services/item.service';
 
 import { isValidField } from '@core/utils/utils';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatInput } from '@angular/material/input';
 

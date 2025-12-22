@@ -6,8 +6,8 @@ import {
 } from '@inventory/data/dtos/inventory-adjustment.dto';
 import { fechaString, formatDateToString } from '@core/utils/date.util';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
-import { CreateInventoryAdjustmentCommand } from '@inventory/domain/models/inventory-adjustment.model';
+import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
+import { CreateInventoryAdjustmentCommand } from '@inventory/data/models/inventory-adjustment.model';
 import { isValidField } from '@core/utils/utils';
 
 export class InventoryAdjustmentDetailMapper {

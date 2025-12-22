@@ -1,5 +1,5 @@
 import { formatDate } from '@core/utils/date.util';
-import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 export class WarehouseTransferViewDetailMapper {

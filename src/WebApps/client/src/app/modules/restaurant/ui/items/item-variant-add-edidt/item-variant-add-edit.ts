@@ -12,8 +12,8 @@ import {
   ItemGetBydIdUseCase,
   ItemUpdateUseCase,
 } from '@restaurant/application/use-cases/item.use-case';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
-import { ProductMeasure } from '@inventory/domain/models/product-measure';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
+import { ProductMeasure } from '@inventory/data/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';

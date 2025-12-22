@@ -17,11 +17,11 @@ import { map, switchMap, finalize } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatTableModule } from '@angular/material/table';
-import { ProductSearch } from '@inventory/domain/models/product.entity';
+import { ProductSearch } from '@inventory/data/models/product.entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
 interface ProductSearchProps {
   isSimpleMode?: boolean;

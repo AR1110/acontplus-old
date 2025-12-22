@@ -1,4 +1,4 @@
-import { SubCategoryListDto } from '@inventory/domain/models/sub-category.model';
+import { SubCategoryListDto } from '@inventory/data/models/sub-category.model';
 
 export class SubCategoryMapper {
   static toJson(obj: any): string {

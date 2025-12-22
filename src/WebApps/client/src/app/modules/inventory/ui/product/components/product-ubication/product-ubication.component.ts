@@ -26,7 +26,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
-import { PRODUCT_SERVICE, PRODUCT_UBICATION_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE, PRODUCT_UBICATION_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,7 +2,7 @@ import { PURCHASE_CODE_REPORT } from '@purchases/purchases.const';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { CUSTOMER_CODE_REPORT } from '@customer/shared/enums/customer.enum';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 
 export interface ReportOptions {
   id?: number;
