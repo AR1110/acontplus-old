@@ -53,6 +53,22 @@ public static class GetEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+        group.MapGet("/check-existence-xml", async (
+            string accessKey,
+            IWebServiceSri webServiceSri,
+            IConfiguration configuration,
+            CancellationToken cancellationToken) =>
+        {
+            var response = await webServiceSri.CheckExistenceAsync(accessKey, configuration["UrlSriComprobantes"] ?? string.Empty);
+            return Results.Ok(response);
+        })
+            .WithName("CheckReceivedDocumentXmlExistence")
+            .WithSummary("Check if XML exists in SRI")
+            .WithDescription("Verify if a document exists in the SRI web service.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
         group.MapGet("/preview/{id:int}", async (
             int id,
             IReceivedDocumentService receivedDocumentService,

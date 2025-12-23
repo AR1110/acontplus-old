@@ -86,22 +86,6 @@ public static class CreateEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-        group.MapPost("/check-existence-xml", async (
-            string accessKey,
-            IWebServiceSri webServiceSri,
-            IConfiguration configuration,
-            CancellationToken cancellationToken) =>
-        {
-            var response = await webServiceSri.CheckExistenceAsync(accessKey, configuration["UrlSriComprobantes"] ?? string.Empty);
-            return Results.Ok(response);
-        })
-            .WithName("CheckReceivedDocumentXmlExistence")
-            .WithSummary("Check if XML exists in SRI")
-            .WithDescription("Verify if a document exists in the SRI web service.")
-            .Produces<object>(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
-
         group.MapPost("/upload-xml", async (
             HttpContext httpContext,
             IReceivedDocumentService receivedDocumentService,

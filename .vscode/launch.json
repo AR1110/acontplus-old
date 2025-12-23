@@ -30,9 +30,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net10.0/Identity.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Identity/Identity.Api/bin/Debug/net10.0/Identity.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
+      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -48,9 +48,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/ApiGateways/Ocelot.API/bin/Debug/net10.0/Ocelot.Api.dll",
+      "program": "${workspaceFolder}/src/ApiGateways/Ocelot.Api/bin/Debug/net10.0/Ocelot.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ApiGateways/Ocelot.API",
+      "cwd": "${workspaceFolder}/src/ApiGateways/Ocelot.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -66,9 +66,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Configuration/Configuration.API/bin/Debug/net10.0/Configuration.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Configuration/Configuration.Api/bin/Debug/net10.0/Configuration.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Configuration/Configuration.API",
+      "cwd": "${workspaceFolder}/src/Services/Configuration/Configuration.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -80,9 +80,23 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Inventory/Inventory.API/bin/Debug/net10.0/Inventory.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Inventory/Inventory.Api/bin/Debug/net10.0/Inventory.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Inventory/Inventory.API",
+      "cwd": "${workspaceFolder}/src/Services/Inventory/Inventory.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PurchasesApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Purchases/Purchases.Api/bin/Debug/net10.0/Purchases.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Purchases/Purchases.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -94,9 +108,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net10.0/Restaurant.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api/bin/Debug/net10.0/Restaurant.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
+      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -108,9 +122,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Billing/Billing.API/bin/Debug/net10.0/Billing.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Billing/Billing.Api/bin/Debug/net10.0/Billing.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.API",
+      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -122,9 +136,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Sales/Sales.API/bin/Debug/net10.0/Sales.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Sales/Sales.Api/bin/Debug/net10.0/Sales.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Sales/Sales.API",
+      "cwd": "${workspaceFolder}/src/Services/Sales/Sales.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -136,9 +150,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Common/Common.API/bin/Debug/net10.0/Common.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Common/Common.Api/bin/Debug/net10.0/Common.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Common/Common.API",
+      "cwd": "${workspaceFolder}/src/Services/Common/Common.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -150,9 +164,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Accounting/Accounting.API/bin/Debug/net10.0/Accounting.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Accounting/Accounting.Api/bin/Debug/net10.0/Accounting.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Accounting/Accounting.API",
+      "cwd": "${workspaceFolder}/src/Services/Accounting/Accounting.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"

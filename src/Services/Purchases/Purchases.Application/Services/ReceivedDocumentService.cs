@@ -13,7 +13,7 @@ public class ReceivedDocumentService(
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<ReceivedDocumentService> _logger = logger;
-    private const string ModuleName = "Purchases";
+    private const string ModuleName = "Purchases.";
 
     public async Task<Result<PagedResult<ReceivedDocumentItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
     {
@@ -231,11 +231,11 @@ public class ReceivedDocumentService(
             };
 
             var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXmlReceivedDocument", parameters);
-            
+
             if (response?.Code != "0")
             {
                 return Result<bool, DomainError>.Failure(
-                    DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR", 
+                    DomainError.Validation("RECEIVED_DOCUMENT_UPLOAD_XML_ERROR",
                     response?.Message ?? "Failed to upload XML"));
             }
 
