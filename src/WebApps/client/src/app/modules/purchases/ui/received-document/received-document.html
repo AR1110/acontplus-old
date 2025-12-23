@@ -1,29 +1,27 @@
 <app-breadcrumb />
 <acp-dynamic-card>
-  <div
-    class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-3 row-cols-xxl-3"
-  >
-    <div class="col">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Establecimiento</mat-label>
-        <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
-          @for (item of establecimientos; track $index) {
-            <mat-option [value]="item.codEstab">
-              {{ item.nombreComercial }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-    </div>
-    <div class="col">
-      <app-date-range-selection
-        (onChangeDateRange)="onDateRangeSelection($event)"
-        [inputGroupDateChecked]="true"
-      />
-    </div>
-    <div class="col">
-      <div class="d-flex gap-2 align-items-end">
-        <mat-form-field appearance="outline" class="flex-grow-1">
+  <div class="filter-section p-3 mb-4 rounded shadow-sm border bg-light">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.codEstab">
+                {{ item.nombreComercial }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12 col-md-4">
+        <app-date-range-selection
+          (onChangeDateRange)="onDateRangeSelection($event)"
+          [inputGroupDateChecked]="true"
+        />
+      </div>
+      <div class="col-12 col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
           <mat-label>Tipo Comprobante</mat-label>
           <mat-select (selectionChange)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc">
             <mat-option value="">Todos</mat-option>
@@ -34,83 +32,90 @@
             }
           </mat-select>
         </mat-form-field>
-        <div class="d-flex gap-1">
-          <acp-button
-            [icon]="extraOptionsIcon"
-            matStyle="icon"
-            title="Más Opciones"
-            (handleClick)="onClickBtnMore()"
-          />
-          <acp-button
-            variant="success"
-            icon="refresh"
-            matStyle="icon"
-            (handleClick)="loadData()"
-            title="Recargar"
-          />
+      </div>
+    </div>
+
+    @if (moreOptionsFilter) {
+      <div class="more-filters-container mt-2 pt-2">
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4">
+            <app-supplier-search
+              [textSearch]="textSearch"
+              (supplierSelected)="onSupplierSelected($event)"
+            />
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Clave Acceso</mat-label>
+              <input
+                matInput
+                [(ngModel)]="dataSearch.claveAcceso"
+                placeholder="Ingrese clave de acceso"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Nro. Documento</mat-label>
+              <input
+                matInput
+                type="text"
+                (change)="onChangeSerieComprobante()"
+                appInputNumber
+                [(ngModel)]="dataSearch.serieComprobante"
+                placeholder="000-000-000"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subcategoría</mat-label>
+              <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
+                <mat-option value="">Todos</mat-option>
+                @for (item of subcategories; track $index) {
+                  <mat-option [value]="item.id">
+                    {{ item.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
         </div>
+      </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <div class="d-flex gap-2">
+        <acp-button
+          [icon]="extraOptionsIcon"
+          [title]="extraOptionsTooltip"
+          (handleClick)="onClickBtnMore()"
+        >
+          {{ moreOptionsFilter ? 'Menos Filtros' : 'Más Filtros' }}
+        </acp-button>
+      </div>
+      <div class="d-flex gap-2">
+        <acp-button variant="success" icon="refresh" (handleClick)="loadData()" title="Recargar">
+          {{ 'Recargar' }}
+        </acp-button>
       </div>
     </div>
   </div>
-  @if (moreOptionsFilter) {
-    <div class="row mb-3">
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <app-supplier-search
-          [textSearch]="textSearch"
-          (supplierSelected)="onSupplierSelected($event)"
-        />
-      </div>
-      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Clave Acceso</mat-label>
-          <input matInput [(ngModel)]="dataSearch.claveAcceso" />
-        </mat-form-field>
-      </div>
-      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Nro. Documento</mat-label>
-          <input
-            matInput
-            type="text"
-            (change)="onChangeSerieComprobante()"
-            appInputNumber
-            [(ngModel)]="dataSearch.serieComprobante"
-          />
-        </mat-form-field>
-      </div>
-      <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-12">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Subcategoría</mat-label>
-          <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
-            <mat-option value="">Todos</mat-option>
-            @for (item of subcategories; track $index) {
-              <mat-option [value]="item.id">
-                {{ item.name }}
-              </mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </div>
-  }
-  <div class="row">
-    <div class="col">
-      <button (click)="openModalAutomaticUpload()" mat-raised-button type="button">
-        <mat-icon>download</mat-icon>
-        Importación Automatica
-      </button>
-      <button (click)="openModalManualUpload()" mat-raised-button class="m-2" type="button">
-        <mat-icon>mouse</mat-icon>
+
+  <div class="action-toolbar mb-4">
+    <div class="d-flex flex-wrap gap-2">
+      <acp-button (handleClick)="openModalAutomaticUpload()" icon="download" matStyle="filled">
+        Importación Automática
+      </acp-button>
+      <acp-button (handleClick)="openModalManualUpload()" icon="mouse" matStyle="filled">
         Importación Manual
-      </button>
-      <button (click)="openModalChangeEstab()" mat-raised-button class="m-2" type="button">
-        <mat-icon>upload_file</mat-icon>
+      </acp-button>
+      <acp-button (handleClick)="openModalChangeEstab()" icon="upload_file" matStyle="filled">
         Migrar Comprobantes
-      </button>
-      <button (click)="editSubcategory()" mat-raised-button type="button">
-        <mat-icon>edit</mat-icon>
+      </acp-button>
+      <acp-button (handleClick)="editSubcategory()" icon="edit" matStyle="filled">
         Modificar Subcategoría
-      </button>
+      </acp-button>
     </div>
   </div>
 
