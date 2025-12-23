@@ -22,16 +22,19 @@ BEGIN
        --> Tabla Temporal
     CREATE TABLE #LookupResults
     (
-        TableName    NVARCHAR(128) NOT NULL
-       ,Id           INT NULL
-       ,Code         NVARCHAR(100) NULL
-       ,[Value]      NVARCHAR(400) NULL
-       ,DisplayOrder INT NULL
-       ,ParentId     INT NULL
-       ,IsDefault    BIT DEFAULT 0
-       ,IsActive     BIT DEFAULT 1
-       ,[Description] NVARCHAR(MAX) DEFAULT ''
-       ,Metadata     NVARCHAR(MAX) NULL
+        TableName               NVARCHAR(128) NOT NULL
+       ,Id                      INT NULL
+       ,Code                    NVARCHAR(100) NULL
+       ,[Value]                 NVARCHAR(400) NULL
+       ,DisplayOrder            INT NULL
+       ,ParentId                INT NULL
+       ,PtoEmisionId            INT NULL
+       ,PtoEmision              NVARCHAR(30) NULL
+       ,IsDefault               BIT DEFAULT 0
+       ,IsActive                BIT DEFAULT 1
+       ,IsDefaultPtoEmison      BIT DEFAULT 0
+       ,[Description]           NVARCHAR(MAX) DEFAULT ''
+       ,Metadata                NVARCHAR(MAX) NULL
        ,INDEX IX_Temp_TableName CLUSTERED (TableName, Id)
        ,INDEX IX_Temp_TableName_Value NONCLUSTERED (TableName, [Value])
        ,INDEX IX_Temp_TableName_Order NONCLUSTERED (TableName, DisplayOrder)
@@ -51,10 +54,40 @@ BEGIN
 
         SELECT TOP 1 @IdEntidad = idEntidad ,@UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @UserRoleId;
 
-
         ---> Insert data lookups
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], IsActive, [Description], IsDefault)
-        EXEC Purchases.usp_GetLookupsData @Filters;
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], PtoEmisionId ,PtoEmision ,IsDefault, IsDefaultPtoEmi)
+        SELECT 'Establishments'     AS TableName
+              ,idEstablecimiento    AS Id
+              ,codEstab             AS Code
+              ,nombreComercial      AS [Value]
+              ,idPuntoEmision       AS PtoEmisionId
+              ,ptoEmi + '-' + estab AS PtoEmision
+              ,defaultEstab         AS IsDefault
+              ,defaultPtoEmi        AS IsDefaultPtoEmi
+        FROM v_PtoEmi_Asign WITH(NOLOCK)
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], [Description], IsDefault, IsDefaultPtoEmi)
+        SELECT 'Warehouses'         AS TableName
+              ,idBodega             AS Id
+              ,codEstab             AS Code
+              ,nombreComercial      AS [Value]
+              ,bodega               AS [Description]
+              ,defaultEstab         AS IsDefault
+              ,defaultBodega        AS IsDefaultPtoEmi
+        FROM v_Bodega_Asign WITH(NOLOCK)
+        WHERE idUsuarioRol = @userRoleId ORDER BY defaultEstab DESC
+
+
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], [Description])
+        SELECT 'Subcategories' AS TableName
+              ,idSubcategoria AS Id
+              ,codigo         AS Code
+              ,nombre         AS [Value]
+              ,descripcion    AS [Description]
+        FROM Contabilidad.Subcategory WITH (NOLOCK)
+        WHERE CompanyId = @idEntidad AND [Enabled] = 1
 
     END TRY
     BEGIN CATCH
