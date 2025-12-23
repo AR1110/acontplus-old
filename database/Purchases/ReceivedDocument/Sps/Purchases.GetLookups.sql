@@ -19,7 +19,6 @@ BEGIN
     --> Variables especiales
     DECLARE @TableNames VARCHAR(MAX) ,@Module NVARCHAR(50) ,@Context NVARCHAR(20);
 
-
        --> Tabla Temporal
     CREATE TABLE #LookupResults
     (
@@ -40,23 +39,22 @@ BEGIN
 
     BEGIN TRY
 
-        --> Inicializacion de variables
-        SET @Module = 'Purchases';
-        SET @Context = 'Lookups';
+        --> Variables
+        SELECT @UserRoleId = UserRoleId
+              ,@Module     = Module
+              ,@Context    = Context
+        FROM OPENJSON(@Filters) WITH (
+            UserRoleId INT          '$.userRoleId'
+           ,Module     VARCHAR(100) '$.module'
+           ,Context    VARCHAR(100) '$.context'
+        );
 
-        --> Obtener los nombres de las tablas a consultar
-        SET @TableNames = dbo.Common.GetLookupTableNames(@Module, @Context);
+        SELECT TOP 1 @IdEntidad = idEntidad ,@UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @UserRoleId;
 
-        --> Insertar los datos en la tabla temporal
-        EXEC dbo.Common.InsertLookupData
-            @TableNames = @TableNames,
-            @Filters = @Filters,
-            @TargetTable = '#LookupResults';
 
-        --> Devolver los resultados
-        SELECT *
-        FROM #LookupResults
-        ORDER BY TableName, DisplayOrder, [Value];
+        ---> Insert data lookups
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], IsActive, [Description], IsDefault)
+        EXEC Purchases.usp_GetLookupsData @Filters;
 
     END TRY
     BEGIN CATCH
