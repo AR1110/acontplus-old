@@ -89,6 +89,18 @@ BEGIN
         FROM Contabilidad.Subcategory WITH (NOLOCK)
         WHERE CompanyId = @idEntidad AND [Enabled] = 1
 
+        SELECT @TableNames = STRING_AGG(TableName, ',') WITHIN GROUP (ORDER BY TableName) FROM (SELECT DISTINCT TableName FROM #LookupResults) AS t;
+
+        IF @TableNames IS NULL OR @TableNames = ''
+            BEGIN
+                RAISERROR('Invalid Module or Context specified (no lookups found)', 16, 1);
+                RETURN;
+            END
+
+        SELECT * FROM #LookupResults ORDER BY TableName,Id , DisplayOrder, Value;
+
+        IF OBJECT_ID('tempdb..#LookupResults') IS NOT NULL DROP TABLE #LookupResults;
+
     END TRY
     BEGIN CATCH
         IF OBJECT_ID('tempdb..#LookupResults') IS NOT NULL DROP TABLE #LookupResults;
