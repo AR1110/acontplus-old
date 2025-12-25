@@ -1,7 +1,7 @@
 USE [AcontPlus]
 GO
 /****** Object:  StoredProcedure [dbo].[ASPAtsGetData]    Script Date: 25/9/2023 08:54:21 ******/
-SET ANSI_NULLS ON
+SET ANSI_NULLS ON --
 GO
 SET QUOTED_IDENTIFIER ON
 GO
@@ -186,13 +186,12 @@ BEGIN
             LEFT JOIN FactElect.RetAtsDocSustento     ds WITH (NOLOCK) ON ds.numAutDocSustento = fc.claveAcceso 
             LEFT JOIN Sri.DocumentoSustentoTributario ss WITH (NOLOCK) ON ss.Id                = ds.documentoSustentoTributarioId
             LEFT JOIN Sri.SustentoTributario          st WITH (NOLOCK) ON st.Id                = ss.SustentoTributarioId
-            LEFT JOIN FactElect.RetencionAts          rt WITH (NOLOCK) ON rt.idRetencionAts    = ds.idRetencionAts
+            LEFT JOIN FactElect.RetencionAts          rt WITH (NOLOCK) ON rt.idRetencionAts    = ds.idRetencionAts AND ISNULL(rt.anuladaSri,0) = 0
             WHERE fc.identificacionReceptor = @rucReceptor
               AND CAST(fc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
               AND fc.codDoc IN ('01','04','05')
               AND fc.xmlCompressed IS NOT NULL
               AND fc.estado = 1
-              AND ISNULL(rt.anuladaSri,0) = 0
         ),
         TipoIdentificacionProveedor AS 
         (
