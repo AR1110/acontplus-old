@@ -1,17 +1,17 @@
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { Button } from '@acontplus/ng-components';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { REPORT_FORMAT, SEPARADORES_REGEX } from '@core/constants/global.constants';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserRoleStateService } from '@shared/store/user-role-state.service';
@@ -22,7 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SharedService } from '@core/services/shared.service';
-import { Brand } from '@inventory/domain/models/brand.model';
+import { Brand } from '@inventory/data/models/brand.model';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,7 +48,7 @@ const imports = [
   ReactiveFormsModule,
   NgTemplateOutlet,
   BreadcrumbComponent,
-  SubCategoryGroupComponent,
+  SubCategoryGroup,
   ProductSearchComponent,
   DateRangeSelectionComponent,
   SupplierSearchComponent,

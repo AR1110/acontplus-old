@@ -4,7 +4,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { ElectronicSignatureList } from '@modules/config/domain/models/electronic-signature.model';
 import { Button } from '@acontplus/ng-components';
 import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
-import { WarehouseList } from '@inventory/domain/models/warehouse.model';
+import { WarehouseList } from '@inventory/data/models/warehouse.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { provideNativeDateAdapter } from '@angular/material/core';

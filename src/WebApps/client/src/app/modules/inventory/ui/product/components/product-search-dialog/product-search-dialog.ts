@@ -17,7 +17,7 @@ import { of, Subscription } from 'rxjs';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { KeyboardNavigationService } from '@shared/components/data-grid/keyboard-navigation';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';

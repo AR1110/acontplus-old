@@ -8,7 +8,7 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { Pagination, Button, DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FRACTIONAL_PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { FRACTIONAL_PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
 import { isValidField } from '@core/utils/utils';
 import { finalize } from 'rxjs/operators';

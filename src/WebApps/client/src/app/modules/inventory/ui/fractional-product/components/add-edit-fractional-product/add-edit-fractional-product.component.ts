@@ -20,7 +20,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import Swal from 'sweetalert2';
-import { FRACTIONAL_PRODUCT_SERVICE, PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { FRACTIONAL_PRODUCT_SERVICE, PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

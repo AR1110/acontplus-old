@@ -1,8 +1,459 @@
 @Purchases.Api_HostAddress = https://localhost:7001
-@Token = Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InphcmF0ZWNAYWNvbnRwbHVzLmNvbS5lYyIsImdpdmVuX25hbWUiOiJaQVJBVEUgScORSUdVRVogQ0hSSVNUSUFOIElWQU4iLCJqdGkiOiI2OGM0NDZjZS0wNWRkLTQ4YjUtYTYwYy0wYmRkNTBiNWNkOGMiLCJuYW1lIjoiWkFSQVRFIEnDkUlHVUVaIENIUklTVElBTiBJVkFOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIxMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOSVNUUkFET1IiLCJzdWIiOiIxMCIsInVuaXF1ZV9uYW1lIjoiemFyYXRlYyIsInVzZXJSb2xlSWQiOiIyNyIsImlkQ2FyZENvbXBhbnkiOiIwMTAyNzYyNTMxMDAxIiwiY29tcGFueUlkIjoiMSIsInRyYWRlTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsImJ1c2luZXNzTmFtZSI6IlpBUkFURSBJw5FJR1VFWiBDSFJJU1RJQU4gSVZBTiIsInVybEdhdGV3YXkiOiJodHRwczovL2xvY2FsaG9zdDo3MDYwIiwiZXhwIjoxNzc2ODI3MzM2fQ.S8tZbhmVEasW1V4UFKju8MQFjLhhKfYoJwm2fNyyHGg
+### Acontplus Token
+@Token = Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InphcmF0ZWNAYWNvbnRwbHVzLmNvbS5lYyIsImdpdmVuX25hbWUiOiJaQVJBVEUgScORSUdVRVogQ0hSSVNUSUFOIElWQU4iLCJqdGkiOiIwMWZlMTYwZC03YjIwLTQ2ZDEtODEyYi00MDgwODM2MTExMDUiLCJuYW1lIjoiWkFSQVRFIEnDkUlHVUVaIENIUklTVElBTiBJVkFOIiwibmFtZWlkIjoiMTAiLCJyb2xlIjoiQURNSU5JU1RSQURPUiIsInN1YiI6IjEwIiwidW5pcXVlX25hbWUiOiJ6YXJhdGVjIiwidXNlclJvbGVJZCI6IjMwNyIsImlkQ2FyZENvbXBhbnkiOiIyMjkzNTMwOTE1MDAxIiwiY29tcGFueUlkIjoiMTk1IiwidHJhZGVOYW1lIjoiQUNPTlRQTFVTIFMuQS5TLiIsImJ1c2luZXNzTmFtZSI6IkFDT05UUExVUyBTLkEuUy4iLCJ1cmxHYXRld2F5IjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzA2MCIsIm5iZiI6MTc2NjQzNDE5MiwiZXhwIjoxNzY5MDI2MTkyLCJpYXQiOjE3NjY0MzQxOTIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwNjAiLCJhdWQiOiJvY2Vsb3Quc2VydmljZSJ9.O_u3lGj4Si7uPH0WjizpJKt63YvRI1H25Aubc36BpdVVdc--vAP10TmSjfHOx-3FEPrmlwGcf7Lh3904RtJGZA
 
+### Health Check
 GET {{Purchases.Api_HostAddress}}/
 Accept: application/json
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# LOOKUPS
+# =============================================================================
+
+### Get Lookups
+GET {{Purchases.Api_HostAddress}}/api/lookups
+Accept: application/json
+Authorization: {{Token}}
+
+### Refresh Lookups Cache
+POST {{Purchases.Api_HostAddress}}/api/lookups/refresh
+Accept: application/json
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# SUPPLIERS
+# =============================================================================
+
+### Get All Suppliers
+GET {{Purchases.Api_HostAddress}}/api/suppliers
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Supplier
+POST {{Purchases.Api_HostAddress}}/api/suppliers
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Supplier Name",
+  "idCard": "1234567890",
+  "email": "supplier@example.com",
+  "phone": "0999999999",
+  "address": "Supplier Address"
+}
+
+### Update Supplier
+PUT {{Purchases.Api_HostAddress}}/api/suppliers/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Updated Supplier Name",
+  "idCard": "1234567890",
+  "email": "supplier@example.com",
+  "phone": "0999999999",
+  "address": "Updated Address"
+}
+
+### Delete Supplier
+DELETE {{Purchases.Api_HostAddress}}/api/suppliers/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# ARTICLES
+# =============================================================================
+
+### Get All Articles
+GET {{Purchases.Api_HostAddress}}/api/articles
+Accept: application/json
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# ADDITIONAL ARTICLE DATA
+# =============================================================================
+
+### Get All Additional Article Data
+GET {{Purchases.Api_HostAddress}}/api/additional-article-data
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Additional Article Data
+POST {{Purchases.Api_HostAddress}}/api/additional-article-data/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "additionalInfo": "Additional information",
+  "value": "Value"
+}
+
+### Delete Additional Article Data
+DELETE {{Purchases.Api_HostAddress}}/api/additional-article-data/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# PURCHASE CATEGORIES
+# =============================================================================
+
+### Get All Purchase Categories
+GET {{Purchases.Api_HostAddress}}/api/purchase-categories
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Purchase Category
+POST {{Purchases.Api_HostAddress}}/api/purchase-categories
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Category Name",
+  "description": "Category Description"
+}
+
+### Update Purchase Category
+PUT {{Purchases.Api_HostAddress}}/api/purchase-categories/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "name": "Updated Category Name",
+  "description": "Updated Description"
+}
+
+### Delete Purchase Category
+DELETE {{Purchases.Api_HostAddress}}/api/purchase-categories/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# HABITUAL PURCHASES
+# =============================================================================
+
+### Get All Habitual Purchases
+GET {{Purchases.Api_HostAddress}}/api/habitual-purchases?pageNumber=1&pageSize=10
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Habitual Purchase
+POST {{Purchases.Api_HostAddress}}/api/habitual-purchases
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "description": "Habitual Purchase Description",
+  "amount": 100.00,
+  "frequency": "Monthly"
+}
+
+### Update Habitual Purchase
+PUT {{Purchases.Api_HostAddress}}/api/habitual-purchases/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "description": "Updated Description",
+  "amount": 150.00,
+  "frequency": "Monthly"
+}
+
+### Delete Habitual Purchase
+DELETE {{Purchases.Api_HostAddress}}/api/habitual-purchases/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# NON-HABITUAL PURCHASES
+# =============================================================================
+
+### Get All Non-Habitual Purchases
+GET {{Purchases.Api_HostAddress}}/api/non-habitual-purchases?pageNumber=1&pageSize=10
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Non-Habitual Purchase
+POST {{Purchases.Api_HostAddress}}/api/non-habitual-purchases
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "description": "Non-Habitual Purchase Description",
+  "amount": 100.00,
+  "date": "2025-12-19"
+}
+
+### Update Non-Habitual Purchase
+PUT {{Purchases.Api_HostAddress}}/api/non-habitual-purchases/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "description": "Updated Description",
+  "amount": 150.00,
+  "date": "2025-12-19"
+}
+
+### Delete Non-Habitual Purchase
+DELETE {{Purchases.Api_HostAddress}}/api/non-habitual-purchases/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# PURCHASE ORDERS
+# =============================================================================
+
+### Get All Purchase Orders
+GET {{Purchases.Api_HostAddress}}/api/purchase-orders?pageNumber=1&pageSize=10
+Accept: application/json
+Authorization: {{Token}}
+
+### Get Purchase Order By ID
+GET {{Purchases.Api_HostAddress}}/api/purchase-orders/1
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Purchase Order
+POST {{Purchases.Api_HostAddress}}/api/purchase-orders
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "supplierId": 1,
+  "orderDate": "2025-12-19",
+  "totalAmount": 1000.00,
+  "status": "Pending"
+}
+
+### Update Purchase Order
+PUT {{Purchases.Api_HostAddress}}/api/purchase-orders/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "supplierId": 1,
+  "orderDate": "2025-12-19",
+  "totalAmount": 1200.00,
+  "status": "Approved"
+}
+
+### Delete Purchase Order
+DELETE {{Purchases.Api_HostAddress}}/api/purchase-orders/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# PURCHASE INVOICES
+# =============================================================================
+
+### Get All Purchase Invoices
+GET {{Purchases.Api_HostAddress}}/api/purchase-invoices?pageNumber=1&pageSize=10
+Accept: application/json
+Authorization: {{Token}}
+
+### Get Purchase Invoice By ID
+GET {{Purchases.Api_HostAddress}}/api/purchase-invoices/1
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Purchase Invoice
+POST {{Purchases.Api_HostAddress}}/api/purchase-invoices
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "purchaseOrderId": 1,
+  "invoiceNumber": "INV-001",
+  "invoiceDate": "2025-12-19",
+  "totalAmount": 1000.00
+}
+
+### Update Purchase Invoice
+PUT {{Purchases.Api_HostAddress}}/api/purchase-invoices/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "purchaseOrderId": 1,
+  "invoiceNumber": "INV-001-UPD",
+  "invoiceDate": "2025-12-19",
+  "totalAmount": 1200.00
+}
+
+### Delete Purchase Invoice
+DELETE {{Purchases.Api_HostAddress}}/api/purchase-invoices/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# RECEIVED DOCUMENTS
+# =============================================================================
+
+### Get All Received Documents
+GET {{Purchases.Api_HostAddress}}/api/received-documents?pageNumber=1&pageSize=10
+Accept: application/json
+Authorization: {{Token}}
+
+### Get Received Document By ID (Anonymous)
+GET {{Purchases.Api_HostAddress}}/api/received-documents/1
+Accept: application/json
+
+### Preview Received Document (HTML)
+GET {{Purchases.Api_HostAddress}}/api/received-documents/preview/1
+Accept: text/html
+Authorization: {{Token}}
+
+### Download Received Document XML
+GET {{Purchases.Api_HostAddress}}/api/received-documents/download/1
+Accept: application/xml
+Authorization: {{Token}}
+
+### Create Received Document
+POST {{Purchases.Api_HostAddress}}/api/received-documents
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "accessKey": "1812202501210030268200120020020000267871190081711",
+  "establishmentId": 553,
+  "subcategoryId": 110
+}
+
+### Read Received Documents File (Upload Text File)
+POST {{Purchases.Api_HostAddress}}/api/received-documents/read
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: {{Token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="documents.txt"
+Content-Type: text/plain
+
+Document data here
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Check Received Document XML Existence
+POST {{Purchases.Api_HostAddress}}/api/received-documents/check-existence-xml
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "accessKey": "1234567890123456789012345678901234567890123456789"
+}
+
+### Upload Received Document XML
+POST {{Purchases.Api_HostAddress}}/api/received-documents/upload-xml
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: {{Token}}
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="document.xml"
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<document>XML content here</document>
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Update Received Document
+PUT {{Purchases.Api_HostAddress}}/api/received-documents/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "documentNumber": "DOC-001-UPD",
+  "documentDate": "2025-12-19",
+  "supplierId": 1,
+  "totalAmount": 600.00
+}
+
+### Migrate Received Document
+PUT {{Purchases.Api_HostAddress}}/api/received-documents/migrate
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "documentId": 1,
+  "newCategoryId": 2
+}
+
+### Update Received Document Subcategory
+PUT {{Purchases.Api_HostAddress}}/api/received-documents/subcategory/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "subcategoryId": 3
+}
+
+### Delete Received Document
+DELETE {{Purchases.Api_HostAddress}}/api/received-documents/1
+Authorization: {{Token}}
+
+###
+
+# =============================================================================
+# RECEIVED DOCUMENT DETAILS TEMP
+# =============================================================================
+
+### Get Received Document Details Temp
+GET {{Purchases.Api_HostAddress}}/api/received-document-details-temp/1
+Accept: application/json
+Authorization: {{Token}}
+
+### Create Received Document Detail Temp
+POST {{Purchases.Api_HostAddress}}/api/received-document-details-temp
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "documentId": 1,
+  "articleId": 1,
+  "quantity": 10,
+  "unitPrice": 50.00
+}
+
+### Update Received Document Detail Temp
+PUT {{Purchases.Api_HostAddress}}/api/received-document-details-temp/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "quantity": 15,
+  "unitPrice": 55.00
+}
+
+###
+
+# =============================================================================
+# DOCUMENT DETAILS
+# =============================================================================
+
+### Create Document Detail
+POST {{Purchases.Api_HostAddress}}/api/document-details/1/1
+Content-Type: application/json
+Authorization: {{Token}}
+
+{
+  "quantity": 10,
+  "unitPrice": 50.00,
+  "discount": 0
+}
+
+### Delete Document Detail
+DELETE {{Purchases.Api_HostAddress}}/api/document-details/1
 Authorization: {{Token}}
 
 ###

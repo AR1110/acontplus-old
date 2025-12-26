@@ -1,18 +1,15 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DynamicCard } from '@acontplus/ng-components';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
+import { DynamicCard, Pagination } from '@acontplus/ng-components';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { DialogService } from '@core/services/dialog.service';
 import { MassiveTaxDialogComponent } from '@inventory/ui/massive-tax-page/massive-tax-dialog/massive-tax-dialog.component';
 import { finalize } from 'rxjs/operators';
-import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-case';
+import { MASSIVE_TAX_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-massive-tax-page',
   imports: [
     MatIconModule,
@@ -24,10 +21,10 @@ import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-ca
   templateUrl: './massive-tax-page.component.html',
 })
 export class MassiveTaxPageComponent implements OnInit {
-  private readonly _massiveTaxUseCase = inject(MassiveTaxUseCase);
+  private readonly massiveTaxService = inject(MASSIVE_TAX_SERVICE);
   private _dialogSvc = inject(DialogService);
 
-  dataSource = signal([]);
+  dataSource = signal<unknown[]>([]);
 
   isLoadingResults = signal(false);
 
@@ -62,7 +59,7 @@ export class MassiveTaxPageComponent implements OnInit {
       if (this.isLoadingResults()) return;
 
       this.isLoadingResults.set(true);
-      this._massiveTaxUseCase
+      this.massiveTaxService
         .getAll({})
         .pipe(finalize(() => this.isLoadingResults.set(false)))
         .subscribe((response) => {
@@ -77,3 +74,6 @@ export class MassiveTaxPageComponent implements OnInit {
     this.getAll();
   }
 }
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';

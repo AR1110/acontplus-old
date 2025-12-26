@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
-import { TarifaService } from '@inventory/data/services/tarifa.service';
+import { TARIFA_SERVICE } from '@inventory/data/inventory-token';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
@@ -36,7 +36,7 @@ export class TarifaEditModalComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<TarifaEditModalComponent>);
   tS = inject(ToastrNotificationService);
-  tarifaSvc = inject(TarifaService);
+  tarifaSvc = inject(TARIFA_SERVICE);
 
   btnText = 'Actualizar';
   titleModal = signal('Editar Tarifa');

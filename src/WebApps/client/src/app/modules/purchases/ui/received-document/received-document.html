@@ -1,0 +1,192 @@
+<app-breadcrumb />
+<acp-dynamic-card>
+  <div class="filter-section p-3 mb-4 rounded shadow-sm border bg-light">
+    <div class="row g-3">
+      <div class="col-12 col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.codEstab">
+                {{ item.nombreComercial }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12 col-md-4">
+        <app-date-range-selection
+          (onChangeDateRange)="onDateRangeSelection($event)"
+          [inputGroupDateChecked]="true"
+        />
+      </div>
+      <div class="col-12 col-md-4">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Tipo Comprobante</mat-label>
+          <mat-select (selectionChange)="onChangeTipoDoc()" [(ngModel)]="dataSearch.codDoc">
+            <mat-option value="">Todos</mat-option>
+            @for (item of documentTypes; track $index) {
+              <mat-option [value]="item.codigoSri">
+                {{ item.descripcion }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    @if (moreOptionsFilter) {
+      <div class="more-filters-container mt-2 pt-2">
+        <div class="row g-3">
+          <div class="col-12 col-md-6 col-lg-4">
+            <app-supplier-search
+              [textSearch]="textSearch"
+              (supplierSelected)="onSupplierSelected($event)"
+            />
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Clave Acceso</mat-label>
+              <input
+                matInput
+                [(ngModel)]="dataSearch.claveAcceso"
+                placeholder="Ingrese clave de acceso"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Nro. Documento</mat-label>
+              <input
+                matInput
+                type="text"
+                (change)="onChangeSerieComprobante()"
+                appInputNumber
+                [(ngModel)]="dataSearch.serieComprobante"
+                placeholder="000-000-000"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 col-lg-2">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subcategoría</mat-label>
+              <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
+                <mat-option value="">Todos</mat-option>
+                @for (item of subcategories; track $index) {
+                  <mat-option [value]="item.id">
+                    {{ item.name }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <div class="d-flex gap-2">
+        <acp-button
+          [icon]="extraOptionsIcon"
+          [title]="extraOptionsTooltip"
+          (handleClick)="onClickBtnMore()"
+        >
+          {{ moreOptionsFilter ? 'Menos Filtros' : 'Más Filtros' }}
+        </acp-button>
+      </div>
+      <div class="d-flex gap-2">
+        <acp-button variant="success" icon="refresh" (handleClick)="loadData()" title="Recargar">
+          {{ 'Recargar' }}
+        </acp-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-toolbar mb-4">
+    <div class="d-flex flex-wrap gap-2">
+      <acp-button (handleClick)="openModalAutomaticUpload()" icon="download" matStyle="filled">
+        Importación Automática
+      </acp-button>
+      <acp-button (handleClick)="openModalManualUpload()" icon="mouse" matStyle="filled">
+        Importación Manual
+      </acp-button>
+      <acp-button (handleClick)="openModalChangeEstab()" icon="upload_file" matStyle="filled">
+        Migrar Comprobantes
+      </acp-button>
+      <acp-button (handleClick)="editSubcategory()" icon="edit" matStyle="filled">
+        Modificar Subcategoría
+      </acp-button>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col">
+      <acp-data-grid
+        [data]="documents()"
+        [columns]="columns"
+        [length]="pageCount"
+        [pageIndex]="page"
+        [pageSize]="pageSize"
+        (page)="onPageChanged($event)"
+        [cellTemplate]="{
+          actions: actionsTpl,
+        }"
+      />
+    </div>
+  </div>
+
+  <ng-template #actionsTpl let-data>
+    <acp-button
+      type="button"
+      icon="visibility"
+      variant="primary"
+      matStyle="icon"
+      title="Ver Comprobante"
+      (handleClick)="openModalDocument(data)"
+    />
+    <acp-button
+      type="button"
+      icon="link"
+      variant="secondary"
+      matStyle="icon"
+      title="Docs. Relacionados"
+      (handleClick)="getMergedDocs(data)"
+    />
+    <acp-button
+      type="button"
+      icon="download"
+      variant="secondary"
+      matStyle="icon"
+      title="Descargar XML"
+      (handleClick)="downloadXml(data)"
+    />
+    @if (!data.complete) {
+      <acp-button
+        type="button"
+        icon="sync"
+        variant="warning"
+        matStyle="icon"
+        title="Actualizar XML"
+        (handleClick)="putXml(data)"
+      />
+      <acp-button
+        type="button"
+        icon="delete"
+        variant="danger"
+        matStyle="icon"
+        title="Eliminar"
+        (handleClick)="askToDelete(data)"
+      />
+    }
+    @if (data.codDoc === '01') {
+      <acp-button
+        type="button"
+        icon="picture_as_pdf"
+        variant="info"
+        matStyle="icon"
+        title="RIDE"
+        (handleClick)="getRide(data)"
+      />
+    }
+  </ng-template>
+</acp-dynamic-card>

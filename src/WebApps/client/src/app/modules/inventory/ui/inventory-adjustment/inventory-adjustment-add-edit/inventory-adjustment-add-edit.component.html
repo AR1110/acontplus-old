@@ -1,0 +1,145 @@
+<app-mat-custom-dialog
+  (close)="close()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="title()"
+/>
+
+<ng-template #body>
+  <form id="adjustmentForm" [formGroup]="adjustmentForm" (ngSubmit)="onSubmit()">
+    <div class="container-fluid vstack gap-2">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Documento</mat-label>
+            <mat-select formControlName="documentType">
+              @for (item of tiposDoc(); track $index) {
+                <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Movimiento</mat-label>
+            <mat-select formControlName="transactionType">
+              @for (item of tiposTransaccion(); track $index) {
+                <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento</mat-label>
+            <mat-select formControlName="establishmentId" (selectionChange)="changeEstablishment()">
+              @for (item of estabs(); track $index) {
+                <mat-option [value]="item.idEstablecimiento">{{ item.nombreEstab }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Punto de Emisión</mat-label>
+            <mat-select formControlName="emissionPointId">
+              @for (item of emissionsPoint(); track $index) {
+                <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Fecha Emisión</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="emissionDate" />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker1" />
+            <mat-datepicker #picker1 />
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Bodega</mat-label>
+            <mat-select formControlName="warehouseId" (selectionChange)="askToChangeBodega()">
+              @for (item of warehouses(); track $index) {
+                <mat-option [value]="item.idBodega">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col"></div>
+        <div class="col"></div>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-2">
+        <div class="col">
+          <app-product-autocomplete-advanced
+            [imageSize]="'medium'"
+            [enableImageZoom]="true"
+            [enableQuickView]="true"
+            [showStockBadge]="true"
+            [showImageNavigation]="true"
+            [autoRotateImages]="false"
+            (itemSelected)="itemSelected($event)"
+          />
+        </div>
+        <div class="col d-flex justify-content-end">
+          <div class="hstack gap-2">
+            <acp-button
+              variant="info"
+              icon="search"
+              text="Búsqueda avanzada"
+              (handleClick)="openSearchAdvanced()"
+            />
+            <acp-button
+              variant="danger"
+              icon="refresh"
+              text="Cantidad a 0"
+              matTooltip="Cambiar cantida de los productos de detalle a 0"
+              (handleClick)="askToChangeQuantityZero()"
+            />
+          </div>
+        </div>
+      </div>
+
+      <acp-tabulator-table
+        [columns]="columns"
+        [data]="dataSourceItems()"
+        [options]="{
+          height: '100%',
+          dataTreeSelectPropagate: false,
+        }"
+        (cellEdited)="cellEdited($event)"
+      />
+
+      <div class="row">
+        <div class="col-xl-10 col-lg-10 col-md-10 col-sm-10 col-12">
+          <mat-form-field class="w-100">
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput formControlName="observations" placeholder="..."></textarea>
+          </mat-form-field>
+        </div>
+        <div class="col-xl-2 col-lg-2 col-md-2 col-sm-2 col-12">
+          <div class="text-right">
+            <h4>
+              <strong>Total: {{ currentAdjustment.total }}</strong>
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+<ng-template #footer>
+  <acp-button
+    type="submit"
+    variant="success"
+    [icon]="icon()"
+    [text]="btnText()"
+    form="adjustmentForm"
+  />
+</ng-template>

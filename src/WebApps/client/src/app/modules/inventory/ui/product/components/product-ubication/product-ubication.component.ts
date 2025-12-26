@@ -5,7 +5,7 @@ import {
   model,
   output,
   OnInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, signal,
 } from '@angular/core';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +26,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
-import { PRODUCT_SERVICE, PRODUCT_UBICATION_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE, PRODUCT_UBICATION_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,7 +59,7 @@ export class ProductUbicationComponent implements OnInit {
 
   loading = false;
 
-  dataSource = new MatTableDataSource<any>([]);
+  dataSource = signal<any>([])
   columnsDefs: ColumnDefinition[] = [
     { key: 'index', label: '#', type: 'string' },
     { key: 'op', label: 'Op.', type: 'string' },
@@ -88,7 +88,7 @@ export class ProductUbicationComponent implements OnInit {
       .getId(this.productId())
       .pipe(finalize(() => (this.loading = false)))
       .subscribe((response) => {
-        this.dataSource = new MatTableDataSource(response?.productLocations || []);
+        this.dataSource.set(response?.productLocations || []);
       });
   }
 
@@ -100,7 +100,6 @@ export class ProductUbicationComponent implements OnInit {
         ubicacion: null,
       };
     });
-    console.log(this.data());
   }
 
   edit(item: any) {
@@ -167,7 +166,7 @@ export class ProductUbicationComponent implements OnInit {
     console.log(this.data());
   }
 
-  async askToDelete(item: unknown) {
+  async askToDelete(item: any) {
     const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Esta seguro/a de eliminar este Ubicación del Articulo ahora?</small>`,

@@ -13,6 +13,7 @@ export const hybridAuthGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const tokenUseCase = inject(TokenUseCase);
 
+
   // Verificar si viene de una ruta legacy (con token en query params)
   const queryParams = route.queryParams;
   const hasLegacyAuth = !!(queryParams['token'] && queryParams['route']);
@@ -22,6 +23,7 @@ export const hybridAuthGuard: CanActivateFn = (route, state) => {
   if (hasLegacyAuth) {
     return true;
   }
+  console.log('no legacy auth');
 
   // Para rutas legacy (/legacy/...), el token ya fue procesado por app.ts
   // Solo verificar que exista un token válido

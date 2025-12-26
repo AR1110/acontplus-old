@@ -51,7 +51,7 @@
 
     <app-mat-dynamic-table
       [templateOp]="templateOp"
-      [tableData]="dataSource.data"
+      [tableData]="dataSource()"
       [columnDefinitions]="columnsDefs"
       [visibleColumns]="columns"
     />

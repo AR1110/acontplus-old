@@ -7,7 +7,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { TarifaService } from '@inventory/data/services/tarifa.service';
+import { TARIFA_SERVICE } from '@inventory/data/inventory-token';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import { TarifaEditModalComponent } from '@inventory/ui/tarifa-page/tarifa-edit-modal/tarifa-edit-modal.component';
 import { DialogService } from '@core/services/dialog.service';
@@ -27,7 +27,7 @@ import { DialogService } from '@core/services/dialog.service';
   styles: ``,
 })
 export class TarifaPageComponent implements OnInit {
-  tarifaSvc = inject(TarifaService);
+  tarifaSvc = inject(TARIFA_SERVICE);
   visibleColumns: string[] = [
     'index',
     'op',

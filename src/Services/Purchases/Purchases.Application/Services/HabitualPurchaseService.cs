@@ -37,11 +37,11 @@ public class HabitualPurchaseService(IUnitOfWork unitOfWork) : IHabitualPurchase
     {
       var parameters = new Dictionary<string, object>
       {
-        { "userRoleId", request.CreatedByUserId },
+        { "userRoleId", request.UserRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Insert", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var newId = Convert.ToInt32(response.Payload);
         var item = new HabitualPurchaseItem(newId, request.PurchaseBase, request.Details, true, DateTime.UtcNow);
@@ -65,7 +65,7 @@ public class HabitualPurchaseService(IUnitOfWork unitOfWork) : IHabitualPurchase
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
-      if (response?.Code == "1")
+      if (response?.Code == "0")
       {
         var item = new HabitualPurchaseItem(id, request.PurchaseBase, request.Details, true, DateTime.UtcNow);
         return Result<HabitualPurchaseItem, DomainError>.Success(item);
@@ -84,7 +84,7 @@ public class HabitualPurchaseService(IUnitOfWork unitOfWork) : IHabitualPurchase
     {
       var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
-      return response?.Code == "1"
+      return response?.Code == "0"
         ? Result<bool, DomainError>.Success(true)
         : Result<bool, DomainError>.Failure(DomainError.Validation("HABITUAL_PURCHASE_DELETE_ERROR", response?.Message ?? "Failed to delete habitual purchase"));
     }

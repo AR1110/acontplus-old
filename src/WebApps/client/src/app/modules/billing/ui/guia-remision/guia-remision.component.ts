@@ -22,7 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { GuiaRemisionList } from '@billing/domain/models/guia-remision/guia-remision.model';
 import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
-import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
+import { CompraHabitualHistorialDirective } from '@purchases/shared/directives/compra-habitual-historial.directive';
 import { MatMenuModule } from '@angular/material/menu';
 import { ProductKardexModalDirective } from '@inventory/ui/product/components/directives/product-kardex-modal.directive';
 import { DialogService } from '@core/services/dialog.service';

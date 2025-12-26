@@ -6,6 +6,7 @@ import {
   signal,
   ViewChildren,
   OnInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,16 +22,11 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 import { ProductKardexModalDirective } from '@inventory/ui/product/components/directives/product-kardex-modal.directive';
-import { StockService } from '@inventory/data/services/stock.service';
-import { CompraHabitualHistorialDirective } from '@purchase/directives/compra-habitual-historial.directive';
-import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
-import { finalize, forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { STOCK_SERVICE, PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
-import { ProductList } from '@inventory/domain/models/product.entity';
+import { ProductList } from '@inventory/data/models/product.entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,10 +35,11 @@ import { DialogService } from '@core/services/dialog.service';
 import { MtxPopoverModule } from '@ng-matero/extensions/popover';
 import { ProductStock } from '@inventory/ui/product/components/product-stock/product-stock';
 import { HasPermissionDirective } from '@core/directives/permission';
-import { INVENTORY_MODULES_CODE } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_MODULES_CODE } from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inventory-product',
   imports: [
     FormsModule,
@@ -58,7 +55,7 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
     MatTooltipModule,
     MatCheckboxModule,
     MatSelectModule,
-    SubCategoryGroupComponent,
+    SubCategoryGroup,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
@@ -102,7 +99,7 @@ export class Product implements OnInit {
   stocks = signal<any[]>([]);
   estados = signal<any[]>([]);
   private _productService = inject(PRODUCT_SERVICE);
-  private stockSvc = inject(StockService);
+  private stockSvc = inject(STOCK_SERVICE);
   private tS = inject(ToastrNotificationService);
   private $dialogSvc = inject(DialogService);
 
@@ -118,7 +115,6 @@ export class Product implements OnInit {
     {
       header: 'Descripción',
       field: 'dataDescription',
-      width: '300px',
     },
     { header: 'Imagen', field: 's3ObjectUrl', type: 'image' },
     { header: 'SubFamilia', field: 'subFamilia' },
@@ -323,3 +319,7 @@ export class Product implements OnInit {
     this.refresh();
   }
 }
+import { CompraHabitualHistorialDirective } from '@purchases/shared/directives/compra-habitual-historial.directive';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
+import { finalize, forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';

@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" class="login-pf" lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="robots" content="noindex, nofollow">
+    
+            <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>        SRI en Línea - Login
+</title>
+    <link rel="icon" href="/auth/resources/7.3.8.ga/login/sri-template/img/favicon.ico" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/lib/rcue/css/rcue.min.css" rel="stylesheet" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/lib/rcue/css/rcue-additions.min.css" rel="stylesheet" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/css/login.css" rel="stylesheet" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/css/animate.min.css" rel="stylesheet" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/css/font-roboto.css" rel="stylesheet" />
+            <link href="/auth/resources/7.3.8.ga/login/sri-template/css/slider.css" rel="stylesheet" />
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/core-min.js" type="text/javascript"></script>
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/md5.js" type="text/javascript"></script>
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/sha512.js" type="text/javascript"></script>
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/script.js" type="text/javascript"></script>
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/banner.js" type="text/javascript"></script>
+            <script src="/auth/resources/7.3.8.ga/login/sri-template/js/google-analytics.js" type="text/javascript"></script>
+	<script src="https://cdn.auth0.com/js/lock/11.14/lock.min.js"></script>
+	<script src="https://cdn.auth0.com/js/analytics/1.3.1/analytics.min.js"></script>
+</head>
+
+<body class=""> 
+    <div class="contenedor">
+        <div class="row distribucion-ingreso-credenciales">
+			<div  class="col-sm-9 col-md-9 col-lg-9 sri-imagen-banner no-mostrar-responsive padding-leteral">
+				<div class="carousel">
+					<div id="imagen" class="animated transicion-cambio-imagen">
+						<div class="controles">
+							<button id="retroceder" class="boton-izquierda d-flex justify-content-center puntero" title="Anterior banner"></button>
+							<button id="play" class="eliminar-boton margen-boton-pausar puntero boton-tamano-minimo" role="button"><i class="fa fa-play-circle-o color-icono-reproducir" aria-hidden="true"></i></button>
+							<button id="stop" class="eliminar-boton margen-boton-pausar puntero boton-tamano-minimo" role="button"><i class="fa fa-pause-circle-o color-icono-pausar"  aria-hidden="true"></i></button>
+							<button id="avanzar" class="boton-derecha d-flex justify-content-center puntero" title="Siguiente banner"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+            
+			<div class="col-sm-3 col-md-3 col-lg-3 col-12 ingreso-credenciales">
+                <div id="kc-logo"> <div id="kc-logo-wrapper"></div> </div>
+                <div id="kc-container" class="">
+                    <div id="kc-container-wrapper" class="">
+                        <div id="kc-content" class="col-sm-12 col-md-12 col-lg-12 container">
+                            <div id="kc-content-wrapper" class="row">
+
+                                <div id="kc-form" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 login">
+                                    <div id="kc-form-wrapper" class="">
+            <form id="kc-form-login" class="form-horizontal" action="https://srienlinea.sri.gob.ec/auth/realms/Internet/login-actions/authenticate?session_code=0M2llo1h0etLV50860s0D1pXy_Rtzg6bY2nl8ZBotwI&amp;execution=c8579e68-8d74-4b5b-a6b3-233e5088a5fd&amp;client_id=app-tuportal-internet&amp;tab_id=f5rA_6P_W0k" method="post" onsubmit="return validarUsuario();"  >
+				<input id="username" class="form-control input-datos-login tooltips" name="username" value="" type="hidden" />
+               	
+				<div class="form-group">
+				    <div>
+                        <label for="usuario" class="control-label etiqueta-datos-login">*RUC / C.I. / Pasaporte</label>
+                    </div>
+                    <div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					 
+                        <span class="input-group-addon icono_credencial"><i class="fa fa-user fa-fw icon-color"></i></span>
+							<div data-tip="Ingrese su identificación">
+								<input id="usuario" required class="form-control input-datos-login tooltips" name="usuario" type="text" autofocus maxlength="13" placeholder="1700000000001" oninvalid="this.setCustomValidity(&#39;Ingrese su identificación&#39;)" oninput="this.setCustomValidity('')" onKeyPress="return soloNumerosLetras(event)" onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false" onCut="return false" autocomplete="off">
+								</input>
+							</div>
+                    </div>
+                </div>
+				
+				<div class="form-group">
+                    <div>
+                        <label for="ciAdicional" class="control-label etiqueta-datos-login">C.I. adicional</label>
+                    </div>
+
+                    <div class="input-group col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					    <span class="input-group-addon icono_credencial"><i class="fa fa-user-plus fa-fw icon-color"></i></span>
+							<div data-tip="Usuario adicional autorizado">
+								<input id="ciAdicional" class="form-control input-datos-login tooltips" name="ciAdicional" type="text" maxlength="10" placeholder="1700000001" onKeyPress="return soloNumeros(event)" onCopy="return false" onDrag="return flase" onDrop="return false" onPaste="return false" onCut="return false" autocomplete="off" />
+                            </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <label for="password" class="control-label etiqueta-datos-login">*Clave</label>
+                    </div>
+
+                    <div class="input-group  col-xs-12 col-sm-12 col-md-12 col-lg-12">
+					    <span class="input-group-addon icono_credencial"><i class="sri-menu-icon-claves icon-color"></i></span>
+                        <div data-tip="Ingrese su clave">
+							<input id="password" required class="form-control input-datos-login tooltips" name="password" type="password" autocomplete="off" maxlength="30" placeholder="Clave" oninvalid="this.setCustomValidity(&#39;Ingrese su clave&#39;)" oninput="setCustomValidity('')" onCopy="return false" onDrag="return false" onDrop="return false" onPaste="return false" onCut="return false" />
+                        </div>
+                        <span class="input-group-addon icono_credencial"><i class="fa fa-eye-slash fa-fw icon-color" id="togglePassword"></i></span>
+					</div>
+                </div>
+
+                <div class="form-group">
+				    <div id="kc-form-buttons" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 submit">
+                        <div class=" btn-ingresar">
+                            <input class="btn btn-primary btn-lg"  name="login" id="kc-login" type="submit" value="Ingresar"/>
+                        </div>
+                     </div>
+					 
+                    <div id="kc-form-options" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+                        <div class="">
+                                <span class="btn-ingresar fs-reset-password">
+									<a href="/sri-generacion-claves-web-internet/publico/opciones-clave.jsf" class="display-inline">
+										<img class="tamanio-guia-usuario"  src="/recursos-sri/iconos/sri-icon/iconos/candado.svg" />
+										<p class="widthTextPassword">Generar o recuperar clave</p>
+									</a>
+								</span>
+                        </div>
+                    </div>              
+                </div>
+            </form>
+                                    </div>
+                                </div>
+
+                            </div>
+					
+                        </div>
+						
+                    </div>
+                </div>
+            </div>
+			
+			<div class="col-sm-12 col-md-12 col-lg-12 alinea-footer">
+				<div id="requerimiento" class="fondo-footer">
+					<div class="flex-container">
+					  <div>Microsoft Edge 38, Firefox 53, Chrome 58, Safari 10 (o superiores).</div>
+					  <div>&copy; Servicio de Rentas Internas 2019</div>
+					  <div><a href="http://www.sri.gob.ec/DocumentosAlfrescoPortlet/descargar/9b580c38-7c68-4b6d-80ac-70a5b7780bf3/T%c3%89RMINOS%20GENERALES%20DE%20USO%20DEL%20SITIO%20WEB%20Y%20POL%c3%8dTICA%20DE%20PRIVACIDAD..pdf">Privacidad</a></div>  
+					</div>
+				</div>
+
+	        </div>
+			
+        </div>	
+    </div>
+	
+	<div id="disablingDiv" class="disablingDiv" style="display: none"></div>
+		<div id="noSoportado" class="sri-overlay" style="display: none">
+		  <div class="sri-container">
+			<div class="sri-row">
+			  <div class="sri-col-sm-1"></div>
+			  <div class="sri-col-sm-10">
+				<div class="card" style="opacity: 1;">
+				  <div class="sri-row">
+					<div class="sri-col-sm-12">
+					  <h1>Validación de navegadores</h1>
+					</div>
+				  </div>
+				  <div class="sri-row">
+					<div class="sri-col-sm-12">
+					  <p class="sri-bold">La versión de su navegador no es soportada en esta página. Descargue una  versión actualizada.</p>
+					</div>
+					<div class="sri-col-sm-2"></div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/chrome.png"
+							 alt="Descargar Chrome">
+						<p lang="en" class="sri-bold"><a id="linkChrome" target="_blank" class="linkBrowser"
+											   href="https://www.google.es/chrome/browser/">Chrome</a></p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/firefox.png"
+							 alt="Descargar Firefox">
+						<p lang="en" class="sri-bold"><a id="linkFirefox" target="_blank" class="linkBrowser"
+											   href="https://www.mozilla.org/es-ES/firefox/">Firefox</a></p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/edge.png"
+							 alt="Descargar Edge">
+						<p lang="en" class="sri-bold"><a id="linkEdge" target="_blank" class="linkBrowser"
+											   href="https://www.microsoft.com/es-es/windows/microsoft-edge">Edge</a>
+						</p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/safari.png"
+							 alt="Descargar Safari">
+						<p lang="en" class="sri-bold"><a id="linkSafari" target="_blank" class="linkBrowser"
+											   href="https://support.apple.com/es_ES/downloads/safari">Safari</a>
+						</p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2"></div>
+
+				  </div>
+				  <div class="sri-row" id="accederAlPortal">
+					<div class="sri-col-sm-12">
+					   <button type="button" onclick="desactivarVentanaAdvertencia('noSoportado')">Continuar Navegando</button>
+					</div>
+				  </div>
+				</div>
+			  </div>
+			  <div class="sri-col-sm-1"></div>
+			</div>
+		  </div>
+		</div>
+		<div id="advertenciaNavegador" class="sri-overlay" style="display: none">
+		  <div class="sri-container">
+			<div class="sri-row">
+			  <div class="sri-col-sm-1"></div>
+			  <div class="sri-col-sm-10">
+				<div class="card" style="opacity: 1;">
+				  <div class="sri-row">
+					<div class="sri-col-sm-12">
+					  <h1>Validación de navegadores - Advertencia</h1>
+					</div>
+				  </div>
+				  <div class="sri-row">
+					<div class="sri-col-sm-12">
+					  <p class="sri-bold">La versión de su navegador no es la óptima y puede presentar inconvenientes en la navegación, le sugerimos descargar una versión actualizada.</p>
+					</div>
+					<div class="sri-col-sm-2"></div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/chrome.png"
+							 alt="Descargar Chrome">
+						<p lang="en" class="sri-bold"><a id="linkChrome1" target="_blank" class="linkBrowser"
+											   href="https://www.google.es/chrome/browser/">Chrome</a></p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/firefox.png"
+							 alt="Descargar Firefox">
+						<p lang="en" class="sri-bold"><a id="linkFirefox1" target="_blank" class="linkBrowser"
+											   href="https://www.mozilla.org/es-ES/firefox/">Firefox</a></p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/edge.png" alt="Descargar Edge">
+						<p lang="en" class="sri-bold"><a id="linkEdge1" target="_blank" class="linkBrowser"
+											   href="https://www.microsoft.com/es-es/windows/microsoft-edge">Edge</a>
+						</p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2">
+					  <div class="espaciado-entre-iconos">
+						<img class="logo-navegador espaciado-entre-iconos"
+							 src="/recursos-sri/imagenes/navegadores/safari.png"
+							 alt="Descargar Safari">
+						<p lang="en" class="sri-bold"><a id="linkSafari1" target="_blank" class="linkBrowser"
+											   href="https://support.apple.com/es_ES/downloads/safari">Safari</a>
+						</p>
+					  </div>
+					</div>
+					<div class="sri-col-sm-2"></div>
+
+				  </div>
+				  <div class="sri-row">
+					<div class="sri-col-sm-12">
+					  <button type="button" onclick="desactivarVentanaAdvertencia('advertenciaNavegador')">Continuar Navegando</button>
+					</div>
+				  </div>
+
+				</div>
+			  </div>
+			  <div class="sri-col-sm-1"></div>
+			</div>
+		  </div>
+	</div>
+	
+	<script>
+		var form = document.getElementById('kc-form-login');
+		form.addEventListener('submit', function(event) {
+		  password.setAttribute('type', 'password');
+		  event.preventDefault();
+		  ga('send', 'event', 'Login SSO', 'submit', {
+			hitCallback: function() {
+			  form.submit();
+			}
+		  });
+		});
+	</script>
+
+	<script>	
+		document.addEventListener('DOMContentLoaded', ()=>{
+		document.querySelectorAll('.fa-eye, .fa-eye-slash')    
+		.forEach( el => {
+		el.addEventListener('click', event =>{        
+			const trigger = event.target;        
+			trigger.classList.toggle('fa-eye');
+			trigger.classList.toggle('fa-eye-slash');
+			
+			var type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+			password.setAttribute('type', type);
+			
+		});
+		});
+		});   
+    </script>
+
+	<script>
+	/*
+	 * Tipo de Componente: JS
+	 * Nombre: versionesNoSoportadasNavegadores.js
+	 * Descripción: Variables con la versión no soportada de los navegadores
+	 * Autor: Mario Granja
+	 * Parametros: ninguno
+	 * Valores de retorno: ninguno
+	*/
+
+	  var VERSION_NO_SOPORTADA_FIREFOX = 29; //verificado
+	  var VERSION_NO_SOPORTADA_CHROME = 48;
+	  var VERSION_NO_SOPORTADA_SAFARI = 9;
+	  var VERSION_NO_SOPORTADA_EDGE = 12;
+
+	  var VERSION_CERTIFICADA_FIREFOX = 53;
+	  var VERSION_CERTIFICADA_CHROME =  58;
+	  var VERSION_CERTIFICADA_SAFARI = 10;
+	  var VERSION_CERTIFICADA_EDGE = 13;
+
+	  var ID_BIENVENIDOS = '';
+	  var ESTA_EN_BIENVENIDOS = false;
+	  var TIMEOUT_VALIDACION = 1500;
+	</script>
+	<script>
+	  /*
+	 * Tipo de Componente: JS
+	 * Nombre: verificarNavegadorPaginaBienvenidos.js
+	 * Descripción: Verifica que se use un navegador soportado
+	 * Autor: SRI
+	 * Parametros: ninguno
+	 * Valores de retorno: ninguno
+	*/
+	navigator.browserSpecs = (function () {
+		var ua = navigator.userAgent, tem,
+		  M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+		if (/trident/i.test(M[1])) {
+		  tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+		  return {name: 'IE', version: (tem[1] || '')};
+		}
+		if (M[1] === 'Chrome') {
+		  tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+		  if (tem != null) return {name: tem[1].replace('OPR', 'Opera'), version: tem[2]};
+		}
+		M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+		if ((tem = ua.match(/version\/(\d+)/i)) != null) M.splice(1, 1, tem[1]);
+		return {name: M[0], version: M[1]};
+	  })();
+
+
+	  if ((navigator.browserSpecs.name == 'MSIE' || navigator.browserSpecs.name == 'IE')
+		|| (navigator.browserSpecs.name == 'Chrome' && Number(navigator.browserSpecs.version) <= VERSION_NO_SOPORTADA_CHROME)
+		|| (navigator.browserSpecs.name == 'Firefox' && Number(navigator.browserSpecs.version) <= VERSION_NO_SOPORTADA_FIREFOX)
+		|| (navigator.browserSpecs.name == 'Safari' && Number(navigator.browserSpecs.version) <= VERSION_NO_SOPORTADA_SAFARI)
+		|| (navigator.browserSpecs.name == 'Edge' && Number(navigator.browserSpecs.version) <= VERSION_NO_SOPORTADA_EDGE)
+	  ) {
+       
+		setTimeout(function () {
+
+		  document.getElementById('disablingDiv').style.display = 'block';
+		  document.getElementById('noSoportado').style.display = 'block';
+
+		  if(navigator.browserSpecs.name == 'MSIE' || navigator.browserSpecs.name == 'Safari'){
+			document.getElementById('accederAlPortal').style.display = 'none';
+		  }
+         
+		  if (ESTA_EN_BIENVENIDOS) {
+			document.getElementById(ID_BIENVENIDOS).style.display = 'none';
+		  }
+          
+		  ga('send', 'event', 'Validación navegadores Login SSO Internet', 'Navegador no soportado', 'No soportado', '1');
+        
+		}, TIMEOUT_VALIDACION);
+		
+	  } else if (
+		(navigator.browserSpecs.name == 'Chrome' && Number(navigator.browserSpecs.version) > VERSION_NO_SOPORTADA_CHROME && Number(navigator.browserSpecs.version) < VERSION_CERTIFICADA_CHROME )
+		|| (navigator.browserSpecs.name == 'Firefox' && Number(navigator.browserSpecs.version) > VERSION_NO_SOPORTADA_FIREFOX && Number(navigator.browserSpecs.version) < VERSION_CERTIFICADA_FIREFOX)
+		|| (navigator.browserSpecs.name == 'Safari' && Number(navigator.browserSpecs.version) > VERSION_NO_SOPORTADA_SAFARI && Number(navigator.browserSpecs.version) < VERSION_CERTIFICADA_SAFARI)
+		|| (navigator.browserSpecs.name == 'Edge' && Number(navigator.browserSpecs.version) > VERSION_NO_SOPORTADA_EDGE && Number(navigator.browserSpecs.version) < VERSION_CERTIFICADA_EDGE)
+	  ) {
+	    
+		document.getElementById('disablingDiv').style.display = 'block';
+		document.getElementById('advertenciaNavegador').style.display = 'block';
+        
+		ga('send', 'event', 'Validación navegadores Login SSO Internet', 'Navegador no soportado', 'Advertencia', '1');
+	  }
+
+	  function desactivarVentanaAdvertencia(divAdvetencia) {
+		document.getElementById('disablingDiv').style.display = 'none';
+		document.getElementById(divAdvetencia).style.display = 'none';
+	  }
+	</script>
+	
+</body>
+</html>
+

@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { finalize } from 'rxjs/operators';
-import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
+import { BRAND_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   selector: 'app-brand-add-edit-modal',
@@ -34,7 +34,7 @@ export class BrandAddEditModalComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);
-  private _brandUseCase = inject(BrandUseCase);
+  private brandService = inject(BRAND_SERVICE);
 
   btnText = 'Guardar';
   titleModal = 'Nueva Marca';
@@ -81,7 +81,7 @@ export class BrandAddEditModalComponent implements OnInit {
 
       if (this.data.idMarca > 0) {
         this.loading.set(true);
-        this._brandUseCase
+        this.brandService
           .put(this.data.idMarca, this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);
@@ -90,7 +90,7 @@ export class BrandAddEditModalComponent implements OnInit {
       if (!(this.data.idMarca > 0)) {
         this.loading.set(true);
 
-        this._brandUseCase
+        this.brandService
           .post(this.data)
           .pipe(finalize(() => this.loading.set(false)))
           .subscribe(this.successReponse);

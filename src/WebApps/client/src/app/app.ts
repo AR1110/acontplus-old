@@ -1,15 +1,11 @@
 import { Component, inject, OnInit, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+
 import { PreloaderService, SettingsService } from '@core/bootstrap';
-import { PermissionsService } from '@core/services/permissions';
-import {
-  PermissionCashAccounting,
-  ProductPermission,
-  UserPermission,
-  UserRoleStateService,
-} from '@shared/store/user-role-state.service';
+
+import { UserPermission, UserRoleStateService } from '@shared/store/user-role-state.service';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { AuthUseCase } from '@modules/auth/domain/use-cases/auth.use-case';
+
 import { getEnumValueByKey } from '@core/utils/constant-value';
 import { GlobalRoutes } from '@core/constants/global-routes';
 import { ThemeSwitcher } from '@acontplus/ng-components';
@@ -25,8 +21,6 @@ export class App implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  private _authUseCase = inject(AuthUseCase);
-
   title = 'Acontplus';
   userRoleState = inject(UserRoleStateService);
 
@@ -34,10 +28,10 @@ export class App implements OnInit, AfterViewInit {
   private readonly _tokenUseCase = inject(TokenUseCase);
   private readonly preloader = inject(PreloaderService);
   private readonly settings = inject(SettingsService);
-  private readonly permissionsService = inject(PermissionsService);
 
-  // Add a flag to track if legacy authentication has been processed
+  // Add flags to track authentication state
   private legacyAuthProcessed = false;
+  private modernFlowProcessed = false;
 
   ngOnInit() {
     // Limpiar sessionStorage en cada inicio
@@ -50,34 +44,22 @@ export class App implements OnInit, AfterViewInit {
       const route = params['route'] as string | undefined;
       const dataPermission = params['permission'] as string | undefined;
       const userRoleData = params['userRoleData'] as string | undefined;
-      console.log('Query Params:', { token, route, dataPermission, userRoleData });
 
-      // **FLUJO LEGACY**: Autenticación desde Razor Pages
-      // Viene con token, route y permisos como query params
-      if (token && route) {
+      console.log('Query Params received:', { token, route, dataPermission, userRoleData });
+
+      // **FLUJO LEGACY**: Autenticación desde Razor Pages (iframe)
+      // Debe tener token, route, permission y userRoleData para ser considerado legacy
+      if (token && route && dataPermission && userRoleData && !this.legacyAuthProcessed) {
+        console.log('[Legacy Flow] Processing legacy authentication from Razor Pages');
         this.handleLegacyAuthentication(token, route, dataPermission, userRoleData);
       }
-      // **FLUJO MODERNO**: Autenticación Angular nativa
-      // Only handle modern flow if no legacy auth was processed AND no valid token exists
-      else if (!this.legacyAuthProcessed && this.shouldHandleModernFlow()) {
+      // **FLUJO MODERNO**: Aplicación Angular standalone
+      // Se ejecuta cuando NO hay parámetros legacy o cuando los parámetros están incompletos
+      else if (!this.legacyAuthProcessed && !this.modernFlowProcessed) {
+        console.log('[Modern Flow] Processing modern Angular flow');
         this.handleModernFlow();
       }
     });
-  }
-
-  /**
-   * Determines if modern flow should be handled
-   */
-  private shouldHandleModernFlow(): boolean {
-    // Check if we have a valid token in localStorage
-    const existingToken = localStorage.getItem(environment.tokenKey);
-
-    if (existingToken && !this._tokenUseCase.isTokenExpired()) {
-      console.log('[Modern Flow] Valid token exists, skipping modern flow initialization');
-      return false;
-    }
-
-    return true;
   }
 
   /**
@@ -122,37 +104,39 @@ export class App implements OnInit, AfterViewInit {
   }
 
   /**
-   * Maneja la autenticación legacy desde Razor Pages
+   * Maneja la autenticación legacy desde Razor Pages (iframe)
    * Recibe token, ruta y permisos como query params
    */
   private handleLegacyAuthentication(
     token: string,
     route: string,
-    dataPermission?: string,
-    userRoleData?: string,
+    dataPermission: string,
+    userRoleData: string,
   ) {
     // Mark that legacy auth has been processed
     this.legacyAuthProcessed = true;
 
+    console.log('[Legacy Flow] Processing legacy authentication with:', { token, route });
+
     // Validate and sync tokens - clear data if tokens don't match
     const shouldClearData = this.validateAndSyncTokens(token);
 
-    // If tokens didn't match and data was cleared, we need to process everything fresh
-    // If tokens matched, we might still want to update permissions if they changed
-    if (shouldClearData || dataPermission) {
-      this.processPermissions(dataPermission, userRoleData);
-    }
+    // Process permissions (always process in legacy flow since we have all data)
+    this.processPermissions(dataPermission, userRoleData);
 
-    // Always set the new token (it might be the same or different)
+    // Always set the new token
     localStorage.setItem(environment.tokenKey, token);
 
     // Convertir la ruta legacy a ruta Angular
     const route_page = getEnumValueByKey(GlobalRoutes, route as keyof typeof GlobalRoutes);
 
+    console.log('[Legacy Flow] Navigating to route:', route_page);
+
     if (route_page) {
       // Redirigir a /legacy/... para cargar sin el layout admin
       void this.router.navigate(['/legacy', ...route_page.split('/')]);
     } else {
+      console.warn('[Legacy Flow] Route not found, redirecting to dashboard');
       // Redirigir a dashboard por defecto (con layout)
       void this.router.navigate(['/dashboard']);
     }
@@ -161,45 +145,36 @@ export class App implements OnInit, AfterViewInit {
   /**
    * Procesa los permisos recibidos desde el sistema legacy
    */
-  private processPermissions(dataPermission?: string, userRoleData?: string) {
+  private processPermissions(dataPermission: string, userRoleData: string) {
     try {
-      // Only process if we have permission data
-      if (!dataPermission) {
-        return;
-      }
+      console.log('[Legacy Flow] Processing permissions');
 
       localStorage.setItem('permisos', dataPermission);
+      localStorage.setItem('userRoleData', userRoleData);
 
-      if (userRoleData) {
-        localStorage.setItem('userRoleData', userRoleData);
-      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parsedPermission = JSON.parse(dataPermission) as { acciones: any };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const { acciones } = parsedPermission;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const permission = JSON.parse(dataPermission) as Record<string, any>;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const userRole = JSON.parse(userRoleData) as { codeRole: any };
 
-      const getPermission = localStorage.getItem('permisos');
-      const getUserRoleData = localStorage.getItem('userRoleData');
-
-      if (getPermission && getUserRoleData) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const parsedPermission = JSON.parse(getPermission) as { acciones: any };
+      const instancePermission = new UserPermission();
+      this.userRoleState.setState({
+        permission: {
+          ...instancePermission,
+          ...permission,
+        },
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const { acciones } = parsedPermission;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const permission = JSON.parse(dataPermission) as Record<string, any>;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const userRole = JSON.parse(getUserRoleData) as { codeRole: any };
+        accion: acciones,
+        acciones: [],
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        codeRole: userRole.codeRole,
+      });
 
-        const instancePermission = new UserPermission();
-        this.userRoleState.setState({
-          permission: {
-            ...instancePermission,
-            ...permission,
-          },
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          accion: acciones,
-          acciones: [],
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          codeRole: userRole.codeRole,
-        });
-      }
+      console.log('[Legacy Flow] Permissions processed successfully');
     } catch (error) {
       console.error('[Legacy Auth] Error processing permissions:', error);
     }
@@ -210,9 +185,21 @@ export class App implements OnInit, AfterViewInit {
    * Sin query params de autenticación legacy
    */
   private handleModernFlow() {
+    this.modernFlowProcessed = true;
     console.log('[Modern Flow] Initializing modern Angular flow');
+
     this.settings.setDirection();
     this.themeSwitcher.loadMode();
+
+    // En el flujo moderno, verificar si hay token válido
+    const existingToken = localStorage.getItem(environment.tokenKey);
+    if (existingToken && !this._tokenUseCase.isTokenExpired()) {
+      console.log('[Modern Flow] Valid token found, user is authenticated');
+      // Usuario ya autenticado, puede continuar con la aplicación normal
+    } else {
+      // Redirigir al login o página de autenticación
+      void this.router.navigate(['/auth/login']);
+    }
   }
 
   ngAfterViewInit() {

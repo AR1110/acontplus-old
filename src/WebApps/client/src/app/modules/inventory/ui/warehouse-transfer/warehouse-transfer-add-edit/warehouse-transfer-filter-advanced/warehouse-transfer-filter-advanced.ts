@@ -8,7 +8,7 @@ import { GroupedEstabBodega } from '@core/models/estab.model';
 import { Button } from '@acontplus/ng-components';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DataGridColumn } from '@shared/components/data-grid/types';
-import { GetMassTransferProductsUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ValidatorUtils } from '@core/utils/utils';
 import { PageEvent } from '@angular/material/paginator';
@@ -38,7 +38,7 @@ interface Category {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WarehouseTransferFilterAdvanced implements OnInit {
-  private getMassTransferProductsUseCase = inject(GetMassTransferProductsUseCase);
+  private warehouseTransferService = inject(WAREHOUSE_TRANSFER_SERVICE);
   private dgRef = inject(MatDialogRef<WarehouseTransferFilterAdvanced>);
   private notiSvc = inject(ToastrNotificationService);
   private params = inject<{
@@ -78,12 +78,11 @@ export class WarehouseTransferFilterAdvanced implements OnInit {
   totalRecords = signal(0);
 
   log(e: any) {
-    console.log(e);
+    console.error(e);
   }
 
   ngOnInit() {
     this.categories.set(this.params.categories);
-    console.log(this.params.categories);
     this.sourceWarehouseText.set(
       this.params.sourceWarehouses.find((w) => w.idBodega === this.params.sourceWarehouseId)
         ?.descripcion,
@@ -134,7 +133,7 @@ export class WarehouseTransferFilterAdvanced implements OnInit {
     }
   }
 
-  onSelectionChange(event: any) {
+  onSelectionChange(_event: any) {
     this.updateGroupCheckboxes();
     this.checkIfAllSelected();
   }
@@ -225,7 +224,7 @@ export class WarehouseTransferFilterAdvanced implements OnInit {
 
     this.rowSelected.set([]);
     this.totalRecords.set(0);
-    this.getMassTransferProductsUseCase.execute(params).subscribe((result) => {
+    this.warehouseTransferService.getMassTransferProducts(params).subscribe((result: any) => {
       this.list.set(result.products);
       this.totalRecords.set(result.totalRecords);
     });
@@ -243,7 +242,6 @@ export class WarehouseTransferFilterAdvanced implements OnInit {
   }
 
   close() {
-    console.log(this.checkedCategories);
     this.dgRef.close();
   }
 }

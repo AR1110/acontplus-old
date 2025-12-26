@@ -1,0 +1,44 @@
+.filter-section {
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  border-radius: 12px !important;
+
+  .mat-mdc-form-field {
+    margin-bottom: 0;
+  }
+}
+
+.more-filters-container {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.action-toolbar {
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1.5rem !important;
+
+  acp-button {
+    margin-right: 0.5rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host ::v-deep {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: white !important;
+  }
+}

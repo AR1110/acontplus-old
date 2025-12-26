@@ -11,7 +11,7 @@ public record ArticleItem(
 public record AdditionalArticleDataCreate(
     int DocumentId,
     List<AdditionalInfoDto> AdditionalInfo,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record AdditionalArticleDataUpdate(
     int Id,

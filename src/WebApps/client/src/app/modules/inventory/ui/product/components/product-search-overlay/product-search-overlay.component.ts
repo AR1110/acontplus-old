@@ -20,7 +20,7 @@ import { Pagination } from '@acontplus/ng-components';
 import { debounceTime, distinctUntilChanged, finalize, map, of, Subject, switchMap } from 'rxjs';
 
 import { ProductSearchListComponent } from '@inventory/ui/product/components/product-search-list/product-search-list.component';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { MatInputModule } from '@angular/material/input';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { MatIconButton } from '@angular/material/button';

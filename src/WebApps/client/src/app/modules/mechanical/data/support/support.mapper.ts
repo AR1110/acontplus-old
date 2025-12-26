@@ -1,7 +1,7 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { formatDate } from '@core/utils/date.util';
-import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
+import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
+import { MedidaProducto } from '@inventory/data/models/measure.model';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { SupportDetail } from '@mechanical/domain/models/support.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';

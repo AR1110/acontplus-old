@@ -1,6 +1,6 @@
 import { Route } from '@angular/router';
 import { permissionGuard } from '@core/guards/permission.guard';
-import { INVENTORY_MODULES_CODE, INVENTORY_ROUTES } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_MODULES_CODE, INVENTORY_ROUTES } from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 
 export const routes: Route[] = [
@@ -25,8 +25,8 @@ export const routes: Route[] = [
     path: 'subcategories',
     title: 'SubCategoria',
     loadComponent: () =>
-      import('@inventory/ui/sub-category/sub-category.component').then(
-        (m) => m.SubCategoryComponent,
+      import('@inventory/ui/sub-category/sub-category').then(
+        (m) => m.SubCategory,
       ),
     data: {
       breadcrumb: 'Sub Categorias',
@@ -144,7 +144,7 @@ export const routes: Route[] = [
     path: 'inventory-adjustments',
     loadComponent: () =>
       import(
-        '@inventory/inventory-adjustment/presentation/inventory-adjustment/inventory-adjustment.component'
+        '@inventory/ui/inventory-adjustment/inventory-adjustment.component'
       ).then((m) => m.InventoryAdjustmentComponent),
     data: {
       breadcrumb: 'Ajuste Inventario',

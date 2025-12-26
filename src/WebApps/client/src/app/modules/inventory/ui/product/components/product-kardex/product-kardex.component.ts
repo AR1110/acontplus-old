@@ -1,23 +1,29 @@
-import { Component, inject, ViewChild, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  ViewChild,
+  OnInit,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { TabulatorTable } from '@acontplus/ng-components';
+import { TabulatorTable, Button } from '@acontplus/ng-components';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
 
-import { TransactionService } from '@inventory/data/services/transaction.service';
+import { TRANSACTION_SERVICE } from '@inventory/data/inventory-token';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';
 import { SharedService } from '@core/services/shared.service';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { formatDateToString } from '@core/utils/date.util';
 import { monthEnd, monthStart } from '@formkit/tempo';
-import { Button } from '@acontplus/ng-components';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatInputModule } from '@angular/material/input';
@@ -25,6 +31,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-product-kardex',
   imports: [
     FormsModule,
@@ -48,7 +55,7 @@ export class ProductKardexComponent implements OnInit {
   }>(MAT_DIALOG_DATA);
   modal = inject(MatDialogRef<ProductKardexComponent>);
 
-  transactionSvc = inject(TransactionService);
+  transactionSvc = inject(TRANSACTION_SERVICE);
   tS = inject(ToastrNotificationService);
   sharedSvc = inject(SharedService);
 

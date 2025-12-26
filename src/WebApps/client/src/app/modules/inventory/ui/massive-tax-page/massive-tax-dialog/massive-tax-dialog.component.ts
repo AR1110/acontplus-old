@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -7,15 +7,16 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MassiveTaxUseCase } from '@inventory/domain/usecases/massive-tax.use-case';
+import { MASSIVE_TAX_SERVICE } from '@inventory/data/inventory-token';
 import { finalize } from 'rxjs/operators';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { getValidId, isValidField } from '@core/utils/utils';
-import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-massive-tax-dialog',
   imports: [
     MatFormFieldModule,
@@ -25,7 +26,7 @@ import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components
     MatIconModule,
     MatButtonModule,
     MatCustomDialogComponent,
-    SubCategoryGroupComponent,
+    SubCategoryGroup,
     ToUpperCaseDirective,
   ],
   templateUrl: './massive-tax-dialog.component.html',
@@ -34,7 +35,7 @@ import { SubCategoryGroupComponent } from '@inventory/ui/sub-category/components
 export class MassiveTaxDialogComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<MassiveTaxDialogComponent>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
-  private _massiveTaxUseCase = inject(MassiveTaxUseCase);
+  private massiveTaxService = inject(MASSIVE_TAX_SERVICE);
 
   dataForm = {
     title: '0 Productos encontrados.',
@@ -59,7 +60,7 @@ export class MassiveTaxDialogComponent implements OnInit {
 
   ngOnInit() {
     this.loading.set(true);
-    this._massiveTaxUseCase
+    this.massiveTaxService
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe((response) => {
@@ -85,7 +86,7 @@ export class MassiveTaxDialogComponent implements OnInit {
           ?.descripcion || '';
 
       this.loading.set(true);
-      this._massiveTaxUseCase
+      this.massiveTaxService
         .getQuantityProductByTaxId({
           taxId: this.dataForm.taxIdFrom,
           subCategoryId: this.dataForm.subCategoryId,
@@ -186,7 +187,7 @@ export class MassiveTaxDialogComponent implements OnInit {
         subCategoryId: getValidId(this.dataForm.subCategoryId),
       };
       // this.loading.set(true);
-      this._massiveTaxUseCase
+      this.massiveTaxService
         .put(params)
         //  .pipe(finalize(() => this.loading.set(false)))
         .subscribe((response) => {

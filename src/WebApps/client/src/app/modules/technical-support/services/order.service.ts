@@ -9,8 +9,8 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { isValidField } from '@core/utils/utils';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
-import { mergeMeasureUtil } from '@inventory/domain/utils/merge-measure.util';
+import { MedidaProducto } from '@inventory/data/models/measure.model';
+import { mergeMeasureUtil } from '@inventory/utils/merge-measure.util';
 import { map } from 'rxjs';
 
 import { TECH_SUPPORT_PATHS } from '../constants/tech-support.constants';

@@ -1,4 +1,4 @@
-import { mergeProductMeasures } from '@inventory/domain/utils/merge-measure.util';
+import { mergeProductMeasures } from '@inventory/utils/merge-measure.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 export class ItemGetByIdMapper {

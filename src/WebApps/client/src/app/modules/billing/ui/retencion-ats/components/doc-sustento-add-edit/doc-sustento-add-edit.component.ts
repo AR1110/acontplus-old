@@ -43,7 +43,7 @@ import {
   MatDatepickerToggle,
 } from '@angular/material/datepicker';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { DocumentReceivedUseCase } from '@purchase/domain/use-cases/document-received.use-case';
+import { RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
 import { DialogService } from '@core/services/dialog.service';
 import { DocElectViewerComponent } from '@shared/components/doc-elect-viewer/doc-elect-viewer.component';
 import { RetencionAts } from '@billing/domain/models/retencion-ats/retencion-ats.model';
@@ -98,7 +98,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
   private readonly _fb = inject(FormBuilder);
   private readonly _docSustentoUseCase = inject(DocSustentoUseCase);
   private readonly _tS = inject(ToastrNotificationService);
-  private readonly _documentoReceivedUseCase = inject(DocumentReceivedUseCase);
+  private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
   private readonly _dialogService = inject(DialogService);
 
   setPanelOpen(index: number) {
@@ -291,7 +291,7 @@ export class DocSustentoAddEditComponent implements AfterViewInit, OnInit {
     const doc = this.docSustentoArray().controls[index].value as RetAtsDocSustento;
     if (doc.isAutomatic) {
       if (!doc.idDocumento) return;
-      this._documentoReceivedUseCase.previewXml(doc.idDocumento).subscribe((response) => {
+      this._receivedDocumentSvc.previewXml(doc.idDocumento).subscribe((response) => {
         this._dialogService.open(DocElectViewerComponent, {
           size: 'xxl',
           data: response.payload,

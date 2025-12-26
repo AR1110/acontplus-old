@@ -4,7 +4,7 @@ public record PurchaseOrderCreate(
     ReceiptDto Receipt,
     List<ReceiptDetailDto> ReceiptDetails,
     List<TaxDto> Taxes,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record PurchaseOrderUpdate(
     int Id,

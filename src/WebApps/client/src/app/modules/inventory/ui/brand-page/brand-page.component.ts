@@ -1,4 +1,11 @@
-import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ViewChild,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,9 +20,10 @@ import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.d
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
+import { BRAND_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-brand-page',
   templateUrl: './brand-page.component.html',
   imports: [
@@ -30,7 +38,7 @@ import { BrandUseCase } from '@inventory/domain/usecases/brand.use-case';
   ],
 })
 export class BrandPageComponent implements OnInit {
-  private _brandUseCase = inject(BrandUseCase);
+  private brandService = inject(BRAND_SERVICE);
   pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<any[]>([]);
@@ -47,7 +55,7 @@ export class BrandPageComponent implements OnInit {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this._brandUseCase.getAll(params).subscribe({
+    this.brandService.getAll(params).subscribe({
       next: (response) => {
         this.isLoadingResults = false;
         this.dataSource.set(response.brands);
@@ -91,7 +99,7 @@ export class BrandPageComponent implements OnInit {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this._brandUseCase.updateStatus(data.idMarca).subscribe((response) => {
+          this.brandService.updateStatus(data.idMarca).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

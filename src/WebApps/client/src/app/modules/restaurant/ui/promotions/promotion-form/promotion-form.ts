@@ -32,8 +32,8 @@ import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum
 import { TabulatorTable } from '@acontplus/ng-components';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import Swal from 'sweetalert2';
-import { ProductMeasure } from '@inventory/domain/models/product-measure';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { ProductMeasure } from '@inventory/data/models/product-measure';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { LookupItem } from '@core/models/lookup-type';
 import { LookupService } from '@restaurant/application/services/lookup-service';
 import { PromotionDetail } from '@restaurant/domain/models/promotion-detail';

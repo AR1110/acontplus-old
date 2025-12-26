@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { MedidaProducto } from '@inventory/domain/models/measure.model';
-import { TarifaProducto } from '@inventory/domain/models/tarifa.model';
+import { MedidaProducto } from '@inventory/data/models/measure.model';
+import { TarifaProducto } from '@inventory/data/models/tarifa.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 
 interface Data {

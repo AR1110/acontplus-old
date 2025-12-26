@@ -1,6 +1,6 @@
 import DecimalUtils from '@core/utils/decimal.util';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
-import { ProductFee, ProductMeasure } from '@inventory/domain/models/product-measure';
+import { ProductFee, ProductMeasure } from '@inventory/data/models/product-measure';
 
 /**
  * Enumeración para el estado de una línea de detalle del documento.

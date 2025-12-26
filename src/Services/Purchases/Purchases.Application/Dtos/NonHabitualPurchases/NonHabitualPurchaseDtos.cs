@@ -3,7 +3,7 @@ namespace Purchases.Application.Dtos.NonHabitualPurchases;
 public record NonHabitualPurchaseCreate(
     IncomingDocumentDto IncomingDocument,
     List<IncomingDocumentDetailDto> Details,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record NonHabitualPurchaseUpdate(
     int Id,

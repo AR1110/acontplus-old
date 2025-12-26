@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { OpenModalProductService } from '@inventory/domain/services/open-modal-product.service';
+import { OpenModalProductService } from '@inventory/services/open-modal-product.service';
 
 @Directive({
   selector: '[appProductKardexModal]',

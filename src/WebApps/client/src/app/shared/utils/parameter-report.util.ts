@@ -1,4 +1,4 @@
-import { PURCHASE_CODE_REPORT } from '@purchase/domain/enums/purchase.constants';
+import { PURCHASE_CODE_REPORT } from '@purchases/purchases.const';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 
 interface Params {

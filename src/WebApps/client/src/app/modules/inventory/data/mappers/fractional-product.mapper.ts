@@ -3,7 +3,7 @@ import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import {
   FractionalProductDataGetId,
   FractionalProductDataSave,
-} from '@inventory/domain/models/fractional-product.model';
+} from '@inventory/data/models/fractional-product.model';
 
 export class FractionalProductGetAllMapper {
   static fromJson(responseApi: any) {
@@ -93,7 +93,7 @@ export class FractionalProductPostMapper {
   static toJson(obj: FractionalProductDataSave) {
     const { data } = obj;
 
-    const pvps = obj.pvps.map((item: unknown, index: number) => {
+    const pvps = obj.pvps.map((item: any, index: number) => {
       return {
         idTarifa: item.idTarifa,
         precioVenta: item.precioVenta,

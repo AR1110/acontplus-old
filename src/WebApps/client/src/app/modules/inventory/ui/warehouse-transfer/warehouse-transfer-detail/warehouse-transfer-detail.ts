@@ -1,17 +1,18 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { INVENTORY_CODE_REPORT } from '@inventory/domain/enums/inventory.enum';
+import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
-import { WarehouseTransferViewDetailUseCase } from '@inventory/domain/usecases/warehouse-transfer.use-case';
+import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { DataGridColumn } from '@shared/components/data-grid/types';
 import { DataGrid } from '@shared/components/data-grid/data-grid';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inventory-adjustment-detail',
   imports: [MatCustomDialogComponent, DataGrid, DecimalPipe, DatePipe, MatCard, MatIcon],
   templateUrl: './warehouse-transfer-detail.html',
@@ -79,7 +80,7 @@ import { MatIcon } from '@angular/material/icon';
   `,
 })
 export class WarehouseTransferDetail implements OnInit {
-  private viewDetailUseCase = inject(WarehouseTransferViewDetailUseCase);
+  private warehouseTransferService = inject(WAREHOUSE_TRANSFER_SERVICE);
   #generateReport = inject(GenerateReportUseCase);
 
   private dialogRef = inject(MatDialogRef<WarehouseTransferDetail>);
@@ -121,9 +122,7 @@ export class WarehouseTransferDetail implements OnInit {
   ];
 
   ngOnInit() {
-    this.viewDetailUseCase.execute(this.params.id).subscribe((response) => {
-      console.log(response);
-
+    this.warehouseTransferService.viewDetail(this.params.id).subscribe((response: any) => {
       this.header = response.header;
       this.list.set(response.details);
     });

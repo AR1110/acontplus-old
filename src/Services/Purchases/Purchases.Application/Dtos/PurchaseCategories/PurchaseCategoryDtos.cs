@@ -3,7 +3,7 @@ namespace Purchases.Application.Dtos.PurchaseCategories;
 public record PurchaseCategoryCreate(
     string Name,
     string? Description,
-    int CreatedByUserId);
+    int UserRoleId);
 
 public record PurchaseCategoryUpdate(
     int Id,

@@ -8,7 +8,7 @@ import { ReusableAutocompleteComponent } from '@shared/components/reusable-autoc
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { CurrencyPipe } from '@angular/common';
-import { PRODUCT_SERVICE } from '@inventory/tokens/inventory-token';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
   selector: 'app-product-autocomplete-advanced',

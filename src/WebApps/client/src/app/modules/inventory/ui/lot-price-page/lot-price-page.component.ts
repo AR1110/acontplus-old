@@ -1,9 +1,16 @@
-import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ViewChild,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TabulatorTable } from '@acontplus/ng-components';
+import { TabulatorTable, Button, DynamicCard } from '@acontplus/ng-components';
 
 import { pricingCalculateUtil } from '@core/utils/pricing-calculate.util';
 import { roundNumber } from '@core/utils/round-number.utils';
@@ -11,20 +18,19 @@ import { isValidField } from '@core/utils/utils';
 
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { SubCategorySelectMultipleComponent } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple.component';
-import { LotPrice, LotPriceTarifa } from '@inventory/domain/models/lot-price.model';
-import { GroupedSubFamilia } from '@inventory/domain/models/sub-category.model';
-import { TarifaSelectHtmlOnly } from '@inventory/domain/models/tarifa.model';
-import { LotPriceService } from '@inventory/data/services/lot-price.service';
+import { SubCategorySelectMultiple } from '@inventory/ui/sub-category/components/sub-category-select-multiple/sub-category-select-multiple';
+import { LotPrice, LotPriceTarifa } from '@inventory/data/models/lot-price.model';
+import { GroupedSubFamilia } from '@inventory/data/models/sub-category.model';
+import { TarifaSelectHtmlOnly } from '@inventory/data/models/tarifa.model';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
-import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDivider } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
+import { LOT_PRICE_HTTP_TOKEN } from '@inventory/data/inventory-token';
 
 enum OptionsCalculateEnum {
   A = 'A',
@@ -36,6 +42,7 @@ enum OptionsCalculateEnum {
 type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-lot-price-page',
   imports: [
     MatIcon,
@@ -47,7 +54,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
     MatRadioModule,
     BreadcrumbComponent,
     TabulatorTable,
-    SubCategorySelectMultipleComponent,
+    SubCategorySelectMultiple,
     ProductSearchComponent,
     SupplierSearchComponent,
     Button,
@@ -63,7 +70,7 @@ type OptionPvpEnum = 'precioVenta' | 'precioConIva' | 'precioCosto';
   `,
 })
 export class LotPricePageComponent implements OnInit {
-  private readonly lotPriceSvc = inject(LotPriceService);
+  private readonly lotPriceSvc = inject(LOT_PRICE_HTTP_TOKEN);
 
   @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
@@ -327,7 +334,7 @@ export class LotPricePageComponent implements OnInit {
       this.productsModified = [];
 
       this.lotPriceSvc.getAll(dataSearch).subscribe((response) => {
-        const results = structuredClone(response);
+        const results = structuredClone(response) as LotPrice[];
         this.nestedProducts.set(results);
         this.cloneNestedProducts = structuredClone(results);
       });
@@ -478,7 +485,7 @@ export class LotPricePageComponent implements OnInit {
     this.mainForm.rucProveedor = data.identificacionComprador;
   }
 
-  supplierclearSearch($event: any) {
+  supplierclearSearch($event: unknown) {
     this.mainForm.rucProveedor = '';
   }
 

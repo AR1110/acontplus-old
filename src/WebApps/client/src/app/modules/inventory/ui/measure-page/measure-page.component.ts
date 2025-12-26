@@ -1,4 +1,11 @@
-import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  ViewChild,
+  OnInit,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,13 +17,14 @@ import { CustomTableContainerComponent } from '@core/components/custom-table-con
 import { SharedService } from '@core/services/shared.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { MeasureAddEditDirective } from '@inventory/ui/directives/measure-add-edit.directive';
-import { MeasureRead } from '@inventory/domain/models/measure.model';
+import { MeasureRead } from '@inventory/data/models/measure.model';
 import { Pagination } from '@acontplus/ng-components';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
 import Swal from 'sweetalert2';
-import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
+import { MEASURE_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-measure-page',
   imports: [
     BreadcrumbComponent,
@@ -32,7 +40,7 @@ import { MeasureUseCase } from '@inventory/domain/usecases/measure.use-case';
   styles: ``,
 })
 export class MeasurePageComponent implements OnInit {
-  private _measureUseCase = inject(MeasureUseCase);
+  private measureService = inject(MEASURE_SERVICE);
   pagination = signal(new Pagination());
   visibleColumns: string[] = ['index', 'op', 'code', 'description', 'estado'];
   dataSource = signal<MeasureRead[]>([]);
@@ -49,8 +57,8 @@ export class MeasurePageComponent implements OnInit {
       pageSize: this.pagination().pageSize,
     };
     this.isLoadingResults = true;
-    this._measureUseCase.getAll(params).subscribe({
-      next: (response) => {
+    this.measureService.getAll(params).subscribe({
+      next: (response: any) => {
         this.isLoadingResults = false;
         this.dataSource.set(response);
         if (this.dataSource().length > 0) {
@@ -83,7 +91,7 @@ export class MeasurePageComponent implements OnInit {
 
   askToDelete(data: any) {
     try {
-      Swal.fire({
+      void Swal.fire({
         icon: 'warning',
         html: `<small>Esta seguro/a de eliminar esta Medida ahora?</small>`,
         showConfirmButton: true,
@@ -93,7 +101,7 @@ export class MeasurePageComponent implements OnInit {
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          this._measureUseCase.updateStatus(data.idMedida).subscribe((response) => {
+          this.measureService.updateStatus(data.idMedida).subscribe((response) => {
             if (response.code == '0') {
               this.tS.show({
                 type: 'warning',

@@ -48,9 +48,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.Api/bin/Debug/net10.0/GatewayAcontplus.Api.dll",
+      "program": "${workspaceFolder}/src/ApiGateways/Ocelot.Api/bin/Debug/net10.0/Ocelot.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/ApiGateways/GatewayAcontplus.Api",
+      "cwd": "${workspaceFolder}/src/ApiGateways/Ocelot.Api",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -83,6 +83,20 @@
       "program": "${workspaceFolder}/src/Services/Inventory/Inventory.Api/bin/Debug/net10.0/Inventory.Api.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/Services/Inventory/Inventory.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PurchasesApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Purchases/Purchases.Api/bin/Debug/net10.0/Purchases.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Purchases/Purchases.Api",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -163,8 +177,11 @@
       "name": "FrontEnd",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start"],
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "run",
+        "start"
+      ],
       "cwd": "${workspaceFolder}/src/WebApps/client"
     },
     {
@@ -172,14 +189,23 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "start-with-admin"],
+      "runtimeArgs": [
+        "run",
+        "start-with-admin"
+      ],
       "cwd": "${workspaceFolder}/src/WebApps/pos"
     }
   ],
   "compounds": [
     {
       "name": "Basic Profile",
-      "configurations": ["GatewayApi", "IdentityApi", "CommonApi", "FrontEnd", "ConfigurationApi"],
+      "configurations": [
+        "GatewayApi",
+        "IdentityApi",
+        "CommonApi",
+        "FrontEnd",
+        "ConfigurationApi"
+      ],
       "stopAll": true
     },
     {
@@ -213,15 +239,16 @@
     {
       "name": "AcontPlus MacOs",
       "configurations": [
-        "LegacyFrontEnd",
         "GatewayApi",
+        "LegacyFrontEnd",
         "ConfigurationApi",
         "IdentityApi",
         "InventoryApi",
         "BillingApi",
         "SalesApi",
         "CommonApi",
-        "AccountingApi"
+        "AccountingApi",
+        "FrontEnd"
       ],
       "stopAll": true
     }

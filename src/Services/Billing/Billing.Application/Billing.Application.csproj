@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Acontplus.Billing" />
+    <PackageReference Include="Microsoft.Playwright" />
   </ItemGroup>
 
   <ItemGroup>

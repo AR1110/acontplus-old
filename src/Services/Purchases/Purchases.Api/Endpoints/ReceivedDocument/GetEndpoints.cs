@@ -30,7 +30,7 @@ public static class GetEndpoints
             .WithName("GetReceivedDocuments")
             .WithSummary("Get all received documents")
             .WithDescription("Retrieve a list of received documents.")
-            .Produces<object>(StatusCodes.Status200OK)
+            .Produces<ReceivedDocumentItem>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -53,11 +53,27 @@ public static class GetEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
+        group.MapGet("/check-existence-xml", async (
+            string accessKey,
+            IWebServiceSri webServiceSri,
+            IConfiguration configuration,
+            CancellationToken cancellationToken) =>
+        {
+            var response = await webServiceSri.CheckExistenceAsync(accessKey, configuration["UrlSriComprobantes"] ?? string.Empty);
+            return Results.Ok(response);
+        })
+            .WithName("CheckReceivedDocumentXmlExistence")
+            .WithSummary("Check if XML exists in SRI")
+            .WithDescription("Verify if a document exists in the SRI web service.")
+            .Produces<object>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
         group.MapGet("/preview/{id:int}", async (
             int id,
             IReceivedDocumentService receivedDocumentService,
             IAdoRepository adoRepository,
-            IDocumentConverter documentoXmlToHtml,
+            IDocumentConverter documentXmlToHtml,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -73,7 +89,7 @@ public static class GetEndpoints
             var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
             if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
             {
-                response.Code = "1";
+                response.Code = "0";
                 var xmlDoc = dt.Rows[0]["xmlDoc"].ToString();
                 var xdoc = new XmlDocument();
                 if (xmlDoc != null) xdoc.LoadXml(xmlDoc);
@@ -83,18 +99,18 @@ public static class GetEndpoints
                 var getXmlSriData = new DataXmlComprobante();
                 if (!getXmlSriData.GetData(xdoc, ref ceXml, ref sms))
                 {
-                    response.Code = "0";
+                    response.Code = "XML_PARSE_ERROR";
                     response.Message = sms;
                 }
                 else
                 {
-                    response.Payload = documentoXmlToHtml.CreateHtml(ceXml);
+                    response.Payload = documentXmlToHtml.CreateHtml(ceXml);
                 }
             }
             else
             {
-                response.Code = "0";
-                response.Message = "No se encontro xml";
+                response.Code = "XML_NOT_FOUND";
+                response.Message = "No se encontró xml";
             }
 
             return Results.Ok(response);
