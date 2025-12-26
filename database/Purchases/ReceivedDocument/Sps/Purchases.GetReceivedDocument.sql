@@ -119,13 +119,14 @@ BEGIN
                                       ,FORMAT(dr.fechaEmision, ''dd-MM-yyyy'')            as IssueDate
                                       ,FORMAT(dr.fechaAutorizacion, ''dd-MM-yyyy HH:mm'') as AuthorizationDate                  
 			                          ,dr.claveAcceso	                                  as Accesskey
-			                          ,dr.complete						                  as IsComplete
-			                          ,CAST(dr.importeTotal as numeric(18,2))             as Total
-			                          ,td.descripcion                                     as Document
-			                          ,td.codigoSri	                                      as CodDoc
+			                          ,dr.complete						                  as IsProcessed
+			                          ,CAST(dr.importeTotal as numeric(18,2))             as TotalAmount
+			                          ,td.descripcion                                     as DocumentType
+			                          ,td.codigoSri	                                      as DocumentCode
 			                          ,cu.IdCard           
-			                          ,cu.BusinessName                                    as Customer
-			                          ,sc.Name							                  as Subcategory
+			                          ,cu.BusinessName                                    as IssuerBusiness
+                                      ,sc.Id                                              as SubcategoryId
+			                          ,sc.Name							                  as SubcategoryName
                                       ,COUNT(*) OVER()						              as TotalCount
                                 FROM Recepcion.DocumentoRecibido       dr
                                 INNER JOIN dbo.TipoDocumento           td ON td.idTipoDocumento   = dr.idTipoDocumento

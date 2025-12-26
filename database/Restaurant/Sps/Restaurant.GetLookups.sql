@@ -26,7 +26,7 @@ BEGIN
         TableName    NVARCHAR(128) NOT NULL
        ,Id           INT NULL
        ,Code         NVARCHAR(100) NULL
-       ,[Value]      NVARCHAR(400) NULL
+       ,[Value]      NVARCHAR(400) NULL DEFAULT ''
        ,DisplayOrder INT NULL
        ,ParentId     INT NULL
        ,IsDefault    BIT DEFAULT 0
@@ -55,17 +55,15 @@ BEGIN
             END
 
         --> Data Lookups
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], IsActive)
         SELECT 'PaymentMethodsSri' AS TableName
               ,idFormaPagoSri      AS Id
               ,codigo              AS Code
 	          ,descripcion         AS [Value]
               ,estado              AS IsActive
-              ,''                  AS [Description]
-              ,0                   AS IsDefault
         FROM FormaPagoSri WHERE estado = 1;
 
-        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata, IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata, IsActive)
         SELECT 'CreditTimes'   AS TableName
               ,idTiempoCredito AS Id
               ,descripcion	   AS [Value]
@@ -75,48 +73,43 @@ BEGIN
                 FOR JSON PATH
 	           ) AS MetaData
               ,estado          AS IsActive
-              ,''              AS [Description]
-              ,0               AS IsDefault
         FROM dbo.TiempoCredito
         WHERE estado = 1
           AND gestion = 1
           AND idEntidad = @IdEntidad;
 
-        INSERT INTO #LookupResults (TableName, Id, Code, [Value] ,IsDefault, IsActive, [Description])
+        INSERT INTO #LookupResults (TableName, Id, Code, [Value] ,IsDefault, IsActive)
         SELECT 'Establishments'     AS TableName
               ,es.idEstablecimiento AS Id
               ,es.estab             AS Code
               ,es.nombreComercial   AS Value
               ,ea.predeterminado    AS IsDefault
               ,es.estado            AS IsActive
-              ,''                   AS [Description]
         FROM Config.Estab_Asig         ea
         INNER JOIN Sri.Establecimiento es ON es.idEstablecimiento = ea.idEstablecimiento
         WHERE ea.idUsuarioRol = @UserRoleId
           AND es.estado = 1;
 
-        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault, IsActive, [Description])
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault, IsActive)
         SELECT 'IssuingPoints'   AS TableName
               ,pe.idPuntoEmision AS Id
               ,pe.ptoEmi         AS Value
               ,(SELECT pe.idEstablecimiento AS establishmentId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
               ,pa.predeterminado AS IsDefault
               ,pe.estado         AS IsActive
-              ,''                AS [Description]
         FROM Config.PtoEmi_Asig      pa
         INNER JOIN Config.Estab_Asig ea ON ea.idEstab_Asig   = pa.idEstab_Asig
         INNER JOIN dbo.PuntoEmision  pe ON pe.idPuntoEmision = pa.idPuntoEmision
         WHERE ea.idUsuarioRol = @UserRoleId
           AND pe.estado = 1;
 
-        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault, IsActive, [Description])
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] ,Metadata ,IsDefault, IsActive)
         SELECT 'Warehouses'      AS TableName
               ,bo.idBodega       AS Id
               ,bo.descripcion    AS Value
               ,(SELECT bo.idEstablecimiento AS establishmentId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)
               ,ba.predeterminado AS IsDefault
               ,bo.estado         AS IsActive
-              ,''                AS [Description]
         FROM Config.Bodeg_Asig       ba
         INNER JOIN Config.Estab_Asig ea ON ea.idEstab_Asig = ba.idEstab_Asig
         INNER JOIN dbo.Bodega        bo ON bo.idBodega     = ba.idBodega
@@ -141,36 +134,32 @@ BEGIN
 		WHERE es.estado = 1
 		  AND es.idEntidad = @IdEntidad;
 
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,Metadata, IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,Metadata, IsActive)
         SELECT 'SubCategories'            AS TableName
               ,sf.idSubFamilia			  AS Id
               ,sf.siglaFamilia            AS Code
 		      ,sf.descripcion		      AS [Value]
               ,(SELECT ISNULL(sf.s3ObjectUrl, '') AS imagenUrl FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS Metadata
               ,sf.estado                  AS IsActive
-              ,''                         AS [Description]
-              ,0                          AS IsDefault
 	    FROM Inventario.v_Subfamilia  sf
 	    WHERE sf.estado = 1
           AND sf.idEntidad = @IdEntidad
 		  AND sf.siglaFamilia IN ( 'RES', 'POR')
         ORDER BY sf.idSubFamilia DESC;
 
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], Metadata, IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value], Metadata, IsActive)
         SELECT 'Taxes'             AS TableName
               ,ti.idTarifaImpuesto AS Id
 			  ,ti.codigo           AS Code
 			  ,ti.descripcion      AS [Value]
               ,(SELECT ti.porcentaje AS [percentage] ,ti.idImpuesto AS taxId FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS Metadata
               ,ti.estado           AS IsActive
-              ,''                  AS [Description]
-              ,0                   AS IsDefault
 	    FROM Sri.TarifaImpuesto ti
         INNER JOIN Sri.Impuesto im ON im.idImpuesto = ti.idImpuesto
 	    WHERE ti.estado = 1
 		  AND im.codigo = 2;
 
-        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,Metadata, IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName ,Id ,Code ,[Value] ,Metadata, IsActive)
         SELECT TOP 1 'CustomerCompany' AS TableName
                     ,cl.idCliente      AS Id
                     ,cu.IDCard         AS Code
@@ -180,8 +169,6 @@ BEGIN
                             ,ISNULL(cl.correo,'')    AS [email]
                       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS Metadata
                     ,cl.estado         AS IsActive
-                    ,''                AS [Description]
-                    ,0                 AS IsDefault
         FROM dbo.Cliente				  cl
         INNER JOIN Customer.Customer      cu ON cu.Id = cl.CustomerId
         INNER JOIN dbo.TipoIdentificacion ti ON ti.idTipoIdentificacion = cu.IdTypeId
@@ -189,7 +176,7 @@ BEGIN
           AND cl.idEntidad = @IdEntidad
 		  AND ti.codigoSri = '07';
 
-        INSERT INTO #LookupResults (TableName, Id, Code, [Value], Metadata, IsActive, [Description], IsDefault)
+        INSERT INTO #LookupResults (TableName, Id, Code, [Value], Metadata)
         SELECT 'SystemConfig' AS TableName
               ,gs.idEntidad   AS Id
               ,'CONFIG'       AS Code
@@ -200,35 +187,30 @@ BEGIN
                        CAST(multipleVendedor AS BIT) AS multipleVendedor
 
                 FOR JSON PATH, WITHOUT_ARRAY_WRAPPER) AS Metadata
-              ,1              AS IsActive
-              ,''             AS [Description]
-              ,0              AS IsDefault
         FROM Config.v_Sistema_Ventas gs
         WHERE gs.idEntidad = @IdEntidad;
 
-        INSERT INTO #LookupResults (TableName ,Id ,Value ,IsDefault, IsActive, [Description])
+        INSERT INTO #LookupResults (TableName ,Id ,Value ,IsDefault, IsActive)
         SELECT 'Users'                                        AS TableName
               ,us.idUsuario                                   AS Id
 			  ,us.nombreUsuario                               AS Value
               ,CAST(IIF(ur.idUsuario = @UserId, 1, 0) AS BIT) AS IsDefault
               ,us.estado                                      AS IsActive
-              ,''                                             AS [Description]
 		FROM App.UsuarioRol    ur
 		INNER JOIN dbo.Usuario us ON us.idUsuario = ur.idUsuario
         WHERE ur.idEntidad = @IdEntidad
           AND us.estado = 1;
 
-        INSERT INTO #LookupResults (TableName ,Id ,[Value] , IsDefault, IsActive, [Description])
+        INSERT INTO #LookupResults (TableName ,Id ,[Value] , IsDefault, IsActive)
         SELECT 'Fees'         AS TableName
               ,idTarifa       AS Id
               ,descripcion    AS [Value]
               ,predeterminada AS IsDefault
               ,estado         AS IsActive
-              ,''             AS [Description]
         FROM dbo.Tarifa
         WHERE idEntidad = @IdEntidad AND estado = 1;
 
-       -- Generar lista de tablas
+        --> Generar lista de tablas
         SELECT @TableNames = STRING_AGG(TableName, ',') WITHIN GROUP (ORDER BY TableName) FROM (SELECT DISTINCT TableName FROM #LookupResults) AS t;
 
         IF @TableNames IS NULL OR @TableNames = ''
