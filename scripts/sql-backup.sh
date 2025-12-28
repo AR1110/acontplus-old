@@ -33,6 +33,24 @@ echo "PATH actual: $PATH"
 # Crear directorio si no existe
 mkdir -p "$BACKUP_DIR"
 
+# --- VALIDACIÓN DE ESPACIO EN DISCO ---
+MIN_SPACE_GB=20  # Mínimo 20GB libres
+AVAILABLE_SPACE=$(df -BG "$BACKUP_DIR" | awk 'NR==2 {print $4}' | sed 's/G//')
+if [ "$AVAILABLE_SPACE" -lt "$MIN_SPACE_GB" ]; then
+    echo "❌ ERROR CRÍTICO: Espacio insuficiente en disco."
+    echo "   Disponible: ${AVAILABLE_SPACE}GB | Requerido: ${MIN_SPACE_GB}GB"
+    exit 1
+fi
+echo "✓ Espacio disponible: ${AVAILABLE_SPACE}GB"
+
+# --- VALIDACIÓN DE SQL SERVER ---
+if ! pgrep -x sqlservr > /dev/null; then
+    echo "❌ ERROR CRÍTICO: SQL Server no está corriendo."
+    echo "   Iniciar con: sudo systemctl start mssql-server"
+    exit 1
+fi
+echo "✓ SQL Server está corriendo"
+
 # Validaciones - buscar sqlcmd en ubicaciones comunes
 SQLCMD_PATH=""
 for path in /opt/mssql-tools18/bin/sqlcmd /opt/mssql-tools/bin/sqlcmd /usr/bin/sqlcmd; do
@@ -69,6 +87,15 @@ for DB in $DATABASES; do
   if [ $? -ne 0 ] || [ ! -f "$BACKUP_FILE" ]; then
       echo "❌ Error: Falló el backup local de $DB. Saltando..."
       continue
+  fi
+
+  # Validar tamaño mínimo (detectar backups corruptos)
+  BACKUP_SIZE_MB=$(du -m "$BACKUP_FILE" | cut -f1)
+  MIN_SIZE_MB=10  # Mínimo 10MB esperado
+
+  if [ "$BACKUP_SIZE_MB" -lt "$MIN_SIZE_MB" ]; then
+      echo "⚠️  ADVERTENCIA: Backup sospechosamente pequeño (${BACKUP_SIZE_MB}MB)"
+      echo "   Podría estar corrupto. Revisar manualmente."
   fi
 
   echo "✓ Backup local generado: $BACKUP_FILE ($(du -h "$BACKUP_FILE" | cut -f1))"
