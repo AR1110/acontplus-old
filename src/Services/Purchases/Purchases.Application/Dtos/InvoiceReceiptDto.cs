@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Purchases.Application.Dtos
 {
-    public record PurchaseInvoiceReceiptDto : PurchaseBaseDto
+    public record InvoiceReceiptDto : BaseDto
     {
         public required int PurchaseInvoiceId { get; set; }
         public required int TaxSupportId { get; set; }
@@ -17,9 +17,6 @@ namespace Purchases.Application.Dtos
 
         [MaxLength(100)]
         public required string DocumentCode { get; set; }
-
-        public required DateTime DueDate { get; set; }
-
 
         public required decimal SubtotalExcludingTaxes { get; set; }
 

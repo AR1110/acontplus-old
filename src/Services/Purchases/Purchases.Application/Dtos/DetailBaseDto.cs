@@ -1,6 +1,6 @@
 namespace Purchases.Application.Dtos
 {
-  public record PurchaseDetailBaseDto
+  public record DetailBaseDto
   {
     public required int ArticleId { get; set; }
 

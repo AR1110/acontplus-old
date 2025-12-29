@@ -3,7 +3,7 @@ namespace Purchases.Application.Services;
 public class ReceivedDocumentDetailTempService(IUnitOfWork unitOfWork) : IReceivedDocumentDetailTempService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.DocRecDetailTemp_";
+  private const string ModuleName = "Purchases.DocRecDetailTemp_";
 
   public async Task<Result<IReadOnlyList<object>, DomainError>> GetAsync(int documentId, int userRoleId, CancellationToken cancellationToken = default)
   {

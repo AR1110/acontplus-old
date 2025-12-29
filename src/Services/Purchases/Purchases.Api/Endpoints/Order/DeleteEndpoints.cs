@@ -1,4 +1,4 @@
-namespace Purchases.Api.Endpoints.PurchaseOrder;
+namespace Purchases.Api.Endpoints.Order;
 
 public static class DeleteEndpoints
 {
@@ -11,12 +11,12 @@ public static class DeleteEndpoints
 
         group.MapDelete("/{id:int}", async (
             int id,
-            IPurchaseOrderService purchaseOrderService,
+            IOrderService OrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-            return await purchaseOrderService
+            return await OrderService
           .DeleteAsync(id, userRoleId, cancellationToken)
           .ToMinimalApiResultAsync();
         })

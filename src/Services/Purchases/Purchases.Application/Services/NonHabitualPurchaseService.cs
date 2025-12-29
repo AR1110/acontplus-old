@@ -6,7 +6,7 @@ namespace Purchases.Application.Services;
 public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPurchaseService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.CompraNoHabitual_";
+  private const string ModuleName = "Purchases.CompraNoHabitual_";
 
   public async Task<Result<PagedResult<NonHabitualPurchaseItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
   {
@@ -44,7 +44,25 @@ public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPu
       if (response?.Code == "0")
       {
         var newId = Convert.ToInt32(response.Payload);
-        var item = new NonHabitualPurchaseItem(newId, request.IncomingDocument, request.Details, true, DateTime.UtcNow);
+        var item = new NonHabitualPurchaseItem
+        {
+          Id = newId,
+          SupplierId = request.SupplierId,
+          CreditTermId = request.CreditTermId,
+          IssueDate = request.IssueDate,
+          TotalExcludingTaxes = request.TotalExcludingTaxes,
+          DiscountPercentage = request.DiscountPercentage,
+          TotalAmount = request.TotalAmount,
+          Note = request.Note,
+          IncomingDocumentId = request.IncomingDocumentId,
+          EmissionPointId = request.EmissionPointId,
+          DueDate = request.DueDate,
+          DiscountAmount = request.DiscountAmount,
+          SubcategoryId = request.SubcategoryId,
+          Details = request.Details,
+          IsActive = true,
+          CreatedAt = DateTime.UtcNow
+        };
         return Result<NonHabitualPurchaseItem, DomainError>.Success(item);
       }
       return Result<NonHabitualPurchaseItem, DomainError>.Failure(DomainError.Validation("NON_HABITUAL_PURCHASE_ADD_ERROR", response?.Message ?? "Failed to add non-habitual purchase"));
@@ -67,7 +85,25 @@ public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPu
       var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Update", parameters);
       if (response?.Code == "0")
       {
-        var item = new NonHabitualPurchaseItem(id, request.IncomingDocument, request.Details, true, DateTime.UtcNow);
+        var item = new NonHabitualPurchaseItem
+        {
+          Id = id,
+          SupplierId = request.SupplierId,
+          CreditTermId = request.CreditTermId,
+          IssueDate = request.IssueDate,
+          TotalExcludingTaxes = request.TotalExcludingTaxes,
+          DiscountPercentage = request.DiscountPercentage,
+          TotalAmount = request.TotalAmount,
+          Note = request.Note,
+          IncomingDocumentId = request.IncomingDocumentId,
+          EmissionPointId = request.EmissionPointId,
+          DueDate = request.DueDate,
+          DiscountAmount = request.DiscountAmount,
+          SubcategoryId = request.SubcategoryId,
+          Details = request.Details,
+          IsActive = true,
+          CreatedAt = DateTime.UtcNow
+        };
         return Result<NonHabitualPurchaseItem, DomainError>.Success(item);
       }
       return Result<NonHabitualPurchaseItem, DomainError>.Failure(DomainError.Validation("NON_HABITUAL_PURCHASE_UPDATE_ERROR", response?.Message ?? "Failed to update non-habitual purchase"));

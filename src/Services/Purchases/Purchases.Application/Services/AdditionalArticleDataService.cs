@@ -5,7 +5,7 @@ namespace Purchases.Application.Services;
 public class AdditionalArticleDataService(IUnitOfWork unitOfWork) : IAdditionalArticleDataService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.DatoAdicionalArticulo_";
+  private const string ModuleName = "Purchases.DatoAdicionalArticulo_";
 
   public async Task<Result<IReadOnlyList<AdditionalArticleDataItem>, DomainError>> GetAsync(int userRoleId, CancellationToken cancellationToken = default)
   {

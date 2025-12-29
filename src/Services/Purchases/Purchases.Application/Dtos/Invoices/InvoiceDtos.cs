@@ -1,24 +1,24 @@
-namespace Purchases.Application.Dtos.PurchaseInvoices;
+namespace Purchases.Application.Dtos.Invoices;
 
-public record PurchaseInvoiceCreate(
-    PurchaseInvoiceReceiptDto Receipt,
+public record InvoiceCreate(
+    InvoiceReceiptDto Receipt,
     List<IncomingDocumentDetailDto> Documents,
     List<TaxDto> Taxes,
     List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
     List<InstallmentDto> Installments,
     int UserRoleId);
 
-public record PurchaseInvoiceUpdate(
+public record InvoiceUpdate(
     int Id,
-    PurchaseInvoiceReceiptDto Receipt,
+    InvoiceReceiptDto Receipt,
     List<IncomingDocumentDetailDto> Documents,
     List<TaxDto> Taxes,
     List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,
     List<InstallmentDto> Installments);
 
-public record PurchaseInvoiceItem(
+public record InvoiceItem(
     int Id,
-    PurchaseInvoiceReceiptDto Receipt,
+    InvoiceReceiptDto Receipt,
     List<IncomingDocumentDetailDto> Documents,
     List<TaxDto> Taxes,
     List<ArticleAdditionalInfoDto> ArticleAdditionalInfo,

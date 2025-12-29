@@ -1,17 +1,17 @@
-namespace Purchases.Api.Endpoints.PurchaseInvoice;
+namespace Purchases.Api.Endpoints.Order;
 
 public static class GetEndpoints
 {
     public static void MapGetEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/purchase-invoices")
+        var group = app.MapGroup("/api/purchase-orders")
             .RequireAuthorization()
-            .WithDescription("Endpoints for retrieving purchase invoices.")
-            .WithTags("Purchase Invoices");
+            .WithDescription("Endpoints for retrieving purchase orders.")
+            .WithTags("Purchase Orders");
 
         group.MapGet("/", async (
             PaginationQuery paginationQuery,
-            IPurchaseInvoiceService purchaseInvoiceService,
+            IOrderService OrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -26,31 +26,31 @@ public static class GetEndpoints
                 paginationRequest = paginationRequest.WithFilter("userRoleId", userRoleId);
             }
 
-            return await purchaseInvoiceService
+            return await OrderService
           .GetAsync(paginationRequest, cancellationToken)
           .ToGetMinimalApiResultAsync();
         })
-            .WithName("GetPurchaseInvoices")
-            .WithSummary("Get all purchase invoices")
-            .WithDescription("Retrieve a list of purchase invoices.")
+            .WithName("GetPurchaseOrders")
+            .WithSummary("Get all purchase orders")
+            .WithDescription("Retrieve a list of purchase orders.")
             .Produces<object>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         group.MapGet("/{id:int}", async (
             int id,
-            IPurchaseInvoiceService purchaseInvoiceService,
+            IOrderService OrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
-            return await purchaseInvoiceService
+            return await OrderService
           .GetByIdAsync(id, userRoleId, cancellationToken)
           .ToGetMinimalApiResultAsync();
         })
-            .WithName("GetPurchaseInvoiceById")
-            .WithSummary("Get a purchase invoice by ID")
-            .WithDescription("Retrieve a purchase invoice record by its ID.")
+            .WithName("GetPurchaseOrderById")
+            .WithSummary("Get a purchase order by ID")
+            .WithDescription("Retrieve a purchase order record by its ID.")
             .Produces<object>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);

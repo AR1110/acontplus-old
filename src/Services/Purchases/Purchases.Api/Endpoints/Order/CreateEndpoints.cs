@@ -1,30 +1,32 @@
-namespace Purchases.Api.Endpoints.PurchaseInvoice;
+using Purchases.Application.Dtos.Orders;
+
+namespace Purchases.Api.Endpoints.Order;
 
 public static class CreateEndpoints
 {
     public static void MapCreateEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/purchase-invoices")
+        var group = app.MapGroup("/api/purchase-orders")
             .RequireAuthorization()
-            .WithDescription("Endpoints for creating purchase invoices.")
-            .WithTags("Purchase Invoices");
+            .WithDescription("Endpoints for creating purchase orders.")
+            .WithTags("Purchase Orders");
 
         group.MapPost("/", async (
-            PurchaseInvoiceCreate request,
-            IPurchaseInvoiceService purchaseInvoiceService,
+            OrderCreate request,
+            IOrderService OrderService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
             var userRoleId = userContext.GetClaimValue<int>("userRoleId");
             var requestWithUserRole = request with { UserRoleId = userRoleId };
 
-            return await purchaseInvoiceService
+            return await OrderService
           .AddAsync(requestWithUserRole, cancellationToken)
           .ToMinimalApiResultAsync();
         })
-            .WithName("CreatePurchaseInvoice")
-            .WithSummary("Create a new purchase invoice")
-            .WithDescription("Create a new purchase invoice record.")
+            .WithName("CreatePurchaseOrder")
+            .WithSummary("Create a new purchase order")
+            .WithDescription("Create a new purchase order record.")
             .Produces<object>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);

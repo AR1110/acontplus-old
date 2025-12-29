@@ -1,18 +1,18 @@
-namespace Purchases.Application.Dtos.PurchaseOrders;
+namespace Purchases.Application.Dtos.Orders;
 
-public record PurchaseOrderCreate(
+public record OrderCreate(
     ReceiptDto Receipt,
     List<ReceiptDetailDto> ReceiptDetails,
     List<TaxDto> Taxes,
     int UserRoleId);
 
-public record PurchaseOrderUpdate(
+public record OrderUpdate(
     int Id,
     ReceiptDto Receipt,
     List<ReceiptDetailDto> ReceiptDetails,
     List<TaxDto> Taxes);
 
-public record PurchaseOrderItem(
+public record OrderItem(
     int Id,
     ReceiptDto Receipt,
     List<ReceiptDetailDto> ReceiptDetails,

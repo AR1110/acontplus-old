@@ -1,6 +1,6 @@
 namespace Purchases.Application.Dtos
 {
-  public record ReceiptDto : PurchaseBaseDto
+  public record ReceiptDto : BaseDto
   {
     public int? EmissionPointId { get; set; }
 

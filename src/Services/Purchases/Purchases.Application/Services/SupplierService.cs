@@ -5,7 +5,7 @@ namespace Purchases.Application.Services;
 public class SupplierService(IUnitOfWork unitOfWork) : ISupplierService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.Proveedor_";
+  private const string ModuleName = "Purchases.Proveedor_";
 
   public async Task<Result<IReadOnlyList<SupplierItem>, DomainError>> GetAsync(int userRoleId, CancellationToken cancellationToken = default)
   {
