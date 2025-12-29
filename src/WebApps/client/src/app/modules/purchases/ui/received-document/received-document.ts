@@ -26,6 +26,7 @@ import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html
 import { ReceivedDocumentList } from '@purchases/data/models/received-document';
 import { MatIcon } from '@angular/material/icon';
 import { DataGridColumn } from '@shared/components/data-grid/types';
+import { LookUpService } from '@modules/purchases/services/lookup.service';
 
 @Component({
   selector: 'app-received-document',
@@ -36,14 +37,12 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
     DynamicCard,
     FormsModule,
     InputNumberDirective,
-    MatButton,
     MatFormField,
     MatLabel,
     MatInput,
     MatSelect,
     MatOption,
     DataGrid,
-    MatIcon,
     SupplierSearchComponent,
   ],
   templateUrl: './received-document.html',
@@ -122,6 +121,7 @@ export class ReceivedDocument implements OnInit {
   pageSize = 10;
   pageCount = 0;
 
+  private readonly _lookupService = inject(LookUpService);
   private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
   private readonly _dialogService = inject(DialogService);
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
