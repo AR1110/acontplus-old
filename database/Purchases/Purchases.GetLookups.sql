@@ -62,7 +62,7 @@ BEGIN
         SELECT TOP 1 @IdEntidad = idEntidad ,@UserId = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @UserRoleId;
 
 
-        IF @Module IN ('Non-Habitual-Purchase','Purchase-Order','Received-Document','Purchase-Invoice')
+        IF @Module IN ('Non-Habitual-','Order','Received-Document','Invoice')
             BEGIN
                 IF @Context = 'Form'
                     BEGIN 
@@ -75,7 +75,7 @@ BEGIN
                     END 
             END
 
-        IF @Module = 'Purchase-Invoice'
+        IF @Module = 'Invoice'
             BEGIN
                 SELECT @TaxRevenue = 1
             END

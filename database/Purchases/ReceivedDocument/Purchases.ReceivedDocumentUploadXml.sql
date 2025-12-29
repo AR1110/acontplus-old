@@ -11,7 +11,7 @@ GO
 -- Description:	Consolidated SP for uploading XML received documents from SRI
 --              Combines logic from Doc_Serv_Update and Documento_Upload_Xml
 -- =============================================
-CREATE OR ALTER PROCEDURE Purchases.UploadXmlReceivedDocument
+CREATE OR ALTER PROCEDURE Purchases.ReceivedDocumentUploadXml
     @UserRoleId INT
     ,@XmlContent XML
     ,@EstablishmentId INT

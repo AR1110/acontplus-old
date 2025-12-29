@@ -9,9 +9,9 @@ GO
 -- =============================================
 -- Author:		Ivan Fernando Paz
 -- Create date: 2022-07-31
--- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS 
+-- Description:	SP PARA LISTAR LOS COMPROBANTES ELECTRONICOS DEL SRI IMPORTADOS
 -- =============================================
-CREATE OR ALTER PROCEDURE Purchases.GetReceivedDocument
+CREATE OR ALTER PROCEDURE Purchases.ReceivedDocumentGet
     @Filters NVARCHAR(MAX) 
    ,@PageIndex INT = 1
    ,@PageSize INT = 10
