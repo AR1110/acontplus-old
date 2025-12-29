@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Purchases.Application.Dtos
 {
-    public record PurchaseInvoiceReceiptDto : PurchaseBaseDto
+    public record InvoiceReceiptDto : BaseDto
     {
         public required int PurchaseInvoiceId { get; set; }
         public required int TaxSupportId { get; set; }

@@ -1,53 +1,52 @@
-using Purchases.Application.Dtos.PurchaseOrders;
-
+using Purchases.Application.Dtos.Orders;
 
 namespace Purchases.Application.Services;
 
-public class PurchaseOrderService(IUnitOfWork unitOfWork) : IPurchaseOrderService
+public class OrderService(IUnitOfWork unitOfWork) : IOrderService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.Orden_";
+  private const string ModuleName = "Purchases.Orden_";
 
-  public async Task<Result<PagedResult<PurchaseOrderItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
+  public async Task<Result<PagedResult<OrderItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
   {
     try
     {
-      var response = await _adoRepository.GetPagedFromStoredProcedureAsync<PurchaseOrderItem>(
+      var response = await _adoRepository.GetPagedFromStoredProcedureAsync<OrderItem>(
         $"{ModuleName}Get", paginationRequest, cancellationToken: cancellationToken);
 
       if (response.Items.Any())
       {
-        return Result<PagedResult<PurchaseOrderItem>, DomainError>.Success(response);
+        return Result<PagedResult<OrderItem>, DomainError>.Success(response);
       }
 
       var error = DomainError.NotFound("PURCHASE_ORDER_NOT_FOUND", "No items were found.");
-      return Result<PagedResult<PurchaseOrderItem>, DomainError>.Failure(error);
+      return Result<PagedResult<OrderItem>, DomainError>.Failure(error);
     }
     catch (Exception ex)
     {
       var error = DomainError.Internal("PURCHASE_ORDER_GET_ERROR",
         $"An error occurred while retrieving items. {ex.Message}");
-      return Result<PagedResult<PurchaseOrderItem>, DomainError>.Failure(error);
+      return Result<PagedResult<OrderItem>, DomainError>.Failure(error);
     }
   }
 
-  public async Task<Result<PurchaseOrderItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
+  public async Task<Result<OrderItem, DomainError>> GetByIdAsync(int id, int userRoleId, CancellationToken cancellationToken = default)
   {
     try
     {
       var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-      var order = await _adoRepository.QuerySingleOrDefaultAsync<PurchaseOrderItem>($"{ModuleName}GetById", parameters);
+      var order = await _adoRepository.QuerySingleOrDefaultAsync<OrderItem>($"{ModuleName}GetById", parameters);
       return order != null
-        ? Result<PurchaseOrderItem, DomainError>.Success(order)
-        : Result<PurchaseOrderItem, DomainError>.Failure(DomainError.NotFound("PURCHASE_ORDER_NOT_FOUND", "Purchase order not found"));
+        ? Result<OrderItem, DomainError>.Success(order)
+        : Result<OrderItem, DomainError>.Failure(DomainError.NotFound("PURCHASE_ORDER_NOT_FOUND", "Purchase order not found"));
     }
     catch (Exception ex)
     {
-      return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_GETBYID_ERROR", ex.Message));
+      return Result<OrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_GETBYID_ERROR", ex.Message));
     }
   }
 
-  public async Task<Result<PurchaseOrderItem, DomainError>> AddAsync(PurchaseOrderCreate request, CancellationToken cancellationToken = default)
+  public async Task<Result<OrderItem, DomainError>> AddAsync(OrderCreate request, CancellationToken cancellationToken = default)
   {
     try
     {
@@ -61,15 +60,15 @@ public class PurchaseOrderService(IUnitOfWork unitOfWork) : IPurchaseOrderServic
       {
         return await GetByIdAsync(Convert.ToInt32(response.Payload), request.UserRoleId, cancellationToken);
       }
-      return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Validation("PURCHASE_ORDER_ADD_ERROR", response?.Message ?? "Failed to add purchase order"));
+      return Result<OrderItem, DomainError>.Failure(DomainError.Validation("PURCHASE_ORDER_ADD_ERROR", response?.Message ?? "Failed to add purchase order"));
     }
     catch (Exception ex)
     {
-      return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_ADD_ERROR", ex.Message));
+      return Result<OrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_ADD_ERROR", ex.Message));
     }
   }
 
-  public async Task<Result<PurchaseOrderItem, DomainError>> UpdateAsync(int id, PurchaseOrderUpdate request, int userRoleId, CancellationToken cancellationToken = default)
+  public async Task<Result<OrderItem, DomainError>> UpdateAsync(int id, OrderUpdate request, int userRoleId, CancellationToken cancellationToken = default)
   {
     try
     {
@@ -83,11 +82,11 @@ public class PurchaseOrderService(IUnitOfWork unitOfWork) : IPurchaseOrderServic
       {
         return await GetByIdAsync(id, userRoleId, cancellationToken);
       }
-      return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Validation("PURCHASE_ORDER_UPDATE_ERROR", response?.Message ?? "Failed to update purchase order"));
+      return Result<OrderItem, DomainError>.Failure(DomainError.Validation("PURCHASE_ORDER_UPDATE_ERROR", response?.Message ?? "Failed to update purchase order"));
     }
     catch (Exception ex)
     {
-      return Result<PurchaseOrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_UPDATE_ERROR", ex.Message));
+      return Result<OrderItem, DomainError>.Failure(DomainError.Internal("PURCHASE_ORDER_UPDATE_ERROR", ex.Message));
     }
   }
 

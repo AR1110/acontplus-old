@@ -1,6 +1,6 @@
 namespace Purchases.Application.Dtos
 {
-  public record IncomingDocumentDetailDto : PurchaseDetailBaseDto
+  public record IncomingDocumentDetailDto : DetailBaseDto
   {
     public required int OrderIndex { get; set; }
 

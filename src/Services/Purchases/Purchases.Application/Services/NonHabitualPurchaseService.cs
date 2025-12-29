@@ -6,7 +6,7 @@ namespace Purchases.Application.Services;
 public class NonHabitualPurchaseService(IUnitOfWork unitOfWork) : INonHabitualPurchaseService
 {
   private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-  private const string ModuleName = "Compra.CompraNoHabitual_";
+  private const string ModuleName = "Purchases.CompraNoHabitual_";
 
   public async Task<Result<PagedResult<NonHabitualPurchaseItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
   {

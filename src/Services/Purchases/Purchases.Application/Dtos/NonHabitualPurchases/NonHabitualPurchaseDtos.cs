@@ -1,18 +1,18 @@
 namespace Purchases.Application.Dtos.NonHabitualPurchases;
 
-public record NonHabitualPurchaseCreate : PurchaseBaseDto
+public record NonHabitualPurchaseCreate : BaseDto
 {
     public ICollection<IncomingDocumentDetailDto> Details { get; init; } = [];
     public int UserRoleId { get; init; }
 }
 
-public record NonHabitualPurchaseUpdate : PurchaseBaseDto
+public record NonHabitualPurchaseUpdate : BaseDto
 {
     public int Id { get; init; }
     public ICollection<IncomingDocumentDetailDto> Details { get; init; } = [];
 }
 
-public record NonHabitualPurchaseItem : PurchaseBaseDto
+public record NonHabitualPurchaseItem : BaseDto
 {
     public int Id { get; init; }
     public ICollection<IncomingDocumentDetailDto> Details { get; init; } = [];

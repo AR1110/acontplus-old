@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Purchases.Application.Dtos;
 
-public record PurchaseBaseDto
+public record BaseDto
 {
     public required int SupplierId { get; set; }
 
