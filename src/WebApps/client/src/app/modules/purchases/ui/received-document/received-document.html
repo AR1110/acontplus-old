@@ -5,10 +5,10 @@
       <div class="col-12 col-md-4">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.codEstab">
-            @for (item of establecimientos; track $index) {
-              <mat-option [value]="item.codEstab">
-                {{ item.nombreComercial }}
+          <mat-select (selectionChange)="onChangeEstab()" [(ngModel)]="dataSearch.estabId">
+            @for (item of establishments(); track $index) {
+              <mat-option [value]="item.id">
+                {{ item.value }}
               </mat-option>
             }
           </mat-select>
@@ -72,9 +72,9 @@
               <mat-label>Subcategoría</mat-label>
               <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
                 <mat-option value="">Todos</mat-option>
-                @for (item of subcategories; track $index) {
+                @for (item of subcategories(); track $index) {
                   <mat-option [value]="item.id">
-                    {{ item.name }}
+                    {{ item.value }}
                   </mat-option>
                 }
               </mat-select>

@@ -1,4 +1,5 @@
 import { LookupType } from '@core/models/lookup-type';
+import { PurchaseLookupResponse } from '../models/purchase-lookup';
 
 export class PurchaseLookupsMapper {
   static toJson(params: LookupType) {
@@ -8,29 +9,17 @@ export class PurchaseLookupsMapper {
     return queryParams.toString();
   }
 
-  static fromJson(response: any): any {
-    const { taxes = [], establishments = [] } = response;
+  static fromJson(response: any): PurchaseLookupResponse {
+    const { establishments = [], subcategories = [] } = response;
 
     const estabTemp = establishments.map((estab: any) => {
       const { metadata, ...rest } = estab;
       return rest;
     });
 
-    const taxesTemp = taxes.map((tax: any) => {
-      const { metadata, ...rest } = tax;
-      const metadataTemp = JSON.parse(metadata) || {};
-      return {
-        ...rest,
-        metadata: {
-          percentage: metadataTemp.porcentage,
-        },
-      };
-    });
-
-    console.log(response);
     return {
-      taxes: taxesTemp,
       establishments: estabTemp,
+      subcategories,
     };
   }
 }
