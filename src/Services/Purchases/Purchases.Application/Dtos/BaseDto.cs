@@ -4,6 +4,7 @@ namespace Purchases.Application.Dtos;
 
 public record BaseDto
 {
+    public int UserRoleId { get; init; }
     public required int SupplierId { get; set; }
 
     public int? CreditTermId { get; set; }
