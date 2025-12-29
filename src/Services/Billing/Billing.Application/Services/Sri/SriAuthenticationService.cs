@@ -1,12 +1,10 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Playwright;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Billing.Application.Dtos;
-using Billing.Application.Interfaces.Sri;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Playwright;
 
 namespace Billing.Application.Services.Sri;
 

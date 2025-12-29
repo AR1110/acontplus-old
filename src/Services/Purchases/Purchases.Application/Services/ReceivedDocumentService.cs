@@ -13,14 +13,14 @@ public class ReceivedDocumentService(
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
     private readonly IConfiguration _configuration = configuration;
     private readonly ILogger<ReceivedDocumentService> _logger = logger;
-    private const string ModuleName = "Purchases.";
+    private const string ModuleName = "Purchases.ReceivedDocument";
 
     public async Task<Result<PagedResult<ReceivedDocumentItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
     {
         try
         {
             var response = await _adoRepository.GetPagedFromStoredProcedureAsync<ReceivedDocumentItem>(
-              $"{ModuleName}GetReceivedDocuments", paginationRequest, cancellationToken: cancellationToken);
+              $"{ModuleName}Find", paginationRequest, cancellationToken: cancellationToken);
 
             if (response.Items.Any())
             {
@@ -43,7 +43,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var document = await _adoRepository.QuerySingleOrDefaultAsync<ReceivedDocumentItem>($"{ModuleName}GetReceivedDocumentById", parameters);
+            var document = await _adoRepository.QuerySingleOrDefaultAsync<ReceivedDocumentItem>($"{ModuleName}GetById", parameters);
             return document != null
               ? Result<ReceivedDocumentItem, DomainError>.Success(document)
               : Result<ReceivedDocumentItem, DomainError>.Failure(DomainError.NotFound("RECEIVED_DOCUMENT_NOT_FOUND", "Received document not found"));
@@ -59,7 +59,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var ds = await _adoRepository.GetDataSetAsync("Purchases.GetReceivedDocumentXmlById", parameters);
+            var ds = await _adoRepository.GetDataSetAsync("Purchases.ReceivedDocumentGetXmlById", parameters);
             var dt = ds.Tables.Count > 0 ? ds.Tables[0] : new DataTable();
             if (dt.Rows.Count > 0 && dt.Columns.Contains("xmlDoc"))
             {
@@ -152,7 +152,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "subcategoryId", request.SubcategoryId }, { "userId", id } };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UpdateSubcategoryReceivedDocument", parameters);
+            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}SubcategoryUpdate", parameters);
             return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_UPDATE_CATEGORY_ERROR", response?.Message ?? "Failed to update category"));
@@ -168,7 +168,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}DeleteReceivedDocument", parameters);
+            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Delete", parameters);
             return response?.Code == "0"
               ? Result<bool, DomainError>.Success(true)
               : Result<bool, DomainError>.Failure(DomainError.Validation("RECEIVED_DOCUMENT_DELETE_ERROR", response?.Message ?? "Failed to delete received document"));
@@ -188,7 +188,7 @@ public class ReceivedDocumentService(
         { "userRoleId", request.UserRoleId },
         { "json", JsonExtensions.SerializeOptimized(request) }
       };
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}MigrateReceivedDocument", parameters);
+            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}Migrate", parameters);
             if (response?.Code == "0")
             {
                 return await GetByIdAsync(request.Id, request.UserRoleId, cancellationToken);
@@ -206,7 +206,7 @@ public class ReceivedDocumentService(
         try
         {
             var parameters = new Dictionary<string, object> { { "id", id }, { "userRoleId", userRoleId } };
-            var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}DownloadReceivedDocument", parameters);
+            var data = await _adoRepository.QuerySingleOrDefaultAsync<byte[]>($"{ModuleName}Download", parameters);
             return data != null
               ? Result<byte[], DomainError>.Success(data)
               : Result<byte[], DomainError>.Failure(DomainError.NotFound("DOCUMENT_FILE_NOT_FOUND", "Document file not found"));
@@ -230,7 +230,7 @@ public class ReceivedDocumentService(
                 { "subcategoryId", subcategoryId },
             };
 
-            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXmlReceivedDocument", parameters);
+            var response = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{ModuleName}UploadXml", parameters);
 
             if (response?.Code != "0")
             {

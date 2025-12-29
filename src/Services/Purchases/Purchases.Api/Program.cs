@@ -25,7 +25,7 @@ try
     var configuration = ApplicationConfigurationBuilder.Load();
     builder.Configuration.AddConfiguration(configuration);
 
-    builder.Services.AddComprasServices(builder.Configuration);
+    builder.Services.AddPurchasesServices(builder.Configuration);
 
     builder.Services.AddInfrastructureHealthChecks();
 

@@ -11,7 +11,7 @@ public static class CrudEndpoints
 
         group.MapGet("/", async (
             PaginationQuery paginationQuery,
-            IHabitualPurchaseService habitualPurchaseService,
+            IHabitualService habitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -33,7 +33,7 @@ public static class CrudEndpoints
 
         group.MapPost("/", async (
             HabitualPurchaseCreate request,
-            IHabitualPurchaseService habitualPurchaseService,
+            IHabitualService habitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -54,7 +54,7 @@ public static class CrudEndpoints
         group.MapPut("/{id:int}", async (
             int id,
             HabitualPurchaseUpdate request,
-            IHabitualPurchaseService habitualPurchaseService,
+            IHabitualService habitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
@@ -74,7 +74,7 @@ public static class CrudEndpoints
 
         group.MapDelete("/{id:int}", async (
             int id,
-            IHabitualPurchaseService habitualPurchaseService,
+            IHabitualService habitualPurchaseService,
             IUserContext userContext,
             CancellationToken cancellationToken) =>
         {
