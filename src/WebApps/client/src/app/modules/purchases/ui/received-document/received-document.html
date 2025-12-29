@@ -71,7 +71,7 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Subcategoría</mat-label>
               <mat-select [(ngModel)]="dataSearch.subcategoryId" (selectionChange)="loadData()">
-                <mat-option value="">Todos</mat-option>
+                <!-- <mat-option value="">Todos</mat-option> -->
                 @for (item of subcategories(); track $index) {
                   <mat-option [value]="item.id">
                     {{ item.value }}

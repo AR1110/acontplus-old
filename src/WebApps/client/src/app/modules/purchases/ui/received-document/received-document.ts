@@ -155,6 +155,17 @@ export class ReceivedDocument implements OnInit {
       })
       .subscribe((response) => {
         this.establishments.set(response.establishments);
+
+        const newEstablishment: LookupItem = {
+          id: 0,
+          code: '',
+          value: 'Todos',
+          displayOrder: 0,
+          isActive: false,
+          isDefault: true,
+        };
+        response.subcategories.unshift(newEstablishment);
+
         this.subcategories.set(response.subcategories);
 
         // Set default establishment
@@ -186,6 +197,9 @@ export class ReceivedDocument implements OnInit {
       subcategoryId: this.dataSearch.subcategoryId,
       tipo: 1,
     };
+
+    console.log(dataSearch);
+
     this._receivedDocumentSvc.get(dataSearch).subscribe((response) => {
       this.documents.set(response.documents);
       this.pageCount = this.documents()[0]?.totalRecords ?? 0;
