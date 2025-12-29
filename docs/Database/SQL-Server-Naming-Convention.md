@@ -1,6 +1,7 @@
 # SQL Server Naming Convention Guide - Ecuador ERP
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [General Principles](#general-principles)
 - [Database Objects](#database-objects)
@@ -26,6 +27,7 @@
 This document establishes the naming conventions for SQL Server database objects in the Ecuador ERP system. Following these standards ensures consistency, maintainability, and clarity across the entire database architecture.
 
 ### Objectives
+
 - **Consistency**: All database objects follow the same naming patterns
 - **Clarity**: Names are self-documenting and easy to understand
 - **Maintainability**: Facilitates long-term maintenance and updates
@@ -36,28 +38,62 @@ This document establishes the naming conventions for SQL Server database objects
 ## General Principles
 
 ### 1. Language
+
 - Use **English** for all database object names
 - Exception: Business-specific terms from Ecuador that have no direct English translation
 
 ### 2. Character Set
+
 - Use only alphanumeric characters (A-Z, a-z, 0-9)
-- Use underscores (_) as word separators
+- Use underscores (\_) as word separators
 - Avoid special characters, spaces, or accented letters
 
 ### 3. Case Convention
+
 - Use **PascalCase** for table and column names
 - Use **PascalCase** for stored procedures, functions, and views
 - Avoid ALL CAPS except for abbreviations (ID, SRI, RUC)
 
 ### 4. Abbreviations
+
 - Minimize abbreviations
 - Use only well-known abbreviations (ID, Num, Qty, Amt)
 - Document custom abbreviations in a glossary
 
 ### 5. Prefixes and Suffixes
+
 - Avoid Hungarian notation
 - Use prefixes for stored procedures and functions to indicate type
 - Use descriptive suffixes when necessary (Date, Time, Status, Type)
+
+### 6. Multi-Entity Schemas
+
+When a schema contains **multiple entities** (e.g., `Purchases` contains `Supplier`, `PurchaseInvoice`, `PurchaseOrder`), always include the entity name in object names to avoid ambiguity:
+
+```sql
+-- ✅ Good: Clear entity context in multi-entity schema
+Purchases.SupplierGetById
+Purchases.SupplierCreate
+Purchases.PurchaseInvoiceGetById
+Purchases.PurchaseOrderApprove
+
+-- ❌ Bad: Ambiguous in multi-entity schema
+Purchases.GetById  -- Which entity?
+Purchases.Create   -- Create what?
+```
+
+**When to include entity names:**
+
+- **Always** include entity name when schema has 2+ main entities
+- **Optional** when schema represents a single entity/concept
+- **Required** for views, stored procedures, functions, and triggers
+
+**Examples of multi-entity schemas:**
+
+- `Purchases`: Supplier, PurchaseInvoice, PurchaseOrder
+- `Restaurant`: Table, Order, MenuItem, Reservation
+- `Common`: Company, User, Address, Parameter
+- `Inventory`: Product, Warehouse, StockMovement
 
 ---
 
@@ -66,17 +102,20 @@ This document establishes the naming conventions for SQL Server database objects
 ### Tables
 
 #### Naming Pattern
+
 ```
 [Schema].[EntityName]
 ```
 
 #### Rules
+
 - Singular noun (e.g., `Order`, not `Orders`)
 - PascalCase format
 - No prefix (avoid `tbl`, `TB_`, etc.)
 - Descriptive and business-oriented
 
 #### Examples
+
 ```sql
 Sales.Order
 Sales.OrderDetail
@@ -87,7 +126,9 @@ Accounting.JournalEntry
 ```
 
 #### Reserved Words
+
 If a table name conflicts with SQL Server reserved words, use brackets:
+
 ```sql
 Restaurant.[Table]
 Restaurant.[Order]
@@ -98,18 +139,22 @@ Restaurant.[Order]
 ### Columns
 
 #### Naming Pattern
+
 ```
 [DescriptiveName]
 ```
 
 #### Rules
+
 - PascalCase format
 - No prefix indicating data type
 - Descriptive and self-explanatory
 - Use complete words (avoid abbreviations)
 
 #### Standard Columns
+
 Every table should include these audit columns:
+
 ```sql
 Id                 BIGINT IDENTITY(1,1) PRIMARY KEY
 CreatedAt          DATETIME2(7) NOT NULL DEFAULT GETUTCDATE()
@@ -122,6 +167,7 @@ DeletedBy          BIGINT NULL
 ```
 
 #### Examples
+
 ```sql
 -- Good
 ProductName
@@ -141,7 +187,9 @@ tax_amt
 ```
 
 #### Boolean Columns
+
 Use `Is` or `Has` prefix:
+
 ```sql
 IsActive
 IsDeleted
@@ -150,7 +198,9 @@ IsProcessed
 ```
 
 #### Date/Time Columns
+
 Use descriptive suffixes:
+
 ```sql
 CreatedAt
 UpdatedAt
@@ -166,16 +216,19 @@ ProcessedAt
 ### Primary Keys
 
 #### Naming Pattern
+
 ```
 PK_[TableName]_[ColumnName]
 ```
 
 #### Rules
+
 - Always use `Id` as the primary key column name
 - Use `BIGINT IDENTITY(1,1)` for auto-increment
 - Single column primary key preferred
 
 #### Examples
+
 ```sql
 -- Table: Sales.Order
 CONSTRAINT PK_Order_Id PRIMARY KEY (Id)
@@ -189,16 +242,19 @@ CONSTRAINT PK_Product_Id PRIMARY KEY (Id)
 ### Foreign Keys
 
 #### Naming Pattern
+
 ```
 FK_[ChildTable]_[ParentTable]_[ColumnName]
 ```
 
 #### Rules
+
 - Foreign key column name: `[ParentTable]Id`
 - Use `BIGINT` to match primary key type
 - Include `ON DELETE` and `ON UPDATE` rules when appropriate
 
 #### Examples
+
 ```sql
 -- Table: Sales.OrderDetail
 OrderId BIGINT NOT NULL
@@ -214,6 +270,7 @@ CONSTRAINT FK_Order_Customer_CustomerId
 ```
 
 #### Composite Foreign Keys
+
 ```sql
 CONSTRAINT FK_OrderItem_Order_OrderId_LineNumber
     FOREIGN KEY (OrderId, LineNumber)
@@ -225,22 +282,26 @@ CONSTRAINT FK_OrderItem_Order_OrderId_LineNumber
 ### Indexes
 
 #### Naming Pattern
+
 ```
 IX_[TableName]_[Column1]_[Column2]_[...]
 ```
 
 For unique indexes:
+
 ```
 UIX_[TableName]_[Column1]_[Column2]_[...]
 ```
 
 #### Rules
+
 - Use `IX_` prefix for non-clustered indexes
 - Use `UIX_` prefix for unique indexes
 - List columns in the order they appear in the index
 - Include `INCLUDE` columns in the name if critical
 
 #### Examples
+
 ```sql
 -- Non-clustered index
 CREATE NONCLUSTERED INDEX IX_Order_CustomerId_OrderDate
@@ -262,11 +323,13 @@ INCLUDE (Total, OrderDate)
 ### Constraints
 
 #### Check Constraints
+
 ```
 CK_[TableName]_[ColumnName]_[Description]
 ```
 
 Examples:
+
 ```sql
 CONSTRAINT CK_Order_Total_Positive
     CHECK (Total >= 0)
@@ -279,11 +342,13 @@ CONSTRAINT CK_Employee_Email_Format
 ```
 
 #### Default Constraints
+
 ```
 DF_[TableName]_[ColumnName]
 ```
 
 Examples:
+
 ```sql
 CONSTRAINT DF_Order_CreatedAt
     DEFAULT GETUTCDATE()
@@ -296,11 +361,13 @@ CONSTRAINT DF_Order_Status
 ```
 
 #### Unique Constraints
+
 ```
 UQ_[TableName]_[Column1]_[Column2]_[...]
 ```
 
 Examples:
+
 ```sql
 CONSTRAINT UQ_User_Email
     UNIQUE (Email)
@@ -314,6 +381,7 @@ CONSTRAINT UQ_Product_CompanyId_SKU
 ### Views
 
 #### Naming Pattern
+
 ```
 [Schema].[EntityName]View
 OR
@@ -321,22 +389,27 @@ OR
 ```
 
 #### Rules
+
 - Suffix with `View`
 - PascalCase format
+- **Include entity name** when schema has multiple entities
 - Descriptive of the data returned
 - No `v` or `vw` prefix
 
 #### Examples
-```sql
--- Denormalized views
-Sales.OrderSummaryView
-Inventory.ProductStockView
-Restaurant.ActiveTablesView
 
--- Reporting views
-Accounting.MonthlyRevenueView
-Sales.TopCustomersView
-Restaurant.DailySalesView
+```sql
+-- Multi-entity schemas: Include entity name
+Inventory.ProductStockView           -- Inventory has: Product, Warehouse, Movement
+Inventory.WarehouseCapacityView
+Restaurant.TableAvailabilityView     -- Restaurant has: Table, Order, MenuItem
+Restaurant.OrderSummaryView
+Purchases.SupplierPerformanceView    -- Purchases has: Supplier, Invoice, Order
+Purchases.PurchaseInvoiceStatusView
+
+-- Single-entity or aggregate views
+Accounting.MonthlyRevenueView        -- Aggregate across multiple entities
+Sales.TopCustomersView               -- Reporting/analytics view
 
 -- Security views
 Common.UserPermissionsView
@@ -348,11 +421,13 @@ Sales.CustomerContactView
 ### Stored Procedures
 
 #### Naming Pattern
+
 ```
 [Schema].[Entity][Action][Detail]
 ```
 
 #### Actions
+
 - `Get` - Retrieve single record
 - `Find` - Retrieve multiple records
 - `Create` - Insert new record
@@ -363,47 +438,64 @@ Sales.CustomerContactView
 - `Validate` - Validation operation
 
 #### Statistics Procedures (Special Pattern)
+
 ```
 [Schema].StatisticsGet[Type]
 ```
 
 #### Rules
+
 - PascalCase format
-- Entity name first, then action
+- **Always include entity name** when schema has multiple entities
+- Entity name first, then action, then optional detail
 - No `sp_` prefix (reserved for system)
 - No `usp_` or `proc_` prefix
 - Use descriptive action verbs
+- Omit entity only for cross-entity operations or when schema represents a single concept
 
 #### Examples
 
-**CRUD Operations:**
+**CRUD Operations (Multi-Entity Schemas):**
+
 ```sql
--- Get single record
+-- Get single record - Entity name included
 Sales.OrderGetById
 Inventory.ProductGetBySKU
 Restaurant.TableGetByNumber
+Purchases.SupplierGetById              -- Purchases has multiple entities
+Purchases.PurchaseInvoiceGetById       -- Clear which entity
+Purchases.PurchaseOrderGetById
 
--- Find multiple records
+-- Find multiple records - Entity name included
 Sales.OrderFindByCustomer
 Sales.OrderFindByDateRange
 Inventory.ProductFindByCategory
+Inventory.WarehouseFindByRegion        -- Inventory has multiple entities
+Purchases.SupplierFindByCountry
+Purchases.PurchaseInvoiceFindByStatus
 
--- Create
+-- Create - Entity name included
 Sales.OrderCreate
 Sales.OrderCreateWithItems
 Inventory.ProductCreate
+Restaurant.ReservationCreate           -- Restaurant has multiple entities
+Restaurant.MenuItemCreate
 
--- Update
+-- Update - Entity name included
 Sales.OrderUpdate
 Sales.OrderUpdateStatus
 Inventory.ProductUpdatePrice
+Purchases.SupplierUpdateContact
+Purchases.PurchaseOrderUpdateStatus
 
--- Delete (soft delete)
+-- Delete (soft delete) - Entity name included
 Sales.OrderDelete
 Inventory.ProductDelete
+Restaurant.ReservationDelete
 ```
 
 **Business Logic:**
+
 ```sql
 Sales.OrderProcessPayment
 Sales.OrderProcessRefund
@@ -414,6 +506,7 @@ Accounting.JournalEntryPost
 ```
 
 **Statistics/Analytics:**
+
 ```sql
 Restaurant.StatisticsGetDashboard
 Restaurant.StatisticsGetRealTime
@@ -424,6 +517,7 @@ Inventory.StatisticsGetMovement
 ```
 
 **Validation:**
+
 ```sql
 Sales.OrderValidateStock
 Inventory.ProductValidateQuantity
@@ -435,44 +529,69 @@ Restaurant.TableValidateAvailability
 ### Functions
 
 #### Naming Pattern
+
 ```
-[Schema].[fn][DescriptiveName]
+[Schema].[fn][Entity][DescriptiveName]   -- For multi-entity schemas
+[Schema].[fn][DescriptiveName]          -- For single-entity or utility schemas
 ```
 
 #### Types and Prefixes
+
 - Scalar functions: `fn`
 - Table-valued functions: `fn` or `tvf`
 - Inline table-valued: `fn` or `itvf`
 
 #### Rules
+
 - PascalCase after prefix
+- **Include entity name** when schema has multiple entities
 - Descriptive of return value
 - Use verb or noun depending on function type
 
 #### Examples
 
 **Scalar Functions:**
+
 ```sql
+-- Utility functions (no entity needed)
 Common.fnCalculateTax
 Common.fnGetBusinessDays
-Sales.fnCalculateDiscount
-Restaurant.fnCalculateServiceCharge
 Accounting.fnGetFiscalYear
+
+-- Multi-entity schema: Include entity
+Sales.fnOrderCalculateDiscount         -- Sales may have Order, Quote, Invoice
+Restaurant.fnOrderCalculateTotal       -- Restaurant has Order, Table, etc.
+Inventory.fnProductCalculateReorderPoint
+Purchases.fnSupplierGetCreditLimit
 ```
 
 **Table-Valued Functions:**
+
 ```sql
-Sales.fnGetOrdersByDateRange
-Inventory.fnGetLowStockProducts
-Restaurant.fnGetActiveOrders
+-- Multi-entity schemas: Include entity
+Sales.fnOrderGetByDateRange
+Inventory.fnProductGetLowStock
+Inventory.fnWarehouseGetCapacity
+Restaurant.fnOrderGetActive
+Restaurant.fnTableGetAvailable
+Purchases.fnSupplierGetByRating
+Purchases.fnPurchaseInvoiceGetPending
+
+-- Utility functions
 Common.fnSplitString
+Common.fnGetDateRange
 ```
 
 **Inline Table-Valued Functions:**
+
 ```sql
+-- Multi-entity schemas: Include entity
 Sales.fnOrderDetailsByOrderId
 Inventory.fnProductsByCategory
+Inventory.fnStockMovementByWarehouse
 Restaurant.fnTablesByStatus
+Restaurant.fnReservationsByDate
+Purchases.fnPurchaseOrdersBySupplier
 ```
 
 ---
@@ -480,11 +599,13 @@ Restaurant.fnTablesByStatus
 ### Triggers
 
 #### Naming Pattern
+
 ```
 [Schema].[TR_][TableName]_[Action]_[Description]
 ```
 
 #### Actions
+
 - `AI` - After Insert
 - `AU` - After Update
 - `AD` - After Delete
@@ -493,17 +614,27 @@ Restaurant.fnTablesByStatus
 - `IDO` - Instead Of Delete
 
 #### Rules
+
 - `TR_` prefix
-- Table name
+- **Full table name** (which already includes entity context)
 - Action abbreviation
 - Brief description
+- Table name naturally disambiguates in multi-entity schemas
 
 #### Examples
+
 ```sql
+-- Multi-entity schemas: Table name provides entity context
 Sales.TR_Order_AU_UpdateTimestamp
 Sales.TR_OrderDetail_AI_ValidateStock
 Inventory.TR_Product_AU_AuditLog
+Inventory.TR_Warehouse_AI_InitializeStock
+Inventory.TR_StockMovement_AI_UpdateInventory
 Restaurant.TR_Order_AD_PreventDelete
+Restaurant.TR_Table_AU_TrackChanges
+Restaurant.TR_Reservation_AI_ValidateAvailability
+Purchases.TR_Supplier_AU_LogChanges
+Purchases.TR_PurchaseInvoice_AI_ValidateTerms
 Accounting.TR_JournalEntry_IIO_Validate
 ```
 
@@ -512,14 +643,17 @@ Accounting.TR_JournalEntry_IIO_Validate
 ## Schemas
 
 ### Purpose
+
 Schemas organize database objects by business domain or functional area.
 
 ### Naming Pattern
+
 ```
 [BusinessDomain]
 ```
 
 ### Rules
+
 - PascalCase format
 - Singular noun
 - Represents a bounded context or business module
@@ -557,25 +691,26 @@ FactElect        -- Electronic invoicing
 
 ### Standard Mapping
 
-| Data Type | Use Case | Notes |
-|-----------|----------|-------|
-| `BIGINT` | Primary keys, Foreign keys | Identity(1,1) for PKs |
-| `NVARCHAR(n)` | Text fields | Use for Unicode support |
-| `VARCHAR(n)` | ASCII-only text | Use when Unicode not needed |
-| `NVARCHAR(MAX)` | Large text | Use sparingly |
-| `DECIMAL(p,s)` | Money, precise numbers | e.g., DECIMAL(18,2) |
-| `BIT` | Boolean flags | Use IsXxx naming |
-| `DATETIME2(7)` | Timestamps | Preferred over DATETIME |
-| `DATE` | Date only | No time component |
-| `TIME(7)` | Time only | No date component |
-| `UNIQUEIDENTIFIER` | GUIDs | Use for distributed systems |
-| `INT` | Counts, small numbers | Max ~2 billion |
-| `SMALLINT` | Very small numbers | Max 32,767 |
-| `TINYINT` | Enums, status codes | Max 255 |
+| Data Type          | Use Case                   | Notes                       |
+| ------------------ | -------------------------- | --------------------------- |
+| `BIGINT`           | Primary keys, Foreign keys | Identity(1,1) for PKs       |
+| `NVARCHAR(n)`      | Text fields                | Use for Unicode support     |
+| `VARCHAR(n)`       | ASCII-only text            | Use when Unicode not needed |
+| `NVARCHAR(MAX)`    | Large text                 | Use sparingly               |
+| `DECIMAL(p,s)`     | Money, precise numbers     | e.g., DECIMAL(18,2)         |
+| `BIT`              | Boolean flags              | Use IsXxx naming            |
+| `DATETIME2(7)`     | Timestamps                 | Preferred over DATETIME     |
+| `DATE`             | Date only                  | No time component           |
+| `TIME(7)`          | Time only                  | No date component           |
+| `UNIQUEIDENTIFIER` | GUIDs                      | Use for distributed systems |
+| `INT`              | Counts, small numbers      | Max ~2 billion              |
+| `SMALLINT`         | Very small numbers         | Max 32,767                  |
+| `TINYINT`          | Enums, status codes        | Max 255                     |
 
 ### Recommendations
 
 **Strings:**
+
 ```sql
 -- Short codes (SKU, document numbers)
 NVARCHAR(50)
@@ -594,6 +729,7 @@ NVARCHAR(MAX)
 ```
 
 **Numbers:**
+
 ```sql
 -- Money, prices, totals
 DECIMAL(18, 2)
@@ -609,6 +745,7 @@ DECIMAL(18, 3)
 ```
 
 **Dates:**
+
 ```sql
 -- Timestamps (created, updated, deleted)
 DATETIME2(7) NOT NULL DEFAULT GETUTCDATE()
@@ -744,24 +881,32 @@ GO
 ## Best Practices
 
 ### 1. Consistency is Key
+
 - Always follow the same patterns
 - Document deviations with clear reasons
 - Review and update conventions as needed
 
 ### 2. Self-Documenting Names
+
 ```sql
--- Good: Clear and descriptive
+-- Good: Clear and descriptive with entity context
 Sales.OrderCalculateTotal
 Restaurant.TableGetAvailable
+Restaurant.OrderProcessKitchen       -- Clear: Restaurant Order, not Sales Order
 Inventory.ProductValidateStock
+Purchases.SupplierGetByRating        -- Clear: Supplier entity in Purchases
+Purchases.PurchaseInvoiceApprove     -- Clear: PurchaseInvoice entity
 
 -- Bad: Cryptic and unclear
 Sales.sp_calc_tot
 Restaurant.get_tbl
 Inventory.val_prod
+Purchases.GetById                     -- Which entity?
+Purchases.Approve                     -- Approve what?
 ```
 
 ### 3. Avoid Reserved Words
+
 ```sql
 -- Avoid
 User
@@ -779,11 +924,13 @@ UserAccount
 ```
 
 ### 4. Schema Organization
+
 - Group related objects in the same schema
 - Use schemas to enforce security boundaries
 - Avoid putting everything in `dbo`
 
 ### 5. Documentation
+
 - Add extended properties for tables and columns
 - Document complex business rules
 - Maintain a data dictionary
@@ -806,11 +953,13 @@ EXEC sys.sp_addextendedproperty
 ```
 
 ### 6. Performance Considerations
+
 - Index naming helps identify purpose
 - Use filtered indexes with descriptive names
 - Document index usage in comments
 
 ### 7. Version Control
+
 - Store all database objects in source control
 - Use meaningful commit messages
 - Follow naming conventions in migration scripts
@@ -820,6 +969,7 @@ EXEC sys.sp_addextendedproperty
 ## Anti-Patterns to Avoid
 
 ### ❌ Don't Use
+
 ```sql
 -- Hungarian notation
 tblOrder
@@ -849,6 +999,7 @@ CUSTOMER_INFO
 ```
 
 ### ✅ Use Instead
+
 ```sql
 -- Clear, PascalCase names
 Sales.Order
@@ -856,15 +1007,25 @@ Sales.OrderDetail
 Inventory.ProductCategory
 Common.CustomerAddress
 
--- Standard stored procedures
+-- Standard stored procedures with entity names
 Sales.OrderGetById
 Inventory.ProductUpdate
-Common.fnCalculateTax
+Inventory.WarehouseGetByRegion        -- Multi-entity schema
+Purchases.SupplierCreate              -- Clear entity context
+Purchases.PurchaseInvoiceApprove      -- No ambiguity
+Restaurant.TableReserve
+Restaurant.OrderProcessPayment
 
--- Descriptive names
+-- Utility functions (no entity needed)
+Common.fnCalculateTax
+Common.fnGetBusinessDays
+
+-- Descriptive views with entity names
 Sales.OrderSummaryView
-Inventory.ProductStockLevel
-Common.CustomerContactInfo
+Inventory.ProductStockLevelView
+Inventory.WarehouseCapacityView       -- Multi-entity schema
+Purchases.SupplierPerformanceView     -- Clear entity
+Restaurant.TableOccupancyView
 ```
 
 ---
@@ -891,19 +1052,22 @@ Before implementing any database object, verify:
 ---
 
 ## Document Version
+
 - **Version**: 1.0
 - **Date**: December 2025
 - **Author**: Development Team
 - **Status**: Active
 
 ## Revision History
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0 | Dec 2025 | Dev Team | Initial version |
+
+| Version | Date     | Author   | Changes         |
+| ------- | -------- | -------- | --------------- |
+| 1.0     | Dec 2025 | Dev Team | Initial version |
 
 ---
 
 ## References
+
 - [SQL Server Naming Conventions - Microsoft Docs](https://docs.microsoft.com/sql/relational-databases/tables/table-naming-conventions)
 - [Database Design Best Practices](https://www.sqlshack.com/learn-sql-naming-conventions/)
 - [Clean Code Database](https://www.red-gate.com/simple-talk/databases/sql-server/database-administration-sql-server/sql-server-naming-standards/)
