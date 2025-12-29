@@ -18,9 +18,6 @@ namespace Purchases.Application.Dtos
         [MaxLength(100)]
         public required string DocumentCode { get; set; }
 
-        public required DateTime DueDate { get; set; }
-
-
         public required decimal SubtotalExcludingTaxes { get; set; }
 
 
