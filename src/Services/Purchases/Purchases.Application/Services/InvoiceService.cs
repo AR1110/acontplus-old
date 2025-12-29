@@ -5,7 +5,7 @@ namespace Purchases.Application.Services;
 public class InvoiceService(IUnitOfWork unitOfWork) : IInvoiceService
 {
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
-    private const string ModuleName = "Purchases.Factura_";
+    private const string ModuleName = "Purchases.Invoice";
 
     public async Task<Result<PagedResult<InvoiceItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default)
     {
