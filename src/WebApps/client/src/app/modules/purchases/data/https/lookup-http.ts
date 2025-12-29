@@ -6,11 +6,10 @@ import { LookUpRepository } from '../repositories/lookup-repositoriy';
 import { HttpClient } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { PURCHASE_PATHS } from '@modules/purchases/purchases.const';
-import { LookupCache } from '@core/services/lookup-cache';
 import { LookupType } from '@core/models/lookup-type';
 import { PagedResult } from '@acontplus/core';
-import { GetLookupsMapper } from '@restaurant/data/lookup/get-lookups-mapper';
-import { map, of, tap } from 'rxjs';
+import { map } from 'rxjs';
+import { PurchaseLookupsMapper } from '../mappers/purchase-lookup-mapper';
 
 @Injectable({
   providedIn: 'root',
@@ -20,10 +19,10 @@ export class LookUpHttp implements LookUpRepository {
   #url = `${PATHS_API.PURCHASE}${PURCHASE_PATHS.LOOKUPS}`;
 
   getLookup(params: { type: LookupType; keys: string }): Observable<any> {
-    const queryParams = GetLookupsMapper.toJson(params.type);
+    const queryParams = PurchaseLookupsMapper.toJson(params.type);
 
     return this.#http
       .get<PagedResult<any>>(`${this.#url}?${queryParams}`)
-      .pipe(map((response) => GetLookupsMapper.fromJson(response)));
+      .pipe(map((response) => PurchaseLookupsMapper.fromJson(response)));
   }
 }
