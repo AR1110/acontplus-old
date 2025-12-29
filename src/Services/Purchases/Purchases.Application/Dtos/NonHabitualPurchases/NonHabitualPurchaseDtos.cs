@@ -3,7 +3,6 @@ namespace Purchases.Application.Dtos.NonHabitualPurchases;
 public record NonHabitualPurchaseCreate : BaseDto
 {
     public ICollection<IncomingDocumentDetailDto> Details { get; init; } = [];
-    public int UserRoleId { get; init; }
 }
 
 public record NonHabitualPurchaseUpdate : BaseDto
