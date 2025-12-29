@@ -46,7 +46,7 @@ public static class CreateEndpoints
             var dt = await fileTextService.GetDocsAsync(FileData.GetFileByte(file));
             if (!DataValidation.DataTableIsNull(dt))
             {
-                var dsExistentDocument = await adoRepository.GetDataSetAsync("Recepcion.Documento_Check_Existence",
+                var dsExistentDocument = await adoRepository.GetDataSetAsync("Purchases.ReceivedDocumentCheckExistence",
                     new Dictionary<string, object> { { "json", JsonExtensions.SerializeOptimized(dt) } });
 
                 var dtExistent = dsExistentDocument.Tables.Count > 0 ? dsExistentDocument.Tables[0] : new DataTable();

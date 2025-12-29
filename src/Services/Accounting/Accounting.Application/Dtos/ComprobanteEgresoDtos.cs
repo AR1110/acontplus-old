@@ -37,7 +37,7 @@ public record PagoDto
     public DateTime FechaEmision { get; init; }
     public string? Nro { get; init; }
     public decimal Valor { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
     public bool Posfechado { get; init; }
     public int Secuencial { get; init; }
     public bool Cobro { get; init; }
@@ -51,28 +51,28 @@ public record PagoDetalleDto
 {
     public int IdCuotaPorPagar { get; init; }
     public int Secuencial { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal Abono { get; init; }
+    public decimal Balance { get; init; }
+    public decimal AmountPaid { get; init; }
 }
 
 public record HistorialDto
 {
     public int IdCuentaPorPagar { get; init; }
     public int Secuencial { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal Abono { get; init; }
+    public decimal Balance { get; init; }
+    public decimal AmountPaid { get; init; }
 }
 
 public record CuentaDto
 {
     public int IdCuentaPorPagar { get; init; }
     public int IdEstadoPago { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
 }
 
 public record CuotaDto
 {
     public int IdCuotaPorPagar { get; init; }
     public int IdEstadoPago { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
 }

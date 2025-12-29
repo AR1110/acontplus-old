@@ -79,7 +79,7 @@ public static class GetEndpoints
         {
             var response = new SpResponse { Code = string.Empty };
 
-            var ds = await adoRepository.GetDataSetAsync("Recepcion.Documento_Get_Id",
+            var ds = await adoRepository.GetDataSetAsync("Purchases.ReceivedDocumentGetById",
             new Dictionary<string, object>
               {
                     { "userRoleId", userContext.GetClaimValue<int>("userRoleId") },

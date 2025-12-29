@@ -30,5 +30,7 @@ public record BaseDto
     public required decimal DiscountAmount { get; set; }
 
     public int? SubcategoryId { get; set; }
+    public decimal Balance { get; init; }
+    public decimal AmountPaid { get; init; }
 }
 

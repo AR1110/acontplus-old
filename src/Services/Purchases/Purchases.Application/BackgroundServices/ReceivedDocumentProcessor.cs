@@ -1,11 +1,10 @@
-using System.Text.Json;
 using Acontplus.Billing.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Purchases.Application.Dtos.ReceivedDocuments;
-using Purchases.Application.Interfaces;
+using System.Text.Json;
 
 namespace Purchases.Application.BackgroundServices;
 

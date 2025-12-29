@@ -3,7 +3,7 @@ using Purchases.Application.Dtos.HabitualPurchases;
 
 namespace Purchases.Application.Interfaces;
 
-public interface IHabitualPurchaseService
+public interface IHabitualService
 {
     Task<Result<PagedResult<HabitualPurchaseItem>, DomainError>> GetAsync(PaginationRequest paginationRequest, CancellationToken cancellationToken = default);
     Task<Result<HabitualPurchaseItem, DomainError>> AddAsync(HabitualPurchaseCreate request, CancellationToken cancellationToken = default);
