@@ -46,5 +46,6 @@ public record ItemItem
     public decimal? PriceWithTax { get; set; }
     public string? Category { get; set; }
     public string? AcronymFamily { get; set; }
+    public decimal? stock { get; set; } = 0;
     public ICollection<ItemCompositionItem>? Compositions { get; init; }
 }

@@ -108,9 +108,9 @@ export class ItemGetByIdMapper {
   static fromJson(response: any) {
     const { item, itemCompositions = [] } = JSON.parse(response.payload as string);
 
-    const { id, title, cooking, forPromotion, summary, recipe, instructions } = item[0];
+    const { id, title, cooking, forPromotion, summary, preparationInstructions } = item[0];
 
-    console.log(itemCompositions)
+
     const flatMapped = itemCompositions.map((item: any) => {
       const mainMeasures = JSON.parse(item.principal);
       const fractionalMeasures = JSON.parse(item.fractional);
@@ -164,15 +164,13 @@ export class ItemGetByIdMapper {
         }
       }
     });
-    console.log(tree);
 
     // ✅ 4. RESPUESTA FINAL LIMPIA
     return {
       item: {
         id,
         summary,
-        recipe,
-        instructions,
+        preparationInstructions,
         title,
         cooking,
         forPromotion,
@@ -194,7 +192,7 @@ export class ItemUpdateMapper {
       summary: item.summary,
       cooking: item.cooking,
       recipe: item.recipe,
-      instructions: item.instructions,
+      preparationInstructions: item.preparationInstructions,
       isActive: item.isActive,
       compositions: itemCompositions.map((item: any, index: number) => ({
         index: index + 1,

@@ -320,7 +320,7 @@ export class ItemAddEdit implements OnInit {
         id: new FormControl(0),
         summary: new FormControl('', [Validators.required]),
         recipe: new FormControl(''),
-        instructions: new FormControl(''),
+        preparationInstructions: new FormControl(''),
         cooking: new FormControl(false),
         productId: new FormControl(0),
         isActive: new FormControl(true),
