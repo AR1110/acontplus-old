@@ -240,15 +240,13 @@
       "name": "AcontPlus MacOs",
       "configurations": [
         "GatewayApi",
-        "LegacyFrontEnd",
         "ConfigurationApi",
         "IdentityApi",
         "InventoryApi",
         "BillingApi",
         "SalesApi",
         "CommonApi",
-        "AccountingApi",
-        "FrontEnd"
+        "AccountingApi"
       ],
       "stopAll": true
     }

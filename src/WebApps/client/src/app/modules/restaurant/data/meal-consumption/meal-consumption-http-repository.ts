@@ -11,7 +11,7 @@ import {
 } from '@modules/restaurant/domain/models/meal-consumption';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SearchCustomerResponse } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
 import { GetCancellationDetailsResponse } from '@restaurant/application/use-cases/meal-consumption/get-cancellation-details.use-case';

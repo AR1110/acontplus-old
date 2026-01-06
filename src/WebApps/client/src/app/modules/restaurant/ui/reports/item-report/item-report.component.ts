@@ -6,7 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
-import { RESTAURANT_CODE_REPORT } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_CODE_REPORT } from '@restaurant/restaurant-const';
 import { debounceTime, distinctUntilChanged, map, Observable, startWith, switchMap } from 'rxjs';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { AsyncPipe } from '@angular/common';

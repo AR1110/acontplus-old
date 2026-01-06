@@ -4,16 +4,13 @@ import { Button, DynamicCard, DataGrid } from '@acontplus/ng-components';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
-import { MatButton } from '@angular/material/button';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatSelect } from '@angular/material/select';
 import { MatOption } from '@angular/material/core';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { TipoDoc } from '@core/models/tipo-doc.model';
-import { Subcategory } from '@accounting/sub-category/domain/subcategory';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
+import { LOOKUP_HTTP_TOKEN, RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
 import { DialogService } from '@core/services/dialog.service';
 import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
@@ -24,8 +21,8 @@ import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { ReceivedDocumentList } from '@purchases/data/models/received-document';
-import { MatIcon } from '@angular/material/icon';
 import { DataGridColumn } from '@shared/components/data-grid/types';
+import { ContextType, LookupItem, ModuleType } from '@core/models/lookup-type';
 
 @Component({
   selector: 'app-received-document',
@@ -36,14 +33,12 @@ import { DataGridColumn } from '@shared/components/data-grid/types';
     DynamicCard,
     FormsModule,
     InputNumberDirective,
-    MatButton,
     MatFormField,
     MatLabel,
     MatInput,
     MatSelect,
     MatOption,
     DataGrid,
-    MatIcon,
     SupplierSearchComponent,
   ],
   templateUrl: './received-document.html',
@@ -102,7 +97,7 @@ export class ReceivedDocument implements OnInit {
   textSearch = '';
   dataSearch = {
     codDoc: '',
-    codEstab: '',
+    estabId: 0,
     serieComprobante: '',
     subcategoryId: 0,
     startDate: '',
@@ -114,32 +109,31 @@ export class ReceivedDocument implements OnInit {
   extraOptionsIcon = 'visibility';
   extraOptionsTooltip = 'Ver más filtros';
   moreOptionsFilter = false;
-  subcategories: Subcategory[] = [];
-  establecimientos: EstablecimientoSelectHtmlOnly[] = [];
+  subcategories = signal<LookupItem[]>([]);
+  establishments = signal<LookupItem[]>([]);
 
   // DataGrid pagination properties
   page = 0;
   pageSize = 10;
   pageCount = 0;
 
+  private readonly _lookupRepository = inject(LOOKUP_HTTP_TOKEN);
   private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
   private readonly _dialogService = inject(DialogService);
   private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
   private readonly _tS = inject(ToastrNotificationService);
 
   async alertEstabSelected() {
-    if (this.establecimientos.length === 0) {
+    if (this.establishments().length === 0) {
       return this._tS.show({
         type: 'warning',
         message: 'Seleccione el Establecimiento',
       });
     }
-    const dataEstab = this.establecimientos.find(
-      (estab) => estab.codEstab === this.dataSearch.codEstab,
-    );
+    const dataEstab = this.establishments().find((estab) => estab.id === this.dataSearch.estabId);
     if (dataEstab) {
       const { isConfirmed } = await Swal.fire({
-        title: 'Estab.: ' + dataEstab.nombreComercial,
+        title: 'Estab.: ' + dataEstab.value,
         text: 'Esta seguro de realizar una nueva importación de comprobantes en este establecimiento?',
         icon: 'warning',
         showCancelButton: true,
@@ -154,22 +148,45 @@ export class ReceivedDocument implements OnInit {
   }
 
   loadFilters() {
-    this._receivedDocumentSvc.getDataFilter().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
-      this.documentTypes = response.documentTypes;
-      const codEstabFound = this.establecimientos.find((x) => x.predeterminado)?.codEstab;
-      if (codEstabFound) {
-        this.dataSearch.codEstab = codEstabFound;
-        this.loadData();
-      }
-    });
+    this._lookupRepository
+      .getLookup({
+        module: ModuleType.ReceivedDocument,
+        context: ContextType.Filters,
+      })
+      .subscribe((response) => {
+        this.establishments.set(response.establishments);
+
+        const newEstablishment: LookupItem = {
+          id: 0,
+          code: '',
+          value: 'Todos',
+          displayOrder: 0,
+          isActive: false,
+          isDefault: true,
+        };
+        response.subcategories.unshift(newEstablishment);
+
+        this.subcategories.set(response.subcategories);
+
+        // Set default establishment
+        const estabDefault = this.establishments().find((estab) => estab.isDefault);
+        if (estabDefault) {
+          this.dataSearch.estabId = estabDefault.id;
+          this.loadData();
+        } else {
+          this._tS.show({
+            type: 'warning',
+            message: 'No hay establecimientos predeterminados',
+          });
+        }
+      });
   }
 
   loadData() {
     const dataSearch = {
       pageIndex: this.page + 1,
       pageSize: this.pageSize,
-      codEstab: this.dataSearch.codEstab,
+      estabId: this.dataSearch.estabId,
       rucProveedor: this.dataSearch.rucProveedor,
       claveAcceso: this.dataSearch.claveAcceso,
       ckBoxFecha: true,
@@ -180,6 +197,9 @@ export class ReceivedDocument implements OnInit {
       subcategoryId: this.dataSearch.subcategoryId,
       tipo: 1,
     };
+
+    console.log(dataSearch);
+
     this._receivedDocumentSvc.get(dataSearch).subscribe((response) => {
       this.documents.set(response.documents);
       this.pageCount = this.documents()[0]?.totalRecords ?? 0;
@@ -227,15 +247,13 @@ export class ReceivedDocument implements OnInit {
     if (!(await this.alertEstabSelected())) return;
 
     this._subCategoryUseCase.getAll({}).subscribe((response) => {
-      this.subcategories = response as Subcategory[];
-      if (this.subcategories.length > 0) {
+      if (this.subcategories().length > 0) {
         this._dialogService.open(DocManualUploadComponent, {
           size: 'lg',
           data: {
-            codEstab: this.dataSearch.codEstab,
-            nombreComercial: this.establecimientos.find(
-              (x) => x.codEstab == this.dataSearch.codEstab,
-            )?.nombreComercial,
+            estabId: this.dataSearch.estabId,
+            nombreComercial: this.establishments().find((x) => x.id == this.dataSearch.estabId)
+              ?.value,
           },
         });
       } else {

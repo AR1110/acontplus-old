@@ -1,4 +1,4 @@
-import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';

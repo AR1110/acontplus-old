@@ -34,7 +34,7 @@ BEGIN
     --> Order
     DECLARE @OrderByClause NVARCHAR(200);
 
-    --> Parse JSON filters
+    --> filters
     DECLARE @idEntidad INT
            ,@UserId INT
            ,@IncludeDeleted BIT = 0
@@ -184,6 +184,7 @@ BEGIN
                      SELECT * FROM #FilteredOrders ' + @OrderByClause + N' OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
 
                      IF OBJECT_ID(''tempdb..#FilteredOrders'') IS NOT NULL DROP TABLE #FilteredOrders ' ;
+
         EXEC sp_executesql
             @DataSQL
            ,@Params

@@ -7,7 +7,6 @@ CREATE OR ALTER VIEW Compra.v_DocumentoIngreso WITH SCHEMABINDING AS (
           ,di.fechaEmision
           ,di.importeTotal
           ,di.idUsuario
-          ,di.idEntidad
           ,di.idProveedor
           ,di.secuencial
           ,es.estab + '-' + pe.ptoEmi + '-' +  RIGHT('000000000' + CAST(di.secuencial AS VARCHAR(9)), 9) as serieComprobante

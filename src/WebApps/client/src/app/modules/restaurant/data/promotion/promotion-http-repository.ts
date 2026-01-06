@@ -4,7 +4,7 @@ import { PromotionListDto } from '@modules/restaurant/domain/models/promotion';
 import { PromotionRepository } from '@restaurant/domain/repositories/promotion-repository';
 import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { PromotionListMapper } from '@restaurant/data/promotion/promotion-list-mapper';
 import { PromotionSaveMapper } from '@restaurant/data/promotion/promotion-save-mapper';

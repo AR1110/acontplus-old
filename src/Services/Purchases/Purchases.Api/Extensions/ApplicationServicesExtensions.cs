@@ -7,7 +7,7 @@ namespace Purchases.Api.Extensions;
 
 public static class ApplicationServicesExtensions
 {
-    public static IServiceCollection AddComprasServices(this IServiceCollection services,
+    public static IServiceCollection AddPurchasesServices(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddApplicationServices(configuration);

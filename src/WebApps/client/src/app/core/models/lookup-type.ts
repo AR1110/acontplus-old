@@ -17,9 +17,11 @@ export interface LookupItem {
 export enum ModuleType {
   Products = 'Products',
   Customers = 'Customers',
+  ReceivedDocument = 'Received-Document',
 }
 
 export enum ContextType {
-  Filter = 'Filter',
+  // Filter = 'Filter',
+  Filters = 'Filters',
   Dialog = 'Dialog',
 }

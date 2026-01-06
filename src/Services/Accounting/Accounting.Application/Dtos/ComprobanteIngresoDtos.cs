@@ -4,7 +4,7 @@ public record ComprobanteIngresoDto
 {
     public int IdCliente { get; init; }
     public decimal Total { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
     public string CodEstab { get; init; } = null!;
     public string? Observacion { get; init; }
 }
@@ -36,7 +36,7 @@ public record CobroDto
     public int? IdCuentaPorCobrar { get; init; }
     public DateTime FechaEmision { get; init; }
     public decimal Valor { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
     public bool Posfechado { get; init; }
     public int Secuencial { get; init; }
     public bool Cobro { get; init; }
@@ -55,8 +55,8 @@ public record CobroUpdateDto
 public record CobroDetalleDto
 {
     public int IdCuotaPorCobrar { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal Abono { get; init; }
+    public decimal Balance { get; init; }
+    public decimal AmountPaid { get; init; }
     public decimal Interes { get; init; }
     public int DiasMora { get; init; }
     public decimal Mora { get; init; }
@@ -67,8 +67,8 @@ public record HistorialCobroDto
 {
     public int IdCuentaPorCobrar { get; init; }
     public int Secuencial { get; init; }
-    public decimal Saldo { get; init; }
-    public decimal Abono { get; init; }
+    public decimal Balance { get; init; }
+    public decimal AmountPaid { get; init; }
     public decimal Mora { get; init; }
     public int DiasMora { get; init; }
 }
@@ -77,7 +77,7 @@ public record CuentaCobroDto
 {
     public int IdCuentaPorCobrar { get; init; }
     public int IdEstadoPago { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
     public decimal Mora { get; init; }
     public int DiasMora { get; init; }
 }
@@ -86,7 +86,7 @@ public record CuotaCobroDto
 {
     public int IdCuotaPorCobrar { get; init; }
     public int IdEstadoPago { get; init; }
-    public decimal Abono { get; init; }
+    public decimal AmountPaid { get; init; }
     public decimal Mora { get; init; }
     public int DiasMora { get; init; }
 }
