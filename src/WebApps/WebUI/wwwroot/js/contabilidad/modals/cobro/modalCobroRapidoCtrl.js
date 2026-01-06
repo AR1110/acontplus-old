@@ -41,10 +41,15 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.estadoCobro = {};
 
     $scope.selectedDocumentos = [];
- 
+
 
     $scope.entidadesFinancieras = [];
     $scope.subEntidadesFinancieras = [];
+
+    $scope.isLoading = false;
+    $scope.isSaving = false;
+    $scope.isSubmitting = false; // lock to prevent multiple confirmations / duplicate submissions
+
 
     $scope.findSubEntidad = findSubEntidad;
     $scope.openModalCobroAvanzado = openModalCobroAvanzado;
@@ -89,10 +94,14 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     loadInitialData();
     function loadInitialData() {
         try {
-            showLoader();
+
+            $scope.isLoading = true;
+
+
             comprobanteIngresoSvc.paymentFormData({
                 idCuentaPorCobrar
             }).then(dataFormaCobro => {
+                $scope.isLoading = false;
                 let {
                     entidadesFinanciera,
                     bancos,
@@ -147,10 +156,12 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     tS.toastr('warning', 'Entidad Financiera Efectivo no posee subentidad financiera');
                 }
             }).catch(error => {
+                $scope.isLoading = false;
                 console.log(error)
-            }).finally(() => hideLoader());
+            }).finally(() => {
+                $scope.isLoading = false;
+            })
         } catch (error) {
-            hideLoader();
             console.log(error)
         }
     }
@@ -158,7 +169,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     async function openModalCobroAvanzado() {
         try {
             const { fileCtrl, ctrl, template } = nombreModalContabilidad.COBRO_LOTE;
-            let controller = (await import(fileCtrl))[ctrl]; 
+            let controller = (await import(fileCtrl))[ctrl];
             let modalRef = modalSvc.openModalCustom({
                 controller,
                 template,
@@ -209,6 +220,11 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
     async function save() {
         try {
+
+            if ($scope.isSaving || $scope.isSubmitting) return;
+            // mark that we're processing a save action (pre-confirmation lock)
+            $scope.isSubmitting = true;
+
             if (!modalCobroSvc.isValidForm($scope.cobro, $scope.entidadFinanciera.codigo)) throw 'Form invalid'
 
             let { isConfirmed } = await Swal.fire({
@@ -218,9 +234,17 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Si, guardar!',
-                cancelButtonText: 'No, cancelar!'
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No',
+                allowOutsideClick: false,
+                allowEscapeKey: true
             })
+
+            if (!isConfirmed) {
+                // user cancelled, release pre-confirmation lock
+                $scope.isSubmitting = false;
+                return;
+            }
 
 
             if (isConfirmed) {
@@ -258,15 +282,15 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                     }];
 
                     modalCobroSvc.clearData();
- 
-                    
+
+
                     for (let item of $scope.selectedDocumentos) {
                         item.cuotasCalculadas = structuredClone(item.cuotasCalculadasClone);
                     }
-                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono); 
+                    modalCobroSvc.setValorAbono($scope.cobro.valorAbono);
                     modalCobroSvc.setCuentasPorCobrar($scope.selectedDocumentos);
-                  //  modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
-                    modalCobroSvc.setUniqueIndex(0) 
+                    //  modalCobroSvc.setEsAbonoPosfechado($scope.cobro.posFechado);
+                    modalCobroSvc.setUniqueIndex(0)
 
                     //--------agregando abono ---
                     modalCobroSvc.aplicarAbono();
@@ -298,13 +322,17 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                         cuotasPorCobrarEstado
                     }
 
-                    const params = comprobanteIngresoSvc.mapperTo(data);  
+                    const params = comprobanteIngresoSvc.mapperTo(data);
 
                     const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
 
+                    $scope.isSaving = true;
                     managedRegister(params).then((response) => {
-                        
-                        if (!response) return; 
+                        // release both flags on completion
+                        $scope.isSaving = false;
+                        $scope.isSubmitting = false;
+
+                        if (!response) return;
                         if (response.code === '0') {
                             fS.sweetAlert('warning', response.message)
                         }
@@ -312,17 +340,21 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                             fS.sweetAlert('success', response.message, '', 1000)
                             $uibModalInstance.close(response)
                         }
-                    }).catch(error => { 
+                    }).catch(error => {
+                        $scope.isSaving = false;
+                        $scope.isSubmitting = false;
                         console.log(error)
                     })
-                } catch (error) { 
+                } catch (error) {
+                    $scope.isSaving = false;
+                    $scope.isSubmitting = false;
+
                     console.log(error)
                 }
 
             }
 
         } catch (error) {
-            hideLoader()
             console.log(error)
         }
     }

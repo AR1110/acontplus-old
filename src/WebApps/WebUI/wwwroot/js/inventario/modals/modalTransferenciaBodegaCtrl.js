@@ -10,7 +10,9 @@ ModalTransferenciaBodegaDetalleCtrl.$inject = [
 ]
 function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $injector, params) {
     const transferenciaBodegaSvc = $injector.get('transferenciaBodegaService');
+    const commonSvc = $injector.get('commonService');
 
+    const { id } = params;
 
 
     $scope.gridOptions = {
@@ -137,7 +139,7 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $injecto
     async function initiload() {
         try {
             showLoader();
-            transferenciaBodegaSvc.getIdDetalle(params.id).then(response => {
+            transferenciaBodegaSvc.getIdDetalle(id).then(response => {
                 let { dataDocumento, detalleDocumento } = response
                 $scope.data = dataDocumento;
                 $scope.gridOptions.data = detalleDocumento;
@@ -159,6 +161,39 @@ function ModalTransferenciaBodegaDetalleCtrl($scope, $uibModalInstance, $injecto
 
         for (let item of $scope.gridOptions.data) {
             item.num = num++;
+        }
+    }
+
+
+    $scope.getReport = () => {
+        try {
+
+            let format = 'excel';
+
+            const parameters = {
+                hasService: true,
+                reportParams: JSON.stringify({
+                    hasParams: true,
+                    codigo: 'RCD',
+                    codEstab: $scope.data.codEstab,
+                    format,
+                    aditionalParams: [
+
+                    ]
+                }),
+                dataParams: JSON.stringify({
+                    codDoc: 'TB',
+                    id,
+                })
+            }
+
+
+            commonSvc.getReport({
+                parameters,
+                formatType: format
+            })
+        } catch (error) {
+            console.log(error)
         }
     }
 

@@ -109,7 +109,7 @@ BEGIN
 							INNER JOIN dbo.Medida   me WITH (NOLOCK) ON me.idMedida   = fd.idMedida		
 							INNER JOIN dbo.Articulo ar WITH (NOLOCK) ON ar.idArticulo = fd.idArticulo 
 							INNER JOIN dbo.TipoIva  ti WITH (NOLOCK) ON ti.idTipoIva  = ar.idTipoIva
-							WHERE fd.idFacturaCompra = @id AND fd.estado = 1 ORDER BY fd.idFacturaCompraDetalle ASC
+							WHERE fd.idFacturaCompraÂ =Â @id AND fd.estado = 1 ORDER BY fd.idFacturaCompraDetalle ASC
 		END 
 
 	IF @codDoc='IB'
@@ -135,7 +135,7 @@ BEGIN
 						INNER JOIN dbo.Medida   m ON m.idMedida    = ibd.idMedida		
 						INNER JOIN dbo.Articulo a ON a.idArticulo  = ibd.idArticulo 
 						INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
-						WHERE ibd.idIngresoBodega = @id AND ibd.estado = 1 ORDER BY ibd.idIngresoBodegaDetalle ASC
+						WHERE ibd.idIngresoBodegaÂ =Â @id AND ibd.estado = 1 ORDER BY ibd.idIngresoBodegaDetalle ASC
 	END 
 
 	IF @codDoc='LC'
@@ -161,7 +161,7 @@ BEGIN
 						INNER JOIN dbo.Medida   m ON m.idMedida    = lcd.idMedida		
 						INNER JOIN dbo.Articulo a ON a.idArticulo  = lcd.idArticulo 
 						INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
-						WHERE lcd.idLiquidacionCompra = @id AND lcd.estado = 1 ORDER BY lcd.idLiquidacionCompraDetalle ASC
+						WHERE lcd.idLiquidacionCompraÂ =Â @id AND lcd.estado = 1 ORDER BY lcd.idLiquidacionCompraDetalle ASC
 	END 
 
 
@@ -188,7 +188,7 @@ BEGIN
 						INNER JOIN dbo.Medida   m ON m.idMedida    = did.idMedida		
 						INNER JOIN dbo.Articulo a ON a.idArticulo  = did.idArticulo 
 						INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
-						WHERE did.idDocumentoIngreso = @id AND did.estado = 1 ORDER BY did.idDocumentoIngresoDetail ASC
+						WHERE did.idDocumentoIngresoÂ =Â @id AND did.estado = 1 ORDER BY did.idDocumentoIngresoDetail ASC
 		END 
 
     IF @codDoc = 'CI'
@@ -214,7 +214,35 @@ BEGIN
 					INNER JOIN dbo.Medida   m ON m.idMedida    = cid.idMedida		
 					INNER JOIN dbo.Articulo a ON a.idArticulo  = cid.idArticulo 
 					INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
-					WHERE cid.idConsolidacionInventario = @id AND cid.estado = 1 ORDER BY cid.idConsolidacionInventario ASC
+					WHERE cid.idConsolidacionInventarioÂ =Â @id AND cid.estado = 1 ORDER BY cid.idConsolidacionInventario ASC
+
+	END
+
+
+     IF @codDoc = 'TB'
+	BEGIN 
+	    SELECT 
+						id              =tbd.idTransferenciaBodegaDetalle
+						,idArticulo     = tbd.idArticulo
+						,codigo         = a.codigo
+						,descripcion    = tbd.descripcion
+						,cantidad       = CAST(tbd.cantidad AS NUMERIC(18,2)) 
+						,medida         = m.descripcion
+						,tipoIva        = ti.descripcion
+						,precioUnitario = cast(tbd.precioCosto as numeric(18,2)) 
+						,valorDescuento =  CAST(cantidad * 0 AS numeric(18,5))
+						,total          = cast((tbd.cantidad * tbd.precioCosto) as numeric(18,2))		
+						,precioVenta    = ap.precioVenta
+						,precioConIva   = ap.precioConIva
+						,tarifa         = t.descripcion
+						,nota           = ISNULL(a.observaciones, '')
+					FROM dbo.TransferenciaBodegaDetalle tbd 
+					INNER JOIN ArticuloPvP ap ON ap.idarticulo = tbd.idArticulo 
+					INNER JOIN Tarifa       t ON t.idTarifa    = ap.idTarifa
+					INNER JOIN dbo.Medida   m ON m.idMedida    = tbd.idMedida		
+					INNER JOIN dbo.Articulo a ON a.idArticulo  = tbd.idArticulo 
+					INNER JOIN dbo.TipoIva ti ON ti.idTipoIva  = a.idTipoIva
+					WHERE tbd.idTransferenciaBodegaÂ =Â @id AND tbd.estado = 1 ORDER BY tbd.idTransferenciaBodegaDetalle ASC
 
 	END 
 	
