@@ -159,6 +159,7 @@ BEGIN
                                       ,ar.categoria             AS Category
                                       ,ar.siglaFamilia          AS AcronymFamily
                                       ,COUNT(*) OVER()          AS TotalCount
+                                      ,ar.stock
                                 FROM Restaurant.Item             ri
                                 INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
                                 + @WhereClause
