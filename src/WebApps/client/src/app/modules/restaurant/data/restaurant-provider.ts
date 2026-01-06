@@ -6,7 +6,7 @@ import { RoomWebService } from '@restaurant/data/room/room-web.service';
 import { TableRepository } from '@restaurant/domain/repositories/table.repository';
 import { TableWebService } from '@restaurant/data/table/table-web.service';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
-import { ItemHttpRepository } from '@restaurant/data/item/item-http.repository';
+import { ItemHttpRepository } from '@restaurant/data/https/item-http.repository';
 import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
 import { MealScheduleSettingHttpRepository } from '@restaurant/data/meal-schedule-setting/meal-schedule-setting-http-repository';
 import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';

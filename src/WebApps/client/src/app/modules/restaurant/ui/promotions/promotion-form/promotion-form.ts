@@ -28,7 +28,7 @@ import { DAYS_OF_WEEK, DISCOUNT_TYPES } from '@restaurant/domain/models/promotio
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
-import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import Swal from 'sweetalert2';

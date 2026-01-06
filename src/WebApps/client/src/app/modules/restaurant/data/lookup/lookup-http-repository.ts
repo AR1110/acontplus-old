@@ -3,7 +3,7 @@ import { LookupRepository } from '@restaurant/domain/repositories/lookup-reposit
 import { map, Observable, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@modules/restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { PagedResult, PaginationParams } from '@acontplus/core';
 import { GetLookupsMapper } from '@restaurant/data/lookup/get-lookups-mapper';
 import { LookupCache } from '@core/services/lookup-cache';

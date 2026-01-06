@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
 import { map, Observable, throwError } from 'rxjs';
-import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ItemListMapper } from '@restaurant/data/item/item-list.mapper';
 import { PagedResult, PaginationParams } from '@acontplus/core';
-import { ItemUpdateMapper } from '@restaurant/data/item/item-update-mapper';
-import { ItemGetByIdMapper } from '@restaurant/data/item/item-get-by-id-mapper';
-import { ItemComboUpdateMapper } from '@restaurant/data/item/item-combo-update-mapper';
+import {
+  ItemComboUpdateMapper,
+  ItemGetByIdMapper,
+  ItemListMapper,
+  ItemUpdateMapper
+} from "@restaurant/data/mappers/item-mapper";
 
 @Injectable({
   providedIn: 'root',

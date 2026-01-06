@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, input, output, signal} from '@angular/core';
 import {ItemSearch} from "@restaurant/ui/items/item-search/item-search";
-import {CATEGORY_ABBREVIATIONS} from "@restaurant/domain/enums/restaurant.enum";
+import {CATEGORY_ABBREVIATIONS} from "@restaurant/restaurant-const";
 import {Button} from "@acontplus/ng-components";
 
 @Component({
