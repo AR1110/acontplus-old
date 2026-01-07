@@ -10,37 +10,54 @@
             getByIdForOrderProduction
         };
         return service;
-        function search(obj) {
-            let json = JSON.stringify({
-                tipo: 2,
-                textSearch: obj.textSearch,
-                siglaFamilia: obj.siglaFamilia
+        function search(params) {
+            const queryParams = new URLSearchParams({
+                pageIndex: params.pageIndex?.toString() ?? '0',
+                pageSize: params.pageSize?.toString() ?? '10',
+                tipo: '2'
             });
-            return mS.getData('get', `${url}?json=${json}`).then(response => {
-                const results = {
-                    data: [],
-                    total: 0
-                }
-                if (response.code === "1") {
-                    const payload = JSON.parse(response.payload);
-                    const items = (payload.items || []).map(i => {
-                        return {
-                            "productId": i.productId,
+
+            if (params.textSearch) {
+                queryParams.append('textSearch', params.textSearch);
+            }
+
+            if (params.filters) {
+                const objToJsonFilters = {
+                    siglaFamilia: 'sigla'
+                };
+
+                Object.entries(params.filters).forEach(([key, value]) => {
+                    if (value == null) return;
+                    const filterKey = objToJsonFilters[key] || key;
+                    queryParams.append(`filters[${filterKey}]`, String(value));
+                });
+            }
+
+            return mS
+                .getData('get', `${url}?${queryParams.toString()}`)
+                .then(response => {
+                    const results = {
+                        data: [],
+                        total: 0
+                    };
+
+                    if (response.code === "1") {
+                        const payload = JSON.parse(response.payload);
+
+                        results.data = (payload.items || []).map(i => ({
+                            productId: i.productId,
                             description: i.descripcion,
                             nombreSubFamilia: i.subFamilia,
-                            "code": i.codigo,
-                            //"stock": i.stock,
-                            //   "menuId": i.menuId,
-                            //  "summary": i.summary,
-                            //  "content": i.content,
-                        }
+                            code: i.codigo
+                        }));
 
-                    });
-                    results.data = items;
-                }
-                return results;
-            })
+                        results.total = payload.total ?? 0;
+                    }
+
+                    return results;
+                });
         }
+
         function getByIdForOrderProduction(productId) {
             let json = JSON.stringify({
                 tipo: 4,
