@@ -798,7 +798,7 @@ app.component('itemSearch', {
                 $ctrl.filteredItems = [];
                 if (!($ctrl.searchText.length > 0)) return;
                 itemService.search({
-                    textSearch: $ctrl.searchText,
+                    searchTerm: $ctrl.searchText,
                     filters: {
                         siglaFamilia: $ctrl.siglaFamilia
                     },

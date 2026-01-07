@@ -11,10 +11,10 @@
         };
         return service;
         function search(params) {
+            console.log('itemService search params', params);
             const queryParams = new URLSearchParams({
                 pageIndex: params.pageIndex?.toString() ?? '0',
                 pageSize: params.pageSize?.toString() ?? '10',
-                tipo: '2'
             });
 
             if (params.textSearch) {
