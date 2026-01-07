@@ -811,6 +811,7 @@ app.component('itemSearch', {
                     .catch((error) => {
                         console.error("Error al obtener datos:", error);
                     });
+                console.log('Searching for:', $ctrl.searchText);
 
             }, 300);
         };
