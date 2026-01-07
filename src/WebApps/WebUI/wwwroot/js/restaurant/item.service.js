@@ -3,22 +3,23 @@
     app.factory('itemService', itemService);
     itemService.$inject = ['mainService', 'formulario'];
     function itemService(mS, fS) {
-        var url = 'restaurant/item/';
+        var url = 'restaurant/items';
 
         var service = {
             search,
-            getByIdForOrderProduction
+            getByIdForOrderProduction,
+            getId
         };
         return service;
         function search(params) {
             console.log('itemService search params', params);
             const queryParams = new URLSearchParams({
-                pageIndex: params.pageIndex?.toString() ?? '0',
-                pageSize: params.pageSize?.toString() ?? '10',
+                pageIndex: params.pageIndex.toString() || '1',
+                pageSize: params.pageSize.toString() || '10',
             });
 
-            if (params.textSearch) {
-                queryParams.append('textSearch', params.textSearch);
+            if (params.searchTerm) {
+                queryParams.append('searchTerm', params.searchTerm);
             }
 
             if (params.filters) {
@@ -41,18 +42,29 @@
                         total: 0
                     };
 
-                    if (response.code === "1") {
-                        const payload = JSON.parse(response.payload);
 
-                        results.data = (payload.items || []).map(i => ({
-                            productId: i.productId,
-                            description: i.descripcion,
-                            nombreSubFamilia: i.subFamilia,
-                            code: i.codigo
-                        }));
+                    console.log('itemService search response', response);
 
-                        results.total = payload.total ?? 0;
-                    }
+                    results.data = (response.items || []).map((item, index) => {
+                        return {
+                            index: index + 1,
+                            id: item.id,
+                            acronymCategory: item.acronymFamily,
+                            productId: item.productId,
+                            title: item.title,
+                            summary: item.summary,
+                            imageUrl: item.s3ObjectUrl,
+                            description: item.description,
+                            code: item.code,
+                            measure: item.measure,
+                            auxiliaryCode: item.auxiliary_code,
+                            costPrice: item.costPrice,
+                            nombreSubFamilia: item.category,
+                        };
+                    });
+
+                    results.total = response.totalCount || 0;
+
 
                     return results;
                 });
@@ -129,20 +141,12 @@
                 return results;
             });
         }
-        function createItem(item) {
-            var url = configService.apiUrl + 'restaurant/items';
 
-            return $http.post(url, item, { headers: headers });
-        }
-        function updateItem(id, item) {
-            var url = configService.apiUrl + 'restaurant/items/' + id;
-
-            return $http.put(url, item, { headers: headers });
-        }
-        function deleteItem(id) {
-            var url = configService.apiUrl + 'restaurant/items/' + id;
-
-            return $http.delete(url, { headers: headers });
+        function getId(id) {
+            return mS.getData('get', `${url}/${id}`).then(response => {
+                console.log('itemService getById response', response);
+                return response;
+            });
         }
     }
 }());
