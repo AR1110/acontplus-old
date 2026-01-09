@@ -18,8 +18,8 @@ import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-model-add-edit-modal',
-  templateUrl: './model-add-edit.component.html',
+  selector: 'app-model-add-edit',
+  templateUrl: './model-add-edit.html',
   imports: [
     FormsModule,
     MatFormFieldModule,
@@ -33,8 +33,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatCustomDialogComponent,
   ],
 })
-export class ModelAddEditComponent implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<ModelAddEditComponent>);
+export class ModelAddEdit implements OnInit {
+  readonly dialogRef = inject(MatDialogRef<ModelAddEdit>);
   readonly params = inject<any>(MAT_DIALOG_DATA);
 
   tS = inject(ToastrNotificationService);

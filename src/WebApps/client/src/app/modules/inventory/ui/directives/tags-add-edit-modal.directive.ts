@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { TagsAddEditModalComponent } from '@inventory/ui/tags/tags-add-edit-modal/tags-add-edit-modal.component';
+import { TagsAddEdit } from '@inventory/ui/tags/tags-add-edit/tags-add-edit';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
@@ -13,7 +13,7 @@ export class TagsAddEditModalDirective {
   @HostListener('click', ['$event'])
   onClick($event: MouseEvent) {
     $event.stopPropagation();
-    const modalRef = this.dialogSvc.open(TagsAddEditModalComponent, {
+    const modalRef = this.dialogSvc.open(TagsAddEdit, {
       data: structuredClone(this.params()) || {},
     });
     modalRef.subscribe((result) => {

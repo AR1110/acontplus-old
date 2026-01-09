@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { ModelAddEditComponent } from '@inventory/ui/inv-model-page/model-add-edit-modal/model-add-edit.component';
+import { ModelAddEdit } from '@inventory/ui/inv-model-page/model-add-edit/model-add-edit';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
@@ -13,7 +13,7 @@ export class ModelAddEditDirective {
   @HostListener('click', ['$event'])
   onClick($event: MouseEvent) {
     $event.stopPropagation();
-    const modalRef = this._dialogSvc.open(ModelAddEditComponent, {
+    const modalRef = this._dialogSvc.open(ModelAddEdit, {
       data: this.params() || {},
     });
     modalRef.subscribe((result: any) => {

@@ -105,8 +105,8 @@ export const routes: Route[] = [
     path: 'model',
     title: 'Modelo',
     loadComponent: () =>
-      import('@inventory/ui/inv-model-page/inv-model-page.component').then(
-        (m) => m.InvModelPageComponent,
+      import('@inventory/ui/inv-model-page/inv-model-page').then(
+        (m) => m.InvModelPage,
       ),
     data: {
       breadcrumb: 'Modelo',
@@ -124,7 +124,7 @@ export const routes: Route[] = [
   {
     path: 'tags',
     title: 'Etiquetas',
-    loadComponent: () => import('@inventory/ui/tags/tags.component').then((m) => m.TagsComponent),
+    loadComponent: () => import('@inventory/ui/tags/tags').then((m) => m.Tags),
     data: {
       breadcrumb: 'Etiquetas',
     },

@@ -27,10 +27,10 @@ import { finalize } from 'rxjs/operators';
     MatDynamicTableComponent,
     ModelAddEditDirective,
   ],
-  templateUrl: './inv-model-page.component.html',
+  templateUrl: './inv-model-page.html',
   styles: ``,
 })
-export class InvModelPageComponent implements OnInit {
+export class InvModelPage implements OnInit {
   private modeloService = inject(INVENTARIO_MODELO_SERVICE);
   pagination = signal(new Pagination());
   isLoadingResults = signal(false);

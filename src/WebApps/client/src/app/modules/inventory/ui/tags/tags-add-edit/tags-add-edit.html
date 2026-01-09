@@ -1,11 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="titleModal()"
-  (close)="close()"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-flex flex-column gap-2">
     <mat-form-field class="w-100">
       <mat-label>Descripción</mat-label>
@@ -21,9 +14,22 @@
       </mat-radio-group>
     }
   </div>
-</ng-template>
-<ng-template #actionsTemplate>
-  <button type="button" mat-flat-button (click)="save()">
-    {{ btnText }}
-  </button>
-</ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="btnText"
+    variant="success"
+    matStyle="filled"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>
