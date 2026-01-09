@@ -145,7 +145,67 @@
         function getId(id) {
             return mS.getData('get', `${url}/${id}`).then(response => {
                 console.log('itemService getById response', response);
-                return response;
+                const results = {
+                    menu: {},
+                    components: []
+                }
+                if (response.code === "1") {
+                    const { item, itemCompositions = [] } = JSON.parse(response.payload);
+                    const menu = item[0];
+                    console.log('itemService getById menu', menu);
+                    console.log('itemService getById itemCompositions', itemCompositions);
+                    results.components = (itemCompositions || []).map(c => {
+
+                        const { fractional, principal } = c;
+
+                        const medidas = fS.processAndSortMeasures(principal, fractional);
+                        console.log('itemService getById medidas', medidas);
+
+                        const dataMedida = medidas.find(m => m.defaultMedida) || {};
+
+                        return {
+                            "idArticulo": c.productId,
+                            "codigo": c.code,
+                            "descripcion": c.description,
+                            "stock": c.stock,
+                            precioCosto: dataMedida.precioCosto,
+                            precioUnitario: dataMedida.precioCosto,
+                            precioCostoFraccionado: dataMedida.precioCosto,
+                            "llevaInventario": c.isStockable,
+                            "idMedida": dataMedida.idMedida,
+                            nombreMedida: dataMedida.descripcion,
+                            "conversion": dataMedida.conversion,
+                            medidas,
+                            uniqueId: c.uniqueId
+                        }
+
+                    });
+
+                    const { fractional, principal } = menu;
+
+                    const medidas = fS.processAndSortMeasures(principal, fractional);
+
+                    console.log('itemService getById medidas menu', medidas);
+                    const dataMedida = medidas.find(m => m.defaultMedida) || {};
+
+                    results.menu = {
+                        idArticulo: menu.productId,
+                        codigo: menu.code,
+                        descripcion: menu.description,
+                        stock: menu.stock,
+                        precioCosto: dataMedida.precioCosto,
+                        precioCostoFraccionado: dataMedida.precioCosto,
+                        precioUnitario: dataMedida.precioCosto,
+                        llevaInventario: menu.isStockable,
+                        idMedida: dataMedida.idMedida,
+                        nombreMedida: dataMedida.descripcion,
+                        conversion: dataMedida.conversion,
+                        medidas,
+                        components: results.components,
+                        uniqueId: menu.uniqueId
+                    }
+                }
+                return results;
             });
         }
     }
