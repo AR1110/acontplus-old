@@ -85,8 +85,8 @@ export const routes: Route[] = [
     path: 'measure',
     title: 'Medida',
     loadComponent: () =>
-      import('@inventory/ui/measure-page/measure-page.component').then(
-        (m) => m.MeasurePageComponent,
+      import('@inventory/ui/measure-page/measure-page').then(
+        (m) => m.MeasurePage,
       ),
     data: {
       breadcrumb: 'Medida',

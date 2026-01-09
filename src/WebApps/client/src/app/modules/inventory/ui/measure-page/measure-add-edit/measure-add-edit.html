@@ -1,0 +1,25 @@
+<mat-dialog-content>
+  <mat-form-field class="w-100">
+    <mat-label>Descripción</mat-label>
+    <input matInput placeholder="..." appToUpperCase [(ngModel)]="data.descripcion" />
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>
