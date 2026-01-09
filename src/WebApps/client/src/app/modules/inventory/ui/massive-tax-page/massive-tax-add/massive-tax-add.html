@@ -1,26 +1,22 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTamplate"
-  [actionsTemplate]="actionsTemplate"
-  (close)="close()"
-  [loading]="loading()"
-  [title]="'Cambio Masivo de Impuesto'"
-/>
-
-<ng-template #containerTamplate>
-  <div class="d-grid gap-2">
-    @if (joinTaxDesc) {
-      <h5 class="text-info">{{ joinTaxDesc }}</h5>
+<mat-dialog-content>
+  <div class="d-grid gap-2 m-0 p-0">
+    @if (joinTaxDesc()) {
+      <h5 class="text-info">{{ joinTaxDesc() }}</h5>
     }
     <div class="d-flex justify-content-between align-items-center">
       <h3 class="card-title">{{ dataForm.title }}</h3>
-      <button mat-icon-button aria-label="refresh" (click)="onChangeTaxFrom()">
-        <mat-icon>refresh</mat-icon>
-      </button>
+      <acp-button
+        type="button"
+        icon="refresh"
+        variant="secondary"
+        matStyle="icon"
+        (handleClick)="onChangeTaxFrom()"
+      />
     </div>
 
     <app-sub-category-group
       [isInputMat]="true"
-      [subCategoryGroups]="subCategories"
+      [subCategoryGroups]="subCategories()"
       (onSelected)="onSelectSubCategory($event)"
       (onEmptyData)="clearDataSubCategory()"
     />
@@ -28,7 +24,7 @@
     <mat-form-field>
       <mat-label>Impuesto Inicial <span class="text-danger">*</span> </mat-label>
       <mat-select [(ngModel)]="dataForm.taxIdFrom" (selectionChange)="onChangeTaxFrom()">
-        @for (item of taxRatesFrom; track $index) {
+        @for (item of taxRatesFrom(); track $index) {
           <mat-option [value]="item.idTarifaImpuesto">{{ item.descripcion }}</mat-option>
         }
       </mat-select>
@@ -38,7 +34,7 @@
       <mat-form-field>
         <mat-label>Impuesto Destino: <span class="text-danger">*</span></mat-label>
         <mat-select [(ngModel)]="dataForm.taxIdTo" (selectionChange)="onChangeTaxTo()">
-          @for (item of taxRatesTo; track $index) {
+          @for (item of taxRatesTo(); track $index) {
             <mat-option [value]="item.idTarifaImpuesto">{{ item.descripcion }}</mat-option>
           }
         </mat-select>
@@ -50,11 +46,23 @@
       <textarea appToUpperCase matInput placeholder="..." [(ngModel)]="dataForm.obs"></textarea>
     </mat-form-field>
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
-  <button mat-flat-button (click)="askToSave()">
-    <mat-icon>save</mat-icon>
-    Guardar
-  </button>
-</ng-template>
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    text="Guardar"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="askToSave()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

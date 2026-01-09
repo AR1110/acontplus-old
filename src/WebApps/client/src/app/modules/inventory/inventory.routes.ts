@@ -62,8 +62,8 @@ export const routes: Route[] = [
     path: 'massive-tax-page',
     title: 'Cambio Masivo de IVA',
     loadComponent: () =>
-      import('@inventory/ui/massive-tax-page/massive-tax-page.component').then(
-        (m) => m.MassiveTaxPageComponent,
+      import('@inventory/ui/massive-tax-page/massive-tax-page').then(
+        (m) => m.MassiveTaxPage,
       ),
     data: {
       breadcrumb: 'Cambio Masivo de IVA',

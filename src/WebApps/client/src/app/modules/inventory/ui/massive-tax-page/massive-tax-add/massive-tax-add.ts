@@ -1,12 +1,16 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Button } from '@acontplus/ng-components';
 import { MASSIVE_TAX_SERVICE } from '@inventory/data/inventory-token';
 import { finalize } from 'rxjs/operators';
 import { TarifaImpuesto } from '@shared/models/tarifa-impuesto.model';
@@ -14,30 +18,42 @@ import Swal from 'sweetalert2';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
+import { NotificationService } from '@acontplus/ng-notifications';
+
+interface MassiveTaxFormData {
+  title: string;
+  taxIdFrom: number;
+  taxIdTo: number;
+  quantityProducts: number;
+  obs: string;
+  subCategoryId: number;
+}
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-massive-tax-dialog',
+  selector: 'app-massive-tax-add',
+  templateUrl: './massive-tax-add.html',
   imports: [
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule,
-    MatCustomDialogComponent,
+    Button,
     SubCategoryGroup,
     ToUpperCaseDirective,
+    MatDialogActions,
+    MatDialogContent,
   ],
-  templateUrl: './massive-tax-dialog.component.html',
-  styles: ``,
 })
-export class MassiveTaxDialogComponent implements OnInit {
-  readonly dialogRef = inject(MatDialogRef<MassiveTaxDialogComponent>);
-  readonly params = inject<any>(MAT_DIALOG_DATA);
-  private massiveTaxService = inject(MASSIVE_TAX_SERVICE);
+export class MassiveTaxAdd implements OnInit {
+  readonly dialogRef = inject(MatDialogRef<MassiveTaxAdd>);
+  readonly params = inject<unknown>(MAT_DIALOG_DATA);
 
-  dataForm = {
+  private massiveTaxService = inject(MASSIVE_TAX_SERVICE);
+  private tS = inject(NotificationService);
+
+  dataForm: MassiveTaxFormData = {
     title: '0 Productos encontrados.',
     taxIdFrom: 0,
     taxIdTo: 0,
@@ -45,45 +61,41 @@ export class MassiveTaxDialogComponent implements OnInit {
     obs: '',
     subCategoryId: 0,
   };
-  private cloneDataForm = structuredClone(this.dataForm);
 
-  taxRatesFrom: TarifaImpuesto[] = [];
-  taxRatesTo: TarifaImpuesto[] = [];
+  taxRatesFrom = signal<TarifaImpuesto[]>([]);
+  taxRatesTo = signal<TarifaImpuesto[]>([]);
+  subCategories = signal<any[]>([]);
 
-  private taxFromDesc = '';
-  private taxToDesc = '';
-  joinTaxDesc = '';
+  private taxFromDesc = signal('');
+  private taxToDesc = signal('');
+  joinTaxDesc = signal('');
 
   loading = signal(false);
 
-  subCategories = [] as any[];
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.loading.set(true);
     this.massiveTaxService
       .getDataForm()
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
-        this.taxRatesFrom = response.taxRates;
-        this.subCategories = response.subCategories;
+      .subscribe((response: { taxRates: TarifaImpuesto[]; subCategories: unknown[] }) => {
+        this.taxRatesFrom.set(response.taxRates);
+        this.subCategories.set(response.subCategories);
       });
   }
 
-  onChangeTaxFrom() {
+  onChangeTaxFrom(): void {
     try {
       if (!(this.dataForm.taxIdFrom > 0)) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Seleccione el Impuesto Inicial',
-        });
+        this.tS.warning({ message: 'Seleccione el Impuesto Inicial' });
         return;
       }
-      this.taxRatesTo = this.taxRatesFrom.filter(
-        (t) => t.idTarifaImpuesto !== this.dataForm.taxIdFrom,
+      this.taxRatesTo.set(
+        this.taxRatesFrom().filter((t) => t.idTarifaImpuesto !== this.dataForm.taxIdFrom),
       );
-      this.taxFromDesc =
-        this.taxRatesFrom.find((t) => t.idTarifaImpuesto === this.dataForm.taxIdFrom)
-          ?.descripcion || '';
+      this.taxFromDesc.set(
+        this.taxRatesFrom().find((t) => t.idTarifaImpuesto === this.dataForm.taxIdFrom)
+          ?.descripcion ?? '',
+      );
 
       this.loading.set(true);
       this.massiveTaxService
@@ -92,75 +104,65 @@ export class MassiveTaxDialogComponent implements OnInit {
           subCategoryId: this.dataForm.subCategoryId,
         })
         .pipe(finalize(() => this.loading.set(false)))
-        .subscribe((response) => {
+        .subscribe((response: number) => {
           this.dataForm.quantityProducts = response;
           this.dataForm.title = `${this.dataForm.quantityProducts} Productos encontrados.`;
           this.setTaxDesc();
 
           if (!(this.dataForm.quantityProducts > 0)) {
-            Swal.fire({
-              icon: 'info',
-              text: 'No se encontraron productos con impuesto inicial.',
-            });
+            this.tS.info({ message: 'No se encontraron productos con impuesto inicial.' });
           }
         });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
-  onChangeTaxTo() {
-    this.taxToDesc =
-      this.taxRatesTo.find((t) => t.idTarifaImpuesto === this.dataForm.taxIdTo)?.descripcion || '';
+  onChangeTaxTo(): void {
+    this.taxToDesc.set(
+      this.taxRatesTo().find((t) => t.idTarifaImpuesto === this.dataForm.taxIdTo)?.descripcion ??
+        '',
+    );
     this.setTaxDesc();
   }
-  private setTaxDesc() {
-    this.joinTaxDesc = `Impuesto Inicial ${this.taxFromDesc} - Impuesto Destino ${this.taxToDesc}`;
+
+  private setTaxDesc(): void {
+    this.joinTaxDesc.set(
+      `Impuesto Inicial ${this.taxFromDesc()} - Impuesto Destino ${this.taxToDesc()}`,
+    );
   }
 
-  onSelectSubCategory(data: any) {
+  onSelectSubCategory(data: number): void {
     this.dataForm.subCategoryId = data;
   }
 
-  clearDataSubCategory() {
+  clearDataSubCategory(): void {
     this.dataForm.subCategoryId = 0;
   }
 
-  async askToSave() {
+  async askToSave(): Promise<void> {
     try {
       if (!(this.dataForm.taxIdFrom > 0)) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Seleccione el Impuesto Inicial',
-        });
+        this.tS.warning({ message: 'Seleccione el Impuesto Inicial' });
         return;
       }
 
       if (!(this.dataForm.quantityProducts > 0)) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'No se encontraron productos con impuesto inicial.',
-        });
+        this.tS.warning({ message: 'No se encontraron productos con impuesto inicial.' });
         return;
       }
 
       if (!(this.dataForm.taxIdTo > 0)) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'Seleccione el Impuesto Destino',
-        });
+        this.tS.warning({ message: 'Seleccione el Impuesto Destino' });
         return;
       }
 
       if (!isValidField(this.dataForm.obs.trim())) {
-        Swal.fire({
-          icon: 'warning',
-          text: 'La observacion es obligatorio.',
-        });
+        this.tS.warning({ message: 'La observación es obligatoria.' });
         return;
       }
 
-      const obs = `${this.joinTaxDesc} ${this.dataForm.obs}`;
+      const obs = `${this.joinTaxDesc()} ${this.dataForm.obs}`;
 
       const { isConfirmed } = await Swal.fire({
         title: 'Actualizar el Impuesto',
@@ -186,35 +188,24 @@ export class MassiveTaxDialogComponent implements OnInit {
         obs: obs,
         subCategoryId: getValidId(this.dataForm.subCategoryId),
       };
-      // this.loading.set(true);
+
+      this.loading.set(true);
       this.massiveTaxService
         .put(params)
-        //  .pipe(finalize(() => this.loading.set(false)))
-        .subscribe((response) => {
+        .pipe(finalize(() => this.loading.set(false)))
+        .subscribe((response: { code: string; message: string }) => {
           if (response.code === '0') {
-            Swal.fire({
-              icon: 'warning',
-              text: response.message,
-            });
+            this.tS.warning({ message: response.message });
           }
           if (response.code === '1') {
-            Swal.fire({
-              icon: 'success',
-              text: response.message,
-              timer: 1000,
-            });
-
+            this.tS.success({ message: response.message });
             setTimeout(() => {
               this.dialogRef.close(response);
             }, 100);
           }
         });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-  }
-
-  close() {
-    this.dialogRef.close();
   }
 }
