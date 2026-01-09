@@ -24,7 +24,7 @@ interface Category {
 }
 
 @Component({
-  selector: 'app-warehouse-transfer-filter-advanced',
+  selector: 'app-warehouse-page-transfer-filter-advanced',
   imports: [
     MatSelectModule,
     MatInput,

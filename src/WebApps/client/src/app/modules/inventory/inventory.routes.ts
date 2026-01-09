@@ -116,7 +116,7 @@ export const routes: Route[] = [
     path: 'tarifa',
     title: 'Tarifa',
     loadComponent: () =>
-      import('@inventory/ui/tarifa-page/tarifa-page.component').then((m) => m.TarifaPageComponent),
+      import('@inventory/ui/tarifa-page/tarifa-page').then((m) => m.TarifaPage),
     data: {
       breadcrumb: 'Tarifa',
     },
@@ -151,7 +151,7 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'warehouse-transfer',
+    path: 'warehouse-page-transfer',
     loadComponent: () =>
       import('@inventory/ui/warehouse-transfer/warehouse-transfer').then(
         (m) => m.WarehouseTransfer,

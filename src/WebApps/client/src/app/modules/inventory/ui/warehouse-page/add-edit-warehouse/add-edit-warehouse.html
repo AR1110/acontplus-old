@@ -1,11 +1,5 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="title"
-  (close)="close()"
-/>
-<ng-template #body>
-  <div class="d-grid gap-2">
+<mat-dialog-content>
+  <div class="d-grid gap-2 m-0 p-0">
     <mat-form-field class="w-100">
       <mat-label>Establecimiento</mat-label>
       <mat-select [(ngModel)]="data.codEstab" [disabled]="isUpdate()">
@@ -30,13 +24,23 @@
       <textarea matInput appToUpperCase [(ngModel)]="data.direccion"></textarea>
     </mat-form-field>
   </div>
-</ng-template>
-<ng-template #footer>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    [icon]="btnIcon"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
   <acp-button
     type="button"
-    variant="success"
-    [icon]="btnIcon"
-    (handleClick)="save()"
-    [text]="btnText"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
   />
-</ng-template>
+</mat-dialog-actions>

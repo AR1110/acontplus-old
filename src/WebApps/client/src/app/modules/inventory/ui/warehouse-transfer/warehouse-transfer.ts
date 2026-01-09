@@ -32,7 +32,7 @@ import { GenerateReportUseCase } from '@modules/api/reports/application/generate
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 
 @Component({
-  selector: 'app-warehouse-transfer',
+  selector: 'app-warehouse-page-transfer',
   imports: [
     BreadcrumbComponent,
     DateRangeSelectionComponent,

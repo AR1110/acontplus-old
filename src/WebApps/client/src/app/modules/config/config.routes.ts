@@ -158,7 +158,7 @@ export const routes: Routes = [
   {
     path: 'warehouse',
     loadComponent: () =>
-      import('@inventory/ui/warehouse/warehouse.component').then((m) => m.WarehouseComponent),
+      import('@inventory/ui/warehouse-page/warehouse-page').then((m) => m.WarehouseComponent),
     data: {
       breadcrumb: 'Bodega',
     },
