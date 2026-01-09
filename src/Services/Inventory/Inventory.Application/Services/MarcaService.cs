@@ -1,6 +1,6 @@
 namespace Inventory.Application.Services;
 
-public class MarcaService : IMarcaService
+public class MarcaService : IBrandService
 {
     private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Inventario.Marca";

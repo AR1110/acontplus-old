@@ -1,6 +1,6 @@
 namespace Inventory.Api.Controllers;
 
-public class MarcaController(IMarcaService marcaService) : BaseApiController
+public class MarcaController(IBrandService marcaService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

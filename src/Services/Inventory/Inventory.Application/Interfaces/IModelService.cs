@@ -1,6 +1,6 @@
 namespace Inventory.Application.Interfaces;
 
-public interface IMarcaService
+public interface IModelService
 {
     Task<SpResponse> GetAsync(Dictionary<string, object> parameters);
     Task<SpResponse> AddAsync(Dictionary<string, object> parameters);

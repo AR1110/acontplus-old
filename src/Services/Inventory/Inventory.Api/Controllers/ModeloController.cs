@@ -1,6 +1,6 @@
 namespace Inventory.Api.Controllers;
 
-public class ModeloController(IModeloService modeloService) : BaseApiController
+public class ModeloController(IModelService modeloService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)
