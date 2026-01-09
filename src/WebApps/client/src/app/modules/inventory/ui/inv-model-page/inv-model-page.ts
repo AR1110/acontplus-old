@@ -1,132 +1,185 @@
-import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { DynamicCard } from '@acontplus/ng-components';
-import { MatIconModule } from '@angular/material/icon';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { DataGrid, Button, AdvancedDialogService } from '@acontplus/ng-components';
+import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SharedService } from '@core/services/shared.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ModelAddEditDirective } from '@inventory/ui/directives/model-add-edit.directive';
-import { Pagination } from '@acontplus/ng-components';
-import Swal from 'sweetalert2';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { NotificationService } from '@acontplus/ng-notifications';
+import { DataGridColumn } from '@shared/components/data-grid/types';
 import { INVENTARIO_MODELO_SERVICE } from '@inventory/data/inventory-token';
-import { finalize } from 'rxjs/operators';
+import { ModelAddEdit } from './model-add-edit/model-add-edit';
+import Swal from 'sweetalert2';
+
+interface InvModel {
+  idModelo: number;
+  idMarca: number;
+  marca: string;
+  codigo: string;
+  descripcion: string;
+  estado: boolean;
+  nomEstado: string;
+  totalRecords?: number;
+}
 
 @Component({
   selector: 'app-inv-model-page',
-  imports: [
-    BreadcrumbComponent,
-    MatButtonModule,
-    DynamicCard,
-    MatIconModule,
-    MatTableModule,
-    MatDynamicTableComponent,
-    ModelAddEditDirective,
-  ],
   templateUrl: './inv-model-page.html',
-  styles: ``,
+  imports: [BreadcrumbComponent, DataGrid, Button],
+  styles: `
+    :host ::ng-deep .data-grid {
+      height: 500px;
+    }
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InvModelPage implements OnInit {
-  private modeloService = inject(INVENTARIO_MODELO_SERVICE);
-  pagination = signal(new Pagination());
+  list = signal<InvModel[]>([]);
   isLoadingResults = signal(false);
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-  pageEvent!: PageEvent;
-  private tS = inject(ToastrNotificationService);
+
+  private modeloService = inject(INVENTARIO_MODELO_SERVICE);
+  private tS = inject(NotificationService);
   private sharedSvc = inject(SharedService);
+  private dgSvc = inject(AdvancedDialogService);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'marca', label: 'Marca', type: 'string' },
-    { key: 'codigo', label: 'Código', type: 'string' },
-    { key: 'descripcion', label: 'Descripción', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  page = 0;
+  pageSize = 10;
+  pageCount = 0;
+
+  columns: DataGridColumn[] = [
+    {
+      header: 'Nro.',
+      field: 'index',
+      width: '60px',
+      sortable: false,
+    },
+    {
+      header: 'Op.',
+      field: 'actions',
+      sortable: false,
+    },
+    {
+      header: 'Marca',
+      field: 'marca',
+      sortable: true,
+    },
+    {
+      header: 'Código',
+      field: 'codigo',
+      sortable: true,
+    },
+    {
+      header: 'Descripción',
+      field: 'descripcion',
+      sortable: true,
+    },
+    {
+      header: 'Estado',
+      field: 'nomEstado',
+      sortable: true,
+      formatter: (rowData: InvModel) => {
+        const badgeClass = rowData.estado ? 'badge bg-success' : 'badge bg-danger';
+        const text = rowData.nomEstado || (rowData.estado ? 'Activo' : 'Inactivo');
+        return `<span class="${badgeClass}">${text}</span>`;
+      },
+    },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  dataSource = new MatTableDataSource<any>([]);
+  add(): void {
+    void this.openModelModal();
+  }
 
-  getMeasures() {
+  edit(data: InvModel): void {
+    void this.openModelModal(data);
+  }
+
+  private async openModelModal(data?: InvModel): Promise<void> {
+    const isEdit = !!data;
+    const ref = await this.dgSvc.openInWrapper(
+      {
+        component: ModelAddEdit,
+        title: isEdit ? 'Editar Modelo' : 'Nuevo Modelo',
+        icon: isEdit ? 'edit' : 'add',
+        showCloseButton: true,
+        data: data ?? {},
+      },
+      {
+        size: 'sm',
+      },
+    );
+
+    ref.afterClosed().subscribe((result) => {
+      if (result && typeof result === 'object') {
+        this.refresh();
+      }
+    });
+  }
+
+  getModels(): void {
     const params = {
-      pageIndex: this.pagination().pageIndex + 1,
-      pageSize: this.pagination().pageSize,
+      pageIndex: this.page + 1,
+      pageSize: this.pageSize,
     };
     if (this.isLoadingResults()) return;
 
     this.isLoadingResults.set(true);
-    this.modeloService
-      .getAll(params)
-      .pipe(finalize(() => this.isLoadingResults.set(false)))
-      .subscribe((response) => {
-        this.dataSource = new MatTableDataSource(response.data);
-        if (this.dataSource.data.length > 0) {
-          this.pagination.update(
-            (e) => new Pagination(e.pageIndex, e.pageSize, this.dataSource.data[0].totalRecords),
-          );
-        }
-      });
-  }
 
-  ngOnInit() {
-    this.getMeasures();
-  }
-
-  refresh() {
-    this.getMeasures();
-  }
-
-  handlePageEvent(e: PageEvent) {
-    this.pageEvent = e;
-    this.pagination.update((pag) => {
-      const updated = new Pagination(pag.pageIndex, pag.pageSize, pag.totalRecords);
-      updated.handlePageEvent(e);
-      return updated;
+    this.modeloService.getAll(params).subscribe({
+      next: (response: { data: InvModel[] }) => {
+        this.isLoadingResults.set(false);
+        this.list.set(response.data);
+        this.pageCount = this.list().length > 0 ? (this.list()[0].totalRecords ?? 0) : 0;
+      },
+      error: (err: unknown) => {
+        this.isLoadingResults.set(false);
+        console.error(err);
+      },
     });
-    this.getMeasures();
   }
 
-  askToDelete(data: any) {
+  ngOnInit(): void {
+    this.getModels();
+  }
+
+  refresh(): void {
+    this.getModels();
+  }
+
+  handlePageEvent(e: PageEvent): void {
+    this.page = e.pageIndex;
+    this.pageSize = e.pageSize;
+    this.getModels();
+  }
+
+  async askToDelete(data: InvModel): Promise<void> {
     try {
-      Swal.fire({
+      const { isConfirmed } = await Swal.fire({
         icon: 'warning',
-        html: `<small>Esta seguro/a de eliminar esta Modelo ahora?</small>`,
-        showConfirmButton: true,
+        html: `<small>Esta seguro/a de eliminar este Modelo ahora?</small>`,
         confirmButtonText: 'Si, eliminar',
         showCancelButton: true,
         cancelButtonText: 'No, cancelar',
         allowOutsideClick: false,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.modeloService.updateStatus(data.idModelo).subscribe((response) => {
-            if (response.code == '0') {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
+      });
+
+      if (isConfirmed) {
+        this.modeloService
+          .updateStatus(data.idModelo)
+          .subscribe((response: { code: string; message: string }) => {
+            if (response.code === '0') {
+              this.tS.warning({ message: response.message });
             }
-            if (response.code == '1') {
-              this.tS.show({
-                type: 'success',
-                message: response.message,
-              });
-              this.refresh();
+            if (response.code === '1') {
+              this.tS.success({ message: response.message });
+              this.getModels();
             }
           });
-        }
-      });
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
-  exportToExcel() {
-    const results = this.dataSource.data.map((item: any) => {
+  exportToExcel(): void {
+    const results = this.list().map((item: InvModel) => {
       return {
         marca: item.marca,
         descripcion: item.descripcion,

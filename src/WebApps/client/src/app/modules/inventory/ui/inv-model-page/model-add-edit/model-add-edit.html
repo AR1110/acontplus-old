@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="titleModal()"
-  [loading]="loading()"
-  (close)="dialogRef.close()"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-grid gap-2 m-0 p-0">
     <mat-form-field>
       <mat-label>Marca</mat-label>
@@ -16,9 +8,15 @@
           <mat-option [value]="item.idMarca">{{ item.descripcion }}</mat-option>
         }
       </mat-select>
-      <button mat-icon-button matSuffix appBrandAddEdit (onResult)="refreshMarca()">
-        <mat-icon>add</mat-icon>
-      </button>
+      <acp-button
+        type="button"
+        icon="add"
+        variant="primary"
+        matStyle="icon"
+        matSuffix
+        appBrandAddEdit
+        (onResult)="refreshMarca()"
+      />
     </mat-form-field>
 
     <mat-form-field class="w-100">
@@ -33,11 +31,23 @@
       </mat-radio-group>
     }
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
-  <button mat-flat-button (click)="save()">
-    <mat-icon>save</mat-icon>
-    {{ btnText }}
-  </button>
-</ng-template>
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

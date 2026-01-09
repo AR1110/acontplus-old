@@ -1,7 +1,7 @@
-import { Component, inject, Input, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { BrandAddEditDirective } from '@inventory/ui/directives/brand-add-edit.directive';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
@@ -9,15 +9,29 @@ import { PRODUCT_SERVICE, INVENTARIO_MODELO_SERVICE } from '@inventory/data/inve
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { finalize } from 'rxjs/operators';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MatRadioModule } from '@angular/material/radio';
+import { Button } from '@acontplus/ng-components';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { finalize } from 'rxjs/operators';
+
+interface Brand {
+  idMarca: number;
+  descripcion: string;
+}
+
+interface ModelData {
+  idModelo: number;
+  idMarca: number;
+  descripcion: string | null;
+  estado: boolean;
+}
 
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-model-add-edit',
   templateUrl: './model-add-edit.html',
   imports: [
@@ -25,57 +39,51 @@ import { MatRadioModule } from '@angular/material/radio';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatIconModule,
-    MatButtonModule,
     MatRadioModule,
     BrandAddEditDirective,
     ToUpperCaseDirective,
-    MatCustomDialogComponent,
+    Button,
+    MatDialogActions,
+    MatDialogContent,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModelAddEdit implements OnInit {
   readonly dialogRef = inject(MatDialogRef<ModelAddEdit>);
-  readonly params = inject<any>(MAT_DIALOG_DATA);
+  readonly params = inject<Partial<ModelData>>(MAT_DIALOG_DATA);
 
-  tS = inject(ToastrNotificationService);
+  private tS = inject(NotificationService);
   private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
   private modeloService = inject(INVENTARIO_MODELO_SERVICE);
 
   btnText = 'Guardar';
-  titleModal = signal('Nuevo');
 
-  data = {
+  data: ModelData = {
     idModelo: 0,
     idMarca: 0,
     descripcion: null,
     estado: true,
   };
 
-  marcas = signal<any[]>([]);
+  marcas = signal<Brand[]>([]);
   loading = signal(false);
 
-  successReponse = {
+  private successResponse = {
     next: (response: ApiResponseLegacy) => {
       if (response.code === '0') {
-        this.tS.show({
-          type: 'warning',
-          message: response.message,
-        });
+        this.tS.warning({ message: response.message });
       }
       if (response.code === '1') {
-        this.tS.show({
-          type: 'success',
-          message: response.message,
-        });
+        this.tS.success({ message: response.message });
         this.dialogRef.close(response);
       }
     },
-    error(error: any) {
-      console.log(error);
+    error: (error: unknown) => {
+      console.error(error);
     },
   };
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getDataForm();
 
     this.data = { ...this.data, ...this.params };
@@ -85,46 +93,35 @@ export class ModelAddEdit implements OnInit {
 
     if (this.data.idModelo > 0) {
       this.btnText = 'Actualizar';
-      this.titleModal.set('Editar ');
     }
   }
 
-  private getDataForm() {
-    this._PRODUCT_SERVICE.getDataForm().subscribe((response) => {
+  private getDataForm(): void {
+    this._PRODUCT_SERVICE.getDataForm().subscribe((response: { marcas: Brand[] }) => {
       this.marcas.set(response.marcas);
     });
   }
-  refreshMarca() {
+
+  refreshMarca(): void {
     this.getDataForm();
   }
 
-  save() {
+  save(): void {
     try {
       if (!isValidField(this.data.descripcion)) {
-        this.tS.show({
-          type: 'warning',
-          message: 'Ingrese la descripción',
-        });
+        this.tS.warning({ message: 'Ingrese la descripción' });
         return;
       }
 
-      if (this.data.idModelo > 0) {
-        this.loading.set(true);
-        this.modeloService
-          .put(this.data.idModelo, this.data)
-          .pipe(finalize(() => this.loading.set(false)))
-          .subscribe(this.successReponse);
-      }
+      this.loading.set(true);
+      const operation =
+        this.data.idModelo > 0
+          ? this.modeloService.put(this.data.idModelo, this.data)
+          : this.modeloService.post(this.data);
 
-      if (!(this.data.idModelo > 0)) {
-        this.loading.set(true);
-        this.modeloService
-          .post(this.data)
-          .pipe(finalize(() => this.loading.set(false)))
-          .subscribe(this.successReponse);
-      }
+      operation.pipe(finalize(() => this.loading.set(false))).subscribe(this.successResponse);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 }

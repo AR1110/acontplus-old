@@ -1,37 +1,65 @@
 <app-breadcrumb />
 
-<acp-dynamic-card>
-  <div headerActions class="d-flex flex-row gap-2">
-    @if (!isLoadingResults()) {
-      <button mat-icon-button appModelAddEdit (onResult)="refresh()">
-        <mat-icon>add</mat-icon>
-      </button>
-      <button mat-icon-button (click)="exportToExcel()">
-        <mat-icon>save_alt</mat-icon>
-      </button>
-    }
-    <button mat-icon-button (click)="refresh()">
-      <mat-icon>refresh</mat-icon>
-    </button>
-  </div>
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [columns]="columns"
+  [data]="list()"
+  [length]="pageCount"
+  [pageIndex]="page"
+  [pageSize]="pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    actions: opTpl,
+  }"
+/>
 
-  <app-mat-dynamic-table
-    [isLoadingData]="isLoadingResults()"
-    [tableData]="dataSource.data"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [paginationConfig]="pagination()"
-    [enablePagination]="true"
-    (pageEvent)="handlePageEvent($event)"
-    [templateOp]="templateOp"
+<ng-template #opTpl let-data>
+  <acp-button
+    type="button"
+    icon="edit"
+    variant="success"
+    matStyle="icon"
+    (handleClick)="edit(data)"
   />
 
-  <ng-template #templateOp let-item="item">
-    <button mat-icon-button appModelAddEdit [params]="item" (onResult)="refresh()">
-      <mat-icon>edit</mat-icon>
-    </button>
-    <button mat-icon-button (click)="askToDelete(item)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </ng-template>
-</acp-dynamic-card>
+  <acp-button
+    type="button"
+    icon="delete"
+    variant="danger"
+    matStyle="icon"
+    (handleClick)="askToDelete(data)"
+  />
+</ng-template>
+
+<ng-template #headerToolbar>
+  <div class="d-flex flex-row gap-2">
+    <acp-button
+      type="button"
+      icon="add"
+      variant="success"
+      matStyle="filled"
+      text="Nuevo"
+      [disabled]="isLoadingResults()"
+      (handleClick)="add()"
+    />
+
+    <acp-button
+      type="button"
+      icon="save_alt"
+      variant="info"
+      matStyle="filled"
+      text="Exportar"
+      [disabled]="isLoadingResults()"
+      (handleClick)="exportToExcel()"
+    />
+
+    <acp-button
+      type="button"
+      icon="refresh"
+      variant="secondary"
+      matStyle="icon"
+      (handleClick)="refresh()"
+    />
+  </div>
+</ng-template>
