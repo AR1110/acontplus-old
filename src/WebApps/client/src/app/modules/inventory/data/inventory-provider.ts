@@ -18,7 +18,7 @@ import {
   PRODUCT_PHOTO_SERVICE,
   PRODUCT_UBICATION_SERVICE,
   INVENTORY_ADJUSTMENT_SERVICE,
-  BRAND_SERVICE,
+  BRAND_HTTP_TOKEN,
   MEASURE_SERVICE,
   TAG_SERVICE,
   WAREHOUSE_SERVICE,
@@ -44,7 +44,7 @@ import { TransactionHttp } from '@inventory/data/https/transaction-http';
 
 export const DATA_INVENTORY_IOC: Provider[] = [
   {
-    provide: BRAND_SERVICE,
+    provide: BRAND_HTTP_TOKEN,
     useClass: BrandHttp,
   },
   {

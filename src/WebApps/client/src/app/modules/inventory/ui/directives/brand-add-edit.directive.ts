@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject, input, Input, output } from '@angular/core';
-import { BrandAddEditModalComponent } from '@inventory/ui/brand-page/brand-add-edit-modal/brand-add-edit-modal.component';
+import { BrandAddEdit } from '@inventory/ui/brand-page/brand-add-edit/brand-add-edit';
 import { DialogService } from '@core/services/dialog.service';
 
 @Directive({
@@ -13,7 +13,7 @@ export class BrandAddEditDirective {
   @HostListener('click', ['$event'])
   onClick($event: MouseEvent) {
     $event.stopPropagation();
-    const modalRef = this._dialogSvc.open(BrandAddEditModalComponent, {
+    const modalRef = this._dialogSvc.open(BrandAddEdit, {
       data: structuredClone(this.params()) || {},
     });
     modalRef.subscribe((result: any) => {

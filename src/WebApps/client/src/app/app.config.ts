@@ -23,7 +23,8 @@ import { routes } from './app.routes';
 import { provideToastr } from 'ngx-toastr';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { DatePipe } from '@angular/common';
-import {purchasesProvider} from "@purchases/data/purchases-provider";
+import { purchasesProvider } from '@purchases/data/purchases-provider';
+import { provideNotifications } from '@acontplus/ng-notifications';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -74,5 +75,8 @@ export const appConfig: ApplicationConfig = {
       useValue: 'es-MX',
     },
     DatePipe,
+    provideNotifications({
+      defaultProvider: 'sweetalert',
+    }),
   ],
 };

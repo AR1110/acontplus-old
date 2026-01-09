@@ -22,9 +22,7 @@ export class BrandHttp implements BrandRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
       .pipe(
         map((response) => {
           const result = {

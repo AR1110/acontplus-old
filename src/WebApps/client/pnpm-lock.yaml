@@ -12,8 +12,14 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(@acontplus/utils@1.0.11(decimal.js@10.6.0)(tslib@2.8.1)(typescript@5.9.3))(tslib@2.8.1)(typescript@5.9.3)(uuid@13.0.0)
       '@acontplus/ng-components':
-        specifier: ^1.3.7
-        version: 1.3.7(@acontplus/ui-kit@1.0.1(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)
+        specifier: ^2.1.0
+        version: 2.1.0(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)
+      '@acontplus/ng-notifications':
+        specifier: ^2.0.2
+        version: 2.0.2(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(ngx-toastr@19.1.0(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.15(@angular/animations@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))))(rxjs@7.8.2)(sweetalert2@11.26.3)
+      '@acontplus/ui-kit':
+        specifier: ^1.0.2
+        version: 1.0.2(tslib@2.8.1)(typescript@5.9.3)
       '@angular/animations':
         specifier: ^20.3.12
         version: 20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))
@@ -230,19 +236,31 @@ packages:
       typescript: ^5.9.2
       uuid: ^13.0.0
 
-  '@acontplus/ng-components@1.3.7':
-    resolution: {integrity: sha512-HKSRzZcZvBWrtA06aR4cwfcOvHQdmeS2VkYygWdCyP0EKhnFvrmVtQIVKCfQuca15RcQZcYmPYwQSTUr3zyAag==}
+  '@acontplus/ng-components@2.1.0':
+    resolution: {integrity: sha512-MjrUjJ4S3c01NCtR7So99WJdLgpoz/ScbVbibtEJSpEyNx3Nrv+VD27vxQjqUdyyfxuGC9YQuO7sOVKGWw1ilw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      '@acontplus/ui-kit': ^1.0.1
-      '@angular/cdk': ^20.2.12
-      '@angular/common': ^20.3.9
-      '@angular/core': ^20.3.9
-      '@angular/material': ^20.2.12
+      '@acontplus/ui-kit': ^1.0.2
+      '@angular/cdk': ^21.0.5
+      '@angular/common': ^21.0.6
+      '@angular/core': ^21.0.6
+      '@angular/material': ^21.0.5
       tabulator-tables: ^6.3.1
 
-  '@acontplus/ui-kit@1.0.1':
-    resolution: {integrity: sha512-gDCvDxVH4ixjVd0SdEYl4mg3Cr+btgZnyRNg2uxSdyxYktDPM/RFq16ox70a2BIJBPNt1Znpq0tK/Cj8MVAOYg==}
+  '@acontplus/ng-notifications@2.0.2':
+    resolution: {integrity: sha512-9xbeTS+cPSLDWStpnams7u6f9OLfq7ow324dKSTp/WCczx2RBSyywTZASxiJsM4GjvzexrAIOPpYASSC4nW1VA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@acontplus/ui-kit': ^1.0.2
+      '@angular/common': ^21.0.0
+      '@angular/core': ^21.0.0
+      '@angular/material': ^21.0.0
+      ngx-toastr: ^19.1.0
+      rxjs: ^7.8.2
+      sweetalert2: ^11.26.2
+
+  '@acontplus/ui-kit@1.0.2':
+    resolution: {integrity: sha512-rVaSVXNsyrtQkbe0KDYl5qr9vED8JT8jxPjwz45OZCeJwTRgyhdCujigLXhZVsH5thAAI6Y20J5WhMk4H43yjw==}
     peerDependencies:
       tslib: ^2.8.1
       typescript: ^5.9.2
@@ -4840,6 +4858,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -5001,9 +5020,9 @@ snapshots:
       typescript: 5.9.3
       uuid: 13.0.0
 
-  '@acontplus/ng-components@1.3.7(@acontplus/ui-kit@1.0.1(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)':
+  '@acontplus/ng-components@2.1.0(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)':
     dependencies:
-      '@acontplus/ui-kit': 1.0.1(tslib@2.8.1)(typescript@5.9.3)
+      '@acontplus/ui-kit': 1.0.2(tslib@2.8.1)(typescript@5.9.3)
       '@angular/cdk': 20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/common': 20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
       '@angular/core': 20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)
@@ -5011,7 +5030,18 @@ snapshots:
       tabulator-tables: 6.3.1
       tslib: 2.8.1
 
-  '@acontplus/ui-kit@1.0.1(tslib@2.8.1)(typescript@5.9.3)':
+  '@acontplus/ng-notifications@2.0.2(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(ngx-toastr@19.1.0(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.15(@angular/animations@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))))(rxjs@7.8.2)(sweetalert2@11.26.3)':
+    dependencies:
+      '@acontplus/ui-kit': 1.0.2(tslib@2.8.1)(typescript@5.9.3)
+      '@angular/common': 20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
+      '@angular/core': 20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)
+      '@angular/material': 20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace)
+      ngx-toastr: 19.1.0(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.15(@angular/animations@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)))
+      rxjs: 7.8.2
+      sweetalert2: 11.26.3
+      tslib: 2.8.1
+
+  '@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3)':
     dependencies:
       tslib: 2.8.1
       typescript: 5.9.3

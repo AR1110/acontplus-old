@@ -96,7 +96,7 @@ export const routes: Route[] = [
     path: 'brand',
     title: 'Marca',
     loadComponent: () =>
-      import('@inventory/ui/brand-page/brand-page.component').then((m) => m.BrandPageComponent),
+      import('@inventory/ui/brand-page/brand-page').then((m) => m.BrandPage),
     data: {
       breadcrumb: 'Marca',
     },

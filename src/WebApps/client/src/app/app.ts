@@ -198,7 +198,7 @@ export class App implements OnInit, AfterViewInit {
       // Usuario ya autenticado, puede continuar con la aplicación normal
     } else {
       // Redirigir al login o página de autenticación
-      void this.router.navigate(['/auth/login']);
+      //  void this.router.navigate(['/auth/login']);
     }
   }
 
