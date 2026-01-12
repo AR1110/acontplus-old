@@ -1,7 +1,7 @@
 //@ts-check
 export {
     modalCobroRapidoCtrl
-}
+};
 
 modalCobroRapidoCtrl.$inject = [
     '$scope',
@@ -49,6 +49,7 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
     $scope.isLoading = false;
     $scope.isSaving = false;
     $scope.isSubmitting = false; // lock to prevent multiple confirmations / duplicate submissions
+
 
     $scope.findSubEntidad = findSubEntidad;
     $scope.openModalCobroAvanzado = openModalCobroAvanzado;
@@ -239,12 +240,12 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                 allowEscapeKey: true
             })
 
-
             if (!isConfirmed) {
                 // user cancelled, release pre-confirmation lock
                 $scope.isSubmitting = false;
                 return;
             }
+
 
             if (isConfirmed) {
                 try {
@@ -325,7 +326,6 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
 
                     const managedRegister = fS.fetchManager(comprobanteIngresoSvc.post);
 
-                    // actual network/save in progress (shows "Procesando...")
                     $scope.isSaving = true;
                     managedRegister(params).then((response) => {
                         // release both flags on completion
@@ -348,15 +348,13 @@ function modalCobroRapidoCtrl($scope, $uibModalInstance, $injector, params) {
                 } catch (error) {
                     $scope.isSaving = false;
                     $scope.isSubmitting = false;
+
                     console.log(error)
                 }
 
             }
 
         } catch (error) {
-            // fallback: ensure locks are released on unexpected errors
-            $scope.isSaving = false;
-            $scope.isSubmitting = false;
             console.log(error)
         }
     }
