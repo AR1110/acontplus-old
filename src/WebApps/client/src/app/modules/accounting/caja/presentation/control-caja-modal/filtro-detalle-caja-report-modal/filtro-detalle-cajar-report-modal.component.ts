@@ -22,7 +22,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'app-filtro-detalle-caja-report-modal',
+  selector: 'app-filtro-detalle-caja-page-report-modal',
   imports: [
     CommonModule,
     FormsModule,

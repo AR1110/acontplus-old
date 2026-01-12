@@ -1,10 +1,9 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { DataGrid, Button, AdvancedDialogService } from '@acontplus/ng-components';
+import { DataGrid, Button, AdvancedDialogService, DataGridColumn} from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SharedService } from '@core/services/shared.service';
 import { NotificationService } from '@acontplus/ng-notifications';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { INVENTARIO_MODELO_SERVICE } from '@inventory/data/inventory-token';
 import { ModelAddEdit } from './model-add-edit/model-add-edit';
 import Swal from 'sweetalert2';

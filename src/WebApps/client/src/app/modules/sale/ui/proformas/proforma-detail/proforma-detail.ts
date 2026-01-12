@@ -5,8 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
 import { finalize } from 'rxjs';
 import { ProformaInvoiceViewDetailUseCase } from '@sale/application/use-cases/proforma-use-case';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { DataGridColumn } from '@shared/components/data-grid/types';
+import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-proforma-detail',

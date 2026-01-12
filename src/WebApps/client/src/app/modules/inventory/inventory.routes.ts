@@ -14,8 +14,8 @@ export const routes: Route[] = [
     path: 'category',
     title: 'Categoria',
     loadComponent: () =>
-      import('@inventory/ui/category-page/category-page.component').then(
-        (m) => m.CategoryPageComponent,
+      import('@inventory/ui/category-page/category-page').then(
+        (m) => m.CategoryPage,
       ),
     data: {
       breadcrumb: 'Reporte Compras',
@@ -25,8 +25,8 @@ export const routes: Route[] = [
     path: 'subcategories',
     title: 'SubCategoria',
     loadComponent: () =>
-      import('@inventory/ui/sub-category/sub-category').then(
-        (m) => m.SubCategory,
+      import('@inventory/ui/sub-category/sub-category-page').then(
+        (m) => m.SubCategoryPage,
       ),
     data: {
       breadcrumb: 'Sub Categorias',
@@ -37,8 +37,8 @@ export const routes: Route[] = [
     path: INVENTORY_ROUTES.products,
     title: 'Productos',
     loadComponent: () =>
-      import('@inventory/ui/product/product').then(
-        (m) => m.Product,
+      import('@inventory/ui/product/product-page').then(
+        (m) => m.ProductPage,
       ),
     canActivate: [permissionGuard],
     data: {
@@ -51,8 +51,8 @@ export const routes: Route[] = [
     path: 'fracc-product',
     title: 'Productos Fraccionados',
     loadComponent: () =>
-      import('@inventory/ui/fracc-product-page/fracc-product-page.component').then(
-        (m) => m.FraccProductPageComponent,
+      import('@inventory/ui/fracc-product-page/fracc-product-page').then(
+        (m) => m.FraccProductPage,
       ),
     data: {
       breadcrumb: 'Productos Fraccionados',
@@ -124,7 +124,7 @@ export const routes: Route[] = [
   {
     path: 'tags',
     title: 'Etiquetas',
-    loadComponent: () => import('@inventory/ui/tags/tags').then((m) => m.Tags),
+    loadComponent: () => import('@inventory/ui/tags/tags-page').then((m) => m.TagsPage),
     data: {
       breadcrumb: 'Etiquetas',
     },
@@ -144,8 +144,8 @@ export const routes: Route[] = [
     path: 'inventory-adjustments',
     loadComponent: () =>
       import(
-        '@inventory/ui/inventory-adjustment/inventory-adjustment.component'
-      ).then((m) => m.InventoryAdjustmentComponent),
+        '@inventory/ui/inventory-adjustment/inventory-adjustment-page'
+      ).then((m) => m.InventoryAdjustmentPage),
     data: {
       breadcrumb: 'Ajuste Inventario',
     },
@@ -153,8 +153,8 @@ export const routes: Route[] = [
   {
     path: 'warehouse-page-transfer',
     loadComponent: () =>
-      import('@inventory/ui/warehouse-transfer/warehouse-transfer').then(
-        (m) => m.WarehouseTransfer,
+      import('@inventory/ui/warehouse-transfer/warehouse-transfer-page').then(
+        (m) => m.WarehouseTransferPage,
       ),
     canActivate: [permissionGuard],
     data: {

@@ -12,7 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-filtro-caja-modal-report-modal',
+  selector: 'app-filtro-caja-page-modal-report-modal',
   imports: [FormsModule, Button, MatCustomDialogComponent, MatFormFieldModule, MatSelectModule],
   templateUrl: './filtro-control-caja-report-modal.component.html',
 })

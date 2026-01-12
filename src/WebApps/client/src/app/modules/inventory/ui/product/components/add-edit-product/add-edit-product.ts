@@ -33,7 +33,7 @@ import { forkJoin } from 'rxjs';
 import { ProductUbicationComponent } from '@inventory/ui/product/components/product-ubication/product-ubication.component';
 import { Button } from '@acontplus/ng-components';
 import { ProductBarcodeComponent } from '@inventory/ui/product/components/product-barcode/product-barcode.component';
-import { FraccProductListComponent } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list.component';
+import { FraccProductList } from '@inventory/ui/fractional-product/components/fracc-product-list/fracc-product-list';
 import { UploadImageComponent } from '@shared/components/upload-image/upload-image.component';
 import { PRODUCT_SERVICE, PRODUCT_PHOTO_SERVICE } from '@inventory/data/inventory-token';
 interface ProductTarifa {
@@ -65,7 +65,7 @@ interface ProductTarifa {
     ProductUbicationComponent,
     Button,
     ProductBarcodeComponent,
-    FraccProductListComponent,
+    FraccProductList,
     UploadImageComponent,
     //Directives
     SubCategoryModalDirective,

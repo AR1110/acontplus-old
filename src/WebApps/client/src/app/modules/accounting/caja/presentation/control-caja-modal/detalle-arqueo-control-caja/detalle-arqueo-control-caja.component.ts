@@ -8,7 +8,7 @@ import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/m
 import { SharedService } from '@core/services/shared.service';
 
 @Component({
-  selector: 'app-detalle-arqueo-caja-modal-modal',
+  selector: 'app-detalle-arqueo-caja-page-modal-modal',
   imports: [Button, MatCustomDialogComponent, MatDynamicTableComponent],
   templateUrl: './detalle-arqueo-control-caja.component.html',
 })

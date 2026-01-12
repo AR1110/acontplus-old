@@ -1,0 +1,30 @@
+<mat-dialog-content>
+  <form autocomplete="off" [formGroup]="dataForm" id="formData" (ngSubmit)="save()">
+    <div class="d-grid gap-2">
+      <mat-form-field class="w-100">
+        <mat-label>Entidad Financiera</mat-label>
+        <mat-select formControlName="idEntidadFinanciera">
+          @for (item of entidadesFinanciera; track $index) {
+            <mat-option [value]="item.idEntidadFinanciera">{{ item.descripcion }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="w-100">
+        <mat-label>Valor</mat-label>
+        <input type="number" matInput formControlName="entrada" />
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button
+    [variant]="'success'"
+    [type]="'submit'"
+    [form]="'formData'"
+    matStyle="filled"
+    [disabled]="!dataForm.valid"
+    [text]="'Guardar'"
+    [icon]="'save'"
+  />
+</mat-dialog-actions>

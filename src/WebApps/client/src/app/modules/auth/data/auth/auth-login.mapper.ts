@@ -81,7 +81,7 @@ export class AuthLoginMapper {
         detailControlReport: cashData.reporteDetalleControlCaja,
       };
 
-      // Product
+      // ProductPage
       const productData = p.product[0];
       const product = {
         priceManagement: productData.precio,

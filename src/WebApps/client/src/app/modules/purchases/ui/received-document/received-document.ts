@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Button, DynamicCard, DataGrid } from '@acontplus/ng-components';
+import { Button, DynamicCard, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
@@ -21,7 +21,6 @@ import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { ReceivedDocumentList } from '@purchases/data/models/received-document';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { ContextType, LookupItem, ModuleType } from '@core/models/lookup-type';
 
 @Component({

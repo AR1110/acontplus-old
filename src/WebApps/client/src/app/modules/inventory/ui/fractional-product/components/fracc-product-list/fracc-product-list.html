@@ -1,0 +1,52 @@
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [columns]="columns"
+  [data]="list()"
+  [length]="pageCount"
+  [pageIndex]="page"
+  [pageSize]="pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    actions: opTpl,
+  }"
+/>
+
+<ng-template #opTpl let-data>
+  <acp-button
+    type="button"
+    icon="edit"
+    variant="success"
+    matStyle="icon"
+    (handleClick)="edit(data)"
+  />
+
+  <acp-button
+    type="button"
+    icon="delete"
+    variant="danger"
+    matStyle="icon"
+    (handleClick)="askToDelete(data)"
+  />
+</ng-template>
+
+<ng-template #headerToolbar>
+  <div class="d-flex flex-row gap-2">
+    <acp-button
+      type="button"
+      icon="add"
+      variant="success"
+      matStyle="filled"
+      text="Nuevo"
+      (handleClick)="add()"
+    />
+
+    <acp-button
+      type="button"
+      icon="refresh"
+      variant="secondary"
+      matStyle="icon"
+      (handleClick)="refresh()"
+    />
+  </div>
+</ng-template>

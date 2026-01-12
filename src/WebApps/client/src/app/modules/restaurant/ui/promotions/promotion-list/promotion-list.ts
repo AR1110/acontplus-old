@@ -13,8 +13,7 @@ import { PromotionListDto } from '@restaurant/domain/models/promotion';
 import { FormsModule } from '@angular/forms';
 import { DialogService } from '@core/services/dialog.service';
 import { PromotionForm } from '@restaurant/ui/promotions/promotion-form/promotion-form';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { DataGridColumn } from '@shared/components/data-grid/types';
+import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { PageEvent } from '@angular/material/paginator';
 

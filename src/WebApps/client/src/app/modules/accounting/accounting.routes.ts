@@ -11,18 +11,18 @@ export const routes: Routes = [
     path: 'cashboxes',
     title: 'Caja',
     loadComponent: () =>
-      import('./caja/presentation/caja/caja.component').then((m) => m.CajaComponent),
+      import('@accounting/ui/caja-page/caja-page').then((m) => m.CajaPage),
     data: {
       breadcrumb: 'Gestión Caja',
     },
   },
   {
-    path: 'movimiento-caja-page',
+    path: 'movimiento-caja-page-page',
     title: 'Caja',
     loadComponent: () =>
       import(
-        '@accounting/movimiento-caja/presentation/movimiento-caja-page/movimiento-caja-page.component'
-      ).then((m) => m.MovimientoCajaPageComponent),
+        '@accounting/movimiento-caja/presentation/movimiento-caja-page/movimiento-caja-page'
+      ).then((m) => m.MovimientoCajaPage),
     data: {
       breadcrumb: 'Movimiento Caja',
     },
@@ -144,7 +144,7 @@ export const routes: Routes = [
         },
       },
       {
-        path: 'movimiento-caja-report',
+        path: 'movimiento-caja-page-report',
         title: 'Movimiento Caja Reporte',
         loadComponent: () =>
           import(

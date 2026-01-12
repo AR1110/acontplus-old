@@ -19,7 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
 @Component({
-  selector: 'app-movimiento-caja-report',
+  selector: 'app-movimiento-caja-page-report',
   imports: [
     FormsModule,
     MatFormFieldModule,

@@ -12,7 +12,7 @@ export abstract class MovimientoCajaRepository {
     subEntidadesFinanciera: any[];
     tiposDocumento: any[];
   }>;
-  // abstract getId(idCaja: number): Observable<{ caja:any, asignaciones: any[] }>
+  // abstract getId(idCaja: number): Observable<{ caja-page:any, asignaciones: any[] }>
   abstract create<T>(data: T): Observable<ApiResponseLegacy>;
   abstract update<T>(id: number, data: T): Observable<ApiResponseLegacy>;
   abstract delete(id: number): Observable<ApiResponseLegacy>;

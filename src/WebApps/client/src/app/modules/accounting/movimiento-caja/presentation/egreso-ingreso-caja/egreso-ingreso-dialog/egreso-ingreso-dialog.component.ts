@@ -7,7 +7,7 @@ import { DOC_TYPE } from '@core/constants/global.constants';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { CashboxSelectHtmlOnly } from '@accounting/caja/domain/caja.entity';
+import { CashboxSelectHtmlOnly } from '@accounting/data/models/caja';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinanciera } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.model';
 import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
@@ -192,7 +192,7 @@ export class EgresoIngresoDialogComponent implements OnInit {
       if (!getValidId(params.idCaja as any)) {
         this.tS.show({
           type: 'warning',
-          message: 'Seleccione la caja',
+          message: 'Seleccione la caja-page',
         });
         return;
       }

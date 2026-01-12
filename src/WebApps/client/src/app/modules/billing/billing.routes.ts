@@ -32,7 +32,7 @@ export const routes: Route[] = [
   {
     path: 'doc-elects',
     title: 'Documento Electrónico',
-    loadComponent: () => import('@billing/ui/doc-elect/doc-elect').then((m) => m.DocElect),
+    loadComponent: () => import('@billing/ui/doc-elect/doc-elect-page').then((m) => m.DocElectPage),
     data: {
       breadcrumb: 'Documento Electrónico',
       context: BILLING_MODULES_CODE.DOC_ELECT,

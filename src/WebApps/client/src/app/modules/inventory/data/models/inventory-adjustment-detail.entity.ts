@@ -47,7 +47,7 @@ export class InventoryAdjustmentDetail {
 
     // Validation
     if (params.productId <= 0) {
-      throw new Error('Product ID must be a positive number');
+      throw new Error('ProductPage ID must be a positive number');
     }
     if (params.quantity < 0) {
       throw new Error('Quantity cannot be negative');

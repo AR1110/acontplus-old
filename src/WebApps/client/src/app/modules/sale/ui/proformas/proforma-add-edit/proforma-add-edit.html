@@ -115,7 +115,7 @@
             <mat-label>Observación</mat-label>
             <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
           </mat-form-field>
-          <app-data-grid
+          <acp-data-grid
             [data]="additionalInfo()"
             [columns]="columnsAdditionalInfo"
             [showPaginator]="false"
@@ -140,7 +140,7 @@
         </div>
       </div>
       <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-        <app-data-grid
+        <acp-data-grid
           [data]="totalRows"
           [columns]="displayedTotalsColumns"
           [showPaginator]="false"
