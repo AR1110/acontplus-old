@@ -142,9 +142,8 @@ export class ItemAddEdit implements OnInit {
         settingBtn.addEventListener('click', () => this.openOverlay(rowData));
 
         buttonHolder.appendChild(delBtn);
-        if (rowData && rowData.children) {
-          buttonHolder.appendChild(settingBtn);
-        }
+        if(this.isCombo()) buttonHolder.appendChild(settingBtn);
+
 
         return buttonHolder;
       },

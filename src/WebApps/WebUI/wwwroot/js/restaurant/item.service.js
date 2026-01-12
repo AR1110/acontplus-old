@@ -174,7 +174,7 @@
                             "llevaInventario": c.isStockable,
                             "idMedida": dataMedida.idMedida,
                             nombreMedida: dataMedida.descripcion,
-                            "conversion": dataMedida.conversion,
+                            "conversion": c.quantity,
                             medidas,
                             uniqueId: c.uniqueId
                         }
