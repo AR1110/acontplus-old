@@ -1,7 +1,14 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { DynamicCard } from '@acontplus/ng-components';
+import {
+  DynamicCard,
+  DataGrid,
+  DataGridColumn,
+  Button,
+  Pagination,
+  DateRangePicker, DateRangeValue,
+} from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,23 +16,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
+
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { InvoiceService } from '@billing/services/invoice.service';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
-  selector: 'app-invoice',
+  selector: 'app-invoice-page',
   imports: [
     FormsModule,
     DynamicCard,
@@ -39,16 +42,17 @@ import { finalize, switchMap, throwError } from 'rxjs';
     MatInputModule,
     //components
     BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
+    DateRangePicker,
+    DataGrid,
+    Button,
     DateRangeSelectionComponent,
   ],
-  templateUrl: './invoice.html',
-  styles: ``,
+  templateUrl: './invoice-page.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Invoice implements OnInit {
+export class InvoicePage implements OnInit {
   private invoiceSvc = inject(InvoiceService);
-  private tS = inject(ToastrNotificationService);
+  private notificationSvc = inject(NotificationService);
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -56,21 +60,20 @@ export class Invoice implements OnInit {
   isSearchAdvanced = signal(false);
   isLoadingResults = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'fechaVencimiento', label: 'Fecha Vcto', type: 'string' },
-    { key: 'razonSocialComprador', label: 'Cliente', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'abono', label: 'Abono', type: 'number' },
-    { key: 'saldo', label: 'Saldo', type: 'number' },
-    { key: 'estadoNom', label: 'Estado', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'op', header: 'Op.' },
+    { field: 'serieComprobante', header: 'Serie' },
+    { field: 'fechaEmision', header: 'Fecha Emisión' },
+    { field: 'fechaVencimiento', header: 'Fecha Vcto' },
+    { field: 'razonSocialComprador', header: 'Cliente' },
+    { field: 'total', header: 'Total' },
+    { field: 'abono', header: 'Abono' },
+    { field: 'saldo', header: 'Saldo' },
+    { field: 'estadoNom', header: 'Estado' },
+    { field: 'usuario', header: 'Usuario' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  dataSource = new MatTableDataSource<any>();
+  dataSource = signal<any[]>([]);
 
   pagination = signal(new Pagination());
 
@@ -111,7 +114,7 @@ export class Invoice implements OnInit {
   }
 
   private setGetAll(response: any) {
-    this.dataSource = new MatTableDataSource(response.data);
+    this.dataSource.set(response.data);
     this.pagination.update((p) => new Pagination(p.pageIndex, p.pageSize, response.totalRecords));
   }
 
@@ -150,9 +153,9 @@ export class Invoice implements OnInit {
 
             this.dataSearch.codEstab = dataEstab?.codEstab || '';
             this.dataSearch.idPuntoEmision =
-              this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0;
+              this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ?? 0;
           } else {
-            this.tS.show({
+            this.notificationSvc.show({
               type: 'warning',
               message: 'No tienes asignado Establecimiento!',
             });
@@ -185,21 +188,25 @@ export class Invoice implements OnInit {
     if (this.puntosEmision.length > 0) {
       this.setDataSearch(
         'idPuntoEmision',
-        this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision || 0,
+        this.puntosEmision.find((pto) => pto.defaultPtoEmi)?.idPuntoEmision ?? 0,
       );
       this.refresh();
     } else {
-      this.tS.show({
+      this.notificationSvc.show({
         type: 'warning',
         message: 'No tiene puntos de emisión asignados',
       });
     }
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  dateRangeSelected(range: DateRangeValue<true>){
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
     this.refresh();
+  }
+  checkboxChangeDateRange($event:boolean){
+    this.dataSearch.checkBoxDate=$event;
+    this.refresh()
   }
 
   handlePageEvent(e: PageEvent) {

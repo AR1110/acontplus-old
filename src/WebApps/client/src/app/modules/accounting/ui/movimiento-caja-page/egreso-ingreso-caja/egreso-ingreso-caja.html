@@ -6,7 +6,7 @@
       <div class="col">
         <mat-form-field class="w-100">
           <mat-label>Establecimiento</mat-label>
-          <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="getMovimientosCaja()">
+          <mat-select [(ngModel)]="dataSearch().codEstab" (selectionChange)="getMovimientosCaja()">
             @for (item of establecimientos; track $index) {
               <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
             }
@@ -16,7 +16,7 @@
       <div class="col">
         <app-date-range-selection
           [showMatSuffix]="true"
-          [(checkbox)]="dataSearch.enableDateFilter"
+          [(checkbox)]="dataSearch().enableDateFilter"
           (onCheckboxChange)="refresh()"
           (onChangeDateRange)="onDateRangeSelection($event)"
           [showInputMaterial]="true"
@@ -33,49 +33,44 @@
   </div>
   <div class="col-xxl-2 col-xl-2 col-md-2 col-sm-12 col-12">
     <div class="hstack gap-2">
-      <button mat-icon-button aria-label="refresh" (click)="refresh()">
-        <mat-icon>refresh</mat-icon>
-      </button>
+      <acp-button icon="refresh" matStyle="icon" variant="primary" (handleClick)="refresh()" />
       @if ($userRoleStateManager.canCreate()) {
-        <button mat-icon-button aria-label="Add" (click)="openModal()">
-          <mat-icon>add</mat-icon>
-        </button>
+        <acp-button icon="add" matStyle="icon" variant="primary" (handleClick)="openModal()" />
       }
     </div>
   </div>
 </div>
 
-<app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults()"
-  [tableData]="dataSource"
-  [columnDefinitions]="columnsDefs"
-  [visibleColumns]="columns"
-  [templateOp]="templateOp"
-  [paginationConfig]="pagination()"
-  [enablePagination]="true"
-  (pageEvent)="handlePageEvent($event)"
+<acp-data-grid
+  [data]="dataSource"
+  [columns]="columnsDefs"
+  [cellTemplate]="{ op: opTpl }"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
 />
 
-<ng-template #templateOp let-item="item">
+<ng-template #opTpl let-data>
   <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
     <mat-icon>more_vert</mat-icon>
   </button>
 
   <mat-menu #menu="matMenu">
     @if ($userRoleStateManager.canGenerateReport()) {
-      <button mat-menu-item (click)="getReport(item)">
+      <button mat-menu-item (click)="getReport(data)">
         <mat-icon>download</mat-icon>
         <span>Reporte</span>
       </button>
     }
 
-    <button mat-menu-item (click)="getPrint(item)">
+    <button mat-menu-item (click)="getPrint(data)">
       <mat-icon>print</mat-icon>
       <span>Imprimir</span>
     </button>
 
     @if ($userRoleStateManager.canCancel()) {
-      <button mat-menu-item (click)="askToDelete(item)">
+      <button mat-menu-item (click)="askToDelete(data)">
         <mat-icon>delete</mat-icon>
         <span>Anular</span>
       </button>

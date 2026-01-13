@@ -1,34 +1,25 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  inject,
-  model,
-  OnInit,
-  signal,
-  TemplateRef,
-  ViewChild,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 
 import { isValidField } from '@core/utils/utils';
 import { DocConfigList } from '@modules/config/domain/models/doc-config.model';
-import { DocConfigInfoAdicionalComponent } from '@modules/config/ui/doc-config/doc-config-info-adicional/doc-config-info-adicional.component';
+import { DocConfigInfoAdicional } from '@modules/config/ui/doc-config/doc-config-info-adicional/doc-config-info-adicional';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Button, DynamicCard } from '@acontplus/ng-components';
+import {
+  Button,
+  DynamicCard,
+  DataGrid,
+  DataGridColumn,
+  AdvancedDialogService,
+} from '@acontplus/ng-components';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { ListDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/list-doc-config.use-case';
-
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { DialogService } from '@core/services/dialog.service';
 import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
 
@@ -43,18 +34,17 @@ import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cas
     Button,
     MatSelectModule,
     DynamicCard,
-    MatDynamicTableComponent,
+    DataGrid,
   ],
-  templateUrl: './doc-config.component.html',
+  templateUrl: './doc-config-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocConfigPageComponent implements OnInit, AfterViewInit {
+export class DocConfigPageComponent implements OnInit {
   private $listUseCase = inject(ListDocConfigUseCase);
   private $createUseCase = inject(CreateDocConfigUseCase);
   private $formDataDocConfig = inject(GetDocConfigFormDataUseCase);
-  private readonly _tS = inject(ToastrNotificationService);
-  private readonly _modalService = inject(DialogService);
-  private readonly _cdr = inject(ChangeDetectorRef);
+  private readonly tS = inject(NotificationService);
+  private readonly dialogSvc = inject(AdvancedDialogService);
 
   establecimientos = signal<GroupedEstab[]>([]);
   puntosEmision = signal<GroupedEstabPuntoEmision[]>([]);
@@ -65,17 +55,14 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
     codEstab: '',
   };
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'nomDoc', label: 'Descripción', type: 'string' },
-    { key: 'templateSelect', label: '', type: 'template' },
-    { key: 'templateSecuencia', label: 'Secuencia', type: 'template' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'index', header: '#', width: '60px' },
+    { field: 'op', header: 'Op.' },
+    { field: 'nomDoc', header: 'Descripción' },
+    { field: 'estado', header: 'Estado' },
+    { field: 'ultimaSecuencia', header: 'Secuencia' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  @ViewChild('templateSecuencia') templateSecuencia!: TemplateRef<any>;
-  @ViewChild('templateSelect') templateSelect!: TemplateRef<any>;
   getDocs() {
     this.docs.set([]);
     this.$listUseCase.execute(this.dataSearch.idPuntoEmision).subscribe((response) => {
@@ -97,19 +84,6 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
         }
         this.dataSearch.codEstab = dataEstab.codEstab;
       }
-      this._cdr.detectChanges();
-    });
-  }
-
-  ngAfterViewInit(): void {
-    // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
-      if (col.type === 'template' && col.key === 'templateSecuencia') {
-        col.templateOutlet = this.templateSecuencia;
-      }
-      if (col.type === 'template' && col.key === 'templateSelect') {
-        col.templateOutlet = this.templateSelect;
-      }
     });
   }
 
@@ -130,15 +104,13 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
 
   saveConfig(item: DocConfigList) {
     if (!(this.dataSearch.idPuntoEmision > 0)) {
-      this._tS.show({
-        type: 'warning',
+      this.tS.warning({
         message: 'Seleccione el punto de emisión',
       });
       return;
     }
     if (!isValidField(item.ultimaSecuencia)) {
-      this._tS.show({
-        type: 'warning',
+      this.tS.warning({
         message: 'Seleccione el punto de emisión',
       });
       return;
@@ -153,26 +125,34 @@ export class DocConfigPageComponent implements OnInit, AfterViewInit {
     };
 
     this.$createUseCase.execute(data).subscribe((response) => {
-      this._tS.show({
-        type: response.code === '1' ? 'success' : 'warning',
-        message: response.message,
-      });
+      if (response.code === '0') {
+        this.tS.warning({ message: response.message });
+      }
       if (response.code === '1') {
+        this.tS.success({ message: response.message });
         this.getDocs();
       }
     });
   }
 
-  openModalInfoAdicional(data: DocConfigList) {
-    const modalRef = this._modalService.open(DocConfigInfoAdicionalComponent, {
-      size: 'lg',
-      data: {
-        ...structuredClone(data),
-        idPuntoEmision: this.dataSearch.idPuntoEmision,
+  async openModalInfoAdicional(data: DocConfigList) {
+    const ref = await this.dialogSvc.openInWrapper(
+      {
+        component: DocConfigInfoAdicional,
+        title: 'Información Adicional',
+        icon: 'sell',
+        showCloseButton: true,
+        data: {
+          ...structuredClone(data),
+          idPuntoEmision: this.dataSearch.idPuntoEmision,
+        },
       },
-    });
+      {
+        size: 'lg',
+      },
+    );
 
-    modalRef.subscribe((result) => {
+    ref.afterClosed().subscribe((result) => {
       if (result && typeof result === 'object') {
         this.getDocs();
       }

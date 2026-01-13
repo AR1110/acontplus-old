@@ -25,7 +25,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
 
 @Component({
-  selector: 'app-company-customer',
+  selector: 'app-company-page-customer',
   imports: [
     BreadcrumbComponent,
     CompanyCustomerAddEditDirective,

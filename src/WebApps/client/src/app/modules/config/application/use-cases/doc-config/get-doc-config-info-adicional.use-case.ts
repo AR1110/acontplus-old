@@ -1,14 +1,14 @@
 import { BaseUseCase } from '@core/base-use-case';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DocConfigInfoAdicional } from '@modules/config/domain/models/doc-config.model';
+import { DocConfigInfoAdicionalList} from '@modules/config/domain/models/doc-config.model';
 import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GetDocConfigInfoAdicionalUseCase
-  implements BaseUseCase<DocConfigInfoAdicional[], number>
+  implements BaseUseCase<DocConfigInfoAdicionalList[], number>
 {
   private repo = inject(DocConfigRepository);
 
@@ -17,7 +17,7 @@ export class GetDocConfigInfoAdicionalUseCase
 
   constructor() {}
 
-  execute(ind: number): Observable<DocConfigInfoAdicional[]> {
+  execute(ind: number): Observable<DocConfigInfoAdicionalList[]> {
     return this.repo.getInfoAdicionales(ind);
   }
 }

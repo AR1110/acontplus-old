@@ -4,7 +4,7 @@ export default {
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^@core/(.*)$': '<rootDir>/src/app/core/$1',
-    '^@company-customer/(.*)$': '<rootDir>/src/app/modules/customer/company-customer/$1',
+    '^@company-customer/(.*)$': '<rootDir>/src/app/modules/customer/company-page-customer/$1',
     '^@modules/(.*)$': '<rootDir>/src/app/modules/$1',
     '^@accounting/(.*)$': '<rootDir>/src/app/modules/accounting/$1',
     '^@technical-support/(.*)$': '<rootDir>/src/app/modules/technical-support/$1',

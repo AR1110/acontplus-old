@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -9,14 +9,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { DataGrid, DataGridColumn, DynamicCard, Button } from '@acontplus/ng-components';
 import { finalize } from 'rxjs';
 import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
-import { DynamicCard } from '@acontplus/ng-components';
 import { HistorialPagoLista } from '@accounting/data/models/historial-pago.model';
 import { MatDivider } from '@angular/material/divider';
 import { DialogService } from '@core/services/dialog.service';
@@ -41,35 +39,36 @@ import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
     DynamicCard,
     MatDivider,
     MatCustomDialogComponent,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
     MatTooltip,
   ],
   templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CuentaPorPagarHistMovimientoComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<CuentaPorPagarHistMovimientoComponent>);
-  readonly data = inject<any>(MAT_DIALOG_DATA);
+  readonly data = inject<{ idCuentaPorPagar: number }>(MAT_DIALOG_DATA);
   private dialogSvc = inject(DialogService);
   private useCase = inject(CUENTA_POR_PAGAR_HTTP_TOKEN);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'serieComprobante', label: 'Nro. Doc.', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Registro', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'nombreEstado', label: 'Estado', type: 'string' },
-    { key: 'expand', label: '', type: 'string' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'op', header: 'Op.' },
+    { field: 'index', header: 'Nro.' },
+    { field: 'serieComprobante', header: 'Nro. Doc.' },
+    { field: 'fechaEmision', header: 'Fecha Registro' },
+    { field: 'total', header: 'Total' },
+    { field: 'nombreEstado', header: 'Estado' },
+    { field: 'expand', header: '' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   cuentaPorPagar = {} as Partial<CuentaPorPagarLista>;
 
-  comprobantesEgreso = new MatTableDataSource<ComprobanteEgresoLista>([]);
+  comprobantesEgreso: ComprobanteEgresoLista[] = [];
   tempHistorialPagos = signal<HistorialPagoLista[]>([]);
   historialPagos = signal<HistorialPagoLista[]>([]);
-  tempPagosDetalle = signal<any[]>([]);
+  tempPagosDetalle = signal<unknown[]>([]);
 
   loading = signal(false);
 
@@ -78,11 +77,17 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     this.useCase
       .getHistorialMovimientoByIdCuentaPorPagar(this.data.idCuentaPorPagar)
       .pipe(finalize(() => this.loading.set(false)))
-      .subscribe((response) => {
-        this.comprobantesEgreso = new MatTableDataSource(response.comprobantesEgreso);
-        this.tempHistorialPagos.set(response.historialPagos);
-        this.tempPagosDetalle.set(response.pagosDetalle);
-      });
+      .subscribe(
+        (response: {
+          comprobantesEgreso: ComprobanteEgresoLista[];
+          historialPagos: HistorialPagoLista[];
+          pagosDetalle: unknown[];
+        }) => {
+          this.comprobantesEgreso = response.comprobantesEgreso;
+          this.tempHistorialPagos.set(response.historialPagos);
+          this.tempPagosDetalle.set(response.pagosDetalle);
+        },
+      );
   }
 
   onShowExpanded(row: ComprobanteEgresoLista) {
@@ -97,10 +102,30 @@ export class CuentaPorPagarHistMovimientoComponent implements OnInit {
     this.historialPagos.set([]);
   }
 
+  onRowClick(_event: { rowData: ComprobanteEgresoLista }) {
+    // Implementar lógica de click en fila si es necesario
+  }
+
+  toggleExpand(data: ComprobanteEgresoLista) {
+    if (this.historialPagos().length > 0) {
+      this.onHideExpanded();
+    } else {
+      this.onShowExpanded(data);
+    }
+  }
+
+  downloadDocument(_data: ComprobanteEgresoLista) {
+    // Implementar lógica para descargar documento
+  }
+
+  deleteDocument(_data: ComprobanteEgresoLista) {
+    // Implementar lógica para eliminar documento
+  }
+
   openPagoDetalle(item: HistorialPagoLista) {
     this.dialogSvc.open(PagoDetalleModalComponent, {
       size: 'md',
-      data: this.tempPagosDetalle().filter((pd) => pd.idPago === item.idPago),
+      data: this.tempPagosDetalle().filter((pd: any) => pd.idPago === item.idPago),
     });
   }
 

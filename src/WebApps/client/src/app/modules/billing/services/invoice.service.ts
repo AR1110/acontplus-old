@@ -53,9 +53,7 @@ export class InvoiceService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(
         map((response) => {
           const result = {

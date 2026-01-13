@@ -28,28 +28,32 @@
             </mat-form-field>
           </div>
           <div class="col">
-            <app-date-range-selection
-              (onChangeDateRange)="onDateRangeSelection($event)"
-              (onCheckboxChange)="refresh()"
-              [(checkbox)]="dataSearch.checkBoxDate"
-              [showInputMaterial]="true"
-              [showMatPrefix]="true"
+            <acp-date-range-picker
+              [showCheckbox]="true"
+            (dateRangeSelected)="dateRangeSelected($event)"
+            (checkboxChange)="checkboxChangeDateRange($event)"
+              [checkboxChecked]="dataSearch.checkBoxDate"
             />
           </div>
         </div>
       </div>
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
-          <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
-            <mat-icon>add</mat-icon>
-            Nuevo
-          </button>
-          <button mat-icon-button (click)="refresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
-            <mat-icon>filter_list</mat-icon>
-          </button>
+          <acp-button
+            icon="add"
+            text="Nuevo"
+            variant="primary"
+            matStyle="filled"
+            appMeasureAddEdit
+            (onResultModal)="refresh()"
+          />
+          <acp-button icon="refresh" matStyle="icon" variant="primary" (handleClick)="refresh()" />
+          <acp-button
+            icon="filter_list"
+            matStyle="icon"
+            variant="primary"
+            (handleClick)="isSearchAdvanced.set(!isSearchAdvanced())"
+          />
         </div>
       </div>
     </div>
@@ -108,26 +112,23 @@
     }
   </div>
 
-  <app-custom-table-container
-    [pagination]="pagination()"
-    [isLoadingResults]="isLoadingResults()"
-    (onPageEvent)="handlePageEvent($event)"
-  >
-    <app-mat-dynamic-table
-      [templateOp]="templateOp"
-      [tableData]="dataSource.data"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-    />
-  </app-custom-table-container>
+  <acp-data-grid
+    [data]="dataSource()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{ op: templateOp }"
+    [length]="pagination().totalRecords"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    (page)="handlePageEvent($event)"
+  />
 
-  <ng-template #templateOp let-item="item">
+  <ng-template #templateOp let-data>
     <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
       <mat-icon>more_vert</mat-icon>
     </button>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item appNotaEntregaDetalleDialog [id]="item.idDocumento">
+      <button mat-menu-item appNotaEntregaDetalleDialog [id]="data.idDocumento">
         <mat-icon>list_alt</mat-icon>
         <span>Detalle</span>
       </button>

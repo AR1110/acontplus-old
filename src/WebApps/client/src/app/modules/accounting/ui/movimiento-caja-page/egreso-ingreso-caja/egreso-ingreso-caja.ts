@@ -1,9 +1,9 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { SharedService } from '@core/services/shared.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
@@ -15,9 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
+import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs/operators';
 import { MatMenuModule } from '@angular/material/menu';
@@ -40,23 +38,25 @@ import { MovimientoCajaList } from '@accounting/movimiento-caja/domain/movimient
     MatMenuModule,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
   ],
   templateUrl: './egreso-ingreso-caja.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EgresoIngresoCaja implements OnInit {
-  dataSearch = {
+  dataSearch = signal({
     codEstab: '',
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
     customerId: 0,
     codEstado: '',
     enableDateFilter: true,
-  };
+  });
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToastrNotificationService);
+  private notificationSvc = inject(NotificationService);
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
   private $listUseCase = inject(ListMovimientoCajaUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
@@ -65,37 +65,32 @@ export class EgresoIngresoCaja implements OnInit {
 
   isLoadingResults = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'nomCaja', label: 'Caja', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
-    {
-      key: 'nomSubEntidadFinanciera',
-      label: 'Entidad Financiera',
-      type: 'string',
-    },
-    { key: 'valor', label: 'Valor', type: 'string' },
-    { key: 'observaciones', label: 'Obs.', type: 'string' },
-    { key: 'nomEmpleado', label: 'Cliente', type: 'string' },
-    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'index', header: 'Nro.' },
+    { field: 'op', header: 'Op.' },
+    { field: 'nomCaja', header: 'Caja' },
+    { field: 'fechaEmision', header: 'Fecha Emisión' },
+    { field: 'nroDoc', header: 'Nro. Doc' },
+    { field: 'nomSubEntidadFinanciera', header: 'Entidad Financiera' },
+    { field: 'valor', header: 'Valor' },
+    { field: 'observaciones', header: 'Obs.' },
+    { field: 'nomEmpleado', header: 'Cliente' },
+    { field: 'nomUsuario', header: 'Usuario' },
+    { field: 'nomEstado', header: 'Estado' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
   getMovimientosCaja() {
     const params = {
-      checkBoxFecha: this.dataSearch.enableDateFilter,
-      codEstab: this.dataSearch.codEstab,
+      checkBoxFecha: this.dataSearch().enableDateFilter,
+      codEstab: this.dataSearch().codEstab,
       pageIndex: this.pagination().pageIndex + 1,
       pageSize: this.pagination().pageSize,
-      fechaInicio: this.dataSearch.fromDate,
-      fechaFin: this.dataSearch.toDate,
-      customerId: isValidField(this.dataSearch.customerId),
-      codEstado: isValidField(this.dataSearch.codEstado),
+      fechaInicio: this.dataSearch().fromDate,
+      fechaFin: this.dataSearch().toDate,
+      customerId: isValidField(this.dataSearch().customerId),
+      codEstado: isValidField(this.dataSearch().codEstado),
     };
     this.dataSource = [];
 
@@ -114,21 +109,26 @@ export class EgresoIngresoCaja implements OnInit {
   }
 
   ngOnInit() {
-    this._movimientoCajaUseCase.getDataFilter().subscribe((response) => {
-      this.establecimientos = response.establecimientos;
-      if (this.establecimientos.length > 0) {
-        const dataEstab = this.establecimientos.find((item) => item.predeterminado);
-        if (dataEstab) {
-          this.dataSearch.codEstab = dataEstab.codEstab;
-          this.getMovimientosCaja();
+    this._movimientoCajaUseCase
+      .getDataFilter()
+      .subscribe((response: { establecimientos: EstablecimientoSelectHtmlOnly[] }) => {
+        this.establecimientos = response.establecimientos;
+        if (this.establecimientos.length > 0) {
+          const dataEstab = this.establecimientos.find((item) => item.predeterminado);
+          if (dataEstab) {
+            this.dataSearch.update((prev) => ({ ...prev, codEstab: dataEstab.codEstab }));
+            this.getMovimientosCaja();
+          }
         }
-      }
-    });
+      });
   }
 
   onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.fromDate = range.from;
-    this.dataSearch.toDate = range.to;
+    this.dataSearch.update((prev) => ({
+      ...prev,
+      fromDate: range.from,
+      toDate: range.to,
+    }));
     this.getMovimientosCaja();
   }
 
@@ -137,18 +137,18 @@ export class EgresoIngresoCaja implements OnInit {
   }
 
   onSelectCustomer($event: CompanyCustomerEntity) {
-    this.dataSearch.customerId = $event.customerId;
+    this.dataSearch.update((prev) => ({ ...prev, customerId: $event.customerId }));
     this.getMovimientosCaja();
   }
 
   onEmptyCustomer() {
-    this.dataSearch.customerId = 0;
+    this.dataSearch.update((prev) => ({ ...prev, customerId: 0 }));
   }
 
-  openModal(params?: any) {
+  openModal(params?: unknown) {
     const modalRef = this.dialogSvc.open(EgresoIngresoDialogComponent, {
       size: 'lg',
-      data: params || {},
+      data: params ?? {},
     });
     modalRef.subscribe((result) => {
       if (result && typeof result === 'object') {
@@ -166,7 +166,7 @@ export class EgresoIngresoCaja implements OnInit {
       nroIdentificacion: item.nroIdentificacion,
     };
 
-    this.sharedSvc.askToPrint({
+    void this.sharedSvc.askToPrint({
       parameters: JSON.stringify(parameters),
     });
   }
@@ -194,13 +194,13 @@ export class EgresoIngresoCaja implements OnInit {
         format: 'pdf',
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
   askToDelete(item: MovimientoCajaList) {
     try {
-      Swal.fire({
+      void Swal.fire({
         icon: 'warning',
         html: `<small>Esta seguro/a de eliminar  ahora?</small>`,
         showConfirmButton: true,
@@ -212,13 +212,13 @@ export class EgresoIngresoCaja implements OnInit {
         if (result.isConfirmed) {
           this._movimientoCajaUseCase.delete(item.idMovimientoCaja).subscribe((response) => {
             if (response.code === '0') {
-              this.tS.show({
+              this.notificationSvc.show({
                 type: 'warning',
                 message: response.message,
               });
             }
             if (response.code === '1') {
-              this.tS.show({
+              this.notificationSvc.show({
                 type: 'success',
                 message: response.message,
               });
@@ -228,7 +228,7 @@ export class EgresoIngresoCaja implements OnInit {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
   handlePageEvent(e: PageEvent) {

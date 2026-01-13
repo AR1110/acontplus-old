@@ -37,7 +37,7 @@ export const SETUP_STEPS: ConfigurationStep[] = [
     description: 'Registrar Empresa',
     mandatory: true,
     isCompleted: true, // Always completed
-    route: '/config/company-registration',
+    route: '/config/company-page-registration',
     icon: 'fas fa-building',
     estimatedTime: 'Completado ✓',
   },

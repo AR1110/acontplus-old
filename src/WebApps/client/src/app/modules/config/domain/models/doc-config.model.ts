@@ -25,7 +25,7 @@ export class DocConfigListResponse {
   data: DocConfigList[] = [];
 }
 
-export interface DocConfigInfoAdicional {
+export interface DocConfigInfoAdicionalList {
   unique: string;
   nombre: string;
   valor: string;

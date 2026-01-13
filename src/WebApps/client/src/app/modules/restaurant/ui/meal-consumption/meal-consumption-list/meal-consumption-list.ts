@@ -421,7 +421,7 @@ export class MealConsumptionList implements OnInit {
               text: 'Cliente aún no tiene asignada una empresa',
             });
           } else if (event && response.customer.idEmpresa > 0) {
-            // Auto-save if enter was pressed and has company
+            // Auto-save if enter was pressed and has company-page
             this.autoSaveAvailableServices();
           }
         }

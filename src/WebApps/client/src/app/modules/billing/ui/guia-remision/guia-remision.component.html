@@ -35,19 +35,27 @@
           </div>
           <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
             <div class="d-flex flex-row gap-1 justify-content-end">
-              <button mat-icon-button [disabled]="loading" (click)="openAddEditModal()">
-                <mat-icon>add</mat-icon>
-              </button>
-              <button mat-icon-button (click)="refresh()" [disabled]="loading">
-                <mat-icon>refresh</mat-icon>
-              </button>
-              <button
-                mat-icon-button
-                (click)="isFilterAdvanced.set(!isFilterAdvanced())"
-                [disabled]="loading"
-              >
-                <mat-icon>filter_list</mat-icon>
-              </button>
+              <acp-button
+                icon="add"
+                matStyle="icon"
+                variant="primary"
+                [disabled]="loading()"
+                (handleClick)="openAddEditModal()"
+              />
+              <acp-button
+                icon="refresh"
+                matStyle="icon"
+                variant="primary"
+                [disabled]="loading()"
+                (handleClick)="refresh()"
+              />
+              <acp-button
+                icon="filter_list"
+                matStyle="icon"
+                variant="primary"
+                [disabled]="loading()"
+                (handleClick)="isFilterAdvanced.set(!isFilterAdvanced())"
+              />
             </div>
           </div>
         </div>
@@ -102,35 +110,35 @@
       </div>
     }
   </div>
-  <app-mat-dynamic-table
-    [tableData]="dataSource()"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [templateOp]="templateOp"
-    [paginationConfig]="pagination()"
-    [enablePagination]="true"
-    (pageEvent)="handlePageEvent($event)"
+  <acp-data-grid
+    [data]="dataSource()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{ op: templateOp }"
+    [length]="pagination().totalRecords"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    (page)="handlePageEvent($event)"
   />
 
-  <ng-template #templateOp let-item="item">
+  <ng-template #templateOp let-data>
     <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
       <mat-icon>more_vert</mat-icon>
     </button>
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item appCompraHabitualHistorial [params]="item">
+      <button mat-menu-item appCompraHabitualHistorial [params]="data">
         <mat-icon>history</mat-icon>
         <span>Hist. compras</span>
       </button>
     </mat-menu>
 
-    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="data.idArticulo">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="item.idArticulo">
+    <button mat-icon-button matTooltip="Editar" appAddEditProduct [id]="data.idArticulo">
       <mat-icon>edit</mat-icon>
     </button>
-    <button mat-icon-button appProductKardexModal [params]="item" matTooltip="Kardex">
+    <button mat-icon-button appProductKardexModal [params]="data" matTooltip="Kardex">
       <mat-icon>timeline</mat-icon>
     </button>
   </ng-template>

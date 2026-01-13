@@ -1,32 +1,30 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-pago-detalle-modal',
-  imports: [MatCustomDialogComponent, MatDynamicTableComponent],
+  imports: [MatCustomDialogComponent, DataGrid],
   templateUrl: './pago-detalle-modal.component.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PagoDetalleModalComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<PagoDetalleModalComponent>);
-  readonly data = inject<any[]>(MAT_DIALOG_DATA);
+  readonly data = inject<unknown[]>(MAT_DIALOG_DATA);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'nroCuota', label: 'Nro. Cuota.', type: 'string' },
-    { key: 'cuota', label: 'Cuota', type: 'number' },
-    { key: 'abono', label: 'Abono', type: 'number' },
-    { key: 'saldo', label: 'Saldo', type: 'number' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'nroCuota', header: 'Nro. Cuota.' },
+    { field: 'cuota', header: 'Cuota' },
+    { field: 'abono', header: 'Abono' },
+    { field: 'saldo', header: 'Saldo' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
-  dataSource = new MatTableDataSource<any>([]);
+  dataSource: unknown[] = [];
 
   ngOnInit() {
-    this.dataSource = new MatTableDataSource(this.data);
+    this.dataSource = this.data;
   }
 
   closeDialog() {

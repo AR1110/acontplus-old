@@ -1,175 +1,178 @@
 <app-breadcrumb />
-<acp-dynamic-card>
-  <!--    <div class="row">-->
-  <!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="establish"-->
-  <!--          >Establecimiento: <span class="text-danger">*</span></label-->
-  <!--          >-->
-  <!--          <select-->
-  <!--            (change)="filterValidation()"-->
-  <!--            [(ngModel)]="dataSearch.codEstab"-->
-  <!--            class="form-select"-->
-  <!--            id="establish"-->
-  <!--            name="establish"-->
-  <!--          >-->
-  <!--            @for (item of establecimientos; track $index) {-->
-  <!--              <option [ngValue]="item.codEstab">-->
-  <!--                {{ item.nombreComercial }}-->
-  <!--              </option>-->
-  <!--            }-->
-  <!--          </select>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
-  <!--        <div class="form-group">-->
-  <!--          <label for="dateRangeSelection">Rango Fechas: </label>-->
-  <!--          <app-date-range-selection-->
-  <!--            (onChangeDateRange)="onDateRangeSelection($event)"-->
-  <!--          />-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
-  <!--        <div class="form-group">-->
-  <!--          <label>Estado</label>-->
-  <!--          <select-->
-  <!--            (change)="filterValidation()"-->
-  <!--            [(ngModel)]="dataSearch.byEstado"-->
-  <!--            class="form-select"-->
-  <!--            id="estado"-->
-  <!--            name="estado"-->
-  <!--          >-->
-  <!--            <option value="">Todos</option>-->
-  <!--            <option [ngValue]="1">Activo</option>-->
-  <!--            <option [ngValue]="0">Anulado</option>-->
-  <!--          </select>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
-  <!--        <div class="card mt-2">-->
-  <!--          -->
-  <!--            <button-->
-  <!--              (click)="onClickBtnMore()"-->
-  <!--              acp-button variant="danger" icon="delete""-->
-  <!--              type="button"-->
-  <!--            >-->
-  <!--              <mat-icon>visibility</mat-icon>-->
-  <!--            </button>-->
-  <!--            <button-->
-  <!--              (click)="filterValidation()"-->
-  <!--              acp-button variant="success" icon="" text="" (handleClick)="" btn-sm ml-2"-->
-  <!--              type="button"-->
-  <!--            >-->
-  <!--              <mat-icon>refresh</mat-icon>-->
-  <!--            </button>-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    </div>-->
+<!--    <div class="row">-->
+<!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
+<!--        <div class="form-group">-->
+<!--          <label for="establish"-->
+<!--          >Establecimiento: <span class="text-danger">*</span></label-->
+<!--          >-->
+<!--          <select-->
+<!--            (change)="filterValidation()"-->
+<!--            [(ngModel)]="dataSearch.codEstab"-->
+<!--            class="form-select"-->
+<!--            id="establish"-->
+<!--            name="establish"-->
+<!--          >-->
+<!--            @for (item of establecimientos; track $index) {-->
+<!--              <option [ngValue]="item.codEstab">-->
+<!--                {{ item.nombreComercial }}-->
+<!--              </option>-->
+<!--            }-->
+<!--          </select>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
+<!--        <div class="form-group">-->
+<!--          <label for="dateRangeSelection">Rango Fechas: </label>-->
+<!--          <app-date-range-selection-->
+<!--            (onChangeDateRange)="onDateRangeSelection($event)"-->
+<!--          />-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
+<!--        <div class="form-group">-->
+<!--          <label>Estado</label>-->
+<!--          <select-->
+<!--            (change)="filterValidation()"-->
+<!--            [(ngModel)]="dataSearch.byEstado"-->
+<!--            class="form-select"-->
+<!--            id="estado"-->
+<!--            name="estado"-->
+<!--          >-->
+<!--            <option value="">Todos</option>-->
+<!--            <option [ngValue]="1">Activo</option>-->
+<!--            <option [ngValue]="0">Anulado</option>-->
+<!--          </select>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">-->
+<!--        <div class="card mt-2">-->
+<!--          -->
+<!--            <button-->
+<!--              (click)="onClickBtnMore()"-->
+<!--              acp-button variant="danger" icon="delete""-->
+<!--              type="button"-->
+<!--            >-->
+<!--              <mat-icon>visibility</mat-icon>-->
+<!--            </button>-->
+<!--            <button-->
+<!--              (click)="filterValidation()"-->
+<!--              acp-button variant="success" icon="" text="" (handleClick)="" btn-sm ml-2"-->
+<!--              type="button"-->
+<!--            >-->
+<!--              <mat-icon>refresh</mat-icon>-->
+<!--            </button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
 
-  <!--    @if (moreSearchOptions) {-->
-  <!--      <div class="row" ng-if="moreSearchOptions">-->
-  <!--        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">-->
-  <!--          <div class="row">-->
-  <!--            <div class="col-xl-4 col-lg-4 col-md-12 col-12">-->
-  <!--              <div class="form-group">-->
-  <!--                <label for="cliente-empleado">Persona</label>-->
-  <!--                <select-->
-  <!--                  name="cliente-empleado"-->
-  <!--                  id="cliente-empleado"-->
-  <!--                  class="form-select"-->
-  <!--                  [(ngModel)]="dataSearch.byTipoPersona"-->
-  <!--                  (change)="onChangePersona()"-->
-  <!--                  [disabled]="disabledTempInputPersona"-->
-  <!--                >-->
-  <!--                  <option value="">Todos</option>-->
-  <!--                  @for (item of tiposPersona; track $index) {-->
-  <!--                    <option [ngValue]="item.codigo">-->
-  <!--                      {{ item.descripcion }}-->
-  <!--                    </option>-->
-  <!--                  }-->
-  <!--                </select>-->
-  <!--              </div>-->
-  <!--            </div>-->
+<!--    @if (moreSearchOptions) {-->
+<!--      <div class="row" ng-if="moreSearchOptions">-->
+<!--        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">-->
+<!--          <div class="row">-->
+<!--            <div class="col-xl-4 col-lg-4 col-md-12 col-12">-->
+<!--              <div class="form-group">-->
+<!--                <label for="cliente-empleado">Persona</label>-->
+<!--                <select-->
+<!--                  name="cliente-empleado"-->
+<!--                  id="cliente-empleado"-->
+<!--                  class="form-select"-->
+<!--                  [(ngModel)]="dataSearch.byTipoPersona"-->
+<!--                  (change)="onChangePersona()"-->
+<!--                  [disabled]="disabledTempInputPersona"-->
+<!--                >-->
+<!--                  <option value="">Todos</option>-->
+<!--                  @for (item of tiposPersona; track $index) {-->
+<!--                    <option [ngValue]="item.codigo">-->
+<!--                      {{ item.descripcion }}-->
+<!--                    </option>-->
+<!--                  }-->
+<!--                </select>-->
+<!--              </div>-->
+<!--            </div>-->
 
-  <!--            @if (showCliente || showEmpleado) {-->
-  <!--              <div class="col-xl-8 col-lg-8 col-md-12 col-12">-->
-  <!--                @if (showCliente) {-->
-  <!--                  <div class="form-group">-->
-  <!--                    <label for="customerSearch">Cliente: </label>-->
-  <!--                    <app-company-customer-search-->
-  <!--                      [isSimpleMode]="isCustomerSearchSimple"-->
-  <!--                      (onCustomerSelected)="onCustomerSelected($event)"-->
-  <!--                      (clearSearch)="resultCustomerEmptyInput($event)"-->
-  <!--                      [textSearch]="companyCustomerSearchName"-->
-  <!--                    />-->
-  <!--                  </div>-->
-  <!--                }-->
-  <!--                @if (showEmpleado) {-->
-  <!--                  <div class="form-group">-->
-  <!--                    <label for="">Empleado: </label>-->
-  <!--                    <app-employee-search-->
-  <!--                      [isSimpleMode]="isSearchEmployeeSimple"-->
-  <!--                      (onSupplierSelected)="onEmployeeSelected($event)"-->
-  <!--                      (emptyInput)="employeeclearSearch($event)"-->
-  <!--                      [textSearch]="companyCustomerSearchName"-->
-  <!--                    />-->
-  <!--                  </div>-->
-  <!--                }-->
-  <!--              </div>-->
-  <!--            }-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">-->
-  <!--          <div class="row">-->
-  <!--            <div class="col-xl-7 col-lg-7 col-md-12 col-12">-->
-  <!--              <div class="form-group">-->
-  <!--                <label>Usuario:</label>-->
-  <!--                <input-->
-  <!--                  type="text"-->
-  <!--                  class="form-control border-select"-->
-  <!--                  ng-model="dataSearch.nroSecuencialDoc"-->
-  <!--                  ngbTooltip="Ingrese Número de Documento del cobro!"-->
-  <!--                  placeholder="Ej: 123"-->
-  <!--                />-->
-  <!--              </div>-->
-  <!--            </div>-->
-  <!--            <div class="col-xl-5 col-lg-5 col-md-12 col-12">-->
-  <!--              <div class="form-group">-->
-  <!--                <label>Nro. Doc. Ingreso:</label>-->
-  <!--                <input-->
-  <!--                  type="text"-->
-  <!--                  class="form-control border-select"-->
-  <!--                  ng-model="dataSearch.nroSecuencialDoc"-->
-  <!--                  ngbTooltip="Ingrese Número de Documento del cobro!"-->
-  <!--                  placeholder="Ej: 123"-->
-  <!--                />-->
-  <!--              </div>-->
-  <!--            </div>-->
-  <!--          </div>-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--    }-->
-  <div
-    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
-  >
-    <div class="col"></div>
-    <div class="col">
-      <div class="d-flex flex-row gap-2 justify-content-end">
-        <button mat-icon-button (click)="refresh()">
-          <mat-icon>refresh</mat-icon>
-        </button>
-      </div>
+<!--            @if (showCliente || showEmpleado) {-->
+<!--              <div class="col-xl-8 col-lg-8 col-md-12 col-12">-->
+<!--                @if (showCliente) {-->
+<!--                  <div class="form-group">-->
+<!--                    <label for="customerSearch">Cliente: </label>-->
+<!--                    <app-company-page-customer-search-->
+<!--                      [isSimpleMode]="isCustomerSearchSimple"-->
+<!--                      (onCustomerSelected)="onCustomerSelected($event)"-->
+<!--                      (clearSearch)="resultCustomerEmptyInput($event)"-->
+<!--                      [textSearch]="companyCustomerSearchName"-->
+<!--                    />-->
+<!--                  </div>-->
+<!--                }-->
+<!--                @if (showEmpleado) {-->
+<!--                  <div class="form-group">-->
+<!--                    <label for="">Empleado: </label>-->
+<!--                    <app-employee-search-->
+<!--                      [isSimpleMode]="isSearchEmployeeSimple"-->
+<!--                      (onSupplierSelected)="onEmployeeSelected($event)"-->
+<!--                      (emptyInput)="employeeclearSearch($event)"-->
+<!--                      [textSearch]="companyCustomerSearchName"-->
+<!--                    />-->
+<!--                  </div>-->
+<!--                }-->
+<!--              </div>-->
+<!--            }-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">-->
+<!--          <div class="row">-->
+<!--            <div class="col-xl-7 col-lg-7 col-md-12 col-12">-->
+<!--              <div class="form-group">-->
+<!--                <label>Usuario:</label>-->
+<!--                <input-->
+<!--                  type="text"-->
+<!--                  class="form-control border-select"-->
+<!--                  ng-model="dataSearch.nroSecuencialDoc"-->
+<!--                  ngbTooltip="Ingrese Número de Documento del cobro!"-->
+<!--                  placeholder="Ej: 123"-->
+<!--                />-->
+<!--              </div>-->
+<!--            </div>-->
+<!--            <div class="col-xl-5 col-lg-5 col-md-12 col-12">-->
+<!--              <div class="form-group">-->
+<!--                <label>Nro. Doc. Ingreso:</label>-->
+<!--                <input-->
+<!--                  type="text"-->
+<!--                  class="form-control border-select"-->
+<!--                  ng-model="dataSearch.nroSecuencialDoc"-->
+<!--                  ngbTooltip="Ingrese Número de Documento del cobro!"-->
+<!--                  placeholder="Ej: 123"-->
+<!--                />-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    }-->
+<div
+  class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+>
+  <div class="col"></div>
+  <div class="col">
+    <div class="d-flex flex-row gap-2 justify-content-end">
+      <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
     </div>
   </div>
+</div>
 
-  <app-mat-dynamic-table
-    [isLoadingData]="loading()"
-    [enablePagination]="true"
-    [paginationConfig]="pagination()"
-    [tableData]="comprobantesIngreso"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    (pageEvent)="handlePageEvent($event)"
-  />
-</acp-dynamic-card>
+<acp-data-grid
+  [data]="comprobantesIngreso"
+  [columns]="columnsDefs"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: opTpl,
+  }"
+/>
+
+<ng-template #opTpl let-data>
+  <acp-button variant="info" icon="visibility" matStyle="icon" (handleClick)="viewDetails(data)" />
+  <acp-button variant="success" icon="print" matStyle="icon" (handleClick)="printDocument(data)" />
+</ng-template>

@@ -1,51 +1,57 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="title"
-  (close)="close()"
-/>
-
-<ng-template #body>
+<mat-dialog-content>
   <div class="d-grid gap-2">
     <mat-form-field>
       <mat-label>Descripción</mat-label>
-      <input matInput [(ngModel)]="data.descripcion" />
+      <input matInput [(ngModel)]="dataForm.descripcion" />
     </mat-form-field>
 
     <mat-radio-group
       aria-label="Select an option"
-      [(ngModel)]="data.tipo"
+      [(ngModel)]="dataForm.tipo"
       (change)="handleChangeType()"
     >
       <mat-radio-button [value]="true">Contado</mat-radio-button>
       <mat-radio-button [value]="false">Crédito</mat-radio-button>
     </mat-radio-group>
 
-    @if (!data.tipo) {
+    @if (!dataForm.tipo) {
       <mat-form-field>
         <mat-label>Días crédito</mat-label>
-        <input matInput [(ngModel)]="data.diasCredito" />
+        <input matInput [(ngModel)]="dataForm.diasCredito" />
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Número cuotas</mat-label>
-        <input matInput [(ngModel)]="data.numeroCuota" />
+        <input matInput [(ngModel)]="dataForm.numeroCuota" />
       </mat-form-field>
 
-      <mat-slide-toggle [(ngModel)]="data.entrada">Con entrada</mat-slide-toggle>
+      <mat-slide-toggle [(ngModel)]="dataForm.entrada">Con entrada</mat-slide-toggle>
     }
 
-    <mat-radio-group aria-label="Select an option" [(ngModel)]="data.gestion">
+    <mat-radio-group aria-label="Select an option" [(ngModel)]="dataForm.gestion">
       <mat-radio-button [value]="false">Compra</mat-radio-button>
       <mat-radio-button [value]="true">Venta</mat-radio-button>
     </mat-radio-group>
 
-    <mat-radio-group aria-label="Select an option" [(ngModel)]="data.estado">
+    <mat-radio-group aria-label="Select an option" [(ngModel)]="dataForm.estado">
       <mat-radio-button [value]="true">Activo</mat-radio-button>
       <mat-radio-button [value]="false">Inactivo</mat-radio-button>
     </mat-radio-group>
   </div>
-</ng-template>
-<ng-template #footer>
-  <acp-button variant="success" [icon]="btnIcon" [text]="btnText" (handleClick)="save()" />
-</ng-template>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button
+    variant="success"
+    [icon]="btnIcon"
+    [text]="btnText"
+    matStyle="filled"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

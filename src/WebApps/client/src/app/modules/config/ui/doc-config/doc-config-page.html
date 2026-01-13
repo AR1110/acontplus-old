@@ -36,49 +36,55 @@
     </div>
   </div>
 
-  <app-mat-dynamic-table
-    [tableData]="docs()"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [templateOp]="templateOp"
+  <acp-data-grid
+    [data]="docs()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: templateOp,
+      estado: templateEstado,
+      ultimaSecuencia: templateSecuencia,
+    }"
+    ,
+    [showPaginator]="false"
   />
 
-  <ng-template #templateOp let-item="item">
+  <ng-template #templateOp let-data>
     <acp-button
       variant="success"
       icon="save"
       matStyle="icon"
-      [disabled]="!item.ultimaSecuencia"
-      (handleClick)="saveConfig(item)"
+      [disabled]="!data.ultimaSecuencia"
+      (handleClick)="saveConfig(data)"
     />
-    @if (item.hasInfoAdicional) {
+    @if (data.hasInfoAdicional) {
       <acp-button
         icon="sell"
         matStyle="icon"
-        [disabled]="!item.ultimaSecuencia"
-        (handleClick)="openModalInfoAdicional(item)"
+        [disabled]="!data.ultimaSecuencia"
+        (handleClick)="openModalInfoAdicional(data)"
       />
     }
   </ng-template>
 
-  <ng-template #templateSecuencia let-item>
+  <ng-template #templateEstado let-data>
+    <mat-checkbox
+      type="checkbox"
+      [name]="data.nomDoc + data.index"
+      [id]="data.nomDoc + data.index"
+      [(ngModel)]="data.estado"
+    />
+  </ng-template>
+
+  <ng-template #templateSecuencia let-data>
     <mat-form-field>
       <input
         matInput
         type="number"
-        [(ngModel)]="item.ultimaSecuencia"
+        [(ngModel)]="data.ultimaSecuencia"
         onclick="this.select()"
         min="1"
-        [disabled]="!item.estado"
+        [disabled]="!data.estado"
       />
     </mat-form-field>
-  </ng-template>
-  <ng-template #templateSelect let-item>
-    <mat-checkbox
-      type="checkbox"
-      [name]="item.nomDoc + item.index"
-      [id]="item.nomDoc + item.index"
-      [(ngModel)]="item.estado"
-    />
   </ng-template>
 </acp-dynamic-card>

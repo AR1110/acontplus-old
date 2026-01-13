@@ -5,11 +5,7 @@
 />
 
 <ng-template #containerTemplate>
-  <app-mat-dynamic-table
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [tableData]="dataSource.data"
-  />
+  <acp-data-grid [data]="dataSource" [columns]="columnsDefs" />
 </ng-template>
 
 <ng-template #actionsTemplate />

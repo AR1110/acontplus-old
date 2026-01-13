@@ -43,7 +43,7 @@ export const routes: Route[] = [
   {
     path: 'invoices',
     title: 'Factura',
-    loadComponent: () => import('@billing/ui/invoice/invoice').then((m) => m.Invoice),
+    loadComponent: () => import('@billing/ui/invoice-page/invoice-page').then((m) => m.InvoicePage),
     data: {
       breadcrumb: 'Factura',
     },

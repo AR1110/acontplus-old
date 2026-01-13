@@ -4,10 +4,9 @@ import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { HttpClient } from '@angular/common/http';
 import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
 import {
-  DocConfigFormDataResponse,
-  DocConfigInfoAdicional,
+  DocConfigFormDataResponse, 
   DocConfigListResponse,
-  DocConfig,
+  DocConfig, DocConfigInfoAdicionalList,
 } from '@modules/config/domain/models/doc-config.model';
 import { map, Observable } from 'rxjs';
 import { DocConfigListMapper } from '@modules/config/data/doc-config/doc-config-list.mapper';
@@ -48,7 +47,7 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
     };
     return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
-  getInfoAdicionales(id: number): Observable<DocConfigInfoAdicional[]> {
+  getInfoAdicionales(id: number): Observable<DocConfigInfoAdicionalList[]> {
     const json = DocConfigInfoAdicionalesMapper.toJson(id);
     return this.#http
       .get(`${this.#url}?json=${json}`)
