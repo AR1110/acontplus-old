@@ -4,7 +4,7 @@ import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
 import { HttpClient } from '@angular/common/http';
 import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
 import {
-  DocConfigFormDataResponse, 
+  DocConfigFormDataResponse,
   DocConfigListResponse,
   DocConfig, DocConfigInfoAdicionalList,
 } from '@modules/config/domain/models/doc-config.model';
