@@ -132,7 +132,7 @@ BEGIN
 			(
 				 codigo          VARCHAR(300)  '$.codigo'
 				,codBarras       VARCHAR(500)  '$.codBarras'
-				,codAuxiliar     VARCHAR(500)  '$.codigo'
+				,codAuxiliar     VARCHAR(500)  '$.codAuxiliar'
 				,idSubFamilia    INT           '$.idSubFamilia'
 				,idMedida        INT           '$.idMedida'
 				,idMarca         INT           '$.idMarca'

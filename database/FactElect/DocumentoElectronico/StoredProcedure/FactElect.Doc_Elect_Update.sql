@@ -35,7 +35,7 @@ BEGIN
                 RETURN;
             END
 
-        IF DATEDIFF(DAY, @fechaEmision, GETDATE()) > IIF(@codDoc = '07',5,4)
+        IF DATEDIFF(DAY, @fechaEmision, GETDATE()) > IIF(@codDoc = '07',0,0)
             BEGIN
                 SELECT '0' AS code, 'El documento ' + @serieComprobante + ' se encuentra fuera de la fecha permitida por el SRI' AS message;
                 RETURN;

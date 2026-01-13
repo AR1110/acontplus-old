@@ -158,7 +158,7 @@ BEGIN
 
             IF @codeLicense != 'D'
                 BEGIN 
-                    IF @ruc NOT IN ('1717631848001','2200123962001','2200123962001')
+                    IF @ruc NOT IN ('1717631848001','2200123962001','2200123962001','1313319558001')
                         BEGIN
                             SET @PolicyValue = -1;
                         END
