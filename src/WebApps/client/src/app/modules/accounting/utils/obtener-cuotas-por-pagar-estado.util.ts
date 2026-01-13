@@ -1,10 +1,10 @@
 import { DECIMALS } from '@core/constants/global.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
+import { PagoDetalle } from '@accounting/data/models/pago-detalle.model';
 import { determinadoEstadoPagoCuotaUtil } from './determinado-estado-pago-cuota.util';
-import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { EstadoPago } from '@accounting/data/models/estado-pago.interface';
 import { minus } from '@core/utils/decimal.util';
-import { CuotaPorPagarEstado } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { CuotaPorPagarEstado } from '@accounting/data/models/comprobante-egreso.entity';
 
 interface PagoDetallePick
   extends Pick<PagoDetalle, 'idCuentaPorPagar' | 'idCuotaPorPagar' | 'abono' | 'saldo'> {}

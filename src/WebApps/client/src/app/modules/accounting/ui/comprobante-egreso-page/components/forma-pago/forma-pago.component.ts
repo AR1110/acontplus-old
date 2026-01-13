@@ -12,7 +12,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   ComprobanteEgresoStore,
   getDataFormaPagoState,
-} from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
+} from '@accounting/store/comprobante-egreso.store';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';

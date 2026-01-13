@@ -159,7 +159,7 @@ export const routes: Routes = [
         title: 'Cartera Proveedor',
         loadComponent: () =>
           import(
-            '@accounting/comprobante-egreso/presentation/reports/supplier-accounts/supplier-accounts.component'
+            '@accounting/ui/supplier-accounts/supplier-accounts.component'
           ).then((m) => m.SupplierAccountsComponent),
         data: {
           breadcrumb: 'Cartera Proveedor',
@@ -182,7 +182,7 @@ export const routes: Routes = [
         title: 'Reporte de Pagos',
         loadComponent: () =>
           import(
-            '@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component'
+            '@accounting/ui/payments-report/payments-report.component'
           ).then((m) => m.PaymentsReportComponent),
         data: {
           breadcrumb: 'Reporte de Pagos',

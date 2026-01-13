@@ -17,11 +17,11 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { finalize } from 'rxjs';
 import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
 import { DynamicCard } from '@acontplus/ng-components';
-import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/historial-pago.model';
+import { HistorialPagoLista } from '@accounting/data/models/historial-pago.model';
 import { MatDivider } from '@angular/material/divider';
 import { DialogService } from '@core/services/dialog.service';
 import { PagoDetalleModalComponent } from '@accounting/ui/cuenta-por-pagar-page/components/pago-detalle-modal/pago-detalle-modal.component';
-import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { ComprobanteEgresoLista } from '@accounting/data/models/comprobante-egreso.entity';
 import { MatTooltip } from '@angular/material/tooltip';
 import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
 

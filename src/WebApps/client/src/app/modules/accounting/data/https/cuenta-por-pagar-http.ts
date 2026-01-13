@@ -5,8 +5,8 @@ import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CuentaPorPagarMapper } from '../mappers/cuenta-por-pagar.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/historial-pago.model';
+import { ComprobanteEgresoLista } from '@accounting/data/models/comprobante-egreso.entity';
+import { HistorialPagoLista } from '@accounting/data/models/historial-pago.model';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 
 import { TiempoCreditoSelectHtmlOnly } from '@accounting/shared/models/tiempo-credito.interface';

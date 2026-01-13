@@ -1,6 +1,6 @@
 <app-breadcrumb />
 
-<acp-dynamic-card>
+<div class="container-fluid">
   <div class="d-grid gap-2">
     <div
       class="row row-cols-1 row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2"
@@ -36,12 +36,18 @@
       </div>
       <div class="col d-flex justify-content-end">
         <div class="hstack gap-2">
-          <button mat-icon-button (click)="refresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-          <button mat-icon-button (click)="advancedFilter.set(!advancedFilter())">
-            <mat-icon>filter_list</mat-icon>
-          </button>
+          <acp-button
+            variant="secondary"
+            icon="refresh"
+            matStyle="icon"
+            (handleClick)="refresh()"
+          />
+          <acp-button
+            variant="info"
+            icon="filter_list"
+            matStyle="icon"
+            (handleClick)="advancedFilter.set(!advancedFilter())"
+          />
         </div>
       </div>
     </div>
@@ -78,50 +84,49 @@
       </div>
     }
 
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [templateOp]="templateOp"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
+    <acp-data-grid
+      [data]="dataSource()"
+      [columns]="columnsDefs"
+      [length]="pagination().totalRecords"
+      [pageIndex]="pagination().pageIndex"
+      [pageSize]="pagination().pageSize"
+      (page)="handlePageEvent($event)"
+      [cellTemplate]="{
+        op: opTpl,
+        index: indexTpl,
+        nomUsuario: userTpl,
+      }"
     />
   </div>
+</div>
 
-  <ng-template #actionTemplate>
-    <button>Hola</button>
-  </ng-template>
+<ng-template #opTpl let-data>
+  <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+    <mat-icon>more_vert</mat-icon>
+  </button>
 
-  <ng-template #templateOp let-item="item">
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-      <mat-icon>more_vert</mat-icon>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item appActionComprobanteEgresoAnular [id]="data.idComprobanteEgreso">
+      <mat-icon>clear</mat-icon>
+      <span>Anular</span>
     </button>
 
-    <mat-menu #menu="matMenu">
-      <!--      <button mat-menu-item   >-->
-      <!--        <mat-icon>details</mat-icon>-->
-      <!--        <span>Historial</span>-->
-      <!--      </button>-->
-      <button mat-menu-item appActionComprobanteEgresoAnular [id]="item.idComprobanteEgreso">
-        <mat-icon>clear</mat-icon>
-        <span>Anular</span>
-      </button>
+    <button
+      mat-menu-item
+      appActionComprobanteEgresoReport
+      [id]="data.idComprobanteEgreso"
+      [codEstab]="data.codEstab"
+    >
+      <mat-icon>download</mat-icon>
+      <span>Reporte</span>
+    </button>
+  </mat-menu>
+</ng-template>
 
-      <button
-        mat-menu-item
-        appActionComprobanteEgresoReport
-        [id]="item.idComprobanteEgreso"
-        [codEstab]="item.codEstab"
-      >
-        <mat-icon>download</mat-icon>
-        <span>Reporte</span>
-      </button>
+<ng-template #indexTpl let-index="index">
+  {{ index + 1 }}
+</ng-template>
 
-      <!--      <button mat-menu-item   appSendMailModal>-->
-      <!--        <mat-icon>email</mat-icon>-->
-      <!--        <span>Enviar correo</span>-->
-      <!--      </button>-->
-    </mat-menu>
-  </ng-template>
-</acp-dynamic-card>
+<ng-template #userTpl let-data>
+  <strong>{{ data.nomUsuario }}</strong>
+</ng-template>

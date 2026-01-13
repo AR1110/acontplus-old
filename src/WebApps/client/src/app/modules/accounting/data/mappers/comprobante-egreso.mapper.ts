@@ -1,7 +1,7 @@
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
-import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { EstadoPago } from '@accounting/data/models/estado-pago.interface';
 import { groupCitiesByProvinceUtil } from '@shared/utils/group-cities-by-province.util';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
@@ -10,13 +10,13 @@ import {
   CuentaPorPagarHistorial,
   CuotaPorPagarEstado,
   FormaPago,
-} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
+} from '@accounting/data/models/comprobante-egreso.entity';
+import { PagoDetalle } from '@accounting/data/models/pago-detalle.model';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { formatDateToString } from '@core/utils/date.util';
 
-interface ParamsGuardar {
-  dataCuentaPorPagar: CuentaPorPagarLista;
+export interface ParamsGuardar {
+  dataCuentaPorPagar: Partial<CuentaPorPagarLista>;
   total: number;
   formasPago: FormaPago[];
   pagosDetalle: PagoDetalle[];

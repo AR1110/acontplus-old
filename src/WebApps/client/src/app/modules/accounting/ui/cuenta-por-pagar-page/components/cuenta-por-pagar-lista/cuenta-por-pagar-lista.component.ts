@@ -40,9 +40,12 @@ import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { ParameterReportUtil } from '@shared/utils/parameter-report.util';
 import { SharedService } from '@core/services/shared.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
+import {
+  CUENTA_POR_PAGAR_HTTP_TOKEN,
+  COMPROBANTE_EGRESO_HTTP_TOKEN,
+} from '@accounting/data/accounting-token';
+import { ComprobanteEgresoCuotasData } from '@accounting/data/repositories/comprobante-egreso.repository';
 import { ComprobanteEgresoLoteComponent } from '@accounting/ui/comprobante-egreso-page/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
-import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
@@ -70,7 +73,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private useCase = inject(CUENTA_POR_PAGAR_HTTP_TOKEN);
-  private _comprobanteEgresoUseCase = inject(ComprobanteEgresoUseCase);
+  private _comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];
@@ -319,15 +322,15 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
     // Crear un array de observables para obtener las cuotas
     const observables = selected.map((item) =>
-      this._comprobanteEgresoUseCase.getCuotasByIdCuentaPorPagar(item.idCuentaPorPagar),
+      this._comprobanteEgresoHttp.getCuotasByCuentaPorPagarId(item.idCuentaPorPagar),
     );
 
     forkJoin(observables).subscribe((cuotasResponse) => {
       const selectedMergeCuotas = selected.map((item) => {
         // Aplanamos las cuotas de la respuesta y las filtramos por idCuentaPorPagar
         const filteredCuotas = cuotasResponse
-          .flatMap((payment) => payment.cuotas)
-          .filter((cuota) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
+          .flatMap((payment: ComprobanteEgresoCuotasData) => payment.cuotas)
+          .filter((cuota: any) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
 
         // Devolvemos el documento combinado con las cuotas clonadas
         return {

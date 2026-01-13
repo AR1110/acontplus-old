@@ -1,4 +1,4 @@
-import { ComprobanteEgresoResponse } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { ComprobanteEgresoResponse } from '@accounting/data/models/comprobante-egreso.entity';
 
 export class ListComprobanteEgresoMapper {
   static toJson(params: any) {

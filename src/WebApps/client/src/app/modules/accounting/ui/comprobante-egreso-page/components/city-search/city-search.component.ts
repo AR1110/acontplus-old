@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { ComprobanteEgresoStore } from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
+import { ComprobanteEgresoStore } from '@accounting/store/comprobante-egreso.store';
 
 const _filterCiudadGroup = (opt: any[], value: string): string[] => {
   const filterValue = value.toLowerCase();

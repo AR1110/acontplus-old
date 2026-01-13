@@ -1,4 +1,4 @@
-import { CuentaPorPagarCuota } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { CuentaPorPagarCuota } from '@accounting/data/models/comprobante-egreso.entity';
 
 interface Props {
   secuencial: number;

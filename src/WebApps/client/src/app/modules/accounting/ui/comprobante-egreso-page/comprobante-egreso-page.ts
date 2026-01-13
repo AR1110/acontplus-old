@@ -1,19 +1,16 @@
 import {
   Component,
   inject,
-  model,
   signal,
   TemplateRef,
   ViewChild,
   OnInit,
-  AfterViewInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination, DynamicCard } from '@acontplus/ng-components';
-import { ListComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/list-comprobante-egreso.use-case';
-import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
+import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
+import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
@@ -25,8 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { formatDateToString } from '@core/utils/date.util';
-import { ComprobanteEgresoList } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
+import { ComprobanteEgresoList } from '@accounting/data/models/comprobante-egreso.entity';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenu, MatMenuItem, MatMenuModule } from '@angular/material/menu';
 
@@ -46,9 +42,9 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatMenuModule,
 
     BreadcrumbComponent,
-    DynamicCard,
+    DataGrid,
+    Button,
     DateRangeSelectionComponent,
-    MatDynamicTableComponent,
     MatMenu,
     MatMenuItem,
     //Directives
@@ -58,39 +54,38 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
   ],
   templateUrl: './comprobante-egreso-page.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ComprobanteEgresoPage implements OnInit, AfterViewInit {
-  private $listUseCase = inject(ListComprobanteEgresoUseCase);
-  private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
+export class ComprobanteEgresoPage implements OnInit {
+  private comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
 
-  @ViewChild('actionTemplate', { static: true }) actionTemplate!: TemplateRef<any>;
+  @ViewChild('actionTemplate', { static: true }) actionTemplate!: TemplateRef<unknown>;
   dataSource = signal<ComprobanteEgresoList[]>([]);
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'nroDoc', label: 'Nro. Documento', type: 'string' },
-    { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
-    { key: 'nomPersona', label: 'Persona', type: 'string' },
-    { key: 'total', label: 'Total', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
-    { key: 'nomUsuario', label: 'Usuario', type: 'custom', columnType: 'html' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'index', header: '#' },
+    { field: 'op', header: 'Op.' },
+    { field: 'nroDoc', header: 'Nro. Documento' },
+    { field: 'fechaRegistro', header: 'Fecha Registro' },
+    { field: 'nomPersona', header: 'Persona' },
+    { field: 'total', header: 'Total' },
+    { field: 'nomEstado', header: 'Estado' },
+    { field: 'nomUsuario', header: 'Usuario' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
-  users = signal<any[]>([]);
+  users = signal<{ idUsuario: number; nombreUsuario: string }[]>([]);
 
-  dataSearch = model({
+  dataSearch = signal({
     codEstab: '',
     byEstado: 0,
     isDate: true,
     fromDate: formatDateToString(new Date()),
     toDate: formatDateToString(new Date()),
     userId: 0,
-    nroSecuencial: null,
+    nroSecuencial: null as string | null,
     nameSupplier: '',
     byPersona: 0,
   });
@@ -106,7 +101,7 @@ export class ComprobanteEgresoPage implements OnInit, AfterViewInit {
 
     // Validación inicial
     if (!isValidField(search.codEstab)) {
-      Swal.fire({
+      void Swal.fire({
         icon: 'warning',
         text: 'Establecimiento es obligatorio',
       });
@@ -120,8 +115,8 @@ export class ComprobanteEgresoPage implements OnInit, AfterViewInit {
     }
 
     if (isValidField(this.dataSearch().nroSecuencial)) {
-      if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch().nroSecuencial as any)) {
-        Swal.fire({
+      if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch().nroSecuencial ?? '')) {
+        void Swal.fire({
           icon: 'warning',
           text: 'Define correctamente el número de secuencial o el rango de número secuencial!',
         });
@@ -142,65 +137,53 @@ export class ComprobanteEgresoPage implements OnInit, AfterViewInit {
       // Se puede agregar validación similar para byPersona si es necesario
       byUsuario: getValidId(search.userId),
       nroSecuencial: ValidatorUtils.validAndFormatedRangeSequential(
-        this.dataSearch().nroSecuencial as any,
+        this.dataSearch().nroSecuencial ?? '',
       ),
     };
 
-    this.$listUseCase.execute(params).subscribe((response) => {
-      console.log(response);
+    this.comprobanteEgresoHttp.list(params).subscribe((response) => {
       this.dataSource.set(response.data);
       this.pagination.update((i) => new Pagination(i.pageIndex, i.pageSize, response.totalRecords));
     });
   }
 
   ngOnInit() {
-    this.$dataFilterUseCase.execute().subscribe((response) => {
-      console.log(response);
+    this.comprobanteEgresoHttp.getFilterData().subscribe((response) => {
       this.estabs = response.estabs;
-      this.users.set(response.users);
+      this.users.set(response.users as { idUsuario: number; nombreUsuario: string }[]);
       const dataEstab = this.estabs.find((item) => item.defaultEstab);
       if (dataEstab) {
-        this.dataSearch.update((i) => ({
-          ...i,
+        this.dataSearch.set({
+          ...this.dataSearch(),
           codEstab: dataEstab.codEstab,
-        }));
+        });
         this.getList();
       }
     });
   }
 
-  ngAfterViewInit() {
-    this.columnsDefs = this.columnsDefs.map((col) => {
-      if (col.type === 'custom' && col.key === 'nomUsuario') {
-        return { ...col, body: (ele: any) => `<strong>${ele.nomUsuario}-Emilio</strong>` };
-      }
-      return col;
+  onChangeDateRange(event: { from: string; to: string }) {
+    this.dataSearch.set({
+      ...this.dataSearch(),
+      fromDate: event.from,
+      toDate: event.to,
     });
-    console.log(this.columnsDefs);
-  }
-
-  onChangeDateRange($event: any) {
-    this.dataSearch.update((item) => ({
-      ...item,
-      fromDate: $event.from,
-      toDate: $event.to,
-    }));
     this.refresh();
   }
 
-  onSupplierSelected(data: any) {
-    this.dataSearch.update((item) => ({
-      ...item,
-      byPersona: data.identificacionComprador,
+  onSupplierSelected(data: { identificacionComprador: string; name: string }) {
+    this.dataSearch.set({
+      ...this.dataSearch(),
+      byPersona: parseInt(data.identificacionComprador, 10) || 0,
       nameSupplier: data.name,
-    }));
+    });
   }
 
-  supplierclearSearch($event: any) {
-    this.dataSearch.update((item) => ({
-      ...item,
+  supplierclearSearch(_event: unknown) {
+    this.dataSearch.set({
+      ...this.dataSearch(),
       byPersona: 0,
-    }));
+    });
   }
 
   handlePageEvent(e: PageEvent) {

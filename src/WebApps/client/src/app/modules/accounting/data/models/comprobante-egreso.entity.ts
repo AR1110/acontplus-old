@@ -1,4 +1,4 @@
-import { CuentaPorPagar } from '../../data/models/cuenta-por-pagar.model';
+import { CuentaPorPagar } from './cuenta-por-pagar.model';
 
 import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';

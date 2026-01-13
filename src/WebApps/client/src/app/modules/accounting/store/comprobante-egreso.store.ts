@@ -7,23 +7,24 @@ import { computed, inject } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
 import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
-import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
-import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { PagoDetalle } from '@accounting/data/models/pago-detalle.model';
+import { EstadoPago } from '@accounting/data/models/estado-pago.interface';
 import {
   CuentaPorPagarCuota,
   CuentaPorPagarHistorial,
   FormaPago,
-} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+} from '@accounting/data/models/comprobante-egreso.entity';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
 import { isDateValid } from '@core/utils/date.util';
-import { ComprobanteEgresoUtil } from '@accounting/comprobante-egreso/application/comprobante-egreso/comprobante-egreso.util';
+import { ComprobanteEgresoUtil } from '@accounting/utils/comprobante-egreso.util';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { minus } from '@core/utils/decimal.util';
-import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case';
+import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
+import { ComprobanteEgresoFormaPagoData } from '@accounting/data/repositories/comprobante-egreso.repository';
 
 interface ComprobanteEgresoStore {
   isLoading: boolean;
@@ -142,7 +143,7 @@ export const ComprobanteEgresoStore = signalStore(
   withMethods(
     (
       store,
-      useCase = inject(ComprobanteEgresoUseCase),
+      useCase = inject(COMPROBANTE_EGRESO_HTTP_TOKEN),
       tS = inject(ToastrNotificationService),
     ) => ({
       updateStateProperty: function <K extends keyof ComprobanteEgresoStore>(
@@ -161,10 +162,9 @@ export const ComprobanteEgresoStore = signalStore(
       loadDataForm: (idProveedor: number) => {
         patchState(store, { isLoading: true });
         useCase
-          .getDataFormPago(idProveedor)
+          .getFormaPagoData(idProveedor)
           .pipe(finalize(() => patchState(store, { isLoading: false })))
-          .subscribe((response) => {
-            console.log(response);
+          .subscribe((response: ComprobanteEgresoFormaPagoData) => {
             patchState(store, {
               entidadesFinanciera: response.entidadesFinanciera,
               subEntidadesFinanciera: response.subEntidadesFinanciera,

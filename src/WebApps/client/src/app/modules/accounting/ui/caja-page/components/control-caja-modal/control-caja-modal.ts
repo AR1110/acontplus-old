@@ -24,7 +24,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
-import { Button, DataGrid, DataGridColumn, DateRangePicker } from '@acontplus/ng-components';
+import {Button, DataGrid, DataGridColumn, DateRangePicker, DateRangeValue} from '@acontplus/ng-components';
 import { NotificationService } from '@acontplus/ng-notifications';
 import { PageEvent } from '@angular/material/paginator';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
@@ -184,9 +184,9 @@ export class ControlCajaModal implements OnInit {
     }
   }
 
-  onDateRangeSelection({ startDate, endDate }: { startDate: Date; endDate: Date }) {
-    this.dataSearch.fromDate = formatDateToString(startDate);
-    this.dataSearch.toDate = formatDateToString(endDate);
+  onDateRangeSelection({ from, to }: DateRangeValue<true>) {
+    this.dataSearch.fromDate = from;
+    this.dataSearch.toDate = to;
     this.getMovimientosCaja();
   }
 

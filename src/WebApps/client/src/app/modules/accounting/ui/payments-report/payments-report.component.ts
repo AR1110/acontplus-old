@@ -10,7 +10,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 
-import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/data-filter-comprobante-egreso.use-case';
+import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Subscription } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Banco } from '@accounting/shared/models/banco.interface';
@@ -48,7 +48,7 @@ enum ReportTypeEnum {
   styles: ``,
 })
 export class PaymentsReportComponent implements OnInit, OnDestroy {
-  private $dataFilterUseCase = inject(DataFilterComprobanteEgresoUseCase);
+  private comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
   private $generateReportUseCase = inject(GenerateReportUseCase);
   private readonly _tokenUseCase = inject(TokenUseCase);
   private subscription$!: Subscription;
@@ -79,7 +79,7 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit() {
-    this.subscription$ = this.$dataFilterUseCase.execute().subscribe((response) => {
+    this.subscription$ = this.comprobanteEgresoHttp.getFilterData().subscribe((response) => {
       console.log(response);
       this.estabs.set(response.estabs);
       this.users.set(response.users);

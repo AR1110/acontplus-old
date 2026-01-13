@@ -7,9 +7,9 @@ import { minus } from '@core/utils/decimal.util';
 import {
   CuentaPorPagarCuota,
   CuentaPorPagarHistorial,
-} from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
-import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+} from '@accounting/data/models/comprobante-egreso.entity';
+import { PagoDetalle } from '@accounting/data/models/pago-detalle.model';
+import { EstadoPago } from '@accounting/data/models/estado-pago.interface';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import { determinadoEstadoPagoCuotaUtil } from './determinado-estado-pago-cuota.util';
 

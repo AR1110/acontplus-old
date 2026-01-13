@@ -1,5 +1,5 @@
 import { CodigoEstadoPago } from '@accounting/shared/enums/codigo-estado-pago.enum';
-import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
+import { EstadoPago } from '@accounting/data/models/estado-pago.interface';
 
 interface Props {
   abono: number;

@@ -3,8 +3,8 @@ import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.
 import { AnticipoWebRepository } from '@accounting/movimiento-caja/infrastructure/anticipo-web.repository';
 import { CajaHttp } from '@accounting/data/https/caja-http';
 import { CategoryHttp } from '@accounting/data/https/category-http';
-import { ComprobanteEgresoRepository } from '@accounting/comprobante-egreso/domain/comprobante-egreso.repository';
-import { ComprobanteEgresoWebRepository } from '@accounting/comprobante-egreso/infrastructure/comprobante-egreso-web.repository';
+import { ComprobanteEgresoRepository } from '@accounting/data/repositories/comprobante-egreso.repository';
+import { ComprobanteEgresoHttp } from '@accounting/data/https/comprobante-egreso-http';
 import { ComprobanteIngresoRepository } from '@accounting/data/repositories/comprobante-ingreso-repository';
 import { ComprobanteIngresoHttp } from '@accounting/data/https/comprobante-ingreso-http';
 import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
@@ -24,6 +24,7 @@ import {
   CATEGORY_HTTP_TOKEN,
   SUB_ENTIDAD_FINANCIERA_HTTP_TOKEN,
   SUB_CATEGORY_HTTP_TOKEN,
+  COMPROBANTE_EGRESO_HTTP_TOKEN,
 } from '@accounting/data/accounting-token';
 import { ControlCajaHttp } from '@accounting/data/https/control-caja-http';
 
@@ -41,8 +42,8 @@ export const DATA_ACCOUNTING_IOC: Provider[] = [
     useClass: CategoryHttp,
   },
   {
-    provide: ComprobanteEgresoRepository,
-    useClass: ComprobanteEgresoWebRepository,
+    provide: COMPROBANTE_EGRESO_HTTP_TOKEN,
+    useClass: ComprobanteEgresoHttp,
   },
   {
     provide: ComprobanteIngresoRepository,

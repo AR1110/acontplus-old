@@ -1,4 +1,4 @@
-import { ComprobanteEgresoDeleteResponse } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { ComprobanteEgresoDeleteResponse } from '@accounting/data/models/comprobante-egreso.entity';
 
 export class GetComprobanteEgresoForDeletionMapper {
   static toJson(params: any) {

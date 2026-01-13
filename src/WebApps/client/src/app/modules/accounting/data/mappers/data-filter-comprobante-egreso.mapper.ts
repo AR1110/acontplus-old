@@ -1,4 +1,4 @@
-import { ComprobanteEgresoFilterResponse } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
+import { ComprobanteEgresoFilterResponse } from '@accounting/data/models/comprobante-egreso.entity';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 export class DataFilterComprobanteEgresoMapper {

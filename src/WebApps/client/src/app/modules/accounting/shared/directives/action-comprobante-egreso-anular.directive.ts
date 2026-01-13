@@ -1,17 +1,15 @@
 import { Directive, HostListener, inject, input, output } from '@angular/core';
-import { GetComprobanteEgresoForDeletionUseCase } from '@accounting/comprobante-egreso/application/use-cases/get-comprobante-egreso-for-deletion.use-case';
+import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { getValidId } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { AnularComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/anular-comprobante-egreso.use-case';
 import DecimalUtils from '@core/utils/decimal.util';
 
 @Directive({
   selector: '[appActionComprobanteEgresoAnular]',
 })
 export class ActionComprobanteEgresoAnularDirective {
-  private $getDataForDeletionUseCase = inject(GetComprobanteEgresoForDeletionUseCase);
-  private $anularUseCase = inject(AnularComprobanteEgresoUseCase);
+  private comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
 
   id = input(0);
   cantDocs = input(0);
@@ -34,7 +32,7 @@ export class ActionComprobanteEgresoAnularDirective {
 
     if (!isContinue) return;
 
-    this.$getDataForDeletionUseCase.execute(this.id()).subscribe(async (response) => {
+    this.comprobanteEgresoHttp.getDataForDeletion(this.id()).subscribe(async (response) => {
       const { cuentas, cuotas, estadosPago } = response;
       if (cuentas.length === 0 || cuotas.length === 0) {
         console.log('cuentasPorPagar', cuentas);
@@ -71,8 +69,8 @@ export class ActionComprobanteEgresoAnularDirective {
         ...dataParams,
       };
 
-      this.$anularUseCase
-        .execute({
+      this.comprobanteEgresoHttp
+        .anular({
           data,
           id: this.id(),
         })
