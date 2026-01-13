@@ -10,7 +10,7 @@ import { GroupedEstab } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 
-import { ComprobanteIngresoOpenModalService } from '@accounting/comprobante-ingreso/application/services/comprobante-ingreso-open-modal.service';
+import { ComprobanteIngresoOpenModalService } from '@accounting/services/comprobante-ingreso-open-modal.service';
 import { Pagination } from '@acontplus/ng-components';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';

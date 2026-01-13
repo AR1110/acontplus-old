@@ -5,9 +5,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { GroupedEstabBodega } from '@core/models/estab.model';
-import { Button } from '@acontplus/ng-components';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { DataGridColumn } from '@shared/components/data-grid/types';
+import { Button, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ValidatorUtils } from '@core/utils/utils';
@@ -24,7 +22,7 @@ interface Category {
 }
 
 @Component({
-  selector: 'app-warehouse-transfer-filter-advanced',
+  selector: 'app-warehouse-page-transfer-filter-advanced',
   imports: [
     MatSelectModule,
     MatInput,

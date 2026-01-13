@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ResumenContableRepository } from '@accounting/resumen-contable/domain/resumen-contable.repository';
+import { ResumenContableRepository } from '@accounting/data/repositories/resumen-contable.repository';
 
 @Injectable({
   providedIn: 'root',

@@ -9,6 +9,9 @@
     function loginCtrl($scope, $http, $localStorage) {
         let urlBase = document.getElementById('urlGateway').value;
         let urlService = `${urlBase}/gateway/seguridad`
+
+        // Set Client-Id header for rate limiting
+        $http.defaults.headers.common['Client-Id'] = 'acontplus-web-app';
         // For get the customer data from response
         $scope.codes = ['', '', '', '', '', ''];
         $scope.mainResponse = {};
@@ -16,7 +19,7 @@
         const tS = toastr;
 
         // Ditect user info
-        //let Url = "https://" + "cloudflare.com/cdn-cgi/trace"; 
+        //let Url = "https://" + "cloudflare.com/cdn-cgi/trace";
         //let AjaxUrl = new XMLHttpRequest();
         //AjaxUrl.open("get", Url);
         //AjaxUrl.send();
@@ -175,12 +178,12 @@
                     $scope.data.returnUrl = '/';
                 }
                 $http.post(`${urlService}/account/login`, $scope.data).then(response => {
-                    if (response.data.code === "0") { 
-                        tS.warning(response.data.message, "Login", { 
-                            closeButton: true, 
-                            progressBar: true, 
-                            preventDuplicates: true, 
-                            positionClass: 'toast-bottom-center' 
+                    if (response.data.code === "0") {
+                        tS.warning(response.data.message, "Login", {
+                            closeButton: true,
+                            progressBar: true,
+                            preventDuplicates: true,
+                            positionClass: 'toast-bottom-center'
                         });
                         return;
                     };

@@ -42,7 +42,7 @@ export const INVENTORY_ADJUSTMENT_SERVICE = new InjectionToken<InventoryAdjustme
   'INVENTORY_ADJUSTMENT_SERVICE',
 );
 
-export const BRAND_SERVICE = new InjectionToken<BrandRepository>('BRAND_SERVICE');
+export const BRAND_HTTP_TOKEN = new InjectionToken<BrandRepository>('BRAND_HTTP_TOKEN');
 
 export const MEASURE_SERVICE = new InjectionToken<MeasureRepository>('MEASURE_SERVICE');
 

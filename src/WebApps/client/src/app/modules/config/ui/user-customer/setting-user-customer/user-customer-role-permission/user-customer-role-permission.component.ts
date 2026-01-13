@@ -210,7 +210,7 @@ export class UserCustomerRolePermissionComponent implements OnInit {
   }
 
   /**
-   * Permisos caja
+   * Permisos caja-page
    *
    */
   someCompleteCashBox() {

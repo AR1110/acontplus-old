@@ -1,0 +1,52 @@
+<mat-dialog-content>
+  <div class="d-grid gap-3">
+    <mat-form-field class="w-100">
+      <mat-label>Descripción</mat-label>
+      <input matInput placeholder="..." [(ngModel)]="data.descripcion" />
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Usuario</mat-label>
+      <mat-select [(ngModel)]="data.idUsuario">
+        @for (item of usuarios(); track $index) {
+          <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Turno</mat-label>
+      <mat-select [(ngModel)]="data.idTurno">
+        @for (item of turnos(); track $index) {
+          <mat-option [value]="item.idTurno">{{ item.descripcion }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    @if (data.idCaja > 0) {
+      <mat-radio-group aria-label="Estado" [(ngModel)]="data.estado">
+        <mat-radio-button [value]="true">Activo</mat-radio-button>
+        <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+      </mat-radio-group>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

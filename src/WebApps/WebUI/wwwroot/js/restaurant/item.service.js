@@ -3,44 +3,73 @@
     app.factory('itemService', itemService);
     itemService.$inject = ['mainService', 'formulario'];
     function itemService(mS, fS) {
-        var url = 'restaurant/item/';
+        var url = 'restaurant/items';
 
         var service = {
             search,
-            getByIdForOrderProduction
+            getByIdForOrderProduction,
+            getId
         };
         return service;
-        function search(obj) {
-            let json = JSON.stringify({
-                tipo: 2,
-                textSearch: obj.textSearch,
-                siglaFamilia: obj.siglaFamilia
+        function search(params) {
+            console.log('itemService search params', params);
+            const queryParams = new URLSearchParams({
+                pageIndex: params.pageIndex.toString() || '1',
+                pageSize: params.pageSize.toString() || '10',
             });
-            return mS.getData('get', `${url}?json=${json}`).then(response => {
-                const results = {
-                    data: [],
-                    total: 0
-                }
-                if (response.code === "1") {
-                    const payload = JSON.parse(response.payload);
-                    const items = (payload.items || []).map(i => {
-                        return {
-                            "productId": i.productId,
-                            description: i.descripcion,
-                            nombreSubFamilia: i.subFamilia,
-                            "code": i.codigo,
-                            //"stock": i.stock,
-                            //   "menuId": i.menuId,
-                            //  "summary": i.summary,
-                            //  "content": i.content,
-                        }
 
+            if (params.searchTerm) {
+                queryParams.append('searchTerm', params.searchTerm);
+            }
+
+            if (params.filters) {
+                const objToJsonFilters = {
+                    siglaFamilia: 'sigla'
+                };
+
+                Object.entries(params.filters).forEach(([key, value]) => {
+                    if (value == null) return;
+                    const filterKey = objToJsonFilters[key] || key;
+                    queryParams.append(`filters[${filterKey}]`, String(value));
+                });
+            }
+
+            return mS
+                .getData('get', `${url}?${queryParams.toString()}`)
+                .then(response => {
+                    const results = {
+                        data: [],
+                        total: 0
+                    };
+
+
+                    console.log('itemService search response', response);
+
+                    results.data = (response.items || []).map((item, index) => {
+                        return {
+                            index: index + 1,
+                            id: item.id,
+                            acronymCategory: item.acronymFamily,
+                            productId: item.productId,
+                            title: item.title,
+                            summary: item.summary,
+                            imageUrl: item.s3ObjectUrl,
+                            description: item.description,
+                            code: item.code,
+                            measure: item.measure,
+                            auxiliaryCode: item.auxiliary_code,
+                            costPrice: item.costPrice,
+                            nombreSubFamilia: item.category,
+                        };
                     });
-                    results.data = items;
-                }
-                return results;
-            })
+
+                    results.total = response.totalCount || 0;
+
+
+                    return results;
+                });
         }
+
         function getByIdForOrderProduction(productId) {
             let json = JSON.stringify({
                 tipo: 4,
@@ -112,20 +141,72 @@
                 return results;
             });
         }
-        function createItem(item) {
-            var url = configService.apiUrl + 'restaurant/items';
 
-            return $http.post(url, item, { headers: headers });
-        }
-        function updateItem(id, item) {
-            var url = configService.apiUrl + 'restaurant/items/' + id;
+        function getId(id) {
+            return mS.getData('get', `${url}/${id}`).then(response => {
+                console.log('itemService getById response', response);
+                const results = {
+                    menu: {},
+                    components: []
+                }
+                if (response.code === "1") {
+                    const { item, itemCompositions = [] } = JSON.parse(response.payload);
+                    const menu = item[0];
+                    console.log('itemService getById menu', menu);
+                    console.log('itemService getById itemCompositions', itemCompositions);
+                    results.components = (itemCompositions || []).map(c => {
 
-            return $http.put(url, item, { headers: headers });
-        }
-        function deleteItem(id) {
-            var url = configService.apiUrl + 'restaurant/items/' + id;
+                        const { fractional, principal } = c;
 
-            return $http.delete(url, { headers: headers });
+                        const medidas = fS.processAndSortMeasures(principal, fractional);
+                        console.log('itemService getById medidas', medidas);
+
+                        const dataMedida = medidas.find(m => m.defaultMedida) || {};
+
+                        return {
+                            "idArticulo": c.productId,
+                            "codigo": c.code,
+                            "descripcion": c.description,
+                            "stock": c.stock,
+                            precioCosto: dataMedida.precioCosto,
+                            precioUnitario: dataMedida.precioCosto,
+                            precioCostoFraccionado: dataMedida.precioCosto,
+                            "llevaInventario": c.isStockable,
+                            "idMedida": dataMedida.idMedida,
+                            nombreMedida: dataMedida.descripcion,
+                            "conversion": c.quantity,
+                            medidas,
+                            uniqueId: c.uniqueId
+                        }
+
+                    });
+
+                    const { fractional, principal } = menu;
+
+                    const medidas = fS.processAndSortMeasures(principal, fractional);
+
+                    console.log('itemService getById medidas menu', medidas);
+                    const dataMedida = medidas.find(m => m.defaultMedida) || {};
+
+                    results.menu = {
+                        idArticulo: menu.productId,
+                        codigo: menu.code,
+                        descripcion: menu.description,
+                        stock: menu.stock,
+                        precioCosto: dataMedida.precioCosto,
+                        precioCostoFraccionado: dataMedida.precioCosto,
+                        precioUnitario: dataMedida.precioCosto,
+                        llevaInventario: menu.isStockable,
+                        idMedida: dataMedida.idMedida,
+                        nombreMedida: dataMedida.descripcion,
+                        conversion: dataMedida.conversion,
+                        medidas,
+                        components: results.components,
+                        uniqueId: menu.uniqueId
+                    }
+                }
+                return results;
+            });
         }
     }
 }());

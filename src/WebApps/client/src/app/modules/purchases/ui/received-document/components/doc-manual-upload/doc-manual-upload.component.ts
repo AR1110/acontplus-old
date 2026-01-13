@@ -5,12 +5,12 @@ import { MatButton, MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
-import { SubCategorySelectHtmlOnly } from '@accounting/sub-category/domain/subcategory';
+import { SubCategorySelectHtmlOnly } from '@accounting/data/models/subcategory';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatIcon } from '@angular/material/icon';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
-import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
+import { SUB_CATEGORY_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { catchError, forkJoin, Observable, tap, throwError } from 'rxjs';
 import { Button } from '@acontplus/ng-components';
 
@@ -52,7 +52,7 @@ export class DocManualUploadComponent implements OnInit {
   readonly data = inject<any>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<DocManualUploadComponent>);
   private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
-  private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
+  private readonly _subCategoryHttp = inject(SUB_CATEGORY_HTTP_TOKEN);
   private readonly _tS = inject(ToastrNotificationService);
 
   get claveAccesoDocs() {
@@ -98,7 +98,7 @@ export class DocManualUploadComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+    this._subCategoryHttp.getAll({}).subscribe((response) => {
       this.subcategories = response;
     });
 
@@ -117,7 +117,7 @@ export class DocManualUploadComponent implements OnInit {
     if (!subcategoryId) {
       return this._tS.show({
         type: 'warning',
-        message: 'Please select a subcategory',
+        message: 'Please select a subcategory-page',
       });
     }
 

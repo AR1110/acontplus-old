@@ -11,14 +11,12 @@ import { Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
-import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { PaginationParams } from '@acontplus/core';
 import { MatInput } from '@angular/material/input';
 import { ValidatorUtils } from '@core/utils/utils';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
-import { LookupService } from '@restaurant/application/services/lookup-service';
 import {MatTooltip} from "@angular/material/tooltip";
-import {ItemVariantAddEdit} from "@restaurant/ui/items/item-variant-add-edidt/item-variant-add-edit";
 
 @Component({
   selector: 'app-items',
@@ -40,12 +38,11 @@ import {ItemVariantAddEdit} from "@restaurant/ui/items/item-variant-add-edidt/it
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Items implements OnInit {
-  private lookupSvc = inject(LookupService);
   private _listUseCase = inject(ItemListUseCase);
   private _dgSvc = inject(DialogService);
 
   columns: DataGridColumn[] = [
-    { header: 'Op.', field: 'op', pinned: 'left' },
+    { header: 'Op.', field: 'op'},
     { header: 'Nro.', field: 'index' },
     { header: 'Categoría', field: 'category' },
     { header: 'Imagen', field: 'imageUrl', type: 'image' },
@@ -76,15 +73,6 @@ export class Items implements OnInit {
   searchTerm = '';
 
   ngOnInit() {
-    // this.lookupSvc.lookupListUseCase.execute({
-    //   type: {
-    //     module: 'Products',
-    //     context: 'Filters'
-    //   },
-    //   keys: 'estabs'
-    // }).subscribe(res => {
-    //   console.log(res, 'responsesss')
-    // })
     this.getList();
   }
 
@@ -120,7 +108,6 @@ export class Items implements OnInit {
   }
 
   onEdit(rowData: any) {
-    console.log('Editando:', rowData);
     this._dgSvc.open(ItemAddEdit, {
       size: 'xl',
       data: {
@@ -132,18 +119,6 @@ export class Items implements OnInit {
     })
   }
 
-
-  addEditVariant(rowData:any){
-    this._dgSvc.open(ItemVariantAddEdit, {
-      size: 'xl',
-      data: {
-        id: rowData.id,
-        acronymCategory: rowData.acronymCategory,
-      },
-    }).subscribe(result=>{
-      if(result && typeof result === 'object') this.getList()
-    })
-  }
 
   getNextPage(e: PageEvent) {
     this.pagination.update((pag) => {

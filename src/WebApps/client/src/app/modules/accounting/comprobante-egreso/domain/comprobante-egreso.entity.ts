@@ -1,7 +1,7 @@
-import { CuentaPorPagar } from '../../cuenta-por-pagar/domain/cuenta-por-pagar.model';
+import { CuentaPorPagar } from '../../data/models/cuenta-por-pagar.model';
 
-import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
-import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
+import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import { PaymentTypeCode } from '@accounting/shared/enums/accounting.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
 import { DECIMALS } from '@core/constants/global.constants';

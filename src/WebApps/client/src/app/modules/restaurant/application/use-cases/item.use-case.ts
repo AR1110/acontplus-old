@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable, throwError } from 'rxjs';
 import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
-import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { PagedResult, PaginationParams } from '@acontplus/core';
 
 @Injectable({

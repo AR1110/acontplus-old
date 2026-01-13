@@ -1,0 +1,46 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2 m-0 p-0">
+    <mat-form-field class="w-100">
+      <mat-label>Establecimiento</mat-label>
+      <mat-select [(ngModel)]="data.codEstab" [disabled]="isUpdate()">
+        @for (item of estabs(); track $index) {
+          <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Descripción</mat-label>
+      <input matInput appToUpperCase [(ngModel)]="data.descripcion" />
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Teléfono</mat-label>
+      <input matInput appToUpperCase [(ngModel)]="data.telefono" />
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Dirección</mat-label>
+      <textarea matInput appToUpperCase [(ngModel)]="data.direccion"></textarea>
+    </mat-form-field>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    [icon]="btnIcon"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

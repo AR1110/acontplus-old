@@ -10,7 +10,7 @@ import {
 } from '@restaurant/domain/models/meal-schedule-setting';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { RESTAURANT_PATHS } from '@restaurant/domain/enums/restaurant.enum';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 
 @Injectable({
   providedIn: 'root',

@@ -16,7 +16,7 @@ import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { ProductMeasure } from '@inventory/data/models/product-measure';
 import { ItemComposition } from '@restaurant/domain/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
-import { CATEGORY_ABBREVIATIONS } from '@restaurant/domain/enums/restaurant.enum';
+import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { ItemSearchDialog } from '@restaurant/ui/items/item-search-dialog/item-search-dialog';

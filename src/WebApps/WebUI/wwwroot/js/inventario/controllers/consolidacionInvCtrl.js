@@ -1546,7 +1546,7 @@
 
 
         $scope.handleItemSelect = function (item) {
-            itemSvc.getByIdForOrderProduction(item.productId).then(async response => {
+            itemSvc.getId(item.id).then(async response => {
                 try {
                     const { menu, components } = response;
                     if (!(components.length > 0)) {

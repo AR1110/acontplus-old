@@ -1,0 +1,188 @@
+<app-breadcrumb />
+
+<acp-dynamic-card>
+  <div class="d-flex flex-column gap-2">
+    <div class="row">
+      <div class="col-xxl-10 col-xl-10 col-lg-10 col-md-10 col-sm-12 col-12">
+        <div
+          class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="onEstabChange()">
+                @for (item of estabs(); track $index) {
+                  <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Punto Emisión</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idPuntoEmision" (selectionChange)="refresh()">
+                @for (item of puntosEmision(); track $index) {
+                  <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <app-date-range-selection
+              (onChangeDateRange)="onDateRangeSelection($event)"
+              (onCheckboxChange)="refresh()"
+              [(checkbox)]="dataSearch.checkBoxDate"
+              [showInputMaterial]="true"
+              [showMatPrefix]="true"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
+          <button mat-icon-button (click)="refresh()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
+            <mat-icon>filter_list</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    @if (isSearchAdvanced()) {
+      <div class="border-top">
+        <div class="d-flex justify-content-center gap-3 pb-2">
+          <mat-checkbox>Ciente/Proveedor</mat-checkbox>
+          <mat-checkbox>Usuario</mat-checkbox>
+          <mat-checkbox>Buscar por Nro. Doc</mat-checkbox>
+        </div>
+        <div
+          class="row row-cols-xxl-5 row-cols-xl-5 row-cols-lg-5 row-cols-md-4 row-cols-sm-3 row-cols-1 gx-1"
+        >
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Estado</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstado" (selectionChange)="refresh()">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of estadosDoc(); track $index) {
+                  <mat-option [value]="item.codEstado">{{ item.descripcion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Tipo Doc.</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codDoc" (selectionChange)="refresh()">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of tiposDoc(); track $index) {
+                  <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Favorite food</mat-label>
+              <input matInput placeholder="Ex. Pizza" value="Sushi" />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Favorite food</mat-label>
+              <input matInput placeholder="Ex. Pizza" value="Sushi" />
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="w-100">
+              <mat-label>Favorite food</mat-label>
+              <input matInput placeholder="Ex. Pizza" value="Sushi" />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <acp-data-grid
+    [data]="list()"
+    [cellTemplate]="{
+      document: documentTpl,
+      client: clientTpl,
+      dates: datesTpl,
+      version: versionTpl,
+      actions: actionsTpl,
+    }"
+    [columns]="columns"
+    [length]="pagination().totalRecords"
+    [pageOnFront]="false"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    [pageSizeOptions]="pagination().pageSizeOptions"
+    (page)="handlePageEvent($event)"
+  />
+  <ng-template #documentTpl let-row>
+    <div class="doc-cell">
+      <div class="code-name">{{ row.codDoc }} - {{ row.docName }}</div>
+      <div class="series">{{ row.serieComprobante }}</div>
+    </div>
+  </ng-template>
+  <ng-template #clientTpl let-row>
+    <div class="client-cell">
+      <div class="ruc">{{ row.receiverRuc }}</div>
+      <div class="name">{{ row.receiverName }}</div>
+    </div>
+  </ng-template>
+  <ng-template #datesTpl let-row>
+    <div class="dates-cell">
+      <div>Emisión: {{ row.issueDate }}</div>
+      @if (row.authorizationDate) {
+        <div>
+          Autorización:
+          <span class="auth-date">
+            {{ row.authorizationDate }}
+          </span>
+        </div>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #versionTpl let-row>
+    <div class="version-cell">
+      <div>Versión: {{ row.version }}</div>
+      <div>Clave: {{ row.accessKey }}</div>
+    </div>
+  </ng-template>
+
+  <ng-template #actionsTpl let-row>
+    <div class="hstack gap-1 justify-content-end align-items-center">
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>download</mat-icon>
+          <span>Pdf</span>
+        </button>
+
+        <button mat-menu-item>
+          <mat-icon>list_alt</mat-icon>
+          <span>Detalle</span>
+        </button>
+      </mat-menu>
+
+      <button mat-icon-button aria-label="Icon Email">
+        <mat-icon>email</mat-icon>
+      </button>
+      <button mat-icon-button aria-label="Icon Email">
+        <img
+          src="/assets/icons/icons8/svg/whatsapp.svg"
+          alt="WhatsApp Icon"
+          style="width: 24px; height: 24px"
+        />
+      </button>
+    </div>
+  </ng-template>
+</acp-dynamic-card>

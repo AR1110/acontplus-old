@@ -52,7 +52,7 @@ interface CommonType {
 }
 
 @Component({
-  selector: 'app-warehouse-transfer-add-edit',
+  selector: 'app-warehouse-page-transfer-add-edit',
   imports: [
     MatSelectModule,
     MatInput,

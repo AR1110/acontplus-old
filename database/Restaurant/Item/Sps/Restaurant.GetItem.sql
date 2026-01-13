@@ -94,7 +94,7 @@ BEGIN
         IF @IsPos = 1
             BEGIN
                 SET @InnerJoin = @InnerJoin +  'INNER JOIN dbo.ArticuloPvP pv ON pv.idArticulo = fi.ProductId 
-                                                INNER JOIN dbo.Tarifa      ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = 1  '
+                                                INNER JOIN dbo.Tarifa      ta ON ta.idTarifa   = pv.IdTarifa AND ta.codigo = ''1''  '
 
                 SET @Column = @Column + ',pv.precioConIva AS priceWithTax '
             END
@@ -159,6 +159,7 @@ BEGIN
                                       ,ar.categoria             AS Category
                                       ,ar.siglaFamilia          AS AcronymFamily
                                       ,COUNT(*) OVER()          AS TotalCount
+                                      ,ar.stock
                                 FROM Restaurant.Item             ri
                                 INNER JOIN Inventario.v_Articulo ar ON ar.idArticulo = ri.ProductId '
                                 + @WhereClause

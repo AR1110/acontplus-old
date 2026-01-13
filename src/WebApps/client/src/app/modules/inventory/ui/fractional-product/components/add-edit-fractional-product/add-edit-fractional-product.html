@@ -1,0 +1,139 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2">
+    <mat-list>
+      <mat-list-item>Artículo: {{ data.codigo }}-{{ data.descripcion }}</mat-list-item>
+      <mat-divider />
+    </mat-list>
+
+    <div
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Nueva Medida: </mat-label>
+          <mat-select [(ngModel)]="data.idMedida">
+            @for (item of medidas(); track $index) {
+              <mat-option [value]="item.idMedida">{{ item.descripcion }}</mat-option>
+            }
+          </mat-select>
+          <span matSuffix class="d-flex">
+            <button
+              type="button"
+              mat-icon-button
+              appMeasureAddEdit
+              (onResultModal)="resultModalMedida($event)"
+              tabindex="-1"
+            >
+              <mat-icon>add</mat-icon>
+            </button>
+
+            <button type="button" mat-icon-button (click)="refreshMedida($event)" tabindex="-1">
+              <mat-icon>refresh</mat-icon>
+            </button>
+          </span>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Contiene(Conversión): <span class="text-danger">*</span></mat-label>
+          <input
+            type="number"
+            matInput
+            [(ngModel)]="data.conversion"
+            (keyup)="onChangeConversion()"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Medida Principal</mat-label>
+          <input matInput [value]="data.nombreMedida" disabled />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div
+      class="row row-cols-1 row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-1"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Precio Costo Medida Nueva: <span class="text-danger">*</span></mat-label>
+          <input
+            type="number"
+            matInput
+            [(ngModel)]="data.precioCostoFraccionado"
+            (keyup)="recalculateTarifaAdd()"
+          />
+          <span matSuffix>
+            <button mat-icon-button (click)="recalculatePercentage($event)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-calculator"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path
+                  d="M4 3m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"
+                />
+                <path
+                  d="M8 7m0 1a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1v1a1 1 0 0 1 -1 1h-6a1 1 0 0 1 -1 -1z"
+                />
+                <path d="M8 14l0 .01" />
+                <path d="M12 14l0 .01" />
+                <path d="M16 14l0 .01" />
+                <path d="M8 17l0 .01" />
+                <path d="M12 17l0 .01" />
+                <path d="M16 17l0 .01" />
+              </svg>
+            </button>
+          </span>
+        </mat-form-field>
+      </div>
+      <div class="col d-flex justify-content-center">
+        <mat-slide-toggle [(ngModel)]="data.gestionVenta">Para venta</mat-slide-toggle>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Precio Costo</mat-label>
+          <input matInput [value]="data.precioCosto" disabled />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 col-xxl-8 col-xl-8 col-lg-8 col-md-12">
+        <acp-tabulator-table
+          [data]="productTarifa()"
+          [options]="tabulatorOptions"
+          (cellEdited)="cellEdited($event)"
+        />
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText()"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

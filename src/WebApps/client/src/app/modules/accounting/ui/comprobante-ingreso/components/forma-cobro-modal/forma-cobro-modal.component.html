@@ -1,0 +1,277 @@
+<app-mat-custom-dialog
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+  [title]="'Forma de Cobro'"
+  (close)="close()"
+/>
+
+<ng-template #body>
+  <!-- @if (entidadesFinanciera.length > 0) {
+    <div ngbAccordion [closeOthers]="true">
+      @for (item of entidadesFinanciera; track $index) {
+        <div
+          ngbAccordionItem
+          [collapsed]="item.codigo !== 'EFE'"
+          (show)="onChangeTabEntidadFinanciera($index)"
+        >
+          <h2 ngbAccordionHeader>
+            <button ngbAccordionButton>{{ item.descripcion }}</button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <ng-template>
+
+                @if (item.codigo === "TAR") {
+                  <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <app-sub-entidad-financiera-page
+                        [(value)]="infrastructure.idSubEntidadFinanciera"
+                        [subEntidadesFinanciera]="subEntidadesFinanciera"
+                      />
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <app-fecha-emision [(value)]="infrastructure.fechaEmision" />
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <app-valor-abono [(value)]="infrastructure.valorAbono" />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label for="Referencia">Referencia: </label>
+                        <input
+                          type="text"
+                          [(ngModel)]="infrastructure.referencia"
+                          class="form-control border-select"
+                        />
+                      </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label>Aprobación </label>
+                        <input
+                          type="text"
+                          [(ngModel)]="infrastructure.aprobacion"
+                          class="form-control border-select"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-12 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label for="lote">Lote: </label>
+                        <input
+                          type="text"
+                          [(ngModel)]="infrastructure.lote"
+                          class="form-control border-select"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                }
+
+
+                @if (item.codigo === "EFE") {
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-sub-entidad-financiera-page
+                        [value]="infrastructure.idSubEntidadFinanciera"
+                        [subEntidadesFinanciera]="subEntidadesFinanciera"
+                      />
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-fecha-emision [(value)]="infrastructure.fechaEmision" />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <app-valor-abono [(value)]="infrastructure.valorAbono" />
+                    </div>
+                  </div>
+                }
+
+
+                @if (item.codigo === "TRA") {
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-sub-entidad-financiera-page
+                        [value]="infrastructure.idSubEntidadFinanciera"
+                        [subEntidadesFinanciera]="subEntidadesFinanciera"
+                      />
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-fecha-emision [(value)]="infrastructure.fechaEmision" />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <app-valor-abono [(value)]="infrastructure.valorAbono" />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                      <app-banco-select
+                        [(value)]="infrastructure.idBanco"
+                        [bancos]="bancos"
+                      />
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label>Número <span class="text-danger">*</span></label>
+                        <input
+                          type="text"
+                          [(ngModel)]="infrastructure.nro"
+                          class="form-control border-select"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                }
+
+
+                @if (item.codigo === "CHE") {
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-sub-entidad-financiera-page
+                        [value]="infrastructure.idSubEntidadFinanciera"
+                        [subEntidadesFinanciera]="subEntidadesFinanciera"
+                      />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+                      <app-fecha-emision [(value)]="infrastructure.fechaEmision" />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <app-valor-abono [(value)]="infrastructure.valorAbono" />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <form [formGroup]="ciudadForm">
+                        <div class="form-group">
+                          <label>Ciudad</label>
+                          <input
+                            type="text"
+                            matInput
+                            class="form-control"
+                            formControlName="ciudadGroup"
+                            placeholder="Ej: Santo Domingo..."
+                            [matAutocomplete]="autoGroup"
+                          />
+                          <mat-autocomplete #autoGroup="matAutocomplete">
+                            @for (
+                              group of ciudadesGroupOptions | async;
+                              track group
+                            ) {
+                              <mat-optgroup
+                                style="font-weight: 700"
+                                [label]="group.provincia"
+                              >
+                                @for (name of group.ciudades; track $index) {
+                                  <mat-option
+                                    [value]="name.descripcion"
+                                    (onSelectionChange)="
+                                      onSelectionChangeCiudad(name.idCiudad)
+                                    "
+                                    >{{ name.descripcion }}</mat-option
+                                  >
+                                }
+                              </mat-optgroup>
+                            }
+                          </mat-autocomplete>
+                        </div>
+                      </form>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <app-banco-select
+                        [(value)]="infrastructure.idBanco"
+                        [bancos]="bancos"
+                      />
+                    </div>
+                    <div class="col-lg-4 col-md-4 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label
+                          >Número: <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          [(ngModel)]="infrastructure.nro"
+                          class="form-control border-select"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-6 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label for="">Dirigido a:</label>
+                        <input
+                          type="text"
+                          class="form-control border-select"
+                          [(ngModel)]="infrastructure.referencia"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+                      <div class="form-group">
+                        <label>PosFechado</label>
+                        <div class="icheck-primary">
+                          <input
+                            type="checkbox"
+                            [(ngModel)]="infrastructure.posFechado"
+                            id="posFechado"
+                          />
+                          <label for="posFechado"></label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+
+                @if (item.codigo == "DOC") {
+                  <div class="table-responsive">
+                    <table class="table table-condensed">
+                      <thead>
+                        <tr>
+                          <th>N°</th>
+                          <th>Fecha Emision</th>
+                          <th>Serie Comprobante</th>
+                          <th>Documento</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (item of documentosElectronicos; track $index) {
+                          <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ item.fechaEmision }}</td>
+                            <td>{{ item.serieComprobante }}</td>
+                            <td>{{ item.codDoc }}</td>
+                            <td>${{ item.saldo }}</td>
+                          </tr>
+                        } @empty {
+                          <tr class="text-center">
+                            <td colspan="5">No hay registros en esta tabla</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                }
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  } -->
+</ng-template>
+<ng-template #footer>
+  <acp-button variant="success" icon="arrow" text="Abonar" (handleClick)="addPaymentType()" />
+</ng-template>

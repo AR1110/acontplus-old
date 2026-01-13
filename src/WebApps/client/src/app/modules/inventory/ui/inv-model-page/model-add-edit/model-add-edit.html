@@ -1,0 +1,53 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2 m-0 p-0">
+    <mat-form-field>
+      <mat-label>Marca</mat-label>
+      <mat-select [(ngModel)]="data.idMarca">
+        <mat-option [value]="0">Ninguno</mat-option>
+        @for (item of marcas(); track $index) {
+          <mat-option [value]="item.idMarca">{{ item.descripcion }}</mat-option>
+        }
+      </mat-select>
+      <acp-button
+        type="button"
+        icon="add"
+        variant="primary"
+        matStyle="icon"
+        matSuffix
+        appBrandAddEdit
+        (onResult)="refreshMarca()"
+      />
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Descripción</mat-label>
+      <input matInput placeholder="..." appToUpperCase [(ngModel)]="data.descripcion" />
+    </mat-form-field>
+
+    @if (this.data.idModelo > 0) {
+      <mat-radio-group aria-label="Estado" [(ngModel)]="data.estado">
+        <mat-radio-button [value]="true">Activo</mat-radio-button>
+        <mat-radio-button [value]="false">Inactivo</mat-radio-button>
+      </mat-radio-group>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

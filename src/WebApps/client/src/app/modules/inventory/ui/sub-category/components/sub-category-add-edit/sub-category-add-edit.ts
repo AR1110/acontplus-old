@@ -20,7 +20,7 @@ import { Button } from '@acontplus/ng-components';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
-  selector: 'app-sub-category-add-edit',
+  selector: 'app-sub-category-page-add-edit',
   imports: [
     FormsModule,
     MatFormFieldModule,

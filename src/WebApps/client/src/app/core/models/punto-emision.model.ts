@@ -27,7 +27,7 @@ export interface PuntoEmision {
  *
  * Reason:
  * - It contains redundant fields already defined in the new `Establishment` model.
- * - The new design centralizes warehouse and emission point data for better grouping logic.
+ * - The new design centralizes warehouse-page and emission point data for better grouping logic.
  *
  * Replacement:
  * ```ts

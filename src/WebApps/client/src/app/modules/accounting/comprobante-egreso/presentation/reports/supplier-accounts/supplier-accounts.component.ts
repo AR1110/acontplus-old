@@ -18,7 +18,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-import { GetFilterDataCuentaPorPagarUseCase } from '@accounting/cuenta-por-pagar/application/get-filter-data-cuenta-por-pagar.use-case';
+import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { MatRadioModule } from '@angular/material/radio';
 
 type EstadoSelect = Pick<TipoDoc, 'descripcion'> & { codDoc: string };
@@ -73,7 +73,7 @@ export class SupplierAccountsComponent implements OnInit {
   isSearchSupplierSimple = true;
   private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
-  private $getFilterDataUseCase = inject(GetFilterDataCuentaPorPagarUseCase);
+  private $getFilterDataUseCase = inject(CUENTA_POR_PAGAR_HTTP_TOKEN);
 
   reportTypeCode = {
     RG: 'RG', //Reporte General
@@ -86,7 +86,7 @@ export class SupplierAccountsComponent implements OnInit {
   ]);
 
   private initialed() {
-    this.$getFilterDataUseCase.execute().subscribe((response) => {
+    this.$getFilterDataUseCase.getDataFilter().subscribe((response) => {
       this.establecimientos.set(response.estabs);
       const dataEstab = this.establecimientos().find((estab) => estab.defaultEstab);
       if (dataEstab) {

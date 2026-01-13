@@ -1,6 +1,6 @@
 namespace Inventory.Application.Services;
 
-public class ModeloService : IModeloService
+public class ModeloService : IModelService
 {
     private readonly IAdoRepository _repository;
     private readonly string nameSchema = "Inventario.Modelo";

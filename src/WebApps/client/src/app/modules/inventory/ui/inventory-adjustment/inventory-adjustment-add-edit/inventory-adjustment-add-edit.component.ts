@@ -18,7 +18,7 @@ import Swal from 'sweetalert2';
 //components
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
-import { InventoryAdjustmentSearchAdvancedComponent } from '@inventory/ui/inventory-adjustment/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced.component';
+import { InventoryAdjustmentSearchAdvanced } from '@inventory/ui/inventory-adjustment/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced';
 
 import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { TabulatorTable } from '@acontplus/ng-components';
@@ -455,7 +455,7 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
 
   openSearchAdvanced(): void {
     const dialogRef = this.inventoryAdjustmentSvc.dialogSvc.open(
-      InventoryAdjustmentSearchAdvancedComponent,
+      InventoryAdjustmentSearchAdvanced,
       {
         size: 'xl',
         data: {

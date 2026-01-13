@@ -1,0 +1,206 @@
+<div class="d-flex flex-column gap-2">
+  <div class="row">
+    <div class="col-xxl-9 col-xl-9 col-lg-9 col-md-9 col-sm-12 col-12">
+      <div
+        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+      >
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Establecimiento</mat-label>
+            <mat-select [(ngModel)]="dataSearch().codEstab" (selectionChange)="refresh()">
+              @for (item of estabs; track $index) {
+                <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <app-date-range-selection
+            (onChangeDateRange)="onDateRangeSelection($event)"
+            (onCheckboxChange)="refresh()"
+            [(checkbox)]="dataSearch().checkBoxDate"
+            [showInputMaterial]="true"
+            [showMatPrefix]="true"
+          />
+        </div>
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Tipo Documento</mat-label>
+            <mat-select [(ngModel)]="dataSearch().codDoc" (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of tiposDoc; track $index) {
+                <mat-option [value]="item.codDoc">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
+        <acp-button
+          variant="success"
+          icon="payments"
+          text="Pagar"
+          matStyle="filled"
+          [disabled]="isLoadingResults() || selection.selected.length === 0"
+          (handleClick)="openPaymentModal()"
+        />
+        <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
+        <acp-button
+          variant="secondary"
+          icon="filter_list"
+          matStyle="icon"
+          (handleClick)="isSearchAdvanced.set(!isSearchAdvanced())"
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (isSearchAdvanced()) {
+    <div class="border-top">
+      <div class="d-flex justify-content-center gap-3 pb-2">
+        <mat-checkbox [(ngModel)]="dataSearch().esBuscarProveedor">Proveedor </mat-checkbox>
+        <mat-checkbox [(ngModel)]="dataSearch().esBuscarPorNro">Buscar por Nro. Doc</mat-checkbox>
+      </div>
+      <div
+        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+      >
+        <div class="col">
+          <mat-form-field class="w-100">
+            <mat-label>Estado</mat-label>
+            <mat-select [(ngModel)]="dataSearch().codigoEstado" (selectionChange)="refresh()">
+              <mat-option [value]="0">Todos</mat-option>
+              @for (item of estadosDoc; track $index) {
+                <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div class="col">
+          <app-supplier-search
+            [isSimpleMode]="true"
+            (clearSearch)="clearSearchSupplier()"
+            (supplierSelected)="onSelectSupplier($event)"
+            [textSearch]="dataSearch().nombreProveedor"
+          />
+        </div>
+        <div class="col">
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Opciones</mat-label>
+                <mat-select [(ngModel)]="dataSearch().typeSearchNro">
+                  @for (item of typesSearchNro(); track $index) {
+                    <mat-option [value]="item.code">{{ item.description }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col">
+              <mat-form-field class="w-100">
+                <mat-label>Secuencial</mat-label>
+                <input matInput [(ngModel)]="dataSearch().secuencial" mask="0*" placeholder="..." />
+                <button
+                  matSuffix
+                  mat-icon-button
+                  aria-label="Refresh"
+                  (click)="onClickSecuencial($event)"
+                >
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+@if (selection.selected.length > 0) {
+  <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <span>
+      <mat-icon>info</mat-icon>
+      {{ selection.selected.length }} elemento(s) seleccionado(s)
+    </span>
+    <button mat-button (click)="selection.clear()">
+      <mat-icon>clear</mat-icon>
+      Limpiar selección
+    </button>
+  </div>
+} @else {
+  <div class="alert alert-light">
+    <small class="text-muted">
+      <mat-icon>info</mat-icon>
+      Haga clic en una fila para seleccionar. Use Ctrl+clic para selección múltiple.
+    </small>
+  </div>
+}
+
+<acp-data-grid
+  [data]="dataSource"
+  [columns]="columnsDefs"
+  [loading]="isLoadingResults()"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  (rowClick)="onRowClick($event)"
+>
+  <!-- Template for operations column -->
+  <ng-template acpDataGridCell="op" let-item="item">
+    <div class="d-flex align-items-center gap-1">
+      @if (selection.isSelected(item)) {
+        <mat-icon class="text-primary">check_circle</mat-icon>
+      }
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    </div>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="openCuotaModal(item)">
+        <mat-icon>attach_money</mat-icon>
+        <span>Config. Cuota</span>
+      </button>
+      <button mat-menu-item (click)="openHistorialMovimientoModal(item)">
+        <mat-icon>history</mat-icon>
+        <span>Hist. Movimiento</span>
+      </button>
+      <button mat-menu-item (click)="getReport(item)">
+        <mat-icon>save_alt</mat-icon>
+        <span>Pdf</span>
+      </button>
+    </mat-menu>
+  </ng-template>
+
+  <!-- Template for status column -->
+  <ng-template acpDataGridCell="nombreEstado" let-item="item">
+    @switch (item.codigoEstado) {
+      @case ('PA') {
+        <span class="badge text-bg-success">
+          {{ item.nombreEstado }}
+        </span>
+      }
+      @case ('PE') {
+        <span class="badge text-bg-warning">
+          {{ item.nombreEstado }}
+        </span>
+      }
+      @case ('A') {
+        <span class="badge text-bg-danger">
+          {{ item.nombreEstado }}
+        </span>
+      }
+      @default {
+        <span class="badge text-bg-primary">
+          {{ item.nombreEstado }}
+        </span>
+      }
+    }
+  </ng-template>
+</acp-data-grid>

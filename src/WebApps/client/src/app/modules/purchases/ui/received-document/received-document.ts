@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { Button, DynamicCard, DataGrid } from '@acontplus/ng-components';
+import { Button, DynamicCard, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { InputNumberDirective } from '@shared/directives/ui/input-number.directive';
@@ -12,7 +12,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { LOOKUP_HTTP_TOKEN, RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
+import { SUB_CATEGORY_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -21,7 +21,6 @@ import { RetencionHtmlComponent } from '@billing/ui/shared/components/retencion-
 import { CreditNoteHtmlComponent } from '@billing/ui/shared/components/credit-note-html/credit-note-html.component';
 import { InvoiceHtmlComponent } from '@billing/ui/shared/components/invoice-html/invoice-html.component';
 import { ReceivedDocumentList } from '@purchases/data/models/received-document';
-import { DataGridColumn } from '@shared/components/data-grid/types';
 import { ContextType, LookupItem, ModuleType } from '@core/models/lookup-type';
 
 @Component({
@@ -120,7 +119,7 @@ export class ReceivedDocument implements OnInit {
   private readonly _lookupRepository = inject(LOOKUP_HTTP_TOKEN);
   private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
   private readonly _dialogService = inject(DialogService);
-  private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
+  private readonly _subCategoryHttp = inject(SUB_CATEGORY_HTTP_TOKEN);
   private readonly _tS = inject(ToastrNotificationService);
 
   async alertEstabSelected() {
@@ -246,7 +245,7 @@ export class ReceivedDocument implements OnInit {
   async openModalManualUpload() {
     if (!(await this.alertEstabSelected())) return;
 
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+    this._subCategoryHttp.getAll({}).subscribe((response) => {
       if (this.subcategories().length > 0) {
         this._dialogService.open(DocManualUploadComponent, {
           size: 'lg',
@@ -270,7 +269,7 @@ export class ReceivedDocument implements OnInit {
   }
 
   editSubcategory() {
-    // TODO: Implement edit subcategory logic
+    // TODO: Implement edit subcategory-page logic
   }
 
   onChangeEstab() {

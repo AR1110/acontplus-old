@@ -1,0 +1,223 @@
+<app-mat-custom-dialog
+  [containerTemplate]="containerTemplate"
+  [actionsTemplate]="actionsTemplate"
+  [title]="'Nuevo Pago'"
+  [loading]="comprobanteEgresoStore.isLoading()"
+  (close)="closeDialog()"
+/>
+
+<ng-template #containerTemplate>
+  <div class="d-grid gap-4">
+    <div
+      class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+    >
+      <div class="col">
+        <acp-dynamic-card>
+          <div
+            class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="vstack">
+              <small class="fw-semibold">Proveedor: </small>
+              <small>{{ comprobanteEgresoStore.dataCuentaPorPagar().nombreComprador }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Nro. Identificación</small>
+              <small>{{
+                comprobanteEgresoStore.dataCuentaPorPagar().identificacionComprador
+              }}</small>
+            </div>
+          </div>
+        </acp-dynamic-card>
+      </div>
+
+      <div class="col">
+        <acp-dynamic-card>
+          <div
+            class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-4 row-cols-sm-2 row-cols-1 g-2"
+          >
+            <div class="vstack">
+              <small class="fw-semibold">Total</small>
+              <small>{{ comprobanteEgresoStore.total() }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Abono</small>
+              <small>{{ comprobanteEgresoStore.abono() }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Saldo</small>
+              <small>{{ comprobanteEgresoStore.saldo() }}</small>
+            </div>
+            <div class="vstack">
+              <small class="fw-semibold">Diferencia</small>
+              <small>{{ comprobanteEgresoStore.valorDiferencia() }}</small>
+            </div>
+          </div>
+        </acp-dynamic-card>
+      </div>
+    </div>
+    <div class="row g-4">
+      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-12 col-12">
+        <div class="d-grid gap-4">
+          <mat-accordion multi>
+            @for (item of comprobanteEgresoStore.cuentasPorPagar(); track $index) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    <div class="d-flex gap-2 small">
+                      <span class="fw-bold">{{ item.nombreDoc }}</span>
+                      <span class="text-success">{{ item.serieComprobante }}</span>
+                    </div>
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{ item.total | currency }}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <acp-data-grid
+                  [data]="item.cuotas"
+                  [columns]="columns"
+                  [cellTemplate]="{
+                    actions: actionsTemplate,
+                  }"
+                />
+
+                <ng-template #actionsTemplate let-item="item">
+                  @if (item.esCuotaAbonado) {
+                    <button mat-icon-button aria-hidden="false" (click)="verPagoDetalle(item)">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  }
+                </ng-template>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
+
+          @if (comprobanteEgresoStore.formasPago().length > 0) {
+            <div>
+              <div class="d-flex align-items-center">
+                <span class="fw-medium">Forma de pagos</span>
+              </div>
+              <div
+                class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2 justify-content-center"
+              >
+                @for (item of comprobanteEgresoStore.formasPago(); track $index) {
+                  <div class="col">
+                    <acp-dynamic-card
+                      [cardTitle]="item.nombreFormaPago || ''"
+                      [isHeaderVisible]="true"
+                    >
+                      <div class="d-flex align-items-center justify-content-end mb-2">
+                        <button
+                          mat-icon-button
+                          matTooltip="Eliminar forma de pago agregado"
+                          (click)="comprobanteEgresoStore.eliminarFormaPago(item)"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+
+                      <div class="d-flex flex-column gap-1">
+                        <div class="hstack">
+                          <small class="fw-semibold me-2">Fecha Emisión</small>
+                          <small> {{ item.fechaEmision | date: ' dd-MM-yyyy HH:mm' }}</small>
+                        </div>
+
+                        <div class="d-flex flex-row">
+                          <div class="vstack">
+                            <small class="fw-semibold">Valor</small>
+                            <small>{{ item.valorAbonoInput | currency }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Abono</small>
+                            <small>{{ item.abono | currency }}</small>
+                          </div>
+                        </div>
+                        <mat-divider />
+
+                        <div
+                          class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-1"
+                        >
+                          <div class="vstack">
+                            <small class="fw-semibold">Ciudad:</small>
+                            <small>{{ item.nombreCiudad }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Banco:</small>
+                            <small>{{ item.nombreBanco }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Referencia:</small>
+                            <small>{{ item.referencia }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Nro:</small>
+                            <small>{{ item.nro }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Lote:</small>
+                            <small>{{ item.lote }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Aprobación:</small>
+                            <small>{{ item.aprobacion }}</small>
+                          </div>
+
+                          <div class="vstack">
+                            <small class="fw-semibold">Posfechado:</small>
+                            <small>{{ item.nombrePosfechado }}</small>
+                          </div>
+                        </div>
+                      </div>
+                    </acp-dynamic-card>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <mat-form-field class="w-100">
+            <mat-label>Nota (Opcional)</mat-label>
+            <textarea
+              matInput
+              placeholder="..."
+              [(ngModel)]="comprobanteEgresoStore.nota"
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-12 col-12">
+        <acp-dynamic-card [cardTitle]="'Seleccione el Método de Pago'" [isHeaderVisible]="true">
+          <mat-list>
+            <mat-divider />
+            @for (item of comprobanteEgresoStore.entidadesFinanciera(); track $index) {
+              <mat-list-item
+                [disabled]="comprobanteEgresoStore.saldo() === 0"
+                style="cursor: pointer"
+                (click)="openFormaPago(item)"
+              >
+                <div class="d-inline-flex justify-content-between w-100 small">
+                  <div>{{ item.descripcion }}</div>
+                  <mat-icon>keyboard_arrow_right</mat-icon>
+                </div>
+              </mat-list-item>
+              <mat-divider />
+            }
+          </mat-list>
+        </acp-dynamic-card>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #actionsTemplate>
+  <button mat-flat-button (click)="save()">
+    <mat-icon>save</mat-icon>
+    Guardar
+  </button>
+</ng-template>

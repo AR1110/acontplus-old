@@ -1,7 +1,7 @@
 import { minus } from '@core/utils/decimal.util';
 import { DECIMALS } from '@core/constants/global.constants';
 import { roundNumber } from '@core/utils/round-number.utils';
-import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 
 interface Props {
   dataCuota: CuotaPorPagarLista;

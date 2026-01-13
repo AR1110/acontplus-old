@@ -24,7 +24,6 @@ export class AuthLoginMapper {
       });
 
       nodeMap.forEach((node) => {
-        console.log(node.actions);
         if (node.parentId !== undefined && nodeMap.has(node.parentId)) {
           nodeMap.get(node.parentId).children.push(node);
         } else if (node.parentId === undefined) {
@@ -82,7 +81,7 @@ export class AuthLoginMapper {
         detailControlReport: cashData.reporteDetalleControlCaja,
       };
 
-      // Product
+      // ProductPage
       const productData = p.product[0];
       const product = {
         priceManagement: productData.precio,

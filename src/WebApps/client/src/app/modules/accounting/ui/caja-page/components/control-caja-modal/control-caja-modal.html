@@ -1,0 +1,120 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2">
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-1">
+      <div class="col">
+        <acp-date-range-picker
+        [showCheckbox]="true"
+        [checkboxChecked]="dataSearch.checkBoxDate"
+        (checkboxChange)="onCheckboxChange($event)"
+        (dateRangeSelected)="onDateRangeSelection($event)"
+        />
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Estado: </mat-label>
+          <mat-select
+            [(ngModel)]="dataSearch.statusMovement"
+            (selectionChange)="getMovimientosCaja()"
+          >
+            <mat-option [value]="''">--Todos--</mat-option>
+
+            @for (item of estadosMovimiento; track $index) {
+              <mat-option [value]="item.estado">{{ item.descripcion }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col d-flex justify-content-end align-items-center">
+        <acp-button
+          variant="secondary"
+          icon="refresh"
+          matStyle="icon"
+          title="Recargar"
+          (handleClick)="refresh()"
+        />
+      </div>
+    </div>
+  </div>
+
+  <acp-data-grid
+    [columns]="columns"
+    [data]="movimientosCaja()"
+    [length]="pageCount"
+    [pageIndex]="page"
+    [pageSize]="pageSize"
+    (page)="handlePageEvent($event)"
+    [cellTemplate]="{
+      actions: opTpl,
+    }"
+  />
+
+  <ng-template #opTpl let-data>
+    @if (cerrarCaja(data.estado)) {
+      <acp-button
+        type="button"
+        icon="payments"
+        variant="success"
+        matStyle="icon"
+        (handleClick)="openModalCashboxClose(data)"
+        title="Cerrar caja"
+      />
+    }
+
+    @if (verReporteMovimientoCaja(data.estado)) {
+      <acp-button
+        type="button"
+        icon="description"
+        variant="info"
+        matStyle="icon"
+        (handleClick)="askToReportType(data)"
+        title="Reporte Control Caja"
+      />
+    }
+
+    @if (dataPermisosCaja.reporteTransaccionPendiente) {
+      <acp-button
+        type="button"
+        icon="money_off"
+        variant="warning"
+        matStyle="icon"
+        (handleClick)="askToReportType(data, BUTTON_TRANSACTION_PENDING)"
+        title="Reporte Transacciones pendientes"
+      />
+    }
+
+    @if (dataPermisosCaja.reporteDetalleControlCaja) {
+      <acp-button
+        type="button"
+        icon="view_list"
+        variant="primary"
+        matStyle="icon"
+        (handleClick)="openModalReporteFiltroDetalleCaja(data)"
+        title="Reporte Detalle Control Caja"
+      />
+    }
+
+    @if (!data.estado) {
+      <acp-button
+        type="button"
+        icon="price_check"
+        variant="secondary"
+        matStyle="icon"
+        (handleClick)="openModalDetalleArqureoCaja(data)"
+        title="Detalle Arqueo Caja"
+      />
+    }
+
+    @if (!data.estado) {
+      <acp-button
+        type="button"
+        icon="mail"
+        variant="dark"
+        matStyle="icon"
+        appSendMailDialog
+        [data]="getDataSendMail(data)"
+        [notificationAcontPlus]="true"
+        title="Enviar correo"
+      />
+    }
+  </ng-template>
+</mat-dialog-content>

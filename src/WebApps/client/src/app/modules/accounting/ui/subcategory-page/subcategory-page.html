@@ -1,0 +1,40 @@
+<app-breadcrumb />
+
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [data]="subcategories()"
+  [columns]="columnsDefs"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: opTpl,
+    index: indexTpl,
+  }"
+/>
+
+<ng-template #headerToolbar>
+  <div class="d-flex justify-content-between align-items-center w-100">
+    <h5 class="mb-0">Subcategorías</h5>
+    <div class="d-flex gap-2">
+      <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
+      <acp-button
+        variant="primary"
+        icon="add"
+        matStyle="filled"
+        text="Nuevo"
+        (handleClick)="onModalOpen()"
+      />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #opTpl let-data>
+  <acp-button type="button" icon="edit" variant="info" matStyle="icon" (handleClick)="edit(data)" />
+</ng-template>
+
+<ng-template #indexTpl let-index="index">
+  {{ index + 1 }}
+</ng-template>

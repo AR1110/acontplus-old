@@ -3,7 +3,7 @@ import {
   MultiplesPaymentType,
   PaymentDetail,
   PaymentHistory,
-} from '@accounting/comprobante-ingreso/domain/comprobante-ingreso';
+} from '@accounting/data/models/comprobante-ingreso';
 import {
   CuentaPorCobrar,
   CuentaPorCobrarComprobante,

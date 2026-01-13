@@ -79,16 +79,53 @@ app.run(function ($window, $rootScope) {
     }
 });
 
-function alertEndSession() {
+function alertSessionExpiring() {
     let timerInterval;
     Swal.fire({
         icon: "warning",
-        title: "Ha perdido sesión!",
-        html: "Redirigiendo en <b></b> segundos",
+        title: "Su sesión expirará pronto",
+        html: "La sesión se cerrará en <b></b> minutos. ¿Desea continuar?",
+        timer: 300000, // 5 minutos
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        timerProgressBar: true,
+        showCancelButton: true,
+        confirmButtonText: "Continuar",
+        cancelButtonText: "Cerrar sesión",
+        didOpen: () => {
+            const timer = Swal.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+                const timeLeft = Swal.getTimerLeft();
+                const minutesLeft = Math.ceil(timeLeft / 60000);
+                timer.textContent = minutesLeft;
+            }, 1000);
+        },
+        willClose: () => {
+            clearInterval(timerInterval);
+        },
+    }).then((result) => {
+        if (result.dismiss === Swal.DismissReason.timer || result.dismiss === Swal.DismissReason.cancel) {
+            // Si se agota el tiempo o cancela, cerrar sesión
+            alertEndSession();
+        } else if (result.isConfirmed) {
+            // Si confirma continuar, no hacer nada (la sesión seguirá activa)
+            console.log("Usuario decidió continuar con la sesión");
+        }
+    });
+}
+
+function alertEndSession() {
+    let timerInterval;
+    Swal.fire({
+        icon: "error",
+        title: "Sesión expirada",
+        html: "Su sesión ha caducado. Redirigiendo en <b></b> segundos",
         timer: 10000,
         allowOutsideClick: false,
         allowEscapeKey: false,
         timerProgressBar: true,
+        showConfirmButton: true,
+        confirmButtonText: "Ir al login",
         didOpen: () => {
             Swal.showLoading();
             const timer = Swal.getPopup().querySelector("b");
@@ -111,6 +148,7 @@ function alertEndSession() {
 
 app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
     let authInterceptorServiceFactory = {};
+    let sessionWarningShown = false; // Flag para evitar múltiples alertas
 
     let _request = (config) => {
         if (config.url.includes('api.green-api.com')) {
@@ -125,10 +163,19 @@ app.factory("authInterceptorService", function ($q, $localStorage, jwtHelper) {
                 let decodedJwt = jwtHelper.decodeToken(authData.token);
                 const expiration = Number(decodedJwt.exp);
                 const currentTime = Math.floor(new Date() / 1000); // convert to seconds
+                const timeUntilExpiration = expiration - currentTime;
 
+                // Si el token ya expiró
                 if (expiration < currentTime) {
                     return alertEndSession();
                 }
+
+                // Si faltan 5 minutos o menos para expirar (300 segundos) y no se ha mostrado la alerta
+                if (timeUntilExpiration <= 300 && !sessionWarningShown) {
+                    sessionWarningShown = true;
+                    alertSessionExpiring();
+                }
+
                 config.headers["client-Id"] = "acontplus-web-app";
                 config.headers.Authorization = "Bearer " + authData.token;
             } catch (error) {

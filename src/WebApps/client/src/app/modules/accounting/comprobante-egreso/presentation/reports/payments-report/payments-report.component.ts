@@ -14,7 +14,7 @@ import { DataFilterComprobanteEgresoUseCase } from '@accounting/comprobante-egre
 import { Subscription } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
 import { Banco } from '@accounting/shared/models/banco.interface';
-import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.interface';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { REPORT_FORMAT } from '@core/constants/global.constants';

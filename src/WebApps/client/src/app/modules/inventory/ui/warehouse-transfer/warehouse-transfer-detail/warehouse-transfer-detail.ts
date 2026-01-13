@@ -6,8 +6,7 @@ import { GenerateReportUseCase } from '@modules/api/reports/application/generate
 import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
-import { DataGridColumn } from '@shared/components/data-grid/types';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
+import {DataGrid, DataGridColumn} from '@acontplus/ng-components'
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatCard } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';

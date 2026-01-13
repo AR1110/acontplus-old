@@ -1,7 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DataGrid } from '@shared/components/data-grid/data-grid';
-import { DataGridColumn } from '@shared/components/data-grid/types';
+import { DataGrid, DataGridColumn, Pagination} from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import {
   ProformaInvoiceFilterUseCase,
@@ -9,7 +8,6 @@ import {
 } from '@sale/application/use-cases/proforma-use-case';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { Pagination } from '@acontplus/ng-components';
 import { ProformaInvoiceList } from '@sale/domain/models/proforma';
 import { finalize } from 'rxjs/operators';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';

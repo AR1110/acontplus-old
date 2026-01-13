@@ -798,17 +798,21 @@ app.component('itemSearch', {
                 $ctrl.filteredItems = [];
                 if (!($ctrl.searchText.length > 0)) return;
                 itemService.search({
-                    textSearch: encodeURIComponent($ctrl.searchText),
-                    siglaFamilia: $ctrl.siglaFamilia
+                    searchTerm: $ctrl.searchText,
+                    filters: {
+                        siglaFamilia: $ctrl.siglaFamilia
+                    },
+                    pageIndex: 1,
+                    pageSize: 10
                 })
                     .then((response) => {
                         $ctrl.filteredItems = response.data;
-                        // $ctrl.showDropdown = $ctrl.filteredItems.length > 0;
-                        // $ctrl.highlightedIndex = -1;
                     })
-                    .catch(function (error) {
+                    .catch((error) => {
                         console.error("Error al obtener datos:", error);
                     });
+                console.log('Searching for:', $ctrl.searchText);
+
             }, 300);
         };
 
