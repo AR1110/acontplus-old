@@ -2,8 +2,8 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { ScheduleUseCase } from '@modules/config/application/use-cases/schedule/schedule.use.case';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
-import { Shift, ShiftList } from '@modules/config/domain/models/shift.models';
-import { ScheduleList } from '@modules/config/domain/models/schedule.model';
+import { Shift, ShiftList } from '@modules/config/data/models/shift.models';
+import { ScheduleList } from '@modules/config/data/models/schedule.model';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatFormFieldModule } from '@angular/material/form-field';

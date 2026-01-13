@@ -48,8 +48,8 @@ export const routes: Routes = [
     path: 'user-customer',
     title: 'Usuario',
     loadComponent: () =>
-      import('@modules/config/ui/user-customer/user-customer.component').then(
-        (m) => m.UserCustomerComponent,
+      import('@modules/config/ui/user-customer/user-customer-page').then(
+        (m) => m.UserCustomerPage,
       ),
     data: {
       breadcrumb: 'Usuario',
@@ -59,8 +59,8 @@ export const routes: Routes = [
     path: 'user-request',
     title: 'Solicitudes de Usuario',
     loadComponent: () =>
-      import('@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component').then(
-        (m) => m.SolicitudAutorizacionComponent,
+      import('@modules/config/ui/solicitud-autorizacion-page/solicitud-autorizacion-page').then(
+        (m) => m.SolicitudAutorizacionPage,
       ),
     data: {
       breadcrumb: 'Solicitudes de Usuario',
@@ -129,10 +129,10 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'electronic-signature',
+    path: 'electronic-signature-page',
     loadComponent: () =>
-      import('@modules/config/ui/electronic-signature/electronic-signature.component').then(
-        (m) => m.ElectronicSignatureComponent,
+      import('@modules/config/ui/electronic-signature-page/electronic-signature-page').then(
+        (m) => m.ElectronicSignaturePage,
       ),
     data: {
       breadcrumb: 'Firma Electronica',

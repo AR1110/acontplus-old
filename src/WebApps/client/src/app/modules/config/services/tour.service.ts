@@ -1,5 +1,5 @@
-import { TOUR_STEPS } from '@modules/config/domain/models/configuration.model';
-import { TourStep } from '../domain/models/configuration.model';
+import { TOUR_STEPS } from '@modules/config/data/models/configuration.model';
+import { TourStep } from '../data/models/configuration.model';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 

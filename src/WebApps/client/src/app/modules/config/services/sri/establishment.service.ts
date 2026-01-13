@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
+import { CONFIG_PATHS } from '@modules/config/config-const';
+import { EstablishmentRead } from '@modules/config/data/models/establishment.model';
 import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 

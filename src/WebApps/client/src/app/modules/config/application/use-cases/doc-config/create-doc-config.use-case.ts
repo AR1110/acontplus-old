@@ -1,7 +1,7 @@
 import { BaseUseCase } from '@core/base-use-case';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
+import { DocConfigRepository } from '@modules/config/data/repositories/doc-config.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({

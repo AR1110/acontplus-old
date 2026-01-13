@@ -1,11 +1,4 @@
-<app-mat-custom-dialog
-  (close)="close()"
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  title="Búsqueda Avanzada"
-/>
-
-<ng-template #body>
+<mat-dialog-content>
   <div class="container-fluid vstack gap-5">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-2">
       <div class="col">
@@ -47,12 +40,19 @@
               pattern="[0-9]{3}-[0-9]{3}-[0-9]*"
               placeholder="000-000-XXXXXXXXXXX"
               title="Formato: 000-000-XXXXXXXXXXX"
-              oninput="this.value=this.value.replace(/[^0-9-]/g,'').replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')"
+              oninput="
+                this.value = this.value
+                  .replace(/[^0-9-]/g, '')
+                  .replace(/(\d{3})-?(\d{3})-?(.*)/, '$1-$2-$3')
+              "
             />
             <ng-container matSuffix>
-              <button type="button" mat-icon-button (click)="refreshNroDoc()">
-                <mat-icon>refresh</mat-icon>
-              </button>
+              <acp-button
+                variant="secondary"
+                icon="refresh"
+                matStyle="icon"
+                (handleClick)="refreshNroDoc()"
+              />
             </ng-container>
           </mat-form-field>
         }
@@ -70,13 +70,19 @@
           <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
 
           <ng-container matSuffix>
-            <button mat-icon-button (click)="fileInput.click()">
-              <mat-icon>attach_file</mat-icon>
-            </button>
+            <acp-button
+              variant="secondary"
+              icon="attach_file"
+              matStyle="icon"
+              (handleClick)="fileInput.click()"
+            />
             @if (productsNotFounded().length > 0) {
-              <button mat-icon-button (click)="showProductsNoVinculado()">
-                <mat-icon>notification_important</mat-icon>
-              </button>
+              <acp-button
+                variant="warning"
+                icon="notification_important"
+                matStyle="icon"
+                (handleClick)="showProductsNoVinculado()"
+              />
             }
           </ng-container>
           <mat-hint>
@@ -86,19 +92,25 @@
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [enablePagination]="false"
-      [showSelectBox]="true"
-      (rowSelected)="rowSelected($event)"
-      (rowAllSelected)="rowAllSelected($event)"
+    <acp-data-grid
+      [data]="dataSource()"
+      [columns]="columnsDefs"
+      [multiSelectable]="true"
+      [rowSelectable]="true"
+      [rowSelected]="selectedRows()"
+      (rowSelectedChange)="rowAllSelected($event)"
     />
   </div>
-</ng-template>
-<ng-template #footer>
+</mat-dialog-content>
+
+<mat-dialog-actions>
   @if (selectedRows().length > 0) {
-    <acp-button variant="success" icon="save_alt" text="Cargar" (handleClick)="applySelected()" />
+    <acp-button
+      variant="success"
+      icon="save_alt"
+      text="Cargar"
+      matStyle="filled"
+      (handleClick)="applySelected()"
+    />
   }
-</ng-template>
+</mat-dialog-actions>

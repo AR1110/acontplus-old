@@ -3,7 +3,7 @@ import { DeleteCreditTimeUseCase } from '@modules/config/application/use-cases/c
 import { ListCreditTimeUseCase } from '@modules/config/application/use-cases/credit-time/list-credit-time.use-case';
 import { Button, DataGrid, DataGridColumn, AdvancedDialogService } from '@acontplus/ng-components';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
+import { CreditTimeList } from '@modules/config/data/models/tiempo-credito.model';
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { NotificationService } from '@acontplus/ng-notifications';

@@ -95,7 +95,7 @@ export enum GlobalRoutes {
   ComprasFacturaCompra = 'purchase/factura-fisica',
 
   //Customer
-  Cliente = 'customer/company-customer',
+  Cliente = 'customer/company-customer-page',
   CommonEmailQueue = 'common/email-queue',
 
   //BarberShop

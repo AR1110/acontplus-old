@@ -1,6 +1,6 @@
-import { ListShiftResponse, ShiftList } from '@modules/config/domain/models/shift.models';
-import { ShiftRepository } from '@modules/config/domain/repositories/shift.repository';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { ListShiftResponse, ShiftList } from '@modules/config/data/models/shift.models';
+import { ShiftRepository } from '@modules/config/data/repositories/shift.repository';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ListShiftMapper } from './list-shift.mapper';

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { UserCustomerPermissionRepository } from '@modules/config/domain/repositories/user-customer-permission.repository';
+import { UserCustomerPermissionRepository } from '@modules/config/data/repositories/user-customer-permission.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Injectable({

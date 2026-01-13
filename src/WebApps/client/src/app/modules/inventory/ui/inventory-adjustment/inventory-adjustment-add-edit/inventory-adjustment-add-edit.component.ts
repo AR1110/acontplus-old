@@ -7,7 +7,12 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogContent,
+  MatDialogActions,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,7 +21,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import Swal from 'sweetalert2';
 
 //components
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
 import { InventoryAdjustmentSearchAdvanced } from '@inventory/ui/inventory-adjustment/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced';
 
@@ -37,7 +41,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
   imports: [
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
     Button,
     MatFormFieldModule,
     MatInputModule,

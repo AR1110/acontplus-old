@@ -1,4 +1,4 @@
-import { UserCustomerRoleResponse } from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { UserCustomerRoleResponse } from '@modules/config/data/models/user-customer/user-customer-role.model';
 
 export class ListUserCustomerRoleMapper {
   static toJson<T>(parameters: T) {

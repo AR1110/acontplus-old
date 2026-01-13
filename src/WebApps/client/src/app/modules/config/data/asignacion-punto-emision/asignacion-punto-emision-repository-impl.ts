@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionPuntoEmisionRepository } from '@modules/config/domain/repositories/asignacion-punto-emision.repository';
+import { AsignacionPuntoEmisionRepository } from '@modules/config/data/repositories/asignacion-punto-emision.repository';
 import { ListAsignacionPuntoEmisionMapper } from '@modules/config/data/asignacion-punto-emision/list-asignacion-punto-emision.mapper';
-import { AsignacionPuntoEmisionList } from '@modules/config/domain/models/user-customer/asignacion-punto-emision.model';
+import { AsignacionPuntoEmisionList } from '@modules/config/data/models/user-customer/asignacion-punto-emision.model';
 
 @Injectable({
   providedIn: 'root',

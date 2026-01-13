@@ -1,5 +1,5 @@
-import { ScheduleRepository } from '@modules/config/domain/repositories/schedule.repository';
-import { ListScheduleResponse } from '@modules/config/domain/models/schedule.model';
+import { ScheduleRepository } from '@modules/config/data/repositories/schedule.repository';
+import { ListScheduleResponse } from '@modules/config/data/models/schedule.model';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 

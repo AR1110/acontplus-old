@@ -1,12 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { CreditTimeRepository } from '@modules/config/domain/repositories/credit-time.repository';
+import { CreditTimeRepository } from '@modules/config/data/repositories/credit-time.repository';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { ListCreditTimeMapper } from '@modules/config/data/credit-time/list-credit-time.mapper';
-import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
+import { CreditTimeList } from '@modules/config/data/models/tiempo-credito.model';
 
 @Injectable({
   providedIn: 'root',

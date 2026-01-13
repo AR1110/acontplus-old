@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionEstabRepository } from '@modules/config/domain/repositories/asignacion-estab.repository';
+import { AsignacionEstabRepository } from '@modules/config/data/repositories/asignacion-estab.repository';
 
 @Injectable({
   providedIn: 'root',

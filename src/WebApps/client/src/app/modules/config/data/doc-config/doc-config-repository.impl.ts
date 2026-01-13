@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { HttpClient } from '@angular/common/http';
-import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
+import { DocConfigRepository } from '@modules/config/data/repositories/doc-config.repository';
 import {
   DocConfigFormDataResponse,
   DocConfigListResponse,
   DocConfig, DocConfigInfoAdicionalList,
-} from '@modules/config/domain/models/doc-config.model';
+} from '@modules/config/data/models/doc-config.model';
 import { map, Observable } from 'rxjs';
 import { DocConfigListMapper } from '@modules/config/data/doc-config/doc-config-list.mapper';
 import { DocConfigInfoAdicionalesMapper } from '@modules/config/data/doc-config/doc-config-info-adicionales.mapper';

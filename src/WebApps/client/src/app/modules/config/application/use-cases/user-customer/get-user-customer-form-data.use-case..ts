@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { UserCustomerDataForm } from '@modules/config/domain/models/user-customer/user-customer.model';
-import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
+import { UserCustomerDataForm } from '@modules/config/data/models/user-customer/user-customer.model';
+import { UserCustomerRepository } from '@modules/config/data/repositories/user-customer.repository';
 
 @Injectable({
   providedIn: 'root',

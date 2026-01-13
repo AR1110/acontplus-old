@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { UserCustomerPermissionResponse } from '@modules/config/domain/models/user-customer/user-customer-permission.model';
-import { UserCustomerPermissionRepository } from '@modules/config/domain/repositories/user-customer-permission.repository';
+import { UserCustomerPermissionResponse } from '@modules/config/data/models/user-customer/user-customer-permission.model';
+import { UserCustomerPermissionRepository } from '@modules/config/data/repositories/user-customer-permission.repository';
 
 @Injectable({
   providedIn: 'root',

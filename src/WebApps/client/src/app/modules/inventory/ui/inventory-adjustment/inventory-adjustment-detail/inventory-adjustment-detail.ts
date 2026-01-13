@@ -1,6 +1,10 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogContent,
+  MatDialogActions,
+} from '@angular/material/dialog';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
@@ -10,9 +14,9 @@ import { InventoryAdjustmentService } from '@inventory/services/inventory-adjust
 
 @Component({
   selector: 'app-inventory-adjustment-detail',
-  imports: [MatCustomDialogComponent, DynamicCard, Button],
+  imports: [MatDialogContent, MatDialogActions, DynamicCard, Button],
   templateUrl: './inventory-adjustment-detail.html',
-  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryAdjustmentDetail implements OnInit {
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);

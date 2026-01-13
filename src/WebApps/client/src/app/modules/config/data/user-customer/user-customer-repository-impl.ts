@@ -1,11 +1,11 @@
 import {
   UserCustomer,
   UserCustomerDataForm,
-} from '@modules/config/domain/models/user-customer/user-customer.model';
+} from '@modules/config/data/models/user-customer/user-customer.model';
 import { GetUserCustomerFormDataMapper } from '@modules/config/data/user-customer/get-user-customer-form-data.mapper';
-import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
+import { UserCustomerRepository } from '@modules/config/data/repositories/user-customer.repository';
 import { ListUserCustomerMapper } from '@modules/config/data/user-customer/list-user-customer.mapper';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
+import { UserCustomerRepository } from '@modules/config/data/repositories/user-customer.repository';
 
 @Injectable({
   providedIn: 'root',

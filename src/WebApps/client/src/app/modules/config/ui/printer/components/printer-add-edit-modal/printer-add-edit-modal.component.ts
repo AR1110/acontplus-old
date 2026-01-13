@@ -4,7 +4,7 @@ import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import {
   PrinterRead,
   PrinterTypeSelectHtmlOnly,
-} from '@modules/config/domain/models/printing/printer.model';
+} from '@modules/config/data/models/printer.model';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { PrinterDocService } from '@modules/config/services/printer-doc.service';

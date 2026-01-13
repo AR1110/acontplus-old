@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { PrinterRead } from '@modules/config/domain/models/printing/printer.model';
+import { PrinterRead } from '@modules/config/data/models/printer.model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { PrinterAddEditModalComponent } from '@modules/config/ui/printer/components/printer-add-edit-modal/printer-add-edit-modal.component';

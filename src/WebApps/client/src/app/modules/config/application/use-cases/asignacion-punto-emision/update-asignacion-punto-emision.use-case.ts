@@ -2,8 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionPuntoEmisionList } from '@modules/config/domain/models/user-customer/asignacion-punto-emision.model';
-import { AsignacionPuntoEmisionRepository } from '@modules/config/domain/repositories/asignacion-punto-emision.repository';
+import { AsignacionPuntoEmisionList } from '@modules/config/data/models/user-customer/asignacion-punto-emision.model';
+import { AsignacionPuntoEmisionRepository } from '@modules/config/data/repositories/asignacion-punto-emision.repository';
 
 @Injectable({
   providedIn: 'root',

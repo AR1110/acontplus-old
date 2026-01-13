@@ -1,4 +1,4 @@
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';

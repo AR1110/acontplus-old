@@ -2,7 +2,7 @@ import {
   ConfigurationStep,
   SETUP_STEPS,
   SetupStatus,
-} from '@modules/config/domain/models/configuration.model';
+} from '@modules/config/data/models/configuration.model';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';

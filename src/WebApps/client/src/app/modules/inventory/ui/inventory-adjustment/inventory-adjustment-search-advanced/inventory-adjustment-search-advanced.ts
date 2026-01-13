@@ -1,17 +1,17 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { Button } from '@acontplus/ng-components';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Button, DataGrid, DataGridColumn } from '@acontplus/ng-components';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogContent,
+  MatDialogActions,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 
 import { isValidField } from '@core/utils/utils';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 import { ProductAutocompleteAdvancedComponent } from '@inventory/ui/product/components/product-autocomplete-advanced/product-autocomplete-advanced.component';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
@@ -19,25 +19,23 @@ import { ExcelImportService } from '@modules/config/application/services/excel-i
 import Swal from 'sweetalert2';
 import { ValidateImportedDataUseCase } from '@modules/config/application/use-cases/excel-import/validate-imported-data.use-case';
 import { InventoryAdjustmentListProductsMapper } from '@inventory/data/mappers/inventory-adjustment.mapper';
-import { InventoryAdjustmentListProductsDto } from '@inventory/data/dtos/inventory-adjustment.dto';
 
 @Component({
   selector: 'app-inventory-adjustment-search-advanced',
   imports: [
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
     Button,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatIcon,
-    MatIconButton,
     FormsModule,
-    MatDynamicTableComponent,
+    DataGrid,
     ProductAutocompleteAdvancedComponent,
     SupplierSearchComponent,
   ],
   templateUrl: './inventory-adjustment-search-advanced.html',
-  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InventoryAdjustmentSearchAdvanced implements OnInit {
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentSearchAdvanced>);
@@ -62,28 +60,31 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
 
   searchAdvancedForm = {
     opcion: 0,
-    rucProveedor: null,
+    rucProveedor: null as string | null,
     productId: 0,
     subFamiliaId: 0,
-    nroDocumento: null,
+    nroDocumento: null as string | null,
     bodegaId: 0,
     isExcelImport: false,
   };
 
-  dataSource = signal<any[]>([]);
-  selectedRows = signal<any[]>([]);
-  productsNotFounded = signal<any[]>([]);
+  dataSource = signal<
+    { idArticulo: number; codigo: string; descripcion: string; cantidad: number }[]
+  >([]);
+  selectedRows = signal<
+    { idArticulo: number; codigo: string; descripcion: string; cantidad: number }[]
+  >([]);
+  productsNotFounded = signal<{ codigo: string; cantidad: number }[]>([]);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'codigo', label: 'Usuario', type: 'string' },
-    { key: 'descripcion', label: 'Descripción', type: 'string' },
-    { key: 'cantidad', label: 'Cantidad', type: 'string' },
-    { key: 'medidaNombre', label: 'Medida', type: 'string' },
-    { key: 'impuestoNombre', label: 'Impuesto', type: 'string' },
-    { key: 'stock', label: 'Estado', type: 'string' },
-    { key: 'precioCosto', label: 'Precio Costo', type: 'number' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'codigo', header: 'Código' },
+    { field: 'descripcion', header: 'Descripción' },
+    { field: 'cantidad', header: 'Cantidad' },
+    { field: 'medidaNombre', header: 'Medida' },
+    { field: 'impuestoNombre', header: 'Impuesto' },
+    { field: 'stock', header: 'Stock' },
+    { field: 'precioCosto', header: 'Precio Costo' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   optionChange() {
     this.searchAdvancedForm.rucProveedor = null;
@@ -99,12 +100,12 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
     this.listProducts();
   }
 
-  productSelected(event: any) {
+  productSelected(event: { id: number }) {
     this.searchAdvancedForm.productId = event.id;
     this.refresh();
   }
 
-  supplierSelected(event: any) {
+  supplierSelected(event: { identificacionComprador: string }) {
     this.searchAdvancedForm.rucProveedor = event.identificacionComprador;
     this.refresh();
   }
@@ -125,25 +126,20 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
       idBodega: this.searchAdvancedForm.opcion === 6 ? this.params.warehouseId : null,
     };
     this.inventoryAdjustmentSvc.getProductListImported(dataSearch).subscribe((res) => {
-      console.log(res);
-      this.dataSource.set(res.data);
+      this.dataSource.set(
+        res.data as { idArticulo: number; codigo: string; descripcion: string; cantidad: number }[],
+      );
     });
   }
 
-  rowSelected(row: any) {
-    console.log(row);
-    const current = this.selectedRows();
-    const exists = current.some((r) => r.idArticulo === row.idArticulo);
-    if (exists) {
-      this.selectedRows.set([...current.filter((r) => r.idArticulo !== row.idArticulo)]);
-    } else {
-      this.selectedRows.set([...current, row]);
-    }
-  }
-
-  rowAllSelected(event: any) {
-    console.log(event);
-    this.selectedRows.set([...event]);
+  rowAllSelected(selectedRows: unknown) {
+    const typedRows = selectedRows as {
+      idArticulo: number;
+      codigo: string;
+      descripcion: string;
+      cantidad: number;
+    }[];
+    this.selectedRows.set([...typedRows]);
   }
   async onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -151,9 +147,10 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
       const file = input.files[0];
 
       const rawData = await this._excelImportSvc.parseExcelFile(file);
-      const displayedColumns = Object.keys(rawData[0]).map((c) => c.trim());
+      const firstRow = rawData[0] as Record<string, unknown> | undefined;
+      const displayedColumns = Object.keys(firstRow ?? {}).map((c) => c.trim());
       if (!(displayedColumns.includes('codigo') && displayedColumns.includes('cantidad'))) {
-        Swal.fire({
+        void Swal.fire({
           icon: 'error',
           html: this.infoImportExcel(),
         });
@@ -162,16 +159,27 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
       const params = {
         code: 'EX',
         data: {
-          product: rawData,
+          product: rawData as Record<string, unknown>[],
         },
       };
 
       this.validateExcelUseCase.execute(params).subscribe((res) => {
         if (res.code === '0') return;
-        const parseData = JSON.parse(res.payload as string)[0];
+        const parsedResponse = JSON.parse(res.payload as string) as unknown[];
+        const parseData = parsedResponse[0] as {
+          data: { idArticulo: number; codigo: string; descripcion: string; cantidad: number }[];
+          noVinculados: { codigo: string; cantidad: number }[];
+        };
 
         const ds = InventoryAdjustmentListProductsMapper.fromJson(parseData);
-        this.dataSource.set(ds.data);
+        this.dataSource.set(
+          ds.data as {
+            idArticulo: number;
+            codigo: string;
+            descripcion: string;
+            cantidad: number;
+          }[],
+        );
 
         this.productsNotFounded.set(parseData.noVinculados);
       });
@@ -201,7 +209,7 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
                 `;
     }
     html += '</tbody></table></div>';
-    Swal.fire({
+    void Swal.fire({
       title: '<small>Artículo No Vinculados</small>',
       icon: 'info',
       html,
@@ -209,10 +217,12 @@ export class InventoryAdjustmentSearchAdvanced implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Initialize component
+    this.refresh();
+  }
 
   applySelected() {
-    console.log(this.selectedRows());
     this.dialogRef.close({
       selectedRows: this.selectedRows(),
       opcion: this.searchAdvancedForm.opcion,

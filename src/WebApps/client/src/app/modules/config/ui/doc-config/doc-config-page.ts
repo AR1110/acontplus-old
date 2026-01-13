@@ -5,7 +5,7 @@ import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model
 import { NotificationService } from '@acontplus/ng-notifications';
 
 import { isValidField } from '@core/utils/utils';
-import { DocConfigList } from '@modules/config/domain/models/doc-config.model';
+import { DocConfigList } from '@modules/config/data/models/doc-config.model';
 import { DocConfigInfoAdicional } from '@modules/config/ui/doc-config/doc-config-info-adicional/doc-config-info-adicional';
 
 import { MatInputModule } from '@angular/material/input';

@@ -1,10 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { UserCustomerRoleRepository } from '@modules/config/domain/repositories/user-customer-role.repository';
+import { UserCustomerRoleRepository } from '@modules/config/data/repositories/user-customer-role.repository';
 import {
   UserCustomerRole,
   UserCustomerRoleAccessResponse,
-} from '@modules/config/domain/models/user-customer/user-customer-role.model';
+} from '@modules/config/data/models/user-customer/user-customer-role.model';
 import { Observable } from 'rxjs';
 
 @Injectable({

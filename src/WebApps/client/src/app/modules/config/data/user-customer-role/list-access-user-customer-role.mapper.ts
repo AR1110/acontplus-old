@@ -1,7 +1,7 @@
 import {
   UserCustomerRole,
   UserCustomerRoleAccessResponse,
-} from '@modules/config/domain/models/user-customer/user-customer-role.model';
+} from '@modules/config/data/models/user-customer/user-customer-role.model';
 import { isValidJSON } from '@core/utils/utils';
 
 function groupByParent(items: any[]) {

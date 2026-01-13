@@ -1,4 +1,4 @@
-import { DocConfigInfoAdicionalList} from '@modules/config/domain/models/doc-config.model';
+import { DocConfigInfoAdicionalList} from '@modules/config/data/models/doc-config.model';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 
 export class DocConfigInfoAdicionalesMapper {

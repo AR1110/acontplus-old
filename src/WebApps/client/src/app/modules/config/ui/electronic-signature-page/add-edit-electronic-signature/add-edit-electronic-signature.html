@@ -1,0 +1,39 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2 my-2">
+    <mat-form-field class="example-full-width">
+      <mat-label>Contraseña</mat-label>
+      <input matInput [(ngModel)]="data.contrasenia" />
+    </mat-form-field>
+
+    @if (!(data.idFirmaElectronica > 0)) {
+      <mat-form-field class="w-100">
+        <mat-label>
+          Seleccionar archivo:
+          <span class="text-info">.p12</span>
+        </mat-label>
+        <input #fileInput type="file" hidden (change)="onFileSelected($event)" accept=".p12" />
+        <input matInput class="cursor-pointer" readonly (click)="fileInput.click()" />
+
+        <ng-container matSuffix>
+          <acp-button
+            variant="secondary"
+            icon="attach_file"
+            matStyle="icon"
+            (handleClick)="fileInput.click()"
+          />
+        </ng-container>
+      </mat-form-field>
+    }
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="button"
+    variant="success"
+    [icon]="btnIcon"
+    (handleClick)="save()"
+    [text]="btnText"
+    matStyle="filled"
+  />
+</mat-dialog-actions>

@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { UserCustomerRoleRepository } from '@modules/config/domain/repositories/user-customer-role.repository';
+import { UserCustomerRoleRepository } from '@modules/config/data/repositories/user-customer-role.repository';
 import { ListUserCustomerRoleMapper } from './list-user-customer-role.mapper';
-import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { UserCustomerRole } from '@modules/config/data/models/user-customer/user-customer-role.model';
 import { ListAccessUserCustomerRoleMapper } from '@modules/config/data/user-customer-role/list-access-user-customer-role.mapper';
 
 @Injectable({

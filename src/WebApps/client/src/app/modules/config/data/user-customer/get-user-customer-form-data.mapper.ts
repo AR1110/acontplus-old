@@ -1,4 +1,4 @@
-import { UserCustomerDataForm } from '@modules/config/domain/models/user-customer/user-customer.model';
+import { UserCustomerDataForm } from '@modules/config/data/models/user-customer/user-customer.model';
 
 export class GetUserCustomerFormDataMapper {
   static toJson() {

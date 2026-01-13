@@ -1,56 +1,47 @@
-import {
-  Component,
-  inject,
-  signal,
-  TemplateRef,
-  ViewChild,
-  OnInit,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ListAsignacionEstabUseCase } from '@modules/config/application/use-cases/asignacion-estab/list-asignacion-estab.use-case';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
-import { AsignacionEstabList } from '@modules/config/domain/models/user-customer/asignacion-estab.model';
+import {
+  Pagination,
+  DataGrid,
+  DataGridColumn,
+  AdvancedDialogService,
+  Button,
+} from '@acontplus/ng-components';
+import { AsignacionEstabList } from '@modules/config/data/models/user-customer/asignacion-estab.model';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatIcon } from '@angular/material/icon';
-import { MatIconButton } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { UpdateAsignacionEstabUseCase } from '@modules/config/application/use-cases/asignacion-estab/update-asignacion-estab.use-case';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import Swal from 'sweetalert2';
 import { CreateAsignacionEstabUseCase } from '@modules/config/application/use-cases/asignacion-estab/create-asignacion-estab.use-case';
-import { DialogService } from '@core/services/dialog.service';
-import { AsignacionBodegaPuntoEmisionDialogComponent } from '@modules/config/ui/user-customer/setting-user-customer/asignacion-bodega-punto-emision-dialog/asignacion-bodega-punto-emision-dialog.component';
+import { AsignacionBodegaPuntoEmisionDialog } from '@modules/config/ui/user-customer/setting-user-customer/asignacion-bodega-punto-emision-dialog/asignacion-bodega-punto-emision-dialog';
 
 @Component({
   selector: 'app-list-asignacion-estab',
-  imports: [MatSlideToggleModule, FormsModule, MatDynamicTableComponent, MatIcon, MatIconButton],
+  imports: [MatSlideToggleModule, FormsModule, DataGrid, Button],
   templateUrl: './list-asignacion-estab.component.html',
-  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
+export class ListAsignacionEstabComponent implements OnInit {
   private $listAsignacionEstabUseCase = inject(ListAsignacionEstabUseCase);
   private $updateAsignacionEstabUseCase = inject(UpdateAsignacionEstabUseCase);
   private $createAsignacionEstabUseCase = inject(CreateAsignacionEstabUseCase);
   private $userCustomerStore = inject(UserCustomerStore);
-  private _tS = inject(ToastrNotificationService);
-  private _dialogSvc = inject(DialogService);
-  @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
+  private tS = inject(NotificationService);
+  private dialogSvc = inject(AdvancedDialogService);
 
   $loading = signal(false);
 
   dataSource = signal<AsignacionEstabList[]>([]);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'estab', label: 'Nro. Estab', type: 'string' },
-    { key: 'nombreComercial', label: 'Nombre Comercial', type: 'string' },
-    { key: 'predeterminado', label: 'Predeterminado', type: 'template' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'index', header: '#' },
+    { field: 'op', header: 'Op.' },
+    { field: 'estab', header: 'Nro. Estab' },
+    { field: 'nombreComercial', header: 'Nombre Comercial' },
+    { field: 'predeterminado', header: 'Predeterminado' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
@@ -68,25 +59,15 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
     this.getList();
   }
 
-  ngAfterViewInit(): void {
-    this.columnsDefs.forEach((col) => {
-      if (col.type === 'template') {
-        col.templateOutlet = this.statusTemplate;
-      }
-    });
-  }
-
   onChangeDefault(data: AsignacionEstabList) {
     this.$updateAsignacionEstabUseCase.execute(data).subscribe((response) => {
       if (response.code === '0') {
-        this._tS.show({
-          type: 'warning',
+        this.tS.warning({
           message: response.message,
         });
       }
       if (response.code === '1') {
-        this._tS.show({
-          type: 'success',
+        this.tS.success({
           message: response.message,
         });
         this.getList();
@@ -122,14 +103,12 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
       };
       this.$createAsignacionEstabUseCase.execute(params).subscribe((response) => {
         if (response.code === '0') {
-          this._tS.show({
-            type: 'warning',
+          this.tS.warning({
             message: response.message,
           });
         }
         if (response.code === '1') {
-          this._tS.show({
-            type: 'success',
+          this.tS.success({
             message: response.message,
           });
           this.getList();
@@ -138,10 +117,18 @@ export class ListAsignacionEstabComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openAsigBodegaPtoEmision(item: AsignacionEstabList) {
-    const ref = this._dialogSvc.open(AsignacionBodegaPuntoEmisionDialogComponent, {
-      size: 'lg',
-      data: item,
-    });
+  async openAsigBodegaPtoEmision(item: AsignacionEstabList) {
+    await this.dialogSvc.openInWrapper(
+      {
+        component: AsignacionBodegaPuntoEmisionDialog,
+        title: 'Asignación de Punto de Emisión y Bodega',
+        icon: 'settings',
+        showCloseButton: true,
+        data: item,
+      },
+      {
+        size: 'lg',
+      },
+    );
   }
 }

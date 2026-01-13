@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
+import { PrinterRepository } from '@modules/config/data/repositories/printer.repository';
 
 @Injectable({
   providedIn: 'root',

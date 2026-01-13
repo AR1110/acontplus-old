@@ -1,4 +1,4 @@
-import { ListShiftResponse } from '@modules/config/domain/models/shift.models';
+import { ListShiftResponse } from '@modules/config/data/models/shift.models';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListShiftMapper {

@@ -9,7 +9,7 @@ import { MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import {
   DocConfigInfoAdicionalList,
   DocConfigList,
-} from '@modules/config/domain/models/doc-config.model';
+} from '@modules/config/data/models/doc-config.model';
 import { GetDocConfigInfoAdicionalUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-info-adicional.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';

@@ -16,7 +16,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Button } from '@acontplus/ng-components';
 import { NotificationService } from '@acontplus/ng-notifications';
 import Swal from 'sweetalert2';
-import { CreditTimeList } from '@modules/config/domain/models/tiempo-credito.model';
+import { CreditTimeList } from '@modules/config/data/models/tiempo-credito.model';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 @Component({

@@ -1,4 +1,4 @@
-import { UserCustomerPermissionResponse } from '@modules/config/domain/models/user-customer/user-customer-permission.model';
+import { UserCustomerPermissionResponse } from '@modules/config/data/models/user-customer/user-customer-permission.model';
 import { UserCustomerPermissionParams } from '@modules/config/data/user-customer-permission/user-customer-permission.entity';
 import { isValidJSON } from '@core/utils/utils';
 export class ListUserCustomerPermissionMapper {

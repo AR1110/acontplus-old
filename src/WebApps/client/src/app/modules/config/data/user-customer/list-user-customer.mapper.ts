@@ -1,4 +1,4 @@
-import { UserCustomerResponse } from '@modules/config/domain/models/user-customer/user-customer.model';
+import { UserCustomerResponse } from '@modules/config/data/models/user-customer/user-customer.model';
 
 export class ListUserCustomerMapper {
   static toJson<T>(parameters: T) {

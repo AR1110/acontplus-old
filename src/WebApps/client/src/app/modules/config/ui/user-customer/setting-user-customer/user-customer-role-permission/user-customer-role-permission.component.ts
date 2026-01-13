@@ -4,7 +4,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 
-import { UserCustomerRole } from '@modules/config/domain/models/user-customer/user-customer-role.model';
+import { UserCustomerRole } from '@modules/config/data/models/user-customer/user-customer-role.model';
 import { UserCustomerStore } from '@modules/config/application/store/user-customer.store';
 import { ListUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/list-user-customer-permission.use-case';
 import { UpdateUserCustomerPermissionUseCase } from '@modules/config/application/use-cases/user-customer-permission/update-user-customer-permission.use-case';

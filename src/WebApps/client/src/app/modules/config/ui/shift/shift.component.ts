@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { ShiftUseCase } from '@modules/config/application/use-cases/shift/shift.use-case';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ShiftList } from '@modules/config/domain/models/shift.models';
+import { ShiftList } from '@modules/config/data/models/shift.models';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { DialogService } from '@core/services/dialog.service';

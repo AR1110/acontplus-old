@@ -1,0 +1,41 @@
+<app-breadcrumb />
+
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [data]="dataSource()"
+  [columns]="columnsDefs"
+  [cellTemplate]="{
+    op: templateOp,
+  }"
+  [loading]="$loading()"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+/>
+
+<ng-template #headerToolbar>
+  <div class="d-flex flex-row gap-2">
+    <acp-button
+      variant="success"
+      icon="add"
+      matStyle="filled"
+      text="Nuevo"
+      [disabled]="$loading()"
+      (handleClick)="openAdd()"
+    />
+    <acp-button
+      variant="secondary"
+      icon="refresh"
+      matStyle="icon"
+      [disabled]="$loading()"
+      (handleClick)="refresh()"
+    />
+  </div>
+</ng-template>
+
+<ng-template #templateOp let-data>
+  <acp-button variant="primary" icon="edit" matStyle="icon" (handleClick)="openAddEdit(data)" />
+  <acp-button variant="info" icon="settings" matStyle="icon" (handleClick)="openSetting(data)" />
+</ng-template>

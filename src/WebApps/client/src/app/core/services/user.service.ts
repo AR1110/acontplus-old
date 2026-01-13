@@ -1,4 +1,4 @@
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { PATHS_API } from '@core/constants/global.constants';

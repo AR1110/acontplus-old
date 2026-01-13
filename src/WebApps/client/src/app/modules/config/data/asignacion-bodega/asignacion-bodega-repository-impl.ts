@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionBodegaRepository } from '@modules/config/domain/repositories/asignacion-bodega.repository';
+import { AsignacionBodegaRepository } from '@modules/config/data/repositories/asignacion-bodega.repository';
 import { ListAsignacionBodegaMapper } from '@modules/config/data/asignacion-bodega/list-asignacion-bodega.mapper';
-import { AsignacionBodegaList } from '@modules/config/domain/models/user-customer/asignacion-bodega.model';
+import { AsignacionBodegaList } from '@modules/config/data/models/user-customer/asignacion-bodega.model';
 
 @Injectable({
   providedIn: 'root',

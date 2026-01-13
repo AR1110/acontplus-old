@@ -1,6 +1,6 @@
-import { ScheduleRepository } from '@modules/config/domain/repositories/schedule.repository';
-import { ListScheduleResponse } from '@modules/config/domain/models/schedule.model';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { ScheduleRepository } from '@modules/config/data/repositories/schedule.repository';
+import { ListScheduleResponse } from '@modules/config/data/models/schedule.model';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { ScheduleMapper } from './list-schedule.mapper';
 import { inject, Injectable } from '@angular/core';

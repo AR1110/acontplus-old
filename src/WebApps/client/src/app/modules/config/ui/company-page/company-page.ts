@@ -5,7 +5,7 @@ import { CompanyAddEditModal } from '@modules/config/ui/company-page/company-add
 import { Button, DataGrid, DataGridColumn, AdvancedDialogService } from '@acontplus/ng-components';
 
 import { ListCompanyUseCase } from '@modules/config/application/use-cases/company/list-company.use-case';
-import { CompanyList } from '@modules/config/domain/models/company.model';
+import { CompanyList } from '@modules/config/data/models/company.model';
 
 @Component({
   selector: 'app-company-page',
