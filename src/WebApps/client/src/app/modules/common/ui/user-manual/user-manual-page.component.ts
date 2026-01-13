@@ -217,7 +217,7 @@ export class UserManualPageComponent implements OnInit {
   selectNode(node: MenuNode): void {
     this.selectedNode = node;
 
-    // If it's a category with children, toggle it
+    // If it's a category-page with children, toggle it
     if (this.hasChild(0, node)) {
       this.toggleNode(node);
     }

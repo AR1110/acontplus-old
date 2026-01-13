@@ -12,7 +12,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import { LOOKUP_HTTP_TOKEN, RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
 import { DialogService } from '@core/services/dialog.service';
-import { SubCategoryUseCase } from '@accounting/sub-category/application/sub-category.use-case';
+import { SUB_CATEGORY_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import Swal from 'sweetalert2';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
@@ -119,7 +119,7 @@ export class ReceivedDocument implements OnInit {
   private readonly _lookupRepository = inject(LOOKUP_HTTP_TOKEN);
   private readonly _receivedDocumentSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
   private readonly _dialogService = inject(DialogService);
-  private readonly _subCategoryUseCase = inject(SubCategoryUseCase);
+  private readonly _subCategoryHttp = inject(SUB_CATEGORY_HTTP_TOKEN);
   private readonly _tS = inject(ToastrNotificationService);
 
   async alertEstabSelected() {
@@ -245,7 +245,7 @@ export class ReceivedDocument implements OnInit {
   async openModalManualUpload() {
     if (!(await this.alertEstabSelected())) return;
 
-    this._subCategoryUseCase.getAll({}).subscribe((response) => {
+    this._subCategoryHttp.getAll({}).subscribe((response) => {
       if (this.subcategories().length > 0) {
         this._dialogService.open(DocManualUploadComponent, {
           size: 'lg',
@@ -269,7 +269,7 @@ export class ReceivedDocument implements OnInit {
   }
 
   editSubcategory() {
-    // TODO: Implement edit subcategory logic
+    // TODO: Implement edit subcategory-page logic
   }
 
   onChangeEstab() {

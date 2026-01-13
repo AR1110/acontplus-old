@@ -9,7 +9,7 @@ import { Button, DynamicCard } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
-  selector: 'app-category',
+  selector: 'app-category-page',
   imports: [BreadcrumbComponent, MatButton, MatIcon, Button, DynamicCard],
   templateUrl: './category-page.component.html',
   styles: ``,

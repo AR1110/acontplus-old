@@ -12,7 +12,7 @@ import { SubCategoryListDto } from '@inventory/data/models/sub-category.model';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-subcategory',
+  selector: 'app-subcategory-page',
   imports: [
     BreadcrumbComponent,
     MatButtonModule,

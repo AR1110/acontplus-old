@@ -21,7 +21,7 @@ export const routes: Routes = [
     title: 'Caja',
     loadComponent: () =>
       import(
-        '@accounting/movimiento-caja/presentation/movimiento-caja-page/movimiento-caja-page'
+        '@accounting/ui/movimiento-caja-page/movimiento-caja-page'
       ).then((m) => m.MovimientoCajaPage),
     data: {
       breadcrumb: 'Movimiento Caja',
@@ -33,20 +33,20 @@ export const routes: Routes = [
     title: 'Comprobante Ingreso',
     loadComponent: () =>
       import(
-        '@accounting/comprobante-ingreso/presentation/comprobante-ingreso/comprobante-ingreso.component'
-      ).then((m) => m.ComprobanteIngresoComponent),
+        '@accounting/ui/comprobante-ingreso/comprobante-ingreso-page'
+      ).then((m) => m.ComprobanteIngresoPage),
     data: {
       breadcrumb: 'Comprobante Ingreso',
     },
   },
 
   {
-    path: 'sub-entidad-financiera-page',
+    path: 'sub-entidad-financiera-page-page',
     title: 'SubEntidad Financiera',
     loadComponent: () =>
       import(
-        '@accounting/sub-entidad-financiera/presentation/sub-entidad-financiera/sub-entidad-financiera-page.component'
-      ).then((m) => m.SubEntidadFinancieraPageComponent),
+        '@accounting/ui/sub-entidad-financiera-page/sub-entidad-financiera-page'
+      ).then((m) => m.SubEntidadFinancieraPage),
     data: {
       breadcrumb: 'SubEntidad Financiera',
     },
@@ -67,8 +67,8 @@ export const routes: Routes = [
     path: 'category',
     title: 'Categorías',
     loadComponent: () =>
-      import('@accounting/category/presentation/category/category.component').then(
-        (m) => m.CategoryComponent,
+      import('@accounting/ui/category-page/category-page').then(
+        (m) => m.CategoryPage,
       ),
     data: {
       breadcrumb: 'Categorías',
@@ -78,19 +78,19 @@ export const routes: Routes = [
     path: 'subcategory',
     title: 'Subcategorías',
     loadComponent: () =>
-      import('@accounting/sub-category/presentation/subcategory/subcategory.component').then(
-        (m) => m.SubcategoryComponent,
+      import('@accounting/ui/subcategory-page/subcategory-page').then(
+        (m) => m.SubcategoryPage,
       ),
     data: {
       breadcrumb: 'Subcategorías',
     },
   },
   {
-    path: 'cuenta-por-pagar',
+    path: 'cuenta-por-pagar-page',
     title: 'Cuenta por pagar',
     loadComponent: () =>
       import(
-        '@accounting/cuenta-por-pagar/presentation/cuenta-por-pagar/cuenta-por-pagar.component'
+        '@accounting/ui/cuenta-por-pagar-page/cuenta-por-pagar.component'
       ).then((m) => m.CuentaPorPagarComponent),
     data: {
       breadcrumb: 'Cuenta por pagar',
@@ -108,12 +108,12 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'comprobante-egreso',
+    path: 'comprobante-egreso-page',
     title: 'Comprobante Egreso',
     loadComponent: () =>
       import(
-        '@accounting/comprobante-egreso/presentation/comprobante-egreso/comprobante-egreso.component'
-      ).then((m) => m.ComprobanteEgresoComponent),
+        '@accounting/ui/comprobante-egreso-page/comprobante-egreso-page'
+      ).then((m) => m.ComprobanteEgresoPage),
     data: {
       breadcrumb: 'Comprobante Egreso',
     },
@@ -126,19 +126,19 @@ export const routes: Routes = [
         title: 'Resumen Contable',
         loadComponent: () =>
           import(
-            '@accounting/resumen-contable/presentation/resumen-contable/resumen-contable.component'
+            '@accounting/ui/resumen-contable/resumen-contable.component'
           ).then((m) => m.ResumenContableComponent),
         data: {
           breadcrumb: 'Resumen Contable',
         },
       },
       {
-        path: 'reporte-cobros',
+        path: 'reporte-cobros-page',
         title: 'Reporte de Cobros',
         loadComponent: () =>
           import(
-            '@accounting/comprobante-ingreso/presentation/reporte-cobros/reporte-cobros.component'
-          ).then((m) => m.ReporteCobrosComponent),
+            '@accounting/ui/reporte-cobros-page/reporte-cobros-page'
+          ).then((m) => m.ReporteCobrosPage),
         data: {
           breadcrumb: 'Reporte de Cobros',
         },
@@ -148,7 +148,7 @@ export const routes: Routes = [
         title: 'Movimiento Caja Reporte',
         loadComponent: () =>
           import(
-            '@accounting/movimiento-caja/presentation/movimiento-caja-report/movimiento-caja-report.component'
+            '@accounting/ui/movimiento-caja-report/movimiento-caja-report.component'
           ).then((m) => m.MovimientoCajaReportComponent),
         data: {
           breadcrumb: 'Movimiento Caja Reporte',

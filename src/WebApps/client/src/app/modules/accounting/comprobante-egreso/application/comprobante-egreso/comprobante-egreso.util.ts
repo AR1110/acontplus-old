@@ -10,7 +10,7 @@ import {
 } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
 import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
-import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import { determinadoEstadoPagoCuotaUtil } from './determinado-estado-pago-cuota.util';
 
 export class ComprobanteEgresoUtil {

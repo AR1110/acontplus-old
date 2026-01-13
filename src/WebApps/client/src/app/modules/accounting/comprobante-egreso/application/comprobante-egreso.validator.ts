@@ -1,4 +1,4 @@
-import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
+import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
 import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
 import {
   CuentaPorPagarEstado,

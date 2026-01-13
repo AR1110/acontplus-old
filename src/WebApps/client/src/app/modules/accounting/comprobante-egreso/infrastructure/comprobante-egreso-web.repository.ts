@@ -4,11 +4,11 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { ComprobanteEgresoRepository } from '@accounting/comprobante-egreso/domain/comprobante-egreso.repository';
 import { map, Observable } from 'rxjs';
-import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
+import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
-import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.interface';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
 import { ProvinciaCiudad } from '@shared/models/ciudad.interface';

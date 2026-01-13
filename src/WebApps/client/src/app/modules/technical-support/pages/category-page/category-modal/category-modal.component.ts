@@ -10,7 +10,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-category-modal',
+  selector: 'app-category-page-modal',
   imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
   templateUrl: './category-modal.component.html',
   styles: ``,

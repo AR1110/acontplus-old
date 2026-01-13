@@ -1,10 +1,10 @@
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
-import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/sub-entidad-financiera/domain/subentidad-financiera.interface';
+import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
 import { EstadoPago } from '@accounting/comprobante-egreso/domain/estado-pago.interface';
 import { groupCitiesByProvinceUtil } from '@shared/utils/group-cities-by-province.util';
-import { CuotaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuota-por-pagar.interface';
-import { CuentaPorPagarLista } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.model';
+import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
+import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.model';
 import {
   CuentaPorPagarEstado,
   CuentaPorPagarHistorial,

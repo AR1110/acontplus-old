@@ -5,9 +5,9 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { NotificationService } from '@acontplus/ng-notifications';
 import { CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { CashboxList } from '@accounting/data/models/caja';
-import CajaModalComponent from '@accounting/ui/caja-page/caja-modal/caja-modal.component';
-import { AperturaCajaModal } from '@accounting/ui/caja-page/apertura-caja-modal/apertura-caja-modal';
-import { ControlCajaModal } from '@accounting/ui/caja-page/control-caja-modal/control-caja-modal';
+import CajaModalComponent from '@accounting/ui/caja-page/components/caja-modal/caja-modal.component';
+import { AperturaCajaModal } from '@accounting/ui/caja-page/components/apertura-caja-modal/apertura-caja-modal';
+import { ControlCajaModal } from '@accounting/ui/caja-page/components/control-caja-modal/control-caja-modal';
 import Swal from 'sweetalert2';
 
 @Component({

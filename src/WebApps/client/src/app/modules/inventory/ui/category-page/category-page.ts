@@ -9,7 +9,7 @@ import { CATEGORY_SERVICE } from '@inventory/data/inventory-token';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-category',
+  selector: 'app-category-page',
   templateUrl: './category-page.html',
   imports: [BreadcrumbComponent, DataGrid, Button],
   styles: `
@@ -68,13 +68,13 @@ export class CategoryPage implements OnInit {
   ];
 
   add(): void {
-    // TODO: Implement category add modal
-    console.log('Add category');
+    // TODO: Implement category-page add modal
+    console.log('Add category-page');
   }
 
   edit(data: CategoryRead): void {
-    // TODO: Implement category edit modal
-    console.log('Edit category', data);
+    // TODO: Implement category-page edit modal
+    console.log('Edit category-page', data);
   }
 
   getCategories(): void {
@@ -126,7 +126,7 @@ export class CategoryPage implements OnInit {
 
       if (isConfirmed) {
         // TODO: Implement delete/update status functionality
-        console.log('Delete category', data);
+        console.log('Delete category-page', data);
         this.tS.info({ message: 'Funcionalidad de eliminación pendiente de implementar' });
       }
     } catch (error) {

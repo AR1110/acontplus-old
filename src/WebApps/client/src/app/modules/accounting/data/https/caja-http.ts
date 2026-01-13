@@ -16,79 +16,9 @@ export class CajaHttp implements CajaRepository {
 
   getAll<T>(params: T) {
     const json = ListCajaMapper.toJson(params);
-    /*return this._http
+    return this._http
       .get<ApiResponseLegacy>(`${this._url}?json=${json}`)
-      .pipe(map((res) => ListCajaMapper.fromJson(res)));*/
-    return of( {
-      data: [
-        {
-          "idCaja": 627,
-          "descripcion": "IVAN",
-          "estado": true,
-          "actividad": "CERRADA",
-          "usuario": "PAZ CHAMBA IVAN FERNANDO",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 4,
-          "totalRecords": 6
-        },
-        {
-          "idCaja": 395,
-          "descripcion": "CAJA DAVILA",
-          "estado": true,
-          "actividad": "APERTURADA",
-          "usuario": "DAVILA RAMIREZ JHONNY ALEXANDER",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 9,
-          "totalRecords": 6
-        },
-        {
-          "idCaja": 368,
-          "descripcion": "CAJA CHRISTIAN ZARATE",
-          "estado": true,
-          "actividad": "APERTURADA",
-          "usuario": "ZARATE I\u00D1IGUEZ CHRISTIAN IVAN",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 10,
-          "totalRecords": 6
-        },
-        {
-          "idCaja": 277,
-          "descripcion": "COMPRAS",
-          "estado": true,
-          "actividad": "APERTURADA",
-          "usuario": "SABANDO ANGULO MIRIAN ISABEL",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 257,
-          "totalRecords": 6
-        },
-        {
-          "idCaja": 243,
-          "descripcion": "CAJA SHEYLA SANMARTIN",
-          "estado": true,
-          "actividad": "CERRADA",
-          "usuario": "SHEYLA DARIANA SANMARTIN URQUIZO",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 35,
-          "totalRecords": 6
-        },
-        {
-          "idCaja": 240,
-          "descripcion": "CAJA  ACONTPLUS",
-          "estado": true,
-          "actividad": "CERRADA",
-          "usuario": "ACONTPLUS WEB",
-          "turno": "DIURNO",
-          "idTurno": 186,
-          "idUsuario": 231,
-          "totalRecords": 6
-        }
-      ]
-    }) as any
+      .pipe(map((res) => ListCajaMapper.fromJson(res)));
   }
 
   getId(id: number) {

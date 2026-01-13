@@ -1,0 +1,56 @@
+<app-breadcrumb />
+
+<div class="container-fluid">
+  <mat-accordion>
+    @for (item of entidadesFinanciera; track $index) {
+      <mat-expansion-panel (opened)="showAccordion(item)">
+        <mat-expansion-panel-header>
+          <mat-panel-title> {{ item.descripcion }} </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="p-2">
+          <div class="mb-3">
+            <acp-button
+              variant="primary"
+              icon="add"
+              matStyle="filled"
+              text="Nuevo"
+              (handleClick)="openDialog()"
+            />
+          </div>
+
+          @if (subEntidadesFinanciera.length > 0) {
+            <acp-data-grid
+              [data]="subEntidadesFinanciera"
+              [columns]="columnsDefs"
+              [showPaginator]="false"
+              [cellTemplate]="{
+                op: opTpl,
+              }"
+            />
+          } @else {
+            <p class="text-center">Sin datos</p>
+          }
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+</div>
+
+<ng-template #opTpl let-data>
+  <div class="d-flex gap-1">
+    <acp-button
+      type="button"
+      icon="edit"
+      variant="info"
+      matStyle="icon"
+      (handleClick)="openDialog(data)"
+    />
+    <acp-button
+      type="button"
+      icon="delete"
+      variant="danger"
+      matStyle="icon"
+      (handleClick)="askToDelete(data)"
+    />
+  </div>
+</ng-template>

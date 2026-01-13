@@ -1,0 +1,48 @@
+<app-breadcrumb />
+
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [data]="categories()"
+  [columns]="columnsDefs"
+  [showPaginator]="false"
+  [cellTemplate]="{
+    op: opTpl,
+    index: indexTpl,
+    enabled: enabledTpl,
+  }"
+>
+  <ng-template #headerToolbar>
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <h5 class="mb-0">Categorías</h5>
+      <acp-button
+        variant="primary"
+        icon="add"
+        matStyle="filled"
+        text="Nuevo"
+        (handleClick)="onModalOpen()"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template #opTpl let-data>
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="edit(data)">
+        <mat-icon>edit</mat-icon>
+        <span>Editar</span>
+      </button>
+    </mat-menu>
+  </ng-template>
+
+  <ng-template #indexTpl let-index="index">
+    {{ index + 1 }}
+  </ng-template>
+
+  <ng-template #enabledTpl let-data>
+    <div [innerHTML]="data.enabled | secondaryStatus"></div>
+  </ng-template>
+</acp-data-grid>

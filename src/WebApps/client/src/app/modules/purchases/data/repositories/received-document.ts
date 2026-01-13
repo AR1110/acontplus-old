@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { Subcategory } from '@accounting/sub-category/domain/subcategory';
+import { Subcategory } from '@accounting/data/models/subcategory';
 import { TipoDoc } from '@core/models/tipo-doc.model';
 import {ReceivedDocumentList} from "@purchases/data/models/received-document";
 

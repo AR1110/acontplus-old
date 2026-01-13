@@ -2,27 +2,30 @@ import { Provider } from '@angular/core';
 import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
 import { AnticipoWebRepository } from '@accounting/movimiento-caja/infrastructure/anticipo-web.repository';
 import { CajaHttp } from '@accounting/data/https/caja-http';
-import { CategoryRepository } from '@accounting/category/domain/category.repository';
-import { CategoryWebRepository } from '@accounting/category/infrastructure/category-web.repository';
+import { CategoryHttp } from '@accounting/data/https/category-http';
 import { ComprobanteEgresoRepository } from '@accounting/comprobante-egreso/domain/comprobante-egreso.repository';
 import { ComprobanteEgresoWebRepository } from '@accounting/comprobante-egreso/infrastructure/comprobante-egreso-web.repository';
-import { ComprobanteIngresoRepository } from '@accounting/comprobante-ingreso/domain/comprobante-ingreso.repository';
-import { ComprobanteIngresoWebRepository } from '@accounting/comprobante-ingreso/infrastructure/comprobante-ingreso-web.repository';
-import { ControlCajaRepository } from '@accounting/caja/domain/control-caja.repository';
-import { ControlCajaWebRepository } from '@accounting/caja/infrastructure/control-caja-web.repository';
+import { ComprobanteIngresoRepository } from '@accounting/data/repositories/comprobante-ingreso-repository';
+import { ComprobanteIngresoHttp } from '@accounting/data/https/comprobante-ingreso-http';
 import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
 import { CuentaPorCobrarWebRepository } from '@accounting/cuenta-por-cobrar/infrastructure/cuenta-por-cobrar-web.repository';
-import { CuentaPorPagarRepository } from '@accounting/cuenta-por-pagar/domain/cuenta-por-pagar.repository';
-import { CuentaPorPagarWebRepository } from '@accounting/cuenta-por-pagar/infrastructure/cuenta-por-pagar-web.repository';
+import { CuentaPorPagarHttp } from '@accounting/data/https/cuenta-por-pagar-http';
 import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
 import { MovimientoCajaWebRepository } from '@accounting/movimiento-caja/infrastructure/movimiento-caja-web.repository';
-import { ResumenContableRepository } from '@accounting/resumen-contable/domain/resumen-contable.repository';
-import { ResumenContableWebRepository } from '@accounting/resumen-contable/infrastructure/resumen-contable-web.repository';
-import { SubCategoryRepository } from '@accounting/sub-category/domain/sub-category.repository';
-import { SubCategoryWebRepository } from '@accounting/sub-category/infrastructure/sub-category-web.repository';
-import { SubEntidadFinancieraRepository } from '@accounting/sub-entidad-financiera/domain/sub-entidad-financiera.repository';
-import { SubEntidadFinancieraWebRepository } from '@accounting/sub-entidad-financiera/infrastructure/sub-entidad-financiera-web.repository';
-import {CAJA_HTTP_TOKEN} from "@accounting/data/accounting-token";
+import { ResumenContableRepository } from '@accounting/data/repositories/resumen-contable.repository';
+import { ResumenContableHttp } from '@accounting/data/https/resumen-contable-http';
+import { SubCategoryRepository } from '@accounting/data/repositories/sub-category.repository';
+import { SubCategoryHttp } from '@accounting/data/https/sub-category-http';
+import { SubEntidadFinancieraHttp } from '@accounting/data/https/sub-entidad-financiera-http';
+import {
+  CAJA_HTTP_TOKEN,
+  CUENTA_POR_PAGAR_HTTP_TOKEN,
+  CONTROL_CAJA_HTTP_TOKEN,
+  CATEGORY_HTTP_TOKEN,
+  SUB_ENTIDAD_FINANCIERA_HTTP_TOKEN,
+  SUB_CATEGORY_HTTP_TOKEN,
+} from '@accounting/data/accounting-token';
+import { ControlCajaHttp } from '@accounting/data/https/control-caja-http';
 
 export const DATA_ACCOUNTING_IOC: Provider[] = [
   {
@@ -34,8 +37,8 @@ export const DATA_ACCOUNTING_IOC: Provider[] = [
     useClass: CajaHttp,
   },
   {
-    provide: CategoryRepository,
-    useClass: CategoryWebRepository,
+    provide: CATEGORY_HTTP_TOKEN,
+    useClass: CategoryHttp,
   },
   {
     provide: ComprobanteEgresoRepository,
@@ -43,19 +46,19 @@ export const DATA_ACCOUNTING_IOC: Provider[] = [
   },
   {
     provide: ComprobanteIngresoRepository,
-    useClass: ComprobanteIngresoWebRepository,
+    useClass: ComprobanteIngresoHttp,
   },
   {
-    provide: ControlCajaRepository,
-    useClass: ControlCajaWebRepository,
+    provide: CONTROL_CAJA_HTTP_TOKEN,
+    useClass: ControlCajaHttp,
   },
   {
     provide: CuentaPorCobrarRepository,
     useClass: CuentaPorCobrarWebRepository,
   },
   {
-    provide: CuentaPorPagarRepository,
-    useClass: CuentaPorPagarWebRepository,
+    provide: CUENTA_POR_PAGAR_HTTP_TOKEN,
+    useClass: CuentaPorPagarHttp,
   },
   {
     provide: MovimientoCajaRepository,
@@ -63,14 +66,14 @@ export const DATA_ACCOUNTING_IOC: Provider[] = [
   },
   {
     provide: ResumenContableRepository,
-    useClass: ResumenContableWebRepository,
+    useClass: ResumenContableHttp,
   },
   {
-    provide: SubCategoryRepository,
-    useClass: SubCategoryWebRepository,
+    provide: SUB_CATEGORY_HTTP_TOKEN,
+    useClass: SubCategoryHttp,
   },
   {
-    provide: SubEntidadFinancieraRepository,
-    useClass: SubEntidadFinancieraWebRepository,
+    provide: SUB_ENTIDAD_FINANCIERA_HTTP_TOKEN,
+    useClass: SubEntidadFinancieraHttp,
   },
 ];
