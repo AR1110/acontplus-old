@@ -176,10 +176,11 @@
                             nombreMedida: dataMedida.descripcion,
                             "conversion": c.quantity,
                             medidas,
-                            uniqueId: c.uniqueId
+                            uniqueId: c.uniqueId,
+                            isOptional: c.isOptional
                         }
 
-                    });
+                    }).filter(c => !c.isOptional);
 
                     const { fractional, principal } = menu;
 
