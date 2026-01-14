@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
+import { AdvancedDialogService } from '@acontplus/ng-components';
 import { CreateInventoryAdjustmentCommand } from '@inventory/data/models/inventory-adjustment.model';
 import { PRODUCT_SERVICE, INVENTORY_ADJUSTMENT_SERVICE } from '@inventory/data/inventory-token';
 import { InventoryAdjustmentStore } from '@inventory/store/inventory-adjustment.store';
-import { DialogService } from '@core/services/dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class InventoryAdjustmentService {
   readonly inventoryAdjustmentService = inject(INVENTORY_ADJUSTMENT_SERVICE);
   readonly productService = inject(PRODUCT_SERVICE);
   readonly inventoryAdjustmentStore = inject(InventoryAdjustmentStore);
-  readonly dialogSvc = inject(DialogService);
+  readonly dialogSvc = inject(AdvancedDialogService);
 
   // Main CRUD operations
 

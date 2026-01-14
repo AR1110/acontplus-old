@@ -41,7 +41,9 @@
       <div class="col">
         <acp-date-range-picker
           [showCheckbox]="true"
+          [(checkboxChecked)]="dataFilter.useFilterDate"
           (dateRangeSelected)="dateRangeSelected($event)"
+          (checkboxChange)="refresh()"
         />
       </div>
       <div class="col">

@@ -12,8 +12,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(@acontplus/utils@1.0.11(decimal.js@10.6.0)(tslib@2.8.1)(typescript@5.9.3))(tslib@2.8.1)(typescript@5.9.3)(uuid@13.0.0)
       '@acontplus/ng-components':
-        specifier: ^2.1.5
-        version: 2.1.5(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)
+        specifier: ^2.1.7
+        version: 2.1.7(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)
       '@acontplus/ng-notifications':
         specifier: ^2.0.2
         version: 2.0.2(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(ngx-toastr@19.1.0(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@20.3.15(@angular/animations@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))))(rxjs@7.8.2)(sweetalert2@11.26.3)
@@ -84,8 +84,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       datex-ui:
-        specifier: ^1.2.0
-        version: 1.2.0
+        specifier: ^1.2.1
+        version: 1.2.1
       decimal.js:
         specifier: ^10.6.0
         version: 10.6.0
@@ -239,8 +239,8 @@ packages:
       typescript: ^5.9.2
       uuid: ^13.0.0
 
-  '@acontplus/ng-components@2.1.5':
-    resolution: {integrity: sha512-k146of+iNVZRYQGmJCJqxXssP184woy7ACrYCaDWIh0Bi94hu+M1Z/E/RLvlwI9CJXrRbWq1h27p/YpeSzORJQ==}
+  '@acontplus/ng-components@2.1.7':
+    resolution: {integrity: sha512-ctNmT3EXcBMzBaRdTgS+3IUu/dg0UbPdcINRkTjYKjDdYLbFCFr6WYBcU7oYO5rnkelPzhp+UETjdtReQSOJiw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@acontplus/ui-kit': ^1.0.2
@@ -2684,8 +2684,8 @@ packages:
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
 
-  datex-ui@1.2.0:
-    resolution: {integrity: sha512-3vg8qJLZH8uJUiSsJbVb3hSewYv8Vxt+kcl0rcF8fFwBDrlk+2uyRQIUNOM0PZDD5LcrtD+/1TDzYtaUjBblsw==}
+  datex-ui@1.2.1:
+    resolution: {integrity: sha512-B0ylkGCwGrc8q47Hkqva5lCUjPHuqL78DEfqQsVm4r3kYidiNpENpz7+vez3XCaaTcos1Hv4pP9OEo1P7EiW4g==}
     engines: {node: '>=16.0.0', pnpm: '>=8.0.0'}
 
   debug@4.4.3:
@@ -5027,7 +5027,7 @@ snapshots:
       typescript: 5.9.3
       uuid: 13.0.0
 
-  '@acontplus/ng-components@2.1.5(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)':
+  '@acontplus/ng-components@2.1.7(@acontplus/ui-kit@1.0.2(tslib@2.8.1)(typescript@5.9.3))(@angular/cdk@20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(@angular/material@20.2.14(2a2c27b5f9f3f8b334e74e3c717f4ace))(tabulator-tables@6.3.1)':
     dependencies:
       '@acontplus/ui-kit': 1.0.2(tslib@2.8.1)(typescript@5.9.3)
       '@angular/cdk': 20.2.14(@angular/common@20.3.15(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@20.3.15(@angular/compiler@20.3.15)(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2)
@@ -7541,7 +7541,7 @@ snapshots:
 
   date-fns@4.1.0: {}
 
-  datex-ui@1.2.0: {}
+  datex-ui@1.2.1: {}
 
   debug@4.4.3:
     dependencies:

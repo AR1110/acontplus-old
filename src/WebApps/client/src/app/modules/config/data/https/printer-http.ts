@@ -10,7 +10,7 @@ import { customUrl } from '@core/interceptors/inject-session.interceptor';
 @Injectable({
   providedIn: 'root',
 })
-export class PrinterWebRepository implements PrinterRepository {
+export class PrinterHttp implements PrinterRepository {
   private readonly _http = inject(HttpClient);
   private readonly _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.PRINTER}`;
   private readonly _urlPrinter = `${PATHS_API.PRINT_SERVER}GetPrinters`;

@@ -1,0 +1,138 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento</mat-label>
+        <mat-select [(ngModel)]="dataForm.establecimientoId" required>
+          <mat-option [value]="0">Seleccione un establecimiento</mat-option>
+          @for (item of estabs(); track $index) {
+            <mat-option [value]="item.idEstablecimiento">
+              {{ item.nombreComercial }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Nombre Equipo</mat-label>
+        <input matInput [(ngModel)]="dataForm.machine" placeholder="PC-01" required />
+      </mat-form-field>
+    </div>
+    <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>IP Equipo</mat-label>
+        <input matInput [(ngModel)]="dataForm.ipAddress" placeholder="192.168.1.6:5001" required />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Dominio</mat-label>
+        <input matInput [(ngModel)]="dataForm.domain" placeholder="dominio.com" required />
+      </mat-form-field>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Tipo Impresora</mat-label>
+        <mat-select [(ngModel)]="dataForm.printerTypeId" required>
+          <mat-option [value]="0">Seleccione un tipo</mat-option>
+          @for (item of printerTypes(); track $index) {
+            <mat-option [value]="item.id">
+              {{ item.name }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col-12">
+      @if (localPrinters().length === 0) {
+        <mat-form-field class="w-100">
+          <mat-label>Impresora</mat-label>
+          <input matInput [(ngModel)]="dataForm.name" placeholder="epson l3150" required />
+        </mat-form-field>
+      }
+      @if (localPrinters().length > 0) {
+        <mat-form-field class="w-100">
+          <mat-label>Impresora</mat-label>
+          <mat-select [(ngModel)]="dataForm.name" required>
+            <mat-option [value]="0">Seleccione una impresora</mat-option>
+            @for (item of localPrinters(); track $index) {
+              <mat-option [value]="item.name">
+                {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      }
+    </div>
+    @if (dataForm.serverDevice) {
+      <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+        <mat-form-field class="w-100">
+          <mat-label>MAC Address</mat-label>
+          <input matInput [(ngModel)]="dataForm.macAddress" placeholder="00:00:00:00" />
+        </mat-form-field>
+      </div>
+    }
+  </div>
+
+  <div class="row">
+    <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+      <mat-slide-toggle [(ngModel)]="dataForm.isDefault">Predeterminada</mat-slide-toggle>
+    </div>
+    <div class="col-xl-3 colg-3 col-md-3 col-sm-3 col-12">
+      <mat-slide-toggle [(ngModel)]="dataForm.serverDevice">Servidor</mat-slide-toggle>
+    </div>
+  </div>
+
+  <br />
+
+  <acp-data-grid
+    [columns]="documentColumns"
+    [data]="documents()"
+    [showPaginator]="false"
+    [cellTemplate]="{
+      status: statusTpl,
+      copies: copiesTpl,
+    }"
+  />
+
+  <ng-template #statusTpl let-data>
+    <mat-slide-toggle [(ngModel)]="data.isActive" (change)="updateDocument(data)" />
+  </ng-template>
+
+  <ng-template #copiesTpl let-data>
+    @if (data.isActive) {
+      <input
+        type="number"
+        class="form-control form-control-sm"
+        min="1"
+        max="3"
+        [(ngModel)]="data.copies"
+        (blur)="updateDocument(data)"
+        style="width: 80px"
+      />
+    }
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    type="submit"
+    icon="save"
+    [text]="loading() ? 'Guardando...' : btnText()"
+    variant="success"
+    matStyle="filled"
+    [disabled]="loading()"
+    (handleClick)="saveEdit()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

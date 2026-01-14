@@ -2,24 +2,24 @@ import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Printer, PrinterRead } from '@modules/config/data/models/printer.model';
 
-export abstract class PrinterRepository {
-  abstract getPrinters(): Observable<{
+export interface PrinterRepository {
+  getPrinters(): Observable<{
     printers: PrinterRead[];
   }>;
-  abstract getDataForm(): Observable<{
+  getDataForm(): Observable<{
     estabs: any[];
     documents: any[];
     printerTypes: any[];
   }>;
-  abstract getLocalPrinters(): Observable<{
+  getLocalPrinters(): Observable<{
     localPrinters: any[];
   }>;
-  abstract getById(id: number): Observable<{
+  getById(id: number): Observable<{
     documents: any[];
     printer: any;
   }>;
-  abstract updateStatus<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
-  abstract removePrinter(id: number): Observable<ApiResponseLegacy>;
-  abstract create<T>(printer: T): Observable<ApiResponseLegacy>;
-  abstract update<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
+  updateStatus<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
+  removePrinter(id: number): Observable<ApiResponseLegacy>;
+  create<T>(printer: T): Observable<ApiResponseLegacy>;
+  update<T>(id: number, printer: T): Observable<ApiResponseLegacy>;
 }

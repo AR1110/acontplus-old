@@ -101,7 +101,7 @@ export const routes: Routes = [
     path: 'printer',
     title: 'Configuración Impresora',
     loadComponent: () =>
-      import('@modules/config/ui/printer/printer.component').then((m) => m.PrinterComponent),
+      import('@modules/config/ui/printer-page/printer-page').then((m) => m.PrinterPage),
     data: {
       breadcrumb: 'Configuración Impresora',
     },

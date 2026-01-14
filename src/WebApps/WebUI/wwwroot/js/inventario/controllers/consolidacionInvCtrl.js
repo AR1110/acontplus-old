@@ -1475,6 +1475,7 @@
             addRow();
             let index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
             let entity = $scope.gridOptions.data[index];
+            entity.cantidad = 0;
             setItem(entity, articulo, medidas); // configurar fila
             return entity;
         }

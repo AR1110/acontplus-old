@@ -10,6 +10,7 @@ import { AsignacionEstabRepositoryImpl } from '@modules/config/data/asignacion-e
 import {
   ELECTRONIC_SIGNATURE_HTTP_TOKEN,
   SOLICITUD_AUTORIZACION_HTTP_TOKEN,
+  PRINTER_HTTP_TOKEN,
 } from '@modules/config/data/config-token';
 import { GeneralConfigRepositoryImpl } from '@modules/config/data/general-config/general-config-repository-impl';
 import { UserCustomerRoleRepository } from '@modules/config/data/repositories/user-customer-role.repository';
@@ -29,9 +30,8 @@ import { ExcelImportRepository } from '@modules/config/data/repositories/excel-i
 import { CreditTimeRepository } from '@modules/config/data/repositories/credit-time.repository';
 import { DocConfigRepository } from '@modules/config/data/repositories/doc-config.repository';
 import { CompanyRepositoryImpl } from '@modules/config/data/company/company-repository.impl';
-import { PrinterRepository } from '@modules/config/data/repositories/printer.repository';
 import { CompanyRepository } from '@modules/config/data/repositories/company.repository';
-import { PrinterWebRepository } from '@modules/config/data/printer/printer-web.repository';
+import { PrinterHttp } from '@modules/config/data/https/printer-http';
 import { ScheduleRepository } from '@modules/config/data/repositories/schedule.repository';
 import { ScheduleRepositoryImpl } from './schedule/schedule-repository.impl';
 import { ShiftRepository } from '@modules/config/data/repositories/shift.repository';
@@ -79,8 +79,8 @@ export const DATA_CONFIG_IOC: Provider[] = [
     useClass: ExcelImportRepositoryImpl,
   },
   {
-    provide: PrinterRepository,
-    useClass: PrinterWebRepository,
+    provide: PRINTER_HTTP_TOKEN,
+    useClass: PrinterHttp,
   },
   {
     provide: SOLICITUD_AUTORIZACION_HTTP_TOKEN,

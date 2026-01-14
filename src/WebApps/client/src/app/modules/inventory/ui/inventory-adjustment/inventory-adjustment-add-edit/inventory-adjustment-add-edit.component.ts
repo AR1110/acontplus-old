@@ -458,18 +458,23 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
     });
   }
 
-  openSearchAdvanced(): void {
-    const dialogRef = this.inventoryAdjustmentSvc.dialogSvc.open(
-      InventoryAdjustmentSearchAdvanced,
+  async openSearchAdvanced(): Promise<void> {
+    const ref = await this.inventoryAdjustmentSvc.dialogSvc.openInWrapper(
       {
-        size: 'xl',
+        component: InventoryAdjustmentSearchAdvanced,
+        title: 'Búsqueda Avanzada',
+        icon: 'search',
+        showCloseButton: true,
         data: {
           warehouseId: this.adjustmentForm.getRawValue().warehouseId,
         },
       },
+      {
+        size: 'xxl',
+      },
     );
 
-    dialogRef.subscribe((result) => {
+    ref.afterClosed().subscribe((result) => {
       if (!this.isValidResult(result)) {
         return;
       }
