@@ -4,7 +4,7 @@ public class LoginHistoryService(ApplicationDbContext context) : ILoginHistorySe
 {
     public async Task AddAsync(LoginHistory loginHistory)
     {
-        //await context.LoginHistories.AddAsync(loginHistory);
-        //await context.SaveChangesAsync();
+        await context.LoginHistories.AddAsync(loginHistory);
+        await context.SaveChangesAsync();
     }
 }
