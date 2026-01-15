@@ -1,28 +1,27 @@
+import { Button, TabulatorTable } from '@acontplus/ng-components';
+import { Overlay } from '@angular/cdk/overlay';
+import { ComponentPortal } from '@angular/cdk/portal';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TabulatorTable } from '@acontplus/ng-components';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { Button } from '@acontplus/ng-components';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { MatIconButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import Swal from 'sweetalert2';
-import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
+import { MatTooltip } from '@angular/material/tooltip';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import DecimalUtil from '@core/utils/decimal.util';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
+import { ProductMeasure } from '@inventory/data/models/product-measure';
 import {
   ItemGetBydIdUseCase,
   ItemUpdateUseCase,
 } from '@restaurant/application/use-cases/item.use-case';
-import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
-import { ProductMeasure } from '@inventory/data/models/product-measure';
 import { ItemComposition } from '@restaurant/data/models/item-composition';
-import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
-import { MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { MatTooltip } from '@angular/material/tooltip';
-import { Overlay } from '@angular/cdk/overlay';
-import { ComponentPortal } from '@angular/cdk/portal';
 import { ItemSearchDialog } from '@restaurant/ui/items/item-search-dialog/item-search-dialog';
+import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-item-add-edit',
@@ -142,8 +141,8 @@ export class ItemAddEdit implements OnInit {
         settingBtn.addEventListener('click', () => this.openOverlay(rowData));
 
         buttonHolder.appendChild(delBtn);
-        if(this.isCombo() && !(rowData?.children.length>0)) buttonHolder.appendChild(settingBtn);
 
+        if (this.isCombo() && rowData.level === 0) buttonHolder.appendChild(settingBtn);
 
         return buttonHolder;
       },
