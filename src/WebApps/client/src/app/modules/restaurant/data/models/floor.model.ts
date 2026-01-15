@@ -1,4 +1,4 @@
-import { Room } from '@restaurant/domain/models/room.model';
+import { Room } from '@restaurant/data/models/room.model';
 
 export interface Floor {
   codEstab: string;

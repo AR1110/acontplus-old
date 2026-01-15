@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RoomRepository } from '@restaurant/domain/repositories/room.repository';
+import { RoomRepository } from '@restaurant/data/repositories/room.repository';
 
 @Injectable({
   providedIn: 'root',

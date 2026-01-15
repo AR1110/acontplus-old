@@ -1,9 +1,9 @@
 import { BaseUseCase } from '@core/base-use-case';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { PromotionRepository } from '@restaurant/domain/repositories/promotion-repository';
+import { PromotionRepository } from '@restaurant/data/repositories/promotion-repository';
 import { PagedResult } from '@acontplus/core';
-import { PromotionListDto } from '@restaurant/domain/models/promotion';
+import { PromotionListDto } from '@restaurant/data/models/promotion';
 
 @Injectable({
   providedIn: 'root',

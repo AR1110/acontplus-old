@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { Ingredient } from '@restaurant/data/models/ingredient.model';
 
 @Injectable({
   providedIn: 'root',

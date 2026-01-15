@@ -7,7 +7,7 @@ import {
   MealConsumptionCancel,
   MealConsumptionCreateForOtherDateRequest,
   PrintConsumptionResponse,
-} from '../models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { SearchCustomerResponse } from '@restaurant/application/use-cases/meal-consumption/search-customer.use-case';
 import { GetCancellationDetailsResponse } from '@restaurant/application/use-cases/meal-consumption/get-cancellation-details.use-case';

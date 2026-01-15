@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { FloorRepository } from '@restaurant/domain/repositories/floor.repository';
-import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.model';
+import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
+import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 @Injectable({
   providedIn: 'root',

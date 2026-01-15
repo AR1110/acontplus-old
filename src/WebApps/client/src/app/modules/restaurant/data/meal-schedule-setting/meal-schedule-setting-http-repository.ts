@@ -2,12 +2,12 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
+import { MealScheduleSettingRepository } from '@restaurant/data/repositories/meal-schedule-setting.repository';
 import {
   MealScheduleSetting,
   MealScheduleSettingCreate,
   MealScheduleSettingUpdate,
-} from '@restaurant/domain/models/meal-schedule-setting';
+} from '@restaurant/data/models/meal-schedule-setting';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';

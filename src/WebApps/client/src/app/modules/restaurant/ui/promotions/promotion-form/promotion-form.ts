@@ -24,19 +24,19 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDivider } from '@angular/material/divider';
 import { Button } from '@acontplus/ng-components';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { DAYS_OF_WEEK, DISCOUNT_TYPES } from '@restaurant/domain/models/promotion';
+import { DAYS_OF_WEEK, DISCOUNT_TYPES } from '@restaurant/data/models/promotion';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { TabulatorTable } from '@acontplus/ng-components';
-import { ItemComposition } from '@restaurant/domain/models/item-composition';
+import { ItemComposition } from '@restaurant/data/models/item-composition';
 import Swal from 'sweetalert2';
 import { ProductMeasure } from '@inventory/data/models/product-measure';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { LookupItem } from '@core/models/lookup-type';
 import { LookupService } from '@restaurant/application/services/lookup-service';
-import { PromotionDetail } from '@restaurant/domain/models/promotion-detail';
+import { PromotionDetail } from '@restaurant/data/models/promotion-detail';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import {
   PromotionGetByIdUseCase,

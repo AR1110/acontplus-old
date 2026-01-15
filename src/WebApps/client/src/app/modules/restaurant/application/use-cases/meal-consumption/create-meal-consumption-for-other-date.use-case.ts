@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import { MealConsumptionCreateForOtherDateRequest } from '@restaurant/domain/models/meal-consumption';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
+import { MealConsumptionCreateForOtherDateRequest } from '@restaurant/data/models/meal-consumption';
 import { ApiResponse } from '@acontplus/core';
 
 @Injectable({

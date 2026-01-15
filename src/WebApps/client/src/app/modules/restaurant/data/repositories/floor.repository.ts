@@ -1,6 +1,6 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
-import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.model';
+import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 export abstract class FloorRepository {
   abstract remove(id: number): Observable<ApiResponseLegacy>;

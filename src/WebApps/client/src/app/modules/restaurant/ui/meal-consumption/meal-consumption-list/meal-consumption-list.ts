@@ -16,7 +16,7 @@ import {
   ConsumptionStatus,
   CustomerSearchResult,
   MealScheduleForCustomer,
-} from '@restaurant/domain/models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 import { MatDialog } from '@angular/material/dialog';
 import { MealConsumptionOtherDatesDialog } from '../meal-consumption-other-dates-dialog/meal-consumption-other-dates-dialog';
 import { MatCheckbox } from '@angular/material/checkbox';
@@ -43,7 +43,7 @@ import { MatOption } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { GetMealScheduleSettingsUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/get-meal-schedule-settings.use-case';
-import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-setting';
+import { MealScheduleSetting } from '@restaurant/data/models/meal-schedule-setting';
 
 @Component({
   selector: 'app-meal-consumption-list',

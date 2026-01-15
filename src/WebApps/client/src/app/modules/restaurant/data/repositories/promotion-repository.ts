@@ -1,6 +1,6 @@
 import { PagedResult, PaginationParams } from '@acontplus/core';
 import { Observable } from 'rxjs';
-import { PromotionListDto } from '@restaurant/domain/models/promotion';
+import { PromotionListDto } from '@restaurant/data/models/promotion';
 
 export abstract class PromotionRepository {
   abstract list(params: PaginationParams): Observable<PagedResult<PromotionListDto>>;

@@ -1,0 +1,8 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+  - core-js
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - unrs-resolver

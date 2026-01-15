@@ -17,7 +17,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { GetMealScheduleSettingsUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/get-meal-schedule-settings.use-case';
 import { DeleteMealScheduleSettingUseCase } from '@restaurant/application/use-cases/meal-schedule-setting/delete-meal-schedule-setting.use-case';
 import { MatDialog } from '@angular/material/dialog';
-import { MealScheduleSetting } from '@restaurant/domain/models/meal-schedule-setting';
+import { MealScheduleSetting } from '@restaurant/data/models/meal-schedule-setting';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';

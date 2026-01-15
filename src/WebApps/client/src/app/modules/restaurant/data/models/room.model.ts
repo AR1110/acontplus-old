@@ -1,5 +1,5 @@
-import { Floor } from '@restaurant/domain/models/floor.model';
-import { Table } from '@restaurant/domain/models/table.model';
+import { Floor } from '@restaurant/data/models/floor.model';
+import { Table } from '@restaurant/data/models/table.model';
 
 export interface Room {
   floorId?: number;

@@ -3,12 +3,12 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { FloorRepository } from '@restaurant/domain/repositories/floor.repository';
+import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { FloorMapper } from '@restaurant/data/floor/floor.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { GetFloorsByEstabIdMapper } from '@restaurant/data/floor/get-floors-by-estab-id.mapper';
-import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.model';
+import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 @Injectable({
   providedIn: 'root',

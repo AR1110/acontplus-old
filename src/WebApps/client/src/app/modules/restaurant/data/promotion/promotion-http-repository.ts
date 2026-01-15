@@ -1,7 +1,7 @@
 import { PaginationParams, PagedResult, ApiResponse } from '@acontplus/core';
 import { inject, Injectable } from '@angular/core';
-import { PromotionListDto } from '@modules/restaurant/domain/models/promotion';
-import { PromotionRepository } from '@restaurant/domain/repositories/promotion-repository';
+import { PromotionListDto } from '@restaurant/data/models/promotion';
+import { PromotionRepository } from '@restaurant/data/repositories/promotion-repository';
 import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';

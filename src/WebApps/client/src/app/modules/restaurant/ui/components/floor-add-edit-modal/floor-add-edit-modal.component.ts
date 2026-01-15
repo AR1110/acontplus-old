@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-import { Room } from '@restaurant/domain/models/room.model';
+import { Room } from '@restaurant/data/models/room.model';
 import { TabulatorTable } from '@acontplus/ng-components';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export interface DeleteMealConsumptionParams {

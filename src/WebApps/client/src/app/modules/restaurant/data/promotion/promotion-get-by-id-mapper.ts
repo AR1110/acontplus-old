@@ -1,5 +1,5 @@
 import { formatDate } from '@core/utils/date.util';
-import { DiscountType } from '@restaurant/domain/models/promotion';
+import { DiscountType } from '@restaurant/data/models/promotion';
 import { generateUuidv4 } from '@core/utils/generate-uuidv4';
 import { mergeProductMeasures } from '@inventory/utils/merge-measure.util';
 

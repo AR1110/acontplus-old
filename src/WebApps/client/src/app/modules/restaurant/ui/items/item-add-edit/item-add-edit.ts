@@ -14,7 +14,7 @@ import {
 } from '@restaurant/application/use-cases/item.use-case';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { ProductMeasure } from '@inventory/data/models/product-measure';
-import { ItemComposition } from '@restaurant/domain/models/item-composition';
+import { ItemComposition } from '@restaurant/data/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { MatIconButton } from '@angular/material/button';
@@ -142,7 +142,7 @@ export class ItemAddEdit implements OnInit {
         settingBtn.addEventListener('click', () => this.openOverlay(rowData));
 
         buttonHolder.appendChild(delBtn);
-        if(this.isCombo()) buttonHolder.appendChild(settingBtn);
+        if(this.isCombo() && !(rowData?.children.length>0)) buttonHolder.appendChild(settingBtn);
 
 
         return buttonHolder;

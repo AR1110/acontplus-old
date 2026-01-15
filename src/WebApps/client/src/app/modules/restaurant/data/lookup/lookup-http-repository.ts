@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LookupRepository } from '@restaurant/domain/repositories/lookup-repository';
+import { LookupRepository } from '@restaurant/data/repositories/lookup-repository';
 import { map, Observable, of, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';

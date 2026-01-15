@@ -1,5 +1,5 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { GetFloorsByEstabIdResponse } from '@restaurant/domain/models/floor.model';
+import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 export class GetFloorsByEstabIdMapper {
   static fromJson(response: ApiResponseLegacy): GetFloorsByEstabIdResponse {

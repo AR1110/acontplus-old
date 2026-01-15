@@ -4,7 +4,7 @@ import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
-import { RoomRepository } from '@restaurant/domain/repositories/room.repository';
+import { RoomRepository } from '@restaurant/data/repositories/room.repository';
 
 @Injectable({
   providedIn: 'root',

@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
-import { ItemRepository } from '@restaurant/domain/repositories/item.repository';
+import { ItemRepository } from '@restaurant/data/repositories/item.repository';
 import { map, Observable, throwError } from 'rxjs';
 import { PagedResult, PaginationParams } from '@acontplus/core';
 import {

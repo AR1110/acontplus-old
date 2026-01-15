@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import {
   CustomerSearchResult,
   MealScheduleForCustomer,
-} from '@restaurant/domain/models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 import { CreateMealConsumptionForOtherDateUseCase } from '@restaurant/application/use-cases/meal-consumption/create-meal-consumption-for-other-date.use-case';
 import { PrintMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/print-meal-consumption.use-case';
 

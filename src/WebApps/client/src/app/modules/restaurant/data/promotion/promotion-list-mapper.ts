@@ -1,4 +1,4 @@
-import { PromotionListDto } from '@restaurant/domain/models/promotion';
+import { PromotionListDto } from '@restaurant/data/models/promotion';
 import { PaginationParams, PagedResult } from '@acontplus/core';
 import { formatDate, formatDisplayDate } from '@core/utils/date.util';
 export class PromotionListMapper {

@@ -4,7 +4,7 @@ import {
   MealScheduleSetting,
   MealScheduleSettingCreate,
   MealScheduleSettingUpdate,
-} from '@restaurant/domain/models/meal-schedule-setting';
+} from '@restaurant/data/models/meal-schedule-setting';
 
 export abstract class MealScheduleSettingRepository {
   abstract getByEstablishmentId(establishmentId: number): Observable<MealScheduleSetting[]>;

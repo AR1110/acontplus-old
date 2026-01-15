@@ -1,4 +1,4 @@
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
 import { inject, Injectable } from '@angular/core';
 import { PaginationParams, PagedResult, ApiResponse } from '@acontplus/core';
 import {
@@ -8,7 +8,7 @@ import {
   MealConsumptionCancel,
   MealConsumptionCreateForOtherDateRequest,
   PrintConsumptionResponse,
-} from '@modules/restaurant/domain/models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
