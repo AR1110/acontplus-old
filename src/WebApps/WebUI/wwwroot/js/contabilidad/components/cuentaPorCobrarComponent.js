@@ -104,7 +104,7 @@
                         console.log(error)
                     }).finally(() => hideLoader());
 
-                    comprobanteIngresoSvc.getPosfechadoCobrosModal()
+                 //   comprobanteIngresoSvc.getPosfechadoCobrosModal()
 
                 } catch (error) {
                     console.log(error)
@@ -294,7 +294,7 @@
                     return {
                         ...cxc,
                         saldoOriginal: cxc.saldo,
-                        valorSaldoLectura: cxc.saldo, 
+                        valorSaldoLectura: cxc.saldo,
                         cuotas: structuredClone(cuotasFiltradas),
                         cuotasOriginal: structuredClone(cuotasFiltradas)
                     };

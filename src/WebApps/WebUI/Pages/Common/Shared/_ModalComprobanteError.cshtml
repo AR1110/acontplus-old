@@ -1,45 +1,100 @@
+<style>
+  .tabla-vertical {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+  }
 
+  .tabla-vertical th {
+    background-color: #f2f2f2;
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #444;
+  }
+
+  .tabla-vertical td {
+    border: 1px solid #444;
+    padding: 8px;
+    vertical-align: top;
+  }
+
+  .campo {
+    width: 200px;
+    font-weight: bold;
+    background-color: #fafafa;
+  }
+</style>
 <div class="modal-header">
-    <h5 class="modal-title">Errorres del comprobante</h5>
-    <button type="button" class="close" ng-click="$ctrl.closeModal()">&times;</button>
+  <h5 class="modal-title">Errorres del comprobante</h5>
+  <button
+    type="button"
+    class="close"
+    ng-click="$ctrl.closeModal()"
+  >&times;</button>
 </div>
 
 <div class="modal-body">
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Op.</th>
-                    <th>Nro.</th>
-                    <th>Tipo</th>
-                    <th>Mensaje</th>                    
-                    <th>F. Registro</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="item in $ctrl.erroresComprobante">
-                    <td>
-                        <button class="btn btn-info btn-sm waves-effect waves-light" type="button" ng-click="$ctrl.showInfoAdicional(item)">
-                            <span class="btn-label"><i class="ti-plus"></i></span>
-                        </button>
-                    </td>
-                    <td>{{$index+1}}</td>
-                    <td>{{item.tipo}}</td>
-                    <td>{{item.mensaje}}</td>                    
-                    <td>{{item.fechaRegistro | date: $ctrl.formatDate}}</td>
-                    <td>{{item.estado}}</td>
-                </tr>
-                <tr class="text-center" ng-if="$ctrl.erroresComprobante.length===0">
-                    <td colspan="6">No hay registros en esta tabla.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>    
+  <div class="table-responsive ">
+
+    <table
+      class="tabla-vertical"
+      ng-repeat="e in $ctrl.erroresComprobante"
+    >
+      <thead>
+        <tr>
+          <th colspan="2">Detalle del Error</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td class="campo">Estado</td>
+          <td>{{ e.estado }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Tipo</td>
+          <td>{{ e.tipo }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Mensaje</td>
+          <td>{{ e.mensaje }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Información adicional</td>
+          <td>{{ e.informacionAdicional }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Fecha registro</td>
+          <td>{{ e.fechaRegistro | date:'short' }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Fecha documento</td>
+          <td>{{ e.fechaRegistroDoc | date:'short' }}</td>
+        </tr>
+
+        <tr>
+          <td class="campo">Serie comprobante</td>
+          <td>{{ e.serieComprobante }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+  </div>
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-dark" ng-click="$ctrl.closeModal()">
-        &times; Cerrar
-    </button>
+  <button
+    type="button"
+    class="btn btn-dark"
+    ng-click="$ctrl.closeModal()"
+  >
+    &times; Cerrar
+  </button>
 </div>
