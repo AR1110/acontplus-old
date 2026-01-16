@@ -1,34 +1,35 @@
+import { Button, TabulatorTable } from '@acontplus/ng-components';
 import {
+  ChangeDetectionStrategy,
   Component,
   inject,
-  ViewChild,
   OnInit,
   signal,
-  ChangeDetectionStrategy,
+  ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { TabulatorTable, Button } from '@acontplus/ng-components';
-import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import {
+  DateRangeSelectionComponent,
+  formatDateToString,
+  GroupedEstab,
+  GroupedEstabBodega,
+  isValidField,
+  roundNumber,
+  ToastrNotificationService,
+} from '@core/index';
 
-import { roundNumber } from '@core/utils/round-number.utils';
-import { isValidField } from '@core/utils/utils';
-
+import { INVENTORY_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { monthEnd, monthStart } from '@formkit/tempo';
 import { TRANSACTION_SERVICE } from '@inventory/data/inventory-token';
 import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
 import Swal from 'sweetalert2';
-import { SharedService } from '@core/services/shared.service';
-import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
-import { formatDateToString } from '@core/utils/date.util';
-import { monthEnd, monthStart } from '@formkit/tempo';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -57,7 +58,7 @@ export class ProductKardexComponent implements OnInit {
 
   transactionSvc = inject(TRANSACTION_SERVICE);
   tS = inject(ToastrNotificationService);
-  sharedSvc = inject(SharedService);
+  private reportFacade = inject(ReportFacade);
 
   @ViewChild(TabulatorTable) tabulatorComponent!: TabulatorTable;
 
@@ -476,21 +477,15 @@ export class ProductKardexComponent implements OnInit {
       fechaInicio: this.dataSearch.fechaInicio,
       fechaFin: this.dataSearch.fechaFin,
       estado: this.dataSearch.estado,
-    };
-    const parameters = {
-      hasIdUsuarioRol: true,
-      reportParams: JSON.stringify({
-        codigo: INVENTORY_CODE_REPORT.RK,
-        format: formatType,
-        codEstab: this.dataSearch.codEstab,
-        hasParams: true,
-        aditionalParams: [],
-      }),
-
-      dataParams: JSON.stringify(dataParams),
+      codEstab: this.dataSearch.codEstab,
     };
 
-    this.sharedSvc.getReport({ data: parameters, format: formatType });
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RK,
+      data: dataParams,
+      format: formatType,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   close() {

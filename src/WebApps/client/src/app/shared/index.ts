@@ -17,4 +17,7 @@ export * from './directives';
 // export * from './interfaces';
 
 // Formly
+export * from './components';
 export * from './formly-config';
+export * from './services';
+export * from './store';

@@ -1,30 +1,30 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ListMovimientoCajaUseCase } from '@accounting/movimiento-caja/application/list-movimiento-caja.use-case';
+import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
+import { MovimientoCajaList } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
+import { EgresoIngresoDialogComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component';
+import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
+import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { SharedService } from '@core/services/shared.service';
-import { NotificationService } from '@acontplus/ng-notifications';
-import { isValidField } from '@core/utils/utils';
-import Swal from 'sweetalert2';
-import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
-import { formatDateToString } from '@core/utils/date.util';
-import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
-import { PageEvent } from '@angular/material/paginator';
-import { finalize } from 'rxjs/operators';
-import { MatMenuModule } from '@angular/material/menu';
-import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
 import { DialogService } from '@core/services/dialog.service';
-import { EgresoIngresoDialogComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component';
-import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import { ListMovimientoCajaUseCase } from '@accounting/movimiento-caja/application/list-movimiento-caja.use-case';
-import { MovimientoCajaList } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
+import { SharedService } from '@core/services/shared.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
+import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
+import { finalize } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-egreso-ingreso-caja',
@@ -60,6 +60,7 @@ export class EgresoIngresoCaja implements OnInit {
   private _movimientoCajaUseCase = inject(MovimientoCajaUseCase);
   private $listUseCase = inject(ListMovimientoCajaUseCase);
   $userRoleStateManager = inject(UserRoleStateManager);
+  private reportFacade = inject(ReportFacade);
 
   dataSource: MovimientoCajaList[] = [];
 
@@ -172,30 +173,20 @@ export class EgresoIngresoCaja implements OnInit {
   }
 
   getReport(item: MovimientoCajaList) {
-    try {
-      const format = 'pdf';
-      const dataParms = {
-        tipo: 1,
-        id: item.idMovimientoCaja,
-      };
+    const format = 'pdf';
+    const dataParms = {
+      tipo: 1,
+      id: item.idMovimientoCaja,
+      codEstab: item.codEstab,
+    };
 
-      const parameters = {
-        reportParams: JSON.stringify({
-          codigo: ACCOUNTING_CODE_REPORT.RMIE,
-          format,
-          codEstab: item.codEstab,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataParms),
-      };
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: ACCOUNTING_CODE_REPORT.RMIE,
+      data: dataParms,
+      format,
+    });
 
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: 'pdf',
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    this.reportFacade.openPDF(reportOptions).subscribe();
   }
 
   askToDelete(item: MovimientoCajaList) {

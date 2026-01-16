@@ -1,7 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { DynamicCard, Pagination, DataGrid, DataGridColumn, DataGridRowClassFormatter } from '@acontplus/ng-components';
+import {
+  DataGrid,
+  DataGridColumn,
+  DataGridRowClassFormatter,
+  DynamicCard,
+  Pagination,
+} from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
@@ -17,17 +23,14 @@ import { MatInput } from '@angular/material/input';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { DialogService } from '@core/services/dialog.service';
 import { WarehouseTransferAddEdit } from '@inventory/ui/warehouse-transfer/warehouse-transfer-add-edit/warehouse-transfer-add-edit';
-import {
-  INVENTORY_CODE_REPORT,
-  INVENTORY_MODULES_CODE,
-} from '@inventory/inventory.const';
+import { INVENTORY_MODULES_CODE } from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
 import { HasPermissionDirective } from '@core/directives/permission';
 import { usePermissions } from '@core/composables/use-permissions';
 import { WarehouseTransferDetail } from '@inventory/ui/warehouse-transfer/warehouse-transfer-detail/warehouse-transfer-detail';
 import Swal from 'sweetalert2';
 import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
+import { INVENTORY_CODE_REPORT, REPORT_FORMAT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 
 @Component({
   selector: 'app-warehouse-page-transfer',
@@ -49,6 +52,7 @@ import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WarehouseTransferPage implements OnInit {
+  private reportFacade = inject(ReportFacade);
   inventory_modules_code = signal(INVENTORY_MODULES_CODE);
   action_aliases = signal(ACTION_ALIASES);
   public perms = usePermissions(this.inventory_modules_code().WAREHOUSE_TRANSFER);
@@ -164,14 +168,12 @@ export class WarehouseTransferPage implements OnInit {
                   id: row.id,
                 };
 
-                const reportParameters = ReportParamsBuilder.getReportParameters(
-                  INVENTORY_CODE_REPORT.RTB,
-                  additionalParams,
-                );
-
-                this._reportUseCase.execute({
-                  data: reportParameters,
+                const reportOptions = ReportParamsBuilder.build({
+                  codeReport: INVENTORY_CODE_REPORT.RTB,
+                  data:additionalParams,
+                  format: REPORT_FORMAT.PDF
                 });
+                this.reportFacade.openPDF(reportOptions).subscribe()
               },
             },
           ],

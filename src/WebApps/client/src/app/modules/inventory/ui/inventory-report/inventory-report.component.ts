@@ -1,37 +1,47 @@
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
-import { Button } from '@acontplus/ng-components';
-import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { REPORT_FORMAT, SEPARADORES_REGEX } from '@core/constants/global.constants';
-import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { UserRoleStateService } from '@shared/store/user-role-state.service';
-import { NotificacionService } from '@shared/services/notificacion.service';
-import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { getValidId, isValidEmail, isValidField } from '@core/utils/utils';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { SharedService } from '@core/services/shared.service';
-import { Brand } from '@inventory/data/models/brand.model';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { formatDateToString } from '@core/utils/date.util';
-import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { DynamicCard } from '@acontplus/ng-components';
+import {
+  INVENTORY_CODE_REPORT,
+  REPORT_FORMAT,
+  ReportFacade,
+  ReportParamsBuilder,
+} from '@acontplus/ng-common';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { NgTemplateOutlet } from '@angular/common';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTabsModule } from '@angular/material/tabs';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import {
+  BreadcrumbComponent,
+  DateRangeSelectionComponent,
+  formatDateToString,
+  getValidId,
+  GroupedEstab,
+  GroupedEstabBodega,
+  isValidEmail,
+  isValidField,
+  SEPARADORES_REGEX,
+  ToastrNotificationService,
+} from '@core/index';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
+import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
+import { Brand } from '@inventory/data/models/brand.model';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import {
+  ActionEnviarCorreoDirective,
+  NotificacionService,
+  UserRoleStateService,
+  UserSearchComponent,
+} from '@shared/index';
 import Swal from 'sweetalert2';
 
 const imports = [
@@ -67,9 +77,9 @@ const imports = [
 export class InventoryReportComponent implements OnInit {
   private pS = inject(UserRoleStateService);
   private tS = inject(ToastrNotificationService);
-  sharedSvc = inject(SharedService);
   appNotifiSvc = inject(NotificacionService);
   private readonly _tokenUseCase = inject(TokenUseCase);
+  private readonly reportFacade = inject(ReportFacade);
 
   private readonly _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
   protected readonly FORMAT_REPORT = REPORT_FORMAT;
@@ -433,7 +443,7 @@ export class InventoryReportComponent implements OnInit {
       idArticulo,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
-      codEstab: this.getCodEstab(),
+      codEstab: this.getCodEstab() ?? undefined,
       idBodega: isValidField(this.dataSearch.idBodega),
       idSubFamilia,
       numeroIdentificacion,
@@ -444,159 +454,112 @@ export class InventoryReportComponent implements OnInit {
   }
   // REPORTE DE CONSUMO DIARIO DE ARTICULOS
   private getReportConsumoDiario() {
-    const parameters = {
-      reportParams: JSON.stringify({
-        codigo: this.dataSearch.checkboxAgruparArticulo
-          ? INVENTORY_CODE_REPORT.CDAA
-          : INVENTORY_CODE_REPORT.CDA,
-        format: this.format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(this.getDataParamsConsumoDiario()),
-      hasService: true,
-    };
-
-    this.sharedSvc.getReport({
-      data: parameters,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: this.dataSearch.checkboxAgruparArticulo
+        ? INVENTORY_CODE_REPORT.CDAA
+        : INVENTORY_CODE_REPORT.CDA,
+      data: this.getDataParamsConsumoDiario(),
       format: this.format!,
-      isOldVersion: true,
     });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   getReportArticuloStock() {
-    try {
-      const filtroFecha = this.getFilterDate();
+    const filtroFecha = this.getFilterDate();
 
-      const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
-        ? isValidField(this.dataSearch.idSubFamilia)
-        : null;
-      const numeroIdentificacion = this.dataSearch.chkProveedor
-        ? isValidField(this.dataSearch.numeroIdentificacion)
-        : null;
+    const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      ? isValidField(this.dataSearch.idSubFamilia)
+      : null;
+    const numeroIdentificacion = this.dataSearch.chkProveedor
+      ? isValidField(this.dataSearch.numeroIdentificacion)
+      : null;
 
-      const dataSearch = {
-        tipo: 3,
-        bySubFamilia: idSubFamilia,
-        numeroIdentificacion,
-        codEstab: this.getCodEstab(),
-        idBodega: isValidField(this.dataSearch.idBodega),
-        idMarca: isValidField(this.dataSearch.idMarca),
-        filtroFecha,
-        stockStatusCode:
-          this.dataSearch.stockStatusCode === 0
-            ? null
-            : isValidField(this.dataSearch.stockStatusCode),
-        userRoleId: this._tokenUseCase.getUserRoleId(),
-        idTipoIva: getValidId(this.dataSearch.idTipoIva),
-      };
+    const dataSearch = {
+      tipo: 3,
+      bySubFamilia: idSubFamilia,
+      numeroIdentificacion,
+      codEstab: this.getCodEstab() ?? undefined,
+      idBodega: isValidField(this.dataSearch.idBodega),
+      idMarca: isValidField(this.dataSearch.idMarca),
+      filtroFecha,
+      stockStatusCode:
+        this.dataSearch.stockStatusCode === 0
+          ? null
+          : isValidField(this.dataSearch.stockStatusCode),
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+      idTipoIva: getValidId(this.dataSearch.idTipoIva),
+    };
 
-      const parameters = {
-        reportParams: JSON.stringify({
-          codigo: INVENTORY_CODE_REPORT.STOCK_VALORACION,
-          format: this.format,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataSearch),
-        hasService: true,
-      };
-
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: this.format!,
-        isOldVersion: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.STOCK_VALORACION,
+      data: dataSearch,
+      format: this.format!,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   private getArticuloStockRentabilidad() {
-    try {
-      const filtroFecha = this.getFilterDate();
+    const filtroFecha = this.getFilterDate();
 
-      const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
-        ? isValidField(this.dataSearch.idSubFamilia)
-        : null;
-      const numeroIdentificacion = this.dataSearch.chkProveedor
-        ? isValidField(this.dataSearch.numeroIdentificacion)
-        : null;
+    const idSubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      ? isValidField(this.dataSearch.idSubFamilia)
+      : null;
+    const numeroIdentificacion = this.dataSearch.chkProveedor
+      ? isValidField(this.dataSearch.numeroIdentificacion)
+      : null;
 
-      const dataSearch = {
-        tipo: 6,
-        bySubFamilia: idSubFamilia,
-        numeroIdentificacion,
-        codEstab: this.getCodEstab(),
-        idBodega: isValidField(this.dataSearch.idBodega),
-        idMarca: isValidField(this.dataSearch.idMarca),
-        idTarifa: getValidId(this.dataSearch.idTarifa),
-        filtroFecha,
-        stockStatusCode:
-          this.dataSearch.stockStatusCode === 0
-            ? null
-            : isValidField(this.dataSearch.stockStatusCode),
-        userRoleId: this._tokenUseCase.getUserRoleId(),
-        idTipoIva: getValidId(this.dataSearch.idTipoIva),
-      };
+    const dataSearch = {
+      tipo: 6,
+      bySubFamilia: idSubFamilia,
+      numeroIdentificacion,
+      codEstab: this.getCodEstab() ?? undefined,
+      idBodega: isValidField(this.dataSearch.idBodega),
+      idMarca: isValidField(this.dataSearch.idMarca),
+      idTarifa: getValidId(this.dataSearch.idTarifa),
+      filtroFecha,
+      stockStatusCode:
+        this.dataSearch.stockStatusCode === 0
+          ? null
+          : isValidField(this.dataSearch.stockStatusCode),
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+      idTipoIva: getValidId(this.dataSearch.idTipoIva),
+    };
 
-      const parameters = {
-        reportParams: JSON.stringify({
-          codigo: INVENTORY_CODE_REPORT.RASR,
-          format: this.format,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataSearch),
-        hasService: true,
-      };
-
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: this.format!,
-        isOldVersion: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RASR,
+      data: dataSearch,
+      format: this.format!,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   getReportArticuloPVP() {
-    try {
-      const bySubFamilia = this.dataSearch.checkboxSubCategoryFilter
-        ? isValidField(this.dataSearch.idSubFamilia)
-        : null;
+    const bySubFamilia = this.dataSearch.checkboxSubCategoryFilter
+      ? isValidField(this.dataSearch.idSubFamilia)
+      : null;
 
-      const dataSearch = {
-        tipo: 2,
-        bySubFamilia,
-        stockStatusCode:
-          this.dataSearch.stockStatusCode === 0
-            ? null
-            : isValidField(this.dataSearch.stockStatusCode),
-        idTarifa: getValidId(this.dataSearch.idTarifa),
-        idMarca: isValidField(this.dataSearch.idMarca),
-        userRoleId: this._tokenUseCase.getUserRoleId(),
-        ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
-        fechaInicio: this.dataSearch.fromDate,
-        fechaFin: this.dataSearch.toDate,
-        idTipoIva: getValidId(this.dataSearch.idTipoIva),
-      };
-      const parameters = {
-        reportParams: JSON.stringify({
-          codigo: INVENTORY_CODE_REPORT.ARTICULO_PVP,
-          format: this.format,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataSearch),
-        hasService: true,
-      };
+    const dataSearch = {
+      tipo: 2,
+      bySubFamilia,
+      stockStatusCode:
+        this.dataSearch.stockStatusCode === 0
+          ? null
+          : isValidField(this.dataSearch.stockStatusCode),
+      idTarifa: getValidId(this.dataSearch.idTarifa),
+      idMarca: isValidField(this.dataSearch.idMarca),
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+      ckFechaModificaccion: this.dataSearch.ckFechaModificaccion,
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      idTipoIva: getValidId(this.dataSearch.idTipoIva),
+    };
 
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: this.format!,
-        isOldVersion: true,
-      });
-    } catch (error) {
-      console.log(error);
-    }
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.ARTICULO_PVP,
+      data: dataSearch,
+      format: this.format!,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   // REPORTE DE ARTICULOS FRACCIONADOS
@@ -619,20 +582,12 @@ export class InventoryReportComponent implements OnInit {
       bySubFamilia: idSubFamilia,
       userRoleId: this._tokenUseCase.getUserRoleId(),
     };
-    const parameters = {
-      reportParams: JSON.stringify({
-        codigo: INVENTORY_CODE_REPORT.RAF,
-        format: this.format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(dataSearch),
-      hasService: true,
-    };
-    this.sharedSvc.getReport({
-      data: parameters,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RAF,
+      data: dataSearch,
       format: this.format!,
-      isOldVersion: true,
     });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   // REPORTE DE CADUCIDAD DE ARTICULOS
@@ -640,7 +595,7 @@ export class InventoryReportComponent implements OnInit {
     const filtroFecha = this.getFilterDate();
     const dataSearch = {
       tipo: 5,
-      codEstab: this.getCodEstab(),
+      codEstab: this.getCodEstab() ?? undefined,
       chkProveedor: this.dataSearch.chkProveedor,
       numeroIdentificacion: this.dataSearch.numeroIdentificacion,
       checkboxSubFamiliaFiltro: this.dataSearch.checkboxSubFamiliaFiltro,
@@ -658,22 +613,12 @@ export class InventoryReportComponent implements OnInit {
       filtroFecha,
       userRoleId: this._tokenUseCase.getUserRoleId(),
     };
-
-    const parameters = {
-      reportParams: JSON.stringify({
-        codigo: INVENTORY_CODE_REPORT.RCAA,
-        format: this.format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(dataSearch),
-      hasService: true,
-    };
-
-    this.sharedSvc.getReport({
-      data: parameters,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RCAA,
+      data: dataSearch,
       format: this.format!,
-      isOldVersion: true,
     });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   async askToSendMail() {

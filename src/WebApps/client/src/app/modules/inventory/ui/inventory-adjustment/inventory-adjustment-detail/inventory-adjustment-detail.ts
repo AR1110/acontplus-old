@@ -1,15 +1,18 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  INVENTORY_CODE_REPORT,
+  REPORT_FORMAT,
+  ReportFacade,
+  ReportParamsBuilder,
+} from '@acontplus/ng-common';
+import { Button, DynamicCard } from '@acontplus/ng-components';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
-  MatDialogRef,
-  MatDialogContent,
   MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
 } from '@angular/material/dialog';
-import { Button, DynamicCard } from '@acontplus/ng-components';
-import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
-import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
-import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
+import { DOC_TYPE } from '@core/constants/global.constants';
 import { InventoryAdjustmentService } from '@inventory/services/inventory-adjustment.service';
 
 @Component({
@@ -20,9 +23,9 @@ import { InventoryAdjustmentService } from '@inventory/services/inventory-adjust
 })
 export class InventoryAdjustmentDetail implements OnInit {
   private inventoryAdjustmentSvc = inject(InventoryAdjustmentService);
-  #generateReport = inject(GenerateReportUseCase);
-
+  private reportFacade = inject(ReportFacade);
   private dialogRef = inject(MatDialogRef<InventoryAdjustmentDetail>);
+
   private params = inject(MAT_DIALOG_DATA);
   title = signal('Nueva Consolidación');
   btnText = signal('Guardar');
@@ -45,15 +48,12 @@ export class InventoryAdjustmentDetail implements OnInit {
       id: this.params.id,
     };
 
-    const reportParameters = ReportParamsBuilder.getReportParameters(
-      INVENTORY_CODE_REPORT.RCD,
-      additionalParams,
-    );
-
-    this.#generateReport.execute({
-      data: reportParameters,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RCD,
+      data: additionalParams,
       format: REPORT_FORMAT.EXCEL,
     });
+    this.reportFacade.downloadExcel(reportOptions).subscribe();
   }
 
   close() {

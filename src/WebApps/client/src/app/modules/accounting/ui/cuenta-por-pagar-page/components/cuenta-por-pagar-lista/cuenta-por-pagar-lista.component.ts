@@ -37,7 +37,6 @@ import { GroupedEstab } from '@core/models/estab.model';
 
 // RxJS Operators
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
-import { ParameterReportUtil } from '@shared/utils/parameter-report.util';
 import { SharedService } from '@core/services/shared.service';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
@@ -390,17 +389,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   }
 
   getReport(row: CuentaPorPagarLista) {
-    const params = ParameterReportUtil.getParams(row.codDoc, {
-      id: row.idDocumento,
-      codEstab: row.codEstab,
-    });
 
-    this.sharedSvc.getReport({
-      data: params,
-      isOldVersion: true,
-      openInModal: true,
-    });
-    console.log(params);
   }
 
   handlePageEvent(e: PageEvent) {
