@@ -31,6 +31,7 @@
   "private": true,
   "dependencies": {
     "@acontplus/core": "^1.1.1",
+    "@acontplus/ng-common": "^1.0.7",
     "@acontplus/ng-components": "^2.1.7",
     "@acontplus/ng-notifications": "^2.0.2",
     "@acontplus/ui-kit": "^1.0.2",

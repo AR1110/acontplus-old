@@ -1,3 +1,7 @@
+import { REPORT_PORT, ReportAdapter } from '@acontplus/ng-common';
+import { provideNotifications } from '@acontplus/ng-notifications';
+import { DatePipe } from '@angular/common';
+import { HttpBackend } from '@angular/common/http';
 import {
   ApplicationConfig,
   importProvidersFrom,
@@ -6,25 +10,22 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
-import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
-import { featureProviders, infrastructureProviders } from './providers';
-import { customTranslateLoaderFactory } from '@core/i18n/custom-translate-loader';
-import { SettingsService, TranslateLangService } from '@core/bootstrap';
-import { BASE_URL } from '@core/interceptors/base-url-interceptor';
-import { formlyConfigFactory } from '@shared/formly-config';
-import { environment } from 'src/environments/environment';
-import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
-import { editorProviders } from './editor.config';
-import { HttpBackend } from '@angular/common/http';
-import { FORMLY_CONFIG } from '@ngx-formly/core';
 import { FormsModule } from '@angular/forms';
-import { routes } from './app.routes';
-import { provideToastr } from 'ngx-toastr';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
-import { DatePipe } from '@angular/common';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import { SettingsService, TranslateLangService } from '@core/bootstrap';
+import { customTranslateLoaderFactory } from '@core/i18n/custom-translate-loader';
+import { BASE_URL } from '@core/interceptors/base-url-interceptor';
+import { FORMLY_CONFIG } from '@ngx-formly/core';
+import { provideTranslateService, TranslateLoader, TranslateService } from '@ngx-translate/core';
 import { purchasesProvider } from '@purchases/data/purchases-provider';
-import { provideNotifications } from '@acontplus/ng-notifications';
+import { formlyConfigFactory } from '@shared/formly-config';
+import { provideToastr } from 'ngx-toastr';
+import { environment } from 'src/environments/environment';
+import { routes } from './app.routes';
+import { editorProviders } from './editor.config';
+import { featureProviders, infrastructureProviders } from './providers';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -78,5 +79,6 @@ export const appConfig: ApplicationConfig = {
     provideNotifications({
       defaultProvider: 'sweetalert',
     }),
+    { provide: REPORT_PORT, useClass: ReportAdapter },
   ],
 };

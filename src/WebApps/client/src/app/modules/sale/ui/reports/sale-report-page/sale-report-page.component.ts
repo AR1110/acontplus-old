@@ -1,8 +1,18 @@
+import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
+import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
 import { DynamicCard } from '@acontplus/ng-components';
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   CODE_ESTADO,
   DOC_TYPE,
@@ -10,27 +20,16 @@ import {
   REPORT_FORMAT,
   SEPARADORES_REGEX,
 } from '@core/constants/global.constants';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { SharedService } from '@core/services/shared.service';
-import { isValidEmail, isValidField } from '@core/utils/utils';
-import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
 import { formatDateToString } from '@core/utils/date.util';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDividerModule } from '@angular/material/divider';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import Swal from 'sweetalert2';
-import { NotificacionService } from '@shared/services/notificacion.service';
-import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
-import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
-import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
+import { isValidEmail, isValidField } from '@core/utils/utils';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
 import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
+import { ActionEnviarCorreoDirective } from '@shared/directives/permission/action-enviar-correo.directive';
+import { ActionReportDirective } from '@shared/directives/permission/action-report.directive';
+import { NotificacionService } from '@shared/services/notificacion.service';
+import Swal from 'sweetalert2';
 
 const imports = [
   DynamicCard,
@@ -89,9 +88,9 @@ export class SaleReportPageComponent implements OnInit {
   private _cuentaPorCobrarUseCase = inject(CuentaPorCobrarUseCase);
 
   private tS = inject(ToastrNotificationService);
-  private sharedSvc = inject(SharedService);
   private appNotifiSvc = inject(NotificacionService);
   private _tokenUseCase = inject(TokenUseCase);
+  private reportFacade = inject(ReportFacade);
 
   getDataFilter() {
     this._cuentaPorCobrarUseCase.getDataFilter().subscribe((response) => {
@@ -191,7 +190,7 @@ export class SaleReportPageComponent implements OnInit {
 
   getTipoDoc() {
     if (this.dataSearch.codDoc === DOC_TYPE.FV) return DOC_TYPE_SRI.F;
-    if (this.dataSearch.codDoc === DOC_TYPE.CDV) return null;
+    if (this.dataSearch.codDoc === DOC_TYPE.CDV) return undefined;
     return this.dataSearch.codDoc;
   }
 
@@ -214,8 +213,8 @@ export class SaleReportPageComponent implements OnInit {
     return {
       tipo: 2,
       ckFecha: true,
-      codDoc: this.getTipoDoc(),
-      codEstab: dataEstab?.codEstab || null,
+      codDoc: this.getTipoDoc() ?? undefined,
+      codEstab: dataEstab?.codEstab ?? undefined,
       codEstado: dataEstado?.codigo || null,
       fechaInicio: this.dataSearch.fromDate,
       fechaFin: this.dataSearch.toDate,
@@ -251,21 +250,28 @@ export class SaleReportPageComponent implements OnInit {
     try {
       if (!this.isValidDataSearch()) return;
 
-      const reportParams = JSON.stringify({
-        hasParams: false,
-        codigo: SALE_CODE_REPORT.FG,
+      const reportOptions = ReportParamsBuilder.build({
+        codeReport: SALE_CODE_REPORT.FG,
+        data: this.getDataParams(),
         format: this.format,
       });
+      this.reportFacade.open(reportOptions).subscribe();
 
-      const parameters = {
-        reportParams,
-        dataParams: JSON.stringify(this.getDataParams()),
-        hasService: true,
-      };
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: this.format,
-      });
+      // const reportParams = JSON.stringify({
+      //   hasParams: false,
+      //   codigo: SALE_CODE_REPORT.FG,
+      //   format: this.format,
+      // });
+
+      // const parameters = {
+      //   reportParams,
+      //   dataParams: JSON.stringify(this.getDataParams()),
+      //   hasService: true,
+      // };
+      // this.sharedSvc.getReport({
+      //   data: parameters,
+      //   format: this.format,
+      // });
     } catch (error) {
       console.log(error);
     }

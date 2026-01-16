@@ -1,30 +1,29 @@
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 
-import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { TarifaSelectHtmlOnly } from '@inventory/data/models/tarifa.model';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
+import { TarifaSelectHtmlOnly } from '@inventory/data/models/tarifa.model';
+import { ProductSearchComponent } from '@inventory/ui/product/components/product-search/product-search.component';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { GroupedSubFamilia } from '@inventory/data/models/sub-category.model';
-import { SALE_CODE_REPORT } from '@sale/domain/enums/sale.enum';
-import { SharedService } from '@core/services/shared.service';
-import { getValidId, isValidField } from '@core/utils/utils';
 import { DOC_TYPE } from '@core/constants/global.constants';
 import { TipoDoc } from '@core/models/tipo-doc.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { getValidId, isValidField } from '@core/utils/utils';
+import { GroupedSubFamilia } from '@inventory/data/models/sub-category.model';
 
-import { DynamicCard, Button } from '@acontplus/ng-components';
+import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
+import { Button, DynamicCard } from '@acontplus/ng-components';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDivider } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
+import { formatDateToString } from '@core/utils/date.util';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { formatDateToString } from '@core/utils/date.util';
-import { MatCheckbox } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import { MatDivider } from '@angular/material/divider';
 
 @Component({
   selector: 'app-rentabilidad-page',
@@ -86,10 +85,10 @@ export class RentabilidadPageComponent implements OnInit {
   productSearchProps = {
     isSimpleMode: true,
   };
-  private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
   private _PRODUCT_SERVICE = inject(PRODUCT_SERVICE);
   private _tokenUseCase = inject(TokenUseCase);
+  private reportFacade = inject(ReportFacade);
 
   ngOnInit() {
     this._PRODUCT_SERVICE.getDataReport().subscribe((response) => {
@@ -240,9 +239,9 @@ export class RentabilidadPageComponent implements OnInit {
       tipo: this.getDataTipo(),
       format,
       checkBoxFecha: this.dataSearch.ckFecha,
-      codEstab: isValidField(this.dataSearch.codEstab),
+      codEstab: isValidField(this.dataSearch.codEstab) ?? undefined,
       idBodega: isValidField(this.dataSearch.idBodega),
-      codDoc: isValidField(this.getDataCodDoc()),
+      codDoc: isValidField(this.getDataCodDoc()) ?? undefined,
       idUsuario: (this.dataSearch.userChecked && isValidField(this.dataSearch.idUsuario)) || null,
       idArticulo:
         (this.dataSearch.productChecked && isValidField(this.dataSearch.idArticulo)) || null,
@@ -256,20 +255,14 @@ export class RentabilidadPageComponent implements OnInit {
       idTipoIva: getValidId(this.dataSearch.idTipoIva),
     };
 
-    const parameters = {
-      hasService: true,
-      reportParams: JSON.stringify({
-        codigo: this.dataSearch.checkboxRentabCustom ? SALE_CODE_REPORT.SRRC : SALE_CODE_REPORT.SRR,
-        format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(dataParms),
-    };
-
-    this.sharedSvc.getReport({
-      data: parameters,
-      format: format,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: this.dataSearch.checkboxRentabCustom
+        ? SALE_CODE_REPORT.SRRC
+        : SALE_CODE_REPORT.SRR,
+      data: dataParms,
+      format,
     });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   private getDataCodDoc() {
