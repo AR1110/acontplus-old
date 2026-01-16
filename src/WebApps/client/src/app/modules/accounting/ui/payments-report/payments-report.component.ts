@@ -1,28 +1,26 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 
-import { MatRadioModule } from '@angular/material/radio';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
-import { Button, DynamicCard } from '@acontplus/ng-components';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
-import { Subscription } from 'rxjs';
-import { GroupedEstab } from '@core/models/estab.model';
-import { Banco } from '@accounting/shared/models/banco.interface';
 import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
+import { Banco } from '@accounting/shared/models/banco.interface';
+import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { FormsModule } from '@angular/forms';
-import { formatDateToString } from '@core/utils/date.util';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
-import { ReportParameters, ReportParamsBuilder } from '@shared/utils/report-params.builder';
-import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
+import { GroupedEstab } from '@core/models/estab.model';
+import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
-import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { Subscription } from 'rxjs';
 
 enum ReportTypeEnum {
   Comprobantes = 'LC',
@@ -49,8 +47,8 @@ enum ReportTypeEnum {
 })
 export class PaymentsReportComponent implements OnInit, OnDestroy {
   private comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
-  private $generateReportUseCase = inject(GenerateReportUseCase);
   private readonly _tokenUseCase = inject(TokenUseCase);
+  private reportFacade = inject(ReportFacade);
   private subscription$!: Subscription;
 
   private format!: string;
@@ -108,12 +106,11 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
   }
 
   generateReport() {
-    let reportParameters = {} as ReportParameters | undefined;
     const codDoc = this.filterParams.documentCode === 'all' ? null : this.filterParams.documentCode;
     const additionalParams = {
       establecimientoId: this.filterParams.establecimientoId,
       userId: getValidId(this.filterParams.userId),
-      codDoc,
+      codDoc: codDoc ?? undefined,
       paymentMethodId: getValidId(this.filterParams.paymentMethodId),
       bankId: getValidId(this.filterParams.bankId),
       startDate: this.filterParams.startDate,
@@ -126,24 +123,24 @@ export class PaymentsReportComponent implements OnInit, OnDestroy {
 
     if (ReportTypeEnum.Comprobantes === this.filterParams.reportTypeCode) {
       additionalParams.tipo = 2;
-      reportParameters = ReportParamsBuilder.getReportParameters(
-        ACCOUNTING_CODE_REPORT.ACELC,
-        additionalParams,
-      );
+      const reportOptions = ReportParamsBuilder.build({
+        codeReport: ACCOUNTING_CODE_REPORT.ACELC,
+        data: additionalParams,
+        format: this.format as any,
+      });
+      this.reportFacade.open(reportOptions).subscribe();
+      return;
     }
     if (ReportTypeEnum.FormasPagoDetalle === this.filterParams.reportTypeCode) {
       additionalParams.tipo = 3;
-      reportParameters = ReportParamsBuilder.getReportParameters(
-        ACCOUNTING_CODE_REPORT.ACEDFP,
-        additionalParams,
-      );
+      const reportOptions = ReportParamsBuilder.build({
+        codeReport: ACCOUNTING_CODE_REPORT.ACEDFP,
+        data: additionalParams,
+        format: this.format as any,
+      });
+      this.reportFacade.open(reportOptions).subscribe();
+      return;
     }
-
-    console.log(reportParameters);
-
-    this.$generateReportUseCase.execute({
-      data: reportParameters,
-    });
   }
 
   ngOnDestroy() {

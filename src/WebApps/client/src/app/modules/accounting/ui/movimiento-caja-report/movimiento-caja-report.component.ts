@@ -1,22 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { SharedService } from '@core/services/shared.service';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { FormsModule } from '@angular/forms';
-import { REPORT_FORMAT } from '@core/constants/global.constants';
-import { isValidField } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { formatDateToString } from '@core/utils/date.util';
+import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DynamicCard } from '@acontplus/ng-components';
-import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { REPORT_FORMAT } from '@core/constants/global.constants';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { SharedService } from '@core/services/shared.service';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 @Component({
   selector: 'app-movimiento-caja-page-report',
@@ -41,6 +41,7 @@ export class MovimientoCajaReportComponent implements OnInit {
   isShowEmployee = true;
   sharedSvc = inject(SharedService);
   tS = inject(ToastrNotificationService);
+  private reportFacade = inject(ReportFacade);
 
   tiposDoc = [
     { codDoc: 'MC', descripcion: 'Movimiento Caja' },
@@ -55,7 +56,7 @@ export class MovimientoCajaReportComponent implements OnInit {
     toDate: formatDateToString(new Date()),
     companyCustomerId: 0,
     employeeId: 0,
-    format: '',
+    format: '' as any,
     checkboxCompanyCustomerEmployee: false,
     checkboxUser: false,
     userId: 0,
@@ -155,7 +156,7 @@ export class MovimientoCajaReportComponent implements OnInit {
 
     const dataParams = {
       tipo: 2,
-      codEstab: this.dataSearch.codEstab,
+      codEstab: this.dataSearch.codEstab ?? undefined,
       tipoDoc: this.dataSearch.codDoc,
       checkBoxCliente: companyCustomerId > 0 && this.dataSearch.checkboxCompanyCustomerEmployee,
       idCliente: companyCustomerId > 0 ? companyCustomerId : null,
@@ -167,20 +168,12 @@ export class MovimientoCajaReportComponent implements OnInit {
       fechaFin: this.dataSearch.toDate,
     };
 
-    const reportParams = JSON.stringify({
-      codEstab: this.dataSearch.codEstab,
-      codigo: ACCOUNTING_CODE_REPORT.RMC,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: ACCOUNTING_CODE_REPORT.RMC,
+      data: dataParams,
       format: this.dataSearch.format,
-      aditionalParams: [],
     });
-    const parameters = {
-      reportParams,
-      dataParams: JSON.stringify(dataParams),
-    };
 
-    this.sharedSvc.getReport({
-      data: parameters,
-      format: this.dataSearch.format,
-    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 }

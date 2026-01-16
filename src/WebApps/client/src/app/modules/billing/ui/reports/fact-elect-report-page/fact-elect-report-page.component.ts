@@ -1,26 +1,24 @@
+import { BILLING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
+import { Button, DynamicCard } from '@acontplus/ng-components';
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FormsModule } from '@angular/forms';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
-import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { isValidField } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { SharedService } from '@core/services/shared.service';
-import { formatDateToString } from '@core/utils/date.util';
-import { BILLING_CODE_REPORT } from '@billing/domain/enums/billing.enum.ts';
-import { DynamicCard } from '@acontplus/ng-components';
-import { Button } from '@acontplus/ng-components';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatOption, MatSelect } from '@angular/material/select';
+import { DocElectHttpRepository } from '@billing/data/documento-electronico/doc-elect-http.repository';
+import { FilterData } from '@billing/domain/models/documento-electronico.model';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
+import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { FilterData } from '@billing/domain/models/documento-electronico.model';
 
 @Component({
   selector: 'app-fact-elect-report-page',
@@ -44,7 +42,7 @@ import { FilterData } from '@billing/domain/models/documento-electronico.model';
 export class FactElectReportPageComponent implements OnInit, OnDestroy {
   private readonly _docElectSvc = inject(DocElectHttpRepository);
   private readonly _tS = inject(ToastrNotificationService);
-  private readonly _sharedSvc = inject(SharedService);
+  private reportFacade = inject(ReportFacade);
   private destroy$ = new Subject<void>();
 
   dataSearch = {
@@ -196,73 +194,59 @@ export class FactElectReportPageComponent implements OnInit, OnDestroy {
   }
 
   private getReport() {
-    try {
-      if (this.dataSearch.checkBoxCustomer && !isValidField(this.dataSearch.identificacion)) {
-        this._tS.show({
-          type: 'warning',
-          message: 'Seleccione el Cliente',
-        });
-        return;
-      }
-      if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
-        this._tS.show({
-          type: 'warning',
-          message: 'Seleccione el Usuario',
-        });
-        return;
-      }
-      const dataEstab = this.establecimientos.find(
-        (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
-      );
-      // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
-      const { codDoc } = this.tiposDoc().find(
-        (item) => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
-      );
-      const idCliente = this.dataSearch.checkBoxCustomer ? this.dataSearch.companyCustomerId : null;
-      const identificacion = this.dataSearch.checkBoxCustomer
-        ? isValidField(this.dataSearch.identificacion)
-        : null;
-      const idUsuario = this.dataSearch.checkBoxUser ? isValidField(this.dataSearch.userId) : null;
-      const ckRetencion =
-        this.dataSearch.codeRetencion === 'ALL' ? null : this.dataSearch.codeRetencion === 'CR';
-      const ckDevolucion =
-        this.dataSearch.codeDevolucion === 'ALL' ? null : this.dataSearch.codeDevolucion === 'CD';
-
-      const getDataReport = this.dataReporte[codDoc];
-      const dataParams = {
-        tipo: getDataReport.tipo,
-        ckFecha: true,
-        codDoc,
-        codEstab: dataEstab?.codEstab || null,
-        idCliente,
-        codEstado: (this.dataSearch.codEstado && this.dataSearch.codEstado) || null,
-        fechaInicio: this.dataSearch.fromDate,
-        fechaFin: this.dataSearch.toDate,
-        identificacion,
-        idUsuario,
-        ckRetencion,
-        ckDevolucion,
-      };
-      const reportParams = JSON.stringify({
-        hasParams: false,
-        codigo: getDataReport.codigo,
-        format: this.format,
-        aditionalParams: [],
+    if (this.dataSearch.checkBoxCustomer && !isValidField(this.dataSearch.identificacion)) {
+      this._tS.show({
+        type: 'warning',
+        message: 'Seleccione el Cliente',
       });
-
-      const parameters = {
-        hasIdUsuarioRol: true,
-        reportParams,
-        dataParams: JSON.stringify(dataParams),
-      };
-      this._sharedSvc.getReport({
-        data: parameters,
-        format: this.format,
-        isOldVersion: true,
-      });
-    } catch (error) {
-      console.log(error);
+      return;
     }
+    if (this.dataSearch.checkBoxUser && !isValidField(this.dataSearch.userId)) {
+      this._tS.show({
+        type: 'warning',
+        message: 'Seleccione el Usuario',
+      });
+      return;
+    }
+    const dataEstab = this.establecimientos.find(
+      (estab) => estab.idEstablecimiento === this.dataSearch.idEstablecimiento,
+    );
+    // let dataEstado = this.estadosDoc.find(estado => estado.idEstadoDocumento === this.dataSearch.idEstadoDocumento);
+    const { codDoc } = this.tiposDoc().find(
+      (item) => item.idTipoDocumento === this.dataSearch.idTipoDocumento,
+    );
+    const idCliente = this.dataSearch.checkBoxCustomer ? this.dataSearch.companyCustomerId : null;
+    const identificacion = this.dataSearch.checkBoxCustomer
+      ? isValidField(this.dataSearch.identificacion)
+      : null;
+    const idUsuario = this.dataSearch.checkBoxUser ? isValidField(this.dataSearch.userId) : null;
+    const ckRetencion =
+      this.dataSearch.codeRetencion === 'ALL' ? null : this.dataSearch.codeRetencion === 'CR';
+    const ckDevolucion =
+      this.dataSearch.codeDevolucion === 'ALL' ? null : this.dataSearch.codeDevolucion === 'CD';
+
+    const getDataReport = this.dataReporte[codDoc];
+    const dataParams = {
+      tipo: getDataReport.tipo,
+      ckFecha: true,
+      codDoc: codDoc ?? undefined,
+      codEstab: dataEstab?.codEstab ?? undefined,
+      idCliente,
+      codEstado: (this.dataSearch.codEstado && this.dataSearch.codEstado) || null,
+      fechaInicio: this.dataSearch.fromDate,
+      fechaFin: this.dataSearch.toDate,
+      identificacion,
+      idUsuario,
+      ckRetencion,
+      ckDevolucion,
+    };
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: getDataReport.codigo,
+      data: dataParams,
+      format: this.format,
+    });
+
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   /**

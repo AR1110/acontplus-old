@@ -1,17 +1,16 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { SubCategorySelectHtmlOnly } from '@accounting/data/models/subcategory';
-import { FormsModule } from '@angular/forms';
-import { formatDateToString } from '@core/utils/date.util';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { REPORT_FORMAT, TIPO_TRANSACCION } from '@core/constants/global.constants';
-import { SharedService } from '@core/services/shared.service';
-import { getValidId } from '@core/utils/utils';
-import { ACCOUNTING_CODE_REPORT } from '@accounting/shared/enums/accounting.constants';
 import { ResumenContableUseCase } from '@accounting/resumen-contable/application/resumen-contable.use-case';
+import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DynamicCard } from '@acontplus/ng-components';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { REPORT_FORMAT, TIPO_TRANSACCION } from '@core/constants/global.constants';
+import { formatDateToString } from '@core/utils/date.util';
+import { getValidId } from '@core/utils/utils';
 
 @Component({
   selector: 'app-resumen-contable',
@@ -29,7 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 })
 export class ResumenContableComponent implements OnInit {
   private _resumenContableCaseUse = inject(ResumenContableUseCase);
-  private sharedSvc = inject(SharedService);
+  private reportFacade = inject(ReportFacade);
   subcategories = signal<SubCategorySelectHtmlOnly[]>([]);
   transactionTypes = signal<any[]>([]);
 
@@ -91,22 +90,11 @@ export class ResumenContableComponent implements OnInit {
       toDate: this.dataSearch.toDate,
     };
 
-    const reportParams = JSON.stringify({
-      hasParams: false,
-      codigo: ACCOUNTING_CODE_REPORT.RAAM,
-      format: this.format,
-      aditionalParams: [],
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: ACCOUNTING_CODE_REPORT.RAAM,
+      data: dataParams,
+      format: this.format as any,
     });
-
-    const parameters = {
-      hasIdUsuarioRol: true,
-      reportParams,
-      dataParams: JSON.stringify(dataParams),
-    };
-
-    this.sharedSvc.getReport({
-      data: parameters,
-      format: this.format,
-    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 }

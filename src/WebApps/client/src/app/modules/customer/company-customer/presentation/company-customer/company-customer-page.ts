@@ -1,26 +1,24 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { CompanyCustomerAddEditDirective } from '@company-customer/presentation/directives/company-customer-add-edit.directive';
 
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { isValidField } from '@core/utils/utils';
 
-import { Pagination, Button, DataGrid, DataGridColumn } from '@acontplus/ng-components';
-import Swal from 'sweetalert2';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { ListCompanyCustomerUseCase } from '@company-customer/application/list-company-customer.use-case';
-import { ListCompanyCustomer } from '@company-customer/domain/entities/company-customer.entity';
-import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
-import { CUSTOMER_CODE_REPORT } from '@customer/shared/enums/customer.enum';
+import { CUSTOMER_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
+import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { UpdateStateCompanyCustomerUseCase } from '@company-customer/application/update-state-company-customer.use-case';
+import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { ListCompanyCustomerUseCase } from '@company-customer/application/list-company-customer.use-case';
+import { UpdateStateCompanyCustomerUseCase } from '@company-customer/application/update-state-company-customer.use-case';
+import { ListCompanyCustomer } from '@company-customer/domain/entities/company-customer.entity';
 import { REPORT_FORMAT } from '@core/constants/global.constants';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-company-customer-page',
@@ -42,8 +40,8 @@ import { REPORT_FORMAT } from '@core/constants/global.constants';
 })
 export class CompanyCustomerPage implements OnInit {
   private $listUseCase = inject(ListCompanyCustomerUseCase);
-  private generateReport = inject(GenerateReportUseCase);
   private $updateState = inject(UpdateStateCompanyCustomerUseCase);
+  private reportFacade = inject(ReportFacade);
 
   dataSearch = {
     textSearch: null as string | null,
@@ -127,16 +125,13 @@ export class CompanyCustomerPage implements OnInit {
       tipo: 4,
       format,
     };
-
-    const reportParameters = ReportParamsBuilder.getReportParameters(
-      CUSTOMER_CODE_REPORT.RCL,
-      additionalParams,
-    );
-
-    this.generateReport.execute({
-      data: reportParameters,
-      format,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: CUSTOMER_CODE_REPORT.RCL,
+      data: additionalParams,
+      format: format as any,
     });
+
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   exportExcel() {
