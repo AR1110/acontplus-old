@@ -8,8 +8,6 @@ public class AccessAuthorizationConfiguration : BaseEntityTypeConfiguration<Acce
     {
         base.Configure(builder);
 
-        builder.ToTable("AccessAuthorization", "Seguridad");
-
         // Configure properties
         builder.Property(aa => aa.Uuid)
             .IsRequired();

@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using System.Reflection;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Identity.Api.Persistence;
 
@@ -14,6 +14,16 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<AccessAuthorization> AccessAuthorizations { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
+    public DbSet<Actions> Actions { get; set; }
+    public DbSet<Role> CustomRoles { get; set; }
+    public DbSet<LicenseAccesses> LicenseAccesses { get; set; }
+    public DbSet<LicenseAccessDetails> LicenseAccessDetails { get; set; }
+    public DbSet<PolicyType> PolicyTypes { get; set; }
+    public DbSet<PolicyConfigurationAudit> PolicyConfigurationAudits { get; set; }
+    public DbSet<PolicyEnforcementLog> PolicyEnforcementLogs { get; set; }
+    public DbSet<FeaturePolicyAccess> FeaturePolicyAccesses { get; set; }
+    public DbSet<PricingPlanAccess> PricingPlanAccesses { get; set; }
+    public DbSet<PricingPlanAccessDetail> PricingPlanAccessDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

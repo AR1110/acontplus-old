@@ -8,8 +8,6 @@ public class UserProfileConfiguration : BaseEntityTypeConfiguration<UserProfile>
     {
         base.Configure(builder);
 
-        builder.ToTable("UserProfile", "Auth");
-
         #region Core Profile Properties
         builder.Property(up => up.PreferredLanguage)
             .HasMaxLength(50)

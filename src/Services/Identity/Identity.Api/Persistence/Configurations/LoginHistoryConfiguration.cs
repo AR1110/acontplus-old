@@ -8,8 +8,6 @@ public class LoginHistoryConfiguration : BaseEntityTypeConfiguration<LoginHistor
     {
         base.Configure(builder);
 
-        builder.ToTable("LoginHistory", "Seguridad");
-
         // Configure properties
         builder.Property(lh => lh.UserRoleId)
             .IsRequired();
@@ -51,5 +49,36 @@ public class LoginHistoryConfiguration : BaseEntityTypeConfiguration<LoginHistor
 
         builder.HasIndex(lh => new { lh.IpAddress, lh.CreatedAt })
             .HasDatabaseName("IX_LoginHistory_Ip_Created");
+    }
+}
+
+public class LoginHistoryArchiveConfiguration : BaseEntityTypeConfiguration<LoginHistoryArchive>
+{
+    public override void Configure(EntityTypeBuilder<LoginHistoryArchive> builder)
+    {
+        base.Configure(builder);
+
+        // Configure properties
+        builder.Property(lh => lh.UserRoleId)
+            .IsRequired();
+
+        builder.Property(lh => lh.UserAgent)
+            .HasMaxLength(2000)
+            .IsUnicode(false);
+
+        builder.Property(lh => lh.IpAddress)
+            .HasMaxLength(15)
+            .IsUnicode(false);
+
+        builder.Property(lh => lh.Token)
+            .HasMaxLength(4000)
+            .IsUnicode(false);
+
+        // Indexes for performance and security monitoring
+        builder.HasIndex(lh => lh.UserRoleId)
+            .HasDatabaseName("IX_LoginHistoryArchive_UserRoleId");
+
+        builder.HasIndex(lh => lh.CreatedAt)
+            .HasDatabaseName("IX_LoginHistoryArchive_CreatedAt");
     }
 }

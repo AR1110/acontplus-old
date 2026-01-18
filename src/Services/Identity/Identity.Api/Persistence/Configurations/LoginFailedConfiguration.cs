@@ -8,8 +8,6 @@ public class LoginFailedConfiguration : BaseEntityTypeConfiguration<LoginFailed>
     {
         base.Configure(builder);
 
-        builder.ToTable("LoginFailed", "Seguridad");
-
         // Configure properties
         builder.Property(lf => lf.Username)
             .HasMaxLength(50)

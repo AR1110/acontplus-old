@@ -8,8 +8,6 @@ public class ForgotPasswordConfiguration : BaseEntityTypeConfiguration<ForgotPas
     {
         base.Configure(builder);
 
-        builder.ToTable("ForgotPassword", "Seguridad");
-
         // Configure properties
         builder.Property(fp => fp.Email)
             .IsRequired()
