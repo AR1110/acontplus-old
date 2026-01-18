@@ -2,7 +2,6 @@ namespace Configuration.Application.Services;
 
 public class MenuActionService : IMenuActionService
 {
-    private readonly IRepository<Actions> _actionRepository;
     private readonly IAdoRepository _adoRepository;
     private readonly ILogger<MenuActionService> _logger;
     private readonly IRepository<MenuAction> _menuActionRepository;
@@ -16,7 +15,6 @@ public class MenuActionService : IMenuActionService
         _unitOfWork = unitOfWork;
         _menuActionRepository = unitOfWork.GetRepository<MenuAction>();
         _menuRepository = unitOfWork.GetRepository<Menu>();
-        _actionRepository = unitOfWork.GetRepository<Actions>();
         _adoRepository = unitOfWork.AdoRepository;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -35,8 +33,9 @@ public class MenuActionService : IMenuActionService
             if (menuExists == null)
                 return Result<MenuAction, DomainError>.Failure(DomainError.Validation("MENU_NOT_FOUND",
                     $"Menú con ID {menuAction.MenuId} no encontrado"));
-            var actionExists = await _actionRepository.GetByIdAsync(menuAction.ActionId, cancellationToken);
-            if (actionExists == null)
+            // Validate ActionId exists in Identity.Actions via ADO
+            var actionExists = await ActionExistsAsync(menuAction.ActionId, cancellationToken);
+            if (!actionExists)
                 return Result<MenuAction, DomainError>.Failure(DomainError.Validation("ACTION_NOT_FOUND",
                     $"Acción con ID {menuAction.ActionId} no encontrada"));
             var existsResponse = await ExistsAsync(menuAction.MenuId, menuAction.ActionId,
@@ -173,8 +172,9 @@ public class MenuActionService : IMenuActionService
             if (menuExists == null)
                 return Result<MenuAction, DomainError>.Failure(DomainError.Validation("MENU_NOT_FOUND",
                     $"Menú con ID {menuActionFound.MenuId} no encontrado"));
-            var actionExists = await _actionRepository.GetByIdAsync(menuActionFound.ActionId, cancellationToken);
-            if (actionExists == null)
+            // Validate ActionId exists in Identity.Actions via ADO
+            var actionExists = await ActionExistsAsync(menuActionFound.ActionId, cancellationToken);
+            if (!actionExists)
                 return Result<MenuAction, DomainError>.Failure(DomainError.Validation("ACTION_NOT_FOUND",
                     $"Acción con ID {menuActionFound.ActionId} no encontrada"));
             var existsResponse = await ExistsAsync(menuActionFound.MenuId, menuActionFound.ActionId, id, cancellationToken);
@@ -213,6 +213,25 @@ public class MenuActionService : IMenuActionService
         {
             _logger.LogError(ex, "Error checking if menu action exists");
             return Result<bool, DomainError>.Failure(DomainError.Internal("MENU_ACTION_EXISTS_ERROR", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Validates that an Action exists in Identity service via ADO query
+    /// </summary>
+    private async Task<bool> ActionExistsAsync(int actionId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var query = "SELECT COUNT(1) FROM Seguridad.Actions WHERE Id = @ActionId AND IsDeleted = 0";
+            var parameters = new Dictionary<string, object> { { "@ActionId", actionId } };
+            var count = await _adoRepository.ExecuteScalarAsync<int>(query, parameters, cancellationToken: cancellationToken);
+            return count > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking if action exists with ID {ActionId}", actionId);
+            return false;
         }
     }
 }

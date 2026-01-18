@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("AccessAuthorization", Schema = "Seguridad")]
+[Table("AccessAuthorization", Schema = "Identity")]
 public class AccessAuthorization : BaseEntity
 {
     public int SenderId { get; set; }

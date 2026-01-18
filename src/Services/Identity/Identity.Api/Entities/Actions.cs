@@ -1,6 +1,9 @@
 namespace Identity.Api.Entities;
 
-[Table("Actions", Schema = "Seguridad")]
+/// <summary>
+///     Schema "Seguridad" is correct for Identity service (security domain).
+/// </summary>
+[Table("Actions", Schema = "Identity")]
 public class Actions : BaseEntity
 {
     [MaxLength(5)] public required string Code { get; set; }

@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("Role", Schema = "Seguridad")]
+[Table("Role", Schema = "Identity")]
 public class Role : BaseEntity
 {
     [MaxLength(50)]

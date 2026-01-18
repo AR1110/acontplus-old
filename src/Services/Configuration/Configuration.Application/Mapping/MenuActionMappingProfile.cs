@@ -15,8 +15,7 @@ public static class MenuActionMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Menu)
-            .Ignore(dest => dest.Action);
+            .Ignore(dest => dest.Menu);
 
         // Update mapping: MenuActionUpdate -> MenuAction
         config.NewConfig<MenuActionUpdate, MenuAction>()
@@ -27,12 +26,12 @@ public static class MenuActionMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Menu)
-            .Ignore(dest => dest.Action);
+            .Ignore(dest => dest.Menu);
 
         // Response mappings
+        // Note: ActionName must be populated separately - Action is in Identity service
         config.NewConfig<MenuAction, MenuActionItem>()
             .Map(dest => dest.MenuName, src => src.Menu != null ? src.Menu.Name : string.Empty)
-            .Map(dest => dest.ActionName, src => src.Action != null ? src.Action.Name : string.Empty);
+            .Map(dest => dest.ActionName, src => string.Empty);
     }
 }

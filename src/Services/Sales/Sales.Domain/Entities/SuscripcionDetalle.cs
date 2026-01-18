@@ -4,7 +4,7 @@ namespace Sales.Domain.Entities;
 public class SuscripcionDetalle : BaseEntity
 {
     /// <summary>
-    /// FK to Config.LicenciaDetalle - navigation removed for cross-service boundary
+    /// FK to Config.LicenseDetails - navigation removed for cross-service boundary
     /// </summary>
     public int LicenciaDetalleId { get; set; }
 

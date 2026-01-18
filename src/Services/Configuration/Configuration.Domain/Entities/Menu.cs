@@ -3,7 +3,7 @@ namespace Configuration.Domain.Entities;
 [Table("Menu", Schema = "Config")]
 public class Menu : BaseEntity
 {
-    public required Aplicacion Aplicacion { get; set; }
+    public required Applications Application { get; set; }
     public int AplicacionId { get; set; }
 
     [MaxLength(5)] public required string Code { get; set; }

@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("PricingPlanAccess", Schema = "Seguridad")]
+[Table("PricingPlanAccess", Schema = "Identity")]
 public class PricingPlanAccess : BaseEntity
 {
     /// <summary>

@@ -6,8 +6,11 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<PrinterDocument> PrinterDocuments { get; set; }
     public DbSet<PrinterType> PrinterTypes { get; set; }
     public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
-    public DbSet<Actions> Actions { get; set; }
+    // Actions moved to Identity service
     // Release moved to Common service
+
+    // Read-only views for cross-service queries
+    public DbSet<MenuActionView> MenuActionViews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

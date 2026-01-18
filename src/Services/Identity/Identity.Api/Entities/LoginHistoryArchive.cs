@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("LoginHistoryArchive", Schema = "Seguridad")]
+[Table("LoginHistoryArchive", Schema = "Identity")]
 public class LoginHistoryArchive : BaseEntity
 {
     public int UserRoleId { get; set; }

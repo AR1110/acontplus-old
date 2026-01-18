@@ -3,7 +3,7 @@ namespace Identity.Api.Entities;
 /// <summary>
 ///     Tracks policy configuration changes for audit purposes
 /// </summary>
-[Table("PolicyConfigurationAudit", Schema = "Audit")]
+[Table("PolicyConfigurationAudit", Schema = "Identity")]
 public class PolicyConfigurationAudit : BaseEntity
 {
     /// <summary>

@@ -6,6 +6,8 @@ public class MenuAction : BaseEntity
     public int MenuId { get; set; }
     public required Menu Menu { get; set; }
 
+    /// <summary>
+    /// FK to Identity.Actions - navigation removed for cross-service boundary
+    /// </summary>
     public int ActionId { get; set; }
-    public Actions? Action { get; set; }
 }

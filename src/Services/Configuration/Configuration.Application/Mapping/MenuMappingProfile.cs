@@ -14,7 +14,7 @@ public static class MenuMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Aplicacion)
+            .Ignore(dest => dest.Application)
             .Ignore(dest => dest.Parent)
             .Ignore(dest => dest.Children)
             .Ignore(dest => dest.MenuActions);
@@ -28,14 +28,14 @@ public static class MenuMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Aplicacion)
+            .Ignore(dest => dest.Application)
             .Ignore(dest => dest.Parent)
             .Ignore(dest => dest.Children)
             .Ignore(dest => dest.MenuActions);
 
         // Response mappings
         config.NewConfig<Menu, MenuItem>()
-            .Map(dest => dest.AplicacionName, src => src.Aplicacion != null ? src.Aplicacion.Name : string.Empty)
+            .Map(dest => dest.AplicacionName, src => src.Application != null ? src.Application.Name : string.Empty)
             .Map(dest => dest.ParentName, src => src.Parent != null ? src.Parent.Name : null)
             .Map(dest => dest.Children, src => src.Children);
     }

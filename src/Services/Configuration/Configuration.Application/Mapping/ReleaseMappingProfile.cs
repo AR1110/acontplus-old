@@ -4,7 +4,7 @@ public static class ReleaseMappingProfile
 {
     public static void Register(TypeAdapterConfig config)
     {
-        // Note: Aplicacion navigation removed - AplicacionName must be fetched separately via AplicacionId
+        // Note: Applications navigation removed - AplicacionName must be fetched separately via AplicacionId
         config.NewConfig<Release, ReleaseItem>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.AplicacionId, src => src.AplicacionId)

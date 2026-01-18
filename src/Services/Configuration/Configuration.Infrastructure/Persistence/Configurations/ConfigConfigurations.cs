@@ -2,20 +2,20 @@ using Acontplus.Notifications.Entities;
 
 namespace Configuration.Infrastructure.Persistence.Configurations;
 
-public class AplicacionConfiguration : BaseEntityTypeConfiguration<Aplicacion>
+public class ApplicationsConfiguration : BaseEntityTypeConfiguration<Applications>
 {
-    public override void Configure(EntityTypeBuilder<Aplicacion> builder)
+    public override void Configure(EntityTypeBuilder<Applications> builder)
     {
         base.Configure(builder);
 
         builder
             .HasIndex(x => x.Code)
-            .HasDatabaseName("UX_Aplicacion_Code")
+            .HasDatabaseName("UX_Applications_Code")
             .IsUnique();
 
         builder
             .HasMany(x => x.Menus)
-            .WithOne(x => x.Aplicacion)
+            .WithOne(x => x.Application)
             .HasForeignKey(x => x.AplicacionId);
 
         builder.Ignore(x => x.CreatedBy);
@@ -74,20 +74,20 @@ public class Ec2InstanceConfiguration : BaseEntityTypeConfiguration<Ec2Instance>
     }
 }
 
-public class LicenciaConfiguration : BaseEntityTypeConfiguration<Licencia>
+public class LicensesConfiguration : BaseEntityTypeConfiguration<Licenses>
 {
-    public override void Configure(EntityTypeBuilder<Licencia> builder)
+    public override void Configure(EntityTypeBuilder<Licenses> builder)
     {
         base.Configure(builder);
 
         builder
             .HasIndex(x => x.Code)
-            .HasDatabaseName("UX_Licencia_Code")
+            .HasDatabaseName("UX_Licenses_Code")
             .IsUnique();
 
         builder
-            .HasMany(x => x.LicenciaDetalles)
-            .WithOne(x => x.Licencia)
+            .HasMany(x => x.LicenseDetails)
+            .WithOne(x => x.License)
             .HasForeignKey(x => x.LicenciaId)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -97,9 +97,9 @@ public class LicenciaConfiguration : BaseEntityTypeConfiguration<Licencia>
     }
 }
 
-public class LicenciaDetalleConfiguration : BaseEntityTypeConfiguration<LicenciaDetalle>
+public class LicenseDetailsConfiguration : BaseEntityTypeConfiguration<LicenseDetails>
 {
-    public override void Configure(EntityTypeBuilder<LicenciaDetalle> builder)
+    public override void Configure(EntityTypeBuilder<LicenseDetails> builder)
     {
         base.Configure(builder);
 
@@ -155,10 +155,7 @@ public class MenuActionConfiguration : BaseEntityTypeConfiguration<MenuAction>
     {
         base.Configure(builder);
 
-        builder
-            .HasOne(x => x.Action)
-            .WithMany()
-            .HasForeignKey(x => x.ActionId);
+        // Action is in Identity service - no navigation, just FK
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
@@ -288,20 +285,20 @@ public class ScheduleCompanyConfiguration : BaseEntityTypeConfiguration<Schedule
 //    }
 //}
 
-public class SistemaConfiguration : BaseEntityTypeConfiguration<Sistema>
+public class SystemsConfiguration : BaseEntityTypeConfiguration<Systems>
 {
-    public override void Configure(EntityTypeBuilder<Sistema> builder)
+    public override void Configure(EntityTypeBuilder<Systems> builder)
     {
         base.Configure(builder);
 
         builder
             .HasIndex(x => x.Code)
-            .HasDatabaseName("UX_Sistema_Code")
+            .HasDatabaseName("UX_Systems_Code")
             .IsUnique();
 
         builder
-            .HasMany(x => x.Aplicaciones)
-            .WithOne(m => m.Sistema)
+            .HasMany(x => x.Applications)
+            .WithOne(m => m.System)
             .HasForeignKey(m => m.SistemaId);
 
         builder.Ignore(x => x.CreatedBy);
@@ -310,22 +307,7 @@ public class SistemaConfiguration : BaseEntityTypeConfiguration<Sistema>
     }
 }
 
-public class ActionsConfiguration : BaseEntityTypeConfiguration<Actions>
-{
-    public override void Configure(EntityTypeBuilder<Actions> builder)
-    {
-        base.Configure(builder);
-
-        builder
-            .HasIndex(x => x.Code)
-            .HasDatabaseName("UX_Actions_Code")
-            .IsUnique();
-
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
+// Actions entity moved to Identity service
 
 // Release entity moved to Common service
 
@@ -384,5 +366,18 @@ public class WhatsAppUsageConfiguration : BaseEntityTypeConfiguration<WhatsAppUs
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
         builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+/// <summary>
+/// Configuration for read-only MenuActionView (database view).
+/// Used for cross-service EF Core queries joining MenuAction with Identity.Actions.
+/// </summary>
+public class MenuActionViewConfiguration : IEntityTypeConfiguration<MenuActionView>
+{
+    public void Configure(EntityTypeBuilder<MenuActionView> builder)
+    {
+        builder.ToView("vw_MenuAction", "Config");
+        builder.HasNoKey(); // Views are keyless for read-only access
     }
 }

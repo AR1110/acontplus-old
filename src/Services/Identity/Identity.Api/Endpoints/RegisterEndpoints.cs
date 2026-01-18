@@ -1,6 +1,6 @@
 using Identity.Api.Endpoints.ActionEndpoints;
-using Identity.Api.Endpoints.LicenciaAccesoDetalleEndpoints;
-using Identity.Api.Endpoints.LicenciaAccesoEndpoints;
+using Identity.Api.Endpoints.LicenseAccessDetailEndpoints;
+using Identity.Api.Endpoints.LicenseAccessEndpoints;
 using Identity.Api.Endpoints.PolicyTypeEndpoints;
 using Identity.Api.Endpoints.RoleEndpoints;
 
@@ -13,8 +13,8 @@ public static class RegisterEndpoints
         app.MapAccountEndpoints();
         app.MapLookupEndpoints();
         app.MapUserProfileEndpoints();
-        app.MapLicenciaAccesoEndpoints();
-        app.MapLicenciaAccesoDetalleEndpoints();
+        app.MapLicenseAccessEndpoints();
+        app.MapLicenseAccessDetailEndpoints();
         app.MapRoleEndpoints();
         app.MapPolicyTypeEndpoints();
         app.MapActionEndpoints();

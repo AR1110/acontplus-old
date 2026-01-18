@@ -37,15 +37,15 @@ public class PolicyTypeConfiguration : BaseEntityTypeConfiguration<PolicyType>
     }
 }
 
-public class LicenciaAccesoConfiguration : BaseEntityTypeConfiguration<LicenciaAcceso>
+public class LicenseAccessesConfiguration : BaseEntityTypeConfiguration<LicenseAccesses>
 {
-    public override void Configure(EntityTypeBuilder<LicenciaAcceso> builder)
+    public override void Configure(EntityTypeBuilder<LicenseAccesses> builder)
     {
         base.Configure(builder);
 
         builder
-            .HasMany(x => x.LicenciaAccesoDetalles)
-            .WithOne(m => m.LicenciaAcceso)
+            .HasMany(x => x.LicenseAccessDetails)
+            .WithOne(m => m.LicenseAccess)
             .HasForeignKey(m => m.LicenciaAccesoId)
             .IsRequired();
 
@@ -55,9 +55,9 @@ public class LicenciaAccesoConfiguration : BaseEntityTypeConfiguration<LicenciaA
     }
 }
 
-public class LicenciaAccesoDetalleConfiguration : BaseEntityTypeConfiguration<LicenciaAccesoDetalle>
+public class LicenseAccessDetailsConfiguration : BaseEntityTypeConfiguration<LicenseAccessDetails>
 {
-    public override void Configure(EntityTypeBuilder<LicenciaAccesoDetalle> builder)
+    public override void Configure(EntityTypeBuilder<LicenseAccessDetails> builder)
     {
         base.Configure(builder);
 

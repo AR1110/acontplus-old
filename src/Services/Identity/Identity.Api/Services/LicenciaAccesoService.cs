@@ -4,7 +4,7 @@ namespace Identity.Api.Services;
 
 public class LicenciaAccesoService(IUnitOfWork unitOfWork, IMapper mapper) : ILicenciaAccesoService
 {
-    private readonly IRepository<LicenciaAcceso> _licenciaAccesoRepository = unitOfWork.GetRepository<LicenciaAcceso>();
+    private readonly IRepository<LicenseAccesses> _licenciaAccesoRepository = unitOfWork.GetRepository<LicenseAccesses>();
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
@@ -18,14 +18,14 @@ public class LicenciaAccesoService(IUnitOfWork unitOfWork, IMapper mapper) : ILi
                     x.LicenciaId == request.LicenciaId && x.RoleId == request.RoleId))
                 return Result<LicenciaAccesoItem, DomainError>.Failure(DomainError.Validation("DuplicateLicenseRole", "Esta licencia y rol ya se encuentran registrados"));
 
-            var licenciaAcceso = _mapper.Map<LicenciaAccesoCreate, LicenciaAcceso>(request);
+            var licenciaAcceso = _mapper.Map<LicenciaAccesoCreate, LicenseAccesses>(request);
             licenciaAcceso.CreatedByUserId = createdByUserId;
 
             await _licenciaAccesoRepository.AddAsync(licenciaAcceso);
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            var response = _mapper.Map<LicenciaAcceso, LicenciaAccesoItem>(licenciaAcceso);
+            var response = _mapper.Map<LicenseAccesses, LicenciaAccesoItem>(licenciaAcceso);
             return Result<LicenciaAccesoItem, DomainError>.Success(response);
         }
         catch (Exception ex)
@@ -51,7 +51,7 @@ public class LicenciaAccesoService(IUnitOfWork unitOfWork, IMapper mapper) : ILi
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
 
-            var response = _mapper.Map<LicenciaAcceso, LicenciaAccesoItem>(accessLicense);
+            var response = _mapper.Map<LicenseAccesses, LicenciaAccesoItem>(accessLicense);
             return Result<LicenciaAccesoItem, DomainError>.Success(response);
         }
         catch (Exception ex)

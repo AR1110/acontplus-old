@@ -2,36 +2,36 @@ namespace Identity.Api.Services;
 
 public class LicenciaAccesoDetalleService(IUnitOfWork unitOfWork, MapsterMapper.IMapper mapper) : ILicenciaAccesoDetalleService
 {
-    private readonly IRepository<LicenciaAccesoDetalle> _licenciaAccesoDetalleRepository = unitOfWork.GetRepository<LicenciaAccesoDetalle>();
+    private readonly IRepository<LicenseAccessDetails> _licenciaAccesoDetalleRepository = unitOfWork.GetRepository<LicenseAccessDetails>();
     private readonly IAdoRepository _adoRepository = unitOfWork.AdoRepository;
     private readonly MapsterMapper.IMapper _mapper = mapper;
     private const string ModuleName = "Seguridad.LicenciaAccesoDetalle";
 
-    public async Task<Result<LicenciaAccesoDetalle, DomainError>> AddAsync(LicenciaAccesoDetalleCreate request)
+    public async Task<Result<LicenseAccessDetails, DomainError>> AddAsync(LicenciaAccesoDetalleCreate request)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
-            var licenciaAccesoDetalle = _mapper.Map<LicenciaAccesoDetalleCreate, LicenciaAccesoDetalle>(request);
+            var licenciaAccesoDetalle = _mapper.Map<LicenciaAccesoDetalleCreate, LicenseAccessDetails>(request);
             if (licenciaAccesoDetalle == null)
-                return Result<LicenciaAccesoDetalle, DomainError>.Failure(DomainError.Validation("INVALID_DATA", "No se recibieron datos"));
+                return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Validation("INVALID_DATA", "No se recibieron datos"));
 
             //Validate if the record already exists
             var existingItems = await _licenciaAccesoDetalleRepository.GetAllAsync();
             if (existingItems.Any(x =>
                     x.LicenciaAccesoId == licenciaAccesoDetalle.LicenciaAccesoId &&
                     x.MenuId == licenciaAccesoDetalle.MenuId))
-                return Result<LicenciaAccesoDetalle, DomainError>.Failure(DomainError.Validation("DUPLICATE_RECORD", "El registro ya existe"));
+                return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Validation("DUPLICATE_RECORD", "El registro ya existe"));
 
             await _licenciaAccesoDetalleRepository.AddAsync(licenciaAccesoDetalle);
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
-            return Result<LicenciaAccesoDetalle, DomainError>.Success(licenciaAccesoDetalle);
+            return Result<LicenseAccessDetails, DomainError>.Success(licenciaAccesoDetalle);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            return Result<LicenciaAccesoDetalle, DomainError>.Failure(DomainError.Internal("LICENCIA_ACCESO_DETALLE_ADD_ERROR", ex.Message));
+            return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Internal("LICENCIA_ACCESO_DETALLE_ADD_ERROR", ex.Message));
         }
     }
 
@@ -71,16 +71,16 @@ public class LicenciaAccesoDetalleService(IUnitOfWork unitOfWork, MapsterMapper.
         }
     }
 
-    public async Task<Result<LicenciaAccesoDetalle, DomainError>> UpdateAsync(int id, LicenciaAccesoDetalleUpdate request)
+    public async Task<Result<LicenseAccessDetails, DomainError>> UpdateAsync(int id, LicenciaAccesoDetalleUpdate request)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
             var detalleFound = await _licenciaAccesoDetalleRepository.GetByIdAsync(id);
             if (detalleFound == null)
-                return Result<LicenciaAccesoDetalle, DomainError>.Failure(DomainError.NotFound("LICENCIA_ACCESO_DETALLE_NOT_FOUND", "Registro no encontrado"));
+                return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.NotFound("LICENCIA_ACCESO_DETALLE_NOT_FOUND", "Registro no encontrado"));
 
-            var licenciaAccesoDetalle = _mapper.Map<LicenciaAccesoDetalleUpdate, LicenciaAccesoDetalle>(request);
+            var licenciaAccesoDetalle = _mapper.Map<LicenciaAccesoDetalleUpdate, LicenseAccessDetails>(request);
 
             detalleFound.MenuId = licenciaAccesoDetalle.MenuId;
             detalleFound.Actions = licenciaAccesoDetalle.Actions;
@@ -90,12 +90,12 @@ public class LicenciaAccesoDetalleService(IUnitOfWork unitOfWork, MapsterMapper.
             await _licenciaAccesoDetalleRepository.UpdateAsync(detalleFound);
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
-            return Result<LicenciaAccesoDetalle, DomainError>.Success(detalleFound);
+            return Result<LicenseAccessDetails, DomainError>.Success(detalleFound);
         }
         catch (Exception ex)
         {
             await transaction.RollbackAsync();
-            return Result<LicenciaAccesoDetalle, DomainError>.Failure(DomainError.Internal("LICENCIA_ACCESO_DETALLE_UPDATE_ERROR", ex.Message));
+            return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Internal("LICENCIA_ACCESO_DETALLE_UPDATE_ERROR", ex.Message));
         }
     }
 }

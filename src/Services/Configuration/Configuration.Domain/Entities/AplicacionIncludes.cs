@@ -2,7 +2,7 @@ namespace Configuration.Domain.Entities;
 
 public static class AplicacionIncludes
 {
-    public static readonly string[] Sistema = { nameof(Aplicacion.Sistema) };
-    public static readonly string[] Menus = { nameof(Aplicacion.Menus) };
-    public static readonly string[] SistemaAndMenus = { nameof(Aplicacion.Sistema), nameof(Aplicacion.Menus) };
+    public static readonly string[] System = { nameof(Applications.System) };
+    public static readonly string[] Menus = { nameof(Applications.Menus) };
+    public static readonly string[] SystemAndMenus = { nameof(Applications.System), nameof(Applications.Menus) };
 }

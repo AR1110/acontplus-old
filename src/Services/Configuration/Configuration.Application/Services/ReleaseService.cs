@@ -2,7 +2,7 @@ namespace Configuration.Application.Services;
 
 public class ReleaseService : IReleaseService
 {
-    private readonly IRepository<Aplicacion> _aplicacionRepository;
+    private readonly IRepository<Applications> _aplicacionRepository;
     private readonly ILogger<ReleaseService> _logger;
     private readonly IRepository<Release> _releaseRepository;
     private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +18,7 @@ public class ReleaseService : IReleaseService
 
         _unitOfWork = unitOfWork;
         _releaseRepository = _unitOfWork.GetRepository<Release>();
-        _aplicacionRepository = _unitOfWork.GetRepository<Aplicacion>();
+        _aplicacionRepository = _unitOfWork.GetRepository<Applications>();
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
@@ -69,9 +69,9 @@ public class ReleaseService : IReleaseService
 
         try
         {
-            // Validate Aplicacion exists
-            var aplicacion = await _aplicacionRepository.GetByIdAsync(request.AplicacionId, cancellationToken);
-            if (aplicacion == null)
+            // Validate Applications exists
+            var Applications = await _aplicacionRepository.GetByIdAsync(request.AplicacionId, cancellationToken);
+            if (Applications == null)
                 return Result<ReleaseCreatedResponse, DomainError>.Failure(
                     DomainError.Validation("APLICACION_NOT_FOUND", "La aplicación no existe"));
 
@@ -105,7 +105,7 @@ public class ReleaseService : IReleaseService
 
             var response = _mapper.Map<ReleaseCreatedResponse>(release)
                 with
-            { AplicacionName = aplicacion?.Name ?? string.Empty };
+            { AplicacionName = Applications?.Name ?? string.Empty };
             return Result<ReleaseCreatedResponse, DomainError>.Success(response);
         }
         catch (Exception ex)
@@ -131,9 +131,9 @@ public class ReleaseService : IReleaseService
                 return Result<ReleaseUpdatedResponse, DomainError>.Failure(
                     DomainError.Validation("RELEASE_NOT_FOUND", "Release no encontrado"));
 
-            // Validate Aplicacion exists
-            var aplicacion = await _aplicacionRepository.GetByIdAsync(request.AplicacionId, cancellationToken);
-            if (aplicacion == null)
+            // Validate Applications exists
+            var Applications = await _aplicacionRepository.GetByIdAsync(request.AplicacionId, cancellationToken);
+            if (Applications == null)
                 return Result<ReleaseUpdatedResponse, DomainError>.Failure(
                     DomainError.Validation("APLICACION_NOT_FOUND", "La aplicación no existe"));
 
@@ -162,7 +162,7 @@ public class ReleaseService : IReleaseService
 
             var response = _mapper.Map<ReleaseUpdatedResponse>(releaseFound)
                 with
-            { AplicacionName = aplicacion?.Name ?? string.Empty };
+            { AplicacionName = Applications?.Name ?? string.Empty };
             return Result<ReleaseUpdatedResponse, DomainError>.Success(response);
         }
         catch (Exception ex)
