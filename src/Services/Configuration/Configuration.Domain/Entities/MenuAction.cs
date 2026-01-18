@@ -5,6 +5,7 @@ public class MenuAction : BaseEntity
 {
     public int MenuId { get; set; }
     public required Menu Menu { get; set; }
+
     public int ActionId { get; set; }
-    public required Actions Action { get; set; }
+    public Actions? Action { get; set; }
 }

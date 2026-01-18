@@ -24,5 +24,6 @@ public class Menu : BaseEntity
 
     public ICollection<MenuAction> MenuActions { get; set; } = [];
 
-    public ICollection<UserManual> UserManuals { get; set; } = [];
+    // Note: UserManuals collection removed - it's in Common.Domain
+    // Query via MenuId in Common service instead
 }

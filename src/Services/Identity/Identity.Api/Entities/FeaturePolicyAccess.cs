@@ -3,7 +3,9 @@ namespace Identity.Api.Entities;
 [Table("FeaturePolicyAccess", Schema = "Seguridad")]
 public class FeaturePolicyAccess : BaseEntity
 {
-    public FeaturePolicyConfiguration FeaturePolicyConfiguration { get; set; } = null!;
+    /// <summary>
+    /// FK to Sales.FeaturePolicyConfiguration - navigation removed for cross-service boundary
+    /// </summary>
     public int FeaturePolicyConfigurationId { get; set; }
 
     // Configuración de Acceso

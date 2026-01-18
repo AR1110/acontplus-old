@@ -1,6 +1,6 @@
 namespace Billing.Application.Dtos;
 
-public class TarifaImpuesto : BaseModel
+public class TarifaImpuesto
 {
     public int IdTarifaImpuesto { get; set; }
     public required string CodImpuesto { get; set; }

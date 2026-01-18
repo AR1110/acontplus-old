@@ -7,10 +7,14 @@ public class PricingPlan : BaseEntity
     [Required][MaxLength(100)] public required string Name { get; set; }
     [MaxLength(500)] public string? Description { get; set; }
 
-    public LicenseType LicenseType { get; set; } = null!;
+    /// <summary>
+    /// FK to Config.LicenseType - navigation removed for cross-service boundary
+    /// </summary>
     public int LicenseTypeId { get; set; }
 
-    public SubscriptionType SubscriptionType { get; set; } = null!;
+    /// <summary>
+    /// FK to Config.SubscriptionType - navigation removed for cross-service boundary
+    /// </summary>
     public int SubscriptionTypeId { get; set; }
 
     [Column(TypeName = "numeric(18,5)")] public decimal BasePrice { get; set; }

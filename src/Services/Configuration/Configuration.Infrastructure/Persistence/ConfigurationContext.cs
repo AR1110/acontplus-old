@@ -6,6 +6,8 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<PrinterDocument> PrinterDocuments { get; set; }
     public DbSet<PrinterType> PrinterTypes { get; set; }
     public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
+    public DbSet<Actions> Actions { get; set; }
+    public DbSet<Release> Releases { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,7 +23,7 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
                 modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
         }
 
-        // Force all string-based columns to non-unicode equivalent 
+        // Force all string-based columns to non-unicode equivalent
         // when no column type is explicitly set.
         foreach (var property in modelBuilder.Model.GetEntityTypes()
                      .SelectMany(t => t.GetProperties())

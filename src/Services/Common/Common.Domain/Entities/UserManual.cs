@@ -9,10 +9,10 @@ public class UserManual : BaseEntity
     public int UserManualTypeId { get; set; }
     public required UserManualType UserManualType { get; set; }
 
-    public int? MenuId { get; set; } // Foreign Key to Menu (optional if using separate Menu/Submenu)
-
-    // Navigation Properties
-    public Menu? Menu { get; set; }
+    /// <summary>
+    /// FK to Config.Menu - navigation removed for cross-service boundary
+    /// </summary>
+    public int? MenuId { get; set; }
 
     [MaxLength(200)] public required string Title { get; set; } // Title of the manual
     public required byte[] CompressedContent { get; set; }

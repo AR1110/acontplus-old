@@ -6,7 +6,9 @@ public class FeaturePolicyConfiguration : BaseEntity
     public PricingPlanFeature PricingPlanFeature { get; set; } = null!;
     public int PricingPlanFeatureId { get; set; }
 
-    public PolicyType PolicyType { get; set; } = null!;
+    /// <summary>
+    /// FK to Config.PolicyType - navigation removed for cross-service boundary
+    /// </summary>
     public int PolicyTypeId { get; set; }
 
     // ✅ NUEVO: Configuración de políticas de consumo
@@ -28,8 +30,7 @@ public class FeaturePolicyConfiguration : BaseEntity
 
     [MaxLength(500)] public string? Description { get; set; }
 
-    // Relaciones
-    public ICollection<FeaturePolicyAccess> FeaturePolicyAccesses { get; set; } = new List<FeaturePolicyAccess>();
+    // Note: FeaturePolicyAccesses is in Identity service, query via FeaturePolicyConfigurationId
 
     // ✅ PROPIEDADES CALCULADAS
     public bool HasConsumptionLimit => ConsumptionLimit is > 0;

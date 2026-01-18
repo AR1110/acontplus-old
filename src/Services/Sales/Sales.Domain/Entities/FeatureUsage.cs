@@ -6,7 +6,9 @@ public class FeatureUsage : BaseEntity
     public SubscriptionFeature SubscriptionFeature { get; set; } = null!;
     public int SubscriptionFeatureId { get; set; }
 
-    public AppUser User { get; set; } = null!;
+    /// <summary>
+    /// FK to Identity.AppUser - navigation removed for cross-service boundary
+    /// </summary>
     public int UserId { get; set; }
 
     // ✅ NUEVO: Información del uso
@@ -32,10 +34,9 @@ public class FeatureUsage : BaseEntity
 
     [MaxLength(500)] public string? Notes { get; set; }
 
-    // ✅ PROPIEDADES CALCULADAS
-    public Aplicacion Application => SubscriptionFeature.Application;
-    public int ApplicationId => SubscriptionFeature.ApplicationId;
-    public string ApplicationCode => SubscriptionFeature.ApplicationCode;
+    // Note: Application details must be fetched via SubscriptionFeature.PricingPlanFeature.ApplicationId
+    // Navigation properties removed for cross-service boundary
+    public int GetApplicationId => SubscriptionFeature?.PricingPlanFeature?.ApplicationId ?? 0;
 
     public bool IsConsumptionBased => SubscriptionFeature.IsConsumptionBased;
     public string? ConsumptionType => SubscriptionFeature.ConsumptionType;
@@ -46,10 +47,15 @@ public class FeatureUsage : BaseEntity
     public bool HasOverage => SubscriptionFeature.HasOverage;
 
     // ✅ MÉTODOS ÚTILES
-    public bool ValidatePolicy()
+    // Note: ValidatePolicy needs to be reimplemented using PolicyTypeId lookup
+    // PolicyType navigation removed for cross-service boundary
+    public bool ValidatePolicyByLimit()
     {
+        if (SubscriptionFeature?.PricingPlanFeature?.FeaturePolicyConfigurations == null)
+            return true;
+
         var policy = SubscriptionFeature.PricingPlanFeature.FeaturePolicyConfigurations
-            .FirstOrDefault(fpc => fpc.PolicyType.Code == "CONSUMPTION_LIMIT");
+            .FirstOrDefault(fpc => fpc.HasConsumptionLimit);
 
         if (policy == null) return true;
 
@@ -66,12 +72,10 @@ public class FeatureUsage : BaseEntity
 
     public void CalculateOverage()
     {
-        if (!IsPolicyCompliant && SubscriptionFeature.HasOverage)
+        if (!IsPolicyCompliant && SubscriptionFeature?.HasOverage == true)
         {
-            var policy = SubscriptionFeature.PricingPlanFeature.FeaturePolicyConfigurations
-                .FirstOrDefault(fpc => fpc.PolicyType.Code == "OVERAGE_RATE");
-
-            if (policy != null && SubscriptionFeature.PricingPlanFeature.OverageRate.HasValue)
+            // Note: PolicyType check by code removed - use PolicyTypeId or check directly
+            if (SubscriptionFeature.PricingPlanFeature?.OverageRate.HasValue == true)
             {
                 IsOverage = true;
                 OverageCost = Quantity * SubscriptionFeature.PricingPlanFeature.OverageRate.Value;

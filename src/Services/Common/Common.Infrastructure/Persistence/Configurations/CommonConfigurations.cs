@@ -94,10 +94,7 @@ public class UserManualConfiguration : BaseEntityTypeConfiguration<UserManual>
     public override void Configure(EntityTypeBuilder<UserManual> builder)
     {
         base.Configure(builder);
-        builder
-            .HasOne(um => um.Menu)
-            .WithMany(m => m.UserManuals)
-            .HasForeignKey(um => um.MenuId);
+        // Note: Menu navigation removed - cross-service boundary. Only MenuId FK is kept.
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);

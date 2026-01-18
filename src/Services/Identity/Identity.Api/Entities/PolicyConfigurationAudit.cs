@@ -6,10 +6,19 @@ namespace Identity.Api.Entities;
 [Table("PolicyConfigurationAudit", Schema = "Audit")]
 public class PolicyConfigurationAudit : BaseEntity
 {
+    /// <summary>
+    /// FK to Config.PolicyType - navigation removed for cross-service boundary
+    /// </summary>
     public int PolicyTypeId { get; set; }
-    public required PolicyType PolicyType { get; set; }
+
+    /// <summary>
+    /// FK to Config.LicenseType - navigation removed for cross-service boundary
+    /// </summary>
     public int? LicenseTypeId { get; set; }
-    public LicenseType? LicenseType { get; set; }
+
+    /// <summary>
+    /// FK to Config.Company - navigation removed for cross-service boundary
+    /// </summary>
     public int? CompanyId { get; set; }
 
     [MaxLength(50)] public string ChangeType { get; set; } = string.Empty; // CREATE, UPDATE, DELETE

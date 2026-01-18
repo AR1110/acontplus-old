@@ -1,4 +1,4 @@
-namespace Identity.Api.Endpoints.PolicyTypeEndpoints;
+namespace Configuration.Api.Endpoints.PolicyTypeEndpoints;
 
 public static class PolicyTypeEndpoints
 {
@@ -39,7 +39,6 @@ public static class PolicyTypeEndpoints
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-        // Test endpoint to check if API is working
         group.MapGet("/test",
                 () =>
                 {

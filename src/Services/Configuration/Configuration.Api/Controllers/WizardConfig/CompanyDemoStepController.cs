@@ -1,6 +1,8 @@
+using Configuration.Application.Interfaces.WizardConfig;
+
 namespace Configuration.Api.Controllers.WizardConfig;
 
-public class CompanyDemoStepController(ICompanyDemoStepService companyDemoStepService) : BaseApiController
+public class CompanyDemoStepController(Configuration.Application.Interfaces.WizardConfig.ICompanyDemoStepService companyDemoStepService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get()

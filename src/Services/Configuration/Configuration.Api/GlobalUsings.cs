@@ -1,7 +1,9 @@
 global using Acontplus.Core.Abstractions.Context;
+global using Acontplus.Core.Domain.Common.Results;
 global using Acontplus.Core.Dtos.Common;
 global using Acontplus.Core.Dtos.Requests;
 global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Enums;
 global using Acontplus.Core.Extensions;
 global using Acontplus.Infrastructure.Extensions;
 global using Acontplus.Logging;

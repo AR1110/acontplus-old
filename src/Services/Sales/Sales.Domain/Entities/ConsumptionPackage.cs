@@ -1,6 +1,6 @@
-using Acontplus.Core.Domain.Common.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Acontplus.Core.Domain.Common.Entities;
 
 namespace Sales.Domain.Entities;
 
@@ -36,8 +36,8 @@ public class ConsumptionPackage : BaseEntity
     public bool IsAddOn { get; set; } = false; // true = paquete adicional
     public bool IsRequired { get; set; } = false; // true = paquete obligatorio
 
-    // ✅ APLICACIONES COMPATIBLES
-    public ICollection<Aplicacion> CompatibleApplications { get; set; } = new List<Aplicacion>();
+    // ✅ APLICACIONES COMPATIBLES (IDs only, navigation removed for cross-service boundary)
+    // Use a join table or store ApplicationIds as JSON/comma-separated if needed
     public ICollection<PricingPlanFeature> PricingPlanFeatures { get; set; } = new List<PricingPlanFeature>();
 
     // ✅ PROPIEDADES CALCULADAS
@@ -52,9 +52,12 @@ public class ConsumptionPackage : BaseEntity
         return overageQuantity * OverageRate!.Value;
     }
 
-    public bool IsCompatibleWithApplication(string applicationCode)
+    public bool IsCompatibleWithApplication(int applicationId)
     {
-        return CompatibleApplications.Any(app => app.Code == applicationCode);
+        // Note: CompatibleApplications navigation removed for cross-service boundary
+        // This check should be done via a join table query in the application layer
+        // using ApplicationIds stored in a separate ConsumptionPackageApplication table
+        throw new NotImplementedException("Use application layer to check compatibility via ApplicationId");
     }
 
     public string GetResetDescription()

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace Configuration.Application.Dtos;
 
 public static class MenuIncludes

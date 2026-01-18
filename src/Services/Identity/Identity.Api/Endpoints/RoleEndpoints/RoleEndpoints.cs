@@ -5,8 +5,8 @@ public static class RoleEndpoints
     public static void MapRoleEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/roles")
-.RequireAuthorization()
-            .WithTags("Roles"); ;
+            .RequireAuthorization()
+            .WithTags("Roles");
 
         MapGetEndpoints(group);
         MapCreateEndpoints(group);
@@ -26,29 +26,6 @@ public static class RoleEndpoints
             .WithDescription("Retrieves all active roles")
             .Produces<IReadOnlyList<RoleItem>>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
-
-        // TODO: Add paged endpoint when IRoleService supports GetPagedAsync
-        // group.MapGet("/paged",
-        //         async (IRoleService roleService, [AsParameters] PaginationQuery query,
-        //             CancellationToken cancellationToken) =>
-        //         {
-        //             var PaginationRequest = new PaginationRequest
-        //             {
-        //                 PageIndex = query.PageIndex,
-        //                 PageSize = query.PageSize,
-        //                 SortBy = query.SortBy,
-        //                 SearchTerm = query.SearchTerm,
-        //                 SortDirection = query.SortDirection ?? default
-        //             };
-        //
-        //             return await roleService.GetPagedAsync(PaginationRequest, cancellationToken)
-        //                 .ToMinimalApiResultAsync();
-        //         })
-        //     .WithName("GetPagedRoles")
-        //     .WithSummary("Get paged roles")
-        //     .WithDescription("Retrieves roles with pagination")
-        //     .Produces<IReadOnlyList<RoleItem>>(200)
-        //     .ProducesProblem(StatusCodes.Status400BadRequest);
 
         group.MapGet("/{id:int}",
                 async (int id, IRoleService roleService, CancellationToken cancellationToken) =>

@@ -1,6 +1,8 @@
+using Configuration.Application.Interfaces.WizardConfig;
+
 namespace Configuration.Application.Services.WizardConfig;
 
-public class DemoStepService(IAdoRepository adoRepository) : IDemoStepService
+public class DemoStepService(IAdoRepository adoRepository) : Interfaces.WizardConfig.IDemoStepService
 {
     public async Task<SpResponse> GetAsync(Dictionary<string, object> parameters)
     {

@@ -1,3 +1,5 @@
+using MapsterMapper;
+
 namespace Identity.Api.Services;
 
 public class LicenciaAccesoService(IUnitOfWork unitOfWork, IMapper mapper) : ILicenciaAccesoService

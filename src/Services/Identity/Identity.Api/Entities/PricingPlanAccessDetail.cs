@@ -8,9 +8,10 @@ public class PricingPlanAccessDetail : BaseEntity
 
     public int? Order { get; set; }
 
+    /// <summary>
+    /// FK to Config.Menu - navigation removed for cross-service boundary
+    /// </summary>
     public int? MenuId { get; set; }
-
-    public Menu? Menu { get; set; }
 
     [MaxLength(1000)]
     public string? Actions { get; set; }

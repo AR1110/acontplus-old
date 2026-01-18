@@ -4,7 +4,10 @@ namespace Common.Domain.Entities;
 public class Release : BaseEntity
 {
     private string? _decompressedContent;
-    public required Aplicacion Aplicacion { get; set; }
+
+    /// <summary>
+    /// FK to Config.Aplicacion - navigation removed for cross-service boundary
+    /// </summary>
     public int AplicacionId { get; set; }
     public DateTime ReleaseDate { get; set; }
     [MaxLength(10)] public string? Version { get; set; }

@@ -9,7 +9,7 @@ public static class GetEndpoints
             .WithTags("Bugs");
 
         group.MapGet("/",
-                async ([FromQuery] string json, IBugsService bugsService) =>
+                async ([FromQuery] string json, IBugsService bugsService, CancellationToken cancellationToken) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {

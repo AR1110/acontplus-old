@@ -3,9 +3,14 @@ namespace Sales.Domain.Entities;
 [Table("Suscripcion", Schema = "Sales")]
 public class Suscripcion : BaseEntity
 {
-    public required SubscriptionType SubscriptionType { get; set; }
+    /// <summary>
+    /// FK to Config.SubscriptionType - navigation removed for cross-service boundary
+    /// </summary>
     public int SubscriptionTypeId { get; set; }
-    public required Company Company { get; set; }
+
+    /// <summary>
+    /// FK to Config.Company - navigation removed for cross-service boundary
+    /// </summary>
     public int CompanyId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

@@ -6,7 +6,9 @@ public class Subscription : BaseEntity
     public required PricingPlan PricingPlan { get; set; }
     public int PricingPlanId { get; set; }
 
-    public Company Company { get; set; } = null!;
+    /// <summary>
+    /// FK to Config.Company - navigation removed for cross-service boundary
+    /// </summary>
     public int CompanyId { get; set; }
 
     // Fechas
@@ -81,28 +83,30 @@ public class Subscription : BaseEntity
     public bool IsExpired => DateTime.UtcNow > EndDate;
 
     // Métodos Útiles
-    public bool HasFeature(string applicationCode)
+    // Note: These methods need to be refactored to use ApplicationId instead of Application.Code
+    // The application layer should provide the ApplicationId lookup
+    public bool HasFeature(int applicationId)
     {
         return SubscriptionFeatures.Any(sf =>
-            sf.PricingPlanFeature.Application.Code == applicationCode &&
+            sf.PricingPlanFeature?.ApplicationId == applicationId &&
             sf.IsActive);
     }
 
-    public SubscriptionFeature? GetFeature(string applicationCode)
+    public SubscriptionFeature? GetFeature(int applicationId)
     {
         return SubscriptionFeatures.FirstOrDefault(sf =>
-            sf.PricingPlanFeature.Application.Code == applicationCode);
+            sf.PricingPlanFeature?.ApplicationId == applicationId);
     }
 
-    public bool IsFeatureActive(string applicationCode)
+    public bool IsFeatureActive(int applicationId)
     {
-        var feature = GetFeature(applicationCode);
+        var feature = GetFeature(applicationId);
         return feature?.IsActive == true;
     }
 
-    public decimal GetFeaturePrice(string applicationCode)
+    public decimal GetFeaturePrice(int applicationId)
     {
-        var feature = GetFeature(applicationCode);
+        var feature = GetFeature(applicationId);
         return feature?.EffectiveCost ?? 0;
     }
 

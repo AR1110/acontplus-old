@@ -20,8 +20,12 @@ public static class UserCustomerRoleEndpoints
         group.MapGet("/{userId}",
                 async (int userId, IUserCustomerRoleService userCustomerRoleService, CancellationToken cancellationToken) =>
                 {
-                    var resp = await userCustomerRoleService.GetAsync(userId);
-                    return resp.ToGetMinimalApiResult();
+                    var parameters = new Dictionary<string, object>
+                    {
+                        { "userId", userId }
+                    };
+                    var resp = await userCustomerRoleService.GetAsync(parameters);
+                    return Results.Ok(resp);
                 })
             .WithName("GetUserCustomerRole")
             .WithSummary("Get user customer role")
@@ -42,7 +46,7 @@ public static class UserCustomerRoleEndpoints
                         { "json", userCustomerRole.SerializeOptimized() }
                     };
                     var resp = await userCustomerRoleService.AddAsync(parameters);
-                    return resp.ToMinimalApiResult();
+                    return Results.Ok(resp);
                 })
             .WithName("CreateUserCustomerRole")
             .WithSummary("Create user customer role")
@@ -63,7 +67,7 @@ public static class UserCustomerRoleEndpoints
                         { "json", userCustomerRole.SerializeOptimized() }
                     };
                     var resp = await userCustomerRoleService.UpdateAsync(parameters);
-                    return resp.ToMinimalApiResult();
+                    return Results.Ok(resp);
                 })
             .WithName("UpdateUserCustomerRole")
             .WithSummary("Update user customer role")
@@ -83,7 +87,7 @@ public static class UserCustomerRoleEndpoints
                         { "id", id }
                     };
                     var resp = await userCustomerRoleService.DeleteAsync(parameters);
-                    return resp.ToMinimalApiResult();
+                    return Results.Ok(resp);
                 })
             .WithName("DeleteUserCustomerRole")
             .WithSummary("Delete user customer role")
@@ -98,7 +102,7 @@ public static class UserCustomerRoleEndpoints
                 async (int id, bool estado, IUserCustomerRoleService userCustomerRoleService, IUserContext userContext) =>
                 {
                     var resp = await userCustomerRoleService.UpdateStatusAsync(userContext.GetUserId(), id, estado);
-                    return resp.ToMinimalApiResult();
+                    return Results.Ok(resp);
                 })
             .WithName("UpdateUserCustomerRoleStatus")
             .WithSummary("Update user customer role status")

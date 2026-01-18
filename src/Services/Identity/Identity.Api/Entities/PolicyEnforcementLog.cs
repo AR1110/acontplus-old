@@ -6,11 +6,17 @@ namespace Identity.Api.Entities;
 [Table("PolicyEnforcementLog", Schema = "Audit")]
 public class PolicyEnforcementLog : BaseEntity
 {
+    /// <summary>
+    /// FK to Config.Company - navigation removed for cross-service boundary
+    /// </summary>
     public int CompanyId { get; set; }
-    public required Company Company { get; set; }
+
     public int? UserId { get; set; } //Remove
+
+    /// <summary>
+    /// FK to Config.PolicyType - navigation removed for cross-service boundary
+    /// </summary>
     public int PolicyTypeId { get; set; }
-    public required PolicyType PolicyType { get; set; } = null!;
 
     [MaxLength(500)] public string? RequestedValue { get; set; }
 

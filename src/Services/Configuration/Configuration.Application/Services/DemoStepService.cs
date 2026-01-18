@@ -1,8 +1,9 @@
 using Acontplus.Core.Abstractions.Context;
+using Configuration.Application.Interfaces;
 
 namespace Configuration.Application.Services;
 
-public class DemoStepService : IDemoStepService
+public class DemoStepService : Interfaces.IDemoStepService
 {
     private readonly IRepository<DemoStep> _demoStepRepository;
     private readonly ILogger<DemoStepService> _logger;

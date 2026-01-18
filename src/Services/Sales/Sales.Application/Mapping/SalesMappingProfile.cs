@@ -16,8 +16,6 @@ public static class SalesMappingProfile
             .Ignore(dest => dest.UpdatedAt)
             .Ignore(dest => dest.IsDeleted)
             .Map(dest => dest.IsActive, src => src.IsActive)
-            .Ignore(dest => dest.SubscriptionType)
-            .Ignore(dest => dest.Company)
             .Ignore(dest => dest.SuscripcionDetalles);
 
         // SuscripcionDetalleCreate -> SuscripcionDetalle
@@ -29,7 +27,6 @@ public static class SalesMappingProfile
             .Ignore(dest => dest.UpdatedAt)
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.IsActive)
-            .Ignore(dest => dest.LicenciaDetalle)
             .Ignore(dest => dest.Suscripcion)
             .Ignore(dest => dest.SuscripcionId);
 
@@ -41,7 +38,6 @@ public static class SalesMappingProfile
             .Ignore(dest => dest.UpdatedAt)
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.IsActive)
-            .Ignore(dest => dest.LicenciaDetalle)
             .Ignore(dest => dest.Suscripcion);
 
         // Suscripcion -> SubscriptionResponse
@@ -62,12 +58,9 @@ public static class SalesMappingProfile
             .Map(dest => dest.IsDeleted, src => src.IsDeleted)
             .Map(dest => dest.CreatedByUserId, src => src.CreatedByUserId)
             .Map(dest => dest.CreatedAt, src => src.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))
-            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt.HasValue ? src.UpdatedAt.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : null)
-            .Map(dest => dest.SubscriptionTypeName, src => src.SubscriptionType != null ? src.SubscriptionType.Name : null)
-            .Map(dest => dest.CompanyName, src => src.Company != null ? src.Company.BusinessName : null);
+            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt.HasValue ? src.UpdatedAt.Value.ToString("yyyy-MM-ddTHH:mm:ss.fffZ") : null);
 
         // SuscripcionDetalle -> SuscripcionDetalleDto
-        config.NewConfig<SuscripcionDetalle, SuscripcionDetalleDto>()
-            .Map(dest => dest.LicenciaDetalleName, src => src.LicenciaDetalle != null && src.LicenciaDetalle.Aplicacion != null ? src.LicenciaDetalle.Aplicacion.Name : null);
+        config.NewConfig<SuscripcionDetalle, SuscripcionDetalleDto>();
     }
 }

@@ -39,11 +39,9 @@ public class SubscriptionFeature : BaseEntity
     // Relaciones
     public ICollection<FeatureUsage> FeatureUsages { get; set; } = new List<FeatureUsage>();
 
-    // ✅ PROPIEDADES CALCULADAS
-    public Aplicacion Application => PricingPlanFeature.Application;
-    public int ApplicationId => PricingPlanFeature.ApplicationId;
-    public string ApplicationCode => PricingPlanFeature.ApplicationCode;
-    public string ApplicationName => PricingPlanFeature.ApplicationName;
+    // Note: Application details must be fetched via PricingPlanFeature.ApplicationId from Config service
+    // Navigation properties removed for cross-service boundary
+    public int GetApplicationId => PricingPlanFeature?.ApplicationId ?? 0;
 
     public decimal EffectiveCost => OverrideCost ?? PricingPlanFeature.EffectivePrice;
     public decimal EffectiveTaxRate => PricingPlanFeature.OverrideTaxRate ?? 0;

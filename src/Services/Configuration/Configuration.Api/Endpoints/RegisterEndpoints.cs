@@ -8,6 +8,7 @@ using Configuration.Api.Endpoints.LicenciaEndpoints;
 using Configuration.Api.Endpoints.LicenseTypeEndpoints;
 using Configuration.Api.Endpoints.MenuActionEndpoints;
 using Configuration.Api.Endpoints.MenuEndpoints;
+using Configuration.Api.Endpoints.PolicyTypeEndpoints;
 using Configuration.Api.Endpoints.PrintEndpoints;
 using Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 using Configuration.Api.Endpoints.PrinterEndpoints;
@@ -37,6 +38,7 @@ public static class RegisterEndpoints
         app.MapCompanyEndpoints();
         app.MapMenuActionEndpoints();
         app.MapMenuEndpoints();
+        app.MapPolicyTypeEndpoints();
         app.MapReportEndpoints();
         app.MapSistemaEndpoints();
         app.MapDemoStepEndpoints();

@@ -3,10 +3,14 @@ namespace Identity.Api.Entities;
 [Table("PricingPlanAccess", Schema = "Seguridad")]
 public class PricingPlanAccess : BaseEntity
 {
-    public required PricingPlan PricingPlan { get; set; }
+    /// <summary>
+    /// FK to Sales.PricingPlan - navigation removed for cross-service boundary
+    /// </summary>
     public int PricingPlanId { get; set; }
 
-    public required Role Role { get; set; }
+    /// <summary>
+    /// FK to Identity.AppRole - navigation removed for cross-service boundary
+    /// </summary>
     public int RoleId { get; set; }
     public DateTime? ActivatedAt { get; set; }
 

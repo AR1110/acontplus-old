@@ -3,8 +3,11 @@ namespace Sales.Domain.Entities;
 [Table("SuscripcionDetalle", Schema = "Sales")]
 public class SuscripcionDetalle : BaseEntity
 {
-    public required LicenciaDetalle LicenciaDetalle { get; set; }
+    /// <summary>
+    /// FK to Config.LicenciaDetalle - navigation removed for cross-service boundary
+    /// </summary>
     public int LicenciaDetalleId { get; set; }
+
     public required Suscripcion Suscripcion { get; set; }
     public int SuscripcionId { get; set; }
     public DateTime StartDate { get; set; }

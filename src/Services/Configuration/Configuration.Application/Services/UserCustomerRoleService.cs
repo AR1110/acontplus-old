@@ -20,4 +20,25 @@ public class UserCustomerRoleService : IUserCustomerRoleService
     {
         return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Update", parameters);
     }
+
+    public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Add", parameters);
+    }
+
+    public async Task<SpResponse> DeleteAsync(Dictionary<string, object> parameters)
+    {
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Delete", parameters);
+    }
+
+    public async Task<SpResponse> UpdateStatusAsync(int userId, int id, bool status)
+    {
+        var parameters = new Dictionary<string, object>
+        {
+            { "userRoleId", userId },
+            { "id", id },
+            { "estado", status }
+        };
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "UpdateStatus", parameters);
+    }
 }

@@ -15,8 +15,6 @@ public static class LicenciaAccesoMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Licencia)
-            .Ignore(dest => dest.Role)
             .Ignore(dest => dest.LicenciaAccesoDetalles);
 
         // Update mapping
@@ -28,8 +26,6 @@ public static class LicenciaAccesoMappingProfile
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
             .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.Licencia)
-            .Ignore(dest => dest.Role)
             .Ignore(dest => dest.LicenciaAccesoDetalles);
 
         // Create LicenciaAccesoDetalle mapping

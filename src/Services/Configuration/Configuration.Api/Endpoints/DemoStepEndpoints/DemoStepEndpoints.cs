@@ -1,5 +1,7 @@
 namespace Configuration.Api.Endpoints.DemoStepEndpoints;
 
+using IDemoStepService = Configuration.Application.Interfaces.IDemoStepService;
+
 public static class DemoStepEndpoints
 {
     public static void MapDemoStepEndpoints(this IEndpointRouteBuilder app)

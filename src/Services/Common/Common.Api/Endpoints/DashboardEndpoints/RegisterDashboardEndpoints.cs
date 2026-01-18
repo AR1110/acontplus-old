@@ -4,6 +4,7 @@ public static class RegisterDashboardEndpoints
 {
     public static void MapDashboardEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapGetEndpoints();
+        // Dashboard endpoints are currently disabled
+        // app.MapGetEndpoints();
     }
 }

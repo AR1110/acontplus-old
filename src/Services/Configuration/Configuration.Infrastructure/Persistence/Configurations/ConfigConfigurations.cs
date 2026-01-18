@@ -155,6 +155,11 @@ public class MenuActionConfiguration : BaseEntityTypeConfiguration<MenuAction>
     {
         base.Configure(builder);
 
+        builder
+            .HasOne(x => x.Action)
+            .WithMany()
+            .HasForeignKey(x => x.ActionId);
+
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
         builder.Ignore(x => x.DeletedBy);
@@ -293,6 +298,41 @@ public class SistemaConfiguration : BaseEntityTypeConfiguration<Sistema>
             .WithOne(m => m.Sistema)
             .HasForeignKey(m => m.SistemaId);
 
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class ActionsConfiguration : BaseEntityTypeConfiguration<Actions>
+{
+    public override void Configure(EntityTypeBuilder<Actions> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_Actions_Code")
+            .IsUnique();
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class ReleaseConfiguration : BaseEntityTypeConfiguration<Release>
+{
+    public override void Configure(EntityTypeBuilder<Release> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasOne(x => x.Aplicacion)
+            .WithMany()
+            .HasForeignKey(x => x.AplicacionId);
+
+        builder.Ignore(x => x.Content);
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
         builder.Ignore(x => x.DeletedBy);

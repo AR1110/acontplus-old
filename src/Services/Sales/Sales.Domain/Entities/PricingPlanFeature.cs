@@ -6,7 +6,9 @@ public class PricingPlanFeature : BaseEntity
     public required PricingPlan PricingPlan { get; set; }
     public int PricingPlanId { get; set; }
 
-    public Aplicacion Application { get; set; } = null!;
+    /// <summary>
+    /// FK to Config.Aplicacion - navigation removed for cross-service boundary
+    /// </summary>
     public int ApplicationId { get; set; }
 
     // ✅ NUEVO: Paquete de consumo asociado
@@ -52,9 +54,8 @@ public class PricingPlanFeature : BaseEntity
     public bool HasConsumptionPackage => ConsumptionPackage != null;
     public bool IsPackageUnlimited => ConsumptionPackage?.IsUnlimited == true;
 
-    // ✅ NUEVO: Propiedades de aplicación
-    public string ApplicationCode => Application.Code;
-    public string ApplicationName => Application.Name;
+    // Note: Application details (Code, Name) must be fetched via ApplicationId from Config service
+    // Navigation removed for cross-service boundary
 
     // ✅ NUEVO: Propiedades de override
     public decimal? OverridePrice { get; set; }
