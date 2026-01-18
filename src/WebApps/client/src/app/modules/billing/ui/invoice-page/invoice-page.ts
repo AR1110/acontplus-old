@@ -7,7 +7,8 @@ import {
   DataGridColumn,
   Button,
   Pagination,
-  DateRangePicker, DateRangeValue,
+  DateRangePicker,
+  DateRangeValue,
 } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,8 +19,6 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { NotificationService } from '@acontplus/ng-notifications';
 import { formatDateToString } from '@core/utils/date.util';
@@ -45,7 +44,6 @@ import { finalize, switchMap, throwError } from 'rxjs';
     DateRangePicker,
     DataGrid,
     Button,
-    DateRangeSelectionComponent,
   ],
   templateUrl: './invoice-page.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -199,14 +197,14 @@ export class InvoicePage implements OnInit {
     }
   }
 
-  dateRangeSelected(range: DateRangeValue<true>){
+  dateRangeSelected(range: DateRangeValue<true>) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
     this.refresh();
   }
-  checkboxChangeDateRange($event:boolean){
-    this.dataSearch.checkBoxDate=$event;
-    this.refresh()
+  checkboxChangeDateRange($event: boolean) {
+    this.dataSearch.checkBoxDate = $event;
+    this.refresh();
   }
 
   handlePageEvent(e: PageEvent) {

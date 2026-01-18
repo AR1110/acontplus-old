@@ -46,9 +46,7 @@ $utilities: functions.map-collect(
 
   // Utility class maybe empty, (e.g. with position class)
   $property-class-prefix-hyphen: if(
-    $property-class-prefix == '',
-    $property-class-prefix,
-    $property-class-prefix + '-'
+    sass($property-class-prefix == ''): $property-class-prefix; else: $property-class-prefix + '-',
   );
 
   @each $class-modifier, $value in $values {
