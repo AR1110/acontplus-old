@@ -12,14 +12,19 @@ import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.
 import { formatDateToString } from '@core/utils/date.util';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Button } from '@acontplus/ng-components';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import {ACCOUNTING_CODE_REPORT, REPORT_FORMAT, ReportFacade, ReportParamsBuilder} from '@acontplus/ng-common';
 
 @Component({
   selector: 'app-filtro-detalle-caja-page-report-modal',
@@ -31,19 +36,22 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatInputModule,
     MatTimepickerModule,
     Button,
-    MatCustomDialogComponent,
     MatSlideToggle,
+    MatDialogContent,
+    MatDialogActions,
   ],
-  templateUrl: './filtro-detalle-cajar-report-modal.component.html',
+  templateUrl: './filtro-detalle-cajar-report-modal.html',
   providers: [provideNativeDateAdapter()],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FiltroDetalleCajaReportModal implements OnInit {
   private dialogRef = inject(MatDialogRef<FiltroDetalleCajaReportModal>);
   params = inject<{
-    id: 0;
-    fechaApertura: '';
-    fechaCierre: '';
+    data: {
+      id: 0;
+      fechaApertura: '';
+      fechaCierre: '';
+    };
   }>(MAT_DIALOG_DATA);
 
   dataSearch = {
@@ -60,11 +68,13 @@ export class FiltroDetalleCajaReportModal implements OnInit {
 
   private tS = inject(ToastrNotificationService);
   private sharedSvc = inject(SharedService);
+  private reportFacade = inject(ReportFacade)
 
   ngOnInit() {
-    const fromDate = stringToDate(this.params.fechaApertura, 'dd/MM/yyyy HH:ii', '/');
+    const fromDate = stringToDate(this.params.data.fechaApertura, 'dd/MM/yyyy HH:ii', '/');
     const toDate =
-      this.params.fechaCierre && stringToDate(this.params.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
+      this.params.data.fechaCierre &&
+      stringToDate(this.params.data.fechaCierre, 'dd/MM/yyyy HH:ii', '/');
 
     this.dataSearch.fromDate = fromDate || new Date();
     this.dataSearch.toDate = toDate || new Date();
@@ -89,7 +99,6 @@ export class FiltroDetalleCajaReportModal implements OnInit {
   }
 
   onTimeChange(event: Event, fromDate: boolean): void {
-    console.log(event);
     const inputElement = event.target as HTMLInputElement;
     const timeStr = inputElement.value;
     const [time, modifier] = timeStr.split(' ');
@@ -105,9 +114,16 @@ export class FiltroDetalleCajaReportModal implements OnInit {
     }
   }
 
-  getReport(format: 'pdf' | 'excel') {
+  reportPdf() {
+    this.getReport(REPORT_FORMAT.PDF);
+  }
+  reportExcel() {
+    this.getReport(REPORT_FORMAT.EXCEL);
+  }
+
+  getReport(format: REPORT_FORMAT) {
     try {
-      if (!(this.params.id > 0)) {
+      if (!(this.params.data.id > 0)) {
         this.tS.show({
           type: 'warning',
           message: 'id no proporcionado!',
@@ -118,8 +134,8 @@ export class FiltroDetalleCajaReportModal implements OnInit {
       const dataParams = {
         tipo: 2,
         idEntidadFinanciera: isValidField(this.dataSearch.idEntidadFinanciera),
-        codDoc: isValidField(this.dataSearch.codDoc),
-        id: this.params.id,
+        codDoc: isValidField(this.dataSearch.codDoc)?? undefined,
+        id: this.params.data.id,
         horaInicio: formatDateToString(this.dataSearch.fromDate),
         horaFin: formatDateToString(this.dataSearch.toDate),
         ckHora: this.dataSearch.ckHora,
@@ -140,6 +156,12 @@ export class FiltroDetalleCajaReportModal implements OnInit {
         format: format,
         isOldVersion: true,
       });
+      const reportOptions = ReportParamsBuilder.build({
+        codeReport: ACCOUNTING_CODE_REPORT.CDCC,
+        data: dataParams,
+        format
+      });
+      this.reportFacade.open(reportOptions).subscribe();
     } catch (error) {
       console.log(error);
     }

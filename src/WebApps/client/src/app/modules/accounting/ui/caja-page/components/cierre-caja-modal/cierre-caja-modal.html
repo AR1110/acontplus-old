@@ -1,10 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="'Cerrar Caja'"
-  (close)="close()"
-/>
-<ng-template #body>
+<mat-dialog-content>
   <div class="d-grid gap-2">
     <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-md-3 row-cols-md-2 row-cols-1">
       @for (item of monedas(); track $index) {
@@ -26,7 +20,7 @@
       Total: <span>{{ totalArqueo | currency: '$' }}</span>
     </h5>
   </div>
-</ng-template>
-<ng-template #footer>
-  <acp-button variant="success" icon="save" text="Guardar" (handleClick)="save()" />
-</ng-template>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button matStyle="filled" variant="success" icon="save" text="Guardar" (handleClick)="save()" />
+</mat-dialog-actions>

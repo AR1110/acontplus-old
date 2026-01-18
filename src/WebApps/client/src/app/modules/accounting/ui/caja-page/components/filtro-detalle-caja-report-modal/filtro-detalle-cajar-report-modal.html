@@ -1,0 +1,92 @@
+
+<mat-dialog-content>
+  <div class="d-grid gap-2">
+    <mat-form-field>
+      <mat-label>Entidad Financiera</mat-label>
+      <mat-select [(ngModel)]="dataSearch.idEntidadFinanciera">
+        <mat-option [value]="''">--Todos--</mat-option>
+
+        @for (item of entidadesFinanciera; track $index) {
+          <mat-option [value]="item.idEntidadFinanciera">{{ item.descripcion }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Tipo Documento</mat-label>
+      <mat-select [(ngModel)]="dataSearch.codDoc">
+        <mat-option [value]="''">--Todos--</mat-option>
+        @for (item of tipoDocumentos; track $index) {
+          <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div class="hstack gap-2">
+      <mat-form-field>
+        <mat-label>Fecha Inicio</mat-label>
+        <input matInput disabled [ngModel]="dataSearch.fromDate | date: 'yyyy-MM-dd'" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Hora</mat-label>
+        <input
+          matInput
+          [matTimepicker]="pickerFromDate"
+          [(ngModel)]="dataSearch.fromDate"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          (blur)="onTimeChange($event, false)"
+          [disabled]="!dataSearch.ckHora"
+        />
+        <mat-timepicker-toggle matIconSuffix [for]="pickerToDate" />
+        <mat-timepicker #pickerFromDate />
+      </mat-form-field>
+    </div>
+
+    <div class="hstack gap-2">
+      <mat-form-field>
+        <mat-label>Fecha Fin</mat-label>
+        <input matInput disabled [ngModel]="dataSearch.toDate | date: 'yyyy-MM-dd'" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Hora</mat-label>
+        <input
+          matInput
+          [matTimepicker]="pickerToDate"
+          [(ngModel)]="dataSearch.toDate"
+          [ngModelOptions]="{ updateOn: 'blur' }"
+          (blur)="onTimeChange($event, false)"
+          [disabled]="!dataSearch.ckHora"
+        />
+        <mat-timepicker-toggle matIconSuffix [for]="pickerToDate" />
+        <mat-timepicker #pickerToDate />
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle [(ngModel)]="dataSearch.ckHora">Hora</mat-slide-toggle>
+
+    <div class="hstack gap-1">
+      <acp-button
+        variant="danger"
+        icon="picture_as_pdf"
+        text="Pdf"
+        (handleClick)="reportPdf()"
+      />
+      <acp-button
+        variant="success"
+        icon="download"
+        text="Excel"
+        (handleClick)="reportExcel()"
+      />
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button
+    type="button"
+    icon="close"
+    variant="dark"
+    matStyle="filled"
+    text="Cerrar"
+    (handleClick)="close()"
+  />
+</mat-dialog-actions>

@@ -8,7 +8,7 @@ import { NotificacionService } from '@shared/services/notificacion.service';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
@@ -26,15 +26,18 @@ interface Modeda {
     MatFormFieldModule,
     MatInputModule,
     Button,
-    MatCustomDialogComponent,
     CurrencyPipe,
+    MatDialogContent,
+    MatDialogActions,
   ],
-  templateUrl: './cierre-caja-modal.component.html',
+  templateUrl: './cierre-caja-modal.html',
   encapsulation: ViewEncapsulation.None,
 })
-export class CierreCajaModalComponent implements OnInit {
-  private dialogRef = inject(MatDialogRef<CierreCajaModalComponent>);
-  private params = inject<{ id: number }>(MAT_DIALOG_DATA);
+export class CierreCajaModal implements OnInit {
+  private dialogRef = inject(MatDialogRef<CierreCajaModal>);
+  private params = inject<{
+    data: { id: number }
+  }>(MAT_DIALOG_DATA);
 
   private _controlCajaUseCase = inject(CONTROL_CAJA_HTTP_TOKEN);
   private appNotifiSvc = inject(NotificacionService);
@@ -85,7 +88,7 @@ export class CierreCajaModalComponent implements OnInit {
           arqueoCaja,
         };
 
-        this._controlCajaUseCase.put(this.params.id, data).subscribe((response) => {
+        this._controlCajaUseCase.put(this.params.data.id, data).subscribe((response) => {
           if (response.code === '0') {
             Swal.fire({
               icon: 'warning',
@@ -128,7 +131,7 @@ export class CierreCajaModalComponent implements OnInit {
           },
           spParams: {
             tipo: 1,
-            id: this.params.id,
+            id: this.params.data.id,
           },
         },
       };
