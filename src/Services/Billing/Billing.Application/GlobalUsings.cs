@@ -15,3 +15,4 @@ global using System.Data;
 global using System.Text;
 global using System.Web;
 global using System.Xml;
+global using Acontplus.Core.Domain.Common.Results;

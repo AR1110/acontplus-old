@@ -1,4 +1,9 @@
 using Acontplus.Utilities.Data;
+using Common.Api.Endpoints.BugsEndpoints;
+using Common.Api.Endpoints.DashboardEndpoints;
+using Common.Api.Endpoints.ReleaseEndpoints;
+using Common.Api.Endpoints.ScheduleEndpoints;
+using Common.Api.Endpoints.TagEndpoints;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Common.Api.Endpoints;
@@ -7,11 +12,17 @@ public static class RegisterEndpoints
 {
     private const string UserRoleIdClaim = "userRoleId";
 
-    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder builder)
+    public static IEndpointRouteBuilder MapCommonEndpoints(this IEndpointRouteBuilder app)
     {
-        builder.MapLookupEndpoints();
+        app.MapBugsEndpoints();
+        app.MapDashboardEndpoints();
+        app.MapReleaseEndpoints();
+        app.MapScheduleEndpoints();
+        app.MapTagEndpoints();
 
-        builder.MapGet("/dashboard", async (
+        app.MapLookupEndpoints();
+
+        app.MapGet("/dashboard", async (
                 IDashboardService dashboardService,
                 IUserContext userContext,
                 ILogger<IDashboardService> logger) =>
@@ -38,7 +49,7 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapPost("/notificacion", async (
+        app.MapPost("/notificacion", async (
                 INotificationService notificationService,
                 IUserContext userContext,
                 IHttpContextAccessor httpContextAccessor,
@@ -73,7 +84,7 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapGet("/release", async (
+        app.MapGet("/release", async (
                 IReleaseService releaseService,
                 IUserContext userContext,
                 ILogger<IReleaseService> logger) =>
@@ -96,7 +107,7 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapGet("/usermanual", async (
+        app.MapGet("/usermanual", async (
                 IUserManualService userManualService,
                 IUserContext userContext,
                 ILogger<IUserManualService> logger,
@@ -136,7 +147,7 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapPost("/userrelease", async (
+        app.MapPost("/userrelease", async (
                 IUserReleaseReadService userReleaseReadService,
                 IUserContext userContext,
                 ILogger<IUserReleaseReadService> logger,
@@ -172,7 +183,7 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        builder.MapPost("/whatsappmessage", async (
+        app.MapPost("/whatsappmessage", async (
                 IWhatsappMessageService whatsappMessageService,
                 IUserContext userContext,
                 IHttpContextAccessor httpContextAccessor,
@@ -210,6 +221,6 @@ public static class RegisterEndpoints
             .Produces(401)
             .Produces(500);
 
-        return builder;
+        return app;
     }
 }

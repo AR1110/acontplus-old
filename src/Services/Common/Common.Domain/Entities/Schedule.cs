@@ -1,0 +1,14 @@
+namespace Common.Domain.Entities;
+
+[Table("Schedule", Schema = "Common")]
+public class Schedule : BaseEntity
+{
+    public required Dia Day { get; set; }
+    public int DayId { get; set; }
+
+    [Column(TypeName = "TIME(7), NOT NULL")]
+    public TimeSpan StartTime { get; set; }
+
+    [Column(TypeName = "TIME(7), NOT NULL")]
+    public TimeSpan EndTime { get; set; }
+}

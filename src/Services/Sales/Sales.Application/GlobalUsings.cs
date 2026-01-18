@@ -4,3 +4,8 @@ global using Acontplus.Core.Validation;
 global using Acontplus.Utilities.Data;
 global using Sales.Application.Interfaces;
 global using System.Data;
+global using Acontplus.Core.Domain.Common.Results;
+global using MapsterMapper;
+global using Microsoft.Extensions.Logging;
+global using Sales.Application.Dtos;
+global using Sales.Domain.Entities;

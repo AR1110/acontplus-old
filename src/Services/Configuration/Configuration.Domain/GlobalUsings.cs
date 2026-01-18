@@ -3,3 +3,4 @@ global using Acontplus.Core.Dtos.Responses;
 global using Configuration.Domain.Entities;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using Acontplus.Notifications.Entities;

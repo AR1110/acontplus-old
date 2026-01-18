@@ -14,3 +14,4 @@ global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.Extensions.Configuration;
 global using System.Data;
 global using System.Reflection;
+global using Acontplus.Notifications.Entities;
