@@ -37,6 +37,7 @@
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json"
+      Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
 </Project>

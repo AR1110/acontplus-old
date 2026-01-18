@@ -11,4 +11,5 @@ public class Role : BaseEntity
 
     [MaxLength(500)]
     public string? Description { get; set; }
+    public bool? AuthorizationRequired { get; set; }
 }

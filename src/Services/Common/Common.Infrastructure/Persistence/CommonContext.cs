@@ -1,6 +1,6 @@
+using System.Reflection;
 using Acontplus.Notifications.Entities;
 using Common.Domain.Entities;
-using System.Reflection;
 
 namespace Common.Infrastructure.Persistence;
 
@@ -15,6 +15,14 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
     public DbSet<Priority> Priorities { get; set; }
     public DbSet<Status> Status { get; set; }
     public DbSet<WhatsAppMessage> WhatsAppMessages { get; set; }
+    public DbSet<Days> Days { get; set; }
+    public DbSet<Release> Releases { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
+    public DbSet<Tag> Tags { get; set; }
+    public DbSet<UserManual> UserManuals { get; set; }
+    public DbSet<UserManualTag> UserManualTags { get; set; }
+    public DbSet<UserManualType> UserManualTypes { get; set; }
+    public DbSet<UserReleaseRead> UserReleaseReads { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,5 +45,10 @@ public class CommonContext(DbContextOptions<CommonContext> options) : BaseContex
                                  && p.GetColumnType() == null // No column type is set
                      ))
             property.SetIsUnicode(false);
+
+        BaseEntityRegistration.RegisterEntities(modelBuilder, typeof(CommonContext),
+            typeof(UserReleaseRead));
+
+        Acontplus.Persistence.SqlServer.Configurations.SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(CommonContext), typeof(Days));
     }
 }

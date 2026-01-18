@@ -1,0 +1,22 @@
+[
+    {
+        "Code": "LITE",
+        "Name": "Lite",
+        "Description": "Plan básico con funcionalidades limitadas"
+    },
+    {
+        "Code": "BASIC",
+        "Name": "Básica",
+        "Description": "Plan básico para pequeños negocios"
+    },
+    {
+        "Code": "STANDARD",
+        "Name": "Comercios",
+        "Description": "Plan estándar para comercios medianos"
+    },
+    {
+        "Code": "PREMIUM",
+        "Name": "Premium",
+        "Description": "Plan premium con todas las funcionalidades"
+    }
+]

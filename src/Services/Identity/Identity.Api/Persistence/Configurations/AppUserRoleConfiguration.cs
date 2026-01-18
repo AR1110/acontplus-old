@@ -1,3 +1,5 @@
+// NOTE: This configuration is commented out - Identity entities are managed manually outside of EF Core migrations
+/*
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Identity.Api.Persistence.Configurations;
@@ -22,3 +24,4 @@ public class AppUserRoleConfiguration : IEntityTypeConfiguration<AppUserRole>
         // to avoid circular references and duplicate configurations
     }
 }
+*/

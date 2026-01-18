@@ -6,8 +6,22 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<PrinterDocument> PrinterDocuments { get; set; }
     public DbSet<PrinterType> PrinterTypes { get; set; }
     public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
-    // Actions moved to Identity service
-    // Release moved to Common service
+    public DbSet<Applications> Applications { get; set; }
+    public DbSet<Company> Companies { get; set; }
+    public DbSet<CompanyDemoStep> CompanyDemoSteps { get; set; }
+    public DbSet<CompanyPolicyOverride> CompanyPolicyOverrides { get; set; }
+    public DbSet<DemoStep> DemoSteps { get; set; }
+    public DbSet<Ec2Instance> Ec2Instances { get; set; }
+    public DbSet<LicenseDetails> LicenseDetails { get; set; }
+    public DbSet<LicensePolicyConfiguration> LicensePolicyConfigurations { get; set; }
+    public DbSet<Licenses> Licenses { get; set; }
+    public DbSet<LicenseType> LicenseTypes { get; set; }
+    public DbSet<Menu> Menus { get; set; }
+    public DbSet<MenuAction> MenuActions { get; set; }
+    public DbSet<Report> Reports { get; set; }
+    public DbSet<ScheduleCompany> ScheduleCompanies { get; set; }
+    public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
+    public DbSet<Systems> Systems { get; set; }
 
     // Read-only views for cross-service queries
     public DbSet<MenuActionView> MenuActionViews { get; set; }
@@ -38,6 +52,8 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
             property.SetIsUnicode(false);
 
         BaseEntityRegistration.RegisterEntities(modelBuilder, typeof(ConfigurationContext),
+            typeof(CompanyDemoStep),
+            typeof(ScheduleCompany),
             typeof(PrinterDocument));
     }
 }

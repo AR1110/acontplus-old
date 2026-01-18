@@ -1,3 +1,5 @@
+// NOTE: This configuration is commented out - Identity entities are managed manually outside of EF Core migrations
+/*
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Identity.Api.Persistence.Configurations;
@@ -63,3 +65,4 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .OnDelete(DeleteBehavior.Cascade);
     }
 }
+*/

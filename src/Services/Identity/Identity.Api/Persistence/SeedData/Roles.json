@@ -1,0 +1,47 @@
+[
+    {
+        "Code": "SU",
+        "Name": "SUPERUSUARIO",
+        "Description": "Usuario con acceso total al sistema"
+    },
+    {
+        "Code": "CAJ",
+        "Name": "CAJERO",
+        "Description": "Usuario encargado de operaciones de caja"
+    },
+    {
+        "Code": "ADM",
+        "Name": "ADMINISTRADOR",
+        "Description": "Usuario con permisos administrativos"
+    },
+    {
+        "Code": "VEN",
+        "Name": "VENTAS",
+        "Description": "Usuario de ventas"
+    },
+    {
+        "Code": "VENB",
+        "Name": "VENTA BODEGA",
+        "Description": "Usuario de ventas en bodega"
+    },
+    {
+        "Code": "CON",
+        "Name": "CONTADOR",
+        "Description": "Usuario con acceso a contabilidad"
+    },
+    {
+        "Code": "TRA",
+        "Name": "TRANSFERENCIA",
+        "Description": "Usuario para transferencias"
+    },
+    {
+        "Code": "CB",
+        "Name": "COMPRA BODEGA",
+        "Description": "Usuario de compras en bodega"
+    },
+    {
+        "Code": "ARE",
+        "Name": "AREA ADMINISTRATIVA",
+        "Description": "Usuario del área administrativa"
+    }
+]
