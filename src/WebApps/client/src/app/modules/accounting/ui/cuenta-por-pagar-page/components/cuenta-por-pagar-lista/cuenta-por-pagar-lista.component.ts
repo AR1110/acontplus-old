@@ -1,6 +1,6 @@
 import { CuentaPorPagarHistMovimientoComponent } from '@accounting/ui/cuenta-por-pagar-page/components/cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
 // Angular Common Modules
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -50,7 +50,6 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
 @Component({
   selector: 'app-cuenta-por-pagar-page-lista',
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,
@@ -63,8 +62,8 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     DateRangeSelectionComponent,
     SupplierSearchComponent,
     DataGrid,
-    Button,
-  ],
+    Button
+],
   templateUrl: './cuenta-por-pagar-lista.component.html',
 })
 export class CuentaPorPagarListaComponent implements OnInit {
