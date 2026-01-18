@@ -1,4 +1,4 @@
-namespace Configuration.Api.Endpoints.PolicyTypeEndpoints;
+namespace Identity.Api.Endpoints.PolicyTypeEndpoints;
 
 public static class PolicyTypeEndpoints
 {

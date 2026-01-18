@@ -1,4 +1,4 @@
-namespace Identity.Api.Services;
+namespace Configuration.Application.Services;
 
 public class ScheduleCompanyService(IUnitOfWork unitOfWork) : IScheduleCompanyService
 {
@@ -10,7 +10,7 @@ public class ScheduleCompanyService(IUnitOfWork unitOfWork) : IScheduleCompanySe
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
-            var result = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Seguridad.ScheduleCompany_Insert", parameters);
+            var result = await _adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Config.ScheduleCompany_Insert", parameters);
             await transaction.CommitAsync();
             return Result<SpResponse, DomainError>.Success(result ?? new SpResponse { Code = "50000", Message = "No response from database" });
         }
@@ -26,11 +26,11 @@ public class ScheduleCompanyService(IUnitOfWork unitOfWork) : IScheduleCompanySe
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
-            var role = await _scheduleCompanyRepository.GetByIdAsync(id);
-            if (role == null)
+            var scheduleCompany = await _scheduleCompanyRepository.GetByIdAsync(id);
+            if (scheduleCompany == null)
                 return Result<bool, DomainError>.Failure(DomainError.NotFound("SCHEDULECOMPANY_NOT_FOUND", "ScheduleCompany not found"));
 
-            await _scheduleCompanyRepository.DeleteAsync(role);
+            await _scheduleCompanyRepository.DeleteAsync(scheduleCompany);
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
             return Result<bool, DomainError>.Success(true, "Eliminado exitosamente");
@@ -42,12 +42,12 @@ public class ScheduleCompanyService(IUnitOfWork unitOfWork) : IScheduleCompanySe
         }
     }
 
-    public async Task<Result<dynamic, DomainError>> GetByIdAsync(int CompanyId)
+    public async Task<Result<dynamic, DomainError>> GetByCompanyIdAsync(int companyId)
     {
         try
         {
             var scheduleCompanies = await _scheduleCompanyRepository.GetAllAsync();
-            var filteredCompanies = scheduleCompanies.Where(x => x.CompanyId == CompanyId).ToList();
+            var filteredCompanies = scheduleCompanies.Where(x => x.CompanyId == companyId).ToList();
 
             return filteredCompanies == null || filteredCompanies.Count == 0
                 ? Result<dynamic, DomainError>.Failure(DomainError.NotFound("SCHEDULE_COMPANY_NOT_FOUND", "ScheduleCompany not found"))

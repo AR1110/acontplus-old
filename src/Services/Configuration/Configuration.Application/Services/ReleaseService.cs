@@ -87,7 +87,6 @@ public class ReleaseService : IReleaseService
             {
                 Id = 0, // Will be set by the database
                 AplicacionId = request.AplicacionId,
-                Aplicacion = aplicacion,
                 ReleaseDate = request.ReleaseDate,
                 Version = request.Version,
                 Title = request.Title,

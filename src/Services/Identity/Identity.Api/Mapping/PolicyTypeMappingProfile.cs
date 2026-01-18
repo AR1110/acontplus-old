@@ -1,4 +1,4 @@
-namespace Configuration.Application.Mapping;
+namespace Identity.Api.Mapping;
 
 public static class PolicyTypeMappingProfile
 {
@@ -14,9 +14,7 @@ public static class PolicyTypeMappingProfile
             .Ignore(dest => dest.IsActive)
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
-            .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.LicensePolicyConfigurations)
-            .Ignore(dest => dest.CompanyPolicyOverrides);
+            .Ignore(dest => dest.DeletedByUserId);
 
         // Update mapping: PolicyTypeUpdate -> PolicyType
         config.NewConfig<PolicyTypeUpdate, PolicyType>()
@@ -26,9 +24,7 @@ public static class PolicyTypeMappingProfile
             .Ignore(dest => dest.IsActive)
             .Ignore(dest => dest.IsDeleted)
             .Ignore(dest => dest.DeletedAt)
-            .Ignore(dest => dest.DeletedByUserId)
-            .Ignore(dest => dest.LicensePolicyConfigurations)
-            .Ignore(dest => dest.CompanyPolicyOverrides);
+            .Ignore(dest => dest.DeletedByUserId);
 
         // Response mappings
         config.NewConfig<PolicyType, PolicyTypeItem>();

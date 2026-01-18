@@ -20,6 +20,23 @@ public class ActionsConfiguration : BaseEntityTypeConfiguration<Actions>
     }
 }
 
+public class PolicyTypeConfiguration : BaseEntityTypeConfiguration<PolicyType>
+{
+    public override void Configure(EntityTypeBuilder<PolicyType> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .IsUnique()
+            .HasDatabaseName("IX_PolicyType_Code");
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
 public class LicenciaAccesoConfiguration : BaseEntityTypeConfiguration<LicenciaAcceso>
 {
     public override void Configure(EntityTypeBuilder<LicenciaAcceso> builder)

@@ -8,12 +8,12 @@ using Configuration.Api.Endpoints.LicenciaEndpoints;
 using Configuration.Api.Endpoints.LicenseTypeEndpoints;
 using Configuration.Api.Endpoints.MenuActionEndpoints;
 using Configuration.Api.Endpoints.MenuEndpoints;
-using Configuration.Api.Endpoints.PolicyTypeEndpoints;
 using Configuration.Api.Endpoints.PrintEndpoints;
 using Configuration.Api.Endpoints.PrinterDocumentEndpoints;
 using Configuration.Api.Endpoints.PrinterEndpoints;
 using Configuration.Api.Endpoints.PrinterTypeEndpoints;
 using Configuration.Api.Endpoints.ReportEndpoints;
+using Configuration.Api.Endpoints.ScheduleCompanyEndpoints;
 using Configuration.Api.Endpoints.SistemaEndpoints;
 using Configuration.Api.Endpoints.SubscriptionTypeEndpoints;
 using Configuration.Api.Endpoints.UserCustomerEndpoints;
@@ -38,7 +38,6 @@ public static class RegisterEndpoints
         app.MapCompanyEndpoints();
         app.MapMenuActionEndpoints();
         app.MapMenuEndpoints();
-        app.MapPolicyTypeEndpoints();
         app.MapReportEndpoints();
         app.MapSistemaEndpoints();
         app.MapDemoStepEndpoints();
@@ -48,5 +47,6 @@ public static class RegisterEndpoints
         app.MapSubscriptionTypeEndpoints();
         app.MapEmailSenderConfigEndpoints();
         app.MapWhatsappUsageEndpoints();
+        app.MapScheduleCompanyEndpoints();
     }
 }

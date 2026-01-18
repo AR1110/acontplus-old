@@ -1,6 +1,6 @@
-namespace Identity.Api.Entities;
+namespace Configuration.Domain.Entities;
 
-[Table("ScheduleCompany", Schema = "Seguridad")]
+[Table("ScheduleCompany", Schema = "Config")]
 public class ScheduleCompany : BaseEntity
 {
     /// <summary>
@@ -8,9 +8,7 @@ public class ScheduleCompany : BaseEntity
     /// </summary>
     public int ScheduleId { get; set; }
 
-    /// <summary>
-    /// FK to Config.Company - navigation removed for cross-service boundary
-    /// </summary>
+    public required Company Company { get; set; }
     public int CompanyId { get; set; }
 
     [Column(TypeName = "TIME(7), NOT NULL")]

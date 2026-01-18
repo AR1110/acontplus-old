@@ -4,10 +4,11 @@ public static class ReleaseMappingProfile
 {
     public static void Register(TypeAdapterConfig config)
     {
+        // Note: Aplicacion navigation removed - AplicacionName must be fetched separately via AplicacionId
         config.NewConfig<Release, ReleaseItem>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.AplicacionId, src => src.AplicacionId)
-            .Map(dest => dest.AplicacionName, src => src.Aplicacion != null ? src.Aplicacion.Name : string.Empty)
+            .Map(dest => dest.AplicacionName, src => string.Empty) // Must be populated separately
             .Map(dest => dest.ReleaseDate, src => src.ReleaseDate)
             .Map(dest => dest.Version, src => src.Version)
             .Map(dest => dest.Title, src => src.Title)
@@ -20,7 +21,7 @@ public static class ReleaseMappingProfile
         config.NewConfig<Release, ReleaseCreatedResponse>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.AplicacionId, src => src.AplicacionId)
-            .Map(dest => dest.AplicacionName, src => src.Aplicacion != null ? src.Aplicacion.Name : string.Empty)
+            .Map(dest => dest.AplicacionName, src => string.Empty) // Must be populated separately
             .Map(dest => dest.ReleaseDate, src => src.ReleaseDate)
             .Map(dest => dest.Version, src => src.Version)
             .Map(dest => dest.Title, src => src.Title)
@@ -33,7 +34,7 @@ public static class ReleaseMappingProfile
         config.NewConfig<Release, ReleaseUpdatedResponse>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.AplicacionId, src => src.AplicacionId)
-            .Map(dest => dest.AplicacionName, src => src.Aplicacion != null ? src.Aplicacion.Name : string.Empty)
+            .Map(dest => dest.AplicacionName, src => string.Empty) // Must be populated separately
             .Map(dest => dest.ReleaseDate, src => src.ReleaseDate)
             .Map(dest => dest.Version, src => src.Version)
             .Map(dest => dest.Title, src => src.Title)

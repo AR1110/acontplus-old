@@ -1,4 +1,4 @@
-namespace Configuration.Application.Interfaces;
+namespace Identity.Api.Interfaces;
 
 public interface IPolicyTypeService
 {

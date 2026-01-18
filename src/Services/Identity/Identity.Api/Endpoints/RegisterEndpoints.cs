@@ -1,8 +1,8 @@
 using Identity.Api.Endpoints.ActionEndpoints;
 using Identity.Api.Endpoints.LicenciaAccesoDetalleEndpoints;
 using Identity.Api.Endpoints.LicenciaAccesoEndpoints;
+using Identity.Api.Endpoints.PolicyTypeEndpoints;
 using Identity.Api.Endpoints.RoleEndpoints;
-using Identity.Api.Endpoints.ScheduleCompanyEndpoints;
 
 namespace Identity.Api.Endpoints;
 
@@ -16,7 +16,7 @@ public static class RegisterEndpoints
         app.MapLicenciaAccesoEndpoints();
         app.MapLicenciaAccesoDetalleEndpoints();
         app.MapRoleEndpoints();
-        app.MapScheduleCompanyEndpoints();
+        app.MapPolicyTypeEndpoints();
         app.MapActionEndpoints();
     }
 }

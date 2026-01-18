@@ -166,23 +166,6 @@ public class MenuActionConfiguration : BaseEntityTypeConfiguration<MenuAction>
     }
 }
 
-public class PolicyTypeConfiguration : BaseEntityTypeConfiguration<PolicyType>
-{
-    public override void Configure(EntityTypeBuilder<PolicyType> builder)
-    {
-        base.Configure(builder);
-
-        builder
-            .HasIndex(x => x.Code)
-            .IsUnique()
-            .HasDatabaseName("IX_PolicyType_Code");
-
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
-
 public class LicensePolicyConfigurations : BaseEntityTypeConfiguration<LicensePolicyConfiguration>
 {
     public override void Configure(EntityTypeBuilder<LicensePolicyConfiguration> builder)
@@ -200,11 +183,7 @@ public class LicensePolicyConfigurations : BaseEntityTypeConfiguration<LicensePo
             .HasForeignKey(e => e.LicenseTypeId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder
-            .HasOne(e => e.PolicyType)
-            .WithMany(e => e.LicensePolicyConfigurations)
-            .HasForeignKey(e => e.PolicyTypeId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // PolicyType is in Identity service - no navigation, just FK
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
@@ -223,10 +202,37 @@ public class CompanyPolicyOverrideConfiguration : BaseEntityTypeConfiguration<Co
             .HasDatabaseName("IX_CompanyPolicyOverride_Company_Policy");
 
         builder
-            .HasOne(e => e.PolicyType)
-            .WithMany(e => e.CompanyPolicyOverrides)
-            .HasForeignKey(e => e.PolicyTypeId)
+            .HasOne(e => e.Company)
+            .WithMany()
+            .HasForeignKey(e => e.CompanyId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // PolicyType is in Identity service - no navigation, just FK
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class ScheduleCompanyConfiguration : BaseEntityTypeConfiguration<ScheduleCompany>
+{
+    public override void Configure(EntityTypeBuilder<ScheduleCompany> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(e => new { e.CompanyId, e.ScheduleId })
+            .IsUnique()
+            .HasDatabaseName("IX_ScheduleCompany_Company_Schedule");
+
+        builder
+            .HasOne(e => e.Company)
+            .WithMany()
+            .HasForeignKey(e => e.CompanyId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Schedule is in Common service - no navigation, just FK
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
@@ -321,23 +327,7 @@ public class ActionsConfiguration : BaseEntityTypeConfiguration<Actions>
     }
 }
 
-public class ReleaseConfiguration : BaseEntityTypeConfiguration<Release>
-{
-    public override void Configure(EntityTypeBuilder<Release> builder)
-    {
-        base.Configure(builder);
-
-        builder
-            .HasOne(x => x.Aplicacion)
-            .WithMany()
-            .HasForeignKey(x => x.AplicacionId);
-
-        builder.Ignore(x => x.Content);
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
+// Release entity moved to Common service
 
 public class SubscriptionTypeConfiguration : BaseEntityTypeConfiguration<SubscriptionType>
 {

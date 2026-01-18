@@ -1,4 +1,4 @@
-namespace Identity.Api.Endpoints.ScheduleCompanyEndpoints;
+namespace Configuration.Api.Endpoints.ScheduleCompanyEndpoints;
 
 public static class ScheduleCompanyEndpoints
 {
@@ -16,14 +16,14 @@ public static class ScheduleCompanyEndpoints
 
     private static void MapGetEndpoints(RouteGroupBuilder group)
     {
-        group.MapGet("/{id}",
-                async (int id, IScheduleCompanyService scheduleCompanyService, CancellationToken cancellationToken) =>
+        group.MapGet("/company/{companyId:int}",
+                async (int companyId, IScheduleCompanyService scheduleCompanyService, CancellationToken cancellationToken) =>
                 {
-                    return await scheduleCompanyService.GetByIdAsync(id).ToGetMinimalApiResultAsync();
+                    return await scheduleCompanyService.GetByCompanyIdAsync(companyId).ToGetMinimalApiResultAsync();
                 })
-            .WithName("GetScheduleCompanyById")
-            .WithSummary("Get schedule company by ID")
-            .WithDescription("Retrieves a specific schedule company by its ID")
+            .WithName("GetScheduleCompaniesByCompanyId")
+            .WithSummary("Get schedule companies by company ID")
+            .WithDescription("Retrieves all schedule companies for a specific company")
             .Produces(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
@@ -32,12 +32,12 @@ public static class ScheduleCompanyEndpoints
     private static void MapCreateEndpoints(RouteGroupBuilder group)
     {
         group.MapPost("/",
-                async (ScheduleCompanyItem ScheduleCompanyItem, IScheduleCompanyService scheduleCompanyService) =>
+                async (ScheduleCompanyItem scheduleCompanyItem, IScheduleCompanyService scheduleCompanyService) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {
                         { "userId", 0 },
-                        { "json", DataConverters.SerializeObjectCustom<ScheduleCompanyItem>(ScheduleCompanyItem) }
+                        { "json", DataConverters.SerializeObjectCustom<ScheduleCompanyItem>(scheduleCompanyItem) }
                     };
                     return await scheduleCompanyService.AddAsync(parameters).ToMinimalApiResultAsync();
                 })
@@ -50,7 +50,7 @@ public static class ScheduleCompanyEndpoints
 
     private static void MapUpdateEndpoints(RouteGroupBuilder group)
     {
-        group.MapPut("/{id}",
+        group.MapPut("/{id:int}",
                 async (int id, ScheduleCompany data, IScheduleCompanyService scheduleCompanyService, IUserContext userContext) =>
                 {
                     data.UpdatedByUserId = userContext.GetUserId();
@@ -65,7 +65,7 @@ public static class ScheduleCompanyEndpoints
 
     private static void MapDeleteEndpoints(RouteGroupBuilder group)
     {
-        group.MapDelete("/{id}",
+        group.MapDelete("/{id:int}",
                 async (int id, IScheduleCompanyService scheduleCompanyService) =>
                 {
                     return await scheduleCompanyService.DeleteAsync(id).ToMinimalApiResultAsync();

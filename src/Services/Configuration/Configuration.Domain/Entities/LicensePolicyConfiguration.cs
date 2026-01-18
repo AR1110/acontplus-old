@@ -8,8 +8,11 @@ public class LicensePolicyConfiguration : BaseEntity
 {
     public int LicenseTypeId { get; set; }
     public required LicenseType LicenseType { get; set; }
+
+    /// <summary>
+    /// FK to Identity.PolicyType - navigation removed for cross-service boundary
+    /// </summary>
     public int PolicyTypeId { get; set; }
-    public required PolicyType PolicyType { get; set; }
 
     [MaxLength(500)] public string PolicyValue { get; set; } = string.Empty;
 }

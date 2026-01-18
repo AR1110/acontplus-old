@@ -8,6 +8,7 @@ global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Notifications.Entities;
 global using Acontplus.Utilities.Data;
+global using Common.Domain.Entities;
 global using Configuration.Application.Dtos;
 global using Configuration.Application.Interfaces;
 global using Configuration.Application.Interfaces.Printing;

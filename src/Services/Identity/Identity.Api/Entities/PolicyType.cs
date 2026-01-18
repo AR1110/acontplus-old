@@ -1,4 +1,4 @@
-namespace Configuration.Domain.Entities;
+namespace Identity.Api.Entities;
 
 /// <summary>
 ///     Defines the types of policies that can be applied to licenses and companies
@@ -16,8 +16,6 @@ public class PolicyType : BaseEntity
 
     [MaxLength(100)] public string? DefaultValue { get; set; }
 
-    public ICollection<LicensePolicyConfiguration> LicensePolicyConfigurations { get; set; } =
-        [];
-
-    public ICollection<CompanyPolicyOverride> CompanyPolicyOverrides { get; set; } = [];
+    // Note: LicensePolicyConfigurations and CompanyPolicyOverrides are in Configuration service
+    // Query via PolicyTypeId - navigation removed for cross-service boundary
 }

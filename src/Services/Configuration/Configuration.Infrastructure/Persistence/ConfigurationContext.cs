@@ -7,7 +7,7 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<PrinterType> PrinterTypes { get; set; }
     public DbSet<EstablecimientoLogo> EstablecimientoLogos { get; set; }
     public DbSet<Actions> Actions { get; set; }
-    public DbSet<Release> Releases { get; set; }
+    // Release moved to Common service
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
