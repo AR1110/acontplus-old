@@ -1,5 +1,3 @@
-using Sales.Domain.Entities;
-
 namespace Sales.Application.Services;
 
 public class SuscripcionDetalleService(IUnitOfWork unitOfWork) : ISuscripcionDetalleService

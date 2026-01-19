@@ -1,5 +1,3 @@
-using Acontplus.Core.Abstractions.Context;
-
 namespace Configuration.Application.Interfaces;
 
 public interface IDemoStepService

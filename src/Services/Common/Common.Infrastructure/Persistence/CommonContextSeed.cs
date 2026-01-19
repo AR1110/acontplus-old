@@ -1,6 +1,6 @@
+using Common.Domain.Entities;
 using System.Reflection;
 using System.Text.Json;
-using Common.Domain.Entities;
 
 namespace Common.Infrastructure.Persistence;
 

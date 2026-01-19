@@ -1,5 +1,3 @@
-using MapsterMapper;
-
 namespace Common.Application.Services;
 
 public class ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ScheduleService> logger) : IScheduleService

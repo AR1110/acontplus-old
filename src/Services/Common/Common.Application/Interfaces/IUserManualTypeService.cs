@@ -1,5 +1,3 @@
-using Common.Domain.Entities;
-
 namespace Common.Application.Interfaces;
 
 public interface IUserManualTypeService

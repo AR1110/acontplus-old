@@ -1,5 +1,3 @@
-using Acontplus.Core.Domain.Common.Entities;
-
 namespace Sales.Domain.Entities;
 
 [Table("Coupon", Schema = "Sales")]

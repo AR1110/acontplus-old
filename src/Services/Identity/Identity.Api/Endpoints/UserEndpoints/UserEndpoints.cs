@@ -19,7 +19,7 @@ public static class UserEndpoints
     private static void MapGetEndpoints(RouteGroupBuilder group)
     {
         group.MapGet("/",
-                async (IUserManagementService userService, PaginationQuery paginationQuery,
+                async (IUserService userService, PaginationQuery paginationQuery,
                     CancellationToken cancellationToken) =>
                 {
                     var PaginationRequest = paginationQuery.Adapt<PaginationRequest>() with
@@ -40,7 +40,7 @@ public static class UserEndpoints
     private static void MapCreateEndpoints(RouteGroupBuilder group)
     {
         group.MapPost("/",
-                async (UserItem user, IUserManagementService userService) =>
+                async (UserItem user, IUserService userService) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {
@@ -59,7 +59,7 @@ public static class UserEndpoints
     private static void MapUpdateEndpoints(RouteGroupBuilder group)
     {
         group.MapPut("/{id:int}",
-                async (int id, UserItem user, IUserManagementService userService, IUserContext userContext) =>
+                async (int id, UserItem user, IUserService userService, IUserContext userContext) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {
@@ -79,7 +79,7 @@ public static class UserEndpoints
     private static void MapDeleteEndpoints(RouteGroupBuilder group)
     {
         group.MapDelete("/{id:int}",
-                async (int id, IUserManagementService userService) =>
+                async (int id, IUserService userService) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {
@@ -98,7 +98,7 @@ public static class UserEndpoints
     private static void MapPasswordResetEndpoints(RouteGroupBuilder group)
     {
         group.MapPut("/PasswordReset/{id:int}",
-                async (int id, UserPassword userPassword, IUserManagementService userService) =>
+                async (int id, UserPassword userPassword, IUserService userService) =>
                 {
                     var parameters = new Dictionary<string, object>
                     {
@@ -118,7 +118,7 @@ public static class UserEndpoints
     private static void MapStatusUpdateEndpoints(RouteGroupBuilder group)
     {
         group.MapPut("/{id:int}/{estado}",
-                async (int id, bool estado, IUserManagementService userService, IUserContext userContext) =>
+                async (int id, bool estado, IUserService userService, IUserContext userContext) =>
                 {
                     var resp = await userService.UpdateStatus(userContext.GetUserId(), id, estado);
                     return resp.ToMinimalApiResult();

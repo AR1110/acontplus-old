@@ -1,8 +1,3 @@
-using Acontplus.Persistence.SqlServer.Configurations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Sales.Domain.Entities;
-
 namespace Sales.Infrastructure.Persistence.Configurations;
 
 public class SuscripcionConfiguration : BaseEntityTypeConfiguration<Suscripcion>

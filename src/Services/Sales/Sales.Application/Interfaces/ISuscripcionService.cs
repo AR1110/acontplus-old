@@ -1,5 +1,3 @@
-using Sales.Application.Dtos;
-
 namespace Sales.Application.Interfaces;
 
 public interface ISuscripcionService

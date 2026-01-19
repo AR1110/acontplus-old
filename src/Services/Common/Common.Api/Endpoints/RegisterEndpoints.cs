@@ -4,7 +4,6 @@ using Common.Api.Endpoints.DashboardEndpoints;
 using Common.Api.Endpoints.ReleaseEndpoints;
 using Common.Api.Endpoints.ScheduleEndpoints;
 using Common.Api.Endpoints.TagEndpoints;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Common.Api.Endpoints;
 

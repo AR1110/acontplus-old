@@ -1,5 +1,3 @@
-using Acontplus.Core.Domain.Common.Results;
-
 namespace Common.Application.Interfaces;
 
 public interface IBugsService

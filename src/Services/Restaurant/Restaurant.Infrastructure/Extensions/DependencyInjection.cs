@@ -10,7 +10,7 @@ namespace Restaurant.Infrastructure.Extensions;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddRestaurantInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Register Mapster
         var typeAdapterConfig = TypeAdapterConfig.GlobalSettings;

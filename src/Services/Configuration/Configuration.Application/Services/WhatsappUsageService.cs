@@ -1,5 +1,3 @@
-using Acontplus.Notifications.Entities;
-
 namespace Configuration.Application.Services;
 
 public class WhatsappUsageService : IWhatsappUsageService

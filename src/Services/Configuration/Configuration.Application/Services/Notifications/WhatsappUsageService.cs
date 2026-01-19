@@ -1,5 +1,3 @@
-using Configuration.Application.Interfaces.Notifications;
-
 namespace Configuration.Application.Services.Notifications;
 
 public class WhatsappUsageService(IAdoRepository adoRepository) : Interfaces.Notifications.IWhatsappUsageService

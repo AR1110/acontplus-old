@@ -1,6 +1,3 @@
-using Acontplus.Persistence.SqlServer.Utilities;
-using Microsoft.AspNetCore.Mvc;
-
 namespace Common.Api.Endpoints.DashboardEndpoints;
 
 public static class GetEndpoints

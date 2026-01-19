@@ -1,5 +1,3 @@
-using Mapster;
-
 namespace Common.Application.Mapping;
 
 public static class ScheduleMappingProfile

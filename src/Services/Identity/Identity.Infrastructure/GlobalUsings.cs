@@ -1,0 +1,14 @@
+global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.Dtos.Responses;
+global using Acontplus.Core.Validation;
+global using Acontplus.Persistence.SqlServer.Configurations;
+global using Acontplus.Persistence.SqlServer.Context;
+global using Acontplus.Utilities.Data;
+global using Identity.Domain.Entities;
+global using Identity.Domain.Repositories;
+global using Identity.Infrastructure.Persistence;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.Logging;

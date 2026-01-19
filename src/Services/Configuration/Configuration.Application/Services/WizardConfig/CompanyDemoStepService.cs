@@ -1,5 +1,3 @@
-using Configuration.Application.Interfaces.WizardConfig;
-
 namespace Configuration.Application.Services.WizardConfig;
 
 public class CompanyDemoStepService(IAdoRepository adoRepository) : Interfaces.WizardConfig.ICompanyDemoStepService

@@ -1,5 +1,3 @@
-using Configuration.Application.Interfaces.Notifications;
-
 namespace Configuration.Api.Controllers.Notifications;
 
 public class WhatsappUsageController(Configuration.Application.Interfaces.Notifications.IWhatsappUsageService whatsappUsageService) : BaseApiController

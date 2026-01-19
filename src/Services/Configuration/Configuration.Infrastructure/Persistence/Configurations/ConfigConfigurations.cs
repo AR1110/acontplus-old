@@ -1,5 +1,3 @@
-using Acontplus.Notifications.Entities;
-
 namespace Configuration.Infrastructure.Persistence.Configurations;
 
 public class ApplicationsConfiguration : BaseEntityTypeConfiguration<Applications>

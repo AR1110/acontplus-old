@@ -4,9 +4,9 @@ using Identity.Api.Endpoints.LicenseAccessEndpoints;
 using Identity.Api.Endpoints.PolicyTypeEndpoints;
 using Identity.Api.Endpoints.RoleEndpoints;
 using Identity.Api.Endpoints.UserEndpoints;
-using Identity.Api.Endpoints.UserRoleEndpoints;
-using Identity.Api.Endpoints.UserRequestEndpoints;
 using Identity.Api.Endpoints.UserPermissionEndpoints;
+using Identity.Api.Endpoints.UserRequestEndpoints;
+using Identity.Api.Endpoints.UserRoleEndpoints;
 
 namespace Identity.Api.Endpoints;
 

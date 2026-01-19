@@ -1,6 +1,4 @@
-using Configuration.Application.Dtos;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 
 namespace Configuration.Application.Services;
 

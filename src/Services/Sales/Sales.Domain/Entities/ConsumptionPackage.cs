@@ -1,7 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Acontplus.Core.Domain.Common.Entities;
-
 namespace Sales.Domain.Entities;
 
 [Table("ConsumptionPackage", Schema = "Sales")]

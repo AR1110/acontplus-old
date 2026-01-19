@@ -1,3 +1,5 @@
+using Identity.Domain.Repositories;
+
 namespace Identity.Api.Endpoints.UserProfileEndpoints;
 
 public static class UserProfileEndpoints
@@ -20,8 +22,8 @@ public static class UserProfileEndpoints
         // GET user profile by userId
         userProfileGroup.MapGet("/{userId:int}", async (
             int userId,
-            IUserService userService,
-            ILogger<IUserService> logger) =>
+            IUserRepository userService,
+            ILogger<IUserRepository> logger) =>
         {
             try
             {
@@ -49,8 +51,8 @@ public static class UserProfileEndpoints
         userProfileGroup.MapPut("/{userId:int}", async (
             int userId,
             UserProfileUpdateDto updateDto,
-            IUserService userService,
-            ILogger<IUserService> logger) =>
+            IUserRepository userService,
+            ILogger<IUserRepository> logger) =>
         {
             try
             {

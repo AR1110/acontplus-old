@@ -1,7 +1,3 @@
-using Configuration.Application.Dtos;
-using Configuration.Domain.Entities;
-using Mapster;
-
 namespace Configuration.Application.Mapping;
 
 public static class CompanyMappingProfile

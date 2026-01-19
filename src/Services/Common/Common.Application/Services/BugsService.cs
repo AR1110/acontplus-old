@@ -1,7 +1,3 @@
-using Acontplus.Core.Domain.Common.Results;
-using Acontplus.Utilities.Data;
-using Microsoft.Extensions.Logging;
-
 namespace Common.Application.Services;
 
 public class BugsService(IUnitOfWork unitOfWork, ILogger<BugsService> logger) : IBugsService

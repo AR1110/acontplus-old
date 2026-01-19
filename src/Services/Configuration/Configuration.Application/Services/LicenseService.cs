@@ -1,6 +1,3 @@
-using Configuration.Application.Dtos;
-using Microsoft.Extensions.Logging;
-
 namespace Configuration.Application.Services;
 
 public class LicenseService : ILicenseService

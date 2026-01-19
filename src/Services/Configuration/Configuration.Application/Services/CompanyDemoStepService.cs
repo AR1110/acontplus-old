@@ -1,5 +1,3 @@
-using Configuration.Application.Interfaces;
-
 namespace Configuration.Application.Services;
 
 public class CompanyDemoStepService(IUnitOfWork unitOfWork)

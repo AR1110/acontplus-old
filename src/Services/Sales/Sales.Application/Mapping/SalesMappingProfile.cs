@@ -1,6 +1,3 @@
-using Sales.Application.Dtos;
-using Sales.Domain.Entities;
-
 namespace Sales.Application.Mapping;
 
 public static class SalesMappingProfile

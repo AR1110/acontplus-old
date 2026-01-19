@@ -1,6 +1,6 @@
-using System.Reflection;
 using Acontplus.Notifications.Entities;
 using Common.Domain.Entities;
+using System.Reflection;
 
 namespace Common.Infrastructure.Persistence;
 

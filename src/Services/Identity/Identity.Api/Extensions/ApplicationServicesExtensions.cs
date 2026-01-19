@@ -1,5 +1,6 @@
-using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Extensions;
+using Identity.Infrastructure.Extensions;
+using Identity.Infrastructure.Persistence;
 using Scrutor;
 
 namespace Identity.Api.Extensions;
@@ -26,8 +27,7 @@ public static class ApplicationServicesExtensions
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddSqlServerPersistence<ApplicationDbContext>(options =>
-    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddIdentityInfrastructure(configuration);
 
         // Add ASP.NET Core Identity
         services.AddIdentity<AppUser, AppRole>(options =>

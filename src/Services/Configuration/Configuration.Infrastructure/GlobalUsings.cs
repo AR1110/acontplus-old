@@ -1,5 +1,3 @@
-global using System.Data;
-global using System.Reflection;
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
@@ -16,3 +14,5 @@ global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using Microsoft.Extensions.Configuration;
+global using System.Data;
+global using System.Reflection;

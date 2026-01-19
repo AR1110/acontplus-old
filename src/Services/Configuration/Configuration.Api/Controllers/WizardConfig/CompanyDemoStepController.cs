@@ -1,5 +1,3 @@
-using Configuration.Application.Interfaces.WizardConfig;
-
 namespace Configuration.Api.Controllers.WizardConfig;
 
 public class CompanyDemoStepController(Configuration.Application.Interfaces.WizardConfig.ICompanyDemoStepService companyDemoStepService) : BaseApiController

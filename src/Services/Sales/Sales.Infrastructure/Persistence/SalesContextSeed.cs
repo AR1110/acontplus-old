@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text.Json;
-using Sales.Domain.Entities;
 
 namespace Sales.Infrastructure.Persistence;
 

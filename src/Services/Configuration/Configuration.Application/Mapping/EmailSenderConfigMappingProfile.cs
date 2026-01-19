@@ -1,5 +1,3 @@
-using Acontplus.Notifications.Entities;
-
 namespace Configuration.Application.Mapping;
 
 public static class EmailSenderConfigMappingProfile
