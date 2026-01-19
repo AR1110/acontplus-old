@@ -4,8 +4,6 @@ namespace Sales.Infrastructure.Persistence;
 
 public class SalesContext(DbContextOptions<SalesContext> options) : BaseContext(options)
 {
-    public DbSet<Suscripcion> Suscripciones { get; set; }
-    public DbSet<SuscripcionDetalle> SuscripcionDetalles { get; set; }
     public DbSet<PricingPlan> PricingPlans { get; set; }
     public DbSet<PricingPlanFeature> PricingPlanFeatures { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
@@ -25,7 +23,8 @@ public class SalesContext(DbContextOptions<SalesContext> options) : BaseContext(
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(decimal));
+            var properties = entityType.ClrType.GetProperties()
+                .Where(p => p.PropertyType == typeof(decimal) && p.CanWrite);
 
             foreach (var property in properties)
                 modelBuilder.Entity(entityType.Name).Property(property.Name).HasConversion<double>();
@@ -35,8 +34,5 @@ public class SalesContext(DbContextOptions<SalesContext> options) : BaseContext(
                      .SelectMany(t => t.GetProperties())
                      .Where(p => p.ClrType == typeof(string) && p.GetColumnType() == null))
             property.SetIsUnicode(false);
-
-        BaseEntityRegistration.RegisterEntities(modelBuilder, typeof(SalesContext),
-            typeof(SuscripcionDetalle));
     }
 }

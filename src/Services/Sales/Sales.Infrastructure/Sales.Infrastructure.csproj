@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <PackageReference Include="Acontplus.Persistence.SqlServer" />
+    <PackageReference Include="Mapster" />
+    <PackageReference Include="Mapster.DependencyInjection" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build</IncludeAssets>

@@ -1,35 +1,5 @@
 namespace Sales.Infrastructure.Persistence.Configurations;
 
-public class SuscripcionConfiguration : BaseEntityTypeConfiguration<Suscripcion>
-{
-    public override void Configure(EntityTypeBuilder<Suscripcion> builder)
-    {
-        base.Configure(builder);
-
-        builder
-            .HasMany(x => x.SuscripcionDetalles)
-            .WithOne(x => x.Suscripcion)
-            .HasForeignKey(x => x.SuscripcionId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
-
-public class SuscripcionDetalleConfiguration : BaseEntityTypeConfiguration<SuscripcionDetalle>
-{
-    public override void Configure(EntityTypeBuilder<SuscripcionDetalle> builder)
-    {
-        base.Configure(builder);
-
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
-
 public class PricingPlanConfiguration : BaseEntityTypeConfiguration<PricingPlan>
 {
     public override void Configure(EntityTypeBuilder<PricingPlan> builder)

@@ -14,14 +14,18 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile1.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json"
+      Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Infrastructure" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
     <PackageReference Include="Mapster" />
-
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />
