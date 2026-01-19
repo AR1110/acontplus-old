@@ -109,6 +109,7 @@ BEGIN
             BEGIN
                  SET @WhereClause = @WhereClause + N'AND (
                                                                ar.descripcion LIKE ''%'' + @SearchTerm + ''%''
+                                                            OR ar.codigo LIKE ''%'' + @SearchTerm + ''%''
                                                             OR ri.Summary     LIKE ''%'' + @SearchTerm + ''%''
                                                          ) '
             END
