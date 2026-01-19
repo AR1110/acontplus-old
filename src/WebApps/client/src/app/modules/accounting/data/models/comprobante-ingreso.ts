@@ -1,7 +1,7 @@
 import {
   CuentaPorCobrar,
   CuentaPorCobrarComprobante,
-} from '../../cuenta-por-cobrar/domain/cuenta-por-cobrar.model';
+} from './cuenta-por-cobrar.model';
 import { PaymentType } from '../../shared/models/payment-type.model';
 
 export interface PaymentData {

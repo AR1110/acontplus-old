@@ -4,11 +4,10 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import DecimalUtil from '@core/utils/decimal.util';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
@@ -29,12 +28,13 @@ import Swal from 'sweetalert2';
     ReactiveFormsModule,
     TabulatorTable,
     Button,
-    MatCustomDialogComponent,
     MatInputModule,
     ItemSearch,
     MatIconButton,
     MatIcon,
     MatTooltip,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './item-add-edit.html',
   styles: ``,
@@ -47,7 +47,9 @@ export class ItemAddEdit implements OnInit {
   #tS = inject(ToastrNotificationService);
   overlay = inject(Overlay);
 
-  params = inject<{ id: number; acronymCategory: string }>(MAT_DIALOG_DATA);
+  params = inject<{
+    data: { id: number; acronymCategory: string };
+  }>(MAT_DIALOG_DATA);
   itemForm!: FormGroup;
   itemCompositions = signal<ItemComposition[]>([]);
   itemCompositionsDeleted = signal<ItemComposition[]>([]);
@@ -264,15 +266,15 @@ export class ItemAddEdit implements OnInit {
   ];
 
   isProduct(): boolean {
-    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.RESTAURANT;
+    return this.params?.data?.acronymCategory === CATEGORY_ABBREVIATIONS.RESTAURANT;
   }
 
   isCombo(): boolean {
-    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.COMBO;
+    return this.params?.data?.acronymCategory === CATEGORY_ABBREVIATIONS.COMBO;
   }
 
   isIngredient(): boolean {
-    return this.params?.acronymCategory === CATEGORY_ABBREVIATIONS.INGREDIENT;
+    return this.params?.data?.acronymCategory === CATEGORY_ABBREVIATIONS.INGREDIENT;
   }
 
   getCategoryAbbreviationToSearch() {
@@ -393,7 +395,7 @@ export class ItemAddEdit implements OnInit {
   }
 
   private getItemById() {
-    this.itemGetByIdUseCase.execute(this.params.id).subscribe((response) => {
+    this.itemGetByIdUseCase.execute(this.params.data.id).subscribe((response) => {
       this.itemForm.patchValue(response.item);
       this.itemCompositions.set(response.itemCompositions);
     });
@@ -426,7 +428,7 @@ export class ItemAddEdit implements OnInit {
 
           const newComposition = new ItemComposition();
           newComposition.code = product.code;
-          newComposition.parentItemId = this.params.id;
+          newComposition.parentItemId = this.params.data.id;
           newComposition.childItemId = rowData.id;
           newComposition.measures = measures;
           newComposition.measureId = defaultMeasure.id;
@@ -475,7 +477,7 @@ export class ItemAddEdit implements OnInit {
         const newComposition = new ItemComposition();
         newComposition.parentUuid = parentData.uuid;
         newComposition.code = product.code;
-        newComposition.parentItemId = this.params.id;
+        newComposition.parentItemId = this.params.data.id;
         newComposition.parentCompositionId = parentData.parentCompositionId;
         newComposition.childItemId = rowData.id;
         newComposition.parentUuid = parentData.uuid;
@@ -610,7 +612,7 @@ export class ItemAddEdit implements OnInit {
     };
     this.updateUseCase
       .execute({
-        id: this.params.id,
+        id: this.params.data.id,
         data: dataToSave,
       })
       .subscribe((response) => {

@@ -1,5 +1,5 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ListMovimientoCajaResponse } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
+import { ListMovimientoCajaResponse } from '@accounting/data/models/movimiento-caja.model';
 
 export class ListMovimientoCajaMapper {
   static toJson(obj: any) {

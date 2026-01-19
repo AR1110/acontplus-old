@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { DataFilterCuentaPorCobrarResponse } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.model';
+import { DataFilterCuentaPorCobrarResponse } from '@accounting/data/models/cuenta-por-cobrar.model';
 
 export abstract class CuentaPorCobrarRepository {
   abstract getDataFilter(): Observable<DataFilterCuentaPorCobrarResponse>;

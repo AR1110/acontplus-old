@@ -3,10 +3,10 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
+import { CuentaPorCobrarRepository } from '@accounting/data/repositories/cuenta-por-cobrar.repository';
 
-import { CuentaPorCobrarMapper } from '@accounting/cuenta-por-cobrar/infrastructure/cuenta-por-cobrar.mapper';
-import { DataFilterCuentaPorCobrarMapper } from '@accounting/cuenta-por-cobrar/infrastructure/data-filter-cuenta-por-cobrar.mapper';
+import { CuentaPorCobrarMapper } from '@accounting/data/mappers/cuenta-por-cobrar.mapper';
+import { DataFilterCuentaPorCobrarMapper } from '@accounting/data/mappers/data-filter-cuenta-por-cobrar.mapper';
 
 @Injectable({
   providedIn: 'root',

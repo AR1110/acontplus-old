@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { CuentaPorCobrarRepository } from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.repository';
+import { CuentaPorCobrarRepository } from '@accounting/data/repositories/cuenta-por-cobrar.repository';
 
 @Injectable({
   providedIn: 'root',

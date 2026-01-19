@@ -1,4 +1,4 @@
-import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/data/cuenta-por-cobrar.use-case';
 import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
 import { DynamicCard } from '@acontplus/ng-components';
 import { Component, inject, OnInit, signal } from '@angular/core';

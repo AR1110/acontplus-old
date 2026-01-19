@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ComprobanteIngresoUseCase } from '@accounting/data/comprobante-ingreso.use-case';
-import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/data/cuenta-por-cobrar.use-case';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatButton } from '@angular/material/button';
 import { Button } from '@acontplus/ng-components';

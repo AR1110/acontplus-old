@@ -10,7 +10,7 @@ import { ToastrNotificationService } from '@core/services/toastr-notification.se
 import { CashboxSelectHtmlOnly } from '@accounting/data/models/caja';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinanciera } from '@accounting/data/models/subentidad-financiera.model';
-import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
+import { MovimientoCajaUseCase } from '@accounting/data/movimiento-caja.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';

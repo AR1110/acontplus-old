@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
+import { AnticipoRepository } from '@accounting/data/repositories/anticipo.repository';
 
 @Injectable({
   providedIn: 'root',

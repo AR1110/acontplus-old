@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { PagedResult, PaginationParams } from '@acontplus/core';
-import { GetLookupsMapper } from '@restaurant/data/lookup/get-lookups-mapper';
+import { GetLookupsMapper } from '@restaurant/data/mappers/get-lookups-mapper';
 import { LookupCache } from '@core/services/lookup-cache';
 import { LookupType } from '@core/models/lookup-type';
 

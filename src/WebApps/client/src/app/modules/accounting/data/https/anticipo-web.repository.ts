@@ -4,9 +4,9 @@ import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants'
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
-import { AnticipoRepository } from '@accounting/movimiento-caja/domain/anticipo.repository';
+import { AnticipoRepository } from '@accounting/data/repositories/anticipo.repository';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ListAnticipoMapper } from '@accounting/movimiento-caja/infrastructure/mappers/list-anticipo.mapper';
+import { ListAnticipoMapper } from '@accounting/data/mappers/list-anticipo.mapper';
 
 @Injectable({
   providedIn: 'root',

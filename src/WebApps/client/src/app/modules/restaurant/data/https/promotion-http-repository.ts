@@ -6,9 +6,9 @@ import { map, Observable } from 'rxjs';
 import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
-import { PromotionListMapper } from '@restaurant/data/promotion/promotion-list-mapper';
-import { PromotionSaveMapper } from '@restaurant/data/promotion/promotion-save-mapper';
-import { PromotionGetByIdMapper } from '@restaurant/data/promotion/promotion-get-by-id-mapper';
+import { PromotionListMapper } from '@restaurant/data/mappers/promotion-list-mapper';
+import { PromotionSaveMapper } from '@restaurant/data/mappers/promotion-save-mapper';
+import { PromotionGetByIdMapper } from '@restaurant/data/mappers/promotion-get-by-id-mapper';
 
 @Injectable({
   providedIn: 'root',

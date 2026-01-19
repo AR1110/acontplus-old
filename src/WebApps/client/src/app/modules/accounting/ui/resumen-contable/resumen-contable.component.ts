@@ -1,5 +1,5 @@
 import { SubCategorySelectHtmlOnly } from '@accounting/data/models/subcategory';
-import { ResumenContableUseCase } from '@accounting/resumen-contable/application/resumen-contable.use-case';
+import { ResumenContableUseCase } from '@accounting/data/resumen-contable.use-case';
 import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DynamicCard } from '@acontplus/ng-components';
 import { Component, inject, OnInit, signal } from '@angular/core';

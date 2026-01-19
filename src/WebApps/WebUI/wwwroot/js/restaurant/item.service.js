@@ -152,18 +152,15 @@
                 if (response.code === "1") {
                     const { item, itemCompositions = [] } = JSON.parse(response.payload);
                     const menu = item[0];
-                    console.log('itemService getById menu', menu);
-                    console.log('itemService getById itemCompositions', itemCompositions);
-                    results.components = (itemCompositions || []).map(c => {
+                    const components = (itemCompositions || []).map(c => {
 
                         const { fractional, principal } = c;
 
                         const medidas = fS.processAndSortMeasures(principal, fractional);
-                        console.log('itemService getById medidas', medidas);
-
                         const dataMedida = medidas.find(m => m.defaultMedida) || {};
 
                         return {
+                            id: c.id,
                             "idArticulo": c.productId,
                             "codigo": c.code,
                             "descripcion": c.description,
@@ -174,19 +171,45 @@
                             "llevaInventario": c.isStockable,
                             "idMedida": dataMedida.idMedida,
                             nombreMedida: dataMedida.descripcion,
+                            parentCompositionId: c.parentCompositionId,
                             "conversion": c.quantity,
                             medidas,
                             uniqueId: c.uniqueId,
-                            isOptional: c.isOptional
+                            isOptional: c.isOptional,
+                            level: 0,
+                            children: [],
                         }
 
-                    }).filter(c => !c.isOptional);
+                    })
+                    console.log(components)
+
+                    // ✅ 2. MAPA POR ID (para padres rápidos)
+                    const map = new Map();
+                    components.forEach((item) => map.set(item.id, item));
+
+                    // ✅ 3. CONSTRUIR ÁRBOL + parentUuid + level
+
+                    components.forEach((item) => {
+                        if (item.parentCompositionId === null) {
+                            item.level = 0;
+                            item.parentUuid = null;
+                            results.components.push(item);
+                        }
+                        // else {
+                        //     const parent = map.get(item.parentCompositionId);
+                        //     if (parent) {
+                        //         item.parentUuid = parent.uuid;
+                        //         item.level = parent.level + 1;
+                        //         parent.children.push(item);
+                        //     }
+                        // }
+                    });
 
                     const { fractional, principal } = menu;
 
                     const medidas = fS.processAndSortMeasures(principal, fractional);
 
-                    console.log('itemService getById medidas menu', medidas);
+
                     const dataMedida = medidas.find(m => m.defaultMedida) || {};
 
                     results.menu = {
@@ -202,10 +225,11 @@
                         nombreMedida: dataMedida.descripcion,
                         conversion: dataMedida.conversion,
                         medidas,
-                        components: results.components,
+                        components: results.components.filter(x => !x.isOptional),
                         uniqueId: menu.uniqueId
                     }
                 }
+                console.log(results)
                 return results;
             });
         }

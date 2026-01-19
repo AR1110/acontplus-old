@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { ListMovimientoCajaResponse } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
-import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
+import { ListMovimientoCajaResponse } from '@accounting/data/models/movimiento-caja.model';
+import { MovimientoCajaRepository } from '@accounting/data/repositories/movimiento-caja.repository';
 import { Observable } from 'rxjs';
 
 @Injectable({

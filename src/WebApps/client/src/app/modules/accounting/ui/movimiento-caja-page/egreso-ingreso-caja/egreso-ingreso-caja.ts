@@ -1,6 +1,6 @@
-import { ListMovimientoCajaUseCase } from '@accounting/movimiento-caja/application/list-movimiento-caja.use-case';
-import { MovimientoCajaUseCase } from '@accounting/movimiento-caja/application/movimiento-caja.use-case';
-import { MovimientoCajaList } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
+import { ListMovimientoCajaUseCase } from '@accounting/data/list-movimiento-caja.use-case';
+import { MovimientoCajaUseCase } from '@accounting/data/movimiento-caja.use-case';
+import { MovimientoCajaList } from '@accounting/data/models/movimiento-caja.model';
 import { EgresoIngresoDialogComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component';
 import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';

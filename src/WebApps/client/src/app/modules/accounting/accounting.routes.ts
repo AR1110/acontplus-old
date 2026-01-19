@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./home/accounting-home.component').then((m) => m.AccountingHomeComponent),
+      import('./accounting-home.component').then((m) => m.AccountingHomeComponent),
     data: { breadcrumb: 'Contabilidad' },
   },
   {
@@ -56,7 +56,7 @@ export const routes: Routes = [
     title: 'Cuenta por cobrar',
     loadComponent: () =>
       import(
-        '@accounting/cuenta-por-cobrar/presentation/cuenta-por-cobrar/cuenta-por-cobrar.component'
+        '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component'
       ).then((m) => m.CuentaPorCobrarComponent),
     data: {
       breadcrumb: 'Cuenta por cobrar',
@@ -101,7 +101,7 @@ export const routes: Routes = [
     title: 'Cuenta por cobrar',
     loadComponent: () =>
       import(
-        '@accounting/cuenta-por-cobrar/presentation/cuenta-por-cobrar/cuenta-por-cobrar.component'
+        '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component'
       ).then((m) => m.CuentaPorCobrarComponent),
     data: {
       breadcrumb: 'Cuenta por cobrar',
@@ -171,7 +171,7 @@ export const routes: Routes = [
         title: 'Cartera Cliente',
         loadComponent: () =>
           import(
-            '@accounting/cuenta-por-cobrar/presentation/cartera-cliente/cartera-cliente.component'
+            '@accounting/ui/cartera-cliente/cartera-cliente.component'
           ).then((m) => m.CarteraClienteComponent),
         data: {
           breadcrumb: 'Cartera Cliente',

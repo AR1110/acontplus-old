@@ -12,7 +12,7 @@ import { SubEntidadFinanciera } from '@accounting/data/models/subentidad-financi
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
-import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
+import { AnticipoUseCase } from '@accounting/data/anticipo.use-case';
 import { Button } from '@acontplus/ng-components';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';

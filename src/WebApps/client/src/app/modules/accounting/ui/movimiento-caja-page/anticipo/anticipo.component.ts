@@ -1,7 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { AnticipoModalComponent } from '@accounting/ui/movimiento-caja-page/anticipo/anticipo-modal/anticipo-modal.component';
 
-import { AnticipoRead } from '@accounting/movimiento-caja/domain/anticipo.model';
+import { AnticipoRead } from '@accounting/data/models/anticipo.model';
 import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import Swal from 'sweetalert2';
@@ -11,7 +11,7 @@ import { isValidField } from '@core/utils/utils';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
-import { AnticipoUseCase } from '@accounting/movimiento-caja/application/anticipo.use-case';
+import { AnticipoUseCase } from '@accounting/data/anticipo.use-case';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';

@@ -14,7 +14,7 @@ import { ComprobanteIngresoOpenModalService } from '@accounting/services/comprob
 import { Pagination } from '@acontplus/ng-components';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
-import { CuentaPorCobrarUseCase } from '@accounting/cuenta-por-cobrar/application/cuenta-por-cobrar.use-case';
+import { CuentaPorCobrarUseCase } from '@accounting/data/cuenta-por-cobrar.use-case';
 import { DynamicCard } from '@acontplus/ng-components';
 import { MatIcon } from '@angular/material/icon';
 import { MatButton } from '@angular/material/button';

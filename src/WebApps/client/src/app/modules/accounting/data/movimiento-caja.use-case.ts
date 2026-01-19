@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
+import { MovimientoCajaRepository } from '@accounting/data/repositories/movimiento-caja.repository';
 
 @Injectable({
   providedIn: 'root',

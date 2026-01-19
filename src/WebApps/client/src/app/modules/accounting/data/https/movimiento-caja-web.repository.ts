@@ -4,9 +4,9 @@ import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants'
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { MovimientoCajaRepository } from '@accounting/movimiento-caja/domain/movimiento-caja.repository';
+import { MovimientoCajaRepository } from '@accounting/data/repositories/movimiento-caja.repository';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { ListMovimientoCajaMapper } from '@accounting/movimiento-caja/infrastructure/mappers/list-movimiento-caja.mapper';
+import { ListMovimientoCajaMapper } from '@accounting/data/mappers/list-movimiento-caja.mapper';
 
 @Injectable({
   providedIn: 'root',

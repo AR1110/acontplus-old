@@ -1,6 +1,6 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { Observable } from 'rxjs';
-import { ListMovimientoCajaResponse } from '@accounting/movimiento-caja/domain/movimiento-caja.model';
+import { ListMovimientoCajaResponse } from '@accounting/data/models/movimiento-caja.model';
 
 export abstract class MovimientoCajaRepository {
   abstract getAll<T>(obj: T): Observable<ListMovimientoCajaResponse>;

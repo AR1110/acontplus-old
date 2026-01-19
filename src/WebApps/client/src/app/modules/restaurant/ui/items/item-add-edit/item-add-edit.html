@@ -1,5 +1,4 @@
-<app-mat-custom-dialog (close)="onModalClose()" title="Editar Datos del Producto">
-  <div ngProjectAs="content">
+<mat-dialog-content>
     <form id="itemForm" (ngSubmit)="onSave()" [formGroup]="itemForm">
       <div class="vstack gap-1">
         <mat-form-field>
@@ -47,8 +46,8 @@
         }
       </div>
     </form>
-  </div>
-  <div ngProjectAs="actions">
+  </mat-dialog-content>
+  <mat-dialog-actions>
     <acp-button
       form="itemForm"
       type="submit"
@@ -58,5 +57,4 @@
       matStyle="filled"
       [disabled]="itemForm.invalid"
     />
-  </div>
-</app-mat-custom-dialog>
+  </mat-dialog-actions>

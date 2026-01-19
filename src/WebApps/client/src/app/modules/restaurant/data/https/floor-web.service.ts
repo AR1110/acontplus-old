@@ -5,9 +5,9 @@ import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
-import { FloorMapper } from '@restaurant/data/floor/floor.mapper';
+import { FloorMapper } from '@restaurant/data/mappers/floor.mapper';
 import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { GetFloorsByEstabIdMapper } from '@restaurant/data/floor/get-floors-by-estab-id.mapper';
+import { GetFloorsByEstabIdMapper } from '@restaurant/data/mappers/get-floors-by-estab-id.mapper';
 import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 @Injectable({
