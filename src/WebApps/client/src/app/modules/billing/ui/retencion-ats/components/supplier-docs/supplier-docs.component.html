@@ -6,21 +6,29 @@
   (close)="onClose()"
 />
 <ng-template #contentTemplate>
-  <app-mat-dynamic-table
-    [templateOp]="templateOp"
-    [tableData]="documents()"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [showSelectBox]="true"
-    (rowSelected)="onRowSelected($event)"
+  <acp-data-grid
+    [data]="documents()"
+    [columns]="columns"
+    [showPaginator]="false"
+    [multiSelectable]="true"
+    [rowSelectable]="true"
+    [rowSelected]="documentsSelected()"
+    (rowSelectedChange)="rowAllSelected($event)"
+    [cellTemplate]="{
+      op: templateOp,
+    }"
   />
 </ng-template>
-<ng-template #templateOp let-item="item" />
+
+<ng-template #templateOp let-data />
+
 <ng-template #actionsTemplate>
   @if (this.documentsSelected().length > 0) {
-    <button mat-raised-button (click)="selectDocuments()">
-      <mat-icon aria-hidden="false" aria-label="Check Icon" fontIcon="check" />
-      Seleccionar Documentos
-    </button>
+    <acp-button
+      variant="primary"
+      icon="check"
+      text="Seleccionar Documentos"
+      (handleClick)="selectDocuments()"
+    />
   }
 </ng-template>
