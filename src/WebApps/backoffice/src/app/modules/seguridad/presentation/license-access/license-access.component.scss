@@ -1,0 +1,36 @@
+.table-container {
+  position: relative;
+  overflow: auto;
+  height: 400px;
+}
+.mat-mdc-table {
+  width: 100%;
+  max-height: 500px;
+  overflow: auto;
+}
+
+
+table {
+  width: 100%;
+}
+
+
+.tree-table {
+  width: 100%;
+}
+
+.node-spacer {
+  display: inline-block;
+  width: 28px;
+}
+
+
+//.mat-column-op  {
+//  width: 100px !important;
+//}
+//
+//
+//.mat-column-index  {
+//  width: 30px !important;
+//}
+//

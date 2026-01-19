@@ -1,0 +1,108 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="codigo">Código</label>
+        <input
+          type="text"
+          class="form-control"
+          id="codigo"
+          [(ngModel)]="data.codigo"
+          placeholder="RR"
+          required
+        />
+      </div>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="reportPath">Report Path</label>
+        <input
+          type="text"
+          class="form-control"
+          id="reportPath"
+          [(ngModel)]="data.reportPath"
+          placeholder="Example.rdlc"
+          required
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="storedProcedure">Stored Procedure</label>
+        <input
+          type="text"
+          class="form-control"
+          id="storedProcedure"
+          [(ngModel)]="data.storedProcedure"
+          placeholder=""
+          required
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+      <div class="form-group">
+        <label for="contentType">Content Type</label>
+        <input
+          type="text"
+          class="form-control"
+          id="contentType"
+          [(ngModel)]="data.contentType"
+          placeholder="application/pdf"
+          required
+        />
+      </div>
+    </div>
+    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8 col-12">
+      <div class="form-group">
+        <label for="nombreReport">Nombre Reporte</label>
+        <input
+          type="text"
+          class="form-control"
+          id="nombreReport"
+          [(ngModel)]="data.nombreReporte"
+          placeholder="Example"
+          required
+        />
+      </div>
+    </div>
+  </div>
+
+  @if (params.idReporte > 0) {
+    <div class="form-group">
+      <label>Estado</label>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          id="isActive"
+          [(ngModel)]="data.estado"
+        />
+        <label class="form-check-label" for="isActive">
+          @if (data.estado) {
+            Activo
+          } @else {
+            Inactivo
+          }
+        </label>
+      </div>
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-mat-theme-button
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="save()"
+  ></acp-mat-theme-button>
+  <acp-mat-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="dialogClose()"
+  ></acp-mat-theme-button>
+</mat-dialog-actions>

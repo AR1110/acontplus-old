@@ -1,0 +1,93 @@
+<app-breadcrumb></app-breadcrumb>
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col">
+        <button (click)="openDialog()" type="button" mat-raised-button>
+          <mat-icon>add</mat-icon>
+          Nueva
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          class="form-control"
+          placeholder="Buscar actividad"
+          #input
+        />
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Op.</th>
+            <th class="text-center">#</th>
+            <th class="text-center">Código</th>
+            <th>Descripción</th>
+            <th>Cod. Grupo</th>
+            <th>Grupo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of activities; track $index) {
+            <tr>
+              <td class="text-center">
+                <button
+                  (click)="onEdit(item)"
+                  type="button"
+                  class="btn btn-outline-primary btn-sm btn-rounded"
+                  title="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+              <td class="text-center">
+                {{ $index + 1 }}
+              </td>
+              <td class="text-center">{{ item.codigo }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td class="text-center">{{ item.codGrupo }}</td>
+              <td>{{ item.grupo }}</td>
+              <td>
+                <div
+                  [innerHTML]="
+                    item.estado | statusDisplay: { gender: 'female' }
+                  "
+                ></div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <select
+            (change)="loadData()"
+            [(ngModel)]="pagination().pageSize"
+            class="form-select"
+          >
+            @for (page of pagination().pageSizeOptions; track $index) {
+              <option value="{{ page }}">{{ page }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-md-9 col-12">
+        <!--        <ngb-pagination-->
+        <!--          (pageChange)="loadData()"-->
+        <!--          [(page)]="pagination().pageIndex"-->
+        <!--          [boundaryLinks]="true"-->
+        <!--          [collectionSize]="pagination().totalRecords"-->
+        <!--          [maxSize]="pagination().maxSize"-->
+        <!--          [pageSize]="pagination().pageSize"-->
+        <!--          [rotate]="true"-->
+        <!--        />-->
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

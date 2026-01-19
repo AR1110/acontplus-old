@@ -1,0 +1,20 @@
+<mat-toolbar color="primary" role="banner">
+  <!--  <span class="app-title">{{ title() }}</span>-->
+  <div>
+    <a class="d-inline-block align-text-top navbar-brand" href="/"
+      ><img
+        src="/img/logo-nobackground.png"
+        alt="Logo AcontPlus"
+        class="logo"
+        style="max-width: 150px" /></a
+    ><span class="navbar-text"> </span>
+  </div>
+  <span class="flex-spacer"></span>
+
+  <acp-theme-toggle></acp-theme-toggle>
+</mat-toolbar>
+
+<main>
+  <router-outlet />
+</main>
+<app-footer />

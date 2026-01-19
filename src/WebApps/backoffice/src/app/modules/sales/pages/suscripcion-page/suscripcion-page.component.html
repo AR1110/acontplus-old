@@ -1,0 +1,159 @@
+<app-breadcrumb />
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <input matInput  (keyup)="applyFilter($event)"
+                 placeholder="Buscar suscripción"
+                 #input>
+        </mat-form-field>
+      </div>
+    </div>
+    <br />
+      <section class="section-container-table" tabindex="0">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <!-- Options -->
+          <ng-container matColumnDef="op">
+            <th mat-header-cell *matHeaderCellDef>Op.</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                color="primary"
+                aria-label="Update"
+                (click)="edit(element)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                color="accent"
+                aria-label="Delete"
+                (click)="askToDelete(element)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro.</th>
+            <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          </ng-container>
+          <ng-container matColumnDef="subscriptionTypeName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.subscriptionTypeName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="companyName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.companyName }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="startDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Inicio</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.startDate | date: "dd/MM/yyyy" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="endDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>F. Fin</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.endDate | date: "dd/MM/yyyy" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="maxPaymentDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              F. Max. Pago
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.maxPaymentDate | date: "dd/MM/yyyy" }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="cost">
+            <th mat-header-cell *matHeaderCellDef>Costo</th>
+            <td mat-cell *matCellDef="let element">{{ element.cost }}</td>
+          </ng-container>
+          <ng-container matColumnDef="tax">
+            <th mat-header-cell *matHeaderCellDef>Impuesto</th>
+            <td mat-cell *matCellDef="let element">{{ element.tax }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="discount">
+            <th mat-header-cell *matHeaderCellDef>Descuento</th>
+            <td mat-cell *matCellDef="let element">{{ element.discount }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+            <td mat-cell *matCellDef="let element">{{ element.total }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="paid">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Pago</th>
+            <td mat-cell *matCellDef="let element">
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="colorPaid"
+                [checked]="element.paid"
+                [(ngModel)]="element.paid"
+                (change)="askToPay($event, element)"
+              >
+                Pagada
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="isActive">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let element">
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="colorToggle"
+                [checked]="element.isActive"
+                [(ngModel)]="element.isActive"
+                (change)="askToEnableDisable($event, element)"
+              >
+                Activo
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="7">
+              No data matching the filter {{ input.value }}
+            </td>
+          </tr>
+        </table>
+      </section>
+      <mat-paginator
+        #paginator
+        [length]="totalRows"
+        [pageIndex]="currentPage"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        showFirstLastButtons
+        aria-label="Select page"
+      >
+      </mat-paginator>
+  </mat-card-content>
+</mat-card>

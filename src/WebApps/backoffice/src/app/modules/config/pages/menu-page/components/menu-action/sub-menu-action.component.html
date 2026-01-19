@@ -1,0 +1,24 @@
+<section class="checkbox-section">
+    <span class="checkbox-list-section">
+      <mat-checkbox class="example-margin"
+                    [checked]="allComplete"
+                    [indeterminate]="someComplete()"
+                    (change)="setAll($event.checked)">
+        {{mainNodeAction.name}}
+      </mat-checkbox>
+    </span>
+
+
+  <span>
+      <ul>
+        @for (item of mainNodeAction.actions; track $index) {
+          <li>
+            <mat-checkbox [(ngModel)]="item.completed"
+                          (ngModelChange)="updateAllComplete()">
+              {{item.name}}
+            </mat-checkbox>
+          </li>
+        }
+      </ul>
+    </span>
+</section>

@@ -1,0 +1,50 @@
+<app-breadcrumb />
+<mat-card class="mb-3">
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col-md-4 col-12">
+        <button type="button" mat-raised-button (click)="onDialogOpen()">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+      <div class="col-md-6 col-12 d-flex align-items-center">
+        <mat-form-field class="w-100">
+          <input matInput  (input)="onSearch($event)"
+                 placeholder="..." #searchInput>
+          <ng-container matSuffix>
+            <button type="button" mat-icon-button  (click)="onSearchClear(searchInput)">
+              <mat-icon>clear</mat-icon>
+            </button>
+          </ng-container>
+        </mat-form-field>
+
+    </div>
+        <div class="table-responsive">
+          <acp-mat-dynamic-table
+            [tableData]="userManuals"
+            [columnDefinitions]="columnsDefs"
+            [enablePagination]="true"
+            [paginationConfig]="userManualPaginationConfig"
+          ></acp-mat-dynamic-table>
+        </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #actionsTemplate let-item="item">
+  <mat-menu #menu="matMenu">
+    <button (click)="onEdit(item)" mat-menu-item>
+      <mat-icon>edit</mat-icon>
+      Editar
+    </button>
+    <button (click)="onDelete(item)" mat-menu-item>
+      <mat-icon>delete</mat-icon>
+      Eliminar
+    </button>
+  </mat-menu>
+
+  <button [matMenuTriggerFor]="menu" aria-label="Open Options" mat-icon-button>
+    <mat-icon>menu</mat-icon>
+  </button>
+</ng-template>

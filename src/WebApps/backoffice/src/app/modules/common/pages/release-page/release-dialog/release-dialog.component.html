@@ -1,0 +1,107 @@
+<form
+  id="releaseForm"
+  [formGroup]="releaseForm"
+  (ngSubmit)="onSave()"
+  autocomplete="off"
+>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="aplicacionId">Aplicación:</label>
+          <select
+            class="form-select"
+            formControlName="aplicacionId"
+            id="aplicacionId"
+          >
+            <option>Seleccione una aplicación</option>
+            @for (item of applications; track $index) {
+              <option [value]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="version">Versión:</label>
+          <input
+            type="text"
+            id="version"
+            formControlName="version"
+            class="form-control"
+          />
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="releaseDate">Fecha:</label>
+          <input
+            type="date"
+            id="releaseDate"
+            formControlName="releaseDate"
+            class="form-control"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="title">Titulo:</label>
+          <input
+            type="text"
+            class="form-control"
+            formControlName="title"
+            id="title"
+            required
+            maxlength="200"
+            minlength="3"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <quill-editor
+            formControlName="content"
+            [modules]="modules"
+            [styles]="{ height: '250px' }"
+          ></quill-editor>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+        <div class="form-group">
+          <label for="isActive">Estado:</label>
+          <mat-checkbox id="isActive" formControlName="isActive"></mat-checkbox>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-6">
+        <div class="form-group">
+          <label for="logoutRequired">Logout:</label>
+          <mat-checkbox
+            id="logoutRequired"
+            formControlName="logoutRequired"
+          ></mat-checkbox>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      icon="save"
+      text="Guardar"
+      form="releaseForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="dialogClose()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

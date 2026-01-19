@@ -1,0 +1,84 @@
+<app-breadcrumb />
+<mat-card>
+  <mat-card-content>
+    <button mat-raised-button color="primary" (click)="addLicenseAccess()">
+      <mat-icon>add</mat-icon>
+      Añadir acceso
+    </button>
+
+    <div class="table-container">
+      <table mat-table [dataSource]="dataSource()" class="tree-table">
+        <ng-container matColumnDef="op">
+          <th mat-header-cell *matHeaderCellDef>Op</th>
+          <td mat-cell *matCellDef="let node">
+            @if (node.level===1) {
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="onEdit(node)"
+              title="Editar"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="askToDelete(node)"
+              title="Eliminar"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="accent"
+              (click)="openAccesses(node)"
+              title="Ver accesos"
+            >
+              <mat-icon>lock</mat-icon>
+            </button>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td
+            mat-cell
+            *matCellDef="let node"
+            [style.padding-left]="getNodePadding(node.level)"
+          >
+            <div class="hstack" style="width: 400px">
+              @if(hasChildren(node)){
+              <button mat-icon-button (click)="toggleNode(node)">
+                <mat-icon>{{
+                  node.isExpanded ? "expand_more" : "chevron_right"
+                }}</mat-icon>
+              </button>
+
+              } @if(!hasChildren(node)){
+              <span class="node-spacer"></span>
+              }
+              <span>{{ node.name }}</span>
+            </div>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let node">
+            @if (node.level===1){
+            <mat-chip [color]="node.isActive ? 'primary' : 'warn'">
+              {{ node.isActive ? "Activo" : "Inactivo" }}
+            </mat-chip>
+            }
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns; sticky: true"
+        ></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

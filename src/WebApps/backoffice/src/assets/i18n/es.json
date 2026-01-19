@@ -1,0 +1,10 @@
+{
+  "status": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "active.male": "Activo",
+    "active.female": "Activa",
+    "inactive.male": "Inactivo",
+    "inactive.female": "Inactiva"
+  }
+}

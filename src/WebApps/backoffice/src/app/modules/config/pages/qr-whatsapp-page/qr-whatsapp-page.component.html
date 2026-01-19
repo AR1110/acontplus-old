@@ -1,0 +1,37 @@
+<app-breadcrumb />
+
+@if (!isLoggedIn) {
+  <mat-card>
+    <div class="card-header">QR Code</div>
+    <mat-card-content>
+      <img [src]="imgQR" id="qrcode" alt="" class="img-fluid" />
+
+      <button type="button" class="btn btn-success" (click)="reconnect()">
+        <i class="fa fa-sync-alt"></i>
+        Reconectar
+      </button>
+    </mat-card-content>
+    <div class="card-footer text-muted">
+      {{ message }}
+    </div>
+  </mat-card>
+}
+
+@if (isLoggedIn) {
+  <mat-card-content class="card text-center">
+    <mat-card-content>
+      <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+          <div class="text-success">Dispositivo Connectado</div>
+          <p>
+            ID del Dispositivo: <b class="text-info">{{ wid }}</b>
+          </p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-danger" (click)="askToLogout()">
+        <i class="fa fa-sign-out"></i>
+        Cerrar Sesión
+      </button>
+    </mat-card-content>
+  </mat-card-content>
+}

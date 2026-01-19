@@ -1,0 +1,67 @@
+<app-breadcrumb />
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Opciones</th>
+            <th>Cod. Impuesto</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Porcentaje</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of tarifas; track $index) {
+            <tr>
+              <td class="text-center">{{ $index + 1 }}</td>
+              <td class="text-center">
+                <div class="btn-group">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <div class="dropdown-menu animated slideInUp">
+                    <a
+                      class="dropdown-item"
+                      href="javascript:void(0)"
+                      (click)="edit(item)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                      Editar</a
+                    >
+                  </div>
+                </div>
+              </td>
+              <td>{{ item.codImpuesto }}</td>
+              <td>{{ item.codigo }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td>{{ item.porcentaje }}</td>
+              <td>
+                <div
+                  [innerHTML]="item.estado | statusDisplay: { gender: 'male' }"
+                ></div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

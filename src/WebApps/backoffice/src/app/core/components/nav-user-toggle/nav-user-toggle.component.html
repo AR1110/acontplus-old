@@ -1,0 +1,27 @@
+<button mat-button [matMenuTriggerFor]="userMenu">
+  <mat-icon>person</mat-icon>
+  <span fxShow fxHide.xs class="d-none d-xl-block d-lg-block">
+    {{ username() }}
+  </span>
+</button>
+<mat-menu
+  #userMenu="matMenu"
+  xPosition="before"
+  yPosition="above"
+  [overlapTrigger]="false"
+>
+  <a
+    mat-menu-item
+    href="https://app.acontplus.com"
+    target="_blank"
+    matTooltip="Ir a acontplus web"
+    rel="noopener noreferrer"
+  >
+    <mat-icon>arrow_outward</mat-icon>
+    <span>Acontplus Web</span>
+  </a>
+  <a mat-menu-item (click)="logout()">
+    <mat-icon>exit_to_app</mat-icon>
+    <span>Cerrar sesión</span>
+  </a>
+</mat-menu>

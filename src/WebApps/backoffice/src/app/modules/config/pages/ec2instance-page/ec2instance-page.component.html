@@ -1,0 +1,115 @@
+<app-breadcrumb />
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-6">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <input matInput  (keyup)="applyFilter($event)"
+                 placeholder="Buscar instancia"
+                 #input>
+        </mat-form-field>
+      </div>
+    </div>
+    <br />
+      <section class="section-container-table" tabindex="0">
+        <table mat-table [dataSource]="dataSource" matSort>
+          <!-- Options -->
+          <ng-container matColumnDef="op">
+            <th mat-header-cell *matHeaderCellDef>Op.</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                color="primary"
+                aria-label="Update"
+                (click)="dialogUpdate(element)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <!-- <button
+              mat-icon-button
+              color="warn"
+              aria-label="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button> -->
+            </td>
+          </ng-container>
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro.</th>
+            <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="region">
+            <th mat-header-cell *matHeaderCellDef>Región</th>
+            <td mat-cell *matCellDef="let element">{{ element.region }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="instanceId">
+            <th mat-header-cell *matHeaderCellDef>ID</th>
+            <td mat-cell *matCellDef="let element">{{ element.instanceId }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="instanceName">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.instanceName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="instanceType">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.instanceType }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ipAddress">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>IP</th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.ipAddress }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="isActive">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+            <td mat-cell *matCellDef="let element">
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="colorToggle"
+                [checked]="element.isActive"
+                [(ngModel)]="element.isActive"
+                (click)="startStop(element)"
+              >
+                Encender!
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="displayedColumns; sticky: true"
+          ></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+          <!-- Row shown when there is no matching data. -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" colspan="7">
+              No data matching the filter {{ input.value }}
+            </td>
+          </tr>
+        </table>
+      </section>
+      <mat-paginator
+        [pageSizeOptions]="[25, 50, 100]"
+        showFirstLastButtons
+        aria-label="Select page of instances elements"
+      >
+      </mat-paginator>
+  </mat-card-content>
+</mat-card>

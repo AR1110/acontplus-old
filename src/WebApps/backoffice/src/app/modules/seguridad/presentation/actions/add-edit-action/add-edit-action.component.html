@@ -1,0 +1,39 @@
+<form id="formAction" [formGroup]="dataForm" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <div class="d-grid gap-2">
+      <mat-form-field>
+        <mat-label>Código</mat-label>
+        <input matInput formControlName="code" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+        <mat-hint
+          >El nombre debe escribirse en formato camelCase, por ejemplo:
+          propiedadEjemplo.</mat-hint
+        >
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Descripción</mat-label>
+        <input matInput formControlName="description" />
+      </mat-form-field></div
+  ></mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      variant="primary"
+      type="submit"
+      [disabled]="dataForm.invalid"
+      title="Guardar"
+      icon="save"
+      id="formAction"
+    />
+    <acp-mat-theme-button
+      variant="dark"
+      title="Cancelar"
+      icon="close"
+      (handleClick)="close()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

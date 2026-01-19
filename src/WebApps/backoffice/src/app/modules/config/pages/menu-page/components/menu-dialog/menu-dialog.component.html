@@ -1,0 +1,118 @@
+<form id="menuForm" [formGroup]="menuForm" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Application Selection -->
+        <mat-form-field class="w-100">
+          <mat-label>Application</mat-label>
+          <mat-select formControlName="aplicacionId" required>
+            @for (item of applications(); track item.id) {
+              <mat-option [value]="item.id">
+                {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+          @if (menuForm.get("aplicacionId")?.invalid) {
+            <mat-error> Application is required </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Name -->
+        <mat-form-field class="w-100">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" required maxlength="60" />
+          <mat-hint align="end"
+            >{{ menuForm.get("name")?.value?.length || 0 }}/60</mat-hint
+          >
+          @if (menuForm.get("name")?.invalid) {
+            <mat-error> Name is required </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Code -->
+        <mat-form-field class="w-100">
+          <mat-label>Code</mat-label>
+          <input matInput formControlName="code" required maxlength="5" />
+          <mat-hint align="end"
+            >{{ menuForm.get("code")?.value?.length || 0 }}/5</mat-hint
+          >
+          @if (menuForm.get("code")?.errors) {
+            <mat-error>
+              @if (menuForm.get("code")?.invalid) {
+                <span>Code is required</span>
+              }
+              @if (menuForm.get("code")?.value?.length > 5) {
+                <span>Max 5 characters</span>
+              }
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-6">
+        <!-- Parent Menu -->
+        <mat-form-field class="w-100">
+          <mat-label>Parent Menu</mat-label>
+          <mat-select formControlName="parentId">
+            <mat-option [value]="null">-- Root Level --</mat-option>
+            @for (item of availableParentMenus(); track item.id) {
+              <mat-option [value]="item.id">
+                {{ getMenuHierarchyName(item) }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <!-- URL -->
+        <mat-form-field class="w-100">
+          <mat-label>URL</mat-label>
+          <input matInput formControlName="url" required maxlength="150" />
+          <mat-hint align="end"
+            >{{ menuForm.get("url")?.value?.length || 0 }}/150</mat-hint
+          >
+          @if (menuForm.get("url")?.invalid) {
+            <mat-error> URL is required </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Icon -->
+        <mat-form-field class="w-100">
+          <mat-label>Icon</mat-label>
+          <input matInput formControlName="icon" maxlength="150" />
+          @if (menuForm.get("icon")?.invalid) {
+            <mat-icon matSuffix>
+              {{ menuForm.get("icon")?.value }}
+            </mat-icon>
+          }
+
+          <mat-hint align="end"
+            >{{ menuForm.get("icon")?.value?.length || 0 }}/150</mat-hint
+          >
+        </mat-form-field>
+
+        <!-- Order -->
+        <mat-form-field class="w-100">
+          <mat-label>Order</mat-label>
+          <input matInput type="number" formControlName="order" min="0" />
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      icon="save"
+      text="Guardar"
+      form="menuForm"
+      [disabled]="menuForm.invalid"
+    ></acp-mat-theme-button>
+
+    <acp-mat-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (click)="closeDialog()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

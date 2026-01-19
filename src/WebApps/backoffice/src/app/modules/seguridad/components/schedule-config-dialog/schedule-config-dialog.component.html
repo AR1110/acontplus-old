@@ -1,0 +1,29 @@
+<mat-dialog-content>
+  <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    <app-tabulator
+      [columnNames]="columnsName"
+      [tableData]="dataForColumns"
+    ></app-tabulator>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  @if (!isUpdated) {
+    <button
+      type="button"
+      class="btn btn-outline-success btn-lg"
+      [disabled]="isUpdated"
+      (click)="save()"
+      title="Guardar"
+    >
+      <mat-icon>save</mat-icon> Guardar
+    </button>
+  }
+
+  <button
+    type="button"
+    class="btn btn-outline-dark btn-lg"
+    (click)="closeDialog()"
+  >
+    &times; Cancelar
+  </button>
+</mat-dialog-actions>

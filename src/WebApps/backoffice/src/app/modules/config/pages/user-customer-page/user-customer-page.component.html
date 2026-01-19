@@ -1,0 +1,255 @@
+<app-breadcrumb />
+
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <mat-form-field class="w-100">
+          <input matInput  (keyup)="applyFilter($event)"
+                 placeholder="Buscar usuario"
+                 #input>
+        </mat-form-field>
+
+      </div>
+    </div>
+    <br />
+      <section class="example-table-container">
+        <table
+          mat-table
+          [dataSource]="dataSource"
+          multiTemplateDataRows
+          matSort
+          class="mat-elevation-z8"
+        >
+          <ng-container matColumnDef="op">
+            <th mat-header-cell *matHeaderCellDef>Op.</th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="actionsMenu"
+                class="mat-small"
+              >
+                <mat-icon>list</mat-icon>
+              </button>
+              <mat-menu #actionsMenu="matMenu">
+                <button mat-menu-item (click)="dialogUpdate(element)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Editar</span>
+                </button>
+                <button mat-menu-item (click)="openDialogAsigRole(element)">
+                  <mat-icon>manage_accounts</mat-icon>
+                  <span>Asignación de Roles</span>
+                </button>
+                <button mat-menu-item (click)="openDialogPassword(element)">
+                  <mat-icon>vpn_key</mat-icon>
+                  <span>Actualizar Contraseña</span>
+                </button>
+              </mat-menu>
+            </td>
+          </ng-container>
+
+          <!-- Position Column -->
+          <ng-container matColumnDef="position">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro.</th>
+            <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+          </ng-container>
+
+          <!-- IDCard Column -->
+          <ng-container matColumnDef="idCard">
+            <th mat-header-cell *matHeaderCellDef>Nro. Identificación.</th>
+            <td mat-cell *matCellDef="let element">{{ element.idCard }}</td>
+          </ng-container>
+
+          <!-- fullname Column -->
+          <ng-container matColumnDef="fullname">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>
+              Nombre Completo
+            </th>
+            <td mat-cell *matCellDef="let element">
+              {{ element.fullname }}
+            </td>
+          </ng-container>
+
+          <!-- username Column -->
+          <ng-container matColumnDef="username">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+            <td mat-cell *matCellDef="let element">{{ element.username }}</td>
+          </ng-container>
+
+          <!-- Email Column -->
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Correo</th>
+            <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+          </ng-container>
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let element">
+              <mat-slide-toggle
+                class="example-margin"
+                [color]="colorToggle"
+                [checked]="element.estado"
+                [(ngModel)]="element.estado"
+                (change)="onToggleChange($event, element)"
+              >
+                Activo
+              </mat-slide-toggle>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="expand">
+            <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+              &nbsp;
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm"
+                (click)="onExpanded($event, element)"
+              >
+                @if (expandedElement !== element) {
+                  <mat-icon>arrow_downward</mat-icon>
+                }
+                @if (expandedElement === element) {
+                  <mat-icon>arrow_upward</mat-icon>
+                }
+              </button>
+            </td>
+          </ng-container>
+
+          <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+          <ng-container matColumnDef="expandedDetail">
+            <td
+              mat-cell
+              *matCellDef="let element"
+              [attr.colspan]="columnsToDisplayWithExpand.length"
+            >
+              <div
+                class="d-flex justify-content-center example-element-detail"
+                [@detailExpand]="
+                  element == expandedElement ? 'expanded' : 'collapsed'
+                "
+              >
+                <ng-container
+                  *ngTemplateOutlet="
+                    userCustomerRoles;
+                    context: { $implicit: [element] }
+                  "
+                ></ng-container>
+                <!-- <app-user-customer-role-table/> -->
+              </div>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let element; columns: columnsToDisplayWithExpand"
+            class="example-element-row"
+          ></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+          ></tr>
+        </table>
+      </section>
+      <mat-paginator
+        #paginator
+        [length]="totalRows"
+        [pageIndex]="currentPage"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="pageChanged($event)"
+        showFirstLastButtons
+        aria-label="Select page"
+      >
+      </mat-paginator>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #userCustomerRoles>
+  <mat-card>
+    <mat-card-content>
+      <table
+        class="mat-elevation-z8"
+        mat-table
+        [dataSource]="dataSourceUserCustomerRoles"
+      >
+        <!-- Position Column -->
+        <ng-container matColumnDef="op">
+          <th mat-header-cell *matHeaderCellDef>Op.</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="d-flex gap-2">
+              <button
+                type="button"
+                class="btn btn-info btn-sm"
+                (click)="dialogUserCustomerRoleUpdate(element)"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                (click)="onDeleteUserCustomerRole(element)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef>No.</th>
+          <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+        </ng-container>
+
+        <!-- bussineName Column -->
+        <ng-container matColumnDef="businessName">
+          <th mat-header-cell *matHeaderCellDef>Entidad</th>
+          <td mat-cell *matCellDef="let element">{{ element.businessName }}</td>
+        </ng-container>
+
+        <!-- Rol Column -->
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Rol</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.role }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-slide-toggle
+              class="example-margin"
+              [color]="colorToggle"
+              [checked]="element.estado"
+              [(ngModel)]="element.estado"
+              (change)="onToggleChangeRole($event, element)"
+            >
+              Activa
+            </mat-slide-toggle>
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumnsUserCustomerRoles"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumnsUserCustomerRoles"
+        ></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

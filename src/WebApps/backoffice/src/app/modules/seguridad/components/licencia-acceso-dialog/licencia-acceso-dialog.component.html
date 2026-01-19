@@ -1,0 +1,171 @@
+<form
+  id="licenseAccessForm"
+  [formGroup]="licenciaAccesoForm"
+  (ngSubmit)="onSave()"
+>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+          <label for="licenciaId">Licencia</label>
+          <select
+            class="form-select"
+            formControlName="licenciaId"
+            id="licenciaId"
+            (change)="onLicenseChange($event)"
+            aria-label="Licencia"
+          >
+            <option disabled selected>::SELECCIONE::</option>
+            @for (item of licenses; track $index) {
+              <option [value]="item.id">
+                {{ item.code }} - {{ item.licenseType }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+          <label for="roleId">Rol</label>
+          <select
+            class="form-select"
+            id="roleId"
+            formControlName="roleId"
+            aria-label="Rol"
+          >
+            <option disabled selected>::SELECCIONE::</option>
+            @for (item of roles; track $index) {
+              <option [value]="item.id">
+                {{ item.code }} - {{ item.name }}
+              </option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <h5 class="card-title">Menus Disponibles</h5>
+        <section class="mat-custom-table-container">
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            multiTemplateDataRows
+            matSort
+            class="mat-elevation-z8"
+          >
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox
+                  (change)="$event ? masterToggle() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                  [indeterminate]="selection.hasValue() && !isAllSelected()"
+                  [aria-label]="checkboxLabel()"
+                >
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <mat-checkbox
+                  (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)"
+                  [aria-label]="checkboxLabel(row)"
+                >
+                </mat-checkbox>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="position">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Nro.</th>
+              <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+            </ng-container>
+            <ng-container matColumnDef="aplicacionName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Aplicación
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.aplicacionName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="menuName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Menu</th>
+              <td mat-cell *matCellDef="let element">{{ element.menuName }}</td>
+            </ng-container>
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Submenu</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.name }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="order">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.order }}
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns; sticky: true"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let element; columns: displayedColumns"
+              class="mat-custom-element-row"
+            ></tr>
+          </table>
+        </section>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <h5 class="card-title">Menus con Acceso</h5>
+        <div class="table-responsive my-custom-table">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th class="text-center">#</th>
+                <th>Aplicación</th>
+                <th>Menu</th>
+                <th>Orden</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of selectedMenus; track $index) {
+                <tr class="small">
+                  <td class="text-center">{{ $index + 1 }}</td>
+                  <td>{{ item.aplicacionName }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>
+                    <div style="position: relative">
+                      <input
+                        type="number"
+                        id="sm-order-{{ item.id }}"
+                        class="form-control"
+                        value="{{ item.order }}"
+                        style="width: 80px; min-width: 50px"
+                        (blur)="onSetSubmenuOrder($event, item.id)"
+                      />
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      id="licenseAccessForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="closeDialog()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

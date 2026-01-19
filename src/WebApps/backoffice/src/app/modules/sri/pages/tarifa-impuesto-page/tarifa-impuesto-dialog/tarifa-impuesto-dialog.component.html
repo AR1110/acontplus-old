@@ -1,0 +1,94 @@
+<form
+  id="tarifaImpuestoForm"
+  [formGroup]="tarifaImpuestoForm"
+  (ngSubmit)="onSave()"
+>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="codImpuesto">Impuesto:</label>
+          <select
+            type="text"
+            formControlName="codImpuesto"
+            id="codImpuesto"
+            class="form-select"
+            required
+          >
+            <option [value]="0">Seleccione un Impuesto</option>
+            @for (item of impuestos; track $index) {
+              <option [value]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="codigo">Código:</label>
+          <input
+            type="text"
+            formControlName="codigo"
+            id="codigo"
+            class="form-control"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="descripcion">Descripción:</label>
+          <input
+            type="text"
+            formControlName="descripcion"
+            id="descripcion"
+            class="form-control"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="porcentaje">Porcentaje:</label>
+          <input
+            type="number"
+            formControlName="porcentaje"
+            id="porcentaje"
+            class="form-control"
+            step="any"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="estado">Estado:</label>
+          <input
+            type="checkbox"
+            formControlName="estado"
+            id="estado"
+            class="form-check"
+          />
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      icon="save"
+      text="Guardar"
+      form="tarifaImpuestoForm"
+    />
+    <acp-mat-theme-button
+      variant="dark"
+      icon="close"
+      text="cancelar"
+      (handleClick)="dialogClose()"
+    />
+  </mat-dialog-actions>
+</form>

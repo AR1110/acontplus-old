@@ -1,0 +1,41 @@
+<app-breadcrumb></app-breadcrumb>
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col-6">
+        <button (click)="openDialog(1)" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="text-center">Código</th>
+            <th>Nombre</th>
+            <th>Opciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of licenseTypes; track $index) {
+            <tr>
+              <td class="text-center">{{ item.code }}</td>
+              <td>{{ item.name }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-warning btn-sm"
+                  (click)="edit(item)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

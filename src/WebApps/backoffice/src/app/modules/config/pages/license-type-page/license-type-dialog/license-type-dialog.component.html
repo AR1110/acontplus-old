@@ -1,0 +1,45 @@
+<form id="licenseTypeForm" [formGroup]="licenseTypeForm" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="code"></label>
+          <input
+            type="text"
+            id="code"
+            class="form-control"
+            formControlName="code"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="name"></label>
+          <input
+            type="text"
+            id="name"
+            class="form-control"
+            formControlName="name"
+          />
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      form="licenseTypeForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="closeDialog()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

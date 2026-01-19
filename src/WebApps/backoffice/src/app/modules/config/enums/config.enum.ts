@@ -1,0 +1,20 @@
+export const enum CONFIG_PATHS {
+  APLICACION = 'Aplicacion/',
+  COMPANY = 'Company/',
+  DASHBOARD = 'Dashboard/',
+  EC2INSTANCE = 'Ec2Instance/',
+  LICENCIA = 'Licencia/',
+  LICENCIA_DETALLE = 'LicenciaDetalle/',
+  LICENSE_TYPE = 'LicenseType/',
+  MENU = 'Menu/',
+  SUBMENU = 'Submenu/',
+  SISTEMA = 'Sistema/',
+  SUBSCRIPTION_TYPE = 'SubscriptionType/',
+  USER = 'User/',
+  USER_CUSTOMER = 'UserCustomer/',
+  USER_CUSTOMER_ROLE = 'UserCustomerRole/',
+  REPORT = 'Report/',
+  WHATSAPP_USAGE = 'WhatsappUsage/',
+  WA_INSTANCE = 'waInstance',
+  EMAIL_SENDER_CONFIG = 'EmailSenderConfig/'
+}

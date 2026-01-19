@@ -1,0 +1,42 @@
+<form [formGroup]="form">
+  <h2 mat-dialog-title>{{ titleDialog }}</h2>
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field>
+      <mat-label>Región:</mat-label>
+      <input matInput placeholder="" formControlName="region"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Id:</mat-label>
+      <input matInput placeholder="" formControlName="instanceId"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Nombre:</mat-label>
+      <input matInput placeholder="" formControlName="instanceName"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Tipo:</mat-label>
+      <input matInput placeholder="" formControlName="instanceType"/>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>IP:</mat-label>
+      <input matInput placeholder="" formControlName="ipAddress"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Url Inicio:</mat-label>
+      <input matInput placeholder="" formControlName="urlStart"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Url Parar:</mat-label>
+      <input matInput placeholder="" formControlName="urlStop"/>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" style="margin-right: 20px">
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+      {{ titleBtn }}
+    </button>
+    <button mat-raised-button (click)="close()">Cerrar</button>
+  </mat-dialog-actions>
+</form>

@@ -1,0 +1,83 @@
+<div class="sidenav">
+  <div class="sidenav-header">
+    <acp-icon-user [size]="profilePickSize()" />
+
+    @if (!sideNavCollapsed()) {
+      <div class="header-text">
+        <h2>{{ username() }}</h2>
+      </div>
+    }
+
+    <button
+      class="d-block d-md-none hide-expanded-sidenav"
+      mat-icon-button
+      (click)="toggle.emit()"
+    >
+      <mat-icon aria-label="Close sidenav">close</mat-icon>
+    </button>
+  </div>
+
+  <mat-nav-list
+    class="sidenav-menu"
+    [class.sidenav-collapsed]="sideNavCollapsed()"
+  >
+    <!-- Dashboard -->
+    <a
+      mat-list-item
+      routerLink="home"
+      routerLinkActive
+      #dashboardLink="routerLinkActive"
+      [class.active]="dashboardLink.isActive"
+    >
+      <mat-icon>dashboard</mat-icon>
+      <span class="menu-title">Dashboard</span>
+    </a>
+
+    <!-- Menu Items -->
+    @for (item of menus; track $index) {
+      <div class="menu-parent-container">
+        <a
+          mat-list-item
+          [routerLink]="item.children?.length ? null : item.path"
+          routerLinkActive
+          #parentLink="routerLinkActive"
+          [class.active]="parentLink.isActive || isChildActive(item)"
+          (click)="item.children?.length ? toggleMenu(item) : null"
+          [matTooltip]="item.title"
+          [matTooltipDisabled]="!sideNavCollapsed()"
+          matTooltipPosition="right"
+        >
+          <mat-icon>
+            {{ item.icon }}
+          </mat-icon>
+
+          <span class="menu-title">{{ item.title }}</span>
+
+          @if (item.children?.length) {
+            <mat-icon class="menu-chevron">
+              {{ isExpanded(item) ? "expand_less" : "expand_more" }}
+            </mat-icon>
+          }
+        </a>
+
+        @if (isExpanded(item) && item.children?.length) {
+          <div class="submenu-container">
+            @for (child of item.children; track $index) {
+              <a
+                mat-list-item
+                class="submenu-item"
+                [routerLink]="item.path + '/' + child.path"
+                routerLinkActive
+                #childLink="routerLinkActive"
+                [class.active]="childLink.isActive"
+              >
+                <mat-icon>chevron_right</mat-icon>
+                <span class="menu-title">{{ child.title }}</span>
+              </a>
+            }
+          </div>
+        }
+      </div>
+    }
+  </mat-nav-list>
+</div>

@@ -1,0 +1,49 @@
+<mat-dialog-content>
+  @if (actionsSubMenu.actions.length > 0) {
+    <section>
+      <span>
+        <mat-checkbox
+          [checked]="allComplete"
+          [indeterminate]="someComplete()"
+          (change)="setAll($event.checked)"
+        >
+          {{ actionsSubMenu.name }}
+        </mat-checkbox>
+      </span>
+      <span>
+        <ul>
+          @for (subtask of actionsSubMenu.actions; track $index) {
+            <li>
+              <mat-checkbox
+                [(ngModel)]="subtask.completed"
+                (ngModelChange)="updateAllComplete()"
+              >
+                {{ subtask.name }}
+              </mat-checkbox>
+            </li>
+          }
+        </ul>
+      </span>
+    </section>
+  }
+
+  @if (actionsSubMenu.actions.length === 0) {
+    <div class="alert alert-info" role="alert">
+      El Submenú no tiene asignado las acciones!
+    </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-mat-theme-button
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="save()"
+  ></acp-mat-theme-button>
+  <acp-mat-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="dialogClose()"
+  ></acp-mat-theme-button>
+</mat-dialog-actions>
