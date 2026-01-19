@@ -4,7 +4,7 @@ namespace Identity.Domain.Entities;
 public class LicenseAccessDetails : BaseEntity
 {
     public required LicenseAccesses LicenseAccess { get; set; }
-    public int LicenciaAccesoId { get; set; }
+    public int LicenseAccessId { get; set; }
     public int? Order { get; set; }
 
     /// <summary>

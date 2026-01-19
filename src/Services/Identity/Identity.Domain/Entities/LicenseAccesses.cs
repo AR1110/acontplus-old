@@ -6,7 +6,7 @@ public class LicenseAccesses : BaseEntity
     /// <summary>
     /// FK to Configuration.Licenses - navigation removed for cross-service boundary
     /// </summary>
-    public int LicenciaId { get; set; }
+    public int LicenseId { get; set; }
 
     /// <summary>
     /// FK to Identity.AppRole - navigation removed for cross-service boundary

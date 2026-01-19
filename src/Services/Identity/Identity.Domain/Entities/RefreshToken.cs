@@ -19,8 +19,8 @@ public class RefreshToken
     public string? ReplacedByToken { get; set; }
     public string? DeviceInfo { get; set; } = null;
     public string? UserAgent { get; set; }
-    public int AppUserId { get; set; }
-    public required AppUser AppUser { get; set; }
+    public int UserId { get; set; }
+    // public required AppUser AppUser { get; set; }
 
     [NotMapped] public bool IsExpired => DateTime.UtcNow >= Expires;
 

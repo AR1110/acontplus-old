@@ -46,13 +46,13 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasDatabaseName("IX_RefreshTokens_Token")
             .IsUnique();
 
-        builder.HasIndex(rt => rt.AppUserId)
+        builder.HasIndex(rt => rt.UserId)
             .HasDatabaseName("IX_RefreshTokens_AppUserId");
 
         builder.HasIndex(rt => rt.Expires)
             .HasDatabaseName("IX_RefreshTokens_Expires");
 
-        builder.HasIndex(rt => new { rt.AppUserId, rt.Expires })
+        builder.HasIndex(rt => new { rt.UserId, rt.Expires })
             .HasDatabaseName("IX_RefreshTokens_UserId_Expires");
 
         // Note: Relationship is configured in the AppUser configuration to avoid duplication

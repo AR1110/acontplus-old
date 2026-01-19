@@ -1,18 +1,18 @@
 namespace Identity.Application.Dtos;
 
 public record LicenciaAccesoCreate(
-    int LicenciaId,
+    int LicenseId,
     int RoleId
 );
 
 public record LicenciaAccesoUpdate(
-    int LicenciaId,
+    int LicenseId,
     int RoleId
 );
 
 public record LicenciaAccesoItem(
     int Id,
-    int LicenciaId,
+    int LicenseId,
     string LicenciaName,
     int RoleId,
     string RoleName,

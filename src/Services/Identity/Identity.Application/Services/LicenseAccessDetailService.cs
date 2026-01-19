@@ -19,7 +19,7 @@ public class LicenseAccessDetailService(IUnitOfWork unitOfWork, IMapper mapper) 
                 return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Validation("INVALID_DATA", "No se recibieron datos"));
 
             var existingItems = await _licenseAccessDetailRepository.GetAllAsync();
-            if (existingItems.Any(x => x.LicenciaAccesoId == licenseAccessDetail.LicenciaAccesoId && x.MenuId == licenseAccessDetail.MenuId))
+            if (existingItems.Any(x => x.LicenseAccessId == licenseAccessDetail.LicenseAccessId && x.MenuId == licenseAccessDetail.MenuId))
                 return Result<LicenseAccessDetails, DomainError>.Failure(DomainError.Validation("DUPLICATE_RECORD", "El registro ya existe"));
 
             await _licenseAccessDetailRepository.AddAsync(licenseAccessDetail);

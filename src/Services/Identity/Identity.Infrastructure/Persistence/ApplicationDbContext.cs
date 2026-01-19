@@ -4,19 +4,12 @@ namespace Identity.Infrastructure.Persistence;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : BaseContext(options)
 {
-    // Identity entities - DbSets for querying only, excluded from migrations
-    public DbSet<AppUser> Users { get; set; }
-    public DbSet<AppRole> AppRoles { get; set; }
-    public DbSet<AppUserRole> UserRoles { get; set; }
-
-    // Custom entities
     public DbSet<ForgotPassword> ForgotPasswords { get; set; }
     public DbSet<LoginHistory> LoginHistories { get; set; }
     public DbSet<LoginHistoryArchive> LoginHistoryArchives { get; set; }
     public DbSet<LoginFailed> LoginFaileds { get; set; }
     public DbSet<AccessAuthorization> AccessAuthorizations { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
-    public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<Actions> Actions { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<LicenseAccesses> LicenseAccesses { get; set; }
@@ -33,9 +26,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         base.OnModelCreating(modelBuilder);
 
         // Exclude Identity entities from migrations - they are managed manually
-        modelBuilder.Entity<AppUser>().ToTable("Users", "Auth", t => t.ExcludeFromMigrations());
-        modelBuilder.Entity<AppRole>().ToTable("Roles", "Auth", t => t.ExcludeFromMigrations());
-        modelBuilder.Entity<AppUserRole>().ToTable("UserRoles", "Auth", t => t.ExcludeFromMigrations());
+        // modelBuilder.Entity<AppUser>().ToTable("Users", "Auth", t => t.ExcludeFromMigrations());
+        // modelBuilder.Entity<AppRole>().ToTable("Roles", "Auth", t => t.ExcludeFromMigrations());
+        // modelBuilder.Entity<AppUserRole>()
+        //     .ToTable("UserRoles", "Auth", t => t.ExcludeFromMigrations())
+        //     .HasKey(ur => new { ur.UserId, ur.RoleId });
 
         // Apply all entity configurations from the current assembly
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

@@ -30,8 +30,8 @@ public class RefreshTokenRepository : IRefreshTokenRepository
             CreatedByIp = ipAddress,
             UserAgent = userAgent,
             DeviceInfo = deviceInfo,
-            AppUserId = userId,
-            AppUser = await _context.Users.FindAsync(userId) ?? throw new ArgumentException("User not found", nameof(userId))
+            UserId = userId,
+            // AppUser = await _context.Users.FindAsync(userId) ?? throw new ArgumentException("User not found", nameof(userId))
         };
 
         _context.RefreshTokens.Add(refreshToken);
@@ -45,14 +45,14 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshToken?> GetRefreshTokenAsync(string token)
     {
         return await _context.RefreshTokens
-            .Include(rt => rt.AppUser)
+            //.Include(rt => rt.AppUser)
             .FirstOrDefaultAsync(rt => rt.Token == token);
     }
 
     public async Task<bool> ValidateRefreshTokenAsync(string token, int userId)
     {
         var refreshToken = await _context.RefreshTokens
-            .FirstOrDefaultAsync(rt => rt.Token == token && rt.AppUserId == userId);
+            .FirstOrDefaultAsync(rt => rt.Token == token && rt.UserId == userId);
 
         if (refreshToken == null)
         {
@@ -84,14 +84,14 @@ public class RefreshTokenRepository : IRefreshTokenRepository
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Revoked refresh token for user {UserId} from IP {IpAddress}",
-                refreshToken.AppUserId, ipAddress);
+                refreshToken.UserId, ipAddress);
         }
     }
 
     public async Task RevokeAllUserRefreshTokensAsync(int userId, string? ipAddress = null)
     {
         var activeTokens = await _context.RefreshTokens
-            .Where(rt => rt.AppUserId == userId && rt.Revoked == null && rt.Expires > DateTime.UtcNow)
+            .Where(rt => rt.UserId == userId && rt.Revoked == null && rt.Expires > DateTime.UtcNow)
             .ToListAsync();
 
         foreach (var token in activeTokens)
@@ -131,7 +131,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<IEnumerable<RefreshToken>> GetActiveUserTokensAsync(int userId)
     {
         return await _context.RefreshTokens
-            .Where(rt => rt.AppUserId == userId && rt.IsActive)
+            .Where(rt => rt.UserId == userId && rt.IsActive)
             .OrderByDescending(rt => rt.Created)
             .ToListAsync();
     }

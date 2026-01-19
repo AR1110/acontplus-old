@@ -14,7 +14,7 @@ public class LicenseAccessService(IUnitOfWork unitOfWork, IMapper mapper) : ILic
         try
         {
             var existingItems = await _licenseAccessRepository.GetAllAsync();
-            if (existingItems.Any(x => x.LicenciaId == request.LicenciaId && x.RoleId == request.RoleId))
+            if (existingItems.Any(x => x.LicenseId == request.LicenseId && x.RoleId == request.RoleId))
                 return Result<LicenseAccessItem, DomainError>.Failure(DomainError.Validation("DuplicateLicenseRole", "Esta licencia y rol ya se encuentran registrados"));
 
             var licenseAccess = _mapper.Map<LicenseAccessCreate, LicenseAccesses>(request);

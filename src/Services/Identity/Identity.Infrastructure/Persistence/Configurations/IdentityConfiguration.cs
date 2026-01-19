@@ -43,7 +43,7 @@ public class LicenseAccessesConfiguration : BaseEntityTypeConfiguration<LicenseA
         builder
             .HasMany(x => x.LicenseAccessDetails)
             .WithOne(m => m.LicenseAccess)
-            .HasForeignKey(m => m.LicenciaAccesoId)
+            .HasForeignKey(m => m.LicenseAccessId)
             .IsRequired();
 
         builder.Ignore(x => x.CreatedBy);
