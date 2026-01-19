@@ -8,6 +8,6 @@ public static class LicenseMappingProfile
             .Map(dest => dest.Details, src => src.LicenseDetails);
 
         config.NewConfig<LicenseDetails, LicenseDetailItem>()
-            .Map(dest => dest.ApplicationId, src => src.AplicacionId);
+            .Map(dest => dest.ApplicationId, src => src.ApplicationId);
     }
 }

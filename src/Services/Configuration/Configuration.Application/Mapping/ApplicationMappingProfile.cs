@@ -6,6 +6,6 @@ public static class ApplicationMappingProfile
     {
         config.NewConfig<Applications, ApplicationItem>()
             .Map(dest => dest.SystemName, src => src.System != null ? src.System.Name : string.Empty)
-            .Map(dest => dest.SystemId, src => src.SistemaId);
+            .Map(dest => dest.SystemId, src => src.SystemId);
     }
 }

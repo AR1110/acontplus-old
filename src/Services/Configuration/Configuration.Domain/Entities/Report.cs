@@ -13,10 +13,4 @@ public class Report : BaseEntity
     public required string ReportPath { get; set; }
 
     public string? Query { get; set; }
-
-    public bool FromMobile { get; set; }
-
-    public bool Enabled { get; set; } = true;
-
-    public int? UserId { get; set; }
 }

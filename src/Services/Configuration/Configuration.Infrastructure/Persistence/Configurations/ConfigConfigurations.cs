@@ -14,7 +14,7 @@ public class ApplicationsConfiguration : BaseEntityTypeConfiguration<Application
         builder
             .HasMany(x => x.Menus)
             .WithOne(x => x.Application)
-            .HasForeignKey(x => x.AplicacionId);
+            .HasForeignKey(x => x.ApplicationId);
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
@@ -36,6 +36,43 @@ public class CompanyConfiguration : BaseEntityTypeConfiguration<Company>
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
         builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class CompanyDemoStepConfiguration : BaseEntityTypeConfiguration<CompanyDemoStep>
+{
+    public override void Configure(EntityTypeBuilder<CompanyDemoStep> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasOne(x => x.Company)
+            .WithMany()
+            .HasForeignKey("CompanyId")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasOne(x => x.DemoStep)
+            .WithMany()
+            .HasForeignKey("DemoStepId")
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class DaysConfiguration : IEntityTypeConfiguration<Days>
+{
+    public void Configure(EntityTypeBuilder<Days> builder)
+    {
+        builder.ToTable("Days", "Config");
+
+        builder
+            .HasIndex(x => x.NumberDay)
+            .HasDatabaseName("UX_Days_NumberDay")
+            .IsUnique();
     }
 }
 
@@ -86,7 +123,7 @@ public class LicensesConfiguration : BaseEntityTypeConfiguration<Licenses>
         builder
             .HasMany(x => x.LicenseDetails)
             .WithOne(x => x.License)
-            .HasForeignKey(x => x.LicenciaId)
+            .HasForeignKey(x => x.LicenseId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.Ignore(x => x.CreatedBy);
@@ -297,7 +334,7 @@ public class SystemsConfiguration : BaseEntityTypeConfiguration<Systems>
         builder
             .HasMany(x => x.Applications)
             .WithOne(m => m.System)
-            .HasForeignKey(m => m.SistemaId);
+            .HasForeignKey(m => m.SystemId);
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);
@@ -372,6 +409,23 @@ public class ScheduleConfiguration : BaseEntityTypeConfiguration<Schedule>
     public override void Configure(EntityTypeBuilder<Schedule> builder)
     {
         base.Configure(builder);
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
+public class ReportConfiguration : BaseEntityTypeConfiguration<Report>
+{
+    public override void Configure(EntityTypeBuilder<Report> builder)
+    {
+        base.Configure(builder);
+
+        builder
+            .HasIndex(x => x.Code)
+            .HasDatabaseName("UX_Report_Code")
+            .IsUnique();
 
         builder.Ignore(x => x.CreatedBy);
         builder.Ignore(x => x.UpdatedBy);

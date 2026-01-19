@@ -8,7 +8,7 @@ public class Applications : BaseEntity
     [MaxLength(300)] public required string Name { get; set; }
 
     public required Systems System { get; set; }
-    public int SistemaId { get; set; }
+    public int SystemId { get; set; }
 
     [MaxLength(300)] public string? DomainUrl { get; set; }
 

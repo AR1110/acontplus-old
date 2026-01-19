@@ -4,9 +4,9 @@ namespace Configuration.Domain.Entities;
 public class LicenseDetails : BaseEntity
 {
     public required Licenses License { get; set; }
-    public int LicenciaId { get; set; }
+    public int LicenseId { get; set; }
     public required Applications Application { get; set; }
-    public int AplicacionId { get; set; }
+    public int ApplicationId { get; set; }
     public int? TaxId { get; set; }
     public int? TaxPercentId { get; set; }
 

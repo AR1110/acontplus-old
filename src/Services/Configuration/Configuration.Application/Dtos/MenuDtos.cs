@@ -1,7 +1,7 @@
 namespace Configuration.Application.Dtos;
 
 public record MenuCreate(
-    int AplicacionId,
+    int ApplicationId,
     string Code,
     string Icon,
     string Name,
@@ -12,7 +12,7 @@ public record MenuCreate(
 );
 
 public record MenuUpdate(
-    int AplicacionId,
+    int ApplicationId,
     string Code,
     string Icon,
     string Name,
@@ -24,8 +24,8 @@ public record MenuUpdate(
 
 public record MenuItem(
     int Id,
-    int AplicacionId,
-    string AplicacionName,
+    int ApplicationId,
+    string ApplicationName,
     string Code,
     string Icon,
     string Name,

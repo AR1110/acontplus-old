@@ -33,7 +33,7 @@ public class MenuService : IMenuService
         {
             // Check if code already exists within the same application
             var existingMenu = await _menuRepository.GetFirstOrDefaultAsync(
-                x => x.Code == menu.Code && x.AplicacionId == menu.AplicacionId,
+                x => x.Code == menu.Code && x.ApplicationId == menu.ApplicationId,
                 cancellationToken);
 
             if (existingMenu?.Id > 0)
@@ -48,7 +48,7 @@ public class MenuService : IMenuService
                     return Result<Menu, DomainError>.Failure(DomainError.NotFound("PARENT_MENU_NOT_FOUND",
                         $"Parent menu with ID {menu.ParentId.Value} not found"));
 
-                if (parentMenu.AplicacionId != menu.AplicacionId)
+                if (parentMenu.ApplicationId != menu.ApplicationId)
                     return Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_PARENT_MENU",
                         "Parent menu must belong to the same application"));
             }
@@ -198,7 +198,7 @@ public class MenuService : IMenuService
 
             // Check if code already exists within the same application (excluding current menu)
             var existingMenu = await _menuRepository.GetFirstOrDefaultAsync(
-                x => x.Code == menuFound.Code && x.AplicacionId == menuFound.AplicacionId && x.Id != id,
+                x => x.Code == menuFound.Code && x.ApplicationId == menuFound.ApplicationId && x.Id != id,
                 cancellationToken);
 
             if (existingMenu?.Id > 0)
@@ -217,7 +217,7 @@ public class MenuService : IMenuService
                     return Result<Menu, DomainError>.Failure(DomainError.NotFound("PARENT_MENU_NOT_FOUND",
                         $"Parent menu with ID {menuFound.ParentId.Value} not found"));
 
-                if (parentMenu.AplicacionId != menuFound.AplicacionId)
+                if (parentMenu.ApplicationId != menuFound.ApplicationId)
                     return Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_PARENT_MENU",
                         "Parent menu must belong to the same application"));
 
@@ -263,7 +263,7 @@ public class MenuService : IMenuService
             : menu.Order < 0
             ? Task.FromResult(Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_ORDER",
                 "Menu order must be non-negative")))
-            : menu.AplicacionId <= 0
+            : menu.ApplicationId <= 0
             ? Task.FromResult(Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_APPLICATION",
                 "Valid application ID is required")))
             : Task.FromResult(Result<Menu, DomainError>.Success(menu));
@@ -283,7 +283,7 @@ public class MenuService : IMenuService
             : updatedMenu.Order < 0
             ? Task.FromResult(Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_ORDER",
                 "Menu order must be non-negative")))
-            : updatedMenu.AplicacionId <= 0
+            : updatedMenu.ApplicationId <= 0
             ? Task.FromResult(Result<Menu, DomainError>.Failure(DomainError.Validation("INVALID_APPLICATION",
                 "Valid application ID is required")))
             : Task.FromResult(Result<Menu, DomainError>.Success(updatedMenu));

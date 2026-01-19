@@ -218,7 +218,7 @@ public class SystemService : ISystemService
 
             // Check if Systems has aplicaciones
             var applications = await _applicationRepository.GetAllAsync(cancellationToken);
-            var systemApplications = applications.Where(x => x.SistemaId == id && !x.IsDeleted).ToList();
+            var systemApplications = applications.Where(x => x.SystemId == id && !x.IsDeleted).ToList();
 
             if (systemApplications.Any())
                 return Result<bool, DomainError>.Failure(DomainError.Validation(

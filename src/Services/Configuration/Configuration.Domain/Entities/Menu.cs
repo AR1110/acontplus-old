@@ -4,7 +4,7 @@ namespace Configuration.Domain.Entities;
 public class Menu : BaseEntity
 {
     public required Applications Application { get; set; }
-    public int AplicacionId { get; set; }
+    public int ApplicationId { get; set; }
 
     [MaxLength(5)] public required string Code { get; set; }
 

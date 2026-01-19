@@ -3,7 +3,7 @@ namespace Configuration.Application.Dtos;
 public class MenuDto
 {
     public int? Id { get; set; }
-    public int AplicacionId { get; set; }
+    public int ApplicationId { get; set; }
     public required string Code { get; set; }
     public required string Icon { get; set; }
     public required string Name { get; set; }

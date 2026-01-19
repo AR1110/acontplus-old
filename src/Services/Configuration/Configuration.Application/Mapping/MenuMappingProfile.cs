@@ -35,7 +35,7 @@ public static class MenuMappingProfile
 
         // Response mappings
         config.NewConfig<Menu, MenuItem>()
-            .Map(dest => dest.AplicacionName, src => src.Application != null ? src.Application.Name : string.Empty)
+            .Map(dest => dest.ApplicationName, src => src.Application != null ? src.Application.Name : string.Empty)
             .Map(dest => dest.ParentName, src => src.Parent != null ? src.Parent.Name : null)
             .Map(dest => dest.Children, src => src.Children);
     }

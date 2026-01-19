@@ -105,7 +105,7 @@ public class ApplicationService : IApplicationService
                 Id = 0,
                 Code = request.Code,
                 Name = request.Name,
-                SistemaId = request.SystemId,
+                SystemId = request.SystemId,
                 System = systemEntity,
                 DomainUrl = request.DomainUrl,
                 IpAddress = request.IpAddress,
@@ -164,7 +164,7 @@ public class ApplicationService : IApplicationService
 
             application.Code = request.Code;
             application.Name = request.Name;
-            application.SistemaId = request.SystemId;
+            application.SystemId = request.SystemId;
             application.System = systemEntity;
             application.DomainUrl = request.DomainUrl;
             application.IpAddress = request.IpAddress;

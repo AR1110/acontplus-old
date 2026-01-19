@@ -69,8 +69,8 @@ public class LicenseDetailService(IUnitOfWork unitOfWork) : ILicenseDetailServic
             var detailFound = await _licenseDetailRepository.GetByIdAsync(id);
             if (detailFound == null) return Result<SpResponse, DomainError>.Failure(DomainError.NotFound("LICENSE_DETAIL_NOT_FOUND", "Detail not found"));
 
-            detailFound.LicenciaId = detail.LicenciaId;
-            detailFound.AplicacionId = detail.AplicacionId;
+            detailFound.LicenseId = detail.LicenseId;
+            detailFound.ApplicationId = detail.ApplicationId;
             detailFound.TaxId = detail.TaxId;
             detailFound.TaxPercentId = detail.TaxPercentId;
             detailFound.Cost = detail.Cost;
