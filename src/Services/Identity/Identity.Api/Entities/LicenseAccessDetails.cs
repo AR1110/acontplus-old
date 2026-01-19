@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("LicenseAccessDetails", Schema = "Identity")]
+[Table("LicenseAccessDetails", Schema = "Access")]
 public class LicenseAccessDetails : BaseEntity
 {
     public required LicenseAccesses LicenseAccess { get; set; }

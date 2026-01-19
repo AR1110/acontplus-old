@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("FeaturePolicyAccess", Schema = "Identity")]
+[Table("FeaturePolicyAccess", Schema = "Access")]
 public class FeaturePolicyAccess : BaseEntity
 {
     /// <summary>

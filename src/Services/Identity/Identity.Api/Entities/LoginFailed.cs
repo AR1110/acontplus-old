@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("LoginFailed", Schema = "Identity")]
+[Table("LoginFailed", Schema = "Auth")]
 public class LoginFailed : BaseEntity
 {
     [MaxLength(50)] public string? Username { get; set; }

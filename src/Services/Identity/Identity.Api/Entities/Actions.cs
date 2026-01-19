@@ -1,9 +1,9 @@
 namespace Identity.Api.Entities;
 
 /// <summary>
-///     Schema "Seguridad" is correct for Identity service (security domain).
+///     Schema "Access" contains authorization and control actions.
 /// </summary>
-[Table("Actions", Schema = "Identity")]
+[Table("Actions", Schema = "Access")]
 public class Actions : BaseEntity
 {
     [MaxLength(5)] public required string Code { get; set; }

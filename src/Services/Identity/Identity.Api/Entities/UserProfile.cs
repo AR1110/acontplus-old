@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("UserProfile", Schema = "Identity")]
+[Table("UserProfile", Schema = "Auth")]
 public class UserProfile : BaseEntity
 {
     public int AppUserId { get; set; }

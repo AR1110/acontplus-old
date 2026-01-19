@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("LicenseAccesses", Schema = "Identity")]
+[Table("LicenseAccesses", Schema = "Access")]
 public class LicenseAccesses : BaseEntity
 {
     /// <summary>

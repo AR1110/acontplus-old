@@ -3,7 +3,7 @@ namespace Identity.Api.Entities;
 /// <summary>
 ///     Defines the types of policies that can be applied to licenses and companies.
 /// </summary>
-[Table("PolicyType", Schema = "Identity")]
+[Table("PolicyType", Schema = "Compliance")]
 public class PolicyType : BaseEntity
 {
     [MaxLength(50)] public string Code { get; set; } = string.Empty;

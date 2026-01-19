@@ -3,7 +3,7 @@ namespace Identity.Api.Entities;
 /// <summary>
 ///     Logs all policy enforcement decisions for audit and compliance
 /// </summary>
-[Table("PolicyEnforcementLog", Schema = "Identity")]
+[Table("PolicyEnforcementLog", Schema = "Compliance")]
 public class PolicyEnforcementLog : BaseEntity
 {
     /// <summary>

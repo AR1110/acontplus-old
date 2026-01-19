@@ -1,6 +1,6 @@
 namespace Identity.Api.Entities;
 
-[Table("ForgotPassword", Schema = "Identity")]
+[Table("ForgotPassword", Schema = "Auth")]
 public class ForgotPassword : BaseEntity
 {
     [MaxLength(100)] public required string Email { get; set; }
