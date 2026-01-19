@@ -2,7 +2,7 @@ USE Acontplus
 GO
 CREATE OR ALTER PROCEDURE FactElect.Doc_Elect_Error_Get_Id @userRoleId INT
 ,@id INT
-,@tableNames VARCHAR(500) OUT
+,@tableNames VARCHAR(900) OUT
 AS
 BEGIN
     SET NOCOUNT ON; 
@@ -11,13 +11,16 @@ BEGIN
         SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
         SET @tableNames = 'errors';
 
-	    SELECT ISNULL(dee.estado, '')                  estado
+	    SELECT  dee.estado
                 ,dee.mensaje
-                ,ISNULL(dee.informacionAdicional, '')  informacionAdicional
-                ,tipo
-                ,fechaRegistro  
-        FROM dbo.DocumentoElectronicoError dee WITH (NOLOCK) 
-        WHERE idDocumentoElectronico = @id 
+                ,dee.informacionAdicional
+                ,dee.tipo
+                ,dee.fechaRegistro
+                ,de.serieComprobante
+                ,de.fechaRegistro as fechaRegistroDoc
+        FROM dbo.DocumentoElectronicoError dee WITH (NOLOCK)
+        INNER JOIN dbo.DocumentoElectronico de WITH(NOLOCK) ON de.idDocumentoElectronico = dee.idDocumentoElectronico
+        WHERE dee.idDocumentoElectronico = @id 
     END TRY
     BEGIN CATCH
         INSERT INTO dbo.ErroresSistema([method], [errorNumber], [errorSeverity], [errorState], [errorProcedure], [errorLine], [errorMessage], [idUsuario])
