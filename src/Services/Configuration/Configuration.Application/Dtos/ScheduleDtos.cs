@@ -1,4 +1,4 @@
-namespace Common.Application.Dtos;
+namespace Configuration.Application.Dtos;
 
 public record ScheduleCreate(
     int DayId,

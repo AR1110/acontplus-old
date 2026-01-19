@@ -1,6 +1,6 @@
-namespace Common.Domain.Entities;
+namespace Configuration.Domain.Entities;
 
-[Table("Schedule", Schema = "Common")]
+[Table("Schedule", Schema = "Config")]
 public class Schedule : BaseEntity
 {
     public required Days Day { get; set; }

@@ -10,6 +10,7 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<Company> Companies { get; set; }
     public DbSet<CompanyDemoStep> CompanyDemoSteps { get; set; }
     public DbSet<CompanyPolicyOverride> CompanyPolicyOverrides { get; set; }
+    public DbSet<Days> Days { get; set; }
     public DbSet<DemoStep> DemoSteps { get; set; }
     public DbSet<Ec2Instance> Ec2Instances { get; set; }
     public DbSet<LicenseDetails> LicenseDetails { get; set; }
@@ -19,6 +20,7 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
     public DbSet<Menu> Menus { get; set; }
     public DbSet<MenuAction> MenuActions { get; set; }
     public DbSet<Report> Reports { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
     public DbSet<ScheduleCompany> ScheduleCompanies { get; set; }
     public DbSet<SubscriptionType> SubscriptionTypes { get; set; }
     public DbSet<Systems> Systems { get; set; }
@@ -55,5 +57,7 @@ public class ConfigurationContext(DbContextOptions<ConfigurationContext> options
             typeof(CompanyDemoStep),
             typeof(ScheduleCompany),
             typeof(PrinterDocument));
+
+        Acontplus.Persistence.SqlServer.Configurations.SimpleEntityRegistration.RegisterEntities(modelBuilder, typeof(ConfigurationContext), typeof(Days));
     }
 }

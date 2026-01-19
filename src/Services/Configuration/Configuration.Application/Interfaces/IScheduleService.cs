@@ -1,4 +1,4 @@
-namespace Common.Application.Interfaces;
+namespace Configuration.Application.Interfaces;
 
 public interface IScheduleService
 {

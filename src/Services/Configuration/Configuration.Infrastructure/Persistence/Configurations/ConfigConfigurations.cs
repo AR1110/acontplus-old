@@ -367,6 +367,18 @@ public class WhatsAppUsageConfiguration : BaseEntityTypeConfiguration<WhatsAppUs
     }
 }
 
+public class ScheduleConfiguration : BaseEntityTypeConfiguration<Schedule>
+{
+    public override void Configure(EntityTypeBuilder<Schedule> builder)
+    {
+        base.Configure(builder);
+
+        builder.Ignore(x => x.CreatedBy);
+        builder.Ignore(x => x.UpdatedBy);
+        builder.Ignore(x => x.DeletedBy);
+    }
+}
+
 /// <summary>
 /// Configuration for read-only MenuActionView (database view).
 /// Used for cross-service EF Core queries joining MenuAction with Identity.Actions.

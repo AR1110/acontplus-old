@@ -14,6 +14,7 @@ using Configuration.Api.Endpoints.PrinterEndpoints;
 using Configuration.Api.Endpoints.PrinterTypeEndpoints;
 using Configuration.Api.Endpoints.ReportEndpoints;
 using Configuration.Api.Endpoints.ScheduleCompanyEndpoints;
+using Configuration.Api.Endpoints.ScheduleEndpoints;
 using Configuration.Api.Endpoints.SubscriptionTypeEndpoints;
 using Configuration.Api.Endpoints.SystemEndpoints;
 using Configuration.Api.Endpoints.WhatsappUsageEndpoints;
@@ -43,6 +44,7 @@ public static class RegisterEndpoints
         app.MapSubscriptionTypeEndpoints();
         app.MapEmailSenderConfigEndpoints();
         app.MapWhatsappUsageEndpoints();
+        app.MapScheduleEndpoints();
         app.MapScheduleCompanyEndpoints();
     }
 }

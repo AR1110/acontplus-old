@@ -3,6 +3,7 @@ using Acontplus.Persistence.SqlServer.DependencyInjection;
 using Acontplus.Services.Configuration;
 using Acontplus.Services.Extensions;
 using Acontplus.Services.Extensions.Authentication;
+using Common.Infrastructure.Extensions;
 using Common.Infrastructure.Persistence;
 using Scrutor;
 
@@ -27,8 +28,7 @@ public static class ApplicationServicesExtensions
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddSqlServerPersistence<CommonContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddCommonInfrastructure(configuration);
 
         services.AddCachingServices(configuration);
 

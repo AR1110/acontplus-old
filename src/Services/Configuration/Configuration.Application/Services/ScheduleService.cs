@@ -1,4 +1,4 @@
-namespace Common.Application.Services;
+namespace Configuration.Application.Services;
 
 public class ScheduleService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ScheduleService> logger) : IScheduleService
 {

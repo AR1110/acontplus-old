@@ -2,7 +2,6 @@ using Acontplus.Utilities.Data;
 using Common.Api.Endpoints.BugsEndpoints;
 using Common.Api.Endpoints.DashboardEndpoints;
 using Common.Api.Endpoints.ReleaseEndpoints;
-using Common.Api.Endpoints.ScheduleEndpoints;
 using Common.Api.Endpoints.TagEndpoints;
 
 namespace Common.Api.Endpoints;
@@ -16,7 +15,6 @@ public static class RegisterEndpoints
         app.MapBugsEndpoints();
         app.MapDashboardEndpoints();
         app.MapReleaseEndpoints();
-        app.MapScheduleEndpoints();
         app.MapTagEndpoints();
 
         app.MapLookupEndpoints();

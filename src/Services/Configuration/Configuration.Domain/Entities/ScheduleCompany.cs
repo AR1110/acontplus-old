@@ -3,9 +3,7 @@ namespace Configuration.Domain.Entities;
 [Table("ScheduleCompany", Schema = "Config")]
 public class ScheduleCompany : BaseEntity
 {
-    /// <summary>
-    /// FK to Common.Schedule - navigation removed for cross-service boundary
-    /// </summary>
+    public required Schedule Schedule { get; set; }
     public int ScheduleId { get; set; }
 
     public required Company Company { get; set; }

@@ -1,4 +1,4 @@
-namespace Common.Application.Mapping;
+namespace Configuration.Application.Mapping;
 
 public static class ScheduleMappingProfile
 {

@@ -15,18 +15,6 @@ public class ReleaseConfiguration : BaseEntityTypeConfiguration<Release>
     }
 }
 
-public class ScheduleConfiguration : BaseEntityTypeConfiguration<Schedule>
-{
-    public override void Configure(EntityTypeBuilder<Schedule> builder)
-    {
-        base.Configure(builder);
-
-        builder.Ignore(x => x.CreatedBy);
-        builder.Ignore(x => x.UpdatedBy);
-        builder.Ignore(x => x.DeletedBy);
-    }
-}
-
 public class UserManualTypeConfiguration : BaseEntityTypeConfiguration<UserManualType>
 {
     public override void Configure(EntityTypeBuilder<UserManualType> builder)

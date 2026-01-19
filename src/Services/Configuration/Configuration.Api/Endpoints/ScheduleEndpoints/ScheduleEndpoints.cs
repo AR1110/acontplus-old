@@ -1,4 +1,4 @@
-namespace Common.Api.Endpoints.ScheduleEndpoints;
+namespace Configuration.Api.Endpoints.ScheduleEndpoints;
 
 public static class ScheduleEndpoints
 {
