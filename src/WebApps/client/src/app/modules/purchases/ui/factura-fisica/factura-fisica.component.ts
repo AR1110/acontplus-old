@@ -3,17 +3,21 @@ import { MatCardModule } from '@angular/material/card';
 import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { FacturaFisicaService } from '@purchases/services/factura-fisica.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { MatTableDataSource } from '@angular/material/table';
-import { Pagination, DynamicCard } from '@acontplus/ng-components';
+import {
+  Pagination,
+  DynamicCard,
+  DataGrid,
+  Button,
+  DataGridColumn,
+} from '@acontplus/ng-components';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { finalize, switchMap, throwError } from 'rxjs';
 import { FacturaFisicaLista } from '@purchases/data/models/factura-fisica.interface';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -21,7 +25,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FacturaFisicaDetalleDirective } from '@purchases/shared/directives/factura-fisica-detalle.directive';
@@ -32,10 +35,11 @@ import { FacturaFisicaAddEditModalComponent } from '@purchases/ui/factura-fisica
   selector: 'app-factura-fisica-page',
   imports: [
     DynamicCard,
+    DataGrid,
+    Button,
     //modules
     FormsModule,
     MatCardModule,
-    MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
@@ -46,7 +50,6 @@ import { FacturaFisicaAddEditModalComponent } from '@purchases/ui/factura-fisica
     //components
     BreadcrumbComponent,
     CustomTableContainerComponent,
-    MatDynamicTableComponent,
     DateRangeSelectionComponent,
     //Directives
     FacturaFisicaDetalleDirective,
@@ -56,7 +59,7 @@ import { FacturaFisicaAddEditModalComponent } from '@purchases/ui/factura-fisica
 })
 export class FacturaFisicaComponent implements OnInit {
   private facturaFisicaSvc = inject(FacturaFisicaService);
-  private tS = inject(ToastrNotificationService);
+  private tS = inject(NotificationService);
   private dialogSvc = inject(DialogService);
 
   estabs: GroupedEstab[] = [];
@@ -65,19 +68,18 @@ export class FacturaFisicaComponent implements OnInit {
   isSearchAdvanced = signal(false);
   isLoadingResults = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'fechaVencimiento', label: 'Fecha Vcto', type: 'string' },
-    { key: 'nombreComprador', label: 'Cliente', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'abono', label: 'Abono', type: 'number' },
-    { key: 'saldo', label: 'Saldo', type: 'number' },
-    { key: 'nombreEstado', label: 'Estado', type: 'string' },
-    { key: 'nombreUsuario', label: 'Usuario', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Serie', field: 'serieComprobante', sortable: true },
+    { header: 'Fecha Emisión', field: 'fechaEmision', sortable: true },
+    { header: 'Fecha Vcto', field: 'fechaVencimiento', sortable: true },
+    { header: 'Cliente', field: 'nombreComprador', sortable: true },
+    { header: 'Total', field: 'total', sortable: true, type: 'number' },
+    { header: 'Abono', field: 'abono', sortable: true, type: 'number' },
+    { header: 'Saldo', field: 'saldo', sortable: true, type: 'number' },
+    { header: 'Estado', field: 'nombreEstado', sortable: true },
+    { header: 'Usuario', field: 'nombreUsuario', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = new MatTableDataSource<FacturaFisicaLista>();
 
@@ -166,10 +168,7 @@ export class FacturaFisicaComponent implements OnInit {
               };
             });
           } else {
-            this.tS.show({
-              type: 'warning',
-              message: 'No tienes asignado Establecimiento!',
-            });
+            this.tS.warning({ message: 'No tienes asignado Establecimiento!' });
             return throwError(() => new Error('No tienes asignado Establecimiento'));
           }
 
@@ -205,10 +204,7 @@ export class FacturaFisicaComponent implements OnInit {
       );
       this.refresh();
     } else {
-      this.tS.show({
-        type: 'warning',
-        message: 'No tiene puntos de emisión asignados',
-      });
+      this.tS.warning({ message: 'No tiene puntos de emisión asignados' });
     }
   }
 

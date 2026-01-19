@@ -2,22 +2,19 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SharedService } from '@core/services/shared.service';
 import { MECHANICAL_CODE_REPORT } from '@mechanical/domain/enums/mechanical.enum';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 
 import { InspectionModalComponent } from './components/inspection-modal/inspection-modal.component';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { InspectionUseCase } from '@mechanical/application/use-cases/inspection.use-case';
 import { finalize } from 'rxjs/operators';
 import { DialogService } from '@core/services/dialog.service';
 
 @Component({
   selector: 'app-inspection-page',
-  imports: [FormsModule, MatMenuModule, MatIconModule, MatButtonModule, MatDynamicTableComponent],
+  imports: [FormsModule, MatMenuModule, MatIconModule, DataGrid, Button],
   templateUrl: './inspection-page.component.html',
 })
 export class InspectionPageComponent implements OnInit {
@@ -29,17 +26,16 @@ export class InspectionPageComponent implements OnInit {
   dataSearch = {};
   isLoadingResults = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'businessName', label: 'Cliente/Conductor', type: 'string' },
-    { key: 'licensePlate', label: 'Placa', type: 'string' },
-    { key: 'brand', label: 'Marca', type: 'string' },
-    { key: 'vehicleType', label: 'Tipo', type: 'string' },
-    { key: 'mileage', label: 'Kilometraje', type: 'string' },
-    { key: 'fuellevel', label: 'Combustible', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: 'Nro.', field: 'index', width: '60px', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Cliente/Conductor', field: 'businessName', sortable: true },
+    { header: 'Placa', field: 'licensePlate', sortable: true },
+    { header: 'Marca', field: 'brand', sortable: true },
+    { header: 'Tipo', field: 'vehicleType', sortable: true },
+    { header: 'Kilometraje', field: 'mileage', sortable: true },
+    { header: 'Combustible', field: 'fuellevel', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 

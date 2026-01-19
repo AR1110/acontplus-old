@@ -40,16 +40,25 @@
       </div>
       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
         <div class="d-flex flex-row gap-2 justify-content-end align-items-center">
-          <button mat-flat-button appMeasureAddEdit (onResultModal)="refresh()">
-            <mat-icon>add</mat-icon>
-            Nuevo
-          </button>
-          <button mat-icon-button (click)="refresh()">
-            <mat-icon>refresh</mat-icon>
-          </button>
-          <button mat-icon-button (click)="isSearchAdvanced.set(!isSearchAdvanced())">
-            <mat-icon>filter_list</mat-icon>
-          </button>
+          <acp-button
+            variant="success"
+            icon="add"
+            text="Nuevo"
+            appMeasureAddEdit
+            (onResultModal)="refresh()"
+          />
+          <acp-button
+            variant="secondary"
+            icon="refresh"
+            matStyle="icon"
+            (handleClick)="refresh()"
+          />
+          <acp-button
+            variant="info"
+            icon="filter_list"
+            matStyle="icon"
+            (handleClick)="isSearchAdvanced.set(!isSearchAdvanced())"
+          />
         </div>
       </div>
     </div>
@@ -108,26 +117,24 @@
     }
   </div>
 
-  <app-custom-table-container
-    [pagination]="pagination()"
-    [isLoadingResults]="isLoadingResults()"
-    (onPageEvent)="handlePageEvent($event)"
-  >
-    <app-mat-dynamic-table
-      [templateOp]="templateOp"
-      [tableData]="dataSource.data"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-    />
-  </app-custom-table-container>
+  <acp-data-grid
+    [data]="dataSource.data"
+    [columns]="columns"
+    [loading]="isLoadingResults()"
+    [length]="pagination().totalRecords"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    (page)="handlePageEvent($event)"
+    [cellTemplate]="{
+      op: templateOp,
+    }"
+  />
 
-  <ng-template #templateOp let-item="item">
-    <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-      <mat-icon>more_vert</mat-icon>
-    </button>
+  <ng-template #templateOp let-data>
+    <acp-button variant="secondary" icon="more_vert" matStyle="icon" [matMenuTriggerFor]="menu" />
 
     <mat-menu #menu="matMenu">
-      <button mat-menu-item appNotaEntregaDetalleDialog [id]="item.idDocumento">
+      <button mat-menu-item appNotaEntregaDetalleDialog [id]="data.idDocumento">
         <mat-icon>list_alt</mat-icon>
         <span>Detalle</span>
       </button>
@@ -165,16 +172,10 @@
         <span>Compartir</span>
       </button>
     </mat-menu>
-    <button mat-icon-button matTooltip="Editar">
-      <mat-icon>edit</mat-icon>
-    </button>
+    <acp-button variant="info" icon="edit" matStyle="icon" matTooltip="Editar" />
 
-    <button mat-icon-button matTooltip="Imprimir">
-      <mat-icon>print</mat-icon>
-    </button>
-    <button mat-icon-button matTooltip="Descargar">
-      <mat-icon>save_alt</mat-icon>
-    </button>
+    <acp-button variant="secondary" icon="print" matStyle="icon" matTooltip="Imprimir" />
+    <acp-button variant="success" icon="save_alt" matStyle="icon" matTooltip="Descargar" />
   </ng-template>
 
   <mat-menu #shared="matMenu">

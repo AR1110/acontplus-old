@@ -1,12 +1,10 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { CompraHabitual } from '@purchases/data/models/compra-habitual.model';
 import { CompraHabitualService } from '@purchases/services/compra-habitual.service';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -15,10 +13,10 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 @Component({
   selector: 'app-compra-habitual-historial-modal',
   imports: [
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
     CustomTableContainerComponent,
     MatIconModule,
-    MatButtonModule,
     MatCustomDialogComponent,
   ],
   templateUrl: './compra-habitual-historial-modal.component.html',
@@ -27,7 +25,7 @@ import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat
 export class CompraHabitualHistorialModalComponent implements OnInit {
   private modal = inject(MatDialogRef<CompraHabitualHistorialModalComponent>);
   private compraHabitualSvc = inject(CompraHabitualService);
-  private tS = inject(ToastrNotificationService);
+  private tS = inject(NotificationService);
   params = inject(MAT_DIALOG_DATA);
 
   articleName = '';
@@ -36,14 +34,13 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
 
   documentos: any[] = [];
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'codArticulo', label: 'Código Proveedor', type: 'string' },
-    { key: 'ruc', label: 'Ruc', type: 'string' },
-    { key: 'proveedor', label: 'Proveedor', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Nro.', field: 'index', sortable: false },
+    { header: 'Código Proveedor', field: 'codArticulo', sortable: true },
+    { header: 'Ruc', field: 'ruc', sortable: true },
+    { header: 'Proveedor', field: 'proveedor', sortable: true },
   ];
-  columns: string[] = ['index', 'op', 'codArticulo', 'ruc', 'proveedor'];
   isLoadingResults = false;
 
   isRefresh = false;
@@ -68,8 +65,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
           if (this.comprasHabituales().length > 0) {
             this.articleName = this.comprasHabituales()[0].articulo;
           } else {
-            this.tS.show({
-              type: 'warning',
+            this.tS.warning({
               message: 'Este articulo aun no tiene registros de compra habitual',
             });
           }
@@ -107,17 +103,11 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
 
       this.compraHabitualSvc.delete(params).subscribe((response) => {
         if (response.code === '0') {
-          this.tS.show({
-            type: 'warning',
-            message: response.message,
-          });
+          this.tS.warning({ message: response.message });
         }
 
         if (response.code === '1') {
-          this.tS.show({
-            type: 'success',
-            message: response.message,
-          });
+          this.tS.success({ message: response.message });
           this.isRefresh = true;
           this.onModalClose();
         }

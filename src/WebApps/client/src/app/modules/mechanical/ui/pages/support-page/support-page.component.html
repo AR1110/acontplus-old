@@ -48,12 +48,20 @@
 
     <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
       <div class="d-flex flex-row gap-1 justify-content-end">
-        <button mat-icon-button [disabled]="isLoadingResults()" (click)="openModal()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
-          <mat-icon>refresh</mat-icon>
-        </button>
+        <acp-button
+          variant="success"
+          icon="add"
+          matStyle="icon"
+          [disabled]="isLoadingResults()"
+          (handleClick)="openModal()"
+        />
+        <acp-button
+          variant="secondary"
+          icon="refresh"
+          matStyle="icon"
+          (handleClick)="refresh()"
+          [disabled]="isLoadingResults()"
+        />
       </div>
     </div>
   </div>
@@ -90,71 +98,80 @@
     </div>
     <div class="col">
       <div class="d-flex flex-row gap-1 justify-content-end">
-        <button mat-icon-button [disabled]="isLoadingResults()" (click)="openModal()">
-          <mat-icon>add</mat-icon>
-        </button>
-        <button mat-icon-button (click)="refresh()" [disabled]="isLoadingResults()">
-          <mat-icon>refresh</mat-icon>
-        </button>
+        <acp-button
+          variant="success"
+          icon="add"
+          matStyle="icon"
+          [disabled]="isLoadingResults()"
+          (handleClick)="openModal()"
+        />
+        <acp-button
+          variant="secondary"
+          icon="refresh"
+          matStyle="icon"
+          (handleClick)="refresh()"
+          [disabled]="isLoadingResults()"
+        />
       </div>
     </div>
   </div>
 }
 
-<app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults()"
-  [tableData]="dataSource()"
-  [columnDefinitions]="columnsDefs"
-  [visibleColumns]="columns"
-  [templateOp]="templateOp"
-  [paginationConfig]="pagination()"
-  [enablePagination]="true"
-  (pageEvent)="handlePageEvent($event)"
+<acp-data-grid
+  [loading]="isLoadingResults()"
+  [data]="dataSource()"
+  [columns]="columns"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: templateOp,
+    entregar: statusTemplate,
+  }"
 />
 
-<ng-template #templateOp let-item="item">
-  <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-    <mat-icon>more_vert</mat-icon>
-  </button>
+<ng-template #templateOp let-data>
+  <acp-button variant="secondary" icon="more_vert" matStyle="icon" [matMenuTriggerFor]="menu" />
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="getReport(item)">
+    <button mat-menu-item (click)="getReport(data)">
       <mat-icon>download</mat-icon>
       <span>Reporte</span>
     </button>
 
     @if ($store.isPending()) {
-      <button mat-menu-item (click)="openModal(item.id)">
+      <button mat-menu-item (click)="openModal(data.id)">
         <mat-icon>edit</mat-icon>
         <span>Editar</span>
       </button>
     }
     @if ($store.isPending() || $store.isInspection()) {
-      <button mat-menu-item (click)="askToDelete(item.id)">
+      <button mat-menu-item (click)="askToDelete(data.id)">
         <mat-icon>delete</mat-icon>
         <span>Anular</span>
       </button>
     }
     @if ($store.isPending() || $store.isProcessing()) {
-      <button mat-menu-item (click)="openMaintenance(item.id)">
+      <button mat-menu-item (click)="openMaintenance(data.id)">
         <mat-icon>build</mat-icon>
         <span>Mantenimiento</span>
       </button>
     }
-    @if (($store.isPending() || $store.isProcessing()) && !item.existsInsp) {
-      <button mat-menu-item (click)="openModalInspection(item.id)">
+    @if (($store.isPending() || $store.isProcessing()) && !data.existsInsp) {
+      <button mat-menu-item (click)="openModalInspection(data.id)">
         <mat-icon>engineering</mat-icon>
         <span>Inspección</span>
       </button>
     }
     @if ($store.isToDeliver()) {
-      <button mat-menu-item (click)="askToConvertToDoc(item.id)">
+      <button mat-menu-item (click)="askToConvertToDoc(data.id)">
         <mat-icon>show_chart</mat-icon>
         <span> Convertir a Aprobación</span>
       </button>
     }
     @if ($store.isApproved()) {
-      <button mat-menu-item (click)="getDocView(item.id)">
+      <button mat-menu-item (click)="getDocView(data.id)">
         <mat-icon>file</mat-icon>
         <span> Doc. Aprobado</span>
       </button>
@@ -162,8 +179,8 @@
   </mat-menu>
 </ng-template>
 
-<ng-template #statusTemplate let-item>
+<ng-template #statusTemplate let-data>
   @if ($store.isProcessing()) {
-    <mat-slide-toggle (change)="putState(item.id)" [(ngModel)]="item.enabled" />
+    <mat-slide-toggle (change)="putState(data.id)" [(ngModel)]="data.enabled" />
   }
 </ng-template>

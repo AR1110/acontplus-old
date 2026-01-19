@@ -4,32 +4,26 @@ import {
   input,
   model,
   signal,
-  TemplateRef,
-  ViewChild,
   OnInit,
   AfterViewInit,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { finalize } from 'rxjs/operators';
 import { getValidId, isValidField } from '@core/utils/utils';
 import Swal from 'sweetalert2';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { NgxColorsModule } from 'ngx-colors';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DynamicCard, DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
 
-import { MECHANICAL_STATUS } from '@mechanical/domain/enums/mechanical.enum';
 import { PRODUCT_SERVICE, PRODUCT_BARCODE_SERVICE } from '@inventory/data/inventory-token';
 
 @Component({
@@ -38,25 +32,22 @@ import { PRODUCT_SERVICE, PRODUCT_BARCODE_SERVICE } from '@inventory/data/invent
   imports: [
     FormsModule,
     DynamicCard,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatButtonModule,
     MatSelectModule,
     NgxColorsModule,
     ToUpperCaseDirective,
-    MatIconButton,
   ],
   templateUrl: './product-barcode.component.html',
   styles: ``,
 })
 export class ProductBarcodeComponent implements OnInit, AfterViewInit {
-  private _tS = inject(ToastrNotificationService);
+  private _notification = inject(NotificationService);
   private $productService = inject(PRODUCT_SERVICE);
   private $productBarcodeService = inject(PRODUCT_BARCODE_SERVICE);
-
-  @ViewChild('colorTemplate') colorTemplate!: TemplateRef<any>;
 
   productId = input.required<number>();
   medidas = input<any[]>([]);
@@ -65,15 +56,14 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   loading = false;
 
   dataSource = [] as any[];
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'codigoBarra', label: 'Código Barra', type: 'string' },
-    { key: 'descripcion', label: 'Descripción', type: 'string' },
-    { key: 'nomMedida', label: 'Medida', type: 'string' },
-    { key: 'color', label: 'Color', type: 'template' },
+  columns: DataGridColumn[] = [
+    { header: '#', field: 'index', width: '60px', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Código Barra', field: 'codigoBarra', sortable: true },
+    { header: 'Descripción', field: 'descripcion', sortable: true },
+    { header: 'Medida', field: 'nomMedida', sortable: true },
+    { header: 'Color', field: 'color', sortable: false },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   productBarCodeId = 0;
 
@@ -90,12 +80,7 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
-      if (col.type === 'template') {
-        col.templateOutlet = this.colorTemplate;
-      }
-    });
+    // Templates se asignan automáticamente en acp-data-grid
   }
 
   loadData() {
@@ -122,9 +107,8 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   //     console.log(error);
   //   }
   // }
-  refreshMedida($event: MouseEvent) {
+  refreshMedida() {
     try {
-      $event.stopPropagation();
       this.$productService.getDataForm().subscribe((response) => {
         this.medidasArray.set(response.medidas);
       });
@@ -162,32 +146,22 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   }
   save() {
     if (!getValidId(this.productId())) {
-      this._tS.show({
-        type: 'warning',
+      this._notification.warning({
         message: 'No se ha proporcionado el identificador del producto',
       });
       return;
     }
 
     if (!getValidId(this.data().idMedida)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Seleccione la Medida',
-      });
+      this._notification.warning({ message: 'Seleccione la Medida' });
       return;
     }
     if (!isValidField(this.data().codigoBarra)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Ingrese el Codigo de Barra',
-      });
+      this._notification.warning({ message: 'Ingrese el Codigo de Barra' });
       return;
     }
     if (!isValidField(this.data().descripcion)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Ingrese la descripción',
-      });
+      this._notification.warning({ message: 'Ingrese la descripción' });
       return;
     }
 
@@ -222,21 +196,14 @@ export class ProductBarcodeComponent implements OnInit, AfterViewInit {
   }
   private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
-      this._tS.show({
-        type: 'warning',
-        message: response.message,
-      });
+      this._notification.warning({ message: response.message });
       return;
     }
     if (response.code === '1') {
-      this._tS.show({
-        type: 'success',
-        message: response.message,
-      });
+      this._notification.success({ message: response.message });
 
       this.productBarCodeId = 0;
       this.loadData();
     }
   };
-  protected readonly statusTab = MECHANICAL_STATUS;
 }

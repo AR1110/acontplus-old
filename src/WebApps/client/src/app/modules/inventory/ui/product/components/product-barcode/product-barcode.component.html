@@ -22,9 +22,12 @@
             }
           </mat-select>
           <span matSuffix>
-            <button type="button" mat-icon-button (click)="refreshMedida($event)" tabindex="-1">
-              <mat-icon>refresh</mat-icon>
-            </button>
+            <acp-button
+              variant="secondary"
+              icon="refresh"
+              matStyle="icon"
+              (handleClick)="refreshMedida()"
+            />
           </span>
         </mat-form-field>
       </div>
@@ -39,50 +42,47 @@
           <div class="d-flex gap-2 justify-content-center align-items-center">
             <ngx-colors (open)="openColor()" ngx-colors-trigger [(ngModel)]="data().color" />
             <span>Color</span>
-            <!--            <mat-form-field>-->
-            <!--              <input matInput [(ngModel)]="infrastructure().color">-->
-            <!--            </mat-form-field>-->
           </div>
 
           <div class="hstack gap-1">
-            <button type="button" mat-mini-fab aria-label="Add || Edit" (click)="save()">
-              @if (productBarCodeId > 0) {
-                <mat-icon>edit</mat-icon>
-              } @else {
-                <mat-icon>save</mat-icon>
-              }
-            </button>
-            <button mat-mini-fab aria-label="Clear" (click)="clear()">
-              <mat-icon>clear</mat-icon>
-            </button>
+            <acp-button
+              variant="primary"
+              [icon]="productBarCodeId > 0 ? 'edit' : 'save'"
+              matStyle="icon"
+              (handleClick)="save()"
+            />
+            <acp-button variant="secondary" icon="clear" matStyle="icon" (handleClick)="clear()" />
           </div>
         </div>
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [templateOp]="templateOp"
-      [tableData]="dataSource"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
+    <acp-data-grid
+      [data]="dataSource"
+      [columns]="columns"
+      [cellTemplate]="{
+        op: templateOp,
+        color: colorTemplate,
+      }"
     />
 
-    <ng-template #templateOp let-item="item">
+    <ng-template #templateOp let-data>
       <div class="d-flex gap-1">
-        <button type="button" mat-icon-button (click)="edit(item)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button type="button" mat-icon-button (click)="askToDelete(item)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <acp-button variant="info" icon="edit" matStyle="icon" (handleClick)="edit(data)" />
+        <acp-button
+          variant="danger"
+          icon="delete"
+          matStyle="icon"
+          (handleClick)="askToDelete(data)"
+        />
       </div>
     </ng-template>
 
-    <ng-template #colorTemplate let-item>
+    <ng-template #colorTemplate let-data>
       <div
         [style.width]="'20px'"
         [style.height]="'20px'"
-        [style.background-color]="item.color"
+        [style.background-color]="data.color"
       ></div>
     </ng-template>
   </div>
