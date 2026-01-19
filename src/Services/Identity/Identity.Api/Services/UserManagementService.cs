@@ -1,12 +1,19 @@
 using Acontplus.Core.Dtos.Requests;
 
-namespace Configuration.Application.Services;
+namespace Identity.Api.Services;
 
+/// <summary>
+/// User management service
+/// </summary>
 public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagementService> logger) : IUserManagementService
 {
     private readonly IAdoRepository _repository = unitOfWork.AdoRepository;
     private readonly ILogger<UserManagementService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    public async Task<Result<PagedResult<UserResponse>, DomainError>> GetAsync(PaginationRequest query, CancellationToken cancellationToken = default)
+
+    /// <summary>
+    /// Get users with pagination using structured query
+    /// </summary>
+    public async Task<Result<PagedResult<UserResponse>, DomainError>> GetPaginatedAsync(PaginationRequest query, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -59,7 +66,10 @@ public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagemen
         }
     }
 
-    public async Task<Result<SpResponse, DomainError>> AddAsync(Dictionary<string, object> parameters)
+    /// <summary>
+    /// Add user with result handling
+    /// </summary>
+    public async Task<Result<SpResponse, DomainError>> AddUserAsync(Dictionary<string, object> parameters)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
@@ -77,7 +87,10 @@ public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagemen
         }
     }
 
-    public async Task<Result<SpResponse, DomainError>> UpdateAsync(Dictionary<string, object> parameters)
+    /// <summary>
+    /// Update user with result handling
+    /// </summary>
+    public async Task<Result<SpResponse, DomainError>> UpdateUserAsync(Dictionary<string, object> parameters)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
@@ -95,12 +108,36 @@ public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagemen
         }
     }
 
-    public async Task<Result<SpResponse, DomainError>> DeleteAsync(Dictionary<string, object> parameters)
+    /// <summary>
+    /// Update user password
+    /// </summary>
+    public async Task<Result<SpResponse, DomainError>> UpdatePasswordAsync(Dictionary<string, object> parameters)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
-            var result = await _repository.QuerySingleOrDefaultAsync<SpResponse>("Config.User_Delete", parameters);
+            var result = await _repository.QuerySingleOrDefaultAsync<SpResponse>("Config.User_Password_Reset", parameters);
+            await unitOfWork.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return Result<SpResponse, DomainError>.Success(result ?? new SpResponse { Code = "50000", Message = "No response from database" });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            _logger.LogError(ex, "Error updating user password");
+            return Result<SpResponse, DomainError>.Failure(DomainError.Internal("USER_UPDATE_PASSWORD_ERROR", ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Delete user
+    /// </summary>
+    public async Task<Result<SpResponse, DomainError>> DeleteAsync(Dictionary<string, object> data)
+    {
+        await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+        try
+        {
+            var result = await _repository.QuerySingleOrDefaultAsync<SpResponse>("Config.User_Delete", data);
             await unitOfWork.SaveChangesAsync();
             await transaction.CommitAsync();
             return Result<SpResponse, DomainError>.Success(result ?? new SpResponse { Code = "50000", Message = "No response from database" });
@@ -113,13 +150,16 @@ public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagemen
         }
     }
 
+    /// <summary>
+    /// Update user status
+    /// </summary>
     public async Task<Result<SpResponse, DomainError>> UpdateStatus(int userId, int id, bool estado)
     {
         await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
         try
         {
             var query = @"UPDATE Acontplus.App.UsuarioRol SET estado = @estado WHERE idUsuario = @id
-                                UPDATE Acontplus.dbo.Usuario SET estado = @estado WHERE idUsuario = @id";
+                         UPDATE Acontplus.dbo.Usuario SET estado = @estado WHERE idUsuario = @id";
             var options = new CommandOptionsDto
             {
                 CommandType = CommandType.Text
@@ -138,24 +178,6 @@ public class UserManagementService(IUnitOfWork unitOfWork, ILogger<UserManagemen
             await transaction.RollbackAsync();
             _logger.LogError(ex, "Error updating user status for ID {Id}", id);
             return Result<SpResponse, DomainError>.Failure(DomainError.Internal("USER_UPDATE_STATUS_ERROR", ex.Message));
-        }
-    }
-
-    public async Task<Result<SpResponse, DomainError>> UpdatePasswordAsync(Dictionary<string, object> parameters)
-    {
-        await using var transaction = await unitOfWork.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
-        try
-        {
-            var result = await _repository.QuerySingleOrDefaultAsync<SpResponse>("Config.User_Password_Reset", parameters);
-            await unitOfWork.SaveChangesAsync();
-            await transaction.CommitAsync();
-            return Result<SpResponse, DomainError>.Success(result ?? new SpResponse { Code = "50000", Message = "No response from database" });
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync();
-            _logger.LogError(ex, "Error updating user password");
-            return Result<SpResponse, DomainError>.Failure(DomainError.Internal("USER_UPDATE_PASSWORD_ERROR", ex.Message));
         }
     }
 }

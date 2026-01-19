@@ -1,4 +1,4 @@
-namespace Configuration.Application.Dtos;
+namespace Identity.Api.Dtos;
 
 public record UserItem
 {

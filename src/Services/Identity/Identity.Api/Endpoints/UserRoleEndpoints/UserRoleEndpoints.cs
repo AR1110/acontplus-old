@@ -1,4 +1,4 @@
-namespace Configuration.Api.Endpoints.UserRoleEndpoints;
+namespace Identity.Api.Endpoints.UserRoleEndpoints;
 
 public static class UserRoleEndpoints
 {

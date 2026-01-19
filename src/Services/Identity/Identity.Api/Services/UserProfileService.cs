@@ -1,4 +1,4 @@
-namespace Configuration.Application.Services;
+namespace Identity.Api.Services;
 
 public class UserProfileService : IUserProfileService
 {

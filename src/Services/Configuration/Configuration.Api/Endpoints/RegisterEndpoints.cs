@@ -16,8 +16,6 @@ using Configuration.Api.Endpoints.ReportEndpoints;
 using Configuration.Api.Endpoints.ScheduleCompanyEndpoints;
 using Configuration.Api.Endpoints.SubscriptionTypeEndpoints;
 using Configuration.Api.Endpoints.SystemEndpoints;
-using Configuration.Api.Endpoints.UserEndpoints;
-using Configuration.Api.Endpoints.UserRoleEndpoints;
 using Configuration.Api.Endpoints.WhatsappUsageEndpoints;
 
 namespace Configuration.Api.Endpoints;
@@ -32,8 +30,6 @@ public static class RegisterEndpoints
         app.MapPrinterTypeEndpoints();
         app.MapPrintEndpoints();
         app.MapLicenseDetailEndpoints();
-        app.MapUserEndpoints();
-        app.MapUserRoleEndpoints();
         app.MapApplicationEndpoints();
         app.MapCompanyEndpoints();
         app.MapMenuActionEndpoints();
@@ -50,3 +46,4 @@ public static class RegisterEndpoints
         app.MapScheduleCompanyEndpoints();
     }
 }
+

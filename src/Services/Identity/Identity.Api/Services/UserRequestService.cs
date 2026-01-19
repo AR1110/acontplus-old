@@ -1,9 +1,9 @@
-namespace Configuration.Application.Services;
+namespace Identity.Api.Services;
 
 public class UserRequestService : IUserRequestService
 {
     private readonly IAdoRepository _repository;
-    private readonly string nameSchema = "Config.UserRequest_";
+    private readonly string nameSchema = "Config.UserCustomerRequest";
 
     public UserRequestService(IAdoRepository repository)
     {
@@ -12,17 +12,17 @@ public class UserRequestService : IUserRequestService
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {
-        var ds = await _repository.GetDataSetAsync(nameSchema + "Get", parameters);
+        var ds = await _repository.GetDataSetAsync(nameSchema + "_Get", parameters);
         return ds.Tables.Count == 0 ? null : (object)DataConverters.DataSetToJson(ds);
     }
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Insert", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Insert", parameters);
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "Update", parameters);
+        return await _repository.QuerySingleOrDefaultAsync<SpResponse>(nameSchema + "_Update", parameters);
     }
 }

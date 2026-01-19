@@ -1,4 +1,4 @@
-namespace Configuration.Api.Endpoints.UserEndpoints;
+namespace Identity.Api.Endpoints.UserEndpoints;
 
 public static class UserEndpoints
 {
@@ -27,7 +27,7 @@ public static class UserEndpoints
                         SortDirection = paginationQuery.SortDirection ?? SortDirection.Desc
                     };
 
-                    return await userService.GetAsync(PaginationRequest, cancellationToken).ToGetMinimalApiResultAsync();
+                    return await userService.GetPaginatedAsync(PaginationRequest, cancellationToken).ToGetMinimalApiResultAsync();
                 })
             .WithName("GetUsers")
             .WithSummary("Get users")
@@ -47,7 +47,7 @@ public static class UserEndpoints
                         { "userRoleId", 0 },
                         { "json", user.SerializeOptimized() }
                     };
-                    return await userService.AddAsync(parameters).ToMinimalApiResultAsync();
+                    return await userService.AddUserAsync(parameters).ToMinimalApiResultAsync();
                 })
             .WithName("CreateUser")
             .WithSummary("Create user")
@@ -67,7 +67,7 @@ public static class UserEndpoints
                         { "id", id },
                         { "json", DataConverters.SerializeObjectCustom<UserItem>(user) }
                     };
-                    return await userService.UpdateAsync(parameters).ToMinimalApiResultAsync();
+                    return await userService.UpdateUserAsync(parameters).ToMinimalApiResultAsync();
                 })
             .WithName("UpdateUser")
             .WithSummary("Update user")
