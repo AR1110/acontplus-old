@@ -6,7 +6,7 @@ import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionEstabRepository } from '@modules/config/data/repositories/asignacion-estab.repository';
 import { ListAsignacionEstabMapper } from './list-asignacion-estab.mapper';
-import { AsignacionEstabList } from '@modules/config/data/models/user-customer/asignacion-estab.model';
+import { AsignacionEstabList } from '@modules/config/data/models/user/asignacion-estab.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +25,6 @@ export class AsignacionEstabRepositoryImpl implements AsignacionEstabRepository 
       .pipe(map((response) => ListAsignacionEstabMapper.fromJson(response)));
   }
 
-  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_ESTAB}`;
+  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_ROLE_ESTAB}`;
   private _http = inject(HttpClient);
 }

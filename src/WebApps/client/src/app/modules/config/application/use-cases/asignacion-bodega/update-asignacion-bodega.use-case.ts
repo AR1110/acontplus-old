@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionBodegaList } from '@modules/config/data/models/user-customer/asignacion-bodega.model';
+import { AsignacionBodegaList } from '@modules/config/data/models/user/asignacion-bodega.model';
 import { AsignacionBodegaRepository } from '@modules/config/data/repositories/asignacion-bodega.repository';
 
 @Injectable({

@@ -1,0 +1,67 @@
+<app-mat-custom-dialog
+  [title]="'Configuración Usuario'"
+  (close)="close()"
+  [containerTemplate]="body"
+  [actionsTemplate]="footer"
+/>
+
+<ng-template #body>
+  <mat-list>
+    <mat-list-item>
+      <div class="d-flex justify-content-between">
+        <div><span class="text-muted">Usuario:</span> {{ params.nombreCompleto }}</div>
+        <button mat-icon-button (click)="expandHeader.set(!expandHeader())">
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+    <mat-divider />
+    @if (expandHeader()) {
+      <mat-list-item
+        ><span class="text-muted">Ruc Empresa:</span>
+        {{ userRoleData().rucEmpresa }}</mat-list-item
+      >
+      <mat-divider />
+      <mat-list-item
+        ><span class="text-muted">Razón Social:</span>
+        {{ userRoleData().razonSocialEmpresa }}</mat-list-item
+      >
+      <mat-divider />
+      <mat-list-item
+        ><span class="text-muted">Rol:</span> {{ userRoleData().roleName }}</mat-list-item
+      >
+    }
+  </mat-list>
+
+  <mat-tab-group>
+    <mat-tab label="Establecimientos">
+      <ng-template matTabContent>
+        <div class="my-2">
+          @if (userRoleData().idUsuarioRol > 0) {
+            <acp-dynamic-card>
+              <app-list-asignacion-estab />
+            </acp-dynamic-card>
+          }
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Permisos">
+      <ng-template matTabContent>
+        <div class="mx-5">
+          <!--         <app-user-customer-permission/>-->
+          <app-user-role-permission />
+          <!--          <app-test-tree/>-->
+        </div>
+      </ng-template>
+    </mat-tab>
+    <mat-tab label="Accessos">
+      <ng-template matTabContent>
+        <div class="my-2">
+          <!--          <app-user-customer-role-access/>-->
+          <app-user-access />
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</ng-template>
+<ng-template #footer />

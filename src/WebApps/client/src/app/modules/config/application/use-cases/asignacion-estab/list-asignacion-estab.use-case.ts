@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { AsignacionEstabResponse } from '@modules/config/data/models/user-customer/asignacion-estab.model';
+import { AsignacionEstabResponse } from '@modules/config/data/models/user/asignacion-estab.model';
 import { AsignacionEstabRepository } from '@modules/config/data/repositories/asignacion-estab.repository';
 
 @Injectable({

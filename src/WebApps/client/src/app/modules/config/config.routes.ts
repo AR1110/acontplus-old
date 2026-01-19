@@ -37,9 +37,7 @@ export const routes: Routes = [
     path: 'doc-config',
     title: 'Config. Docs',
     loadComponent: () =>
-      import('@modules/config/ui/doc-config/doc-config-page').then(
-        (m) => m.DocConfigPageComponent,
-      ),
+      import('@modules/config/ui/doc-config/doc-config-page').then((m) => m.DocConfigPageComponent),
     data: {
       breadcrumb: 'Config. Docs',
     },
@@ -47,10 +45,7 @@ export const routes: Routes = [
   {
     path: 'user-customer',
     title: 'Usuario',
-    loadComponent: () =>
-      import('@modules/config/ui/user-customer/user-customer-page').then(
-        (m) => m.UserCustomerPage,
-      ),
+    loadComponent: () => import('@modules/config/ui/user/user-page').then((m) => m.UserPage),
     data: {
       breadcrumb: 'Usuario',
     },
@@ -141,9 +136,7 @@ export const routes: Routes = [
   {
     path: 'credit-time',
     loadComponent: () =>
-      import('@modules/config/ui/credit-time/credit-time-page').then(
-        (m) => m.CreditTimePage,
-      ),
+      import('@modules/config/ui/credit-time/credit-time-page').then((m) => m.CreditTimePage),
     data: {
       breadcrumb: 'Tiempo Crédito',
     },

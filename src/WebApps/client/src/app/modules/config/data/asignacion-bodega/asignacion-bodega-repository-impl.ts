@@ -6,7 +6,7 @@ import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionBodegaRepository } from '@modules/config/data/repositories/asignacion-bodega.repository';
 import { ListAsignacionBodegaMapper } from '@modules/config/data/asignacion-bodega/list-asignacion-bodega.mapper';
-import { AsignacionBodegaList } from '@modules/config/data/models/user-customer/asignacion-bodega.model';
+import { AsignacionBodegaList } from '@modules/config/data/models/user/asignacion-bodega.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +25,6 @@ export class AsignacionBodegaRepositoryImpl implements AsignacionBodegaRepositor
       .pipe(map((response) => ListAsignacionBodegaMapper.fromJson(response)));
   }
 
-  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_BODEGA}`;
+  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_ROLE_BODEGA}`;
   private _http = inject(HttpClient);
 }

@@ -6,7 +6,7 @@ import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { AsignacionPuntoEmisionRepository } from '@modules/config/data/repositories/asignacion-punto-emision.repository';
 import { ListAsignacionPuntoEmisionMapper } from '@modules/config/data/asignacion-punto-emision/list-asignacion-punto-emision.mapper';
-import { AsignacionPuntoEmisionList } from '@modules/config/data/models/user-customer/asignacion-punto-emision.model';
+import { AsignacionPuntoEmisionList } from '@modules/config/data/models/user/asignacion-punto-emision.model';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +27,6 @@ export class AsignacionPuntoEmisionRepositoryImpl implements AsignacionPuntoEmis
       .pipe(map((response) => ListAsignacionPuntoEmisionMapper.fromJson(response)));
   }
 
-  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_ROLE_PUNTO_EMISION}`;
+  private _url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_ROLE_PUNTO_EMISION}`;
   private _http = inject(HttpClient);
 }

@@ -2,7 +2,7 @@ namespace Configuration.Application.Services;
 
 public class UserService(IAdoRepository adoRepository) : IUserService
 {
-    private const string NameSchema = "Config.UserCustomer";
+    private const string NameSchema = "Config.User";
 
     public async Task<object> GetAsync(Dictionary<string, object> parameters)
     {

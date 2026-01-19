@@ -1,30 +1,30 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
-import { GroupedEstab } from '@core/models/estab.model';
-import { NotificationService } from '@acontplus/ng-notifications';
-import { formatDateToString } from '@core/utils/date.util';
-import { isValidField } from '@core/utils/utils';
-import { UserCustomerRole } from '@modules/config/data/models/user-customer/user-customer-role.model';
 import {
-  Pagination,
-  DynamicCard,
-  DataGrid,
-  DataGridColumn,
   AdvancedDialogService,
   Button,
+  DataGrid,
+  DataGridColumn,
+  DynamicCard,
+  Pagination,
 } from '@acontplus/ng-components';
-import Swal from 'sweetalert2';
-import { PageEvent } from '@angular/material/paginator';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { SolicitudAutorizacionList } from '@modules/config/data/models/solicitud-autorizacion.model';
-import { SolicitudAutorizacionDetalle } from '@modules/config/ui/solicitud-autorizacion-page/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle';
+import { GroupedEstab } from '@core/models/estab.model';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
 import { SOLICITUD_AUTORIZACION_HTTP_TOKEN } from '@modules/config/data/config-token';
+import { SolicitudAutorizacionList } from '@modules/config/data/models/solicitud-autorizacion.model';
+import { UserRole } from '@modules/config/data/models/user/user-role.model';
+import { SolicitudAutorizacionDetalle } from '@modules/config/ui/solicitud-autorizacion-page/solicitud-autorizacion-detalle/solicitud-autorizacion-detalle';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-solicitud-autorizacion-page',
@@ -49,7 +49,7 @@ export class SolicitudAutorizacionPage implements OnInit {
   private readonly tS = inject(NotificationService);
   establecimientos: GroupedEstab[] = [];
   dataSource: SolicitudAutorizacionList[] = [];
-  usersRole: UserCustomerRole[] = [];
+  usersRole: UserRole[] = [];
 
   tiposDoc = [
     { code: '01', description: 'Factura' },

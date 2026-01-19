@@ -1,7 +1,7 @@
 import {
   AsignacionPuntoEmisionList,
   AsignacionPuntoEmisionResponse,
-} from '@modules/config/data/models/user-customer/asignacion-punto-emision.model';
+} from '@modules/config/data/models/user/asignacion-punto-emision.model';
 
 export class ListAsignacionPuntoEmisionMapper {
   static toJson(parameters: Partial<AsignacionPuntoEmisionList>) {

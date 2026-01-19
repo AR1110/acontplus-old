@@ -3,7 +3,7 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import {
   AsignacionBodegaList,
   AsignacionBodegaResponse,
-} from '@modules/config/data/models/user-customer/asignacion-bodega.model';
+} from '@modules/config/data/models/user/asignacion-bodega.model';
 
 export abstract class AsignacionBodegaRepository {
   abstract list(parameters: Partial<AsignacionBodegaList>): Observable<AsignacionBodegaResponse>;

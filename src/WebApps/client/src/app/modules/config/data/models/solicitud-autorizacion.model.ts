@@ -1,5 +1,5 @@
 import { GroupedEstab } from '@core/models/estab.model';
-import { UserCustomerRole } from '@modules/config/data/models/user-customer/user-customer-role.model';
+import { UserRole } from '@modules/config/data/models/user/user-role.model';
 
 export interface SolicitudAutorizacion {}
 
@@ -28,7 +28,7 @@ export interface SolicitudAutorizacionResponse {
 }
 export interface SolicitudAutorizacionFilterResponse {
   estabs: GroupedEstab[];
-  usersRole: UserCustomerRole[];
+  usersRole: UserRole[];
 }
 
 export interface SolicitudAutorizacionDetalleList {

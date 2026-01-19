@@ -11,7 +11,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER}`;
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER}`;
   private http = inject(HttpClient);
 
   search<T extends { textSearch: string }>(data: T): Observable<UserSearch[]> {

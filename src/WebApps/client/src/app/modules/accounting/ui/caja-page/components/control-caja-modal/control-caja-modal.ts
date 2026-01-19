@@ -1,10 +1,10 @@
+import { ControlCaja } from '@accounting/data/models/caja';
 import { Component, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { CODE_ESTADO, REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/data/models/caja';
-import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
+import { UserPermissionService } from '@modules/config/services/user/user-permission.service';
 
 import {
   PermissionCashAccounting,
@@ -12,18 +12,11 @@ import {
 } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
-import { CierreCajaModal } from '@accounting/ui/caja-page/components/cierre-caja-modal/cierre-caja-modal';
-import { FiltroDetalleCajaReportModal } from '@accounting/ui/caja-page/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal';
-import { FormsModule } from '@angular/forms';
-import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
-import { DetalleArqueoControlCaja } from '@accounting/ui/caja-page/components/detalle-arqueo-control-caja/detalle-arqueo-control-caja';
-import { formatDateToString } from '@core/utils/date.util';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
-import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
+import { CierreCajaModal } from '@accounting/ui/caja-page/components/cierre-caja-modal/cierre-caja-modal';
+import { DetalleArqueoControlCaja } from '@accounting/ui/caja-page/components/detalle-arqueo-control-caja/detalle-arqueo-control-caja';
+import { FiltroDetalleCajaReportModal } from '@accounting/ui/caja-page/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal';
+import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
 import {
   AdvancedDialogService,
   Button,
@@ -33,17 +26,24 @@ import {
   DateRangeValue,
 } from '@acontplus/ng-components';
 import { NotificationService } from '@acontplus/ng-notifications';
-import { PageEvent } from '@angular/material/paginator';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogContent,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { DialogService } from '@core/services/dialog.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
+import { MatMenuModule } from '@angular/material/menu';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { DialogService } from '@core/services/dialog.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 
 @Component({
   selector: 'app-caja-page-modal',
@@ -161,7 +161,7 @@ export class ControlCajaModal implements OnInit {
   private notificationSvc = inject(NotificationService);
   private pS = inject(UserRoleStateService);
   private _tokenUseCase = inject(TokenUseCase);
-  private reportFacade = inject(ReportFacade)
+  private reportFacade = inject(ReportFacade);
   private format = REPORT_FORMAT.PDF;
   private get getParams() {
     return this.params.data;
@@ -449,55 +449,55 @@ export class ControlCajaModal implements OnInit {
   }
 
   getReportTransactionPending(format: 'pdf' | 'excel') {
-      if (!(this.getParams.idUsuario > 0)) {
-        this.notificationSvc.warning({
-          message: 'idUsuario no proporcionado!',
-        });
-        return;
-      }
-      let toDate;
-      if (
-        this.dataMovientoControCaja.fechaCierre &&
-        !isValidField(this.dataMovientoControCaja.fechaCierre)
-      ) {
-        toDate = new Date(this.dataMovientoControCaja.fechaCierre);
-      } else {
-        toDate = new Date();
-      }
-
-      const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
-      const dateParts: number[] = parts[0].split('/').map((part) => parseInt(part, 10));
-      const timeParts: number[] = parts[1].split(':').map((part) => parseInt(part, 10));
-
-      const convertedFromDate: Date = new Date(
-        dateParts[2],
-        dateParts[1] - 1,
-        dateParts[0],
-        timeParts[0],
-        timeParts[1],
-      );
-
-      const dataParams = {
-        tipo: 2,
-        ckFecha: true,
-        codDoc: undefined,
-        codEstab: undefined,
-        codEstado: this.dataSearch.codEstado,
-        fechaInicio: formatDateToString(convertedFromDate),
-        fechaFin: formatDateToString(toDate),
-        identificacion: null,
-        idUsuario: this.getParams.idUsuario,
-        idCliente: null,
-
-        userRoleId: this._tokenUseCase.getUserRoleId(),
-      };
-
-      const reportOptions = ReportParamsBuilder.build({
-        codeReport: SALE_CODE_REPORT.FG,
-        data: dataParams,
-        format
+    if (!(this.getParams.idUsuario > 0)) {
+      this.notificationSvc.warning({
+        message: 'idUsuario no proporcionado!',
       });
-      this.reportFacade.open(reportOptions).subscribe()
+      return;
+    }
+    let toDate;
+    if (
+      this.dataMovientoControCaja.fechaCierre &&
+      !isValidField(this.dataMovientoControCaja.fechaCierre)
+    ) {
+      toDate = new Date(this.dataMovientoControCaja.fechaCierre);
+    } else {
+      toDate = new Date();
+    }
+
+    const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
+    const dateParts: number[] = parts[0].split('/').map((part) => parseInt(part, 10));
+    const timeParts: number[] = parts[1].split(':').map((part) => parseInt(part, 10));
+
+    const convertedFromDate: Date = new Date(
+      dateParts[2],
+      dateParts[1] - 1,
+      dateParts[0],
+      timeParts[0],
+      timeParts[1],
+    );
+
+    const dataParams = {
+      tipo: 2,
+      ckFecha: true,
+      codDoc: undefined,
+      codEstab: undefined,
+      codEstado: this.dataSearch.codEstado,
+      fechaInicio: formatDateToString(convertedFromDate),
+      fechaFin: formatDateToString(toDate),
+      identificacion: null,
+      idUsuario: this.getParams.idUsuario,
+      idCliente: null,
+
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+    };
+
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: SALE_CODE_REPORT.FG,
+      data: dataParams,
+      format,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   // --> Modal Filtro Reporte Detalle Caja

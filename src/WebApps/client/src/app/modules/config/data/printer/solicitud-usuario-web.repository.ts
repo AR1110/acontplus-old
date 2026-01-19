@@ -13,7 +13,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
   providedIn: 'root',
 })
 export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository {
-  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_REQUEST}`;
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_REQUEST}`;
   private http = inject(HttpClient);
 
   getFilter() {
