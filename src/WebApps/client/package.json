@@ -56,7 +56,7 @@
     "bootstrap": "^5.3.8",
     "chart.js": "^4.5.1",
     "date-fns": "^4.1.0",
-    "datex-ui": "^1.2.1",
+    "datex-ui": "^1.2.7",
     "decimal.js": "^10.6.0",
     "file-saver": "^2.0.5",
     "jest-editor-support": "32.0.0-beta.1",

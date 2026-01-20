@@ -225,7 +225,8 @@
                         nombreMedida: dataMedida.descripcion,
                         conversion: dataMedida.conversion,
                         medidas,
-                        components: results.components.filter(x => !x.isOptional),
+                        //      components: results.components.filter(x => !x.isOptional),
+                        components: results.components,
                         uniqueId: menu.uniqueId
                     }
                 }
