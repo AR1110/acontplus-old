@@ -1,35 +1,34 @@
-import { Component, inject, model, signal, OnInit } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { PageEvent } from '@angular/material/paginator';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { FacturaFisicaService } from '@purchases/services/factura-fisica.service';
-import { NotificationService } from '@acontplus/ng-notifications';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { MatTableDataSource } from '@angular/material/table';
 import {
-  Pagination,
-  DynamicCard,
-  DataGrid,
   Button,
+  DataGrid,
   DataGridColumn,
+  DynamicCard,
+  Pagination,
 } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
+import { Component, inject, model, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { DialogService } from '@core/services/dialog.service';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
-import { finalize, switchMap, throwError } from 'rxjs';
 import { FacturaFisicaLista } from '@purchases/data/models/factura-fisica.interface';
-import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { FacturaFisicaService } from '@purchases/services/factura-fisica.service';
 import { FacturaFisicaDetalleDirective } from '@purchases/shared/directives/factura-fisica-detalle.directive';
-import { DialogService } from '@core/services/dialog.service';
 import { FacturaFisicaAddEditModalComponent } from '@purchases/ui/factura-fisica/components/factura-fisica-add-edit-modal/factura-fisica-add-edit-modal.component';
+import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-factura-fisica-page',
@@ -49,7 +48,6 @@ import { FacturaFisicaAddEditModalComponent } from '@purchases/ui/factura-fisica
     MatInputModule,
     //components
     BreadcrumbComponent,
-    CustomTableContainerComponent,
     DateRangeSelectionComponent,
     //Directives
     FacturaFisicaDetalleDirective,

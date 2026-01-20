@@ -1,4 +1,5 @@
 using Identity.Domain.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Identity.Api.Endpoints.UserProfileEndpoints;
 
@@ -21,9 +22,9 @@ public static class UserProfileEndpoints
 
         // GET user profile by userId
         userProfileGroup.MapGet("/{userId:int}", async (
-            int userId,
-            IUserRepository userService,
-            ILogger<IUserRepository> logger) =>
+            [FromRoute] int userId,
+            [FromServices] IUserRepository userService,
+            [FromServices] ILogger<IUserRepository> logger) =>
         {
             try
             {
@@ -49,10 +50,10 @@ public static class UserProfileEndpoints
 
         // PUT update user profile
         userProfileGroup.MapPut("/{userId:int}", async (
-            int userId,
-            UserProfileUpdateDto updateDto,
-            IUserRepository userService,
-            ILogger<IUserRepository> logger) =>
+            [FromRoute] int userId,
+            [FromBody] UserProfileUpdateDto updateDto,
+            [FromServices] IUserRepository userService,
+            [FromServices] ILogger<IUserRepository> logger) =>
         {
             try
             {
@@ -94,10 +95,9 @@ public static class UserProfileEndpoints
     {
         // GET user profile (Configuration style)
         group.MapGet("/config", async (
-            string? json,
-            IUserProfileService userProfileService,
-            IUserContext userContext,
-            ILogger<IUserProfileService> logger) =>
+            [FromServices] IUserProfileService userProfileService,
+            [FromServices] IUserContext userContext,
+            [FromServices] ILogger<IUserProfileService> logger) =>
         {
             try
             {
@@ -121,10 +121,10 @@ public static class UserProfileEndpoints
 
         // PUT update user profile (Configuration style)
         group.MapPut("/config/{id:int}", async (
-            int id,
-            UserProfileDto dto,
-            IUserProfileService userProfileService,
-            ILogger<IUserProfileService> logger) =>
+            [FromRoute] int id,
+            [FromBody] UserProfileDto dto,
+            [FromServices] IUserProfileService userProfileService,
+            [FromServices] ILogger<IUserProfileService> logger) =>
         {
             try
             {

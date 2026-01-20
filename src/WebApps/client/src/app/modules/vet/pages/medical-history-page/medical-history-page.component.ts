@@ -1,26 +1,25 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
-import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
-import { PageEvent } from '@angular/material/paginator';
+import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
+import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 
-import { Pagination, DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
+import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { GroupedEstab } from '@core/models/estab.model';
+import { DialogService } from '@core/services/dialog.service';
+import { SharedService } from '@core/services/shared.service';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
-import { NotificationService } from '@acontplus/ng-notifications';
-import { SharedService } from '@core/services/shared.service';
-import { DialogService } from '@core/services/dialog.service';
-import { MatIcon } from '@angular/material/icon';
 
-import { FormsModule } from '@angular/forms';
-import { MatMenuModule } from '@angular/material/menu';
 import { DynamicCard } from '@acontplus/ng-components';
+import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-medical-history-page',
@@ -34,7 +33,6 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatIcon,
   ],
   templateUrl: './medical-history-page.component.html',
   styles: ``,

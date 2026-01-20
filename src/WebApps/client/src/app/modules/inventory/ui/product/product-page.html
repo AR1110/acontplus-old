@@ -275,16 +275,16 @@
       [class.bg-success]="bgSuccess"
       [class.bg-danger]="bgDanger"
       class="badge font-weight-100 cursor-pointer"
-      #popoverTrigger="mtxPopoverTrigger"
-      [mtxPopoverTriggerFor]="popover"
-      [mtxPopoverTriggerData]="{ id: row.id }"
-      mtxPopoverTriggerOn="click"
+      #popoverTrigger="acpPopoverTrigger"
+      [acpPopoverTriggerFor]="popover"
+      [popoverData]="{ id: row.id }"
+      triggerEvent="click"
       >{{ row.stock }}</span
     >
   </ng-template>
 
-  <mtx-popover
-    #popover="mtxPopover"
+  <acp-popover
+    #popover="acpPopover"
     [arrowWidth]="900"
     [arrowHeight]="100"
     [position]="[positionStart, positionEnd]"
@@ -292,5 +292,5 @@
     <ng-template mtxPopoverContent let-id="id">
       <app-product-stock [id]="id" />
     </ng-template>
-  </mtx-popover>
+  </acp-popover>
 </acp-dynamic-card>

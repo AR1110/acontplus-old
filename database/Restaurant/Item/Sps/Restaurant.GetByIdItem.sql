@@ -174,6 +174,7 @@ BEGIN
         ,me.descripcion as measure
         ,pp.S3ObjectUrl as ImageUrl
         ,ar.idArticulo  as productId
+        ,ar.stock
     FROM Restaurant.ItemComposition    ic 
     INNER JOIN Restaurant.Item         it ON it.Id         = ic.ChildItemId
      LEFT JOIN dbo.Tarifa              ta ON ta.idTarifa   = ic.FeeId
