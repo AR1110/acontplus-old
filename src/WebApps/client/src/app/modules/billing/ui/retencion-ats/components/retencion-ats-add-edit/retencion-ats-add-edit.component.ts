@@ -89,6 +89,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
   });
 
   idDocumentoElectronico = 0;
+  isDisabledEmitionDate: boolean = true;
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
@@ -259,6 +260,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.infoAdicional.forEach(info => {
         this.addInfoAdicionalWithValues(info);
       });
+      this.isDisabledEmitionDate = false;
     } else {
       this.retencionAtsForm.get('fechaEmision')?.setValue(formatDate(new Date()).toISOString());
 
