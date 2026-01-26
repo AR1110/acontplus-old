@@ -58,8 +58,8 @@ BEGIN
             SELECT COUNT(*)
             FROM App.UsuarioRol ur WITH (NOLOCK)
             INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-            INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-            INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+            INNER JOIN Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+            INNER JOIN Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
               AND s.[IsActive] = 1 
@@ -71,9 +71,9 @@ BEGIN
             SELECT COUNT(*)
             FROM App.UsuarioRol ur WITH (NOLOCK)
             INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-            INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-            INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
-            INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
+            INNER JOIN Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+            INNER JOIN Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+            INNER JOIN Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
             WHERE ur.idUsuarioRol = @userRoleId 
               AND s.[IsActive] = 1 
               AND s.IsDeleted = CAST(0 AS BIT)
@@ -86,8 +86,8 @@ BEGIN
             SELECT COUNT(*)
             FROM App.UsuarioRol ur WITH (NOLOCK)
             INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-            INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-            INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
+            INNER JOIN Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+            INNER JOIN Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId 
             WHERE ur.idUsuarioRol = @userRoleId
               AND (s.Paid IS NULL OR s.Paid = 0)
               AND s.[IsActive] = 1
@@ -164,33 +164,33 @@ BEGIN
                CAST(@expired AS BIT) AS expired
                 FROM App.UsuarioRol ur WITH (NOLOCK)
                 INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-                INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
-                INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId
+                INNER JOIN Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+                INNER JOIN Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId
                                     AND (s.Paid IS NULL OR s.Paid = 0)
                 AND s.[IsActive] = 1
                 AND s.IsDeleted = CAST(0 AS BIT)
-                INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
-                INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
-                INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
-                INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
-                INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
-                INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
+                INNER JOIN Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
+                INNER JOIN Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
+                INNER JOIN Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
+                INNER JOIN Config.LicenseType lt ON l.LicenseTypeId = lt.Id
+                INNER JOIN Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
+                INNER JOIN Config.Aplicacion a ON ld.AplicacionId = a.Id
                 WHERE ur.idUsuarioRol = @userRoleId
                   --AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
                   AND ur.estado = 1
 
             SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-            FROM AcontplusAdmin.Config.DemoStep ds
+            FROM Config.DemoStep ds
             WHERE ds.Id NOT IN (
                 SELECT cds.DemoStepId 
-                FROM AcontplusAdmin.Config.CompanyDemoStep cds
-                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                FROM Config.CompanyDemoStep cds
+                INNER JOIN Config.Company c ON cds.CompanyId = c.Id
                 WHERE c.Uuid = @uuid
             )
             AND EXISTS (
                 SELECT 1
-                FROM AcontplusAdmin.Config.CompanyDemoStep cds
-                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                FROM Config.CompanyDemoStep cds
+                INNER JOIN Config.Company c ON cds.CompanyId = c.Id
                 WHERE c.Uuid = @uuid
             )
 

@@ -78,10 +78,10 @@ BEGIN
 
 		BEGIN TRAN
         
-            EXEC AcontplusAdmin.Config.UserCustomer_Insert 0, @userParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+            EXEC Config.UserCustomer_Insert 0, @userParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 			IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Insert failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp Config.UserCustomer_Insert failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 
@@ -89,7 +89,7 @@ BEGIN
 			,@userCustomerId INT
 
 			SET @userCustomerId = (SELECT idUsuario FROM Acontplus.dbo.Usuario WHERE nombreUsuario = @nombreUsuario)
-			--SET @roleId = (SELECT TOP 1 Id FROM AcontplusAdmin.Seguridad.[Role] WHERE code = 'ADM')
+			--SET @roleId = (SELECT TOP 1 Id FROM Seguridad.[Role] WHERE code = 'ADM')
 
 			SET @userRoleParams = (SELECT '{"userCustomerId": "' + CONVERT(VARCHAR, @userCustomerId) + '"' + 
 				', "roleId": "'+ CONVERT(VARCHAR, @roleId) + '"' + 
@@ -97,11 +97,11 @@ BEGIN
 				', "fromMobile": "' + CONVERT(VARCHAR(5), @fromMobile) + '"}'
 				)
 
- 			EXEC AcontplusAdmin.Config.UserCustomerRole_Insert 0, @userRoleParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+ 			EXEC Config.UserCustomerRole_Insert 0, @userRoleParams, @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 
             IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomerRole_Insert failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp Config.UserCustomerRole_Insert failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 

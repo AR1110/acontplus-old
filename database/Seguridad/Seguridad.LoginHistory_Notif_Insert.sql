@@ -139,7 +139,7 @@ BEGIN
                                         ,@userEmail = us.correo
         FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
         INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
-        INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+        INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
         INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
         LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
         WHERE ur.idUsuarioRol = @userRoleId
@@ -147,7 +147,7 @@ BEGIN
         INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
-                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app mï¿½vil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
@@ -164,7 +164,7 @@ BEGIN
                 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
                                                 ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
-                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app mï¿½vil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
@@ -174,7 +174,7 @@ BEGIN
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        us.correo
 						        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK)
-                                INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+                                INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
                                 INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
                                 LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
                                 WHERE ur.idEntidad = @idEntidad 

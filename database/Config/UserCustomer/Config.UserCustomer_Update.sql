@@ -30,10 +30,10 @@ BEGIN
 
 		BEGIN TRAN 
 			
-            EXEC AcontplusAdmin.Config.UserCustomer_Update @id, @json, @UpdatedBy, @fromMobile,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+            EXEC Config.UserCustomer_Update @id, @json, @UpdatedBy, @fromMobile,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 			IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 		COMMIT TRAN 

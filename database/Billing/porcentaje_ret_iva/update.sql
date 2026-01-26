@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
  
 SET ANSI_NULLS ON

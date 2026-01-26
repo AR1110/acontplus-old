@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 -- ================================================
 -- ================================================
@@ -41,9 +41,9 @@ BEGIN
     FROM 
         Config.Company c WITH(NOLOCK)
     INNER JOIN 
-        AcontplusAdmin.Sales.Suscripcion s WITH(NOLOCK) ON c.Id = s.CompanyId
+        Sales.Suscripcion s WITH(NOLOCK) ON c.Id = s.CompanyId
     INNER JOIN 
-        AcontplusAdmin.Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
+        Config.SubscriptionType st WITH(NOLOCK) ON s.SubscriptionTypeId = st.Id
     WHERE 
         s.[IsActive] = 1 
         AND s.IsDeleted = CAST(0 AS BIT) 
@@ -89,15 +89,15 @@ BEGIN
         lt.[Name] AS license, 
         COUNT(*) AS total
     FROM 
-        AcontplusAdmin.Config.LicenseType lt WITH(NOLOCK)
+        Config.LicenseType lt WITH(NOLOCK)
     INNER JOIN 
-        AcontplusAdmin.Config.Licencia l WITH(NOLOCK) ON lt.Id = l.LicenseTypeId
+        Config.Licencia l WITH(NOLOCK) ON lt.Id = l.LicenseTypeId
     INNER JOIN 
-        AcontplusAdmin.Config.LicenciaDetalle ld WITH(NOLOCK) ON l.Id = ld.LicenciaId
+        Config.LicenciaDetalle ld WITH(NOLOCK) ON l.Id = ld.LicenciaId
     INNER JOIN 
-        AcontplusAdmin.Sales.SuscripcionDetalle sd WITH(NOLOCK) ON ld.Id = sd.LicenciaDetalleId
+        Sales.SuscripcionDetalle sd WITH(NOLOCK) ON ld.Id = sd.LicenciaDetalleId
     INNER JOIN 
-        AcontplusAdmin.Sales.Suscripcion s WITH(NOLOCK) ON sd.SuscripcionId = s.Id
+        Sales.Suscripcion s WITH(NOLOCK) ON sd.SuscripcionId = s.Id
     INNER JOIN 
         @ActiveCompanies ac ON ac.CompanyId = s.CompanyId
     WHERE 

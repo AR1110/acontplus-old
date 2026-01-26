@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Sri')
 BEGIN

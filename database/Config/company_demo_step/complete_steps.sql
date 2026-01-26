@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 -- ================================================
 SET ANSI_NULLS ON
@@ -28,7 +28,7 @@ BEGIN
         SELECT @TotalPasos = COUNT(*) FROM Config.DemoStep;
         
         PRINT 'Total de pasos de demo requeridos: ' + CAST(@TotalPasos AS VARCHAR);
-        PRINT 'Iniciando proceso para empresas con suscripción no-demo...';
+        PRINT 'Iniciando proceso para empresas con suscripciï¿½n no-demo...';
         
         -- Verificar si existen empresas elegibles para el proceso
         IF EXISTS (
@@ -53,7 +53,7 @@ BEGIN
         BEGIN
             PRINT 'Se encontraron empresas que necesitan completar pasos de demo.';
             
-            -- Mostrar empresas que serán procesadas
+            -- Mostrar empresas que serï¿½n procesadas
             SELECT DISTINCT 
                 s.CompanyId,
                 pasos_actuales.PasosCompletados as PasosActuales,
@@ -81,7 +81,7 @@ BEGIN
                    empresas_elegibles.Uuid
             FROM Config.DemoStep ds
             CROSS JOIN (
-                -- Solo empresas con suscripción no-demo que ya tienen registros en CompanyDemoStep
+                -- Solo empresas con suscripciï¿½n no-demo que ya tienen registros en CompanyDemoStep
                 SELECT DISTINCT s.CompanyId, c.Uuid
                 FROM Sales.Suscripcion s 
                 INNER JOIN Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
@@ -107,7 +107,7 @@ BEGIN
                 AND cds.CompanyId = empresas_elegibles.CompanyId
             );
             
-            -- Obtener número de pasos insertados
+            -- Obtener nï¿½mero de pasos insertados
             SET @PasosInsertados = @@ROWCOUNT;
             
             -- Contar empresas procesadas
@@ -132,11 +132,11 @@ BEGIN
         ELSE
         BEGIN
             PRINT 'No se encontraron empresas elegibles para el proceso.';
-            PRINT 'Criterios: Suscripción no-demo + Registros existentes en CompanyDemoStep + Pasos incompletos';
+            PRINT 'Criterios: Suscripciï¿½n no-demo + Registros existentes en CompanyDemoStep + Pasos incompletos';
         END
         
-        -- Verificación final - HABILITADA Y CORREGIDA
-        PRINT 'Estado final de empresas con suscripción no-demo:';
+        -- Verificaciï¿½n final - HABILITADA Y CORREGIDA
+        PRINT 'Estado final de empresas con suscripciï¿½n no-demo:';
         
         --SELECT 
         --    s.CompanyId,

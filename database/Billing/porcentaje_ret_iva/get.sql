@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [Sri].[CodigoRetencion_Get]    Script Date: 12/6/2024 14:30:11 ******/
 SET ANSI_NULLS ON

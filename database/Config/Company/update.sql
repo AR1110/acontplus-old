@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [App].[aspEntidad_Insert]    Script Date: 10/7/2022 11:49:46 AM ******/
 SET ANSI_NULLS ON

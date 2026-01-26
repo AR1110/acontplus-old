@@ -26,10 +26,10 @@ BEGIN
     SET @tableNames = 'companyDemoSteps'
 
     SELECT ds.*
-    ,completed = CAST((CASE WHEN ISNULL((SELECT COUNT(*) FROM AcontplusAdmin.Config.CompanyDemoStep cds WITH(NOLOCK) 
+    ,completed = CAST((CASE WHEN ISNULL((SELECT COUNT(*) FROM Config.CompanyDemoStep cds WITH(NOLOCK) 
                                                     WHERE cds.DemoStepId = ds.Id
                                                     AND cds.Uuid = @uuid
                                                     ),0) >= 1 THEN 1 ELSE 0 END) AS BIT)
-    FROM AcontplusAdmin.Config.DemoStep ds WITH(NOLOCK)
+    FROM Config.DemoStep ds WITH(NOLOCK)
 END
 GO

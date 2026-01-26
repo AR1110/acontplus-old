@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 
 SET ANSI_NULLS ON
@@ -121,7 +121,7 @@ BEGIN
         IF LEN(LTRIM(RTRIM(@Email))) = 0
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Correo electrónico es requerido';
+            SET @ErrorMessage = 'Correo electrï¿½nico es requerido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -129,7 +129,7 @@ BEGIN
         IF LEN(LTRIM(RTRIM(@IdCard))) = 0
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Número de identificación es requerido';
+            SET @ErrorMessage = 'Nï¿½mero de identificaciï¿½n es requerido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -138,7 +138,7 @@ BEGIN
         IF @Email NOT LIKE '%_@_%._%'
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Formato de correo electrónico inválido';
+            SET @ErrorMessage = 'Formato de correo electrï¿½nico invï¿½lido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -161,7 +161,7 @@ BEGIN
                 AND IdUsuario != @Id
         )
         BEGIN
-            SET @ErrorMessage = CONCAT('Usuario ya existe con identificación: ', 
+            SET @ErrorMessage = CONCAT('Usuario ya existe con identificaciï¿½n: ', 
                 (SELECT TOP 1 nombreUsuario 
                  FROM Acontplus.dbo.Usuario WITH (NOLOCK) 
                  WHERE CustomerId = @CustomerId));
@@ -178,7 +178,7 @@ BEGIN
         )
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Nombre de usuario ya está en uso';
+            SET @ErrorMessage = 'Nombre de usuario ya estï¿½ en uso';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -243,17 +243,17 @@ BEGIN
             WHERE Correo = @Email;
 
             SELECT @CompanyId = Id 
-            FROM AcontplusAdmin.Config.Company WITH(NOLOCK) 
+            FROM Config.Company WITH(NOLOCK) 
             WHERE Uuid = @Uuid;
 
             IF NOT EXISTS (
                 SELECT 1 
-                FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) 
+                FROM Config.CompanyDemoStep WITH(NOLOCK) 
                 WHERE DemoStepId = @DemoStepId 
                     AND Uuid = @Uuid
             )
             BEGIN
-                INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedAt, CreatedBy)
+                INSERT INTO Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedAt, CreatedBy)
                 VALUES (@DemoStepId, @CompanyId, @Uuid, @IsMobileRequest, SYSUTCDATETIME(), @UpdatedBy);
             END
         END
@@ -268,7 +268,7 @@ BEGIN
         ELSE
         BEGIN
             SET @Code = '50002';
-            SET @Message = 'No se encontró el usuario para actualizar';
+            SET @Message = 'No se encontrï¿½ el usuario para actualizar';
             SET @ErrorCode = 50002;
         END
 

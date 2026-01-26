@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [Config].[Solicitud_Get]    Script Date: 27/4/2023 14:21:40 ******/
 SET ANSI_NULLS ON

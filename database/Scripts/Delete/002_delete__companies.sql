@@ -18,20 +18,20 @@ INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK) ON e.idEntidad = en.idEntidad
 WHERE en.Uuid = @uuid
 
 
-DELETE sd FROM AcontplusAdmin.Sales.SuscripcionDetalle sd WITH (ROWLOCK)
+DELETE sd FROM Sales.SuscripcionDetalle sd WITH (ROWLOCK)
 WHERE SuscripcionId in (
-    SELECT s.Id FROM AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK)
-    INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON s.CompanyId = c.Id
+    SELECT s.Id FROM Sales.Suscripcion s WITH (NOLOCK)
+    INNER JOIN Config.Company c WITH (NOLOCK) ON s.CompanyId = c.Id
     WHERE c.Uuid = @uuid
 ) 
 
-DELETE s FROM AcontplusAdmin.Sales.Suscripcion s WITH (ROWLOCK)
-    INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON s.CompanyId = c.Id
+DELETE s FROM Sales.Suscripcion s WITH (ROWLOCK)
+    INNER JOIN Config.Company c WITH (NOLOCK) ON s.CompanyId = c.Id
     WHERE c.Uuid = @uuid
 
-DELETE FROM AcontplusAdmin.Config.CompanyDemoStep WHERE Uuid = @uuid
+DELETE FROM Config.CompanyDemoStep WHERE Uuid = @uuid
 
-DELETE FROM AcontplusAdmin.Config.Company WHERE Uuid  = @uuid
+DELETE FROM Config.Company WHERE Uuid  = @uuid
 
 DELETE up FROM 
 Acontplus.Config.UserPermission up WITH (ROWLOCK)

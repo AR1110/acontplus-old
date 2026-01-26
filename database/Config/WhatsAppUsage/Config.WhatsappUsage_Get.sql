@@ -20,16 +20,16 @@ BEGIN
 		BEGIN
 			SET @companyUuid = (SELECT uuid FROM v_usuario WHERE idUsuarioRol = @idUsuarioRol)
 
-            IF NOT EXISTS (SELECT 1 FROM AcontplusAdmin.Config.WhatsappUsage  wau
-                                INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+            IF NOT EXISTS (SELECT 1 FROM Config.WhatsappUsage  wau
+                                INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
                                 WHERE c.Uuid = @companyUuid)
 				BEGIN
 					SELECT '0' code, 'El envío de mensajes por whatsapp aun no esta habilitado, para activarlo debe adquirir un plan, comuníquese con ACONTPLUS WEB al número 0991686066.' as 'message'
 					RETURN
 				END
 
-			IF EXISTS (SELECT 1 FROM AcontplusAdmin.Config.WhatsappUsage  wau
-                                INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+			IF EXISTS (SELECT 1 FROM Config.WhatsappUsage  wau
+                                INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
                                 WHERE c.Uuid = @companyUuid AND wau.IsActive = 0 AND wau.[Unlimited] = 0)
 				BEGIN
 					SELECT '0' code, 'El envío de comprobantes por whatsapp esta bloqueado, para activarlo debe adquirir un plan, comuníquese con ACONTPLUS WEB al número 0991686066.' as 'message'
@@ -43,8 +43,8 @@ BEGIN
 					,@availables INT = 0
 					,@ilimitado BIT = 0
 					SELECT @totalUsed = used, @limite = limit, @ilimitado = [Unlimited] 
-                    FROM AcontplusAdmin.Config.WhatsappUsage  wau
-                        INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+                    FROM Config.WhatsappUsage  wau
+                        INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
                     WHERE c.Uuid = @companyUuid
 
 					IF (@ilimitado = 0)

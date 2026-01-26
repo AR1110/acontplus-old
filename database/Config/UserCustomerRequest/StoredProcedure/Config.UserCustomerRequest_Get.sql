@@ -167,7 +167,7 @@ BEGIN
 				BEGIN
 					IF EXISTS(SELECT 1 FROM @tbRequestParams WHERE codEstado='P')
 						BEGIN
-							SELECT '0'code, 'Por el momento, tu solicitud no ha sido aprobada!'as 'message', 'Solicitud de Clave de Autorización' as titleSms
+							SELECT '0'code, 'Por el momento, tu solicitud no ha sido aprobada!'as 'message', 'Solicitud de Clave de Autorizaciï¿½n' as titleSms
 							RETURN 
 						END 
 
@@ -179,7 +179,7 @@ BEGIN
 
 					IF NOT EXISTS(SELECT 1 FROM @tbRequestParams  WHERE codEstado='P')
 						BEGIN 
-							SELECT '2'code, 'Registrar solictud 'as 'message', 'Solicitud de Clave de Autorización' as titleSms
+							SELECT '2'code, 'Registrar solictud 'as 'message', 'Solicitud de Clave de Autorizaciï¿½n' as titleSms
 							RETURN	
 						END 					
 				END
@@ -211,7 +211,7 @@ BEGIN
 			FROM App.UsuarioRol ur
 			INNER JOIN dbo.Usuario u WITH(NOLOCK) on u.idUsuario = ur.idUsuario
             INNER JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = u.customerId
-            INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
+            INNER JOIN Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
 			WHERE ur.idEntidad = @idEntidad AND ur.idUsuarioRol !=@userRoleId 
         END
 	

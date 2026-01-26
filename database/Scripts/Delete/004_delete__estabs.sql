@@ -12,9 +12,9 @@ SELECT TOP 2 * FROM dbo.Bodega ORDER BY idbodega DESC
 SELECT TOP 2 * FROM dbo.PuntoEmision ORDER BY idPuntoEmision DESC
 SELECT TOP 2 * FROM Sri.Establecimiento ORDER BY idEstablecimiento DESC
 
---select * from AcontplusAdmin.Config.demostep
---select * from AcontplusAdmin.Config.companydemostep 
---delete from acontplusadmin.config.companydemostep where id > 37
+--select * from Config.demostep
+--select * from Config.companydemostep 
+--delete from config.companydemostep where id > 37
 
 --delete from Config.Estab_Asig where idEstab_Asig = 578
 --delete from Config.PtoEmi_Asig where idEstab_Asig = 536

@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 DROP FUNCTION IF EXISTS Common.ufnSpResponse
 GO

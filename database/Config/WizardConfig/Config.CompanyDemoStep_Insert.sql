@@ -29,14 +29,14 @@ BEGIN
 	BEGIN TRY
         SELECT TOP 1 @uuid = uuid, @userId = idUsuario, @Username = nombreUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId;
 
-        SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
+        SET @companyId = (SELECT Id FROM Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
 
 		BEGIN TRAN
-			IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK)
+			IF NOT EXISTS (SELECT TOP 1 1 FROM Config.CompanyDemoStep WITH (NOLOCK)
 						   WHERE Uuid = @uuid
 						   AND DemoStepId = @demoStepId)
 			    BEGIN
-				    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
+				    INSERT INTO Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
 				    VALUES (@demoStepId, @companyId, @uuid, @fromMobile, @Username);
 			    END 
 
