@@ -10,7 +10,8 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json"
+      Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Infrastructure" />
