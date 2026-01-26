@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [Sri].[CodigoRetencion_Insert]    Script Date: 12/6/2024 15:09:05 ******/
 SET ANSI_NULLS ON
@@ -33,13 +33,13 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN 
 
-		IF EXISTS(SELECT 1 FROM AcontPlus.Sri.PorcentajeRetIva  WHERE codigo=LTRIM(TRIM(@codigo)))
+		IF EXISTS(SELECT 1 FROM Sri.PorcentajeRetIva  WHERE codigo=LTRIM(TRIM(@codigo)))
 			BEGIN 
 				SELECT '50001'code, 'Hay un Porcentaje Retencin Iva registrado con este cdigo' as 'message'
 				RETURN 
 			END 
 
-			IF EXISTS(SELECT 1 FROM AcontPlus.Sri.PorcentajeRetIva
+			IF EXISTS(SELECT 1 FROM Sri.PorcentajeRetIva
 							   WHERE descripcion=LTRIM(TRIM(@descripcion))  
 					  )
 				BEGIN 
@@ -47,7 +47,7 @@ BEGIN
 					RETURN 
 				END 
 
-				INSERT INTO AcontPlus.Sri.PorcentajeRetIva (codigo, descripcion, porcentaje)
+				INSERT INTO Sri.PorcentajeRetIva (codigo, descripcion, porcentaje)
 				VALUES(@codigo, @descripcion, @porcentaje)
 				SELECT '0'code, 'Registrado correctamente' as 'message'
 		COMMIT TRAN 

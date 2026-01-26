@@ -27,8 +27,8 @@ BEGIN
 
     BEGIN TRY
         -- Retrieve company IDs based on provided RUCs
-        SET @companyOrigenId = (SELECT idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucOrigen);
-        SET @companyDestinoId = (SELECT idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucDestino);
+        SET @companyOrigenId = (SELECT idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucOrigen);
+        SET @companyDestinoId = (SELECT idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucDestino);
 
         -- Validate company IDs
         IF @companyOrigenId IS NULL OR @companyDestinoId IS NULL
@@ -42,18 +42,18 @@ BEGIN
 
         SELECT [gestion], [descripcion], [diasCredito], [numeroCuota], [entrada], [estado], [fechaRegistro], [idUsuario], @companyDestinoId, [tipo], [fromMobile]
 
-        FROM Acontplus.dbo.TiempoCredito tc
+        FROM dbo.TiempoCredito tc
         WHERE idEntidad = @companyOrigenId
             AND estado = 1
             AND NOT EXISTS (
-              SELECT 1 FROM Acontplus.dbo.TiempoCredito WITH (NOLOCK)
+              SELECT 1 FROM dbo.TiempoCredito WITH (NOLOCK)
               WHERE descripcion = tc.descripcion AND idEntidad = @companyDestinoId
           );
 
         SET @tiemposCreditoCopied = @@ROWCOUNT
 
         -- Copy Customers
-        INSERT INTO Acontplus.dbo.Cliente(
+        INSERT INTO dbo.Cliente(
             [idTipoClienteProveedor], [idTipoEntidad], [idSubContribuyente], [idTiempoCredito],
             [idTipoIdentificacion], [idCiudad], [montoCredito], [direccion], [telefono],
             [correo], [estado], [consumidorFinal], [fechaRegistro], [idUsuario],
@@ -70,12 +70,12 @@ BEGIN
             @companyDestinoId, [idEmpleado], [idEmpresa], [idCargo], [placa], [nota],
             [importacion], [CustomerId], [FormaPagoSriId], [infoCrediticia],
             [UpdatedByUserId], [UpdatedAt], [configValorBruto]
-        FROM Acontplus.dbo.Cliente c WITH (NOLOCK)
+        FROM dbo.Cliente c WITH (NOLOCK)
             LEFT JOIN TiempoCredito tco ON c.idTiempoCredito = tco.idTiempoCredito
         WHERE c.idEntidad = @companyOrigenId
           AND c.estado = CAST(1 AS BIT)
           AND NOT EXISTS (
-              SELECT 1 FROM Acontplus.dbo.Cliente WITH (NOLOCK)
+              SELECT 1 FROM dbo.Cliente WITH (NOLOCK)
               WHERE CustomerId = c.CustomerId AND idEntidad = @companyDestinoId
           );
 
@@ -84,7 +84,7 @@ BEGIN
         -- Copy Suppliers (if applicable)
         IF (@copySuppliers = CAST(1 AS BIT))
         BEGIN
-            INSERT INTO Acontplus.dbo.Proveedor(
+            INSERT INTO dbo.Proveedor(
                 [idTipoIdentificacion], [idTipoClienteProveedor], [idTipoEntidad],
                 [idSubContribuyente], [idTiempoCredito], [idCiudad], [direccion], 
                 [telefono], [correo], [estado], [fechaRegistro], [idUsuario],
@@ -97,13 +97,13 @@ BEGIN
                                                                                                             AND tcn.descripcion = tco.descripcion), [idCiudad], [direccion], 
                 [telefono], [correo], p.[estado], p.[fechaRegistro], p.[idUsuario],
                 @companyDestinoId, [importacion], [CustomerId], [UpdatedByUserId], [UpdatedAt]
-            FROM Acontplus.dbo.Proveedor p WITH (NOLOCK)
+            FROM dbo.Proveedor p WITH (NOLOCK)
                         LEFT JOIN TiempoCredito tco ON p.idTiempoCredito = tco.idTiempoCredito
 
             WHERE p.idEntidad = @companyOrigenId
               AND p.estado = CAST(1 AS BIT)
               AND NOT EXISTS (
-                  SELECT 1 FROM Acontplus.dbo.Proveedor WITH (NOLOCK)
+                  SELECT 1 FROM dbo.Proveedor WITH (NOLOCK)
                   WHERE CustomerId = p.CustomerId AND idEntidad = @companyDestinoId
               );
 

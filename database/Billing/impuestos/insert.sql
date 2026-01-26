@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 -- ================================================
 SET ANSI_NULLS ON
@@ -35,14 +35,14 @@ BEGIN
 									porcentaje NUMERIC(4,2)
 									)
 
-		IF EXISTS (SELECT TOP 1 1 FROM Acontplus.Sri.TarifaImpuesto WITH (NOLOCK) 
+		IF EXISTS (SELECT TOP 1 1 FROM Sri.TarifaImpuesto WITH (NOLOCK) 
 					WHERE codImpuesto = @CodImpuesto AND codigo = @Codigo)
 			BEGIN
 				SELECT '50001' Code, Message = 'Este cdigo ya existe'
 				RETURN
 			END
 		BEGIN TRAN
-			INSERT INTO Acontplus.Sri.TarifaImpuesto(codImpuesto, codigo, descripcion, porcentaje)
+			INSERT INTO Sri.TarifaImpuesto(codImpuesto, codigo, descripcion, porcentaje)
 			VALUES (@CodImpuesto, @Codigo, @Descripcion, @Porcentaje)
 			SET @Id = SCOPE_IDENTITY()
 		IF (@Id > 0) 

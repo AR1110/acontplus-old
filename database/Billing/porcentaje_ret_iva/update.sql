@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
  
 SET ANSI_NULLS ON
@@ -33,7 +33,7 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN 
 		S
-			IF EXISTS(SELECT 1 FROM AcontPlus.Sri.PorcentajeRetIva
+			IF EXISTS(SELECT 1 FROM Sri.PorcentajeRetIva
 							   WHERE idPorcentajeRetIva <> @Id AND codigo=LTRIM(TRIM(@Codigo)) 
 					  )
 				BEGIN 
@@ -41,7 +41,7 @@ BEGIN
 					RETURN 
 				END 
 
-			IF EXISTS(SELECT 1 FROM AcontPlus.Sri.PorcentajeRetIva
+			IF EXISTS(SELECT 1 FROM Sri.PorcentajeRetIva
 							   WHERE idPorcentajeRetIva <> @Id AND codigo=LTRIM(TRIM(@Codigo)) AND descripcion=LTRIM(TRIM(@Descripcion)) 
 					  )
 				BEGIN 
@@ -49,7 +49,7 @@ BEGIN
 					RETURN 
 				END 
 
-				UPDATE AcontPlus.Sri.PorcentajeRetIva SET codigo=@Codigo, descripcion=@Descripcion, porcentaje = @Porcentaje, estado = @Estado WHERE idPorcentajeRetIva = @Id
+				UPDATE Sri.PorcentajeRetIva SET codigo=@Codigo, descripcion=@Descripcion, porcentaje = @Porcentaje, estado = @Estado WHERE idPorcentajeRetIva = @Id
 			
 				SELECT '0'code, 'Actualizado correctamente' as 'message'
 		COMMIT TRAN 

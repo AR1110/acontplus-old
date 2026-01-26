@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [App].[aspEntidad_Insert]    Script Date: 10/7/2022 11:49:46 AM ******/
 SET ANSI_NULLS ON
@@ -97,7 +97,7 @@ BEGIN
                 RETURN
 			END
 
-		IF EXISTS (SELECT 1 FROM [Acontplus].[dbo].[Entidad] WITH (NOLOCK) WHERE ruc = @IdCard)
+		IF EXISTS (SELECT 1 FROM [dbo].[Entidad] WITH (NOLOCK) WHERE ruc = @IdCard)
 			BEGIN 
 				SELECT  '50001' Code, 'Ya se encuentra registrado'as Message
                 RETURN
@@ -122,7 +122,7 @@ BEGIN
 			      ([IdCard] ,[Uuid] ,[BusinessName] ,[TradeName] ,[Telephone] ,[Email] ,[Address], IsMobileRequest)
 			SELECT [IdCard] ,[Uuid] ,UPPER([BusinessName]) ,UPPER([TradeName]) ,[Telephone] ,[Email] ,[Address], IsMobileRequest FROM @TbCompany
 
-			INSERT INTO Acontplus.dbo.Entidad 
+			INSERT INTO dbo.Entidad 
 			      ([Uuid] ,ruc    ,razonSocial,nombreComercial,email,telefono ,direccion,fechaRegistro)
 			SELECT [Uuid] ,IdCard ,UPPER(BusinessName), UPPER(TradeName)  ,Email,Telephone,[Address],GETDATE() FROM @TbCompany
 
@@ -158,7 +158,7 @@ BEGIN
 											   ,nroDescuento        = CASE Codigo WHEN 'V' THEN 2 WHEN 'C' THEN 2 END  
 											   ,nroIce              = CASE Codigo WHEN 'V' THEN 2 WHEN 'C' THEN 2 END
 											   ,importeTotal        = CASE Codigo WHEN 'V' THEN 2 WHEN 'C' THEN 2 END
-										FROM Acontplus.dbo.TipoTransaccion WITH (NOLOCK)
+										FROM dbo.TipoTransaccion WITH (NOLOCK)
 										WHERE Codigo IN ('AL','C','V') FOR JSON PATH)
 			
 			INSERT INTO @TbConfig (IdEntidad,CodConfig,JsonConfig)
@@ -169,7 +169,7 @@ BEGIN
 
 			--============== CONFIGURACION DE NOTIFICACIONES =====================================================
 			
-			SET @JsonConfigNotificaciones = (SELECT idNotificacionSistema,Codigo,Estado FROM Acontplus.Config.NotificacionSistema WITH (NOLOCK) ORDER BY Descripcion FOR JSON PATH)
+			SET @JsonConfigNotificaciones = (SELECT idNotificacionSistema,Codigo,Estado FROM Config.NotificacionSistema WITH (NOLOCK) ORDER BY Descripcion FOR JSON PATH)
 
 			INSERT INTO @TbConfig (IdEntidad,CodConfig,JsonConfig)
 			SELECT @Id,'CS',@JsonConfigNotificaciones
@@ -178,20 +178,20 @@ BEGIN
 
 			--============== CONFIGURACIONES GENERALES DEL SISTEMA ===============================================
 
-			INSERT INTO [Acontplus].[Config].Sistema(IdEntidad,CodConfig,JsonConfig)
+			INSERT INTO [Config].Sistema(IdEntidad,CodConfig,JsonConfig)
 			SELECT IdEntidad,CodConfig,JsonConfig FROM @TbConfig
 
 			--============== CONFIGURACIONES GENERALES DEL SISTEMA ===========================================================
 
 			--============== CONFIGURACIONES DE LAS COLUMNAS EN LOS DOCUMENTOS ===============================================
 			
-			INSERT INTO Acontplus.dbo.ConfigVentaDetalle(IdEntidad,fechaRegistro) SELECT @Id,GETDATE()
+			INSERT INTO dbo.ConfigVentaDetalle(IdEntidad,fechaRegistro) SELECT @Id,GETDATE()
 			
 			--============== CONFIGURACIONES DE LAS COLUMNAS EN LOS DOCUMENTOS ===============================================
 
 			--============== TARIFAS DE PRECIOS ===============================================
 			
-			INSERT INTO Acontplus.dbo.Tarifa(IdEntidad,Descripcion,Codigo,fechaRegistro,Predeterminada)
+			INSERT INTO dbo.Tarifa(IdEntidad,Descripcion,Codigo,fechaRegistro,Predeterminada)
 			SELECT @Id,Tarifa,Codigo,GETDATE(),Predeterminada FROM @TableValue ORDER BY Codigo ASC
 			
 			--============== TARIFAS DE PRECIOS ===============================================

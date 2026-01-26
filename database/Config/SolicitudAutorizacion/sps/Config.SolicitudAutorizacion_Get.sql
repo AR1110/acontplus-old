@@ -164,17 +164,17 @@ BEGIN
 
 		SELECT  @keyRequest = keyRequest FROM Config.v_User_Permission_Sale WHERE idUsuarioRol = @userRoleId   
 	
-			-- Obtener el código de acción desde el JSON
+			-- Obtener el cï¿½digo de acciï¿½n desde el JSON
 			SELECT @codigoAccion = codigoAccion 
 			FROM OPENJSON(@json)
 			WITH (
 				codigoAccion VARCHAR(5)
 			)
 
-			-- Verificar que se haya recibido una acción válida
+			-- Verificar que se haya recibido una acciï¿½n vï¿½lida
 			IF @codigoAccion IS NULL
 			BEGIN
-				SELECT '0' AS code, 'Acción no definida' AS message, 'Solicitud de Autorización' AS titleSms
+				SELECT '0' AS code, 'Acciï¿½n no definida' AS message, 'Solicitud de Autorizaciï¿½n' AS titleSms
 				RETURN
 			END
 
@@ -184,7 +184,7 @@ BEGIN
 			--IF @codigoAccion = 'A' AND EXISTS (SELECT 1 FROM Config.vw_User_Permissions WHERE userRoleId = @userRoleId AND menuCode = 'GV' AND [name] = 'anular')
 			--	SET @keyRequest = 1
 
-			-- Insertar parámetros de la solicitud en la tabla temporal
+			-- Insertar parï¿½metros de la solicitud en la tabla temporal
 			INSERT INTO @tbRequestParams (idDocumento, codDoc, codEstado)
 			SELECT
 				IdDocumento,
@@ -204,7 +204,7 @@ BEGIN
 			BEGIN
 				IF EXISTS(SELECT 1 FROM @tbRequestParams WHERE codEstado = 'P')
 				BEGIN
-					SELECT '0' AS code, 'Por el momento, tu solicitud no ha sido aprobada!' AS message, 'Solicitud de Autorización' AS titleSms
+					SELECT '0' AS code, 'Por el momento, tu solicitud no ha sido aprobada!' AS message, 'Solicitud de Autorizaciï¿½n' AS titleSms
 					RETURN
 				END
 
@@ -216,7 +216,7 @@ BEGIN
 
 				IF NOT EXISTS(SELECT 1 FROM @tbRequestParams WHERE codEstado = 'P')
 				BEGIN
-					SELECT '2' AS code, 'Registrar solicitud' AS message, 'Solicitud de Autorización' AS titleSms
+					SELECT '2' AS code, 'Registrar solicitud' AS message, 'Solicitud de Autorizaciï¿½n' AS titleSms
 					RETURN
 				END
 			END
@@ -250,7 +250,7 @@ BEGIN
 			FROM App.UsuarioRol ur
 			INNER JOIN dbo.Usuario u WITH(NOLOCK) on u.idUsuario = ur.idUsuario
             INNER JOIN Customer.Customer cc WITH(NOLOCK) ON cc.Id = u.customerId
-            INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
+            INNER JOIN Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
 			WHERE ur.idEntidad = @idEntidad AND ur.idUsuarioRol !=@userRoleId 
         END
 

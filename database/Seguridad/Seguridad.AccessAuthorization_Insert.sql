@@ -70,7 +70,7 @@ BEGIN
             END
 
 	    SELECT @template = 'Email_Auth.html'
-        SET @subject = 'Solicitud de Autorización de Ingreso'
+        SET @subject = 'Solicitud de Autorizaciï¿½n de Ingreso'
 
         DECLARE @userToSendEmail AS TABLE (
             body VARCHAR(MAX) NOT NULL,
@@ -90,11 +90,11 @@ BEGIN
         ,@username = u.nombreUsuario
         ,@requesting_user = UPPER(c.BusinessName)
         ,@userId = ur.idUsuario
-        FROM Acontplus.App.UsuarioRol ur 
-        INNER JOIN Acontplus.dbo.Entidad e ON ur.idEntidad = e.idEntidad
-        INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
-        INNER JOIN Acontplus.dbo.Usuario u ON ur.idUsuario = u.idUsuario
-        LEFT JOIN Acontplus.Customer.Customer c ON u.customerId = c.Id
+        FROM App.UsuarioRol ur 
+        INNER JOIN dbo.Entidad e ON ur.idEntidad = e.idEntidad
+        INNER JOIN Seguridad.[Role] r ON ur.RoleId = r.Id
+        INNER JOIN dbo.Usuario u ON ur.idUsuario = u.idUsuario
+        LEFT JOIN Customer.Customer c ON u.customerId = c.Id
         WHERE ur.idUsuarioRol = @userRoleId
 
         SELECT TOP 1 @idEntidad = idEntidad FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @userRoleId
@@ -129,16 +129,16 @@ BEGIN
 					),
              (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        u.correo
-								       FROM Acontplus.dbo.Usuario u 
-                                       INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
-                                       INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-                                       INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
-                                       INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
-                                       LEFT JOIN Acontplus.Customer.Customer cc On u.customerId = c.Id
+								       FROM dbo.Usuario u 
+                                       INNER JOIN App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
+                                       INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+                                       INNER JOIN Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
+                                       INNER JOIN Seguridad.[Role] r ON ur.RoleId = r.Id
+                                       LEFT JOIN Customer.Customer cc On u.customerId = c.Id
                WHERE r.Code = 'ADM'
-                   AND c.Id IN (SELECT cc.Id FROM Acontplus.App.UsuarioRol urr WITH (NOLOCK) 
-                                             INNER JOIN Acontplus.dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad
-                                             INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON ee.Uuid = cc.Uuid 
+                   AND c.Id IN (SELECT cc.Id FROM App.UsuarioRol urr WITH (NOLOCK) 
+                                             INNER JOIN dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad
+                                             INNER JOIN Config.Company cc WITH (NOLOCK) ON ee.Uuid = cc.Uuid 
                                              WHERE urr.idUsuarioRol = @userRoleId
                                              AND urr.estado = 1)
                    AND u.correo IS NOT NULL
@@ -147,15 +147,15 @@ BEGIN
 	            --BEGIN TRAN;
 
                     INSERT INTO Seguridad.AccessAuthorization(SenderId, ReceiverId, Code, Uuid)
-                    SELECT @userId, u.idUsuario, @auth_code, @Uuid FROM Acontplus.dbo.Usuario u 
-                    INNER JOIN Acontplus.App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
-                    INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
-                    INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
-                    INNER JOIN AcontplusAdmin.Seguridad.[Role] r ON ur.RoleId = r.Id
+                    SELECT @userId, u.idUsuario, @auth_code, @Uuid FROM dbo.Usuario u 
+                    INNER JOIN App.UsuarioRol ur ON u.idUsuario = ur.idUsuario
+                    INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+                    INNER JOIN Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
+                    INNER JOIN Seguridad.[Role] r ON ur.RoleId = r.Id
                     WHERE  r.Code = 'ADM'
-                    AND c.Id IN (SELECT cc.Id FROM Acontplus.App.UsuarioRol urr WITH (NOLOCK) 
-                                                                                INNER JOIN Acontplus.dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad
-                                                                                INNER JOIN AcontplusAdmin.Config.Company cc WITH (NOLOCK) ON ee.Uuid = cc.Uuid 
+                    AND c.Id IN (SELECT cc.Id FROM App.UsuarioRol urr WITH (NOLOCK) 
+                                                                                INNER JOIN dbo.Entidad ee WITH (NOLOCK) ON urr.idEntidad = ee.idEntidad
+                                                                                INNER JOIN Config.Company cc WITH (NOLOCK) ON ee.Uuid = cc.Uuid 
                                                                                 WHERE urr.idUsuarioRol = @userRoleId
                                                                                 AND urr.estado = 1
                                                                     )

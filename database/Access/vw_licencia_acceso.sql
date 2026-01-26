@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 CREATE OR ALTER VIEW Seguridad.vw_LicenciaAcceso WITH SCHEMABINDING AS (
 SELECT la.[Id], [LicenciaId], [RoleId], la.[CreatedAt], la.[UpdatedAt]

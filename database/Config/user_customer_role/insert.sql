@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [App].[Usuario_Insert]    Script Date: 6/4/2023 20:45:50 ******/
 SET ANSI_NULLS ON
@@ -68,13 +68,13 @@ BEGIN
 		 ---------------------------------- VARIABLES ---------------------------------------------------------------------
 		 SELECT TOP 1 @UserCustomerId = UserCustomerId ,@RoleId = RoleId ,@companyUuid = companyUuid FROM @tbUserRole
 		
-		 SELECT TOP 1 @ruc = ruc, @idEntidad = idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE Uuid = @companyUuid
+		 SELECT TOP 1 @ruc = ruc, @idEntidad = idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE Uuid = @companyUuid
 
 		 SELECT TOP 1 @codRol = Code FROM Seguridad.[Role] WITH (NOLOCK) WHERE Id = @RoleId
 
 
 		----------------------------------- VALIDATION --------------------------------------------------------------------
-		IF EXISTS (SELECT 1 FROM Acontplus.App.UsuarioRol WITH (NOLOCK) WHERE idEntidad = @idEntidad AND idUsuario = @UserCustomerId AND roleId = @RoleId )
+		IF EXISTS (SELECT 1 FROM App.UsuarioRol WITH (NOLOCK) WHERE idEntidad = @idEntidad AND idUsuario = @UserCustomerId AND roleId = @RoleId )
 			BEGIN
 				SELECT '50001' code, 'Esta rol ya esta asignado a este usuario' as message
                 RETURN 
@@ -87,15 +87,15 @@ BEGIN
 				SET @trancount = 1;
 			END
 
-			INSERT INTO Acontplus.App.UsuarioRol(idUsuario,idEntidad,roleId,fechaRegistro, fromMobile)
+			INSERT INTO App.UsuarioRol(idUsuario,idEntidad,roleId,fechaRegistro, fromMobile)
 			SELECT @UserCustomerId,@idEntidad,@RoleId,GETDATE(), fromMobile FROM @tbUserRole 
 
 			SET @Id = @@IDENTITY
-			INSERT INTO Acontplus.Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
 			VALUES (@Id, 'V', @permisoModuloVenta, GETDATE()) 
-			INSERT INTO Acontplus.Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
 			VALUES (@Id, 'AR', @permisoModuloArticulo, GETDATE()) 
-			INSERT INTO Acontplus.Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
+			INSERT INTO Config.UserPermission(idUsuarioRol, codModule, jsonPermission, fechaRegistro)
 			VALUES (@Id, 'C', @permisoModuloCaja, GETDATE()) 
 
 		IF (@@ROWCOUNT > 0)

@@ -56,7 +56,7 @@ BEGIN
             INNER JOIN
             dbo.Usuario u ON u.idUsuario = ur.idUsuario
             INNER JOIN
-            AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
+            Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = ur.RoleId
             LEFT JOIN
             Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
         WHERE 
@@ -82,11 +82,11 @@ BEGIN
         --    descAction = a.[Description],
         --    tb1.SecurityType
         --FROM
-        --    AcontplusAdmin.Seguridad.UserCustomPermission AS tb1
+        --    Seguridad.UserCustomPermission AS tb1
         --    INNER JOIN
-        --    AcontplusAdmin.Config.Menu m ON tb1.MenuId = m.Id
+        --    Config.Menu m ON tb1.MenuId = m.Id
         --    INNER JOIN
-        --    AcontplusAdmin.Seguridad.Actions a ON tb1.ActionId = a.Id
+        --    Seguridad.Actions a ON tb1.ActionId = a.Id
         --WHERE 
         --        tb1.Id NOT IN (SELECT userCustomPermissionId
         --FROM Config.v_User_Permissions v_up
@@ -107,11 +107,11 @@ BEGIN
         --FROM
         --    Config.v_User_Permissions AS pd
         --    INNER JOIN
-        --    AcontplusAdmin.Seguridad.UserCustomPermission AS tb1 ON tb1.Id = pd.userCustomPermissionId
+        --    Seguridad.UserCustomPermission AS tb1 ON tb1.Id = pd.userCustomPermissionId
         --    INNER JOIN
-        --    AcontplusAdmin.Config.Menu m ON tb1.MenuId = m.Id
+        --    Config.Menu m ON tb1.MenuId = m.Id
         --    INNER JOIN
-        --    AcontplusAdmin.Seguridad.Actions a ON tb1.ActionId = a.Id
+        --    Seguridad.Actions a ON tb1.ActionId = a.Id
         --WHERE pd.userRoleId = @idUsuarioRol
 
 

@@ -21,7 +21,7 @@ BEGIN
 	SET NOCOUNT ON;    
     DECLARE @idUsuario INT
 
-    SELECT @idUsuario = idUsuario FROM Acontplus.App.UsuarioRol WHERE idUsuarioRol = @userRoleId
+    SELECT @idUsuario = idUsuario FROM App.UsuarioRol WHERE idUsuarioRol = @userRoleId
     
     SET @tableNames = 'user,roles'
 
@@ -35,8 +35,8 @@ BEGIN
     ,ISNULL(firstName + ' ' + lastName, 'No asignado') AS FullName
     ,[customerId]
     ,ISNULL(c.IdCard, 'No asignado') AS NroIdentificacion
-    FROM Acontplus.dbo.Usuario u
-    LEFT JOIN Acontplus.Customer.Customer c ON u.customerId = u.customerId
+    FROM dbo.Usuario u
+    LEFT JOIN Customer.Customer c ON u.customerId = u.customerId
     WHERE idUsuario = @idUsuario
 
     SELECT au.idUsuarioRol
@@ -46,11 +46,11 @@ BEGIN
         ,CONVERT(NVARCHAR, FORMAT(au.fechaRegistro, 'dd/MM/yyyy HH:mm:ss')) AS fechaRegistro
         ,sr.Name AS name
         ,au.estado
-    FROM Acontplus.App.UsuarioRol au WITH(NOLOCK)
-    INNER JOIN AcontplusAdmin.Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = au.RoleId
-    INNER JOIN Acontplus.dbo.Usuario u WITH(NOLOCK) ON au.idUsuario = u.idUsuario
-    LEFT JOIN Acontplus.Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
-    INNER JOIN Acontplus.dbo.Entidad e WITH(NOLOCK) ON au.idEntidad = e.idEntidad
+    FROM App.UsuarioRol au WITH(NOLOCK)
+    INNER JOIN Seguridad.[Role] sr WITH(NOLOCK) ON sr.Id = au.RoleId
+    INNER JOIN dbo.Usuario u WITH(NOLOCK) ON au.idUsuario = u.idUsuario
+    LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
+    INNER JOIN dbo.Entidad e WITH(NOLOCK) ON au.idEntidad = e.idEntidad
     WHERE au.idUsuario = @idUsuario
 END
 GO

@@ -58,7 +58,7 @@ BEGIN
 		BEGIN
 			
 			SET @tableNames = 'roles' 
-            SELECT Id, [Name], Code FROM AcontPlusAdmin.Seguridad.[Role] WHERE Code NOT IN ('RT', 'SU', 'ADM')
+            SELECT Id, [Name], Code FROM Seguridad.[Role] WHERE Code NOT IN ('RT', 'SU', 'ADM')
             AND IsActive = 1
 
 			RETURN 

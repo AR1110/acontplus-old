@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 DROP FUNCTION IF EXISTS Common.ufnSpResponse
 GO
@@ -26,8 +26,8 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN 
-			DELETE FROM Acontplus.Config.UserPermission WHERE idUsuarioRol = @Id
-			DELETE FROM Acontplus.App.UsuarioRol WHERE idUsuarioRol = @Id
+			DELETE FROM Config.UserPermission WHERE idUsuarioRol = @Id
+			DELETE FROM App.UsuarioRol WHERE idUsuarioRol = @Id
 		COMMIT TRAN
 		SELECT '0' code, 'Eliminado Correctamente' as message
 		RETURN

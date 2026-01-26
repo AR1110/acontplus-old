@@ -10,7 +10,7 @@ SELECT ur.idUsuarioRol
       ,m.ParentId
 FROM App.UsuarioRol				  ur WITH (NOLOCK)
 CROSS APPLY OPENJSON(ur.Accesses) dt
-INNER JOIN AcontplusAdmin.Config.Menu m ON m.Id = JSON_VALUE(dt.value, '$.menuId')
+INNER JOIN Config.Menu m ON m.Id = JSON_VALUE(dt.value, '$.menuId')
 where ur.Accesses is not null
 
 )

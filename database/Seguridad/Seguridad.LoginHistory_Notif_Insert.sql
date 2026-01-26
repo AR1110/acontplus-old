@@ -45,7 +45,7 @@ BEGIN
 	DECLARE @jsonConfig AS VARCHAR(MAX);
 	DECLARE @id INT;
 
-	--Email 
+	--Email
 	DECLARE @body VARCHAR(MAX);
 	DECLARE @cliente VARCHAR(100);
 	DECLARE @template VARCHAR(50);
@@ -64,7 +64,7 @@ BEGIN
         ,@role VARCHAR(25);
 
     BEGIN TRY
-                      
+
             -- Set values for reusable constants
         SET @notificationTypeId = (SELECT TOP 1 Id FROM Common.NotificationType WHERE Code = 'E');
         SET @priorityId = (SELECT Id FROM Common.[Priority] WHERE Code = 'M');
@@ -96,7 +96,7 @@ BEGIN
         FROM OPENJSON (@json) WITH (
                 userAgent VARCHAR(MAX),
                 createdAt DATETIME2,
-                userRoleId INT, 
+                userRoleId INT,
                 userId INT,
                 fromMobile BIT);
 
@@ -106,7 +106,7 @@ BEGIN
 
         SET @browser = (SELECT JSON_VALUE(@userAgent, '$.browser.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.browser.version'))
         SET @os = (JSON_VALUE(@userAgent, '$.os.name') + ' - version: ' + JSON_VALUE(@userAgent, '$.os.version'))
-    
+
         SELECT @template = 'Login_History.html';
         SET @subject = 'ACCESO CON EXITO';
 
@@ -114,14 +114,14 @@ BEGIN
 
         IF NOT EXISTS (SELECT 1 FROM Config.EmailSenderConfig WHERE CompanyId = @idEntidad)
             BEGIN
-                SET @emailSenderConfigId = (SELECT TOP 1 Id 
-                                               FROM Config.EmailSenderConfig 
+                SET @emailSenderConfigId = (SELECT TOP 1 Id
+                                               FROM Config.EmailSenderConfig
                                                WHERE IsGlobal = 1 AND IsActive = 1);
             END
             ELSE
             BEGIN
-                SET @emailSenderConfigId = (SELECT Id 
-                                               FROM Config.EmailSenderConfig 
+                SET @emailSenderConfigId = (SELECT Id
+                                               FROM Config.EmailSenderConfig
                                                WHERE CompanyId = @idEntidad);
             END
 
@@ -137,10 +137,10 @@ BEGIN
                                         ,@username = us.nombreUsuario
                                         ,@requesting_user = UPPER(cu.BusinessName)
                                         ,@userEmail = us.correo
-        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
-        INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
-        INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
-        INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+        FROM App.UsuarioRol              ur WITH (NOLOCK)
+        INNER JOIN dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
+        INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+        INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
         LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
         WHERE ur.idUsuarioRol = @userRoleId
 
@@ -157,7 +157,7 @@ BEGIN
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                @userEmail
 
-        
+
         IF (@userCodeRole <> 'ADM')
             BEGIN
                 INSERT INTO @userToSendEmail(body, params, receptor)
@@ -173,17 +173,17 @@ BEGIN
 							   ),
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        us.correo
-						        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK)
-                                INNER JOIN AcontplusAdmin.Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
-                                INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+						        FROM App.UsuarioRol              ur WITH (NOLOCK)
+                                INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
+                                INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
                                 LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
-                                WHERE ur.idEntidad = @idEntidad 
+                                WHERE ur.idEntidad = @idEntidad
                                     AND ro.Code = 'ADM'
                                     AND ur.estado = 1
             END
-        
+
         BEGIN TRAN;
-           
+
         DECLARE cursorUser CURSOR LOCAL FOR
         SELECT body, params, receptor
         FROM @userToSendEmail;

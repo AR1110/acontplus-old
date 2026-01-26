@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'Sri')
 BEGIN
@@ -27,13 +27,13 @@ BEGIN
 	IF (@tipo = 1)
 		BEGIN
 			SET @tableNames = 'tarifas'
-			SELECT * FROM Acontplus.Sri.TarifaImpuesto WITH (NOLOCK)
+			SELECT * FROM Sri.TarifaImpuesto WITH (NOLOCK)
 		END
 	
 	IF (@tipo = 2)
 		BEGIN
 			SET @tableNames = 'impuestos'
-			SELECT * FROM Acontplus.Sri.Impuesto WITH (NOLOCK)
+			SELECT * FROM Sri.Impuesto WITH (NOLOCK)
 		END
 
 END

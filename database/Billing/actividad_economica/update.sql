@@ -1,4 +1,4 @@
-USE AcontplusAdmin
+USE Acontplus
 GO
 
 SET ANSI_NULLS ON
@@ -36,7 +36,7 @@ BEGIN
 		WITH (codigo VARCHAR(9), codTarifaImpuesto VARCHAR(4), porcentaje DECIMAL(15,5), 
 		descripcion VARCHAR(500), codGrupo VARCHAR(9), grupo VARCHAR(500), estado BIT)
 		BEGIN TRAN
-			UPDATE Acontplus.Sri.ActividadEconomica SET 
+			UPDATE Sri.ActividadEconomica SET 
 				codigo = @codigo,
 				codTarifaImpuesto = @codTarifaImpuesto,
 				porcentaje = @porcentaje,

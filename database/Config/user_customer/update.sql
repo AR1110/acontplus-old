@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 
 SET ANSI_NULLS ON
@@ -121,7 +121,7 @@ BEGIN
         IF LEN(LTRIM(RTRIM(@Email))) = 0
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Correo electrónico es requerido';
+            SET @ErrorMessage = 'Correo electrï¿½nico es requerido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -129,7 +129,7 @@ BEGIN
         IF LEN(LTRIM(RTRIM(@IdCard))) = 0
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Número de identificación es requerido';
+            SET @ErrorMessage = 'Nï¿½mero de identificaciï¿½n es requerido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -138,14 +138,14 @@ BEGIN
         IF @Email NOT LIKE '%_@_%._%'
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Formato de correo electrónico inválido';
+            SET @ErrorMessage = 'Formato de correo electrï¿½nico invï¿½lido';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
 
         -- Check if customer exists
         SELECT @CustomerId = Id 
-        FROM Acontplus.Customer.Customer WITH(NOLOCK) 
+        FROM Customer.Customer WITH(NOLOCK) 
         WHERE IdCard = @IdCard;
 
         IF @CustomerId IS NULL
@@ -156,14 +156,14 @@ BEGIN
         -- Business validations
         IF EXISTS (
             SELECT 1 
-            FROM Acontplus.dbo.Usuario WITH (NOLOCK) 
+            FROM dbo.Usuario WITH (NOLOCK) 
             WHERE CustomerId = @CustomerId 
                 AND IdUsuario != @Id
         )
         BEGIN
-            SET @ErrorMessage = CONCAT('Usuario ya existe con identificación: ', 
+            SET @ErrorMessage = CONCAT('Usuario ya existe con identificaciï¿½n: ', 
                 (SELECT TOP 1 nombreUsuario 
-                 FROM Acontplus.dbo.Usuario WITH (NOLOCK) 
+                 FROM dbo.Usuario WITH (NOLOCK) 
                  WHERE CustomerId = @CustomerId));
             SET @ErrorCode = 50001;
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
@@ -172,13 +172,13 @@ BEGIN
 
         IF EXISTS (
             SELECT 1 
-            FROM Acontplus.dbo.Usuario WITH (NOLOCK) 
+            FROM dbo.Usuario WITH (NOLOCK) 
             WHERE NombreUsuario = @Username 
                 AND IdUsuario != @Id
         )
         BEGIN
             SET @ErrorCode = 50001;
-            SET @ErrorMessage = 'Nombre de usuario ya está en uso';
+            SET @ErrorMessage = 'Nombre de usuario ya estï¿½ en uso';
             SELECT @ErrorCode AS code, @ErrorMessage AS message;
             RETURN;
         END
@@ -196,21 +196,21 @@ BEGIN
             -- Determine ID type based on card length
             SELECT @IdTypeId = CASE 
                 WHEN LEN(LTRIM(RTRIM(@IdCard))) = 10 THEN 
-                    (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion WHERE CodigoSri = '05')
+                    (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion WHERE CodigoSri = '05')
                 WHEN LEN(LTRIM(RTRIM(@IdCard))) = 13 THEN 
-                    (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion WHERE CodigoSri = '04')
+                    (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion WHERE CodigoSri = '04')
                 ELSE 
-                    (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion WHERE CodigoSri = '06')
+                    (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion WHERE CodigoSri = '06')
             END;
 
-            INSERT INTO Acontplus.Customer.Customer (IdTypeId, IdCard, BusinessName, Email, Telephone)
+            INSERT INTO Customer.Customer (IdTypeId, IdCard, BusinessName, Email, Telephone)
             VALUES (@IdTypeId, @IdCard, @FullName, @Email, @PhoneNumber);
 
             SET @CustomerId = SCOPE_IDENTITY();
         END
 
         -- Update user information
-        UPDATE Acontplus.dbo.Usuario 
+        UPDATE dbo.Usuario 
         SET Correo = @Email,
             FirstName = @FirstName,
             LastName = @LastName,
@@ -225,35 +225,35 @@ BEGIN
         IF (@DemoStepId > 0)
         BEGIN 
 			
-            UPDATE Acontplus.dbo.Usuario 
+            UPDATE dbo.Usuario 
             SET NombreUsuario = @Username,
                 UpdatedAt = SYSUTCDATETIME()
             WHERE IdUsuario = @Id;
 
 			IF (NULLIF(TRIM(@Password), '') IS NOT NULL)
 				BEGIN
-					UPDATE Acontplus.dbo.Usuario 
+					UPDATE dbo.Usuario 
 					SET Contrasenia = HASHBYTES('SHA2_512', @Password),
 						UpdatedAt = SYSUTCDATETIME()
 					WHERE IdUsuario = @Id;
 				END
 
             SELECT @Uuid = CorrelationId 
-            FROM Acontplus.dbo.Usuario WITH(NOLOCK) 
+            FROM dbo.Usuario WITH(NOLOCK) 
             WHERE Correo = @Email;
 
             SELECT @CompanyId = Id 
-            FROM AcontplusAdmin.Config.Company WITH(NOLOCK) 
+            FROM Config.Company WITH(NOLOCK) 
             WHERE Uuid = @Uuid;
 
             IF NOT EXISTS (
                 SELECT 1 
-                FROM AcontplusAdmin.Config.CompanyDemoStep WITH(NOLOCK) 
+                FROM Config.CompanyDemoStep WITH(NOLOCK) 
                 WHERE DemoStepId = @DemoStepId 
                     AND Uuid = @Uuid
             )
             BEGIN
-                INSERT INTO AcontplusAdmin.Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedAt, CreatedBy)
+                INSERT INTO Config.CompanyDemoStep (DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedAt, CreatedBy)
                 VALUES (@DemoStepId, @CompanyId, @Uuid, @IsMobileRequest, SYSUTCDATETIME(), @UpdatedBy);
             END
         END
@@ -268,7 +268,7 @@ BEGIN
         ELSE
         BEGIN
             SET @Code = '50002';
-            SET @Message = 'No se encontró el usuario para actualizar';
+            SET @Message = 'No se encontrï¿½ el usuario para actualizar';
             SET @ErrorCode = 50002;
         END
 

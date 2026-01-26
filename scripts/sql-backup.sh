@@ -18,7 +18,7 @@ SQL_PASSWORD=""
 SQL_SERVER="localhost"
 
 # Bases de datos
-DATABASES="Acontplus AcontplusAdmin"
+DATABASES="Acontplus"
 
 # Log file para cron
 LOG_FILE="/var/log/mssql-backup.log"

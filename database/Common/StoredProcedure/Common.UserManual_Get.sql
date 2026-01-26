@@ -46,11 +46,11 @@ BEGIN
         SELECT Id
             ,Name
         
-        FROM AcontplusAdmin.Config.Menu WITH(NOLOCK)
+        FROM Config.Menu WITH(NOLOCK)
         WHERE IsActive = CAST(1 AS BIT)
         ORDER BY Name
 
-        SET @totalRecords = (SELECT COUNT(*) FROM AcontplusAdmin.Common.UserManual WITH(NOLOCK))
+        SET @totalRecords = (SELECT COUNT(*) FROM Common.UserManual WITH(NOLOCK))
 
         SET @query = '
 	        SELECT umt.Code
@@ -59,10 +59,10 @@ BEGIN
             ,um.Title
             ,um.CompressedContent
 		    ,@totalRecords                                                   as totalRecords
-            FROM AcontplusAdmin.Common.UserManual um WITH(NOLOCK)
-                INNER JOIN AcontplusAdmin.Common.UserManualType umt WITH(NOLOCK) 
+            FROM Common.UserManual um WITH(NOLOCK)
+                INNER JOIN Common.UserManualType umt WITH(NOLOCK) 
             	    ON um.UserManualTypeId = umt.Id
-			    LEFT JOIN AcontplusAdmin.Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
+			    LEFT JOIN Config.Menu m WITH(NOLOCK) ON um.menuId = m.Id
 		    WHERE um.IsActive = CAST(1 AS BIT) '
       	
        	IF (@menuId > 0)

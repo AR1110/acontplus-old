@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [Sri].[CodigoRetencion_Get]    Script Date: 12/6/2024 14:30:11 ******/
 SET ANSI_NULLS ON
@@ -10,7 +10,7 @@ CREATE OR ALTER PROCEDURE [Sri].[PorcentajeRetIva_Get]  @json VARCHAR(200),@tabl
 AS
 BEGIN
 	
-	DECLARE @totalRecords INT = (SELECT COUNT(*) FROM  AcontPlus.Sri.PorcentajeRetIva)
+	DECLARE @totalRecords INT = (SELECT COUNT(*) FROM  Sri.PorcentajeRetIva)
 	DECLARE @pageIndex INT;
 	DECLARE @pageSize INT 
 
@@ -31,7 +31,7 @@ BEGIN
 		porcentaje = ISNULL(pri.porcentaje, 0),
 		estado,
 		totalRecords = @totalRecords
-	FROM AcontPlus.Sri.PorcentajeRetIva pri
+	FROM Sri.PorcentajeRetIva pri
 	ORDER BY pri.idPorcentajeRetIva DESC
 	OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 

@@ -1,4 +1,4 @@
-USE [AcontplusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [App].[aspEntidad_Insert]    Script Date: 10/7/2022 11:49:46 AM ******/
 SET ANSI_NULLS ON
@@ -83,7 +83,7 @@ BEGIN
 				  --,[IdCard]     = GETDATE
 			WHERE Id = @Id
 
-			UPDATE Acontplus.dbo.Entidad 
+			UPDATE dbo.Entidad 
 			   SET razonSocial     = LTRIM(RTRIM(@BusinessName))
 				  ,nombreComercial = LTRIM(RTRIM(@TradeName))
 				  ,direccion       = LTRIM(RTRIM(@Address))

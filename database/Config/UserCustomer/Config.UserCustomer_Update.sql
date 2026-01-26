@@ -30,10 +30,10 @@ BEGIN
 
 		BEGIN TRAN 
 			
-            EXEC AcontplusAdmin.Config.UserCustomer_Update @id, @json, @UpdatedBy, @fromMobile,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
+            EXEC Config.UserCustomer_Update @id, @json, @UpdatedBy, @fromMobile,  @errorCode = @errorCode OUTPUT, @errorMessage = @errorMessage OUTPUT
 			IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp AcontplusAdmin.Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp Config.UserCustomer_Update failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 		COMMIT TRAN 
@@ -45,7 +45,7 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END
-        INSERT INTO Acontplus.dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
+        INSERT INTO dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
 		VALUES ('UserCustomer/Put', NEWID(), ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE())
 		SELECT '0' as code,'Error en el procedimiento de actualizar' as [message]
 	END CATCH 

@@ -26,8 +26,8 @@ BEGIN
 		,r.version
         ,r.CompressedContent
 		,CONVERT(VARCHAR, FORMAT(ReleaseDate, 'dd/MM/yyyy')) AS releaseDate
-     FROM AcontplusAdmin.Common.Release r WITH (NOLOCK)
-     WHERE r.Id NOT IN (SELECT ReleaseId FROM AcontplusAdmin.Common.UserReleaseRead WHERE CreatedBy = @User)
+     FROM Common.Release r WITH (NOLOCK)
+     WHERE r.Id NOT IN (SELECT ReleaseId FROM Common.UserReleaseRead WHERE CreatedBy = @User)
 		AND r.IsDeleted = CAST(0 AS BIT)
 END
 GO

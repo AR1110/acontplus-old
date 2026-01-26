@@ -1,4 +1,4 @@
-USE [AcontPlusAdmin]
+USE Acontplus
 GO
 /****** Object:  StoredProcedure [App].[Usuario_Insert]    Script Date: 6/4/2023 20:45:50 ******/
 SET ANSI_NULLS ON
@@ -46,8 +46,8 @@ BEGIN
 				  ,ISNULL(u.firstName, '''') firstName
 				  ,ISNULL(u.lastName, '''') lastName
 				  ,COUNT(*) OVER()   as TotalRecords
-			FROM Acontplus.dbo.Usuario u WITH (NOLOCK)
-				LEFT JOIN Acontplus.Customer.Customer c ON u.customerId = c.Id
+			FROM dbo.Usuario u WITH (NOLOCK)
+				LEFT JOIN Customer.Customer c ON u.customerId = c.Id
 			WHERE 1=1'
 
 			IF @searchTerm IS NOT NULL AND @searchTerm <> ''

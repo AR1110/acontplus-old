@@ -74,12 +74,12 @@ BEGIN
 			WHERE idUsuarioRol = @UserRoleId 
             ORDER BY defaultEstab DESC
 
-	        SELECT * FROM Acontplus.dbo.TipoDocumento td WITH(NOLOCK)
-            INNER JOIN AcontplusAdmin.Config.Aplicacion a ON td.aplicacionId = a.Id
-            INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
-            INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId
-            INNER JOIN AcontplusAdmin.Sales.Suscripcion s ON sd.SuscripcionId = s.Id
-            INNER JOIN AcontplusAdmin.Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
+	        SELECT * FROM dbo.TipoDocumento td WITH(NOLOCK)
+            INNER JOIN Config.Aplicacion a ON td.aplicacionId = a.Id
+            INNER JOIN Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
+            INNER JOIN Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId
+            INNER JOIN Sales.Suscripcion s ON sd.SuscripcionId = s.Id
+            INNER JOIN Config.Company c ON s.CompanyId = c.Id AND c.Uuid = @CompanyUuid
             WHERE estado = 1
               AND secuencial = 1	
             RETURN 

@@ -22,9 +22,9 @@ CROSS APPLY
         users NVARCHAR(MAX) '$.users' AS JSON
     ) AS perm
         INNER JOIN
-        AcontplusAdmin.Seguridad.UserCustomPermission ucp ON ucp.Id = perm.userCustomPermissionId
+        Seguridad.UserCustomPermission ucp ON ucp.Id = perm.userCustomPermissionId
         INNER JOIN
-        AcontplusAdmin.Config.Menu m ON ucp.MenuId = m.Id
+        Config.Menu m ON ucp.MenuId = m.Id
         INNER JOIN
-        AcontplusAdmin.Seguridad.Actions a ON ucp.ActionId = a.Id
+        Seguridad.Actions a ON ucp.ActionId = a.Id
     WHERE up.permissionsData IS NOT NULL

@@ -41,13 +41,13 @@ BEGIN
 	SELECT @LicenseTypeId = t5.LicenseTypeId
           ,@startDate     = t2.StartDate
           ,@endDate       = t2.EndDate
-	FROM AcontplusAdmin.Sales.SuscripcionDetalle     t1 WITH (NOLOCK)
-	INNER JOIN AcontplusAdmin.Sales.Suscripcion      t2 WITH (NOLOCK) ON t2.Id   = t1.SuscripcionId
-	INNER JOIN AcontplusAdmin.Config.LicenciaDetalle t3 WITH (NOLOCK) ON t3.Id   = t1.LicenciaDetalleId
-	INNER JOIN AcontplusAdmin.Config.Company	     t4 WITH (NOLOCK) ON t4.Id   = t2.CompanyId
-	INNER JOIN AcontplusAdmin.Config.Licencia        t5 WITH (NOLOCK) ON t5.Id   = t3.LicenciaId
-    INNER JOIN AcontplusAdmin.Config.Aplicacion      t6 WITH (NOLOCK) ON t6.Id   = t3.AplicacionId
-	INNER JOIN Acontplus.dbo.Entidad                 t7 WITH (NOLOCK) ON t7.Uuid = t4.Uuid
+	FROM Sales.SuscripcionDetalle     t1 WITH (NOLOCK)
+	INNER JOIN Sales.Suscripcion      t2 WITH (NOLOCK) ON t2.Id   = t1.SuscripcionId
+	INNER JOIN Config.LicenciaDetalle t3 WITH (NOLOCK) ON t3.Id   = t1.LicenciaDetalleId
+	INNER JOIN Config.Company	     t4 WITH (NOLOCK) ON t4.Id   = t2.CompanyId
+	INNER JOIN Config.Licencia        t5 WITH (NOLOCK) ON t5.Id   = t3.LicenciaId
+    INNER JOIN Config.Aplicacion      t6 WITH (NOLOCK) ON t6.Id   = t3.AplicacionId
+	INNER JOIN dbo.Entidad                 t7 WITH (NOLOCK) ON t7.Uuid = t4.Uuid
 	WHERE t2.IsActive = 1
 	  AND(t2.Paid IS NULL OR t2.Paid = 0)
 	  AND t2.IsDeleted = CAST(0 AS BIT)
@@ -63,8 +63,8 @@ BEGIN
             SELECT @countDocuments = COUNT(*) FROM FactElect.v_DocElectronico WHERE idEntidad = @idEntidad AND fechaRegistro BETWEEN @startDate AND @endDate
 
             SELECT TOP 1 @message = t2.Description, @PolicyValue = t1.PolicyValue
-            FROM AcontplusAdmin.Config.LicensePolicyConfiguration t1
-            INNER JOIN AcontplusAdmin.Config.PolicyType           t2 ON t2.Id = t1.PolicyTypeId          
+            FROM Config.LicensePolicyConfiguration t1
+            INNER JOIN Config.PolicyType           t2 ON t2.Id = t1.PolicyTypeId          
             WHERE t1.LicenseTypeId = @LicenseTypeId
               AND t2.Code = @codePolice
 
