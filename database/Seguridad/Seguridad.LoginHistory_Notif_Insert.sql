@@ -147,7 +147,7 @@ BEGIN
         INSERT INTO @userToSendEmail(body, params, receptor)
 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
-                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app mÃ³vil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
@@ -164,7 +164,7 @@ BEGIN
                 		SELECT  (SELECT @requesting_user requesting_user
                                                 ,approving_user = UPPER(ISNULL(cu.BusinessName, us.nombreUsuario))
                                                 ,IIF(@fromMobile = CAST(1 AS BIT), 'no aplica', @browser) browser
-                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app móvil', @os) os
+                                                ,IIF(@fromMobile = CAST(1 AS BIT), 'app mÃ³vil', @os) os
                                                 ,CONVERT(VARCHAR, FORMAT(@loginDate, 'dd/MM/yyyy HH:mm:ss'), 13) loginDate
                                                 ,ISNULL(@ipAddress, '') ipAddress
                                                 ,@username username
@@ -195,8 +195,12 @@ BEGIN
         WHILE @@FETCH_STATUS = 0
         BEGIN
             -- Insert into Notification table
-            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId], [FromMobile])
-            VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId, @fromMobile);
+            INSERT INTO Common.Notification ([NotificationTypeId], [CompressedParameters], [Title], [Subject], [CreatedByUserId]
+            --, [FromMobile]
+            )
+            VALUES (@notificationTypeId, COMPRESS(ISNULL(@params, '{}')), 'Envio por correo', @subject, @userId
+            --, @fromMobile
+            );
 
             SET @notificationId = SCOPE_IDENTITY();
 
