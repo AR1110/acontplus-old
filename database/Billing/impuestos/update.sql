@@ -38,14 +38,14 @@ BEGIN
 									estado BIT
 									)
 
-		IF EXISTS (SELECT TOP 1 1 FROM Acontplus.Sri.TarifaImpuesto WITH (NOLOCK) 
+		IF EXISTS (SELECT TOP 1 1 FROM Sri.TarifaImpuesto WITH (NOLOCK) 
 					WHERE codImpuesto = @codImpuesto AND codigo = @codigo AND idTarifaImpuesto <> @id)
 			BEGIN
 				SELECT '50001' Code, Message = 'Este cdigo ya existe'
 				RETURN
 			END
 		BEGIN TRAN
-			UPDATE Acontplus.Sri.TarifaImpuesto 
+			UPDATE Sri.TarifaImpuesto 
 			SET codImpuesto = @codImpuesto
 			,codigo = @codigo
 			,descripcion = @descripcion

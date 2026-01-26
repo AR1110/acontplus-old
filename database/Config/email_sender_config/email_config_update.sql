@@ -32,7 +32,7 @@ BEGIN
 			 ,[port]              INT '$.port')
 
 		BEGIN TRAN 
-			UPDATE Acontplus.Config.Email_Config
+			UPDATE Config.Email_Config
 			   SET [enableSsl] = @EnableSsl
 				  ,[from]      = @From
 				  ,[host]      = @Host

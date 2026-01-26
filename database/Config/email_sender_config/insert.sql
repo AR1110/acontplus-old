@@ -21,7 +21,7 @@ BEGIN
 
 	BEGIN TRY
 		BEGIN TRAN
-			INSERT INTO Acontplus.Config.EmailSenderConfig([CompanyId], [IsGlobal], [SenderEmail], [SenderName],
+			INSERT INTO Config.EmailSenderConfig([CompanyId], [IsGlobal], [SenderEmail], [SenderName],
 			[SmtpServer], [SmtpPort], [UseSsl], [Username], [EncryptedPassword], [PasswordHash], [UserId], [FromMobile])
 			SELECT companyId, isGlobal, senderEmail, senderName,
 			smtpServer, smtpPort, useSsl, username, encryptedPassword, passwordHash, @UserId, 0

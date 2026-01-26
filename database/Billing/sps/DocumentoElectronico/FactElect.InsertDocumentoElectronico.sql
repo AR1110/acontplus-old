@@ -161,7 +161,7 @@ BEGIN
 
                 IF (@errorCode <> 0)
                     BEGIN
-                        SET @errorMessage = 'sp Acontplus.Config.UpdateConfiguracionDocumento response: ' + ISNULL(@errorMessage, '');
+                        SET @errorMessage = 'sp Config.UpdateConfiguracionDocumento response: ' + ISNULL(@errorMessage, '');
                         THROW 50001, @errorMessage, 1;
                     END
             END
@@ -173,7 +173,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.FactElect.InsertFactura response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp FactElect.InsertFactura response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END
@@ -185,7 +185,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.FactElect.InsertLiquidacion response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp FactElect.InsertLiquidacion response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END
@@ -197,7 +197,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.FactElect.InsertNotaCredito response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp FactElect.InsertNotaCredito response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END
@@ -209,7 +209,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.FactElect.InsertGuiaRemision response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp FactElect.InsertGuiaRemision response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END 
@@ -221,7 +221,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.FactElect.InsertRetencionAts response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp FactElect.InsertRetencionAts response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END 
@@ -236,7 +236,7 @@ BEGIN
 
                             IF (@errorCode <> 0)
                                 BEGIN
-                                    SET @errorMessage = 'sp Acontplus.Inventario.InsertTransaccion response: ' + ISNULL(@errorMessage, '');
+                                    SET @errorMessage = 'sp Inventario.InsertTransaccion response: ' + ISNULL(@errorMessage, '');
                                     THROW 50001, @errorMessage, 1;
                                 END    
                         
@@ -250,7 +250,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.Contabilidad.InsertCuentaPorCobrar response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp Contabilidad.InsertCuentaPorCobrar response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END
@@ -262,7 +262,7 @@ BEGIN
 
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.Contabilidad.InsertCuentaPorPagar response: ' + ISNULL(@errorMessage, '');
+                            SET @errorMessage = 'sp Contabilidad.InsertCuentaPorPagar response: ' + ISNULL(@errorMessage, '');
                             THROW 50001, @errorMessage, 1;
                         END
                 END

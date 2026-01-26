@@ -10,7 +10,7 @@ CREATE OR ALTER PROCEDURE [Sri].[CodigoRetencion_Get]  @json VARCHAR(200),@table
 AS
 BEGIN
 	
-	DECLARE @totalRecords INT = (SELECT COUNT(*) FROM AcontPlus.Sri.CodigoRetencion)
+	DECLARE @totalRecords INT = (SELECT COUNT(*) FROM Sri.CodigoRetencion)
 	DECLARE @pageIndex INT;
 	DECLARE @pageSize INT 
 
@@ -32,7 +32,7 @@ BEGIN
 		porcentajeMax = ISNULL(porcentajeMax, 0),
 		estado,
 		totalRecords = @totalRecords
-	FROM AcontPlus.Sri.CodigoRetencion cr
+	FROM Sri.CodigoRetencion cr
 	ORDER BY cr.idCodigoRetencion DESC
 	OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY
 

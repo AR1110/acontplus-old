@@ -77,19 +77,19 @@ BEGIN
 			FROM @tbUser
 		
 		
-		 IF EXISTS (SELECT TOP 1 1 FROM Acontplus.Customer.Customer WITH(NOLOCK) WHERE IdCard = LTRIM(RTRIM(@IdCard)))
+		 IF EXISTS (SELECT TOP 1 1 FROM Customer.Customer WITH(NOLOCK) WHERE IdCard = LTRIM(RTRIM(@IdCard)))
 			BEGIN
-				SET @customerId = (SELECT TOP 1 Id FROM Acontplus.Customer.Customer WITH(NOLOCK) WHERE IdCard = LTRIM(RTRIM(@IdCard)))
+				SET @customerId = (SELECT TOP 1 Id FROM Customer.Customer WITH(NOLOCK) WHERE IdCard = LTRIM(RTRIM(@IdCard)))
 			END
 		ELSE
 			BEGIN
 				SET @fullName = (SELECT firstName + ' ' + lastName FROM @tbUser)
 			END
 
-		 SELECT TOP 1 @ruc = ruc FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
+		 SELECT TOP 1 @ruc = ruc FROM dbo.Entidad WITH (NOLOCK) WHERE idEntidad = @idEntidad
 
 		----------------------------------- VALIDATION --------------------------------------------------------------------
-		IF EXISTS (SELECT 1 FROM Acontplus.dbo.Usuario WITH (NOLOCK) WHERE customerId = @customerId)
+		IF EXISTS (SELECT 1 FROM dbo.Usuario WITH (NOLOCK) WHERE customerId = @customerId)
 			BEGIN
 				SET @errorCode = 1
 				SET @errorMessage = 'Este usuario ya existe con este nro de identificacion'
@@ -97,7 +97,7 @@ BEGIN
                 RETURN
 			END
 
-		IF EXISTS (SELECT 1 FROM Acontplus.dbo.Usuario WITH (NOLOCK) WHERE nombreUsuario = @Username)
+		IF EXISTS (SELECT 1 FROM dbo.Usuario WITH (NOLOCK) WHERE nombreUsuario = @Username)
 			BEGIN
 				SET @errorCode = 1
 				SET @errorMessage = 'Este nombre de usuario esta en uso'
@@ -105,7 +105,7 @@ BEGIN
                 RETURN 
 			END
 
-		IF EXISTS (SELECT 1 FROM Acontplus.dbo.Usuario WITH (NOLOCK) WHERE customerId = @customerId)
+		IF EXISTS (SELECT 1 FROM dbo.Usuario WITH (NOLOCK) WHERE customerId = @customerId)
 			BEGIN
 				SET @errorCode = 1
 				SET @errorMessage = 'Usuario ya se ecuentra registrado'
@@ -120,10 +120,10 @@ BEGIN
 			END
 			IF (@customerId IS NULL)
 				BEGIN
-					INSERT INTO Acontplus.Customer.Customer(IdTypeId, [IdCard], [BusinessName], [Email])
-					SELECT CASE WHEN LEN(LTRIM(RTRIM(@IdCard))) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion where codigosri = '05')
-					WHEN LEN(LTRIM(RTRIM(@IdCard))) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion where codigosri = '04')
-					ELSE (SELECT TOP 1 idTipoIdentificacion FROM Acontplus.dbo.TipoIdentificacion where codigosri = '06')
+					INSERT INTO Customer.Customer(IdTypeId, [IdCard], [BusinessName], [Email])
+					SELECT CASE WHEN LEN(LTRIM(RTRIM(@IdCard))) = 10 THEN (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion where codigosri = '05')
+					WHEN LEN(LTRIM(RTRIM(@IdCard))) = 13 THEN (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion where codigosri = '04')
+					ELSE (SELECT TOP 1 idTipoIdentificacion FROM dbo.TipoIdentificacion where codigosri = '06')
 					END,
 					@IdCard,
 					@fullName,
@@ -131,7 +131,7 @@ BEGIN
 					SET @customerId = SCOPE_IDENTITY()
 				END
 
-			INSERT INTO Acontplus.dbo.Usuario(nombreUsuario, firstName, lastName, contrasenia, correo, customerId)
+			INSERT INTO dbo.Usuario(nombreUsuario, firstName, lastName, contrasenia, correo, customerId)
 			SELECT Username, firstName, lastName, HASHBYTES('SHA2_512',[Password]), Email, @customerId FROM @tbUser
 		
 		IF (@@ROWCOUNT > 0)

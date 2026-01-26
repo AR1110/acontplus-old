@@ -33,7 +33,7 @@ BEGIN
 		WITH (codigo VARCHAR(9), codTarifaImpuesto VARCHAR(4), porcentaje DECIMAL(15,5), 
 		descripcion VARCHAR(500), codGrupo VARCHAR(9), grupo VARCHAR(500))
 		BEGIN TRAN
-			INSERT INTO Acontplus.Sri.ActividadEconomica([codigo], [codTarifaImpuesto], [porcentaje], [descripcion], [grupo], codGrupo, idUsuario)
+			INSERT INTO Sri.ActividadEconomica([codigo], [codTarifaImpuesto], [porcentaje], [descripcion], [grupo], codGrupo, idUsuario)
 			VALUES(@codigo, @codTarifaImpuesto, @porcentaje, @descripcion, @grupo, @codGrupo, @userId)
 		COMMIT TRAN
 		SELECT '0' code, 'Registrada Exitosamente' as 'message'

@@ -38,7 +38,7 @@ BEGIN
 				,[UseSsl]
 				,[Username]
 				,[IsActive]
-			FROM Acontplus.Config.EmailSenderConfig
+			FROM Config.EmailSenderConfig
             RETURN 
 		END
 END

@@ -33,13 +33,13 @@ BEGIN
             )
             BEGIN
                 SET @errorCode = 1;
-                SET @errorMessage = 'Primero debe guardar la retención';
+                SET @errorMessage = 'Primero debe guardar la retenciï¿½n';
                 ROLLBACK TRAN;
                 SELECT '0' AS code, @errorMessage AS message;
                 RETURN;
             END
 
-            -- Resto del código de inserción y llamadas a SPs...
+            -- Resto del cï¿½digo de inserciï¿½n y llamadas a SPs...
 
             
             INSERT INTO FactElect.RetAtsDocSustento (
@@ -133,7 +133,7 @@ BEGIN
             
            IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp Acontplus.FactElect.RetAts_Doc_Sust_Imp_Insert failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp FactElect.RetAts_Doc_Sust_Imp_Insert failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
            
@@ -141,7 +141,7 @@ BEGIN
             
            IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp Acontplus.FactElect.RetAts_Doc_Sust_Ret_Insert failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp FactElect.RetAts_Doc_Sust_Ret_Insert failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 
@@ -149,7 +149,7 @@ BEGIN
             
            IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp Acontplus.FactElect.RetAts_Doc_Sust_Pago_Insert failed: ' + ISNULL(@errorMessage, '')
+                    SET @errorMessage = 'sp FactElect.RetAts_Doc_Sust_Pago_Insert failed: ' + ISNULL(@errorMessage, '')
 				    RAISERROR(@errorMessage,16,1)
                 END
 

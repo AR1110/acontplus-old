@@ -37,7 +37,7 @@ BEGIN
 
 		SET @encryptedPassword = (SELECT HASHBYTES('SHA2_512', @password))
 		 
-		IF EXISTS (SELECT 1 FROM Acontplus.dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @id AND contrasenia = @encryptedPassword)
+		IF EXISTS (SELECT 1 FROM dbo.Usuario WITH (NOLOCK) WHERE idUsuario = @id AND contrasenia = @encryptedPassword)
 			BEGIN
 				SET @errorMessage = 'No puede ser la misma!'
 				SELECT '50001' code, @errorMessage as message
@@ -50,7 +50,7 @@ BEGIN
 				SET @trancount = 1;
 			END 
 				
-		UPDATE Acontplus.dbo.Usuario SET contrasenia = @encryptedPassword WHERE idUsuario = @id 
+		UPDATE dbo.Usuario SET contrasenia = @encryptedPassword WHERE idUsuario = @id 
 		
 		IF (@@ROWCOUNT > 0)
 			BEGIN

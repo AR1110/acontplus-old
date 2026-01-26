@@ -77,13 +77,13 @@ BEGIN
 	                                                                    INNER JOIN Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
 	                                                                    INNER JOIN Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
 	                                                                    INNER JOIN Config.Company           cc WITH (NOLOCK) ON s.CompanyId = cc.Id
-	                                                                    INNER JOIN Acontplus.dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
-	                                                                    INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
+	                                                                    INNER JOIN dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
+	                                                                    INNER JOIN App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = r.idUsuarioRol 
                                                                         AND a.Code='AR' AND a.[IsActive] = 1
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                                 INNER JOIN Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
-                                                                                                                INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
+                                                                                                                INNER JOIN dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
                                                                                                                 WHERE enn.idEntidad = r.idEntidad
                                                                                                                 AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC

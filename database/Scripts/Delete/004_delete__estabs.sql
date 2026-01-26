@@ -21,6 +21,6 @@ SELECT TOP 2 * FROM Sri.Establecimiento ORDER BY idEstablecimiento DESC
 --delete from Config.Bodeg_Asig where idEstab_Asig = 548
 
 --declare @idestab int = 664
---delete from Acontplus.dbo.PuntoEmision where idEstablecimiento = @idestab
---delete from Acontplus.dbo.Bodega where idEstablecimiento = @idestab
---delete from Acontplus.Sri.Establecimiento where idEstablecimiento = @idestab
+--delete from dbo.PuntoEmision where idEstablecimiento = @idestab
+--delete from dbo.Bodega where idEstablecimiento = @idestab
+--delete from Sri.Establecimiento where idEstablecimiento = @idestab

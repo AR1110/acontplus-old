@@ -41,7 +41,7 @@ BEGIN
 	 
 	BEGIN TRY
 		BEGIN TRAN
-			UPDATE Acontplus.Config.Reporte SET codigo = @codigo
+			UPDATE Config.Reporte SET codigo = @codigo
 			,reportPath = @reportPath 
 			,contentType = @contentType
 			,storedProcedure = @storedProcedure

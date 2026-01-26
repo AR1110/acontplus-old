@@ -54,7 +54,7 @@ BEGIN
 					errorMessage, 
 					errorDate  = FORMAT(errorDate, ''dd/MM/yyyy HH:mm''),
 					totalRecords = COUNT(*) OVER()
-				FROM Acontplus.dbo.ErroresSistema
+				FROM dbo.ErroresSistema
 			--	WHERE CAST(errorDate AS DATE) BETWEEN CAST(@dateFrom AS DATE) AND CAST(@dateTo AS DATE)
 				ORDER BY idErrorSistema DESC
 				OFFSET @pageSize * (@pageIndex - 1) ROWS 

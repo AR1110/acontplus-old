@@ -38,7 +38,7 @@ BEGIN
 		BEGIN
 			SELECT *,
 			COUNT(*) OVER() AS TotalRecords
-			FROM Acontplus.Sri.ActividadEconomica WITH(NOLOCK)
+			FROM Sri.ActividadEconomica WITH(NOLOCK)
 			ORDER BY idActividadEconomica DESC 
 			OFFSET @pageSize*(@pageIndex-1) ROWS
 			FETCH NEXT @pageSize ROWS ONLY;
@@ -48,7 +48,7 @@ BEGIN
 	IF (@tipo = 2)
 		BEGIN
 			SET @tableNames = 'tarifas'
-			SELECT * FROM Acontplus.Sri.TarifaImpuesto WITH(NOLOCK) 
+			SELECT * FROM Sri.TarifaImpuesto WITH(NOLOCK) 
 			WHERE estado = CAST(1 AS bit) 
 				AND codImpuesto = 2
 			RETURN
@@ -58,7 +58,7 @@ BEGIN
 		BEGIN
 			SELECT *,
 			COUNT(*) OVER() AS TotalRecords
-			FROM Acontplus.Sri.ActividadEconomica WITH(NOLOCK)
+			FROM Sri.ActividadEconomica WITH(NOLOCK)
 			WHERE descripcion LIKE '%' + @textSearch + '%'
 				OR grupo LIKE '%'  +@textSearch + '%'
 			ORDER BY idActividadEconomica DESC 

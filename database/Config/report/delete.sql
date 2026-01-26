@@ -12,14 +12,14 @@ BEGIN
 	DECLARE @idUsuario INT
 
 	 
-	IF EXISTS(SELECT 1 FROM Acontplus.Config.Reporte WHERE idReporte = @id AND estado = 1)
+	IF EXISTS(SELECT 1 FROM Config.Reporte WHERE idReporte = @id AND estado = 1)
 		BEGIN
 			SELECT '50001' code,'Reporte en estado Activo' as 'message'
 			RETURN
 		END
 	BEGIN TRY
 		BEGIN TRAN
-			DELETE FROM Acontplus.Config.Reporte
+			DELETE FROM Config.Reporte
 			WHERE idReporte = @id
 			SELECT '0' code,'Eliminado Exitosamente' as 'message'
 		COMMIT TRAN

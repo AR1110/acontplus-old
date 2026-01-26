@@ -37,7 +37,7 @@ BEGIN
                 END
 
             IF NOT EXISTS (SELECT TOP 1 1 FROM App.UsuarioRol ur WITH (NOLOCK) 
-                                            INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+                                            INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                                             INNER JOIN Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid
                                             INNER JOIN Sales.Suscripcion s WITH (NOLOCK) ON c.Id = s.CompanyId
                                             WHERE ur.idUsuario = @userId
@@ -50,22 +50,22 @@ BEGIN
                     RETURN
                 END
 
-            SET @totalSchedule = ISNULL((SELECT COUNT(*) FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK) 
-                                            INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+            SET @totalSchedule = ISNULL((SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK) 
+                                            INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                                             INNER JOIN Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
                                             INNER JOIN Seguridad.ScheduleCompany sc WITH (NOLOCK) ON c.Id = sc.CompanyId
                                             WHERE ur.idUsuario = @userId
                                             AND sc.[IsActive] = 1
                                             ), 0)
             
-            SET @totalProhibitedRoles = (SELECT COUNT(*) FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK) 
+            SET @totalProhibitedRoles = (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK) 
                                                          INNER JOIN Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
                                                          WHERE ur.idUsuario = @userId 
                                                             AND r.Code IN ('CAJ','VEN','VENB','TRA','CB','ARE')
                                                             AND ur.estado = 1
                                                          
                                          )
-            SET @totalProhibitedRolesWithoutSchedule = (SELECT COUNT(*) FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK) 
+            SET @totalProhibitedRolesWithoutSchedule = (SELECT COUNT(*) FROM App.UsuarioRol ur WITH (NOLOCK) 
                                                          INNER JOIN Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
                                                          WHERE ur.idUsuario = @userId 
                                                             AND r.Code IN ('CON')
@@ -75,8 +75,8 @@ BEGIN
 
             IF ((@totalSchedule > 0 AND @totalProhibitedRoles > 0) OR @totalProhibitedRolesWithoutSchedule > 0)
                 BEGIN
-                    IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK) 
-                                            INNER JOIN Acontplus.dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+                    IF NOT EXISTS (SELECT TOP 1 1 FROM App.UsuarioRol ur WITH (NOLOCK) 
+                                            INNER JOIN dbo.Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
                                             INNER JOIN Config.Company c WITH (NOLOCK) ON e.Uuid = c.Uuid 
                                             INNER JOIN Seguridad.ScheduleCompany sc WITH (NOLOCK) ON c.Id = sc.CompanyId
                                             INNER JOIN Common.Schedule s WITH (NOLOCK) ON sc.ScheduleId = s.Id
@@ -90,12 +90,12 @@ BEGIN
                             IF (@totalProhibitedRoles = 1 OR @totalProhibitedRolesWithoutSchedule = 1)
                                 BEGIN
                                     DECLARE @userRoleId INT
-                                    SET @userRoleId = (SELECT TOP 1 idUsuarioRol FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK) 
+                                    SET @userRoleId = (SELECT TOP 1 idUsuarioRol FROM App.UsuarioRol ur WITH (NOLOCK) 
                                                          INNER JOIN Seguridad.[Role] r WITH (NOLOCK) ON ur.RoleId = r.Id
                                                          WHERE ur.idUsuario = @userId  
                                                             AND ur.estado = 1)
 
-                                     EXEC Acontplus.Seguridad.AccessAuthorization_Insert @uuid, @userRoleId, 0
+                                     EXEC Seguridad.AccessAuthorization_Insert @uuid, @userRoleId, 0
                                 END
                         END
                 END  
@@ -136,12 +136,12 @@ BEGIN
 	                                                                    INNER JOIN Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
 	                                                                    INNER JOIN Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
 	                                                                    INNER JOIN Config.Company           cc WITH (NOLOCK) ON s.CompanyId = cc.Id
-	                                                                    INNER JOIN Acontplus.dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
-	                                                                    INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
+	                                                                    INNER JOIN dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
+	                                                                    INNER JOIN App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = ur.idUsuarioRol AND m.Code NOT IN('POS')
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                                 INNER JOIN Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
-                                                                                                                INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
+                                                                                                                INNER JOIN dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
                                                                                                                 WHERE enn.idEntidad = ur.idEntidad
                                                                                                                 AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC
@@ -207,20 +207,20 @@ BEGIN
 													sales = (SELECT comprobante, 
 																	detalle, 
 																	adicionales 
-																	FROM Acontplus.Config.v_user_permission_sale v_ups WITH(NOLOCK)
+																	FROM Config.v_user_permission_sale v_ups WITH(NOLOCK)
 																	WHERE v_ups.idUsuarioRol = ur.idUsuarioRol  FOR JSON PATH)
 													,cashAccounting = (SELECT * FROM Config.v_User_Permission_CashAccounting v_upca WITH(NOLOCK)
 																			   WHERE v_upca.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH
 																	 )
-												    ,product = (SELECT * FROM Acontplus.Config.v_User_Permission_Product v_upp WITH(NOLOCK)	
+												    ,product = (SELECT * FROM Config.v_User_Permission_Product v_upp WITH(NOLOCK)	
 																		 WHERE v_upp.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH)
 													FOR JSON PATH
 
 											  )
                            
-				          FROM Acontplus.App.UsuarioRol ur WITH(NOLOCK)
-				          INNER JOIN Acontplus.dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = ur.idEntidad
-				          INNER JOIN Acontplus.dbo.Usuario u WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
+				          FROM App.UsuarioRol ur WITH(NOLOCK)
+				          INNER JOIN dbo.Entidad e WITH(NOLOCK) ON e.idEntidad = ur.idEntidad
+				          INNER JOIN dbo.Usuario u WITH(NOLOCK) ON ur.idUsuario = u.idUsuario
                           LEFT JOIN Customer.Customer c WITH(NOLOCK) ON u.customerId = c.Id
 				          INNER JOIN Seguridad.[Role] r WITH(NOLOCK) ON ur.RoleId = r.Id
                           INNER JOIN Config.Company cc WITH (NOLOCK) ON e.Uuid = cc.Uuid

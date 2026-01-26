@@ -14,11 +14,11 @@ BEGIN
 	SET @tableNames = 'reports'
 
 	SELECT r.*
-	,nextDs = CASE WHEN (SELECT COUNT(*) FROM Acontplus.Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte) > 0 THEN
-	(SELECT TOP 1 position + 1 FROM Acontplus.Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte ORDER BY position DESC)
+	,nextDs = CASE WHEN (SELECT COUNT(*) FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte) > 0 THEN
+	(SELECT TOP 1 position + 1 FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte ORDER BY position DESC)
 	ELSE 0
 	END
-	,dataSources = (SELECT * FROM Acontplus.Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte  FOR JSON PATH)
-	FROM Acontplus.Config.Reporte r WITH(NOLOCK) ORDER BY r.idReporte DESC
+	,dataSources = (SELECT * FROM Config.ReporteDataSource ds WHERE  ds.idReporte = r.idReporte  FOR JSON PATH)
+	FROM Config.Reporte r WITH(NOLOCK) ORDER BY r.idReporte DESC
 	
 END

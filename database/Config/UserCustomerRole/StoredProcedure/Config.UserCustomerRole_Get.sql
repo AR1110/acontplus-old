@@ -90,7 +90,7 @@ BEGIN
         FROM Sales.Suscripcion s WITH (NOLOCK)
             INNER JOIN Config.Company ccc WITH (NOLOCK)
             ON s.CompanyId = ccc.Id
-            INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK)
+            INNER JOIN dbo.Entidad enn WITH (NOLOCK)
             ON enn.Uuid = ccc.Uuid
         WHERE enn.idEntidad = @idEntidad
             AND s.[IsActive] = 1
@@ -139,9 +139,9 @@ BEGIN
             ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
             INNER JOIN Config.Company cc WITH (NOLOCK)
             ON s.CompanyId = cc.Id
-            INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK)
+            INNER JOIN dbo.Entidad en WITH (NOLOCK)
             ON cc.Uuid = en.Uuid
-            INNER JOIN Acontplus.App.UsuarioRol urr WITH (NOLOCK)
+            INNER JOIN App.UsuarioRol urr WITH (NOLOCK)
             ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
           --  CROSS APPLY OPENJSON(lad.Actions) AS action
           OUTER APPLY 
@@ -185,9 +185,9 @@ BEGIN
             ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
             INNER JOIN Config.Company cc WITH (NOLOCK)
             ON s.CompanyId = cc.Id
-            INNER JOIN Acontplus.dbo.Entidad en WITH (NOLOCK)
+            INNER JOIN dbo.Entidad en WITH (NOLOCK)
             ON cc.Uuid = en.Uuid
-            INNER JOIN Acontplus.App.UsuarioRol urr WITH (NOLOCK)
+            INNER JOIN App.UsuarioRol urr WITH (NOLOCK)
             ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
         --    CROSS APPLY OPENJSON(lad.Actions) AS action
          OUTER APPLY 
@@ -226,8 +226,8 @@ BEGIN
             INNER JOIN Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
             INNER JOIN Sales.Suscripcion s ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
             INNER JOIN Config.Company cc ON s.CompanyId = cc.Id
-            INNER JOIN Acontplus.dbo.Entidad en ON cc.Uuid = en.Uuid
-            INNER JOIN Acontplus.App.UsuarioRol urr ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
+            INNER JOIN dbo.Entidad en ON cc.Uuid = en.Uuid
+            INNER JOIN App.UsuarioRol urr ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
         WHERE urr.idUsuarioRol = @userRoleId
             AND sd.SuscripcionId = @CurrentSubscriptionId
             AND lad.menuId IN (SELECT menuId

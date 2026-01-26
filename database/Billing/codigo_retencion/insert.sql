@@ -36,13 +36,13 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN 
 
-		IF EXISTS(SELECT 1 FROM AcontPlus.Sri.CodigoRetencion  WHERE codigo=LTRIM(TRIM(@codigo)))
+		IF EXISTS(SELECT 1 FROM Sri.CodigoRetencion  WHERE codigo=LTRIM(TRIM(@codigo)))
 			BEGIN 
 				SELECT '50001'code, 'Hay un impuesto registrado con este código' as 'message'
 				RETURN 
 			END 
 
-			IF EXISTS(SELECT 1 FROM AcontPlus.Sri.CodigoRetencion 
+			IF EXISTS(SELECT 1 FROM Sri.CodigoRetencion 
 							   WHERE concepto=LTRIM(TRIM(@concepto))  
 					  )
 				BEGIN 
@@ -50,7 +50,7 @@ BEGIN
 					RETURN 
 				END 
 
-				INSERT INTO AcontPlus.Sri.CodigoRetencion (codigo, concepto, porcentajeMin,porcentajeMax)
+				INSERT INTO Sri.CodigoRetencion (codigo, concepto, porcentajeMin,porcentajeMax)
 				VALUES(@codigo, @concepto, @porcentajeMin,@porcentajeMax)
 				SELECT '0'code, 'Registrado correctamente' as 'message'
 		COMMIT TRAN 

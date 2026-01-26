@@ -47,7 +47,7 @@ BEGIN
 	INNER JOIN Config.Company	     t4 WITH (NOLOCK) ON t4.Id   = t2.CompanyId
 	INNER JOIN Config.Licencia        t5 WITH (NOLOCK) ON t5.Id   = t3.LicenciaId
     INNER JOIN Config.Aplicacion      t6 WITH (NOLOCK) ON t6.Id   = t3.AplicacionId
-	INNER JOIN Acontplus.dbo.Entidad                 t7 WITH (NOLOCK) ON t7.Uuid = t4.Uuid
+	INNER JOIN dbo.Entidad                 t7 WITH (NOLOCK) ON t7.Uuid = t4.Uuid
 	WHERE t2.IsActive = 1
 	  AND(t2.Paid IS NULL OR t2.Paid = 0)
 	  AND t2.IsDeleted = CAST(0 AS BIT)

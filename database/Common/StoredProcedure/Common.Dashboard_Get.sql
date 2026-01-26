@@ -139,7 +139,7 @@ BEGIN
                  ,count(*) total
         FROM Compra.Documento_Ingreso di WITH(NOLOCK)
             INNER JOIN
-                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON di.codDoc = td.codigo
+                dbo.TipoDocumento td WITH(NOLOCK) ON di.codDoc = td.codigo
         WHERE
              di.idEntidad = @idEntidad
         GROUP BY td.codigo
@@ -212,15 +212,15 @@ BEGIN
                 td.descripcion, 
                 td.codigoSri
             FROM 
-                Acontplus.dbo.DocumentoElectronico de WITH(NOLOCK)
+                dbo.DocumentoElectronico de WITH(NOLOCK)
             INNER JOIN 
-                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
+                dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
             INNER JOIN 
-                Acontplus.dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
+                dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
             INNER JOIN 
-                Acontplus.Sri.Establecimiento e ON pe.idEstablecimiento = e.idEstablecimiento
+                Sri.Establecimiento e ON pe.idEstablecimiento = e.idEstablecimiento
             INNER JOIN 
-                Acontplus.FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+                FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
             WHERE 
                 es.codigo = 4
                 AND e.idEntidad = @idEntidad

@@ -83,7 +83,7 @@ BEGIN
 				  --,[IdCard]     = GETDATE
 			WHERE Id = @Id
 
-			UPDATE Acontplus.dbo.Entidad 
+			UPDATE dbo.Entidad 
 			   SET razonSocial     = LTRIM(RTRIM(@BusinessName))
 				  ,nombreComercial = LTRIM(RTRIM(@TradeName))
 				  ,direccion       = LTRIM(RTRIM(@Address))

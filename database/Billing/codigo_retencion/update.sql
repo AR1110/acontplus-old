@@ -38,7 +38,7 @@ BEGIN
 	BEGIN TRY 
 		BEGIN TRAN 
 
-			IF EXISTS(SELECT 1 FROM Acontplus.Sri.CodigoRetencion 
+			IF EXISTS(SELECT 1 FROM Sri.CodigoRetencion 
 							   WHERE idCodigoRetencion <> @id AND codigo=LTRIM(TRIM(@codigo)) 
 					  )
 				BEGIN 
@@ -46,7 +46,7 @@ BEGIN
 					RETURN 
 				END 
 
-			IF EXISTS(SELECT 1 FROM Acontplus.Sri.CodigoRetencion 
+			IF EXISTS(SELECT 1 FROM Sri.CodigoRetencion 
 							   WHERE idCodigoRetencion <> @id AND codigo=LTRIM(TRIM(@codigo))  AND concepto=LTRIM(TRIM(@concepto))  
 					  )
 				BEGIN 
@@ -54,7 +54,7 @@ BEGIN
 					RETURN 
 				END 
 
-				UPDATE Acontplus.Sri.CodigoRetencion SET codigo=@codigo, concepto=@concepto, porcentajeMin = @porcentajeMin, porcentajeMax=@porcentajeMax, estado = @estado WHERE idCodigoRetencion = @id
+				UPDATE Sri.CodigoRetencion SET codigo=@codigo, concepto=@concepto, porcentajeMin = @porcentajeMin, porcentajeMax=@porcentajeMax, estado = @estado WHERE idCodigoRetencion = @id
 			
 				SELECT '0'code, 'Actualizado correctamente' as 'message'
 		COMMIT TRAN 

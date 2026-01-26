@@ -67,7 +67,7 @@ CREATE CONTRACT [StockContract]
 CREATE QUEUE Stock_Queue
  WITH STATUS=ON,
  ACTIVATION (
-  PROCEDURE_NAME = Acontplus.dbo.Transaction_Handler,
+  PROCEDURE_NAME = dbo.Transaction_Handler,
   MAX_QUEUE_READERS = 10,
   EXECUTE AS 'dbo');
 

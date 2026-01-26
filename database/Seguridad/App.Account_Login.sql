@@ -36,7 +36,7 @@ BEGIN
 				END
 
 			IF NOT EXISTS (SELECT TOP 1 1 FROM App.UsuarioRol							ur WITH (NOLOCK) 
-                                          INNER JOIN Acontplus.dbo.Entidad				e  WITH (NOLOCK) ON ur.idEntidad	= e.idEntidad
+                                          INNER JOIN dbo.Entidad				e  WITH (NOLOCK) ON ur.idEntidad	= e.idEntidad
                                           INNER JOIN Config.Company		c  WITH (NOLOCK) ON e.Uuid			= c.Uuid
                                           INNER JOIN Sales.Suscripcion   s  WITH (NOLOCK) ON c.Id			= s.CompanyId
                                           WHERE ur.idUsuario = @userId
@@ -69,9 +69,9 @@ BEGIN
 			            , IDCardCompany		= e.ruc
 			            , companyId			= e.idEntidad
 			            ,[permissions]		= (
-									            SELECT sales			= (SELECT comprobante, detalle, adicionales FROM Acontplus.Config.v_user_permission_sale v_ups WITH(NOLOCK) WHERE v_ups.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH)
+									            SELECT sales			= (SELECT comprobante, detalle, adicionales FROM Config.v_user_permission_sale v_ups WITH(NOLOCK) WHERE v_ups.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH)
 										            ,cashAccounting		= (SELECT * FROM Config.v_User_Permission_CashAccounting v_upca WITH(NOLOCK) WHERE v_upca.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH)
-										            ,product			= (SELECT * FROM Acontplus.Config.v_User_Permission_Product v_upp WITH(NOLOCK)	WHERE v_upp.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH) 
+										            ,product			= (SELECT * FROM Config.v_User_Permission_Product v_upp WITH(NOLOCK)	WHERE v_upp.idUsuarioRol = ur.idUsuarioRol FOR JSON PATH) 
 									            FOR JSON PATH)
                         ,menus = 
                               JSON_QUERY(CASE WHEN ur.Accesses IS NULL THEN  
@@ -91,12 +91,12 @@ BEGIN
 	                                                                    INNER JOIN Sales.SuscripcionDetalle sd WITH (NOLOCK) ON ld.Id = sd.LicenciaDetalleId AND sd.[IsActive] = 1
 	                                                                    INNER JOIN Sales.Suscripcion         s WITH (NOLOCK) ON sd.SuscripcionId = s.Id AND s.[IsActive] = 1
 	                                                                    INNER JOIN Config.Company           cc WITH (NOLOCK) ON s.CompanyId = cc.Id
-	                                                                    INNER JOIN Acontplus.dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
-	                                                                    INNER JOIN Acontplus.App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
+	                                                                    INNER JOIN dbo.Entidad                   en WITH (NOLOCK) ON cc.Uuid = en.Uuid
+	                                                                    INNER JOIN App.UsuarioRol          urr WITH (NOLOCK) ON la.RoleId = urr.RoleId AND urr.idEntidad = en.idEntidad
                                                                         WHERE urr.idUsuarioRol = ur.idUsuarioRol
 	                                                                    AND sd.SuscripcionId = (SELECT TOP 1 s.Id FROM Sales.Suscripcion s WITH (NOLOCK) 
                                                                                                                 INNER JOIN Config.Company ccc WITH (NOLOCK) ON s.CompanyId = ccc.Id
-                                                                                                                INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
+                                                                                                                INNER JOIN dbo.Entidad enn WITH (NOLOCK) ON enn.Uuid = ccc.Uuid 
                                                                                                                 WHERE enn.idEntidad = ur.idEntidad
                                                                                                                 AND s.[IsActive] = 1
 							                                                                    ORDER BY s.Id DESC

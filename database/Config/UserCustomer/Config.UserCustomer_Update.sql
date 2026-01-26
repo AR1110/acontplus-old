@@ -45,7 +45,7 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END
-        INSERT INTO Acontplus.dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
+        INSERT INTO dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
 		VALUES ('UserCustomer/Put', NEWID(), ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE())
 		SELECT '0' as code,'Error en el procedimiento de actualizar' as [message]
 	END CATCH 

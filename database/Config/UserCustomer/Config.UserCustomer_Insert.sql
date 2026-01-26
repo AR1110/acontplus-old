@@ -55,7 +55,7 @@ BEGIN
 			) as  js
 
 		SELECT TOP 1 @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = @userRoleId 
-		SET @uuid = (SELECT Uuid FROM Acontplus.dbo.Entidad WHERE idEntidad = @idEntidad)
+		SET @uuid = (SELECT Uuid FROM dbo.Entidad WHERE idEntidad = @idEntidad)
 
 		IF @roleId IS NULL
 			BEGIN
@@ -88,7 +88,7 @@ BEGIN
             DECLARE @userRoleParams VARCHAR(MAX)
 			,@userCustomerId INT
 
-			SET @userCustomerId = (SELECT idUsuario FROM Acontplus.dbo.Usuario WHERE nombreUsuario = @nombreUsuario)
+			SET @userCustomerId = (SELECT idUsuario FROM dbo.Usuario WHERE nombreUsuario = @nombreUsuario)
 			--SET @roleId = (SELECT TOP 1 Id FROM Seguridad.[Role] WHERE code = 'ADM')
 
 			SET @userRoleParams = (SELECT '{"userCustomerId": "' + CONVERT(VARCHAR, @userCustomerId) + '"' + 
@@ -115,7 +115,7 @@ BEGIN
 		    BEGIN
 			    ROLLBACK TRAN; 
 		    END
-        INSERT INTO Acontplus.dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
+        INSERT INTO dbo.ErroresSistema (method, token, [ErrorNumber],[ErrorSeverity],[ErrorState],[ErrorProcedure],[ErrorLine],[ErrorMessage])
 		VALUES ('UserCustomer/Insert', NEWID(), ERROR_NUMBER(), ERROR_SEVERITY(),  ERROR_STATE(), ERROR_PROCEDURE(), ERROR_LINE(), ERROR_MESSAGE());
 		SELECT '0' as code,'Info: Error en el procedimiento' as [message];
 	END CATCH 

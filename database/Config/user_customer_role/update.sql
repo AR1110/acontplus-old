@@ -48,11 +48,11 @@ BEGIN
 		 ---------------------------------- VARIABLES ---------------------------------------------------------------------
 		 SELECT TOP 1 @UserCustomerId = UserCustomerId ,@RoleId = RoleId ,@companyUuid = companyUuid FROM @tbUserRole
 		
-		 SELECT TOP 1 @idEntidad = idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE uuid = @companyUuid
+		 SELECT TOP 1 @idEntidad = idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE uuid = @companyUuid
 
 		----------------------------------- VALIDATION --------------------------------------------------------------------
-		IF EXISTS (SELECT 1 FROM Acontplus.App.UsuarioRol ur WITH (NOLOCK)
-					INNER JOIN Acontplus.dbo.Entidad e ON ur.idEntidad =e.idEntidad
+		IF EXISTS (SELECT 1 FROM App.UsuarioRol ur WITH (NOLOCK)
+					INNER JOIN dbo.Entidad e ON ur.idEntidad =e.idEntidad
 				WHERE e.uuid = @companyUuid
 			AND idUsuario = @UserCustomerId AND roleId = @RoleId AND idUsuarioRol != @Id)
 			BEGIN
@@ -63,7 +63,7 @@ BEGIN
 
 		BEGIN TRAN 
 
-			UPDATE Acontplus.App.UsuarioRol  
+			UPDATE App.UsuarioRol  
 				SET idEntidad         = @idEntidad
 				   ,RoleId             = @RoleId
 			WHERE idUsuarioRol = @Id

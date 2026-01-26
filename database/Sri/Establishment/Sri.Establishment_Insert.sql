@@ -139,7 +139,7 @@ BEGIN
             
                     IF (@errorCode <> 0)
                         BEGIN
-                            SET @errorMessage = 'sp Acontplus.Config.Estab_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+                            SET @errorMessage = 'sp Config.Estab_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
 				            RAISERROR(@errorMessage,16,1)
                         END
 
@@ -148,7 +148,7 @@ BEGIN
 
                     SELECT @codEstab_Asig = codEstab_Asig
                         ,@idEstab_Asig = idEstab_Asig
-                    FROM Acontplus.Config.Estab_Asig ea WITH(NOLOCK) 
+                    FROM Config.Estab_Asig ea WITH(NOLOCK) 
                     WHERE idEstablecimiento = @id;
 
                     DECLARE @bodegaParams VARCHAR(300);
@@ -192,7 +192,7 @@ BEGIN
 
                                 IF @errorCode <> 0
                                 BEGIN
-                                    SET @errorMessage = 'sp Acontplus.Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
+                                    SET @errorMessage = 'sp Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
 				                    RAISERROR(@errorMessage,16,1);
                                     BREAK;
                                 END
@@ -210,12 +210,12 @@ BEGIN
 
                             IF @errorCode <> 0
                                 BEGIN
-                                    SET @errorMessage = 'sp Acontplus.Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
+                                    SET @errorMessage = 'sp Inventario.Bodega_Insert failed: ' + ISNULL(@errorMessage, '')
 				                    RAISERROR(@errorMessage,16,1)
                                 END
                         END
 
-                    IF EXISTS(SELECT TOP 1 1 FROM Acontplus.dbo.Bodega WITH(NOLOCK) WHERE codEstab = @codEstab)
+                    IF EXISTS(SELECT TOP 1 1 FROM dbo.Bodega WITH(NOLOCK) WHERE codEstab = @codEstab)
                         BEGIN
                             SET @i = 0;
 
@@ -227,7 +227,7 @@ BEGIN
 
                             INSERT INTO @TempBodegAsig (idBodega, codEstabAsig)
                             SELECT idBodega, @codEstab_Asig
-                            FROM Acontplus.dbo.Bodega WITH(NOLOCK)
+                            FROM dbo.Bodega WITH(NOLOCK)
                             WHERE codEstab = @codEstab
 
                             SELECT @count = COUNT(*) FROM @TempBodegAsig;
@@ -250,7 +250,7 @@ BEGIN
 
                                 IF @errorCode <> 0
                                 BEGIN
-                                    SET @errorMessage = 'sp Acontplus.Config.Bodeg_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+                                    SET @errorMessage = 'sp Config.Bodeg_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
 				                    RAISERROR(@errorMessage,16,1);
                                     BREAK;
                                 END
@@ -259,7 +259,7 @@ BEGIN
 
                     IF (ISJSON(@ptosEmi) = 1)
                         BEGIN
-                            INSERT INTO Acontplus.dbo.PuntoEmision(idEstablecimiento, ambiente, ptoEmi, idUsuario)
+                            INSERT INTO dbo.PuntoEmision(idEstablecimiento, ambiente, ptoEmi, idUsuario)
                             SELECT @id, ambiente, ptoEmi, @idUsuario FROM OPENJSON(@ptosEmi) WITH (ambiente CHAR, ptoEmi VARCHAR(3))
                         END
 
@@ -273,7 +273,7 @@ BEGIN
                                     VALUES(@demoStepId, @companyId, @uuid, @fromMobile, @username);
                                 END
 
-                            IF EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK) WHERE idEstablecimiento = @id)
+                            IF EXISTS (SELECT TOP 1 1 FROM dbo.PuntoEmision WITH(NOLOCK) WHERE idEstablecimiento = @id)
                                 BEGIN
                                    SET @i = 0;
 
@@ -285,7 +285,7 @@ BEGIN
 
                                     INSERT INTO @TempPtoEmiAsig (idPuntoEmision, codEstabAsig)
                                     SELECT idPuntoEmision, @codEstab_Asig
-                                    FROM Acontplus.dbo.PuntoEmision WITH(NOLOCK)
+                                    FROM dbo.PuntoEmision WITH(NOLOCK)
                                     WHERE idEstablecimiento = @id
 
                                     SELECT @count = COUNT(*) FROM @TempPtoEmiAsig;
@@ -299,7 +299,7 @@ BEGIN
                                         FROM @TempPtoEmiAsig
                                         WHERE id = @i;
 
-                                        EXEC Acontplus.Config.PtoEmi_Asig_Insert
+                                        EXEC Config.PtoEmi_Asig_Insert
                                             @userRoleId, 
                                             @bodegaParams,
                                             @fromMobile, 
@@ -308,7 +308,7 @@ BEGIN
 
                                         IF @errorCode <> 0
                                         BEGIN
-                                            SET @errorMessage = 'sp Acontplus.Config.PtoEmi_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
+                                            SET @errorMessage = 'sp Config.PtoEmi_Asig_Insert failed: ' + ISNULL(@errorMessage, '')
 				                            RAISERROR(@errorMessage,16,1);
                                             BREAK;
                                         END
@@ -342,7 +342,7 @@ BEGIN
                         
                                 IF @errorCode <> 0
                                         BEGIN
-                                            SET @errorMessage = 'sp Acontplus.Contabilidad.SubEntidadFinanciera_Insert failed: ' + ISNULL(@errorMessage, '')
+                                            SET @errorMessage = 'sp Contabilidad.SubEntidadFinanciera_Insert failed: ' + ISNULL(@errorMessage, '')
 				                            RAISERROR(@errorMessage,16,1);
                                         END
                        
@@ -368,7 +368,7 @@ BEGIN
                         
                                 IF @errorCode <> 0
                                         BEGIN
-                                            SET @errorMessage = 'sp Acontplus.Config.TiempoCredito_Insert failed: ' + ISNULL(@errorMessage, '')
+                                            SET @errorMessage = 'sp Config.TiempoCredito_Insert failed: ' + ISNULL(@errorMessage, '')
 				                            RAISERROR(@errorMessage,16,1);
                                         END
                               END
@@ -379,20 +379,20 @@ BEGIN
                                     @idFamilia INT
 
                                 SELECT @idActividadEconomica = idActividadEconomica, @actividadEconomicaName = descripcion  
-                                FROM Acontplus.Sri.ActividadEconomica WITH(NOLOCK) WHERE codigo = @actividad;
+                                FROM Sri.ActividadEconomica WITH(NOLOCK) WHERE codigo = @actividad;
 
-                                IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
+                                IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
                                     BEGIN
-                                        INSERT INTO Acontplus.dbo.Familia(descripcion, siglas, estado, ActividadEconomicaId)
+                                        INSERT INTO dbo.Familia(descripcion, siglas, estado, ActividadEconomicaId)
                                         SELECT @actividadEconomicaName, LEFT(@actividadEconomicaName, 3) + '-' + LEFT(@actividad, 6), 1, @idActividadEconomica;
 
                                         SET @idFamilia = SCOPE_IDENTITY()
                                     END
                                  --SUBFAMILIA 
 
-                                 IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.subfamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                                 IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.subfamilia WITH(NOLOCK) WHERE idEntidad = @idEntidad)
                                     BEGIN
-                                        SET @idFamilia = (SELECT TOP 1 idFamilia FROM Acontplus.dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
+                                        SET @idFamilia = (SELECT TOP 1 idFamilia FROM dbo.Familia WITH(NOLOCK) WHERE ActividadEconomicaId = @idActividadEconomica)
                                         INSERT INTO dbo.SubFamilia(idFamilia, descripcion, siglas,codigo, montoObjetivo, ultimoSecuencial, idUsuario, idEntidad)
 				                        SELECT @idFamilia, 'SUBFAMILIA DEMO', 'SD', newid(), 0.00, 1 ,@idUsuario, @idEntidad
                                     END
@@ -400,7 +400,7 @@ BEGIN
                                 --MEDIDA
                                 DECLARE @sequential INT,  @medidaCode VARCHAR(15)
 
-                                IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Medida WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                                IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Medida WITH(NOLOCK) WHERE idEntidad = @idEntidad)
                                     BEGIN
                                         SELECT @sequential = COUNT(*) + 1 FROM dbo.Medida WITH(NOLOCK)
 
@@ -411,9 +411,9 @@ BEGIN
                                     END
 
                                 -----TURNOS---
-                                IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Turno WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                                IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Turno WITH(NOLOCK) WHERE idEntidad = @idEntidad)
                                     BEGIN
-                                        INSERT INTO Acontplus.dbo.Turno(descripcion, estado, fechaRegistro, idUsuario, idEntidad)
+                                        INSERT INTO dbo.Turno(descripcion, estado, fechaRegistro, idUsuario, idEntidad)
                                         VALUES ('DIURNO', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad);
                                     END
 
@@ -422,9 +422,9 @@ BEGIN
                                 DECLARE @idTurno INT,
                                     @idCaja INT;
 
-                                IF NOT EXISTS (SELECT TOP 1 1 FROM Acontplus.dbo.Caja WITH(NOLOCK) WHERE idEntidad = @idEntidad)
+                                IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Caja WITH(NOLOCK) WHERE idEntidad = @idEntidad)
                                     BEGIN
-                                        INSERT INTO Acontplus.dbo.Caja(descripcion, estado, fechaRegistro, idUsuario, idEntidad, actividad)
+                                        INSERT INTO dbo.Caja(descripcion, estado, fechaRegistro, idUsuario, idEntidad, actividad)
                                         VALUES ('PRINCIPAL', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad, 1);
                                 
                                         SET @idCaja = SCOPE_IDENTITY()

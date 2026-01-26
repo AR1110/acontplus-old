@@ -137,10 +137,10 @@ BEGIN
                                         ,@username = us.nombreUsuario
                                         ,@requesting_user = UPPER(cu.BusinessName)
                                         ,@userEmail = us.correo
-        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK) 
-        INNER JOIN Acontplus.dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
+        FROM App.UsuarioRol              ur WITH (NOLOCK) 
+        INNER JOIN dbo.Entidad           en WITH (NOLOCK) ON en.idEntidad = ur.idEntidad
         INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
-        INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+        INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
         LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
         WHERE ur.idUsuarioRol = @userRoleId
 
@@ -173,9 +173,9 @@ BEGIN
 							   ),
                                (SELECT hasFile = CAST(0 AS BIT) FOR JSON PATH, WITHOUT_ARRAY_WRAPPER),
                                        us.correo
-						        FROM Acontplus.App.UsuarioRol              ur WITH (NOLOCK)
+						        FROM App.UsuarioRol              ur WITH (NOLOCK)
                                 INNER JOIN Seguridad.[Role] ro WITH (NOLOCK) ON ro.Id        = ur.RoleId
-                                INNER JOIN Acontplus.dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
+                                INNER JOIN dbo.Usuario           us WITH (NOLOCK) ON us.idUsuario = ur.idUsuario
                                 LEFT JOIN Customer.Customer               cu WITH (NOLOCK) ON cu.Id        = us.CustomerId
                                 WHERE ur.idEntidad = @idEntidad 
                                     AND ro.Code = 'ADM'

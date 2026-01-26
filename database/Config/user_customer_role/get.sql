@@ -31,9 +31,9 @@ BEGIN
 		  ,en.nombreComercial as BusinessName
 		  ,po.[Name] as [Role]
 		  ,ur.estado as IsActive
-	FROM Acontplus.App.UsuarioRol     ur WITH (NOLOCK)
-	INNER JOIN Acontplus.dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario  = ur.idUsuario
-	INNER JOIN Acontplus.dbo.Entidad  en WITH (NOLOCK) ON en.idEntidad  = ur.idEntidad
+	FROM App.UsuarioRol     ur WITH (NOLOCK)
+	INNER JOIN dbo.Usuario  us WITH (NOLOCK) ON us.idUsuario  = ur.idUsuario
+	INNER JOIN dbo.Entidad  en WITH (NOLOCK) ON en.idEntidad  = ur.idEntidad
 	INNER JOIN Seguridad.[Role] po WITH (NOLOCK) ON po.Id = ur.RoleId
 	WHERE ur.idUsuario = @userId 
 	ORDER BY ur.idUsuarioRol DESC

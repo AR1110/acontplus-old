@@ -9,7 +9,7 @@ SELECT @idEntidad = idEntidad FROM v_usuario WHERE idUsuarioRol = 490
         FROM Sales.Suscripcion s WITH (NOLOCK)
             INNER JOIN Config.Company ccc WITH (NOLOCK)
             ON s.CompanyId = ccc.Id
-            INNER JOIN Acontplus.dbo.Entidad enn WITH (NOLOCK)
+            INNER JOIN dbo.Entidad enn WITH (NOLOCK)
             ON enn.Uuid = ccc.Uuid
         WHERE enn.idEntidad = @idEntidad
             AND s.[IsActive] = 1

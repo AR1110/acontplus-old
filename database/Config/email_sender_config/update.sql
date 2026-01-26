@@ -32,7 +32,7 @@ BEGIN
 			[EncryptedPassword] = j.encryptedPassword,
 			[PasswordHash] = j.passwordHash,
 			[UserId] = @UserId
-			FROM Acontplus.Config.EmailSenderConfig esc
+			FROM Config.EmailSenderConfig esc
 			JOIN OPENJSON(@Json) WITH (
 									id INT,
 									companyId INT,

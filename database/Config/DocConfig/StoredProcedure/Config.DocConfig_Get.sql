@@ -74,7 +74,7 @@ BEGIN
 			WHERE idUsuarioRol = @UserRoleId 
             ORDER BY defaultEstab DESC
 
-	        SELECT * FROM Acontplus.dbo.TipoDocumento td WITH(NOLOCK)
+	        SELECT * FROM dbo.TipoDocumento td WITH(NOLOCK)
             INNER JOIN Config.Aplicacion a ON td.aplicacionId = a.Id
             INNER JOIN Config.LicenciaDetalle ld ON a.Id = ld.AplicacionId
             INNER JOIN Sales.SuscripcionDetalle sd ON ld.Id = sd.LicenciaDetalleId

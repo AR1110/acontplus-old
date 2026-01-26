@@ -136,7 +136,7 @@ BEGIN
 
             IF (@errorCode <> 0)
                 BEGIN
-                    SET @errorMessage = 'sp Acontplus.Customer.InsertCustomer response: ' + ISNULL(@errorMessage, '');
+                    SET @errorMessage = 'sp Customer.InsertCustomer response: ' + ISNULL(@errorMessage, '');
                     THROW 50001, @errorMessage, 1;
                 END
             --> End
