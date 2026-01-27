@@ -122,11 +122,13 @@ BEGIN
         ,ISNULL
           ((
 		        SELECT sc.id
+                      ,si.Id as itemId
 			          ,sc.parentItemId
 			          ,sc.parentCompositionId
 			          ,sc.childItemId
 			          ,sc.feeId
 			          ,sc.measureId
+                      ,si.productId
 			          ,sc.quantity
 			          ,sc.salePrice
 			          ,sc.unitPrice
@@ -196,6 +198,7 @@ BEGIN
 		              ,st.descripcion as fee
 		              ,sm.descripcion as measure
 		              ,sp.S3ObjectUrl as imageUrl
+                    
 		        FROM Restaurant.ItemComposition    sc 
 		        INNER JOIN Restaurant.Item         si ON si.Id         = sc.ChildItemId
 		         LEFT JOIN dbo.Tarifa			   st ON st.idTarifa   = sc.FeeId

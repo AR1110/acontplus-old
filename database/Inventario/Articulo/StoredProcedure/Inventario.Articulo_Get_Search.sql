@@ -15,8 +15,8 @@ GO
 -- =============================================
 CREATE OR ALTER PROCEDURE Inventario.Articulo_Get_Search
     @userRoleId INT ,
-    @json NVARCHAR(MAX),
-    @tableNames VARCHAR(MAX) OUTPUT
+    @json NVARCHAR(MAX)
+  --  @tableNames VARCHAR(MAX) OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -108,7 +108,7 @@ BEGIN
                 a.codigoAuxiliar LIKE '%' + @bySearch + '%' OR
                 a.codigoBarra    LIKE '%' + @bySearch + '%'
               )
-                AND (@byFraccionado = 0 OR a.fraccionado = 1)
+            --   AND (@byFraccionado = 0 OR a.fraccionado = 1)
         )
     -------------------------------------------------------------------------
     --  DEVOLVER RESULTADOS CON PAGINACIÓN Y DETALLES ADICIONALES
