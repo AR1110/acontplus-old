@@ -83,13 +83,13 @@ export class RetencionAtsAddEditComponent implements OnInit {
     identificacionSujetoRetenido: [''],
     idProveedor: [0],
     periodoFiscal: [''],
-    fechaEmision: [''],
+    fechaEmision: [{ value: '', disabled: true }],
     documentosSustento: this._fb.array([]),
     infoAdicional: this._fb.array([]),
   });
 
   idDocumentoElectronico = 0;
-  isDisabledEmitionDate: boolean = true;
+  //isDisabledEmitionDate: boolean = true;
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
@@ -260,7 +260,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.infoAdicional.forEach(info => {
         this.addInfoAdicionalWithValues(info);
       });
-      this.isDisabledEmitionDate = false;
+      this.retencionAtsForm.get('fechaEmision')?.enable();
     } else {
       this.retencionAtsForm.get('fechaEmision')?.setValue(formatDate(new Date()).toISOString());
 
