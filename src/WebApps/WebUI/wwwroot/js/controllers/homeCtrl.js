@@ -395,6 +395,7 @@
                     }
 
                     if ($scope.licenses.length > 0) {
+                          warningMessage = $scope.licenses[0].warningMessage;
                         let expired = $scope.licenses[0].expired || false;
 
                         if (expired) {
@@ -415,22 +416,19 @@
 
                         if ($scope.licenses.length == 1) {
                             warningMessage = $scope.licenses[0].warningMessage;
-                            $scope.countDownDate = new Date(maxPaymentDate).setMinutes(
+                              $scope.countDownDate = new Date(maxPaymentDate).setMinutes(
                                 new Date().getMinutes() + 5,
                             );
-
-                            if (differenceInDays <= 30) {
-                                $scope.startTimer();
-                            }
+                           
+                            $scope.startTimer();
+                            
                         }
 
                         const totalLicenses = $scope.licenses.filter((x) => x.licenseCode != "ERP-D").length;
 
                         if (
                             totalLicenses >
-                            1 &&
-                            differenceInDays <= 30
-                        ) {
+                            1 ) {
                             modalService.openModalCustom({
                                 controller: [
                                     "$uibModalInstance",
