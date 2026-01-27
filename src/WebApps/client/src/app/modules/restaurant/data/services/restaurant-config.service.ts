@@ -3,7 +3,6 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { map } from 'rxjs';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
@@ -20,9 +19,7 @@ export class RestaurantConfigService {
       tipo: 1,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {

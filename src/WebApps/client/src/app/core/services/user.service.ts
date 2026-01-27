@@ -1,6 +1,4 @@
 import { CONFIG_PATHS } from '@modules/config/config-const';
-import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { PATHS_API } from '@core/constants/global.constants';
 import { UserSearch } from '@core/models/user.model';
 import { Injectable, inject } from '@angular/core';
@@ -20,9 +18,7 @@ export class UserService {
       textSearch: data.textSearch,
     });
     return this.http
-      .get(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.url}?json=${json}`)
       .pipe(
         map((response: any) => {
           let userCustomers = [];

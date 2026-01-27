@@ -15,20 +15,10 @@
       </div>
     </div>
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12">
-      <div class="form-group">
-        <label for="dateRange">Rango fechas: </label>
-        <div class="input-group mb-3">
-          <div class="input-group-text">
-            <input
-              [(ngModel)]="dataSearch.checkBoxFecha"
-              aria-label="Checkbox for following text input"
-              class="form-check-input mt-0"
-              type="checkbox"
-            />
-          </div>
-          <app-date-range-selection (onChangeDateRange)="onDateRangeSelection($event)" />
-        </div>
-      </div>
+      <acp-date-range-picker
+      (dateRangeSelected)="onDateRangeSelection($event)"
+      />
+
     </div>
     <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 col-12"></div>
   </div>

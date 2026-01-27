@@ -5,7 +5,6 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { SupplierRepository } from '@customer/domain/repositories/supplier.repository';
 import { CUSTOMER_PATHS } from '@customer/shared/enums/customer.enum';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
 import { SupplierMapper } from '@customer/data/supplier/supplier.mapper';
 
@@ -27,9 +26,7 @@ export class SupplierWebRepository extends SupplierRepository {
     });
 
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}` )
       .pipe(
         map((response) => {
           let suppliers: SupplierSearch[] = [];

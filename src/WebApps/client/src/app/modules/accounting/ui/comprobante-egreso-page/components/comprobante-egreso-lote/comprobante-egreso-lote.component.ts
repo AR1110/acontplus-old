@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DynamicCard, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,7 +18,6 @@ import { ComprobanteEgresoStore } from '@accounting/store/comprobante-egreso.sto
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 import { obtenerCuotasPorPagarEstadoUtil } from '@accounting/utils/obtener-cuotas-por-pagar-estado.util';
 import { obtenerCuentasPorPagarEstado } from '@accounting/utils/obtener-cuentas-por-pagar-estado.util';
@@ -42,7 +41,8 @@ import { NotificationService } from '@acontplus/ng-notifications';
     CurrencyPipe,
     DatePipe,
     DataGrid,
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './comprobante-egreso-lote.component.html',
   styles: ``,

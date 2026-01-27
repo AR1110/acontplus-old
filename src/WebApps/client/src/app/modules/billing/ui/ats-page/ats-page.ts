@@ -1,24 +1,23 @@
 import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {  FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 
 import { AtsService } from '@billing/services/ats.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
-import { addDay, monthStart } from '@formkit/tempo';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DateRangePicker, DateRangeValue, DynamicCard } from '@acontplus/ng-components';
 import { Button } from '@acontplus/ng-components';
+import {lastMonthRange} from "ngx-datex";
 
 @Component({
-  selector: 'app-ats',
-  imports: [FormsModule, BreadcrumbComponent, DateRangeSelectionComponent, DynamicCard, Button],
-  templateUrl: './ats.component.html',
+  selector: 'app-ats-page',
+  imports: [ReactiveFormsModule, FormsModule, BreadcrumbComponent, DateRangePicker, DynamicCard, Button],
+  templateUrl: './ats-page.html',
   styles: ``,
 })
-export class AtsComponent {
-  fromDate: any = monthStart(addDay(monthStart(new Date()), -1));
-  toDate: any = addDay(monthStart(new Date()), -1);
+export class AtsPage {
+  fromDate=  lastMonthRange()[0];
+  toDate =lastMonthRange()[1];
   dataSearch = {
     fromDate: formatDateToString(this.fromDate),
     toDate: formatDateToString(this.toDate),
@@ -27,7 +26,7 @@ export class AtsComponent {
   private readonly _atsSvc = inject(AtsService);
   private readonly _tS = inject(ToastrNotificationService);
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
   }

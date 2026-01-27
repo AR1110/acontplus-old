@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="'Cuotas'"
-  [loading]="loading()"
-  (close)="closeDialog()"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-flex flex-column gap-2">
     <div
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
@@ -137,11 +129,11 @@
       <tr mat-footer-row *matFooterRowDef="visibleColumns"></tr>
     </table>
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
+<mat-dialog-actions>
   <button mat-flat-button>
     <mat-icon>save</mat-icon>
     Guardar
   </button>
-</ng-template>
+</mat-dialog-actions>

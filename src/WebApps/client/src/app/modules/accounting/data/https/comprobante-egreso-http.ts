@@ -4,7 +4,6 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
 import { map, Observable } from 'rxjs';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.interface';
 import { SubEntidadFinancieraSelectHtmlOnly } from '@accounting/data/models/subentidad-financiera.interface';
 import { BancoSelectOnly } from '@accounting/shared/models/banco.interface';
@@ -83,9 +82,7 @@ export class ComprobanteEgresoHttp implements ComprobanteEgresoRepository {
       idProveedor,
     });
     return this.http
-      .get(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this._url}?json=${json}` )
       .pipe(
         map((response) => {
           let results = {

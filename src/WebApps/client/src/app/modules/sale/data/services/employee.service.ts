@@ -5,7 +5,6 @@ import { map } from 'rxjs';
 import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
 import { PATHS_API } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -18,9 +17,7 @@ export class EmployeeService {
     const params = JSON.stringify({ ...obj, tipo: 1 });
 
     return this.http
-      .get(`${this.url}Search?json=${params}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.url}Search?json=${params}` )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {

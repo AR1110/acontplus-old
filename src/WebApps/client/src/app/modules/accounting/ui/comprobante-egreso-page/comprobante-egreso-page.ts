@@ -9,14 +9,20 @@ import {
 } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 
-import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
+import {
+  DataGrid,
+  DataGridColumn,
+  Pagination,
+  Button,
+  DateRangePicker,
+  DateRangeValue
+} from '@acontplus/ng-components';
 import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { FormsModule } from '@angular/forms';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
@@ -44,7 +50,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     BreadcrumbComponent,
     DataGrid,
     Button,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     MatMenu,
     MatMenuItem,
     //Directives
@@ -162,7 +168,7 @@ export class ComprobanteEgresoPage implements OnInit {
     });
   }
 
-  onChangeDateRange(event: { from: string; to: string }) {
+  onChangeDateRange(event: DateRangeValue<true>) {
     this.dataSearch.set({
       ...this.dataSearch(),
       fromDate: event.from,

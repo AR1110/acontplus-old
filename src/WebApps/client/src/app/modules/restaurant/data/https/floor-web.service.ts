@@ -6,7 +6,6 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { FloorMapper } from '@restaurant/data/mappers/floor.mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { GetFloorsByEstabIdMapper } from '@restaurant/data/mappers/get-floors-by-estab-id.mapper';
 import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
@@ -16,9 +15,7 @@ import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model'
 export class FloorWebService implements FloorRepository {
   getByEstablishmentId(establishmentId: number): Observable<GetFloorsByEstabIdResponse> {
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establishmentId}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establishmentId}` )
       .pipe(map((response) => GetFloorsByEstabIdMapper.fromJson(response)));
   }
   deleteById(id: number): Observable<ApiResponseLegacy> {
@@ -35,9 +32,7 @@ export class FloorWebService implements FloorRepository {
 
   getByEstab(establecimientoId: number) {
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establecimientoId}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establecimientoId}` )
       .pipe(map((response) => FloorMapper.fromApiGetByEstab(response)));
   }
 

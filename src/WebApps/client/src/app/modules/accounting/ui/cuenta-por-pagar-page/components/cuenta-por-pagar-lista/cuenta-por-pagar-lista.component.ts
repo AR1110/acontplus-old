@@ -18,7 +18,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective } from 'ngx-mask';
 
 // Core Components and Services
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DialogService } from '@core/services/dialog.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
@@ -30,7 +29,14 @@ import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.mo
 import { CuentaPorPagarCuotaModalComponent } from '@accounting/ui/cuenta-por-pagar-page/components/cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 
 // Shared Components, Models, and Pipes
-import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
+import {
+  DataGrid,
+  DataGridColumn,
+  Pagination,
+  Button,
+  DateRangePicker,
+  DateRangeValue
+} from '@acontplus/ng-components';
 
 // Core Models
 import { GroupedEstab } from '@core/models/estab.model';
@@ -59,7 +65,7 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatInputModule,
     MatCheckboxModule,
     NgxMaskDirective,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     SupplierSearchComponent,
     DataGrid,
     Button
@@ -267,7 +273,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
     });
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.update((e) => {
       return {
         ...e,

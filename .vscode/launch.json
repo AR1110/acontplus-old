@@ -9,7 +9,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/WebApps/WebUI/bin/Debug/net10.0/WebUI.dll",
+      "program": "${workspaceFolder}/src/WebApps/WebUI/bin/Debug/net9.0/WebUI.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/WebApps/WebUI",
       "stopAtEntry": false,
@@ -30,9 +30,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Identity/Identity.Api/bin/Debug/net10.0/Identity.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Identity/Identity.API/bin/Debug/net10.0/Identity.API.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.Api",
+      "cwd": "${workspaceFolder}/src/Services/Identity/Identity.API",
       "stopAtEntry": false,
       "serverReadyAction": {
         "action": "openExternally",
@@ -44,7 +44,7 @@
       "justMyCode": false
     },
     {
-      "name": "GatewayApi",
+      "name": "OcelotApi",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
@@ -90,41 +90,13 @@
       "justMyCode": false
     },
     {
-      "name": "PurchasesApi",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Purchases/Purchases.Api/bin/Debug/net10.0/Purchases.Api.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Purchases/Purchases.Api",
-      "stopAtEntry": false,
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "justMyCode": false
-    },
-    {
       "name": "RestaurantApi",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api/bin/Debug/net10.0/Restaurant.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API/bin/Debug/net10.0/Restaurant.API.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.Api",
-      "stopAtEntry": false,
-      "env": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "justMyCode": false
-    },
-    {
-      "name": "BillingApi",
-      "type": "coreclr",
-      "request": "launch",
-      "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Billing/Billing.Api/bin/Debug/net10.0/Billing.Api.dll",
-      "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.Api",
+      "cwd": "${workspaceFolder}/src/Services/Restaurant/Restaurant.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -150,9 +122,9 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Common/Common.Api/bin/Debug/net10.0/Common.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Common/Common.API/bin/Debug/net9.0/Common.API.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Common/Common.Api",
+      "cwd": "${workspaceFolder}/src/Services/Common/Common.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -160,13 +132,97 @@
       "justMyCode": false
     },
     {
-      "name": "AccountingApi",
+      "name": "BillingApi",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/Services/Accounting/Accounting.Api/bin/Debug/net10.0/Accounting.Api.dll",
+      "program": "${workspaceFolder}/src/Services/Billing/Billing.Api/bin/Debug/net10.0/Billing.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/Services/Accounting/Accounting.Api",
+      "cwd": "${workspaceFolder}/src/Services/Billing/Billing.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "PurchasesApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Purchases/Purchases.Api/bin/Debug/net9.0/Purchases.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Purchases/Purchases.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "BarberShopApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/BarberShop/BarberShop.API/bin/Debug/net9.0/BarberShop.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/BarberShop/BarberShop.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "MechanicalApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Mechanical/Mechanical.API/bin/Debug/net9.0/Mechanical.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Mechanical/Mechanical.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "TechnicalSupportApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/TechnicalSupport/TechnicalSupport.API/bin/Debug/net9.0/TechnicalSupport.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/TechnicalSupport/TechnicalSupport.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "VetApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Vet/Vet.API/bin/Debug/net9.0/Vet.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Vet/Vet.API",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "justMyCode": false
+    },
+    {
+      "name": "LoyaltyApi",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Services/Loyalty/Loyalty.API/bin/Debug/net9.0/Loyalty.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Services/Loyalty/Loyalty.API",
       "stopAtEntry": false,
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -177,76 +233,87 @@
       "name": "FrontEnd",
       "type": "node",
       "request": "launch",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": [
-        "run",
-        "start"
-      ],
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
       "cwd": "${workspaceFolder}/src/WebApps/client"
     },
     {
-      "name": "FrontEndRestaurant",
+      "name": "BackOffice",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "start-with-admin"
-      ],
-      "cwd": "${workspaceFolder}/src/WebApps/pos"
+      "runtimeArgs": ["run", "start"],
+      "cwd": "${workspaceFolder}/src/WebApps/backoffice"
     }
   ],
   "compounds": [
     {
       "name": "Basic Profile",
-      "configurations": [
-        "GatewayApi",
-        "IdentityApi",
-        "CommonApi",
-        "FrontEnd",
-        "ConfigurationApi"
-      ],
+      "configurations": ["OcelotApi", "IdentityApi", "CommonApi", "ConfigurationApi", "FrontEnd"],
       "stopAll": true
     },
     {
       "name": "AcontPlus Dev",
       "configurations": [
-        "GatewayApi",
-        "ConfigurationApi",
+        "OcelotApi",
         "IdentityApi",
+        "ConfigurationApi",
         "InventoryApi",
         "BillingApi",
+        "CommonApi",
         "FrontEnd"
       ],
       "stopAll": true
     },
     {
-      "name": "AcontPlus Restaurant",
+      "name": "Profile AcontPlus Restaurant",
       "configurations": [
-        "GatewayApi",
-        "ConfigurationApi",
+        "OcelotApi",
         "IdentityApi",
+        "ConfigurationApi",
         "InventoryApi",
         "RestaurantApi",
         "BillingApi",
         "SalesApi",
-        "LegacyFrontEnd",
-        "FrontEnd",
-        "FrontEndRestaurant"
+        "CommonApi"
       ],
       "stopAll": true
     },
     {
-      "name": "AcontPlus MacOs",
+      "name": "AcontPlus Full",
       "configurations": [
-        "GatewayApi",
-        "ConfigurationApi",
+        "OcelotApi",
         "IdentityApi",
+        "ConfigurationApi",
         "InventoryApi",
         "BillingApi",
         "SalesApi",
         "CommonApi",
-        "AccountingApi"
+        "BillingApi",
+        "PurchasesApi",
+        "RestaurantApi",
+        "FrontEnd"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "All Services",
+      "configurations": [
+        "OcelotApi",
+        "IdentityApi",
+        "ConfigurationApi",
+        "InventoryApi",
+        "BillingApi",
+        "SalesApi",
+        "CommonApi",
+        "BillingApi",
+        "PurchasesApi",
+        "RestaurantApi",
+        "BarberShopApi",
+        "MechanicalApi",
+        "TechnicalSupportApi",
+        "VetApi",
+        "LoyaltyApi"
       ],
       "stopAll": true
     }

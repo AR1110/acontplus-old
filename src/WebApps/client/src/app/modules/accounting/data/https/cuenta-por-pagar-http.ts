@@ -4,7 +4,6 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CuentaPorPagarMapper } from '../mappers/cuenta-por-pagar.mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ComprobanteEgresoLista } from '@accounting/data/models/comprobante-egreso.entity';
 import { HistorialPagoLista } from '@accounting/data/models/historial-pago.model';
 import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
@@ -27,9 +26,7 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
   getDataFilter() {
     const json = GetFilterDataCuentaPorPagarMapper.toJson();
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}`)
       .pipe(map((response) => GetFilterDataCuentaPorPagarMapper.fromJson(response)));
   }
 
@@ -39,9 +36,7 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
       ...obj,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {
@@ -63,9 +58,7 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
       tipo: 5,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {
@@ -87,9 +80,7 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
       idCuentaPorPagar,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {
@@ -110,9 +101,7 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
       idCuentaPorPagar,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           let result = {
@@ -134,14 +123,10 @@ export class CuentaPorPagarHttp implements CuentaPorPagarRepository {
   generarCuotas<T>(obj: T) {
     const params = CuentaPorPagarMapper.toApiGenerarCuota(obj);
     const json = JSON.stringify(params);
-    return this.http.post<ApiResponseLegacy>(`${this.url}${json}`, null, {
-      context: getNoLoader(),
-    });
+    return this.http.post<ApiResponseLegacy>(`${this.url}${json}`, null );
   }
 
   actualizarCuotas<T>(id: number, obj: T) {
-    return this.http.post<ApiResponseLegacy>(`${this.url}${id}`, obj, {
-      context: getNoLoader(),
-    });
+    return this.http.post<ApiResponseLegacy>(`${this.url}${id}`, obj );
   }
 }

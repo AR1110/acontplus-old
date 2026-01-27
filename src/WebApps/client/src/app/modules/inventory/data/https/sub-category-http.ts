@@ -5,7 +5,6 @@ import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-lega
 import { map } from 'rxjs';
 
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { SubCategoryRepository } from '@inventory/data/repositories/sub-category.repository';
 import { SubCategoryMapper } from '@inventory/data/mappers/sub-category-mapper';
 

@@ -7,19 +7,17 @@
       "type": "process",
       "args": [
         "build",
-        "${workspaceFolder}/AcontPlus.sln", // <--- THIS IS KEY!
+        "${workspaceFolder}\\AcontPlus.sln",
         "--nologo",
         "--tl:off",
         "--property:GenerateFullPaths=true",
+        "--property:UseSharedCompilation=false",
         "--property:BuildInParallel=true",
         "/clp:Summary;Verbosity=minimal",
         "/maxcpucount"
       ],
       "problemMatcher": "$msCompile",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
+      "group": { "kind": "build", "isDefault": true },
       "presentation": {
         "reveal": "silent",
         "panel": "dedicated",
@@ -33,38 +31,69 @@
       }
     },
     {
-      "label": "publish (optimized)",
+      "label": "build-specific",
       "command": "dotnet",
       "type": "process",
       "args": [
-        "publish",
-        "${workspaceFolder}/AcontPlus.sln",
+        "build",
+        "${input:projectPath}",
         "--nologo",
-        "--configuration Release",
-        "--property:PublishReadyToRun=true",
-        "--property:PublishTrimmed=true",
-        "--property:EnableCompressionInSingleFile=true",
-        "--self-contained false",
-        "--logger:\"Console;Summary;Verbosity=minimal\""
+        "--configuration",
+        "Debug",
+        "--verbosity",
+        "minimal"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {
-        "reveal": "always",
-        "panel": "new" // Always new panel to avoid output mixing
+        "reveal": "silent",
+        "panel": "dedicated"
       }
     },
     {
-      "label": "watch (hot reload)",
+      "label": "restore",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "restore",
+        "${workspaceFolder}\\AcontPlus.sln",
+        "--disable-parallel",
+        "--force-evaluate",
+        "--verbosity",
+        "minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "clean",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "clean",
+        "${workspaceFolder}\\AcontPlus.sln",
+        "--nologo",
+        "--verbosity",
+        "minimal"
+      ],
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "watch",
       "command": "dotnet",
       "type": "process",
       "args": [
         "watch",
         "--project",
-        "${workspaceFolder}/AcontPlus.sln",
+        "${input:projectPath}",
         "--non-interactive",
-        "--nologo",
-        "--property:HotReloadEnabled=true",
-        "--property:HotReloadProfile=aspnetcore"
+        "--nologo"
       ],
       "problemMatcher": "$msCompile",
       "isBackground": true,
@@ -81,212 +110,89 @@
       }
     },
     {
-      "label": "clean (aggressive)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "clean",
-        "${workspaceFolder}/AcontPlus.sln",
-        "--nologo",
-        "--verbosity minimal",
-        "/t:Clean"
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "echo": false,
-        "reveal": "never"
-      }
-    },
-    {
-      "label": "restore (full)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "restore",
-        "${workspaceFolder}/AcontPlus.sln",
-        "--disable-parallel", // More reliable for large solutions
-        "--force-evaluate", // Force reevaluation of packages
-        "--verbosity minimal"
-      ],
-      "problemMatcher": "$msCompile"
-    },
-    {
-      "label": "docker-compose: up",
+      "label": "npm-install-client",
       "type": "shell",
-      "command": "docker-compose up -d",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      },
-      "group": "build"
-    },
-    {
-      "label": "docker-compose: down",
-      "type": "shell",
-      "command": "docker-compose down",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated"
-      }
-    },
-    {
-      "label": "publish: staging (FolderProfile)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "${workspaceFolder}/AcontPlus.sln",
-        "--configuration",
-        "Release",
-        "/p:PublishProfile=FolderProfile",
-        "--nologo",
-        "/clp:Summary;Verbosity=minimal"
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "publish: production (FolderProfile1)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "${workspaceFolder}/AcontPlus.sln",
-        "--configuration",
-        "Release",
-        "/p:PublishProfile=FolderProfile1",
-        "--nologo",
-        "/clp:Summary;Verbosity=minimal"
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "publish: current project (staging)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "${file}",
-        "--configuration",
-        "Release",
-        "/p:PublishProfile=FolderProfile",
-        "--nologo",
-        "/clp:Summary;Verbosity=minimal"
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "publish: current project (production)",
-      "command": "dotnet",
-      "type": "process",
-      "args": [
-        "publish",
-        "${file}",
-        "--configuration",
-        "Release",
-        "/p:PublishProfile=FolderProfile1",
-        "--nologo",
-        "/clp:Summary;Verbosity=minimal"
-      ],
-      "problemMatcher": "$msCompile",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
-    },
-    {
-      "label": "test-services (macOS/Linux)",
-      "type": "shell",
-      "command": "./.vscode/test-services.sh",
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      },
+      "command": "npm",
+      "args": ["install"],
       "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
-    {
-      "label": "test-services (Windows)",
-      "type": "shell",
-      "command": "powershell",
-      "args": [
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        ".vscode/test-services.ps1"
-      ],
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
+        "cwd": "${workspaceFolder}\\src\\WebApps\\client"
       },
-      "options": {
-        "cwd": "${workspaceFolder}"
-      }
-    },
-    {
-      "label": "run-webui-only",
-      "type": "shell",
-      "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "src/WebApps/WebUI"
-      ],
       "group": "build",
       "presentation": {
         "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      },
-      "options": {
-        "env": {
-          "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+        "panel": "new"
       }
     },
     {
-      "label": "open-browser",
+      "label": "npm-start-client",
       "type": "shell",
-      "command": "open",
-      "args": [
-        "https://localhost:7166"
-      ],
-      "group": "test",
+      "command": "npm",
+      "args": ["run", "start"],
+      "options": {
+        "cwd": "${workspaceFolder}\\src\\WebApps\\client"
+      },
+      "isBackground": true,
       "presentation": {
-        "reveal": "never"
-      },
-      "windows": {
-        "command": "start",
-        "args": [
-          "https://localhost:7166"
-        ]
-      },
-      "linux": {
-        "command": "xdg-open",
-        "args": [
-          "https://localhost:7166"
-        ]
+        "reveal": "always",
+        "panel": "new"
       }
+    },
+    {
+      "label": "npm-install-backoffice",
+      "type": "shell",
+      "command": "npm",
+      "args": ["install"],
+      "options": {
+        "cwd": "${workspaceFolder}\\src\\WebApps\\backoffice"
+      },
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "docker-compose-up",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["up", "--build", "-d"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "docker-compose-down",
+      "type": "shell",
+      "command": "docker-compose",
+      "args": ["down"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "projectPath",
+      "description": "Selecciona el proyecto a compilar",
+      "type": "pickString",
+      "options": [
+        "${workspaceFolder}\\src\\Services\\Identity\\Identity.API\\Identity.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Common\\Common.API\\Common.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Configuracion\\Configuracion.API\\Configuracion.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Configuration\\Configuration.Api\\Configuration.Api.csproj",
+        "${workspaceFolder}\\src\\Services\\Inventario\\Inventario.API\\Inventario.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Inventory\\Inventory.Api\\Inventory.Api.csproj",
+        "${workspaceFolder}\\src\\Services\\Restaurant\\Restaurant.API\\Restaurant.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Facturacion\\FactElect.API\\FactElect.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Ventas\\Ventas.API\\Ventas.API.csproj",
+        "${workspaceFolder}\\src\\Services\\Sales\\Sales.Api\\Sales.Api.csproj",
+        "${workspaceFolder}\\src\\ApiGateways\\Ocelot.Api\\Ocelot.Api.csproj",
+        "${workspaceFolder}\\src\\ApiGateways\\GatewayAcontplus.API\\GatewayAcontplus.API.csproj"
+      ]
     }
   ]
 }

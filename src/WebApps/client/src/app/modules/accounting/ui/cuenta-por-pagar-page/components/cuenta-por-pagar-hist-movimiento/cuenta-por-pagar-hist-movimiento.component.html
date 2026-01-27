@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="'Historial Movimiento'"
-  [loading]="loading()"
-  (close)="closeDialog()"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <acp-data-grid
     [data]="comprobantesEgreso"
     [columns]="columnsDefs"
@@ -129,6 +121,5 @@
       </div>
     </div>
   }
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate />

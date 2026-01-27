@@ -7,7 +7,6 @@ import { CurrencyPipe } from '@angular/common';
 import { NotificacionService } from '@shared/services/notificacion.service';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Button } from '@acontplus/ng-components';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';

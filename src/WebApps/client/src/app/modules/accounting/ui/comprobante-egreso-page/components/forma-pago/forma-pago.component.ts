@@ -1,7 +1,6 @@
 import { Component, computed, inject, model, ChangeDetectionStrategy } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -30,12 +29,13 @@ import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
     MatSelectModule,
     MatDatepickerModule,
     MatAutocompleteModule,
-    MatCustomDialogComponent,
     FormsModule,
     MatSlideToggleModule,
     NgxMaskDirective,
     CitySearchComponent,
     DataGrid,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './forma-pago.component.html',
   providers: [provideNativeDateAdapter()],

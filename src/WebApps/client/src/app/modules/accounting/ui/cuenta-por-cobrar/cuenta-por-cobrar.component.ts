@@ -4,14 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DOC_TYPE, DOC_TYPE_SRI } from '@core/constants/global.constants';
 import { GroupedEstab } from '@core/models/estab.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { isValidField } from '@core/utils/utils';
 
 import { ComprobanteIngresoOpenModalService } from '@accounting/services/comprobante-ingreso-open-modal.service';
-import { Pagination } from '@acontplus/ng-components';
+import { DateRangePicker, DateRangeValue, Pagination } from '@acontplus/ng-components';
 import { forkJoin } from 'rxjs';
 import { formatDateToString } from '@core/utils/date.util';
 import { CuentaPorCobrarUseCase } from '@accounting/data/cuenta-por-cobrar.use-case';
@@ -27,7 +26,7 @@ import { MatButton } from '@angular/material/button';
     FormsModule,
     MatIcon,
     BreadcrumbComponent,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     DynamicCard,
     MatButton,
   ],
@@ -135,7 +134,7 @@ export class CuentaPorCobrarComponent implements OnInit {
     this.getDataFilter();
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.fechaInicio = range.from;
     this.dataSearch.fechaFin = range.to;
     this.getCuentasPorCobrar();

@@ -3,14 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
 import { DataGrid, DataGridColumn, DynamicCard, Button } from '@acontplus/ng-components';
 import { finalize } from 'rxjs';
@@ -38,10 +37,10 @@ import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
     MatNativeDateModule,
     DynamicCard,
     MatDivider,
-    MatCustomDialogComponent,
     DataGrid,
     Button,
     MatTooltip,
+    MatDialogContent,
   ],
   templateUrl: './cuenta-por-pagar-hist-movimiento.component.html',
   styles: ``,

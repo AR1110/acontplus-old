@@ -3,7 +3,6 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import {
   CODE_ESTADO,
   DOC_TYPE,
@@ -24,14 +23,14 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { MatDivider } from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
-import { Button, DynamicCard } from '@acontplus/ng-components';
+import { Button, DateRangePicker, DynamicCard, DateRangeValue } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-cartera-cliente',
   imports: [
     FormsModule,
     BreadcrumbComponent,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     CompanyCustomerSearchComponent,
     MatSelectModule,
     MatTabsModule,
@@ -141,9 +140,9 @@ export class CarteraClienteComponent implements OnInit {
     }
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
-    this.dataSearch.fromDate = range.from;
-    this.dataSearch.toDate = range.to;
+  onDateRangeSelection(event: DateRangeValue<true>) {
+    this.dataSearch.fromDate = event.from;
+    this.dataSearch.toDate = event.to;
   }
 
   clearSearchCustomer() {

@@ -5,7 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MovimientoCajaRepository } from '@accounting/data/repositories/movimiento-caja.repository';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ListMovimientoCajaMapper } from '@accounting/data/mappers/list-movimiento-caja.mapper';
 
 @Injectable({
@@ -22,9 +21,7 @@ export class MovimientoCajaWebRepository extends MovimientoCajaRepository {
   getAll<T>(obj: T) {
     const json = ListMovimientoCajaMapper.toJson(obj);
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}Get?json=${json}` )
       .pipe(map((response) => ListMovimientoCajaMapper.fromJson(response)));
   }
 

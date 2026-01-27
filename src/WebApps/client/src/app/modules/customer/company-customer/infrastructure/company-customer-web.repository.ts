@@ -4,7 +4,6 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { CompanyCustomerRepository } from '@company-customer/domain/company-customer.repository';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { SearchCompanyCustomerParams } from '@company-customer/domain/entities/company-customer.entity';
 import { SearchCompanyCustomerMapper } from '@company-customer/infrastructure/mappers/search-company-customer.mapper';
 import { GetIdCompanyCustomerMapper } from '@company-customer/infrastructure/mappers/get-id-company-customer.mapper';
@@ -36,18 +35,14 @@ export class CompanyCustomerWebRepository implements CompanyCustomerRepository {
 
   getId(id: number, noLoader?: boolean) {
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}GetId/${id}`, {
-        context: noLoader ? getNoLoader() : new HttpContext(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}GetId/${id}` )
       .pipe(map((response) => GetIdCompanyCustomerMapper.fromJson(response)));
   }
 
   search(obj: SearchCompanyCustomerParams) {
     const json = SearchCompanyCustomerMapper.toJson(obj);
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}` )
       .pipe(map((response) => SearchCompanyCustomerMapper.fromJson(response)));
   }
 

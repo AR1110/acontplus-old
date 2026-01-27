@@ -45,7 +45,7 @@ export const routes: Route[] = [
     },
   },
   {
-    path: 'retencion-ats',
+    path: 'retencion-ats-page',
     title: 'Retención ATS',
     loadComponent: () =>
       import('@billing/ui/retencion-ats/retencion-ats.component').then(

@@ -1,7 +1,6 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { errorInterceptor } from '@core/interceptors/error.interceptor';
-import { loaderInterceptor } from '@core/interceptors/loader.interceptor';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { authMainProvider } from '@modules/auth/providers';
 import { commonProviders } from '@modules/common/providers';
@@ -18,15 +17,16 @@ import { settingsInterceptor } from '@core/interceptors/settings-interceptor';
 import { noopInterceptor } from '@core/interceptors/noop-interceptor';
 import { injectSessionInterceptor } from '@core/interceptors/inject-session.interceptor';
 import { DATA_SALE_IOC } from '@sale/data/sale.ioc';
-
+import {spinnerInterceptor} from '@acontplus/ng-infrastructure'
 export const infrastructureProviders = [
   provideHttpClient(
     withInterceptors([
       noopInterceptor,
       injectSessionInterceptor,
       settingsInterceptor,
-      loaderInterceptor,
+      spinnerInterceptor,
       errorInterceptor,
+
     ]),
   ),
   provideAnimationsAsync(),

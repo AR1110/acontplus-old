@@ -4,9 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
-import { TagRepository } from '@inventory/data/repositories/tag.repository';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { TagMapper } from '@inventory/data/mappers/tag.mapper';
 import { BrandRepository } from '@inventory/data/repositories/brand.repository';
 
 @Injectable({
@@ -49,18 +46,14 @@ export class BrandHttp implements BrandRepository {
     return this._http.post<ApiResponseLegacy>(
       `${this._url}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
   put<T>(id: number, data: T) {
     return this._http.put<ApiResponseLegacy>(
       `${this._url}${id}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
 

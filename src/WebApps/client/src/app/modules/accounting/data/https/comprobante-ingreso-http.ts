@@ -6,7 +6,6 @@ import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants'
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 import { ComprobanteIngresoMapper } from '@accounting/data/mappers/comprobante-ingreso-mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { GroupedEstab } from '@core/models/estab.model';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
@@ -27,9 +26,7 @@ export class ComprobanteIngresoHttp extends ComprobanteIngresoRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {

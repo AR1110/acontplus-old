@@ -8,7 +8,6 @@ import Swal from 'sweetalert2';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { isValidField } from '@core/utils/utils';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { AnticipoUseCase } from '@accounting/data/anticipo.use-case';
@@ -18,14 +17,23 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
-import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 
-import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
+import {
+  DataGrid,
+  DataGridColumn,
+  Pagination,
+  Button,
+  DateRangePicker,
+  DateRangeValue
+} from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { finalize } from 'rxjs/operators';
 import { UserRoleStateManager } from '@shared/store/user-role-state-manager';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { DialogService } from '@core/services/dialog.service';
+import {
+  CompanyCustomerSearchComponent
+} from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 
 @Component({
   selector: 'app-anticipo',
@@ -37,8 +45,8 @@ import { DialogService } from '@core/services/dialog.service';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
+    DateRangePicker,
     CompanyCustomerSearchComponent,
-    DateRangeSelectionComponent,
     DataGrid,
     Button,
   ],
@@ -130,7 +138,7 @@ export class AnticipoComponent implements OnInit {
     this.dataSearch.customerId = 0;
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.fromDate = range.from;
     this.dataSearch.toDate = range.to;
     this.getAnticipos();

@@ -1,23 +1,20 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { NotificationService } from '@acontplus/ng-notifications';
 import { CompraHabitual } from '@purchases/data/models/compra-habitual.model';
 import { CompraHabitualService } from '@purchases/services/compra-habitual.service';
 import { DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-compra-habitual-historial-modal',
   imports: [
     DataGrid,
     Button,
-    CustomTableContainerComponent,
     MatIconModule,
-    MatCustomDialogComponent,
+    MatDialogContent,
   ],
   templateUrl: './compra-habitual-historial-modal.component.html',
   styles: ``,
@@ -26,7 +23,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
   private modal = inject(MatDialogRef<CompraHabitualHistorialModalComponent>);
   private compraHabitualSvc = inject(CompraHabitualService);
   private tS = inject(NotificationService);
-  params = inject(MAT_DIALOG_DATA);
+  data = inject(MAT_DIALOG_DATA);
 
   articleName = '';
 
@@ -46,8 +43,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
   isRefresh = false;
 
   ngOnInit() {
-    console.log(this.params);
-    this.articleName = `${this.params.codigo} -> ${this.params.descripcion}`;
+    this.articleName = `${this.data.codigo} -> ${this.data.descripcion}`;
     this.getComprasHabituales();
   }
 
@@ -56,7 +52,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
     this.compraHabitualSvc
       .get({
         tipo: 1,
-        idArticulo: this.params.idArticulo,
+        idArticulo: this.data.idArticulo,
       })
       .subscribe({
         next: (response) => {
@@ -97,7 +93,7 @@ export class CompraHabitualHistorialModalComponent implements OnInit {
   private deleteCH(item: any) {
     try {
       const { idDocumento, idCompraHabitual } = Object.assign(item, {
-        idDocumento: this.params.idDocumento,
+        idDocumento: this.data.idDocumento,
       });
       const params = { idDocumento, id: idCompraHabitual };
 

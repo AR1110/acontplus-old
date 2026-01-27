@@ -1,14 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { NotaEntregaRepository } from '@sale/domain/repositories/nota-entrega.repository';
 import { SALE_PATHS } from '@sale/domain/enums/sale.enum';
-import { GroupedEstab } from '@core/models/estab.model';
-import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { NotaEntregaAdapter } from '@sale/data/nota-entrega.adapter';
 import { NotaEntregaMapper } from '@sale/data/nota-entrega/nota-entrega.mapper';
 
 @Injectable({
@@ -23,9 +19,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       tipo: 3,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(map((response) => NotaEntregaMapper.fromApiDataFilter(response)));
   }
 
@@ -35,9 +29,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       ...obj,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(map((response) => NotaEntregaMapper.fromApiGetAll(response)));
   }
 
@@ -47,9 +39,7 @@ export class NotaEntregaWebRepository implements NotaEntregaRepository {
       id,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(map((response) => NotaEntregaMapper.fromApiDetalleCompleto(response)));
   }
 

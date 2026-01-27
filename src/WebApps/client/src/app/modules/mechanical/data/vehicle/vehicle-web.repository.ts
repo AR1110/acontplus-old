@@ -2,11 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { VehicleRepository } from '@mechanical/domain/repositories/vehicle.repository';
 import { VehicleMapper } from '@mechanical/data/vehicle/vehicle.mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ListVehicleParams } from '@mechanical/domain/models/vehicle.model';
 import { ListVehicleMapper } from '@mechanical/data/vehicle/list-vehicle.mapper';
 
@@ -20,9 +19,7 @@ export class VehicleWebRepository extends VehicleRepository {
   getAll(obj: ListVehicleParams) {
     const json = ListVehicleMapper.toJson(obj);
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}` )
       .pipe(map((response) => ListVehicleMapper.fromJson(response)));
   }
 
@@ -31,9 +28,7 @@ export class VehicleWebRepository extends VehicleRepository {
       tipo: 2,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}` )
       .pipe(map((response) => VehicleMapper.fromApiDataForm(response)));
   }
 
@@ -43,9 +38,7 @@ export class VehicleWebRepository extends VehicleRepository {
       tipo: 3,
     });
     return this.#http
-      .get(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.#url}?json=${json}` )
       .pipe(map((response: any) => VehicleMapper.fromApiGetId(response)));
   }
 

@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="title()"
-  (close)="close()"
-  [align]="'center'"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-grid gap-2">
     <!-- <div class="sticky-top d-flex justify-content-between">
           <span class="h5 fw-bold">Total a pagar</span>
@@ -225,9 +217,9 @@
     }
     <!--END TRANSFERENCIA-->
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
+<mat-dialog-actions>
   @if (!comprobanteEgresoStore.esDoc()) {
     <button
       mat-flat-button
@@ -237,4 +229,4 @@
       Abonar
     </button>
   }
-</ng-template>
+</mat-dialog-actions>

@@ -6,11 +6,8 @@ import { isValidJSON } from '@core/utils/utils';
 import { map } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
-import { VehiclePart } from '@mechanical/domain/models/vehicle-part';
-import { VehiclePartType } from '@mechanical/domain/models/vehicle-part-type';
 import { InspectionRepository } from '@mechanical/domain/repositories/inspection.repository';
 import { InspeccionMapper } from '@mechanical/data/inspection/inspeccion.mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -25,9 +22,7 @@ export class InspectionWebRepository implements InspectionRepository {
       tipo: 1,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}` )
       .pipe(map((response) => InspeccionMapper.getAll(response)));
   }
 

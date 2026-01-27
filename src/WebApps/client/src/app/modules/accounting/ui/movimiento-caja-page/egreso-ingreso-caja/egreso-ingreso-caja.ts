@@ -3,7 +3,14 @@ import { MovimientoCajaUseCase } from '@accounting/data/movimiento-caja.use-case
 import { MovimientoCajaList } from '@accounting/data/models/movimiento-caja.model';
 import { EgresoIngresoDialogComponent } from '@accounting/ui/movimiento-caja-page/egreso-ingreso-caja/egreso-ingreso-dialog/egreso-ingreso-dialog.component';
 import { ACCOUNTING_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
-import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';
+import {
+  Button,
+  DataGrid,
+  DataGridColumn,
+  DateRangePicker,
+  DateRangeValue,
+  Pagination
+} from '@acontplus/ng-components';
 import { NotificationService } from '@acontplus/ng-notifications';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +23,6 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { CompanyCustomerEntity } from '@company-customer/domain/entities/company-customer.entity';
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { DialogService } from '@core/services/dialog.service';
 import { SharedService } from '@core/services/shared.service';
@@ -36,7 +42,7 @@ import Swal from 'sweetalert2';
     MatIconModule,
     MatButtonModule,
     MatMenuModule,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     CompanyCustomerSearchComponent,
     DataGrid,
     Button,
@@ -124,7 +130,7 @@ export class EgresoIngresoCaja implements OnInit {
       });
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.update((prev) => ({
       ...prev,
       fromDate: range.from,

@@ -17,7 +17,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'movimiento-caja-page-page',
+    path: 'movimiento-caja-page',
     title: 'Caja',
     loadComponent: () =>
       import(

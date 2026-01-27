@@ -1,11 +1,10 @@
 import { Component, computed, inject, model, signal, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerInputEvent, MatDatepickerModule } from '@angular/material/datepicker';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import {  MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
@@ -37,8 +36,9 @@ import { isValidField } from '@core/utils/utils';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatCustomDialogComponent,
     NgxMaskDirective,
+    MatDialogContent,
+    MatDialogActions,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './cuenta-por-pagar-cuota-modal.component.html',

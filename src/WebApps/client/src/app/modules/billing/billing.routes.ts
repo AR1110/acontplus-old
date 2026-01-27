@@ -10,9 +10,9 @@ export const routes: Route[] = [
     data: { breadcrumb: 'Facturación' },
   },
   {
-    path: 'ats',
+    path: 'ats-page',
     title: 'Ats',
-    loadComponent: () => import('@billing/ui/ats/ats.component').then((m) => m.AtsComponent),
+    loadComponent: () => import('@billing/ui/ats-page/ats-page').then((m) => m.AtsPage),
     data: {
       breadcrumb: 'Ats',
     },

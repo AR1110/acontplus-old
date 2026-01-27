@@ -1,11 +1,10 @@
 import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-pago-detalle-modal',
-  imports: [MatCustomDialogComponent, DataGrid],
+  imports: [DataGrid, MatDialogContent],
   templateUrl: './pago-detalle-modal.component.html',
   styles: ``,
   changeDetection: ChangeDetectionStrategy.OnPush,

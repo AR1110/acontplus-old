@@ -1,8 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 
@@ -11,9 +9,8 @@ import Swal from 'sweetalert2';
   imports: [
     DataGrid,
     Button,
-    CustomTableContainerComponent,
     MatIconModule,
-    MatCustomDialogComponent,
+    MatDialogContent,
   ],
   templateUrl: './product-hist-purchase-modal.component.html',
   styles: ``,

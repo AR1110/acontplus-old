@@ -14,8 +14,7 @@ import { map, Observable, startWith } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { Button } from '@acontplus/ng-components';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 
 export const _filter = (opt: any[], value: string): string[] => {
   console.log(opt);
@@ -32,7 +31,8 @@ export const _filter = (opt: any[], value: string): string[] => {
     MatAutocompleteModule,
     MatInputModule,
     Button,
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './forma-cobro-modal.component.html',
   styles: ``,

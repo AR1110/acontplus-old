@@ -1,11 +1,5 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [title]="'Historial de Compras Habituales - ' + articleName"
-  (close)="onModalClose()"
-/>
-
-<ng-template #body>
-  <app-custom-table-container [isLoadingResults]="isLoadingResults">
+<mat-dialog-content>
+  <h1>{{'Historial de Compras Habituales - ' + articleName}}</h1>
     <acp-data-grid
       [data]="documentos"
       [columns]="columns"
@@ -14,8 +8,6 @@
         op: templateOp,
       }"
     />
-  </app-custom-table-container>
-
   <ng-template #templateOp let-data>
     <acp-button
       variant="danger"
@@ -24,4 +16,6 @@
       (handleClick)="askToDeleteCH(data)"
     />
   </ng-template>
-</ng-template>
+</mat-dialog-content>
+
+

@@ -5,12 +5,16 @@ import { Category } from '@technical-support/models/category';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { CATEGORY_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Button } from '@acontplus/ng-components';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-category-page-modal',
-  imports: [ReactiveFormsModule, Button, MatCustomDialogComponent],
+  imports: [
+    ReactiveFormsModule,
+    Button,
+    MatDialogContent,
+    MatDialogActions,
+  ],
   templateUrl: './category-modal.component.html',
   styles: ``,
 })
@@ -31,8 +35,6 @@ export class CategoryModalComponent implements OnInit {
     enabled: new FormControl(true),
   });
   data = inject<Category>(MAT_DIALOG_DATA);
-  modalIcon = 'add';
-  modalTitle = 'Registrar Categoría';
   tipos: any[] = [];
   private _categoryHttp = inject(CATEGORY_HTTP_TOKEN);
 
@@ -50,16 +52,11 @@ export class CategoryModalComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data.id > 0) {
-      this.modalIcon = 'edit';
-      this.modalTitle = 'Editar Categoría';
       this.categoryForm.patchValue(this.data);
     }
     this.get();
   }
 
-  onModalClose() {
-    this.modalRef.close();
-  }
 
   onSave() {
     const dataToSave = {

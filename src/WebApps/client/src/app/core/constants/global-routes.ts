@@ -15,7 +15,7 @@ export enum GlobalRoutes {
   //Configuration End
 
   //Facturación start
-  FactElectAts = 'billing/ats',
+  FactElectAts = 'billing/ats-page',
   FactElectGuiaRemision = 'billing/guia-remision',
   //Facturacion end
 
