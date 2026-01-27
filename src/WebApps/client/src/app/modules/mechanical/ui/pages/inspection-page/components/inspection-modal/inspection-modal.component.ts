@@ -204,16 +204,16 @@ export class InspectionModalComponent implements OnInit {
       return;
     }
 
-    const isSelectedStatus = this.vehiclePartTypeNodes().some(vtn =>
-      vtn.nodes.some(n => n.status == 1 || n.status == 2 || n.status == 3),
-    );
-    if (!isSelectedStatus) {
-      this.tS.show({
-        type: 'warning',
-        message: 'Seleccione al menos un tipo de inspección',
-      });
-      return;
-    }
+    // const isSelectedStatus = this.vehiclePartTypeNodes().some(vtn =>
+    //   vtn.nodes.some(n => n.status == 1 || n.status == 2 || n.status == 3),
+    // );
+    // if (!isSelectedStatus) {
+    //   this.tS.show({
+    //     type: 'warning',
+    //     message: 'Seleccione al menos un tipo de inspección',
+    //   });
+    //   return;
+    // }
 
     return true;
   }

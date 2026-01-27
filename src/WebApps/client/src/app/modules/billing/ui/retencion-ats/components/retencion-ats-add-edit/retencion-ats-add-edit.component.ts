@@ -89,7 +89,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
   });
 
   idDocumentoElectronico = 0;
-  //isDisabledEmitionDate: boolean = true;
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
