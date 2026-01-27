@@ -255,9 +255,9 @@
 
                 $scope.releases = releases.payload || [];
 
-                if ($scope.releases.length > 0) {
+                /*if ($scope.releases.length > 0) {
                     $scope.openReleases();
-                }
+                }*/
 
                 if (comprobantesElectronicos && comprobantesElectronicos.length > 0) {
                     modalService.openModalCustom({
