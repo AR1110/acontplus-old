@@ -17,8 +17,8 @@
         <acp-data-grid
           [data]="retenciones()"
           [columns]="columns"
-          [pageIndex]="pagination().pageIndex"
-          [pageSize]="pagination().pageSize"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
           (page)="onPageChanged($event)"
           [cellTemplate]="{
             op: templateOp,
