@@ -384,33 +384,52 @@ BEGIN
 
 			SELECT idBanco,descripcion,codigo FROM dbo.Banco WITH (NOLOCK) WHERE estado = 1
 
-			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1
+			SELECT cd.idCiudad,provincia = pr.descripcion ,cd.descripcion,pr.codigo FROM dbo.Provincia pr WITH (NOLOCK) INNER JOIN dbo.Ciudad cd WITH (NOLOCK) ON cd.idProvincia = pr.idProvincia WHERE cd.estado = 1;
 
-			SELECT cc.idCuentaPorCobrar                 as idDocumento
-                  ,0                                    as idTipoDocumento
-	              ,cc.serieComprobante
-	              ,cc.importeTotal		                as saldo
-	              ,CASE cc.codDoc WHEN '04' THEN 'Nota de Cr�dito'
-                                  WHEN '07' THEN 'Comprobante de Retenci�n'
-                                  WHEN 'A'  THEN 'Anticipo'
-	               END				                    as nomDoc
-	              ,FORMAT(cc.fechaEmision,'MM/dd/yyyy') as fechaEmision
-                  ,cc.codDoc
-            FROM v_CuentaPorCobrar cc WITH (NOLOCK)
-			LEFT JOIN Recepcion.DocumentoRecibido dr WITH (NOLOCK) ON dr.idDocumento            = cc.idDocumento AND cc.codDoc = '07'
-			LEFT JOIN FactElect.DocRelacionado    rd WITH (NOLOCK) ON rd.idDocumentoRecibido    = dr.idDocumento
-            LEFT JOIN dbo.NotaCredito			  nc WITH (NOLOCK) ON nc.idNotaCredito		    = cc.idDocumento AND cc.codDoc = '04'
-		    LEFT JOIN dbo.Factura				  fa WITH (NOLOCK) ON fa.idFactura			    = nc.idFactura
-		    LEFT JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = fa.idDocumentoElectronico
-            WHERE cc.codDoc IN ('A','04','07')
-              AND cc.idCliente = @idCliente
-              AND cc.codEstado = 'PE'
-			  AND (
-                     (cc.codDoc = 'A' AND rd.numDocSustento IS NULL AND de.serieComprobante IS NULL)
-                     OR rd.numDocSustento  = @serieComprobante
-                     OR REPLACE(de.serieComprobante,'-','') = @serieComprobante
-                     OR @serieComprobante IS NULL
-                  )
+            WITH DocumentosBase AS 
+            (
+                -- Filtrar documentos pendientes desde el inicio
+                SELECT cc.idCuentaPorCobrar
+                      ,cc.serieComprobante
+                      ,cc.importeTotal
+                      ,cc.codDoc
+                      ,cc.fechaEmision
+                      ,cc.idDocumento
+                FROM Contabilidad.CuentaPorCobrar cc
+                INNER JOIN dbo.EstadoPago ep ON ep.idEstadoPago = cc.idEstadoPago
+                WHERE cc.codDoc IN ('A', '04', '07')
+                  AND cc.idCliente = @idCliente
+                  AND ep.codigo = 'PE'
+            ),
+            DocumentosRelacionados AS 
+            (
+                SELECT db.idCuentaPorCobrar
+                      ,db.codDoc
+                      ,rd.numDocSustento
+                      ,de.serieComprobante AS serieFacturaRelacionada
+                FROM DocumentosBase					  db
+                LEFT JOIN Recepcion.DocumentoRecibido dr ON dr.idDocumento = db.idDocumento AND db.codDoc = '07'
+                LEFT JOIN FactElect.DocRelacionado    rd ON rd.idDocumentoRecibido = dr.idDocumento
+                LEFT JOIN dbo.NotaCredito             nc ON nc.idNotaCredito = db.idDocumento AND db.codDoc = '04'
+                LEFT JOIN dbo.Factura                 fa ON fa.idFactura = nc.idFactura
+                LEFT JOIN dbo.DocumentoElectronico    de ON de.idDocumentoElectronico = fa.idDocumentoElectronico
+            )
+            SELECT db.idCuentaPorCobrar AS idDocumento
+                  ,0					AS idTipoDocumento
+                  ,db.serieComprobante
+                  ,db.importeTotal		AS saldo
+                  ,CASE db.codDoc WHEN '04' THEN 'Nota de Crédito'
+					              WHEN '07' THEN 'Comprobante de Retención'
+				                  WHEN 'A'  THEN 'Anticipo'
+                   END AS nomDoc
+	              ,FORMAT(db.fechaEmision, 'MM/dd/yyyy') AS fechaEmision
+                  ,db.codDoc
+            FROM DocumentosBase				 db
+            LEFT JOIN DocumentosRelacionados dr ON dr.idCuentaPorCobrar = db.idCuentaPorCobrar
+            WHERE @serieComprobante IS NULL
+               OR (db.codDoc = 'A' AND dr.numDocSustento IS NULL AND dr.serieFacturaRelacionada IS NULL)
+               OR dr.numDocSustento = @serieComprobante
+               OR REPLACE(dr.serieFacturaRelacionada, '-', '') = @serieComprobante;
 
             SELECT idEstadoPago ,descripcion ,codigo FROM dbo.EstadoPago WHERE estado = 1 AND codigo IN ('PE','PP','CBR')
 
@@ -459,7 +478,9 @@ BEGIN
 			WHERE cc.idCuentaPorCobrar = @idCuentaPorCobrar
               AND ep.codigo IN ('PP','PE')
 
-            SELECT TOP 1 tipoConfig,interes,configDeuda FROM Config.v_Sistema_Ventas WITH (NOLOCK) WHERE idEntidad = @idEntidad
+            SELECT cast (0 as bit) as tipoConfig
+                  ,cast (0 as bit) as interes
+                  ,cast (0 as bit) as configDeuda 
 
 			RETURN
         END

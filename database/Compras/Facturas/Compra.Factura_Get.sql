@@ -201,7 +201,9 @@ BEGIN
 	        WHERE idEntidad = @idEntidad AND estado = 1
 	        ORDER BY idCategoriaCompra DESC
             
-            SELECT Id as idSustentoTributario, Codigo + ' - ' + Descripcion  as descripcion FROM Sri.SustentoTributario WITH (NOLOCK) WHERE [Enabled] = 1
+            SELECT Id as idSustentoTributario, Codigo + ' - ' + Descripcion  as descripcion FROM Sri.SustentoTributario WITH (NOLOCK)
+            WHERE [Enabled] = 1
+              AND Codigo in ('02','04','05','07','08','14','15','00') 
 
             SELECT * FROM Contabilidad.Subcategory WITH (NOLOCK) WHERE CompanyId = @idEntidad AND [Enabled] = 1
 

@@ -72,6 +72,7 @@ BEGIN
               ,md.[Description]
               ,CONVERT(NUMERIC(18,2), md.Quantity) as quantity
               ,CONVERT(NUMERIC(18,2), md.Price)    as price
+              ,CONVERT(NUMERIC(18,2), md.TaxValue) as taxValue
               ,CONVERT(NUMERIC(18,2), md.Total)    as totalDetail
               ,md.Obs
               ,md.Medida                           as medida

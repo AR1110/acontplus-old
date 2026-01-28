@@ -22,10 +22,10 @@ SELECT tr.idTransaccion
       ,dt.precioCostoFraccionado
       ,dt.AjusteId                                                                  as particion
       ,dt.saldo
-      ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.cantidad END, 0) as cantidadEntrada
-	  ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.cantidad END, 0)                    as cantidadSalida
-      ,ISNULL(CASE WHEN tt.codigo = 'E' OR tt.codigo = 'A' THEN dt.total END, 0)    as totalEntrada
-      ,ISNULL(CASE WHEN tt.codigo = 'S' THEN dt.total END, 0)                       as totalSalida 
+      ,ISNULL(CASE WHEN dt.cantidadTransaccion > 0 THEN dt.cantidad END, 0) as cantidadEntrada
+	  ,ISNULL(CASE WHEN dt.cantidadTransaccion < 0 THEN dt.cantidad END, 0) as cantidadSalida
+      ,ISNULL(CASE WHEN dt.cantidadTransaccion > 0 THEN dt.total END, 0)    as totalEntrada
+      ,ISNULL(CASE WHEN dt.cantidadTransaccion < 0 THEN dt.total END, 0)    as totalSalida 
       ,ar.idSubFamilia
 	  ,tt.codigo                                                                    as codTransaccion
 	  ,tt.descripcion                                                               as transaccion
