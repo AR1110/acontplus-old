@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="title()"
-  (close)="close()"
-  [align]="'center'"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-grid gap-2">
     <!-- <div class="sticky-top d-flex justify-content-between">
           <span class="h5 fw-bold">Total a pagar</span>
@@ -16,13 +8,14 @@
         </div> -->
 
     @if (comprobanteEgresoStore.esDoc()) {
-      <app-mat-dynamic-table
-        [templateOp]="templateOp"
-        [tableData]="comprobanteEgresoStore.documentos()"
-        [visibleColumns]="columns"
-        [columnDefinitions]="columnsDefs"
+      <acp-data-grid
+        [data]="comprobanteEgresoStore.documentos()"
+        [columns]="columnsDefs"
+        [cellTemplate]="{
+          op: opTpl,
+        }"
       />
-      <ng-template #templateOp let-item="item">
+      <ng-template #opTpl let-data>
         <button mat-icon-button aria-hidden="false" matTooltip="Ver detalle">
           <mat-icon>visibility</mat-icon>
         </button>
@@ -73,7 +66,7 @@
               mask="separator.3"
               thousandSeparator=","
               decimalMarker="."
-              onclick="select();"
+              onclick="select()"
             />
           </mat-form-field>
         </div>
@@ -92,7 +85,7 @@
               matInput
               class="text-center"
               [(ngModel)]="comprobanteEgresoStore.dataFormaPago().nro"
-              onclick="select();"
+              onclick="select()"
             />
           </mat-form-field>
         </div>
@@ -103,7 +96,7 @@
               matInput
               class="text-center"
               [(ngModel)]="comprobanteEgresoStore.dataFormaPago().referencia"
-              onclick="select();"
+              onclick="select()"
             />
           </mat-form-field>
         </div>
@@ -119,7 +112,7 @@
               matInput
               class="text-center"
               [(ngModel)]="comprobanteEgresoStore.dataFormaPago().lote"
-              onclick="select();"
+              onclick="select()"
             />
           </mat-form-field>
         </div>
@@ -131,7 +124,7 @@
               matInput
               class="text-center"
               [(ngModel)]="comprobanteEgresoStore.dataFormaPago().aprobacion"
-              onclick="select();"
+              onclick="select()"
             />
           </mat-form-field>
         </div>
@@ -224,9 +217,9 @@
     }
     <!--END TRANSFERENCIA-->
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
+<mat-dialog-actions>
   @if (!comprobanteEgresoStore.esDoc()) {
     <button
       mat-flat-button
@@ -236,4 +229,4 @@
       Abonar
     </button>
   }
-</ng-template>
+</mat-dialog-actions>

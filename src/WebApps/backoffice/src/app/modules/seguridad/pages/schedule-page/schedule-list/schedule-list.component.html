@@ -1,0 +1,74 @@
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Opciones</th>
+            <th>Día</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of schedules; track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>
+                <div style="display: inline-block">
+                  <button
+                    mat-button
+                    [matMenuTriggerFor]="actionMenu"
+                    class="mat-small"
+                    color="primary"
+                    aria-label="Actions menu"
+                  >
+                    <mat-icon>menu</mat-icon>
+                  </button>
+
+                  <mat-menu #actionMenu="matMenu">
+                    <button mat-menu-item (click)="onUpdate(item)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Editar</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </td>
+              <td>{{ item.day }}</td>
+              <td>{{ item.startTime }}</td>
+              <td>{{ item.endTime }}</td>
+              <td>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="schedule_{{ item.scheduleId }}"
+                    [checked]="item.isActive"
+                    (change)="setStatus(item)"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="schedule_{{ item.scheduleId }}"
+                  ></label>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <h5>No Records</h5>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

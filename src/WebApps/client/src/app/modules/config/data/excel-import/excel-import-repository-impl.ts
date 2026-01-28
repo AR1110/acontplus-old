@@ -2,10 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
 import { HttpClient } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ExcelImportRepository } from '@modules/config/domain/repositories/excel-import.repository';
-import { ImportacionResponse } from '@modules/config/domain/models/importacion.model';
+import { ExcelImportRepository } from '@modules/config/data/repositories/excel-import.repository';
+import { ImportacionResponse } from '@modules/config/data/models/importacion.model';
 
 @Injectable({
   providedIn: 'root',

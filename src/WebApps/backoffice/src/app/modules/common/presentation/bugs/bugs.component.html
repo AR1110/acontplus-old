@@ -1,0 +1,28 @@
+<app-breadcrumb />
+
+<acp-mat-dynamic-card>
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+  >
+    <div class="col">
+      <div class="hstack gap-2"></div>
+    </div>
+    <div class="col">
+      <div class="d-flex flex-row gap-1 justify-content-end">
+        <button mat-icon-button (click)="refresh()" [disabled]="loading">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <acp-mat-dynamic-table
+    [tableData]="dataSource"
+    [columnDefinitions]="columnsDefs"
+    [visibleColumns]="columns"
+    [paginationConfig]="bugsPagination"
+    [enablePagination]="true"
+    (pageEvent)="handlePageEvent($event)"
+  >
+  </acp-mat-dynamic-table>
+</acp-mat-dynamic-card>

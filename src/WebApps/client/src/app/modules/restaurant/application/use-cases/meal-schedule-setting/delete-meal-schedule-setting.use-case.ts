@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
-import { MealScheduleSettingRepository } from '@restaurant/domain/repositories/meal-schedule-setting.repository';
+import { MealScheduleSettingRepository } from '@restaurant/data/repositories/meal-schedule-setting.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export interface DeleteMealScheduleSettingParams {

@@ -1,9 +1,9 @@
 import { Injectable, Inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { DocConfig } from '@modules/config/domain/models/doc-config.model';
+import { DocConfig } from '@modules/config/data/models/doc-config.model';
 import { Observable } from 'rxjs';
-import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
+import { DocConfigRepository } from '@modules/config/data/repositories/doc-config.repository';
 
 @Injectable({
   providedIn: 'root',

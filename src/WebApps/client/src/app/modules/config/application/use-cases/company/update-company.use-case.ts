@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
-import { CompanyList } from '@modules/config/domain/models/company.model';
-import { CompanyRepository } from '@modules/config/domain/repositories/company.repository';
+import { CompanyList } from '@modules/config/data/models/company.model';
+import { CompanyRepository } from '@modules/config/data/repositories/company.repository';
 import { Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 

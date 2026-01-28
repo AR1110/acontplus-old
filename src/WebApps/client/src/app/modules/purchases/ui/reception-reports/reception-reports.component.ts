@@ -1,24 +1,24 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
-import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
-import { TipoDoc } from '@core/models/tipo-doc.model';
-import { REPORT_CODE, DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
-import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
-import { isValidField } from '@core/utils/utils';
-import { SharedService } from '@core/services/shared.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
-import { FormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { Subcategory } from '@accounting/data/models/subcategory';
-import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { formatDateToString } from '@core/utils/date.util';
+import { PURCHASE_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DynamicCard } from '@acontplus/ng-components';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { DOC_TYPE_SRI, REPORT_FORMAT } from '@core/constants/global.constants';
+import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { isValidField } from '@core/utils/utils';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
+import { RECEIVED_DOCUMENT_HTTP_TOKEN } from '@purchases/data/purchases-token';
+import { UserSearchComponent } from '@shared/components/user-search/user-search.component';
 
 type EstabSelect = Omit<EstablecimientoSelectHtmlOnly, 'predeterminado'>;
 type TipoDocSelect = Omit<TipoDoc, 'idTipoDocumento' | 'codigo'>;
@@ -75,8 +75,8 @@ export class ReceptionReportsComponent implements OnInit {
     },
   ];
   private docReceivedSvc = inject(RECEIVED_DOCUMENT_HTTP_TOKEN);
-  private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
+  private reportFacade = inject(ReportFacade);
 
   ngOnInit() {
     this.docReceivedSvc.getDataFilter().subscribe((response) => {
@@ -131,21 +131,21 @@ export class ReceptionReportsComponent implements OnInit {
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.NC)
       return {
         tipo: 3,
-        codigo: REPORT_CODE.RRNC,
+        codigo: PURCHASE_CODE_REPORT.RRNC,
       };
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.R)
       return {
         tipo: 4,
-        codigo: REPORT_CODE.RRG,
+        codigo: PURCHASE_CODE_REPORT.RRG,
       };
     if (this.dataSearch.codDoc === DOC_TYPE_SRI.ND)
       return {
         tipo: 5,
-        codigo: REPORT_CODE.RRND,
+        codigo: PURCHASE_CODE_REPORT.RRND,
       };
     return {
       tipo: 2,
-      codigo: REPORT_CODE.RRF,
+      codigo: PURCHASE_CODE_REPORT.RRF,
     }; //Factura por defecto
   }
 
@@ -186,16 +186,11 @@ export class ReceptionReportsComponent implements OnInit {
       subcategoryId: this.dataSearch.subcategoryId,
     };
 
-    const parameters = {
-      reportParams: JSON.stringify({
-        hasParams: false,
-        codigo,
-        format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(dataParms),
-    };
-
-    this.sharedSvc.getReport({ data: parameters, format: format });
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: codigo,
+      data: dataParms,
+      format,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 }

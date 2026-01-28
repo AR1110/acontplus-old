@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import { PrintConsumptionResponse } from '@restaurant/domain/models/meal-consumption';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
+import { PrintConsumptionResponse } from '@restaurant/data/models/meal-consumption';
 
 export interface PrintMealConsumptionRequest {
   id: number;

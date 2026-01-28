@@ -7,7 +7,12 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogContent,
+  MatDialogActions,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,7 +21,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import Swal from 'sweetalert2';
 
 //components
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { Button } from '@acontplus/ng-components';
 import { InventoryAdjustmentSearchAdvanced } from '@inventory/ui/inventory-adjustment/inventory-adjustment-search-advanced/inventory-adjustment-search-advanced';
 
@@ -37,7 +41,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 @Component({
   selector: 'app-inventory-adjustment-add-edit',
   imports: [
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
     Button,
     MatFormFieldModule,
     MatInputModule,
@@ -453,18 +458,23 @@ export class InventoryAdjustmentAddEditComponent implements OnInit {
     });
   }
 
-  openSearchAdvanced(): void {
-    const dialogRef = this.inventoryAdjustmentSvc.dialogSvc.open(
-      InventoryAdjustmentSearchAdvanced,
+  async openSearchAdvanced(): Promise<void> {
+    const ref = await this.inventoryAdjustmentSvc.dialogSvc.openInWrapper(
       {
-        size: 'xl',
+        component: InventoryAdjustmentSearchAdvanced,
+        title: 'Búsqueda Avanzada',
+        icon: 'search',
+        showCloseButton: true,
         data: {
           warehouseId: this.adjustmentForm.getRawValue().warehouseId,
         },
       },
+      {
+        size: 'xxl',
+      },
     );
 
-    dialogRef.subscribe((result) => {
+    ref.afterClosed().subscribe((result) => {
       if (!this.isValidResult(result)) {
         return;
       }

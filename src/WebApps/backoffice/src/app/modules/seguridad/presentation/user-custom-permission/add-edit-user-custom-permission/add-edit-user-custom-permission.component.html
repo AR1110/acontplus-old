@@ -1,0 +1,110 @@
+<mat-card-content>
+  <div class="d-grid gap-2">
+    <div
+      class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Menú</mat-label>
+          <mat-select
+            placeholder="..."
+            [(ngModel)]="dataForm.menuId"
+            (selectionChange)="changeMenu()"
+          >
+            <mat-option>
+              <ngx-mat-select-search
+                (keyup)="filterMenus($event)"
+                [placeholderLabel]="'Buscar'"
+              ></ngx-mat-select-search>
+            </mat-option>
+
+            @for (item of filteredMenus(); track $index) {
+              <mat-option [value]="item.id">
+                {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>SubMenú</mat-label>
+          <mat-select placeholder="..." [(ngModel)]="dataForm.menuId">
+            <mat-option>
+              <ngx-mat-select-search
+                (keyup)="filterSubMenus($event)"
+                [placeholderLabel]="'Buscar'"
+              ></ngx-mat-select-search>
+            </mat-option>
+
+            @for (item of filteredSubMenus(); track $index) {
+              <mat-option [value]="item.id">
+                {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-form-field class="w-100">
+      <mat-label>Acción</mat-label>
+      <mat-select placeholder="..." [(ngModel)]="dataForm.actionId">
+        <mat-option>
+          <ngx-mat-select-search
+            (keyup)="filterActions($event)"
+            [placeholderLabel]="'Buscar'"
+          ></ngx-mat-select-search>
+        </mat-option>
+
+        @for (item of filteredActions(); track $index) {
+          <mat-option [value]="item.id">
+            {{ item.description || item.name }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <div
+      class="row row-cols-1 row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-1 row-cols-sm-1"
+    >
+      <div class="col">
+        <mat-button-toggle-group
+          name="securityType"
+          [(ngModel)]="dataForm.securityType"
+          aria-label="Font Style"
+        >
+          <mat-button-toggle [value]="null">Ninguno</mat-button-toggle>
+          <mat-button-toggle [value]="1">Requiere Clave</mat-button-toggle>
+          <mat-button-toggle [value]="2"
+            >Requiere Autorización</mat-button-toggle
+          >
+        </mat-button-toggle-group>
+      </div>
+      <div class="col d-flex justify-content-center">
+        @if (isUpdate() && !params.isActive) {
+          <mat-slide-toggle [(ngModel)]="dataForm.isActive">
+            {{dataForm.status?'Activo': 'Inactivo}}
+          </mat-slide-toggle>
+        }
+      </div>
+    </div>
+  </div>
+</mat-card-content>
+
+<mat-dialog-actions>
+  <ng-template #footer>
+    <acp-mat-theme-button
+      variant="success"
+      title="Guardar"
+      icon="save"
+      (handleClick)="save()"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      title="Cancelar"
+      icon="close"
+      (handleClick)="close()"
+    ></acp-mat-theme-button>
+  </ng-template>
+</mat-dialog-actions>

@@ -1,0 +1,64 @@
+<a
+  mat-list-item
+  class="menu-item"
+  [routerLink]="routeHistory() +'/'+item().route"
+  (click)=" nestedMenuOpen.set(!nestedMenuOpen())"
+  routerLinkActive="menu-selected-item"
+  #rla="routerLinkActive"
+  [activated]="rla.isActive"
+  [style.--mat-list-list-item-leading-icon-start-space]="indentation()"
+>
+  @if (item().icon) {
+    <mat-icon
+      matListItemIcon
+      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
+    >
+      {{item().icon}}
+    </mat-icon>
+  }@else{
+    <mat-icon
+      matListItemIcon
+      [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'"
+    >
+      keyboard_arrow_right
+    </mat-icon>
+  }
+  @if (!collapsed()) {
+    <span matListItemTitle>{{item().label}}</span>
+  } @if (item().subItems) {
+  <span matListItemMeta>
+    @if (nestedMenuOpen()) {
+      <mat-icon>expand_less</mat-icon>
+    }@else{
+      <mat-icon>expand_more</mat-icon>
+    }
+  </span>
+}
+</a>
+
+@if (item().subItems && nestedMenuOpen()) {
+  <div @expandContractMenu>
+    @for (subItem of item().subItems; track $index){
+      <app-menu-item
+        [item]="subItem"
+        [collapsed]="collapsed()"
+        [routeHistory]="routeHistory()+'/'+item().route"
+      />
+      <!--      <a mat-list-item class="menu-item"-->
+        <!--         [class.indented]="!collapsed()"-->
+        <!--         [routerLink]="item().route+'/'+subItem.route"-->
+        <!--         routerLinkActive-->
+        <!--         #rla="routerLinkActive"-->
+        <!--         [activated]="rla.isActive"-->
+        <!--      >-->
+        <!--        <mat-icon matListItemIcon-->
+        <!--                  [fontSet]="rla.isActive?'material-icons':'material-icons-outlined'">-->
+        <!--          {{subItem.icon}}-->
+        <!--        </mat-icon>-->
+        <!--        @if (!collapsed()) {-->
+        <!--          <span matListItemTitle>{{subItem.label}}</span>-->
+        <!--        }-->
+        <!--      </a>-->
+    }
+  </div>
+}

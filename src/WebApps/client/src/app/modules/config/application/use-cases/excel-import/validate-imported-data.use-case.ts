@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ExcelImportRepository } from '@modules/config/domain/repositories/excel-import.repository';
+import { ExcelImportRepository } from '@modules/config/data/repositories/excel-import.repository';
 import { Observable } from 'rxjs';
 
 @Injectable({

@@ -92,6 +92,14 @@
         title="Reporte Detalle Control Caja"
       />
     }
+    <acp-button
+      type="button"
+      icon="view_list"
+      variant="primary"
+      matStyle="icon"
+      (handleClick)="openModalReporteFiltroDetalleCaja(data)"
+      title="Reporte Detalle Control Caja"
+    />
 
     @if (!data.estado) {
       <acp-button
@@ -118,3 +126,13 @@
     }
   </ng-template>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button
+    type="button"
+    icon="close"
+    variant="dark"
+    matStyle="filled"
+    text="Cerrar"
+    (handleClick)="close()"
+  />
+</mat-dialog-actions>

@@ -1,0 +1,92 @@
+<app-breadcrumb />
+
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+      <div class="col-6 justify-content-start">
+        <div class="d-flex justify-content-start">
+          <span class="form-group pull-left page-size form-inline">
+            <select
+              class="form-select control-color"
+              [(ngModel)]="pagination.pageSize"
+              (change)="changePageSize()"
+            >
+              @for (item of pagination.pageSizeOptions; track $index) {
+                <option [ngValue]="item">{{ item }}</option>
+              }
+            </select>
+          </span>
+
+          <span class="form-group pull-left page-size form-inline">
+            <button
+              type="button"
+              class="btn btn-secondary m-l-5"
+              (click)="getAll()"
+            >
+              <i class="ti-reload"></i>
+            </button>
+          </span>
+        </div>
+      </div>
+
+      <div class="col-6 d-flex justify-content-end">
+<!--        <ngb-pagination-->
+<!--          [collectionSize]="pagination.totalRecords"-->
+<!--          [(page)]="pagination.pageIndex"-->
+<!--          [maxSize]="pagination.maxSize"-->
+<!--          [pageSize]="pagination.pageSize"-->
+<!--          [rotate]="true"-->
+<!--          (pageChange)="pageChanged()"-->
+<!--          [boundaryLinks]="true"-->
+<!--        />-->
+      </div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto">
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>N°</th>
+            <th>Op.</th>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>%</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of porcentajesRetIva; track $index) {
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-info btn-sm"
+                  (click)="openDialog(item)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+              <td>{{ item.codigo }}</td>
+              <td>{{ item.descripcion }}</td>
+              <td>{{ item.porcentaje }}</td>
+              <td>
+                <mat-slide-toggle
+                  id="status"
+                  (change)="putStates(item)"
+                  [(ngModel)]="item.estado"
+                ></mat-slide-toggle>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

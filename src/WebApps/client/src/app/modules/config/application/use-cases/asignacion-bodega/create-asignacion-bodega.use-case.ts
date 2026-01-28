@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
-import { AsignacionBodegaRepository } from '@modules/config/domain/repositories/asignacion-bodega.repository';
+import { AsignacionBodegaRepository } from '@modules/config/data/repositories/asignacion-bodega.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { AsignacionBodegaList } from '@modules/config/domain/models/user-customer/asignacion-bodega.model';
+import { AsignacionBodegaList } from '@modules/config/data/models/user/asignacion-bodega.model';
 
 @Injectable({
   providedIn: 'root',

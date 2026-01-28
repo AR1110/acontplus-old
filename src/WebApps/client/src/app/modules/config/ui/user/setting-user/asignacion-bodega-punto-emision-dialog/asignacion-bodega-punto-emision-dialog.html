@@ -1,0 +1,81 @@
+<mat-dialog-content>
+  <div class="d-grid gap-2">
+    <acp-dynamic-card [isHeaderVisible]="true" [cardSubtitle]="'Puntos de Emisión'">
+      <acp-data-grid
+        [data]="dataSourcePuntoEmision()"
+        [columns]="columnsDefsPuntoEmision"
+        [cellTemplate]="{
+          op: templateOpPuntoEmision,
+          defaultPtoEmi: templatePuntoEmisionDefault,
+        }"
+      />
+
+      <ng-template #templateOpPuntoEmision let-data>
+        @if (data.idPtoEmi_Asig > 0) {
+          <acp-button
+            variant="danger"
+            icon="delete_outline"
+            matStyle="icon"
+            (handleClick)="addPuntoEmision(data)"
+          />
+        } @else {
+          <acp-button
+            variant="success"
+            icon="save"
+            matStyle="icon"
+            (handleClick)="addPuntoEmision(data)"
+          />
+        }
+      </ng-template>
+
+      <ng-template #templatePuntoEmisionDefault let-data>
+        @if (data.estado) {
+          <mat-slide-toggle
+            [(ngModel)]="data.defaultPtoEmi"
+            (change)="onChangePuntoEmisionDefault(data)"
+          />
+        }
+      </ng-template>
+    </acp-dynamic-card>
+
+    <acp-dynamic-card [isHeaderVisible]="true" [cardSubtitle]="'Bodegas'">
+      <acp-data-grid
+        [data]="dataSourceBodega()"
+        [columns]="columnsDefsBodega"
+        [cellTemplate]="{
+          op: templateOpBodega,
+          defaultBodga: templateDefaultBodega,
+        }"
+      />
+
+      <ng-template #templateOpBodega let-data>
+        @if (data.idBodeg_Asig > 0) {
+          <acp-button
+            variant="danger"
+            icon="delete_outline"
+            matStyle="icon"
+            (handleClick)="addBodega(data)"
+          />
+        } @else {
+          <acp-button
+            variant="success"
+            icon="save"
+            matStyle="icon"
+            (handleClick)="addBodega(data)"
+          />
+        }
+      </ng-template>
+
+      <ng-template #templateDefaultBodega let-data>
+        @if (data.estado) {
+          <mat-slide-toggle
+            [(ngModel)]="data.defaultBodga"
+            (change)="onChangeBodegaDefault(data)"
+          />
+        }
+      </ng-template>
+    </acp-dynamic-card>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions />

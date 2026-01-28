@@ -65,8 +65,8 @@ export class RouteMigrationService {
     // Mapeo de rutas legacy a rutas Angular modernas
     const mappings: Record<string, string> = {
       // Ejemplos de mapeo:
-      // 'old/sale-page': 'sales/invoice',
-      // 'old/customer-page': 'customer/company-customer',
+      // 'old/sale-page': 'sales/invoice-page',
+      // 'old/customer-page': 'customer/company-page-customer',
     };
 
     return mappings[legacyRoute] ?? null;

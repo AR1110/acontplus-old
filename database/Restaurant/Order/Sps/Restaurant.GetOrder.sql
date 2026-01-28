@@ -45,6 +45,8 @@ BEGIN
            ,@IsFinished BIT
            ,@StartDate DATETIME2
            ,@EndDate DATETIME2
+           ,@IsPending BIT
+           ,@IsDeleted BIT
 
     BEGIN TRY
         --> Data Json
@@ -59,6 +61,8 @@ BEGIN
                       ,@TableId         = TableId
                       ,@CreatedByUserId = createdByUserId
                       ,@IsFinished      = isFinished
+                      ,@IsPending       = isPending
+                      ,@IsDeleted       = isDeleted
                 FROM OPENJSON(@Filters)
                 WITH
                 (
@@ -71,6 +75,8 @@ BEGIN
                    ,tableId         INT
                    ,createdByUserId INT
                    ,isFinished      BIT
+                   ,isPending       BIT
+                   ,isDeleted       BIT
                 )
             END
 
@@ -130,10 +136,20 @@ BEGIN
                 SET @WhereClause = @WhereClause + 'AND od.CreatedByUserId = @CreatedByUserId '
             END
 
+        IF @IsPending = 1
+            BEGIN
+                SET @WhereClause = @WhereClause + 'AND od.IsActive = 1 AND od.isFinished != 1 AND od.isDivided != 1 ' 
+            END 
+
         IF @IsFinished = 1
             BEGIN
-                SET @WhereClause = @WhereClause + 'AND ro.IsFinished = @IsFinished '
+                SET @WhereClause = @WhereClause + 'AND od.IsFinished = @IsFinished '
             END
+
+         IF @IsDeleted = 1
+            BEGIN
+                SET @WhereClause = @WhereClause + 'AND od.IsDeleted = @IsDeleted '
+            END 
 
         SET @Params = '@idEntidad       INT
                       ,@PuntoEmisionId  INT
@@ -142,6 +158,7 @@ BEGIN
                       ,@StartDate       DATETIME2
                       ,@EndDate         DATETIME2
                       ,@IsFinished      BIT
+                      ,@IsDeleted       BIT
                       ,@SearchTerm      VARCHAR(100)
                       ,@Offset          INT
                       ,@PageSize        INT
@@ -195,6 +212,7 @@ BEGIN
            ,@StartDate
            ,@EndDate
            ,@IsFinished
+           ,@IsDeleted
            ,@SearchTerm
            ,@Offset
            ,@PageSize

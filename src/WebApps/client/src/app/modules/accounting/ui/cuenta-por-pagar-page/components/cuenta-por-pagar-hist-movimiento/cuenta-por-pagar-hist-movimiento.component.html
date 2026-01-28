@@ -1,116 +1,125 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="'Historial Movimiento'"
-  [loading]="loading()"
-  (close)="closeDialog()"
-/>
-
-<ng-template #containerTemplate>
-  <app-mat-dynamic-table
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [tableData]="comprobantesEgreso.data"
-    [expandedDetail]="expandedDetail"
-    [showExpand]="true"
-    (showExpanded)="onShowExpanded($event)"
-    (hideExpanded)="onHideExpanded()"
-    [templateOp]="templateOp"
+<mat-dialog-content>
+  <acp-data-grid
+    [data]="comprobantesEgreso"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: opTpl,
+      expand: expandTpl,
+    }"
+    (rowClick)="onRowClick($event)"
   />
 
-  <ng-template #expandedDetail let-row="row">
-    <div
-      class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2 justify-content-center m-2 p-2"
-    >
-      @for (item of historialPagos(); track $index) {
-        <div class="col">
-          <acp-dynamic-card [cardSubtitle]="row.serieComprobante" [isHeaderVisible]="true">
-            <div headerActions class="d-flex">
-              <button
-                mat-icon-button
-                (click)="openPagoDetalle(item)"
-                matTooltip="Historial de pagos"
+  <ng-template #opTpl let-data>
+    <acp-button
+      variant="info"
+      icon="download"
+      matStyle="icon"
+      (handleClick)="downloadDocument(data)"
+    />
+    <acp-button
+      variant="danger"
+      icon="delete"
+      matStyle="icon"
+      (handleClick)="deleteDocument(data)"
+    />
+  </ng-template>
+
+  <ng-template #expandTpl let-data>
+    <acp-button
+      variant="secondary"
+      icon="expand_more"
+      matStyle="icon"
+      (handleClick)="toggleExpand(data)"
+    />
+  </ng-template>
+
+  @if (historialPagos().length > 0) {
+    <div class="mt-3">
+      <h6>Historial de Pagos</h6>
+      <div
+        class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2 justify-content-center m-2 p-2"
+      >
+        @for (item of historialPagos(); track $index) {
+          <div class="col">
+            <acp-dynamic-card>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0">Pago {{ $index + 1 }}</h6>
+                <acp-button
+                  variant="info"
+                  icon="visibility"
+                  matStyle="icon"
+                  (handleClick)="openPagoDetalle(item)"
+                  matTooltip="Ver detalles del pago"
+                />
+              </div>
+
+              <div
+                class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
               >
-                <mat-icon>visibility</mat-icon>
-              </button>
-            </div>
+                <div class="d-flex flex-column">
+                  <div class="vstack">
+                    <small class="fw-semibold">Fecha Emisión</small>
+                    <small>{{ item.fechaEmision }}</small>
+                  </div>
+                  <div class="vstack">
+                    <small class="fw-semibold">Forma de Pago</small>
+                    <small>{{ item.nombreFormaPago }}</small>
+                  </div>
 
-            <div
-              class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
-            >
-              <div class="d-flex flex-column">
-                <div class="vstack">
-                  <small class="fw-semibold">Fecha Emisión</small>
-                  <small>{{ item.fechaEmision }}</small>
-                </div>
-                <div class="vstack">
-                  <small class="fw-semibold">Forma de Pago</small>
-                  <small>{{ item.nombreFormaPago }}</small>
-                </div>
-
-                <div class="vstack">
-                  <small class="fw-semibold">Posfechado</small>
-                  <small>{{ item.nombrePosfechado }}</small>
-                </div>
-              </div>
-
-              <div class="d-flex flex-column">
-                <div class="vstack">
-                  <small class="fw-semibold">Valor</small>
-                  <small>{{ item.valor }}</small>
+                  <div class="vstack">
+                    <small class="fw-semibold">Posfechado</small>
+                    <small>{{ item.nombrePosfechado }}</small>
+                  </div>
                 </div>
 
-                <div class="vstack">
-                  <small class="fw-semibold">Abono</small>
-                  <small>{{ item.abono }}</small>
-                </div>
+                <div class="d-flex flex-column">
+                  <div class="vstack">
+                    <small class="fw-semibold">Valor</small>
+                    <small>{{ item.valor }}</small>
+                  </div>
 
-                <div class="vstack">
-                  <small class="fw-semibold">Cambio</small>
-                  <small>{{ item.vuelto }}</small>
+                  <div class="vstack">
+                    <small class="fw-semibold">Abono</small>
+                    <small>{{ item.abono }}</small>
+                  </div>
+
+                  <div class="vstack">
+                    <small class="fw-semibold">Cambio</small>
+                    <small>{{ item.vuelto }}</small>
+                  </div>
                 </div>
               </div>
-            </div>
-            <mat-divider />
+              <mat-divider />
 
-            <div
-              class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
-            >
-              <div class="vstack">
-                <small class="fw-semibold">Banco:</small>
-                <small>{{ item.nombreBanco }}</small>
+              <div
+                class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-1 row-cols-1 g-2"
+              >
+                <div class="vstack">
+                  <small class="fw-semibold">Banco:</small>
+                  <small>{{ item.nombreBanco }}</small>
+                </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Número: </small>
+                  <small>{{ item.nro }}</small>
+                </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Referencia:</small>
+                  <small>{{ item.referencia }}</small>
+                </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Lote: </small>
+                  <small>{{ item.lote }}</small>
+                </div>
+                <div class="vstack">
+                  <small class="fw-semibold">Aprobación: </small>
+                  <small>{{ item.aprobacion }}</small>
+                </div>
               </div>
-              <div class="vstack">
-                <small class="fw-semibold">Número: </small>
-                <small>{{ item.nro }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Referencia:</small>
-                <small>{{ item.referencia }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Lote: </small>
-                <small>{{ item.lote }}</small>
-              </div>
-              <div class="vstack">
-                <small class="fw-semibold">Aprobación: </small>
-                <small>{{ item.aprobacion }}</small>
-              </div>
-            </div>
-          </acp-dynamic-card>
-        </div>
-      }
+            </acp-dynamic-card>
+          </div>
+        }
+      </div>
     </div>
-  </ng-template>
+  }
+</mat-dialog-content>
 
-  <ng-template #templateOp let-row="row">
-    <button type="button" mat-icon-button>
-      <mat-icon>download</mat-icon>
-    </button>
-    <button type="button" mat-icon-button>
-      <mat-icon>delete</mat-icon>
-    </button>
-  </ng-template>
-</ng-template>
-
-<ng-template #actionsTemplate />

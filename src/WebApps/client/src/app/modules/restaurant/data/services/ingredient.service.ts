@@ -4,8 +4,7 @@ import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
-import { Ingredient } from '@restaurant/domain/models/ingredient.model';
+import { Ingredient } from '@restaurant/data/models/ingredient.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,9 +42,7 @@ export class IngredientService {
       tipo: 2,
     };
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify(query)}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify(query)}` )
       .pipe(
         map((response) => {
           if (response.code === '1') {

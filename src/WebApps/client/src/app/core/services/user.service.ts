@@ -1,6 +1,4 @@
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
-import { ApiResponseLegacy, isApiResponse } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { PATHS_API } from '@core/constants/global.constants';
 import { UserSearch } from '@core/models/user.model';
 import { Injectable, inject } from '@angular/core';
@@ -11,7 +9,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER}`;
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER}`;
   private http = inject(HttpClient);
 
   search<T extends { textSearch: string }>(data: T): Observable<UserSearch[]> {
@@ -20,9 +18,7 @@ export class UserService {
       textSearch: data.textSearch,
     });
     return this.http
-      .get(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.url}?json=${json}`)
       .pipe(
         map((response: any) => {
           let userCustomers = [];

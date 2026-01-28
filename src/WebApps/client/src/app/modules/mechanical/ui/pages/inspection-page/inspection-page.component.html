@@ -1,26 +1,26 @@
-<app-mat-dynamic-table
-  [isLoadingData]="isLoadingResults()"
-  [tableData]="dataSource"
-  [columnDefinitions]="columnsDefs"
-  [visibleColumns]="columns"
-  [templateOp]="templateOp"
-  [paginationConfig]="pagination()"
-  [enablePagination]="true"
-  (pageEvent)="handlePageEvent($event)"
+<acp-data-grid
+  [loading]="isLoadingResults()"
+  [data]="dataSource"
+  [columns]="columns"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: templateOp,
+  }"
 />
 
-<ng-template #templateOp let-item="item">
-  <button mat-icon-button [matMenuTriggerFor]="menu" aria-hidden="false">
-    <mat-icon>more_vert</mat-icon>
-  </button>
+<ng-template #templateOp let-data>
+  <acp-button variant="secondary" icon="more_vert" matStyle="icon" [matMenuTriggerFor]="menu" />
 
   <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="getReport(item)">
+    <button mat-menu-item (click)="getReport(data)">
       <mat-icon>download</mat-icon>
       <span>Reporte</span>
     </button>
 
-    <button mat-menu-item (click)="openModal(item.id, item.supportId)">
+    <button mat-menu-item (click)="openModal(data.id, data.supportId)">
       <mat-icon>edit</mat-icon>
       <span>Editar</span>
     </button>

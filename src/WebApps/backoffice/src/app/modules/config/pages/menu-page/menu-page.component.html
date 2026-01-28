@@ -1,0 +1,130 @@
+<app-breadcrumb />
+<acp-mat-dynamic-card>
+  <div class="row mb-3">
+    <div class="col-md-6 col-12">
+      <div class="form-group">
+        <input
+          type="text"
+          (keyup)="applyFilter($event)"
+          onclick="select();"
+          class="form-control"
+          placeholder="Ex. Inventario"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-container">
+    <div class="menu-actions">
+      <button mat-flat-button color="primary" (click)="openDialog()">
+        <mat-icon>add</mat-icon>
+        Añadir Menú Principal
+      </button>
+    </div>
+
+    @if (loading) {
+      <div class="loading-spinner">
+        <mat-spinner diameter="50"></mat-spinner>
+      </div>
+    } @else {
+      <mat-tree
+        #tree
+        [dataSource]="menus()"
+        [childrenAccessor]="childrenAccessor"
+        class="menu-tree"
+      >
+        <!-- Leaf node template -->
+        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+          <button mat-icon-button disabled></button>
+          <!--            <mat-icon class="node-icon">{{-->
+          <!--              node.icon || "web_asset_off"-->
+          <!--            }}</mat-icon>-->
+          {{ node.name }}
+          <span class="node-url"> ({{ node.url }})</span>
+
+          <div class="node-actions">
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="Añadir Submenú"
+              (click)="openDialog(false, node.id); $event.stopPropagation()"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="accent"
+              matTooltip="Editar"
+              (click)="
+                openDialog(true, undefined, node); $event.stopPropagation()
+              "
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Eliminar"
+              (click)="deleteMenu(node.id, node.name); $event.stopPropagation()"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-tree-node>
+
+        <!-- Expandable node template -->
+        <mat-tree-node
+          *matTreeNodeDef="let node; when: hasChild"
+          matTreeNodePadding
+          matTreeNodeToggle
+          [cdkTreeNodeTypeaheadLabel]="node.name"
+        >
+          <button
+            mat-icon-button
+            matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + node.name"
+          >
+            <mat-icon class="mat-icon-rtl-mirror">
+              {{ tree.isExpanded(node) ? "expand_more" : "chevron_right" }}
+            </mat-icon>
+          </button>
+
+          <!--            <mat-icon class="node-icon">{{-->
+          <!--              node.icon || "web_asset_off"-->
+          <!--            }}</mat-icon>-->
+          {{ node.name }}
+          <span class="node-url"> ({{ node.url }})</span>
+
+          <div class="node-actions">
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="Añadir Submenú"
+              (click)="openDialog(false, node.id); $event.stopPropagation()"
+            >
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="accent"
+              matTooltip="Editar"
+              (click)="
+                openDialog(true, undefined, node); $event.stopPropagation()
+              "
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              matTooltip="Eliminar"
+              (click)="deleteMenu(node.id, node.name); $event.stopPropagation()"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </mat-tree-node>
+      </mat-tree>
+    }
+  </div>
+</acp-mat-dynamic-card>

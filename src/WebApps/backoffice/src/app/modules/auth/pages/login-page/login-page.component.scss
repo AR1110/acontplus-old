@@ -1,0 +1,16 @@
+#wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh; /* Full viewport height */
+  //background-image: url('../assets/images/background/fondo.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 16px; /* Add some padding for smaller screens */
+}
+
+.mat-card {
+  width: 100%;
+  max-width: 400px; /* Restrict the card width */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for elevation */
+}

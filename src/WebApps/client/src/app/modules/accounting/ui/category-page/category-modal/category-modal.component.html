@@ -1,10 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="modalTitle"
-  (close)="onModalClose()"
-/>
-<ng-template #body>
+<mat-dialog-content>
   <form (ngSubmit)="onSave()" id="categoryForm" [formGroup]="categoryForm">
     <div class="row">
       <div class="col">
@@ -48,8 +42,8 @@
       </div>
     </div>
   </form>
-</ng-template>
-<ng-template #footer>
+</mat-dialog-content>
+<mat-dialog-actions>
   <acp-button
     [disabled]="categoryForm.invalid"
     variant="success"
@@ -58,4 +52,4 @@
     type="submit"
     form="categoryForm"
   />
-</ng-template>
+</mat-dialog-actions>

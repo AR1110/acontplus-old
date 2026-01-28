@@ -8,11 +8,11 @@ export const routes: Routes = [
     data: { breadcrumb: 'Clientes' },
   },
   {
-    path: 'company-customer',
+    path: 'company-customer-page',
     title: 'Cliente',
     loadComponent: () =>
-      import('@company-customer/presentation/company-customer/company-customer.component').then(
-        (m) => m.CompanyCustomerComponent,
+      import('@company-customer/presentation/company-customer/company-customer-page').then(
+        (m) => m.CompanyCustomerPage,
       ),
     data: {
       breadcrumb: 'Cliente',

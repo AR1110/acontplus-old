@@ -3,8 +3,8 @@ import { BaseUseCase } from '@core/base-use-case';
 import {
   AsignacionPuntoEmisionList,
   AsignacionPuntoEmisionResponse,
-} from '@modules/config/domain/models/user-customer/asignacion-punto-emision.model';
-import { AsignacionPuntoEmisionRepository } from '@modules/config/domain/repositories/asignacion-punto-emision.repository';
+} from '@modules/config/data/models/user/asignacion-punto-emision.model';
+import { AsignacionPuntoEmisionRepository } from '@modules/config/data/repositories/asignacion-punto-emision.repository';
 import { Observable } from 'rxjs';
 
 @Injectable({

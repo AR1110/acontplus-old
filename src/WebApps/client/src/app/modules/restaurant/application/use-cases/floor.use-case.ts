@@ -1,4 +1,4 @@
-import { FloorRepository } from '@restaurant/domain/repositories/floor.repository';
+import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
 import { Injectable, inject } from '@angular/core';
 
 @Injectable({

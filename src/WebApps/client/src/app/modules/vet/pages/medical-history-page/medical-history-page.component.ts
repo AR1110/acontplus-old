@@ -1,29 +1,25 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
-import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { MedicalHistory } from '@modules/vet/models/medical-history.model';
-import { PageEvent } from '@angular/material/paginator';
+import { MedicalHistoryModalComponent } from '@modules/vet/pages/medical-history-page/medical-history-modal/medical-history-modal.component';
+import { MedicalHistoryService } from '@modules/vet/services/medical-history.service';
 
-import { Pagination } from '@acontplus/ng-components';
+import { Button, DataGrid, DataGridColumn, Pagination } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { GroupedEstab } from '@core/models/estab.model';
+import { DialogService } from '@core/services/dialog.service';
+import { SharedService } from '@core/services/shared.service';
 import { Pet } from '@modules/vet/models/pet.model';
 import Swal from 'sweetalert2';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { SharedService } from '@core/services/shared.service';
-import { DialogService } from '@core/services/dialog.service';
-import { MatIcon } from '@angular/material/icon';
 
+import { DynamicCard } from '@acontplus/ng-components';
 import { FormsModule } from '@angular/forms';
-import { MatMenuModule } from '@angular/material/menu';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { DynamicCard, Button } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconButton } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-medical-history-page',
@@ -32,13 +28,11 @@ import { MatIconButton } from '@angular/material/button';
     DynamicCard,
     FormsModule,
     MatMenuModule,
-    MatDynamicTableComponent,
+    DataGrid,
     Button,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
-    MatIconButton,
-    MatIcon,
   ],
   templateUrl: './medical-history-page.component.html',
   styles: ``,
@@ -64,19 +58,18 @@ export class MedicalHistoryPageComponent implements OnInit {
   private readonly medicalHistoryService = inject(MedicalHistoryService);
   private readonly modalService = inject(DialogService);
   private readonly sharedService = inject(SharedService);
-  private readonly tS = inject(ToastrNotificationService);
+  private readonly tS = inject(NotificationService);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'customer', label: 'Cliente', type: 'string' },
-    { key: 'petName', label: 'Mascota', type: 'string' },
-    { key: 'date', label: 'Fecha', type: 'string' },
-    { key: 'age', label: 'Edad', type: 'string' },
-    { key: 'weight', label: 'Peso', type: 'string' },
-    { key: 'observations', label: 'Observación', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: '#', field: 'index', width: '60px', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Cliente', field: 'customer', sortable: true },
+    { header: 'Mascota', field: 'petName', sortable: true },
+    { header: 'Fecha', field: 'date', sortable: true },
+    { header: 'Edad', field: 'age', sortable: true },
+    { header: 'Peso', field: 'weight', sortable: true },
+    { header: 'Observación', field: 'observations', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
@@ -156,12 +149,11 @@ export class MedicalHistoryPageComponent implements OnInit {
       if (response.isConfirmed) {
         this.medicalHistoryService.delete(item.id).subscribe((response) => {
           if (isApiResponse(response)) {
-            this.tS.show({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
             if (response.code == '1') {
+              this.tS.success({ message: response.message });
               this.loadHistories();
+            } else {
+              this.tS.warning({ message: response.message });
             }
           }
         });

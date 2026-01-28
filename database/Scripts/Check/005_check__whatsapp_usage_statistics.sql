@@ -7,16 +7,16 @@
 
 --SELECT * FROM Entidad --get uuid from identidad of users 
 
---select*  from acontplusadmin.config.company ---uuid in entidad
+--select*  from config.company ---uuid in entidad
 
---select * from acontplusadmin.sales.suscripcion ---companyid from company admin
+--select * from sales.suscripcion ---companyid from company admin
 ----from last 2025 years
---select * from AcontplusAdmin.Sales.SuscripcionDetalle ---get licence type
+--select * from Sales.SuscripcionDetalle ---get licence type
 
---select * from acontplusadmin.config.licensetype ---kind of license
+--select * from config.licensetype ---kind of license
 
 ---- Created by GitHub Copilot in SSMS - review carefully before executing
--- Detalle por empresa y tipo de suscripción
+-- Detalle por empresa y tipo de suscripciï¿½n
 ;WITH MessagesByCompany AS (
     SELECT 
         c.Id AS CompanyId,
@@ -26,7 +26,7 @@
     FROM Common.WhatsAppMessage wam
     INNER JOIN App.UsuarioRol ur ON wam.UserId = ur.idUsuario
     INNER JOIN dbo.Entidad e ON ur.idEntidad = e.idEntidad
-    INNER JOIN acontplusadmin.config.company c ON e.Uuid = c.Uuid
+    INNER JOIN config.company c ON e.Uuid = c.Uuid
     WHERE YEAR(wam.CreatedAt) = 2025
         AND wam.IsDeleted = 0
         AND wam.IsActive = 1
@@ -37,11 +37,11 @@ ActiveSubscriptions AS (
         s.CompanyId,
         lt.Name AS TipoSuscripcion,
         lt.Code AS CodigoLicencia
-    FROM acontplusadmin.sales.suscripcion s
-    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
-    INNER JOIN acontplusadmin.config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
-    INNER JOIN acontplusadmin.config.Licencia l ON ld.LicenciaId = l.Id
-    INNER JOIN acontplusadmin.config.licensetype lt ON l.LicenseTypeId = lt.Id
+    FROM sales.suscripcion s
+    INNER JOIN Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
+    INNER JOIN config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
+    INNER JOIN config.Licencia l ON ld.LicenciaId = l.Id
+    INNER JOIN config.licensetype lt ON l.LicenseTypeId = lt.Id
     WHERE s.IsDeleted = 0
         AND s.IsActive = 1
         AND YEAR(s.StartDate) <= 2025 
@@ -50,7 +50,7 @@ ActiveSubscriptions AS (
 SELECT 
     mbc.Empresa,
     mbc.RUC,
-    ISNULL(STRING_AGG(asub.TipoSuscripcion, ', '), 'Sin Suscripción') AS TiposSuscripcion,
+    ISNULL(STRING_AGG(asub.TipoSuscripcion, ', '), 'Sin Suscripciï¿½n') AS TiposSuscripcion,
     ISNULL(STRING_AGG(asub.CodigoLicencia, ', '), 'N/A') AS CodigosLicencia,
     mbc.TotalMensajes
 FROM MessagesByCompany mbc
@@ -58,7 +58,7 @@ LEFT JOIN ActiveSubscriptions asub ON mbc.CompanyId = asub.CompanyId
 GROUP BY mbc.Empresa, mbc.RUC, mbc.TotalMensajes
 ORDER BY mbc.TotalMensajes DESC;
 -- Created by GitHub Copilot in SSMS - review carefully before executing
--- Resumen agregado por tipo de suscripción
+-- Resumen agregado por tipo de suscripciï¿½n
 WITH MessagesByCompany AS (
     SELECT 
         c.Id AS CompanyId,
@@ -66,7 +66,7 @@ WITH MessagesByCompany AS (
     FROM Common.WhatsAppMessage wam
     INNER JOIN App.UsuarioRol ur ON wam.UserId = ur.idUsuario
     INNER JOIN dbo.Entidad e ON ur.idEntidad = e.idEntidad
-    INNER JOIN acontplusadmin.config.company c ON e.Uuid = c.Uuid
+    INNER JOIN config.company c ON e.Uuid = c.Uuid
     WHERE YEAR(wam.CreatedAt) = 2025
         AND wam.IsDeleted = 0
         AND wam.IsActive = 1
@@ -76,18 +76,18 @@ CompanySubscriptions AS (
     SELECT DISTINCT
         s.CompanyId,
         lt.Name AS TipoSuscripcion
-    FROM acontplusadmin.sales.suscripcion s
-    INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
-    INNER JOIN acontplusadmin.config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
-    INNER JOIN acontplusadmin.config.Licencia l ON ld.LicenciaId = l.Id
-    INNER JOIN acontplusadmin.config.licensetype lt ON l.LicenseTypeId = lt.Id
+    FROM sales.suscripcion s
+    INNER JOIN Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
+    INNER JOIN config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
+    INNER JOIN config.Licencia l ON ld.LicenciaId = l.Id
+    INNER JOIN config.licensetype lt ON l.LicenseTypeId = lt.Id
     WHERE s.IsDeleted = 0
         AND s.IsActive = 1
         AND YEAR(s.StartDate) <= 2025 
         AND YEAR(s.EndDate) >= 2025
 )
 SELECT 
-    ISNULL(cs.TipoSuscripcion, 'Sin Suscripción') AS TipoSuscripcion,
+    ISNULL(cs.TipoSuscripcion, 'Sin Suscripciï¿½n') AS TipoSuscripcion,
     COUNT(DISTINCT mbc.CompanyId) AS NumeroEmpresas,
     SUM(mbc.TotalMensajes) AS TotalMensajes,
     AVG(mbc.TotalMensajes) AS PromedioMensajes,

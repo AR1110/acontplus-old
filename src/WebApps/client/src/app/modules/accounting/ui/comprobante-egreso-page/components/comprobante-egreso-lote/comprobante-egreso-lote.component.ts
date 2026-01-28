@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { DynamicCard, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,16 +14,15 @@ import { EntidadFinanciera } from '@accounting/shared/models/entidad-financiera.
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { DialogService } from '@core/services/dialog.service';
 import { FormaPagoComponent } from '@accounting/ui/comprobante-egreso-page/components/forma-pago/forma-pago.component';
-import { ComprobanteEgresoStore } from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
+import { ComprobanteEgresoStore } from '@accounting/store/comprobante-egreso.store';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CuotaPorPagarLista } from '@accounting/data/models/cuota-por-pagar.interface';
 import Swal from 'sweetalert2';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 
-import { obtenerCuotasPorPagarEstadoUtil } from '@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuotas-por-pagar-estado.util';
-import { obtenerCuentasPorPagarEstado } from '@accounting/comprobante-egreso/application/comprobante-egreso/obtener-cuentas-por-pagar-estado.util';
+import { obtenerCuotasPorPagarEstadoUtil } from '@accounting/utils/obtener-cuotas-por-pagar-estado.util';
+import { obtenerCuentasPorPagarEstado } from '@accounting/utils/obtener-cuentas-por-pagar-estado.util';
 import { FormsModule } from '@angular/forms';
-import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case';
+import { COMPROBANTE_EGRESO_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { NotificationService } from '@acontplus/ng-notifications';
 
 @Component({
@@ -42,7 +41,8 @@ import { NotificationService } from '@acontplus/ng-notifications';
     CurrencyPipe,
     DatePipe,
     DataGrid,
-    MatCustomDialogComponent,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './comprobante-egreso-lote.component.html',
   styles: ``,
@@ -53,7 +53,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
   private dialogSvc = inject(DialogService);
   private notificationSvc = inject(NotificationService);
   comprobanteEgresoStore = inject(ComprobanteEgresoStore);
-  private useCase = inject(ComprobanteEgresoUseCase);
+  private comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
 
   columns: DataGridColumn[] = [
     {
@@ -260,7 +260,7 @@ export class ComprobanteEgresoLoteComponent implements OnInit {
       cuentasPorPagarHistorial: cuentasPorPagarHistorial(),
     };
 
-    this.useCase.post(data).subscribe((response) => {
+    this.comprobanteEgresoHttp.create(data).subscribe((response) => {
       if (response.code === '0') {
         this.notificationSvc.warning({ message: response.message });
       }

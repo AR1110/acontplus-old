@@ -1,0 +1,44 @@
+[
+    {
+        "Code": "I",
+        "Name": "Datos de la empresa",
+        "Description": "Configuración inicial de la empresa",
+        "Mandatory": true
+    },
+    {
+        "Code": "II",
+        "Name": "Configuración de usuarios",
+        "Description": "Creación de usuarios y roles",
+        "Mandatory": true
+    },
+    {
+        "Code": "III",
+        "Name": "Productos y servicios",
+        "Description": "Configuración de productos y servicios",
+        "Mandatory": true
+    },
+    {
+        "Code": "IV",
+        "Name": "Clientes",
+        "Description": "Configuración de clientes",
+        "Mandatory": false
+    },
+    {
+        "Code": "V",
+        "Name": "Proveedores",
+        "Description": "Configuración de proveedores",
+        "Mandatory": false
+    },
+    {
+        "Code": "VI",
+        "Name": "Documentos electrónicos",
+        "Description": "Configuración de documentos electrónicos",
+        "Mandatory": false
+    },
+    {
+        "Code": "VII",
+        "Name": "Finalizar configuración",
+        "Description": "Revisión final y activación",
+        "Mandatory": true
+    }
+]

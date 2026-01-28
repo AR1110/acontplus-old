@@ -1,0 +1,90 @@
+<app-breadcrumb />
+
+<acp-dynamic-card>
+  <div class="row">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+      <mat-form-field class="w-100">
+        <mat-label>Establecimiento: </mat-label>
+        <mat-select
+          name="establecimiento"
+          id="establecimiento"
+          [(ngModel)]="dataSearch.codEstab"
+          (selectionChange)="onChangeEstab()"
+        >
+          @for (item of establecimientos(); track $index) {
+            <mat-option [value]="item.codEstab">
+              {{ item.nombreComercial }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <mat-form-field>
+        <mat-label>Puntos Emisión: </mat-label>
+        <mat-select
+          name="puntoEmision"
+          id="puntoEmision"
+          [(ngModel)]="dataSearch.idPuntoEmision"
+          (selectionChange)="getDocs()"
+        >
+          @for (item of puntosEmision(); track $index) {
+            <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <acp-data-grid
+    [data]="docs()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: templateOp,
+      estado: templateEstado,
+      ultimaSecuencia: templateSecuencia,
+    }"
+    ,
+    [showPaginator]="false"
+  />
+
+  <ng-template #templateOp let-data>
+    <acp-button
+      variant="success"
+      icon="save"
+      matStyle="icon"
+      [disabled]="!data.ultimaSecuencia"
+      (handleClick)="saveConfig(data)"
+    />
+    @if (data.hasInfoAdicional) {
+      <acp-button
+        icon="sell"
+        matStyle="icon"
+        [disabled]="!data.ultimaSecuencia"
+        (handleClick)="openModalInfoAdicional(data)"
+      />
+    }
+  </ng-template>
+
+  <ng-template #templateEstado let-data>
+    <mat-checkbox
+      type="checkbox"
+      [name]="data.nomDoc + data.index"
+      [id]="data.nomDoc + data.index"
+      [(ngModel)]="data.estado"
+    />
+  </ng-template>
+
+  <ng-template #templateSecuencia let-data>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="data.ultimaSecuencia"
+        onclick="this.select()"
+        min="1"
+        [disabled]="!data.estado"
+      />
+    </mat-form-field>
+  </ng-template>
+</acp-dynamic-card>

@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build;</IncludeAssets>
+      <IncludeAssets>runtime; build</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>

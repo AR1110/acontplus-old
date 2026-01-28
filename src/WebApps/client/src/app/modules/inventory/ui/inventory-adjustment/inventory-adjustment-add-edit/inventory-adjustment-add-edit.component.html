@@ -1,11 +1,4 @@
-<app-mat-custom-dialog
-  (close)="close()"
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="title()"
-/>
-
-<ng-template #body>
+<mat-dialog-content>
   <form id="adjustmentForm" [formGroup]="adjustmentForm" (ngSubmit)="onSubmit()">
     <div class="container-fluid vstack gap-2">
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-2">
@@ -93,12 +86,14 @@
               variant="info"
               icon="search"
               text="Búsqueda avanzada"
+              matStyle="filled"
               (handleClick)="openSearchAdvanced()"
             />
             <acp-button
               variant="danger"
               icon="refresh"
               text="Cantidad a 0"
+              matStyle="filled"
               matTooltip="Cambiar cantida de los productos de detalle a 0"
               (handleClick)="askToChangeQuantityZero()"
             />
@@ -133,13 +128,15 @@
       </div>
     </div>
   </form>
-</ng-template>
-<ng-template #footer>
+</mat-dialog-content>
+
+<mat-dialog-actions>
   <acp-button
     type="submit"
     variant="success"
     [icon]="icon()"
     [text]="btnText()"
+    matStyle="filled"
     form="adjustmentForm"
   />
-</ng-template>
+</mat-dialog-actions>

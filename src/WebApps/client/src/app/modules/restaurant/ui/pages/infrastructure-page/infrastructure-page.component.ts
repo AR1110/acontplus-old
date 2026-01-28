@@ -18,7 +18,7 @@ import { Button } from '@acontplus/ng-components';
 import { SharedService } from '@core/services/shared.service';
 import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
 import { GetFloorsByEstabIdUseCase } from '@restaurant/application/use-cases/floor/get-floors-by-estab-id.use-case';
-import { Floor, FloorTreeNode } from '@restaurant/domain/models/floor.model';
+import { Floor, FloorTreeNode } from '@restaurant/data/models/floor.model';
 import { DialogService } from '@core/services/dialog.service';
 import { FloorAddEditModalComponent } from '@restaurant/ui/components/floor-add-edit-modal/floor-add-edit-modal.component';
 import { RoomAddEditModalComponent } from '@restaurant/ui/components/room-add-edit-modal/room-add-edit-modal.component';

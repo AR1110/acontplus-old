@@ -10,4 +10,7 @@
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mapster" />
+  </ItemGroup>
 </Project>

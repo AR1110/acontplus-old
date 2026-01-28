@@ -93,27 +93,27 @@ BEGIN
 			UPDATE wau
             SET wau.used = used +
                     (SELECT totalMensajes FROM @tbl)
-            FROM AcontplusAdmin.Config.WhatsappUsage  wau
-                INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+            FROM Config.WhatsappUsage  wau
+                INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
             WHERE c.Uuid = @companyUuid
 
             DECLARE @limit INT
 
-			SELECT @limit = Limit FROM AcontplusAdmin.Config.WhatsappUsage wau 
-                                INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+			SELECT @limit = Limit FROM Config.WhatsappUsage wau 
+                                INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
                                 WHERE c.Uuid = @companyUuid
 
-			IF EXISTS(SELECT 1 FROM AcontplusAdmin.Config.WhatsappUsage wau 
-                                INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId  = c.Id
+			IF EXISTS(SELECT 1 FROM Config.WhatsappUsage wau 
+                                INNER JOIN Config.Company c ON wau.CompanyId  = c.Id
                                 WHERE c.Uuid = @companyUuid 
                                     AND used >= @limit 
                                     AND [Unlimited] = 0)
 				BEGIN
-					UPDATE AcontplusAdmin.Config.WhatsappUsage 
+					UPDATE Config.WhatsappUsage 
                     SET EndDate = dbo.ufnGetDateEcuador(),
                     [IsActive] = 0 
-                    FROM AcontplusAdmin.Config.WhatsappUsage  wau
-                    INNER JOIN AcontplusAdmin.Config.Company c ON wau.CompanyId = c.Id
+                    FROM Config.WhatsappUsage  wau
+                    INNER JOIN Config.Company c ON wau.CompanyId = c.Id
                     WHERE c.Uuid = @companyUuid
 				END
 		COMMIT TRAN

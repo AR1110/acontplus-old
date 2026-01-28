@@ -1,4 +1,4 @@
-import { AsignacionEstabResponse } from '@modules/config/domain/models/user-customer/asignacion-estab.model';
+import { AsignacionEstabResponse } from '@modules/config/data/models/user/asignacion-estab.model';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ListAsignacionEstabMapper {

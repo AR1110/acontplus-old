@@ -1,15 +1,13 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { INVENTORY_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
+import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
+import { DatePipe, DecimalPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { MatCard } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ReportParamsBuilder } from '@shared/utils/report-params.builder';
-import { GenerateReportUseCase } from '@modules/api/reports/application/generate-report.use-case';
-import { INVENTORY_CODE_REPORT } from '@inventory/inventory.const';
+import { MatIcon } from '@angular/material/icon';
+import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { DOC_TYPE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { WAREHOUSE_TRANSFER_SERVICE } from '@inventory/data/inventory-token';
-import {DataGrid, DataGridColumn} from '@acontplus/ng-components'
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { MatCard } from '@angular/material/card';
-import { MatIcon } from '@angular/material/icon';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-inventory-adjustment-detail',
@@ -80,10 +78,10 @@ import { MatIcon } from '@angular/material/icon';
 })
 export class WarehouseTransferDetail implements OnInit {
   private warehouseTransferService = inject(WAREHOUSE_TRANSFER_SERVICE);
-  #generateReport = inject(GenerateReportUseCase);
 
   private dialogRef = inject(MatDialogRef<WarehouseTransferDetail>);
   private params = inject(MAT_DIALOG_DATA);
+  private reportFacade = inject(ReportFacade);
   title = signal('Detalle Transferencia de Bodega');
 
   header = {} as any;
@@ -133,15 +131,12 @@ export class WarehouseTransferDetail implements OnInit {
       id: this.params.id,
     };
 
-    const reportParameters = ReportParamsBuilder.getReportParameters(
-      INVENTORY_CODE_REPORT.RCD,
-      additionalParams,
-    );
-
-    this.#generateReport.execute({
-      data: reportParameters,
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: INVENTORY_CODE_REPORT.RCD,
       format: REPORT_FORMAT.EXCEL,
+      data: additionalParams,
     });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   close() {

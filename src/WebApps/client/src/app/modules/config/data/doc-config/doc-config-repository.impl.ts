@@ -1,14 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { HttpClient } from '@angular/common/http';
-import { DocConfigRepository } from '@modules/config/domain/repositories/doc-config.repository';
+import { DocConfigRepository } from '@modules/config/data/repositories/doc-config.repository';
 import {
   DocConfigFormDataResponse,
-  DocConfigInfoAdicional,
   DocConfigListResponse,
-  DocConfig,
-} from '@modules/config/domain/models/doc-config.model';
+  DocConfig, DocConfigInfoAdicionalList,
+} from '@modules/config/data/models/doc-config.model';
 import { map, Observable } from 'rxjs';
 import { DocConfigListMapper } from '@modules/config/data/doc-config/doc-config-list.mapper';
 import { DocConfigInfoAdicionalesMapper } from '@modules/config/data/doc-config/doc-config-info-adicionales.mapper';
@@ -48,7 +47,7 @@ export class DocConfigRepositoryImpl implements DocConfigRepository {
     };
     return this.#http.post<ApiResponseLegacy>(`${this.#url}`, { data });
   }
-  getInfoAdicionales(id: number): Observable<DocConfigInfoAdicional[]> {
+  getInfoAdicionales(id: number): Observable<DocConfigInfoAdicionalList[]> {
     const json = DocConfigInfoAdicionalesMapper.toJson(id);
     return this.#http
       .get(`${this.#url}?json=${json}`)

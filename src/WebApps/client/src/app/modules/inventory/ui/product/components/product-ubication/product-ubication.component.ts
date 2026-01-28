@@ -5,23 +5,20 @@ import {
   model,
   output,
   OnInit,
-  ChangeDetectionStrategy, signal,
+  ChangeDetectionStrategy,
+  signal,
 } from '@angular/core';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DynamicCard, DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { GroupedEstab, GroupedEstabBodega } from '@core/models/estab.model';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { ToUpperCaseDirective } from '@shared/directives/ui/to-upper-case.directive';
+import { NotificationService } from '@acontplus/ng-notifications';
 
 import { getValidId, isValidField } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { finalize } from 'rxjs/operators';
 import Swal from 'sweetalert2';
@@ -37,18 +34,17 @@ import { PRODUCT_SERVICE, PRODUCT_UBICATION_SERVICE } from '@inventory/data/inve
     MatSelectModule,
     FormsModule,
     MatIconModule,
-    MatButtonModule,
     DynamicCard,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
     ToUpperCaseDirective,
   ],
   templateUrl: './product-ubication.component.html',
   styles: ``,
 })
 export class ProductUbicationComponent implements OnInit {
-  private _tS = inject(ToastrNotificationService);
+  private _notification = inject(NotificationService);
   private $productService = inject(PRODUCT_SERVICE);
-
   private $productUbicationService = inject(PRODUCT_UBICATION_SERVICE);
 
   productId = input.required<number>();
@@ -59,14 +55,13 @@ export class ProductUbicationComponent implements OnInit {
 
   loading = false;
 
-  dataSource = signal<any>([])
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'nomBodega', label: 'Bodega', type: 'string' },
-    { key: 'ubicacion', label: 'Ubicación', type: 'string' },
+  dataSource = signal<any>([]);
+  columns: DataGridColumn[] = [
+    { header: '#', field: 'index', width: '60px', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Bodega', field: 'nomBodega', sortable: true },
+    { header: 'Ubicación', field: 'ubicacion', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   productUbicationId = 0;
 
@@ -120,33 +115,23 @@ export class ProductUbicationComponent implements OnInit {
   }
   save() {
     if (!getValidId(this.productId())) {
-      this._tS.show({
-        type: 'warning',
+      this._notification.warning({
         message: 'No se ha proporcionado el identificador del producto',
       });
       return;
     }
     if (!getValidId(this.data().idEstablecimiento)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Seleccione el Establecimiento',
-      });
+      this._notification.warning({ message: 'Seleccione el Establecimiento' });
       return;
     }
 
     if (!getValidId(this.data().idBodega)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Seleccione la Bodega',
-      });
+      this._notification.warning({ message: 'Seleccione la Bodega' });
       return;
     }
 
     if (!isValidField(this.data().ubicacion)) {
-      this._tS.show({
-        type: 'warning',
-        message: 'Ingrese la ubicación',
-      });
+      this._notification.warning({ message: 'Ingrese la ubicación' });
       return;
     }
 
@@ -185,17 +170,11 @@ export class ProductUbicationComponent implements OnInit {
   }
   private successResponse = (response: ApiResponseLegacy) => {
     if (response.code === '0') {
-      this._tS.show({
-        type: 'warning',
-        message: response.message,
-      });
+      this._notification.warning({ message: response.message });
       return;
     }
     if (response.code === '1') {
-      this._tS.show({
-        type: 'success',
-        message: response.message,
-      });
+      this._notification.success({ message: response.message });
 
       this.productUbicationId = 0;
       this.loadData();

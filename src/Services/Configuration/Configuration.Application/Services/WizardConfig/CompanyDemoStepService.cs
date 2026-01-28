@@ -1,6 +1,6 @@
 namespace Configuration.Application.Services.WizardConfig;
 
-public class CompanyDemoStepService(IAdoRepository adoRepository) : ICompanyDemoStepService
+public class CompanyDemoStepService(IAdoRepository adoRepository) : Interfaces.WizardConfig.ICompanyDemoStepService
 {
     private readonly string ModuleName = "Config.CompanyDemoStep_";
 

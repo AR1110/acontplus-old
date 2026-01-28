@@ -1,4 +1,4 @@
-import { DocConfigListResponse } from '@modules/config/domain/models/doc-config.model';
+import { DocConfigListResponse } from '@modules/config/data/models/doc-config.model';
 
 export class DocConfigListMapper {
   static toJson(puntoEmisionId: number) {

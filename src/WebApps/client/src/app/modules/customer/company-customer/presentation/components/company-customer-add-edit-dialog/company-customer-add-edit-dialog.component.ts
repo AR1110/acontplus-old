@@ -38,7 +38,7 @@ import { DynamicCard } from '@acontplus/ng-components';
 import { forkJoin, Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-company-customer-add-edit-dialog',
+  selector: 'app-company-page-customer-add-edit-dialog',
   imports: [
     MatButtonModule,
     ReactiveFormsModule,

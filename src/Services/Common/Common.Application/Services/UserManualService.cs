@@ -1,5 +1,3 @@
-using Acontplus.Utilities.Data;
-
 namespace Common.Application.Services;
 
 public class UserManualService(IAdoRepository adoRepository) : IUserManualService

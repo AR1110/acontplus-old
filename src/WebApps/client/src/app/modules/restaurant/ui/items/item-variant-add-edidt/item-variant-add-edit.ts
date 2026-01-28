@@ -14,7 +14,7 @@ import {
 } from '@restaurant/application/use-cases/item.use-case';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { ProductMeasure } from '@inventory/data/models/product-measure';
-import { ItemComposition } from '@restaurant/domain/models/item-composition';
+import { ItemComposition } from '@restaurant/data/models/item-composition';
 import DecimalUtil from '@core/utils/decimal.util';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { Overlay } from '@angular/cdk/overlay';

@@ -8,7 +8,7 @@ import {
   CuentaPorCobrar,
   CuentaPorCobrarComprobante,
   Cuota,
-} from '@accounting/cuenta-por-cobrar/domain/cuenta-por-cobrar.model';
+} from '@accounting/data/models/cuenta-por-cobrar.model';
 
 type CuotaExtend = Cuota & {
   abonoPosfechado: number;

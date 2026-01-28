@@ -1,6 +1,6 @@
-import { ComprobanteEgresoLista } from '@accounting/comprobante-egreso/domain/comprobante-egreso.entity';
-import { PagoDetalle } from '@accounting/comprobante-egreso/domain/pago-detalle.model';
-import { HistorialPagoLista } from '@accounting/comprobante-egreso/domain/historial-pago.model';
+import { ComprobanteEgresoLista } from '@accounting/data/models/comprobante-egreso.entity';
+import { PagoDetalle } from '@accounting/data/models/pago-detalle.model';
+import { HistorialPagoLista } from '@accounting/data/models/historial-pago.model';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { formatDate } from '@core/utils/date.util';

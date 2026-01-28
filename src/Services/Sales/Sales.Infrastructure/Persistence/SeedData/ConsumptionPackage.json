@@ -1,0 +1,62 @@
+[
+    {
+        "Code": "INV_100",
+        "Name": "100 Artículos Inventario",
+        "Description": "Paquete adicional de 100 artículos en inventario",
+        "ConsumptionType": "product",
+        "Quantity": 100,
+        "Unit": "productos",
+        "BasePrice": 5.00,
+        "IsAddOn": true
+    },
+    {
+        "Code": "PROD_50",
+        "Name": "50 Productos",
+        "Description": "Paquete adicional de 50 productos",
+        "ConsumptionType": "product",
+        "Quantity": 50,
+        "Unit": "productos",
+        "BasePrice": 3.00,
+        "IsAddOn": true
+    },
+    {
+        "Code": "USER_10",
+        "Name": "10 Usuarios",
+        "Description": "Paquete adicional de 10 usuarios",
+        "ConsumptionType": "user",
+        "Quantity": 10,
+        "Unit": "usuarios",
+        "BasePrice": 10.00,
+        "IsAddOn": true
+    },
+    {
+        "Code": "STORAGE_5GB",
+        "Name": "5GB Almacenamiento",
+        "Description": "Paquete adicional de 5GB de almacenamiento",
+        "ConsumptionType": "storage",
+        "Quantity": 5,
+        "Unit": "GB",
+        "BasePrice": 2.50,
+        "IsAddOn": true
+    },
+    {
+        "Code": "REPORT_25",
+        "Name": "25 Reportes",
+        "Description": "Paquete adicional de 25 reportes avanzados",
+        "ConsumptionType": "report",
+        "Quantity": 25,
+        "Unit": "reportes",
+        "BasePrice": 4.00,
+        "IsAddOn": true
+    },
+    {
+        "Code": "UNLIMITED",
+        "Name": "Recursos Ilimitados",
+        "Description": "Acceso ilimitado a recursos",
+        "ConsumptionType": "unlimited",
+        "Quantity": -1,
+        "Unit": "ilimitado",
+        "BasePrice": 50.00,
+        "IsAddOn": false
+    }
+]

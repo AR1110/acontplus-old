@@ -1,0 +1,109 @@
+<form id="sistemaForm" (ngSubmit)="save()" autocomplete="off">
+    <div class="row">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="code">Código</label>
+          <input
+            type="text"
+            id="code"
+            name="code"
+            class="form-control"
+            [(ngModel)]="data.code"
+            #code="ngModel"
+            required
+          />
+          <div
+            *ngIf="code.invalid && (code.dirty || code.touched)"
+            class="alert"
+          >
+            <div *ngIf="code.errors?.['required']">El código es Requerido</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="name">Nombre</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control"
+            [(ngModel)]="data.name"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="domainUrl">Dominio</label>
+          <input
+            type="text"
+            id="domainUrl"
+            name="domainUrl"
+            class="form-control"
+            [(ngModel)]="data.domainUrl"
+          />
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-6 col-12">
+        <div class="form-group">
+          <label for="ipAddress">IP</label>
+          <input
+            type="text"
+            id="ipAddress"
+            name="ipAddress"
+            class="form-control"
+            [(ngModel)]="data.ipAddress"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="connectionStrings">Conn. Strings</label>
+          <input
+            type="text"
+            id="connectionStrings"
+            name="connectionStrings"
+            class="form-control"
+            [(ngModel)]="data.connectionStrings"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg">
+        <button
+          type="button"
+          class="btn btn-outline-primary mt-2 mb-2"
+          (click)="addApp()"
+        >
+          <mat-icon>add</mat-icon>
+          Añadir aplicación
+        </button>
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="tableData"
+        ></app-tabulator>
+      </div>
+    </div>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      form="sistemaForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="closeDialog()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

@@ -24,7 +24,7 @@ import {
   MealScheduleSettingCreate,
   MealScheduleSetting,
   MealScheduleSettingUpdate,
-} from '@restaurant/domain/models/meal-schedule-setting';
+} from '@restaurant/data/models/meal-schedule-setting';
 import Swal from 'sweetalert2';
 import { finalize } from 'rxjs/operators';
 

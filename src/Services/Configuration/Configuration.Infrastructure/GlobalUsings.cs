@@ -1,6 +1,7 @@
 global using Acontplus.Core.Abstractions.Persistence;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
+global using Acontplus.Notifications.Entities;
 global using Acontplus.Persistence.SqlServer.Configurations;
 global using Acontplus.Persistence.SqlServer.Context;
 global using Acontplus.Utilities.Data;
@@ -8,6 +9,7 @@ global using Acontplus.Utilities.Format;
 global using Configuration.Domain.Entities;
 global using Configuration.Domain.Models;
 global using Configuration.Domain.Repositories;
+global using Configuration.Domain.Views;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;

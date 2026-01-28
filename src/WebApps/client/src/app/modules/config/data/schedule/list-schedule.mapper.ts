@@ -1,4 +1,4 @@
-import { ListScheduleResponse } from '@modules/config/domain/models/schedule.model';
+import { ListScheduleResponse } from '@modules/config/data/models/schedule.model';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 export class ScheduleMapper {

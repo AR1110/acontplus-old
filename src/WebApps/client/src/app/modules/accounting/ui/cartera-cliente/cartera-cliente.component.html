@@ -1,0 +1,244 @@
+<app-breadcrumb />
+<acp-dynamic-card>
+  <mat-tab-group>
+    <!-- Pestaña Cartera Cliente -->
+    <mat-tab label="Cartera Cliente">
+      <div class="d-grid gap-2 my-2 mx-3">
+        <div class="row">
+          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.ckFecha">Rango Fecha</mat-checkbox>
+          </div>
+
+          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.checkboxCompanyCustomer">Cliente</mat-checkbox>
+          </div>
+          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.ckCxcVencida">Vencidas</mat-checkbox>
+          </div>
+          <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.ckCuotas">Cuotas</mat-checkbox>
+          </div>
+          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
+              >Dir. Vivienda Cliente</mat-checkbox
+            >
+          </div>
+        </div>
+        <mat-divider />
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="onChangeEstab()">
+                @for (item of establecimientos(); track $index) {
+                  <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Pto. emisión:</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
+                @for (item of puntosEmision(); track $index) {
+                  <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+            <acp-date-range-picker
+            [showCheckbox]="true"
+            (dateRangeSelected)="onDateRangeSelection($event)"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Estado:</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstado">
+                <mat-option [value]="null">Todos</mat-option>
+                @for (item of estadosDoc(); track $index) {
+                  <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Tipo Documento</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codDoc" (selectionChange)="onChangeTipoDoc()">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of tiposDoc(); track $index) {
+                  <mat-option [value]="item.codigo">{{ item.descripcion }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-12">
+            <app-company-customer-search
+              [isSimpleMode]="true"
+              (clearSearch)="clearSearchCustomer()"
+              (customerSelected)="onCustomerSelected($event)"
+            />
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Empresa</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idEmpresa">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of empresas(); track $index) {
+                  <mat-option [value]="item.idEmpresa">{{ item.nombreComercial }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-12 col-12 d-flex align-items-center">
+            @if (isSelectedNotaEntrega) {
+              <mat-checkbox [(ngModel)]="dataSearch.convertToDoc">Docs. Transferidas</mat-checkbox>
+            }
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Usuario</mat-label>
+              <mat-select [(ngModel)]="dataSearch.userId">
+                <mat-option [value]="0">--Todos--</mat-option>
+                @for (item of users(); track $index) {
+                  <mat-option [value]="item.idUsuario">{{ item.nombreUsuario }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          @if (dataSearch.checkBoxDirViviendaCliente) {
+            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Ciudad</mat-label>
+                <mat-select [(ngModel)]="dataSearch.idCiudad">
+                  <mat-option [value]="0">-- Ninguna --</mat-option>
+                  @for (group of provinciasAgrupadas(); track $index) {
+                    <mat-optgroup [label]="group.nombre">
+                      @for (sg of group.ciudades; track sg.idCiudad) {
+                        <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>
+                      }
+                    </mat-optgroup>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+              <mat-form-field class="w-100">
+                <mat-label>Dirección de vivienda</mat-label>
+                <input
+                  matInput
+                  [(ngModel)]="dataSearch.dirViviendaCliente"
+                  placeholder="Ej: (Sector, Barrio y Calle):"
+                />
+              </mat-form-field>
+            </div>
+          }
+        </div>
+        <div class="hstack gap-1">
+          <acp-button
+            variant="danger"
+            icon="picture_as_pdf"
+            text="Ver PDF"
+            (handleClick)="getReportPdf(1)"
+          />
+
+          <acp-button
+            variant="success"
+            icon="download"
+            text="Descargar Excel"
+            (handleClick)="getReportExcel(1)"
+          />
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Pestaña Deudores -->
+    <mat-tab label="Deudores">
+      <div class="d-grid gap-2 my-2 mx-3">
+        <div class="row">
+          <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.checkBoxDirViviendaCliente"
+              >Dir. Vivienda Cliente</mat-checkbox
+            >
+          </div>
+
+          <div class="col-xl-2 col-lg-2 col-md-4 col-sm-6 col-12">
+            <mat-checkbox [(ngModel)]="dataSearch.ckCxcVencida">Vencidas</mat-checkbox>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Solo los filtros de Establecimiento, Punto de emisión y Dirección de vivienda -->
+          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Establecimiento</mat-label>
+              <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="onChangeEstab()">
+                @for (item of establecimientos(); track $index) {
+                  <mat-option [value]="item.codEstab">{{ item.nombreComercial }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Punto emisión:</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idPuntoEmision">
+                <mat-option [value]="0">Todos</mat-option>
+                @for (item of puntosEmision(); track $index) {
+                  <mat-option [value]="item.idPuntoEmision">{{ item.ptoEmi }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-lg-4 col-md-4 col-sm-6 col-12">
+            <mat-form-field class="w-100">
+              <mat-label>Dirección de vivienda</mat-label>
+              <input
+                matInput
+                [(ngModel)]="dataSearch.dirViviendaCliente"
+                placeholder="Ej: (Sector, Barrio y Calle):"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-6 col-12">
+            <mat-form-field>
+              <mat-label>Ciudad</mat-label>
+              <mat-select [(ngModel)]="dataSearch.idCiudad" placeholder="Seleccione Ciudad">
+                <mat-option [value]="0">-- Ninguna --</mat-option>
+                @for (group of provinciasAgrupadas(); track $index) {
+                  <mat-optgroup [label]="group.nombre">
+                    @for (sg of group.ciudades; track sg.idCiudad) {
+                      <mat-option [value]="sg.idCiudad">{{ sg.ciudad }}</mat-option>
+                    }
+                  </mat-optgroup>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="hstack gap-2">
+          <acp-button
+            variant="danger"
+            icon="picture_as_pdf"
+            text="Ver PDF"
+            (handleClick)="getReportPdf(2)"
+          />
+
+          <acp-button
+            variant="success"
+            icon="download"
+            text="Descargar Excel"
+            (handleClick)="getReportExcel(2)"
+          />
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</acp-dynamic-card>

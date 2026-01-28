@@ -9,7 +9,7 @@ import { ValidatorUtils } from '@core/utils/utils';
 import { Button, Pagination } from '@acontplus/ng-components';
 import { LookupService } from '@restaurant/application/services/lookup-service';
 import { LookupItem } from '@core/models/lookup-type';
-import { PromotionListDto } from '@restaurant/domain/models/promotion';
+import { PromotionListDto } from '@restaurant/data/models/promotion';
 import { FormsModule } from '@angular/forms';
 import { DialogService } from '@core/services/dialog.service';
 import { PromotionForm } from '@restaurant/ui/promotions/promotion-form/promotion-form';

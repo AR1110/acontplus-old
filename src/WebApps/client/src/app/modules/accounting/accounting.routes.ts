@@ -4,7 +4,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./home/accounting-home.component').then((m) => m.AccountingHomeComponent),
+      import('./accounting-home.component').then((m) => m.AccountingHomeComponent),
     data: { breadcrumb: 'Contabilidad' },
   },
   {
@@ -17,7 +17,7 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'movimiento-caja-page-page',
+    path: 'movimiento-caja-page',
     title: 'Caja',
     loadComponent: () =>
       import(
@@ -56,7 +56,7 @@ export const routes: Routes = [
     title: 'Cuenta por cobrar',
     loadComponent: () =>
       import(
-        '@accounting/cuenta-por-cobrar/presentation/cuenta-por-cobrar/cuenta-por-cobrar.component'
+        '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component'
       ).then((m) => m.CuentaPorCobrarComponent),
     data: {
       breadcrumb: 'Cuenta por cobrar',
@@ -101,7 +101,7 @@ export const routes: Routes = [
     title: 'Cuenta por cobrar',
     loadComponent: () =>
       import(
-        '@accounting/cuenta-por-cobrar/presentation/cuenta-por-cobrar/cuenta-por-cobrar.component'
+        '@accounting/ui/cuenta-por-cobrar/cuenta-por-cobrar.component'
       ).then((m) => m.CuentaPorCobrarComponent),
     data: {
       breadcrumb: 'Cuenta por cobrar',
@@ -159,7 +159,7 @@ export const routes: Routes = [
         title: 'Cartera Proveedor',
         loadComponent: () =>
           import(
-            '@accounting/comprobante-egreso/presentation/reports/supplier-accounts/supplier-accounts.component'
+            '@accounting/ui/supplier-accounts/supplier-accounts.component'
           ).then((m) => m.SupplierAccountsComponent),
         data: {
           breadcrumb: 'Cartera Proveedor',
@@ -171,7 +171,7 @@ export const routes: Routes = [
         title: 'Cartera Cliente',
         loadComponent: () =>
           import(
-            '@accounting/cuenta-por-cobrar/presentation/cartera-cliente/cartera-cliente.component'
+            '@accounting/ui/cartera-cliente/cartera-cliente.component'
           ).then((m) => m.CarteraClienteComponent),
         data: {
           breadcrumb: 'Cartera Cliente',
@@ -182,7 +182,7 @@ export const routes: Routes = [
         title: 'Reporte de Pagos',
         loadComponent: () =>
           import(
-            '@accounting/comprobante-egreso/presentation/reports/payments-report/payments-report.component'
+            '@accounting/ui/payments-report/payments-report.component'
           ).then((m) => m.PaymentsReportComponent),
         data: {
           breadcrumb: 'Reporte de Pagos',

@@ -1,0 +1,16 @@
+
+<div class="app-wrapper">
+  <app-header (toggleSidenav)="toggleSidenav()"/>
+  <mat-sidenav-container class="main-container" >
+    <mat-sidenav opened mode="side" [style.width]="sidenavWidth()">
+      <app-custom-sidenav [collapsed]="collapsed()"/>
+    </mat-sidenav>
+    <mat-sidenav-content class="content"  [style.margin-left]="sidenavWidth()">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+      <app-footer />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+</div>

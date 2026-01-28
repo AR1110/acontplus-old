@@ -69,4 +69,5 @@ public record ItemCompositionItem
     public Guid? UniqueId { get; init; }
     public int? ParentCompositionId { get; init; }
     public bool IsActive { get; init; }
+    public decimal Stock { get; init; }
 }

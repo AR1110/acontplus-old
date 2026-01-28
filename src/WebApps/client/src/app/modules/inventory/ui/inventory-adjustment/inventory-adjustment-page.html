@@ -1,6 +1,20 @@
 <app-breadcrumb />
 
-<acp-dynamic-card>
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [data]="dataSource()"
+  [columns]="columnsDefs"
+  [cellTemplate]="{
+    op: templateOp,
+  }"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+/>
+
+<ng-template #headerToolbar>
   <div class="d-grid gap-2">
     <div class="row row-cols-lg-4 row-cols-md-2 row-cols-1">
       <div class="col">
@@ -25,16 +39,22 @@
         </mat-form-field>
       </div>
       <div class="col">
-        <app-date-range-selection
-          [showInputMaterial]="true"
-          [showMatPrefix]="true"
-          [(checkbox)]="dataFilter.useFilterDate"
-          (onCheckboxChange)="refresh()"
+        <acp-date-range-picker
+          [showCheckbox]="true"
+          [(checkboxChecked)]="dataFilter.useFilterDate"
+          (dateRangeSelected)="dateRangeSelected($event)"
+          (checkboxChange)="refresh()"
         />
       </div>
       <div class="col">
         <div class="hstack gap-1">
-          <acp-button variant="secondary" icon="add" matStyle="icon" (handleClick)="addEdit()" />
+          <acp-button
+            variant="success"
+            icon="add"
+            matStyle="filled"
+            text="Nuevo"
+            (handleClick)="addEdit()"
+          />
           <acp-button
             variant="secondary"
             icon="refresh"
@@ -69,42 +89,30 @@
       </div>
     }
   </div>
+</ng-template>
 
-  <app-mat-dynamic-table
-    [tableData]="dataSource()"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [templateOp]="templateOp"
-    [paginationConfig]="pagination()"
-    [enablePagination]="true"
-    (pageEvent)="handlePageEvent($event)"
-  />
-
-  <ng-template #templateOp let-item="item">
-    <button matIconButton [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
-      <mat-icon>more_vert</mat-icon>
+<ng-template #templateOp let-data>
+  <acp-button [matMenuTriggerFor]="menu" variant="secondary" icon="more_vert" matStyle="icon" />
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="openDetail(data)">
+      <mat-icon>menu</mat-icon>
+      <span>Detalle</span>
     </button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="openDetail(item)">
-        <mat-icon>menu</mat-icon>
-        <span>Detalle</span>
-      </button>
-      <button mat-menu-item disabled>
-        <mat-icon>edit</mat-icon>
-        <span>Editar</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>file_copy</mat-icon>
-        <span>Duplicar</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>clear</mat-icon>
-        <span>Anular</span>
-      </button>
-      <button mat-menu-item>
-        <mat-icon>picture_as_pdf</mat-icon>
-        <span>Reporte</span>
-      </button>
-    </mat-menu>
-  </ng-template>
-</acp-dynamic-card>
+    <button mat-menu-item disabled>
+      <mat-icon>edit</mat-icon>
+      <span>Editar</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>file_copy</mat-icon>
+      <span>Duplicar</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>clear</mat-icon>
+      <span>Anular</span>
+    </button>
+    <button mat-menu-item>
+      <mat-icon>picture_as_pdf</mat-icon>
+      <span>Reporte</span>
+    </button>
+  </mat-menu>
+</ng-template>

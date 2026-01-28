@@ -1,22 +1,20 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [title]="'Historial de Compras Habituales -' + articleName"
-  (close)="onModalClose()"
-/>
-
-<ng-template #body>
-  <app-custom-table-container [isLoadingResults]="isLoadingResults">
-    <app-mat-dynamic-table
-      [templateOp]="templateOp"
-      [tableData]="documentos"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
+<mat-dialog-content>
+  <h1>{{'Historial de Compras Habituales -' + articleName}}</h1>
+    <acp-data-grid
+      [data]="comprasHabituales()"
+      [columns]="columns"
+      [showPaginator]="false"
+      [cellTemplate]="{
+        op: templateOp,
+      }"
     />
-  </app-custom-table-container>
 
-  <ng-template #templateOp let-item="item">
-    <button mat-icon-button aria-label="Remove Shopping Cart" (click)="askToDeleteCH(item)">
-      <mat-icon>remove_shopping_cart</mat-icon>
-    </button>
+  <ng-template #templateOp let-data>
+    <acp-button
+      variant="danger"
+      icon="remove_shopping_cart"
+      matStyle="icon"
+      (handleClick)="askToDeleteCH(data)"
+    />
   </ng-template>
-</ng-template>
+</mat-dialog-content>

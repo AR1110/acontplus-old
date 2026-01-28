@@ -1,0 +1,63 @@
+<form [formGroup]="form">
+  <h2 mat-dialog-title>{{ titleDialog }}</h2>
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field>
+      <mat-label>RUC</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="idCard" type="text" maxlength="13" required/>
+      <button type="button" mat-icon-button matSuffix (click)="searchToSRI()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Razon Social:</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="businessName"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Nombre Comercial:</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="tradeName"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Correo</mat-label>
+      <mat-chip-grid #chipGrid aria-label="Enter emails">
+        <mat-chip-row *ngFor="let email of emails" (removed)="remove(email)" [editable]="true"
+                      (edited)="edit(email, $event)" [aria-description]="'press enter to edit ' + email">
+          {{ email }}
+          <button matChipRemove [attr.aria-label]="'remove ' + email">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        <input placeholder="New email..." [matChipInputFor]="chipGrid"
+               [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+               (matChipInputTokenEnd)="add($event)"/>
+      </mat-chip-grid>
+    </mat-form-field>
+
+    <!-- <mat-form-field>
+      <mat-label>Correo: </mat-label>
+      <input matInput placeholder="Placeholder" formControlName="email" />
+    </mat-form-field> -->
+    <mat-form-field>
+      <mat-label>Teléfono:</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="telephone"/>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Dirección:</mat-label>
+      <input matInput placeholder="Placeholder" formControlName="address"/>
+    </mat-form-field>
+
+    <!-- <mat-radio-group aria-label="Estado" formControlName="isActive">
+      <mat-radio-button value="1">Activo</mat-radio-button>
+      <mat-radio-button value="0">Inactivo</mat-radio-button>
+    </mat-radio-group> -->
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" style="margin-right: 20px">
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">
+      {{ titleBtn }}
+    </button>
+    <button mat-raised-button (click)="close()">Cerrar</button>
+  </mat-dialog-actions>
+</form>

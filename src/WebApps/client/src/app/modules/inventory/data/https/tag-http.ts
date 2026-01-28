@@ -5,7 +5,6 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
 import { TagRepository } from '@inventory/data/repositories/tag.repository';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { TagMapper } from '@inventory/data/mappers/tag.mapper';
 
 @Injectable({
@@ -21,9 +20,7 @@ export class TagHttp implements TagRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {

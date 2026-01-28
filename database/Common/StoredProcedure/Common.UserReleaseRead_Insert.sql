@@ -33,7 +33,7 @@ BEGIN
 		SET @userId = (SELECT idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
 		BEGIN TRAN
-			INSERT INTO AcontplusAdmin.Common.UserReleaseRead(ReleaseId, UserId)
+			INSERT INTO Common.UserReleaseRead(ReleaseId, UserId)
 			SELECT id, @userId FROM @releases;
 
             SET @rowsAffected = @@ROWCOUNT;
@@ -41,7 +41,7 @@ BEGIN
         IF (@rowsAffected > 0)
 				BEGIN
 					SET @code = '1';
-					SET @message = 'Confirmación Exitosa';
+					SET @message = 'Confirmaciï¿½n Exitosa';
 				END
 			ELSE
 				BEGIN

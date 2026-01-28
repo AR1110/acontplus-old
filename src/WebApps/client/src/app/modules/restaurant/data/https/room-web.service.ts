@@ -1,0 +1,45 @@
+import { inject, Injectable } from '@angular/core';
+import { PATHS_API } from '@core/constants/global.constants';
+import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
+import { HttpClient } from '@angular/common/http';
+import { ApiResponseLegacy } from '@core/models/api-response-legacy';
+import { map } from 'rxjs';
+import { RoomRepository } from '@restaurant/data/repositories/room.repository';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RoomWebService implements RoomRepository {
+  #url = `${PATHS_API.RESTAURANT}${RESTAURANT_PATHS.ROOM}`;
+  #http = inject(HttpClient);
+
+  get<T>(params: T) {
+    return this.#http
+      .get<ApiResponseLegacy>(`${this.#url}?json=${JSON.stringify({ params })}`)
+      .pipe(map((response) => response));
+  }
+
+  getByEstab(establecimientoId: number) {
+    return this.#http
+      .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establecimientoId}`)
+      .pipe(map((response) => response));
+  }
+
+  post<T>(data: T) {
+    return this.#http
+      .post<ApiResponseLegacy>(`${this.#url}`, data)
+      .pipe(map((response) => response));
+  }
+
+  put<T>(id: number, data: T) {
+    return this.#http
+      .put<ApiResponseLegacy>(`${this.#url}${id}`, data)
+      .pipe(map((response) => response));
+  }
+
+  remove(id: number) {
+    return this.#http
+      .delete<ApiResponseLegacy>(`${this.#url}${id}`)
+      .pipe(map((response) => response));
+  }
+}

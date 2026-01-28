@@ -1,5 +1,5 @@
-import { ListShiftResponse, ShiftList } from '@modules/config/domain/models/shift.models';
-import { ShiftRepository } from '@modules/config/domain/repositories/shift.repository';
+import { ListShiftResponse, ShiftList } from '@modules/config/data/models/shift.models';
+import { ShiftRepository } from '@modules/config/data/repositories/shift.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';

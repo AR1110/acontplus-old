@@ -1,25 +1,25 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { REPORT_CODE, DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
-import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
-import { isApiResponse } from '@core/models/api-response-legacy';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { groupEstabUtil } from '@core/utils/group-estab.util';
-import { TipoDoc } from '@core/models/tipo-doc.model';
-import { SharedService } from '@core/services/shared.service';
-import { isValidField } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { FormsModule } from '@angular/forms';
-import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { Subcategory } from '@accounting/data/models/subcategory';
-import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
-import { formatDateToString } from '@core/utils/date.util';
+import { ACCOUNTING_PATHS } from '@accounting/shared/enums/accounting.constants';
+import { PURCHASE_CODE_REPORT, ReportFacade, ReportParamsBuilder } from '@acontplus/ng-common';
 import { Button, DynamicCard } from '@acontplus/ng-components';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDivider } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
+import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
+import { DOC_TYPE, PATHS_API } from '@core/constants/global.constants';
+import { isApiResponse } from '@core/models/api-response-legacy';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { TipoDoc } from '@core/models/tipo-doc.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { groupEstabUtil } from '@core/utils/group-estab.util';
+import { isValidField } from '@core/utils/utils';
+import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-reports',
@@ -58,9 +58,9 @@ export class ReportsComponent implements OnInit {
     subcategoryId: 0,
   };
   isSearchSupplierSimple = true;
-  private sharedSvc = inject(SharedService);
   private tS = inject(ToastrNotificationService);
   private url = `${PATHS_API.ACCOUNTING}${ACCOUNTING_PATHS.CUENTA_POR_PAGAR}`;
+  private reportFacade = inject(ReportFacade);
 
   ngOnInit() {
     this.initialed();
@@ -127,8 +127,8 @@ export class ReportsComponent implements OnInit {
       tipo: 1,
       format,
       ckFecha: true,
-      codEstab: isValidField(this.dataSearch.codEstab),
-      codDoc: isValidField(this.dataSearch.codDoc),
+      codEstab: isValidField(this.dataSearch.codEstab) ?? undefined,
+      codDoc: isValidField(this.dataSearch.codDoc) ?? undefined,
       idProveedor:
         (this.dataSearch.supplierChecked && isValidField(this.dataSearch.idProveedor)) || null,
       codEstado: isValidField(this.dataSearch.codEstado),
@@ -137,25 +137,13 @@ export class ReportsComponent implements OnInit {
       subcategoryId: this.dataSearch.subcategoryId,
     };
 
-    const parameters = {
-      reportParams: JSON.stringify({
-        hasParams: false,
-        codigo: REPORT_CODE.RCP,
-        format,
-        aditionalParams: [],
-      }),
-      dataParams: JSON.stringify(dataParms),
-    };
-
-    this.sharedSvc.getReport({ data: parameters, format: format });
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: PURCHASE_CODE_REPORT.RCP,
+      data: dataParms,
+      format,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
-
-  // getCodDoc() {
-  //   if (this.dataSearch.codDoc === DOC_TYPE.LC) return DOC_TYPE_SRI.LC;
-  //   if (this.dataSearch.codDoc === DOC_TYPE.IV) return DOC_TYPE.DNH;
-  //   if (this.dataSearch.codDoc === DOC_TYPE.FE) return DOC_TYPE_SRI.F;
-  //   return DOC_TYPE.FC;
-  // }
 
   private initialed() {
     this.http

@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TokenRepository } from '@modules/auth/domain/repositories/token.repository';
 import { ToastrService } from 'ngx-toastr';
 import { TOASTR_NOTIFICATION_CONFIG } from '@core/services/toastr-notification.service';
-import { UserCustomerRepository } from '@modules/config/domain/repositories/user-customer.repository';
+import { UserCustomerRepository } from '@modules/config/data/repositories/user.repository';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { FirmaElectronicaService } from '@modules/config/services/firma-electronica.service';

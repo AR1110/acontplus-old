@@ -1,0 +1,45 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="company-search"
+          >Empresa: <span class="text-danger">*</span></label
+        >
+        <app-company-search
+          [textName]="data.businessName"
+          (onSelect)="onSelectCompany($event)"
+        />
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+      <div class="form-group">
+        <label for="role">Rol: <span class="text-danger">*</span></label>
+        <select
+          id="roleId"
+          class="form-select"
+          [(ngModel)]="data.roleId"
+          (change)="onRoleChange($event)"
+        >
+          <option [value]="0">Seleccione un rol</option>
+          @for (item of roles; track $index) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-mat-theme-button
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="save()"
+  ></acp-mat-theme-button>
+  <acp-mat-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="closeDialog()"
+  ></acp-mat-theme-button>
+</mat-dialog-actions>

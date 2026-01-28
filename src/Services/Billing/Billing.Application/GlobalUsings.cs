@@ -1,5 +1,6 @@
 global using Acontplus.Billing.Models.Documents;
 global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.Domain.Common.Results;
 global using Acontplus.Core.Dtos.Common;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;

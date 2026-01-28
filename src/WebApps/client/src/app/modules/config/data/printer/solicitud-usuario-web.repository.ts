@@ -1,19 +1,19 @@
 import { inject, Injectable } from '@angular/core';
-import { PrinterRepository } from '@modules/config/domain/repositories/printer.repository';
+import { PrinterRepository } from '@modules/config/data/repositories/printer.repository';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { customUrl } from '@core/interceptors/inject-session.interceptor';
-import { SolicitudUsuarioRepository } from '@modules/config/domain/repositories/solicitud-usuario.repository';
+import { SolicitudUsuarioRepository } from '@modules/config/data/repositories/solicitud-usuario.repository';
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SolicitudUsuarioWebRepository implements SolicitudUsuarioRepository {
-  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_CUSTOMER_REQUEST}`;
+  private url = `${PATHS_API.CONFIG}${CONFIG_PATHS.USER_REQUEST}`;
   private http = inject(HttpClient);
 
   getFilter() {

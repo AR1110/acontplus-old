@@ -1,0 +1,70 @@
+<app-breadcrumb />
+
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [data]="dataSource()"
+  [columns]="columnsDefs"
+  [cellTemplate]="{
+    op: templateOp,
+  }"
+  [length]="pagination().totalRecords"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+/>
+
+<ng-template #headerToolbar>
+  <div class="d-flex flex-row gap-2 align-items-center">
+    <mat-form-field>
+      <mat-label>Buscar</mat-label>
+      <input matInput [(ngModel)]="dataSearch.textSearch" />
+      <ng-container matSuffix>
+        <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
+      </ng-container>
+    </mat-form-field>
+
+    <div class="ms-auto d-flex flex-row gap-2">
+      <!-- Export Button with Dropdown -->
+      <button mat-raised-button color="primary" [matMenuTriggerFor]="exportMenu">
+        Exportar Reporte
+      </button>
+
+      <mat-menu #exportMenu="matMenu">
+        <button mat-menu-item (click)="exportExcel()">
+          <mat-icon>table_view</mat-icon>
+          <span>Exportar a Excel</span>
+        </button>
+        <button mat-menu-item (click)="exportPdf()">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>Exportar a PDF</span>
+        </button>
+      </mat-menu>
+
+      <acp-button
+        appCompanyCustomerAddEdit
+        (companyCustomerSaved)="refresh()"
+        variant="success"
+        icon="add"
+        matStyle="filled"
+        text="Nuevo"
+      />
+
+      <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #templateOp let-data>
+  <acp-button
+    (companyCustomerSaved)="refresh()"
+    appCompanyCustomerAddEdit
+    [id]="data.idCliente"
+    variant="primary"
+    icon="edit"
+    matStyle="icon"
+  />
+  @if (!data.esConsumidorFinal) {
+    <acp-button (handleClick)="askToDelete(data)" variant="danger" icon="delete" matStyle="icon" />
+  }
+</ng-template>

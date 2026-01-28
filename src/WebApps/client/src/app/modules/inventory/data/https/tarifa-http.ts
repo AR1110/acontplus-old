@@ -6,7 +6,6 @@ import { PATHS_API } from '@core/constants/global.constants';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
 import { TarifaRepository } from '../repositories/tarifa.repository';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable()
 export class TarifaHttp implements TarifaRepository {
@@ -19,9 +18,7 @@ export class TarifaHttp implements TarifaRepository {
       ...obj,
     });
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {

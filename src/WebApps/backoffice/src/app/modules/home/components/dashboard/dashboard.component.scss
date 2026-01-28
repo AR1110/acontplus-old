@@ -1,0 +1,16 @@
+.chart-container {
+  max-width: 100%;
+  height: 300px; /* Default height for larger screens */
+}
+
+@media screen and (max-width: 768px) {
+  .chart-container {
+    height: 300px; /* Height for tablets */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .chart-container {
+    height: 200px; /* Height for mobile devices */
+  }
+}

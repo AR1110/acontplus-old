@@ -1,8 +1,10 @@
 {
+  // Editor settings
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
@@ -10,9 +12,23 @@
   "editor.wrappingIndent": "indent",
   "editor.autoIndent": "full",
   "editor.stickyScroll.enabled": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.inlayHints.enabled": "on",
+
+  // File settings
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/.angular": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/dist": true,
+    "**/coverage": true
+  },
+
+  // Language-specific formatters
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -28,21 +44,51 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // TypeScript settings
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.parameterTypes.enabled": false,
+  "typescript.inlayHints.variableTypes.enabled": false,
+  "typescript.inlayHints.propertyDeclarationTypes.enabled": false,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // ESLint settings
   "eslint.validate": ["typescript", "html"],
   "eslint.format.enable": false,
+  "eslint.useFlatConfig": true,
+
+  // Prettier settings
+  "prettier.requireConfig": true,
+
+  // Angular language service
+  "angular.view-engine": false,
+
+  // i18n/Translation settings
+  "i18n-ally.localesPaths": ["public/i18n", "src/app/core/i18n"],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.enabledFrameworks": ["general", "angular"],
+
+  // Search settings
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.angular": true,
+    "**/coverage": true,
+    "pnpm-lock.yaml": true
+  },
+
+  // GitHub Copilot settings
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
       "text": "Generate commit messages using conventional commit format, keeping the entire message to 50 characters or less. Analyze the changes and use appropriate type prefixes:\n- feat: for new features or significant additions\n- fix: for bug fixes\n- docs: for documentation changes\n- style: for code style/formatting changes\n- refactor: for code restructuring without functionality changes\n- test: for adding or modifying tests\n- chore: for maintenance tasks, build changes, or tooling updates\n- perf: for performance improvements\n- ci: for CI/CD configuration changes\n- build: for build system or dependency changes\n\nBe concise but detailed about what changed, include affected components/libraries, and use relevant emojis. Structure as: type(scope): description\n\nExamples:\n- feat(ng-auth): add JWT refresh 🔐\n- fix(core): fix tax calc bug 🐛\n- docs(ng-comp): update README 📚\n- refactor(utils): restructure converters 🔄"
     }
-  ],
-  "prettier.requireConfig": true,
-  "ngx-translate.lookup.resourcesType": "json",
-  "ngx-translate.lookup.resourcesPath": "public/i18n/zh-CN.json",
-  "i18n-ally.localesPaths": [
-    "public/i18n",
-    "src/app/core/i18n"
   ]
 }

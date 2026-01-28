@@ -1,0 +1,48 @@
+<mat-dialog-content>
+  <div class="d-grid gap-1">
+    <mat-form-field class="w-100">
+      <mat-label>RUC</mat-label>
+      <input matInput [(ngModel)]="data.ruc" />
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label> Razón Social:</mat-label>
+      <input matInput [(ngModel)]="data.razonSocial" />
+      <mat-hint>Nombre oficial y legal de la Persona Natural o Jurídica</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label> Nombre Comercial:</mat-label>
+      <input matInput [(ngModel)]="data.nombreComercial" />
+      <mat-hint
+        >Nombre de la Persona Natural o Juridica para el ejercicio de Actividades
+        Economicas</mat-hint
+      >
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Dirección</mat-label>
+      <textarea matInput [(ngModel)]="data.direccion"></textarea>
+    </mat-form-field>
+
+    <acp-input-chip [labelText]="'Correo'" [chips]="emails()" />
+
+    <acp-input-chip [labelText]="'Teléfono'" [chips]="telefonos()" />
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-button
+    variant="success"
+    icon="edit"
+    text="Actualizar"
+    matStyle="filled"
+    (handleClick)="save()"
+  />
+  <acp-button
+    type="button"
+    variant="dark"
+    text="Cerrar"
+    matStyle="filled"
+    (handleClick)="dialogRef.close()"
+  />
+</mat-dialog-actions>

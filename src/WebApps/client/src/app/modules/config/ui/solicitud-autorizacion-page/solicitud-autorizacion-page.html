@@ -1,0 +1,143 @@
+<app-breadcrumb />
+
+<acp-dynamic-card>
+  <div class="d-grid gap-2">
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="dataSearch.codEstab" (selectionChange)="refresh()">
+            @for (item of establecimientos; track $index) {
+              <mat-option [value]="item.codEstab">{{ item.nombreEstab }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <app-date-range-selection
+          [showInputMaterial]="true"
+          (onChangeDateRange)="onDateRangeSelection($event)"
+        />
+      </div>
+
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Doc.:</mat-label>
+
+          <mat-select [(ngModel)]="dataSearch.codDoc" (selectionChange)="refresh()">
+            <mat-option [value]="0">Todos</mat-option>
+
+            @for (item of tiposDoc; track $index) {
+              <mat-option [value]="item.code">{{ item.description }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col">
+        <div class="d-flex flex-row gap-1 justify-content-end">
+          <acp-button
+            variant="secondary"
+            icon="refresh"
+            matStyle="icon"
+            (handleClick)="refresh()"
+            [disabled]="loading"
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-4 row-cols-md-2 row-cols-sm-1 row-cols-1 g-2"
+    >
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Usuario Solicitante</mat-label>
+          <mat-select [(ngModel)]="dataSearch.usuarioSolicitanteId" (selectionChange)="refresh()">
+            <mat-option [value]="0">Todos</mat-option>
+            @for (item of usersRole; track $index) {
+              <mat-option [value]="item.idUsuarioRol">{{ item.nombreCompleto }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="dataSearch.codEstado" (selectionChange)="refresh()">
+            <mat-option [value]="0">Todos</mat-option>
+            @for (item of estadosDoc; track $index) {
+              <mat-option [value]="item.code">{{ item.description }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <acp-data-grid
+    [data]="dataSource"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: templateOp,
+      estado: statusTemplate,
+    }"
+    [loading]="loading"
+    [length]="pagination().totalRecords"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    (page)="handlePageEvent($event)"
+  />
+
+  <ng-template #templateOp let-data>
+    @if (data.codigoEstado === 'P') {
+      <acp-button
+        variant="success"
+        icon="check"
+        matStyle="icon"
+        (handleClick)="askToApprobe(data)"
+        matTooltip="Aprobar Solicitud de Clave de Autorización para editar o anular el documento de venta"
+      />
+
+      <acp-button
+        variant="danger"
+        icon="close"
+        matStyle="icon"
+        matTooltip="Rechazar solicitud de autorización"
+        (handleClick)="rechazar(data)"
+      />
+    }
+
+    <acp-button
+      variant="info"
+      icon="list"
+      matStyle="icon"
+      matTooltip="Detalles de modificación"
+      (handleClick)="openDetalle(data)"
+    />
+  </ng-template>
+
+  <ng-template #statusTemplate let-data>
+    @if (data.codigoEstado === 'P') {
+      <span class="badge bg-info">
+        {{ data.nombreEstado }}
+      </span>
+    }
+    @if (data.codigoEstado === 'A') {
+      <span class="badge bg-success">
+        {{ data.nombreEstado }}
+      </span>
+    }
+    @if (data.codigoEstado === 'R') {
+      <span class="badge bg-danger">
+        {{ data.nombreEstado }}
+      </span>
+    }
+    @if (data.codigoEstado === 'F') {
+      <span class="badge bg-warning">
+        {{ data.nombreEstado }}
+      </span>
+    }
+  </ng-template>
+</acp-dynamic-card>

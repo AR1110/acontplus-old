@@ -1,0 +1,67 @@
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col">
+        <button (click)="openDialog()" mat-raised-button type="button">
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-center">#</th>
+            <th class="text-center">Opciones</th>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of roles; track $index) {
+            <tr>
+              <td class="text-center">{{ $index + 1 }}</td>
+              <td class="text-center">
+                <button
+                  mat-icon-button
+                  [matMenuTriggerFor]="menu"
+                  class="mat-small"
+                >
+                  <mat-icon>menu</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="onUpdate(item)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                  </button>
+                </mat-menu>
+              </td>
+              <td>{{ item.code }}</td>
+              <td>{{ item.name }}</td>
+              <td>
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="schedule_{{ item.id }}"
+                    [checked]="item.isActive"
+                    (change)="changeStatus(item)"
+                  />
+                  <label
+                    class="form-check-label"
+                    for="schedule_{{ item.id }}"
+                  ></label>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <h5>No Records</h5>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

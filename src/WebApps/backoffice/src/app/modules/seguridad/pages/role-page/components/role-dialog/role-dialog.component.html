@@ -1,0 +1,47 @@
+<form
+  id="roleForm"
+  [formGroup]="roleForm"
+  (ngSubmit)="id > 0 ? update() : post()"
+>
+  <mat-dialog-content>
+    <div class="row mt-4">
+      <div class="col">
+        <div class="form-floating mb-3">
+          <input
+            formControlName="code"
+            type="text"
+            class="form-control"
+            placeholder=""
+          />
+          <label for="floatingInput">Código</label>
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-floating mb-3">
+          <input
+            formControlName="name"
+            type="text"
+            class="form-control"
+            placeholder=""
+          />
+          <label>Nombre</label>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      id="roleForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="dialogClose()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

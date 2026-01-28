@@ -1,0 +1,55 @@
+<app-breadcrumb />
+<acp-dynamic-card>
+  <div
+    class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
+  >
+    <div class="col"></div>
+    <div class="col">
+      <div class="d-flex flex-row gap-2 justify-content-end">
+        <acp-button
+          variant="success"
+          icon="add"
+          text="Nuevo"
+          matStyle="filled"
+          (handleClick)="openModalAddUpdate()"
+        />
+        <acp-button variant="secondary" icon="refresh" matStyle="icon" (handleClick)="refresh()" />
+      </div>
+    </div>
+  </div>
+
+  <acp-data-grid
+    [data]="dataSource()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: templateOp,
+    }"
+  />
+
+  <ng-template #templateOp let-data>
+    <acp-button
+      variant="info"
+      icon="edit"
+      matStyle="icon"
+      (handleClick)="openModalAddUpdate(data)"
+    />
+
+    <acp-button
+      variant="warning"
+      icon="edit"
+      matStyle="icon"
+      (handleClick)="updateSignature(data)"
+      matTooltip="Actualizar firma electrónica (archivo y contraseña)"
+    >
+      <app-svg-icon id="icon-file-pencil" />
+    </acp-button>
+
+    <acp-button
+      variant="success"
+      icon="download"
+      matStyle="icon"
+      (handleClick)="downloadSignature(data)"
+      matTooltip="Descargar la Firma Electrónica en archivo"
+    />
+  </ng-template>
+</acp-dynamic-card>

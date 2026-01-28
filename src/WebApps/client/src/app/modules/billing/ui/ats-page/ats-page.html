@@ -1,0 +1,34 @@
+<app-breadcrumb />
+
+<div class="row mt-5">
+  <div
+    class="col-12 col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-6 offset-xl-3 offset-xxl-3 offset-lg-3 offset-md-3 offset-sm-3"
+  >
+    <acp-dynamic-card
+      [cardTitle]="'ATS'"
+      [cardSubtitle]="'Anexo Transaccional Simplificado'"
+      [isHeaderVisible]="true"
+    >
+      <div class="row mt-3 mb-3">
+        <div class="col">
+          <acp-date-range-picker
+            [startDate]="fromDate"
+            [endDate]="toDate"
+            (dateRangeSelected)="onDateRangeSelection($event)"
+          />
+
+        </div>
+      </div>
+
+      <acp-button
+        matStyle="filled"
+        variant="success"
+        icon="download"
+        text="Descargar"
+        title="Descargar Ats"
+        ariaLabel="Descargar Ats Button"
+        (handleClick)="getAts()"
+      />
+    </acp-dynamic-card>
+  </div>
+</div>

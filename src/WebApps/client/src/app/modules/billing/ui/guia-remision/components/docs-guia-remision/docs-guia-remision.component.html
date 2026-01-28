@@ -36,13 +36,13 @@
         </mat-form-field>
       </div>
     </div>
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
+    <acp-data-grid
+      [data]="dataSource()"
+      [columns]="columnsDefs"
+      [length]="pagination().totalRecords"
+      [pageIndex]="pagination().pageIndex"
+      [pageSize]="pagination().pageSize"
+      (page)="handlePageEvent($event)"
     />
   </div>
 </ng-template>

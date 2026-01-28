@@ -1,0 +1,58 @@
+<app-breadcrumb />
+<mat-card>
+  <mat-card-content>
+    <div class="row">
+      <div class="col-6">
+        <button
+          (click)="openDialog()"
+          mat-raised-button
+          title="Registrar nuevo lanzamiento"
+          type="button"
+        >
+          <mat-icon>add</mat-icon>
+          Registrar
+        </button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-center">Opciones</th>
+            <th class="text-center">#</th>
+            <th>Aplicación</th>
+            <th>Version</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of releases; track $index) {
+            <tr>
+              <td class="text-center">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>list</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="onEdit(item)">
+                    <mat-icon>edit</mat-icon>
+                    <span>Editar</span>
+                  </button>
+                  <button mat-menu-item (click)="onDelete(item)">
+                    <mat-icon>delete</mat-icon>
+                    <span>Eliminar</span>
+                  </button>
+                </mat-menu>
+              </td>
+              <td class="text-center">{{ $index + 1 }}</td>
+              <td>{{ item.aplicacionName }}</td>
+              <td>{{ item.version }}</td>
+              <td>{{ item.releaseDate }}</td>
+            </tr>
+          } @empty {
+            <h5>No records</h5>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

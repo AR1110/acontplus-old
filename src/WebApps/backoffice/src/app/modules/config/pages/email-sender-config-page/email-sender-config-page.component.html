@@ -1,0 +1,126 @@
+<app-breadcrumb />
+<mat-card appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Parametros Email</mat-card-title>
+    <mat-card-subtitle>
+      <span class="text-danger">*</span> Ingrese todos los campos requeridos
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <hr />
+    <div class="row">
+      <div class="col-sm-12 col-xs-12">
+        <div class="form-group">
+          <label for="useSsl"
+            >Use Ssl <span class="text-danger">*</span>
+          </label>
+          <mat-slide-toggle
+            id="useSsl"
+            [(ngModel)]="data.useSsl"
+          ></mat-slide-toggle>
+        </div>
+        <div class="form-group">
+          <label for="isGlobal"
+            >Global <span class="text-danger">*</span>
+          </label>
+          <mat-slide-toggle
+            id="isGlobal"
+            [(ngModel)]="data.isGlobal"
+          ></mat-slide-toggle>
+        </div>
+        <div class="form-group">
+          <label for="senderEmail"
+            >Correo Remitente <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.senderEmail"
+            id="senderEmail"
+            placeholder="..."
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="senderName"
+            >Nombre Remitente <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.senderName"
+            id="senderName"
+            placeholder="..."
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="smtpServer"
+            >Server <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.smtpServer"
+            id="smtpServer"
+            placeholder="..."
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="username"
+            >Usuario <span class="text-danger">*</span></label
+          >
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.username"
+            id="username"
+            placeholder="..."
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password"
+            >Password <span class="text-danger">*</span></label
+          >
+          <input
+            type="password"
+            class="form-control"
+            [(ngModel)]="data.password"
+            id="password"
+            placeholder="..."
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="port">port <span class="text-danger">*</span></label>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="data.smtpPort"
+            id="port"
+            placeholder="..."
+            required
+          />
+        </div>
+
+        <button type="button" (click)="askToSave()" mat-raised-button>
+          <mat-icon>save</mat-icon>
+          Guardar
+        </button>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="table-responsive">
+          <acp-mat-dynamic-table
+            [columnDefinitions]="columnsDefs"
+            [tableData]="emailSenderConfigs"
+          ></acp-mat-dynamic-table>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

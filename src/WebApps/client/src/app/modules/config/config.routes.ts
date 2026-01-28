@@ -37,9 +37,7 @@ export const routes: Routes = [
     path: 'doc-config',
     title: 'Config. Docs',
     loadComponent: () =>
-      import('@modules/config/ui/doc-config/doc-config.component').then(
-        (m) => m.DocConfigPageComponent,
-      ),
+      import('@modules/config/ui/doc-config/doc-config-page').then((m) => m.DocConfigPageComponent),
     data: {
       breadcrumb: 'Config. Docs',
     },
@@ -47,10 +45,7 @@ export const routes: Routes = [
   {
     path: 'user-customer',
     title: 'Usuario',
-    loadComponent: () =>
-      import('@modules/config/ui/user-customer/user-customer.component').then(
-        (m) => m.UserCustomerComponent,
-      ),
+    loadComponent: () => import('@modules/config/ui/user/user-page').then((m) => m.UserPage),
     data: {
       breadcrumb: 'Usuario',
     },
@@ -59,8 +54,8 @@ export const routes: Routes = [
     path: 'user-request',
     title: 'Solicitudes de Usuario',
     loadComponent: () =>
-      import('@modules/config/ui/solicitud-autorizacion/solicitud-autorizacion.component').then(
-        (m) => m.SolicitudAutorizacionComponent,
+      import('@modules/config/ui/solicitud-autorizacion-page/solicitud-autorizacion-page').then(
+        (m) => m.SolicitudAutorizacionPage,
       ),
     data: {
       breadcrumb: 'Solicitudes de Usuario',
@@ -92,7 +87,7 @@ export const routes: Routes = [
     path: 'company',
     title: 'Entidad',
     loadComponent: () =>
-      import('@modules/config/ui/company/company.component').then((m) => m.CompanyComponent),
+      import('@modules/config/ui/company-page/company-page').then((m) => m.CompanyPage),
     data: {
       breadcrumb: 'Entidad',
     },
@@ -101,7 +96,7 @@ export const routes: Routes = [
     path: 'printer',
     title: 'Configuración Impresora',
     loadComponent: () =>
-      import('@modules/config/ui/printer/printer.component').then((m) => m.PrinterComponent),
+      import('@modules/config/ui/printer-page/printer-page').then((m) => m.PrinterPage),
     data: {
       breadcrumb: 'Configuración Impresora',
     },
@@ -129,10 +124,10 @@ export const routes: Routes = [
     },
   },
   {
-    path: 'electronic-signature',
+    path: 'electronic-signature-page',
     loadComponent: () =>
-      import('@modules/config/ui/electronic-signature/electronic-signature.component').then(
-        (m) => m.ElectronicSignatureComponent,
+      import('@modules/config/ui/electronic-signature-page/electronic-signature-page').then(
+        (m) => m.ElectronicSignaturePage,
       ),
     data: {
       breadcrumb: 'Firma Electronica',
@@ -141,9 +136,7 @@ export const routes: Routes = [
   {
     path: 'credit-time',
     loadComponent: () =>
-      import('@modules/config/ui/credit-time/credit-time.component').then(
-        (m) => m.CreditTimeComponent,
-      ),
+      import('@modules/config/ui/credit-time/credit-time-page').then((m) => m.CreditTimePage),
     data: {
       breadcrumb: 'Tiempo Crédito',
     },

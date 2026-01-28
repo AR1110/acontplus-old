@@ -1,0 +1,113 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="licencia"
+          >Licencia: <span class="text-danger">*</span></label
+        >
+        <select
+          class="form-select"
+          id="licencia"
+          (change)="onLicenseChange()"
+          [(ngModel)]="data.licenciaId"
+          aria-label="Licencia"
+        >
+          <option disabled selected>::SELECCIONE::</option>
+          @for (item of licenses; track $index) {
+            <option [value]="item.id">
+              {{ item.code }} - {{ item.licenseType }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="role">Rol: <span class="text-danger">*</span></label>
+        <select
+          class="form-select"
+          id="role"
+          aria-label="Rol"
+          [(ngModel)]="data.roleId"
+        >
+          <option disabled selected>::SELECCIONE::</option>
+          @for (item of roles; track $index) {
+            <option [value]="item.id">{{ item.code }} - {{ item.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!--submenus  -->
+  <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+    <!-- This is the tree node template for leaf nodes -->
+    <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+      <div
+        class="d-flex flex-row gap-1 justify-content-center align-items-center"
+        style="width: 310px"
+      >
+        <button mat-icon-button disabled></button>
+        <mat-checkbox
+          (change)="todoItemSelectionToggle(node)"
+          [checked]="checklistSelection.isSelected(node)"
+          [indeterminate]="isNodeIndeterminate(node)"
+        >
+        </mat-checkbox>
+        <span class="flex-grow-1">{{ node.name }}</span>
+        <!--@if (checklistSelection.isSelected(node)){
+          <button type="button"
+                  class="btn btn-success btn-sm justify-content-end"
+                  (click)="onClickActions(node)"
+                  [ngbPopover]="popContentActions"
+                  [autoClose]="'outside'"
+                  (hidden)="actionHidden()"
+          >
+            <fa-icon [icon]="'key'" size="1x"></fa-icon>
+          </button>
+          <ng-template #popContentActions>
+            @for (action of actions; track  $index){
+              <div class="d-flex flex-column bd-highlight">
+                <mat-slide-toggle class="p-2" [(ngModel)]="action.checked" (change)="toggleAction(action)">{{action.name}}</mat-slide-toggle>
+
+              </div>
+
+            }
+          </ng-template>
+        }-->
+      </div>
+    </mat-tree-node>
+    <!-- This is the tree node template for expandable nodes -->
+    <mat-tree-node
+      *matTreeNodeDef="let node; when: hasChild"
+      matTreeNodePadding
+    >
+      <div class="d-flex flex-row gap-1 align-items-center">
+        <button
+          mat-icon-button
+          matTreeNodeToggle
+          [attr.aria-label]="'Toggle ' + node.name"
+        >
+          <mat-icon class="mat-icon-rtl-mirror">
+            {{ treeControl.isExpanded(node) ? "expand_more" : "chevron_right" }}
+          </mat-icon>
+        </button>
+        <mat-checkbox
+          (change)="todoItemSelectionToggle(node)"
+          [checked]="checklistSelection.isSelected(node)"
+          [indeterminate]="isNodeIndeterminate(node)"
+        >
+        </mat-checkbox>
+        <span>{{ node.name }}</span>
+      </div>
+    </mat-tree-node>
+  </mat-tree>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-mat-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="dialogClose()"
+  ></acp-mat-theme-button>
+</mat-dialog-actions>

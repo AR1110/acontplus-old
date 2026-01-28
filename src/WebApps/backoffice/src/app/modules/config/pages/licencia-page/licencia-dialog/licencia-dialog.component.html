@@ -1,0 +1,143 @@
+<form id="licenseDialogForm" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-lg-4 col-sm-12 col-md-6 col-xl-4 col-xxl-4">
+        <div class="form-group">
+          <label for="licenseTypeId">Tipo de Licencia:</label>
+          <select
+            name="licenseTypeId"
+            id="licenseTypeId"
+            class="form-select"
+            disabled="{{ isDisabled }}"
+            [(ngModel)]="data.licenseTypeId"
+            required
+          >
+            <option [ngValue]="0">Seleccione una licencia</option>
+            @for (item of licenseTypes; track $index) {
+              <option [ngValue]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-4 col-sm-12 col-md-6 col-xl-6 col-xxl-6">
+        <div class="form-group">
+          <label for="sistemaId">Sistema:</label>
+          <select
+            name="sistemaId"
+            id="sistemaId"
+            class="form-select"
+            disabled="{{ isDisabled }}"
+            [(ngModel)]="data.sistemaId"
+            required
+          >
+            <option [ngValue]="0">Seleccione un sistema</option>
+            @for (item of sistemas; track $index) {
+              <option [ngValue]="item.id">{{ item.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-4 col-sm-12 col-md-6 col-xl-6 col-xxl-6">
+        <div class="form-group">
+          <label>Aplicación:</label>
+          <mat-select
+            matNativeControl
+            [formControl]="checkedApplication"
+            multiple
+            (selectionChange)="onSelectionChange($event.value)"
+            class="form-select"
+          >
+            @for (item of aplicaciones; track $index) {
+              <mat-option [value]="item.id">{{ item.name }}</mat-option>
+            }
+          </mat-select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="cost">Costo:</label>
+          <input
+            type="number"
+            id="cost"
+            name="cost"
+            #costInput
+            class="form-control"
+            (click)="costInput.select()"
+            [(ngModel)]="data.cost"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="tax">Impuesto:</label>
+          <input
+            type="number"
+            id="tax"
+            name="tax"
+            #taxInput
+            class="form-control"
+            (click)="taxInput.select()"
+            [(ngModel)]="data.tax"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="discount">Discount:</label>
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            #discountInput
+            class="form-control"
+            (click)="discountInput.select()"
+            [(ngModel)]="data.discount"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-3 col-4">
+        <div class="form-group">
+          <label for="total">Total:</label>
+          <input
+            type="number"
+            id="total"
+            name="total"
+            class="form-control"
+            [(ngModel)]="data.total"
+            step="any"
+            disabled
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Adding details  -->
+    <app-tabulator [columnNames]="columnNames" [tableData]="tableData">
+    </app-tabulator>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      icon="save"
+      text="Guardar"
+      form="licenseDialogForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="dialogClose()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

@@ -1475,6 +1475,7 @@
             addRow();
             let index = $scope.gridOptions.data.findIndex(value => value.idArticulo === 0);
             let entity = $scope.gridOptions.data[index];
+            entity.cantidad = 0;
             setItem(entity, articulo, medidas); // configurar fila
             return entity;
         }
@@ -1774,6 +1775,13 @@
     function advancedSearchCtrl($scope, $uibModalInstance, tS, params) {
         const { idBodega, bodegas } = params;
 
+        $scope.dataSearch = {
+            pageSize: 100,
+            pageIndex: 1,
+            maxSize: 5,
+            totalRecords: 0,
+        };
+
         $scope.mainForm = {
             idBodega: idBodega,
             descripcionBodega: bodegas.find(b => b.idBodega === idBodega).descripcion,
@@ -1937,6 +1945,7 @@
             try {
 
                 $scope.articulosNotFounded = [];
+                $scope.articlesSelected = [];
                 importedExcel = false;
 
 
@@ -1947,13 +1956,18 @@
                     idFamilia: fS.isValidField($scope.mainForm.idFamilia),
                     idSubFamilia: fS.isValidField($scope.mainForm.idSubFamilia),
                     nroDocumento: fS.isValidField($scope.mainForm.nroDocumento),
-                    idBodega: $scope.mainForm.opcion === 6 ? $scope.mainForm.idBodega : null
+                    idBodega: $scope.mainForm.opcion === 6 ? $scope.mainForm.idBodega : null,
+                    pageIndex: $scope.dataSearch.pageIndex,
+                    pageSize: $scope.dataSearch.pageSize,
                 }
 
                 consolidacionInvSvc.getProducts(dataSearch).then(response => {
                     $scope.articlesFounded = response.articulos;
-                    if ($scope.articlesFounded.length > 50) {
-                        // Swal.fire({ title: "Aviso", text: "Le recomendamos realizar consolidaciones por cada 50 articulos", icon: "info" })
+
+                    if($scope.articlesFounded.length>0){
+                        $scope.dataSearch.totalRecords = $scope.articlesFounded[0].totalRecords;
+                    }else{
+                        $scope.dataSearch.totalRecords = 0;
                     }
                 })
             } catch (error) {
@@ -1961,6 +1975,15 @@
                 console.log(error)
             }
         }
+
+        $scope.pageChanged = function () {
+            getArticles()
+        };
+
+        $scope.changePageSize = function () {
+            $scope.dataSearch.pageIndex = 1;
+            getArticles()
+        };
 
         function setArticlesSelected() {
             $uibModalInstance.close({

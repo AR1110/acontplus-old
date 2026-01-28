@@ -720,6 +720,7 @@
                         nombreTipoIva: restItem.nombreTipoIva,
                         medidas,
                         conversion: dataMedida.conversion,
+                        totalRecords: restItem.totalRecords,
                     };
                 });
             }

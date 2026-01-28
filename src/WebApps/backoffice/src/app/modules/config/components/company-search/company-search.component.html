@@ -1,0 +1,31 @@
+<mat-form-field appearance="fill" class="w-100">
+  <mat-label>Buscar empresa</mat-label>
+  <input
+    type="text"
+    matInput
+    [formControl]="searchControl"
+    [matAutocomplete]="auto"
+  />
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="onOptionSelected($event)"
+    [displayWith]="displayFn"
+  >
+    @for (option of filteredOptions$ | async; track option.idCard) {
+      <mat-option [value]="option">
+        <div class="d-flex flex-row gap-1">
+          <span>{{ option.idCard }}</span>
+          -
+          <span>{{ option.businessName }}</span>
+        </div>
+      </mat-option>
+    }
+  </mat-autocomplete>
+
+  @if (searching) {
+    <mat-hint>Buscando...</mat-hint>
+  }
+  @if (searchFailed) {
+    <mat-error>Lo sentimos, no se han podido cargar las sugerencias.</mat-error>
+  }
+</mat-form-field>

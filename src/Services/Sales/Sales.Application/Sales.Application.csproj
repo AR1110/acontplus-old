@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Sales.Domain\Sales.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Mapster" />
+  </ItemGroup>
+
 </Project>

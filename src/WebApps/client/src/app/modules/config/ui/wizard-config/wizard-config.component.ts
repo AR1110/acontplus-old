@@ -1,5 +1,14 @@
 // Angular Core
 import {
+  AfterViewInit,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
+import {
   AbstractControl,
   FormArray,
   FormBuilder,
@@ -9,80 +18,58 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  Component,
-  inject,
-  ViewChild,
-  OnInit,
-  AfterViewInit,
-  signal,
-  computed,
-  ChangeDetectionStrategy,
-} from '@angular/core';
 
 // Angular Material
-import {
-  MatStep,
-  MatStepLabel,
-  MatStepper,
-  MatStepperNext,
-  MatStepperPrevious,
-  MatStepperModule,
-} from '@angular/material/stepper';
-import { MatButton, MatIconButton, MatButtonModule } from '@angular/material/button';
-import { DynamicCard } from '@acontplus/ng-components';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInput, MatLabel } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
 // Third-party Libraries
+import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import Swal from 'sweetalert2';
-import { of } from 'rxjs';
 
 // Core Components & Services
+import { Button, DynamicCard, InputChip, TabulatorTable } from '@acontplus/ng-components';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { TabulatorTable } from '@acontplus/ng-components';
-import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
-
-// Shared Components & Models
-import { InputChip } from '@acontplus/ng-components';
+import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
+import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 // Module Services
-import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
+import { CompanyDemoStepService } from '@modules/config/services/wizard-config/company-demo-step.service';
 import { WizardErrorHandlerService } from './services/wizard-error-handler.service';
 
 // Module Use Cases
-import { SaveElectronicSignatureUseCase } from '@modules/config/application/use-cases/electronic-signature/save-electronic-signature.use-case';
-import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
-import { UpdateUserCustomerUseCase } from '@modules/config/application/use-cases/user-customer/update-user-customer.use-case';
-import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
 import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { CreateDocConfigUseCase } from '@modules/config/application/use-cases/doc-config/create-doc-config.use-case';
+import { GetDocConfigFormDataUseCase } from '@modules/config/application/use-cases/doc-config/get-doc-config-form-data.use-case';
+import { UpdateUserUseCase } from '@modules/config/application/use-cases/user/update-user.use-case';
+import { ELECTRONIC_SIGNATURE_HTTP_TOKEN } from '@modules/config/data/config-token';
 
 // Module Models
-import { ActividadEconomica } from '@modules/config/domain/models/wizard-config/actividad-economica.model';
-import { AgenteRetencion } from '@modules/config/domain/models/wizard-config/agente-retencion.model';
-import { ElectronicSignatureParam } from '@modules/config/domain/models/electronic-signature.model';
-import { Contribuyente } from '@modules/config/domain/models/wizard-config/contribuyente.model';
-import { DemoStep } from '@modules/config/domain/models/wizard-config/demo-step.model';
-import { Canton } from '@modules/config/domain/models/wizard-config/canton.model';
-import { DocConfig } from '@modules/config/domain/models/doc-config.model';
 import { UserData } from '@modules/auth/domain/models/user-data.model';
+import { DocConfig } from '@modules/config/data/models/doc-config.model';
+import { ElectronicSignatureParam } from '@modules/config/data/models/electronic-signature.model';
+import { ActividadEconomica } from '@modules/config/data/models/wizard-config/actividad-economica.model';
+import { AgenteRetencion } from '@modules/config/data/models/wizard-config/agente-retencion.model';
+import { Canton } from '@modules/config/data/models/wizard-config/canton.model';
+import { Contribuyente } from '@modules/config/data/models/wizard-config/contribuyente.model';
+import { DemoStep } from '@modules/config/data/models/wizard-config/demo-step.model';
 
 // Shared Components & Models
 import { NgDynamicSelectComponent } from '@shared/components/ng-dynamic-select/ng-dynamic-select.component';
 import { SelectOption } from '@shared/models/select-option';
 
 // Utilities
-import { Button } from '@acontplus/ng-components';
-import { romanToInt } from '@modules/config/domain/models/wizard-config/roman-to-index';
+import { romanToInt } from '@modules/config/data/models/wizard-config/roman-to-index';
 import { AmbienteSri, ambienteSriOptions } from '@shared/models/ambiente-sri';
 
 interface TabulatorCell {
@@ -176,8 +163,8 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
   private readonly _companyDemoStepService = inject(CompanyDemoStepService);
   private readonly _formDataDocConfig = inject(GetDocConfigFormDataUseCase);
   private readonly _errorHandler = inject(WizardErrorHandlerService);
-  private readonly _updateUserCustomerUseCase = inject(UpdateUserCustomerUseCase);
-  private readonly _saveElectronicSignatureUseCase = inject(SaveElectronicSignatureUseCase);
+  private readonly _updateUserUseCase = inject(UpdateUserUseCase);
+  private readonly _electronicSignatureHttp = inject(ELECTRONIC_SIGNATURE_HTTP_TOKEN);
   private readonly _createDocConfigUseCase = inject(CreateDocConfigUseCase);
 
   private readonly _fb = inject(FormBuilder);
@@ -535,7 +522,7 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         demoStepId: this.demoSteps().find((step: DemoStep) => step.code === 'II')?.id,
       };
 
-      this._updateUserCustomerUseCase
+      this._updateUserUseCase
         .execute(userData)
         .pipe(
           catchError((error: unknown) => {
@@ -744,8 +731,8 @@ export class WizardConfigComponent implements OnInit, AfterViewInit {
         file: this.selectedFile,
       };
 
-      this._saveElectronicSignatureUseCase
-        .execute(signatureData)
+      this._electronicSignatureHttp
+        .save(signatureData)
         .pipe(
           catchError((error: unknown) => {
             this._errorHandler.handleApiError(error, {

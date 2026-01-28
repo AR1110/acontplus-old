@@ -1,0 +1,62 @@
+<mat-dialog-content>
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label>Fecha Inicio</label>
+        <app-input-date [(value)]="data.startDate" [disabled]="true" />
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 col-12">
+      <div class="form-group">
+        <label>Fecha Fin</label>
+        <app-input-date [(value)]="data.endDate" [disabled]="true" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="limit">Límite: </label>
+    <input
+      type="number"
+      name="limit"
+      id="limit"
+      [(ngModel)]="data.limit"
+      class="form-control"
+    />
+  </div>
+
+  <div class="row">
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="ilimited">Ilimitado</label>
+        <mat-slide-toggle
+          id="ilimited"
+          [(ngModel)]="data.unlimited"
+        ></mat-slide-toggle>
+      </div>
+    </div>
+    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="status">Estado</label>
+        <mat-slide-toggle
+          id="status"
+          [(ngModel)]="data.isActive"
+        ></mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <acp-mat-theme-button
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="save()"
+  ></acp-mat-theme-button>
+  <acp-mat-theme-button
+    variant="dark"
+    icon="close"
+    text="Cancelar"
+    (handleClick)="dialogClose()"
+  ></acp-mat-theme-button>
+</mat-dialog-actions>

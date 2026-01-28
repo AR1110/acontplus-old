@@ -1,0 +1,77 @@
+<app-breadcrumb />
+
+<form (ngSubmit)="loadData()">
+  <mat-card>
+    <mat-card-content>
+      <div class="row mb-3">
+        <div class="col">
+          <div class="form-group">
+            <label for="startDate">Fecha Inicio</label>
+            <input
+              type="date"
+              [(ngModel)]="data.startDate"
+              id="startDate"
+              name="startDate"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label for="endDate">Fecha Fin</label>
+            <input
+              type="date"
+              [(ngModel)]="data.endDate"
+              id="endDate"
+              name="endDate"
+              class="form-control"
+            />
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" mat-raised-button class="mb-3">
+        <mat-icon>checklist</mat-icon> Listar
+      </button>
+
+      <div class="row">
+        <div class="col">
+          <mat-accordion multi>
+            @for (item of subscriptions; track $index) {
+              <mat-expansion-panel
+                [expanded]="panelOpenState === $index"
+                (opened)="setPanelOpen($index, item.companyId)"
+                (closed)="setPanelOpen(-1, item.companyId)"
+              >
+                <mat-expansion-panel-header class="mb-5 mb-md-0">
+                  <mat-panel-title class="pt-5 pt-md-0"
+                    >{{ item.businessName }}
+                  </mat-panel-title>
+                  <mat-panel-description class="pt-5 pt-md-0">
+                    <h5>{{ item.tradeName }}</h5>
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="table-responsive">
+                  <canvas #documentChart></canvas>
+                </div>
+              </mat-expansion-panel>
+            } @empty {
+              <p>No existen Datos</p>
+            }
+          </mat-accordion>
+          <mat-paginator
+            #paginator
+            (page)="onPageChanged($event)"
+            [length]="pagination().totalRecords"
+            [pageIndex]="pagination().pageIndex"
+            [pageSizeOptions]="pagination().pageSizeOptions"
+            [pageSize]="pagination().pageSize"
+            [showFirstLastButtons]="true"
+            aria-label="Select page"
+          >
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</form>

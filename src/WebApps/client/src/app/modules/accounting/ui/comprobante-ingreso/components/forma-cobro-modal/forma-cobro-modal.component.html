@@ -1,11 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  [title]="'Forma de Cobro'"
-  (close)="close()"
-/>
-
-<ng-template #body>
+<mat-dialog-content>
   <!-- @if (entidadesFinanciera.length > 0) {
     <div ngbAccordion [closeOthers]="true">
       @for (item of entidadesFinanciera; track $index) {
@@ -271,7 +264,7 @@
       }
     </div>
   } -->
-</ng-template>
-<ng-template #footer>
+</mat-dialog-content>
+<mat-dialog-actions>
   <acp-button variant="success" icon="arrow" text="Abonar" (handleClick)="addPaymentType()" />
-</ng-template>
+</mat-dialog-actions>

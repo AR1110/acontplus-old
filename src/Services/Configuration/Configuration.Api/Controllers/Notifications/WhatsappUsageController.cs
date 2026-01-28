@@ -1,8 +1,6 @@
-using Configuration.Application.Interfaces.Notifications;
-
 namespace Configuration.Api.Controllers.Notifications;
 
-public class WhatsappUsageController(IWhatsappUsageService whatsappUsageService) : BaseApiController
+public class WhatsappUsageController(Configuration.Application.Interfaces.Notifications.IWhatsappUsageService whatsappUsageService) : BaseApiController
 {
     [HttpGet]
     public async Task<IActionResult> Get(string json)

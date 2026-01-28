@@ -1,5 +1,5 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { GeneralConfigResponse } from '@modules/config/domain/models/general-config.model';
+import { GeneralConfigResponse } from '@modules/config/data/models/general-config.model';
 import { SEPARATOR_KEY_CODE } from '@core/constants/global.constants';
 
 export class ListGeneralConfigMapper {

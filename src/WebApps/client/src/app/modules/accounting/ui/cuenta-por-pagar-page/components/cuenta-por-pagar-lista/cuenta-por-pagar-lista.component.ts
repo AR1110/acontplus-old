@@ -1,6 +1,6 @@
 import { CuentaPorPagarHistMovimientoComponent } from '@accounting/ui/cuenta-por-pagar-page/components/cuenta-por-pagar-hist-movimiento/cuenta-por-pagar-hist-movimiento.component';
 // Angular Common Modules
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -18,7 +18,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { NgxMaskDirective } from 'ngx-mask';
 
 // Core Components and Services
-import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { DialogService } from '@core/services/dialog.service';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDateToString } from '@core/utils/date.util';
@@ -30,25 +29,33 @@ import { CuentaPorPagarLista } from '@accounting/data/models/cuenta-por-pagar.mo
 import { CuentaPorPagarCuotaModalComponent } from '@accounting/ui/cuenta-por-pagar-page/components/cuenta-por-pagar-cuota-modal/cuenta-por-pagar-cuota-modal.component';
 
 // Shared Components, Models, and Pipes
-import { DataGrid, DataGridColumn, Pagination, Button } from '@acontplus/ng-components';
+import {
+  DataGrid,
+  DataGridColumn,
+  Pagination,
+  Button,
+  DateRangePicker,
+  DateRangeValue
+} from '@acontplus/ng-components';
 
 // Core Models
 import { GroupedEstab } from '@core/models/estab.model';
 
 // RxJS Operators
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
-import { ParameterReportUtil } from '@shared/utils/parameter-report.util';
 import { SharedService } from '@core/services/shared.service';
 import { SelectionModel } from '@angular/cdk/collections';
-import { CUENTA_POR_PAGAR_HTTP_TOKEN } from '@accounting/data/accounting-token';
+import {
+  CUENTA_POR_PAGAR_HTTP_TOKEN,
+  COMPROBANTE_EGRESO_HTTP_TOKEN,
+} from '@accounting/data/accounting-token';
+import { ComprobanteEgresoCuotasData } from '@accounting/data/repositories/comprobante-egreso.repository';
 import { ComprobanteEgresoLoteComponent } from '@accounting/ui/comprobante-egreso-page/components/comprobante-egreso-lote/comprobante-egreso-lote.component';
-import { ComprobanteEgresoUseCase } from '@accounting/comprobante-egreso/application/use-cases/comprobante-egreso.use-case';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 
 @Component({
   selector: 'app-cuenta-por-pagar-page-lista',
   imports: [
-    CommonModule,
     FormsModule,
     MatButtonModule,
     MatIconModule,
@@ -58,11 +65,11 @@ import { SupplierSearchComponent } from '@customer/ui/supplier/components/suppli
     MatInputModule,
     MatCheckboxModule,
     NgxMaskDirective,
-    DateRangeSelectionComponent,
+    DateRangePicker,
     SupplierSearchComponent,
     DataGrid,
-    Button,
-  ],
+    Button
+],
   templateUrl: './cuenta-por-pagar-lista.component.html',
 })
 export class CuentaPorPagarListaComponent implements OnInit {
@@ -70,7 +77,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   private dialogSvc = inject(DialogService);
   private sharedSvc = inject(SharedService);
   private useCase = inject(CUENTA_POR_PAGAR_HTTP_TOKEN);
-  private _comprobanteEgresoUseCase = inject(ComprobanteEgresoUseCase);
+  private _comprobanteEgresoHttp = inject(COMPROBANTE_EGRESO_HTTP_TOKEN);
 
   estabs: GroupedEstab[] = [];
   estadosDoc = [] as any[];
@@ -266,7 +273,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
     });
   }
 
-  onDateRangeSelection(range: { from: string; to: string }) {
+  onDateRangeSelection(range: DateRangeValue<true>) {
     this.dataSearch.update((e) => {
       return {
         ...e,
@@ -319,15 +326,15 @@ export class CuentaPorPagarListaComponent implements OnInit {
 
     // Crear un array de observables para obtener las cuotas
     const observables = selected.map((item) =>
-      this._comprobanteEgresoUseCase.getCuotasByIdCuentaPorPagar(item.idCuentaPorPagar),
+      this._comprobanteEgresoHttp.getCuotasByCuentaPorPagarId(item.idCuentaPorPagar),
     );
 
     forkJoin(observables).subscribe((cuotasResponse) => {
       const selectedMergeCuotas = selected.map((item) => {
         // Aplanamos las cuotas de la respuesta y las filtramos por idCuentaPorPagar
         const filteredCuotas = cuotasResponse
-          .flatMap((payment) => payment.cuotas)
-          .filter((cuota) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
+          .flatMap((payment: ComprobanteEgresoCuotasData) => payment.cuotas)
+          .filter((cuota: any) => cuota.idCuentaPorPagar === item.idCuentaPorPagar);
 
         // Devolvemos el documento combinado con las cuotas clonadas
         return {
@@ -387,17 +394,7 @@ export class CuentaPorPagarListaComponent implements OnInit {
   }
 
   getReport(row: CuentaPorPagarLista) {
-    const params = ParameterReportUtil.getParams(row.codDoc, {
-      id: row.idDocumento,
-      codEstab: row.codEstab,
-    });
 
-    this.sharedSvc.getReport({
-      data: params,
-      isOldVersion: true,
-      openInModal: true,
-    });
-    console.log(params);
   }
 
   handlePageEvent(e: PageEvent) {

@@ -1,0 +1,273 @@
+<form
+  id="suscripcionForm"
+  (ngSubmit)="data.id > 0 ? onEdit() : onSave()"
+  autocomplete="off"
+>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-xxl-8 col-xl-8 col-lg-8 col-md-8 col-sm-12 col-12">
+        <mat-form-field class="example-full-width">
+          <mat-label>Empresa:</mat-label>
+          <input
+            matInput
+            aria-label="Company"
+            [matAutocomplete]="auto"
+            [formControl]="stateCtrl"
+            (change)="onCompanySearch()"
+          />
+
+          <mat-autocomplete #auto="matAutocomplete">
+            <mat-option
+              *ngFor="let state of filteredCompanies"
+              [value]="state.tradeName"
+              (onSelectionChange)="onCompanySelected(state)"
+            >
+              <span>{{ state.idCard }}</span> |
+              <small>{{ state.tradeName }}</small> |
+              <small>{{ state.businessName }}</small>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12">
+        <div class="form-floating">
+          <select
+            name="subscriptionTypeId"
+            id="subscriptionTypeId"
+            class="form-control"
+            [(ngModel)]="data.subscriptionTypeId"
+            required
+          >
+            <option [ngValue]="0">Seleccione un tipo</option>
+            @for (item of subscriptionTypes; track $index) {
+              <option [ngValue]="item.id" selected="">
+                {{ item.code }} - {{ item.name }}
+              </option>
+            }
+          </select>
+          <label for="subscriptionTypeId">Tipo de Suscripción:</label>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="cost">Costo:</label>
+          <input
+            type="number"
+            id="cost"
+            name="cost"
+            #costInput
+            class="form-control"
+            (click)="costInput.select()"
+            [(ngModel)]="data.cost"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="tax">Impuesto:</label>
+          <input
+            type="number"
+            id="tax"
+            name="tax"
+            #taxInput
+            class="form-control"
+            (click)="taxInput.select()"
+            [(ngModel)]="data.tax"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="form-group">
+          <label for="discount">Discount:</label>
+          <input
+            type="number"
+            id="discount"
+            name="discount"
+            #discountInput
+            class="form-control"
+            (click)="discountInput.select()"
+            [(ngModel)]="data.discount"
+            (keyup)="sumTotal()"
+            step="any"
+          />
+        </div>
+      </div>
+      <div class="col">
+        <div class="form-group">
+          <label for="total">Total:</label>
+          <input
+            type="text"
+            id="total"
+            name="total"
+            class="form-control"
+            [(ngModel)]="data.total"
+            step="any"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3">
+        <div class="form-group">
+          <label for="startDate">F. Inicio:</label>
+          <input
+            type="date"
+            id="startDate"
+            name="startDate"
+            class="form-control"
+            [(ngModel)]="data.startDate"
+            (ngModelChange)="onStartDateChange($event)"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <label for="endDate">F. Fin:</label>
+          <input
+            type="date"
+            id="endDate"
+            name="endDate"
+            class="form-control"
+            [(ngModel)]="data.endDate"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <label for="maxPaymentDate">F. Max. Pago:</label>
+          <input
+            type="date"
+            id="maxPaymentDate"
+            name="maxPaymentDate"
+            class="form-control"
+            [(ngModel)]="data.maxPaymentDate"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-5 col-sm-12 col-12">
+        <h5 class="card-title">Licencias disponibles</h5>
+        <section class="mat-custom-table-container">
+          <table
+            mat-table
+            [dataSource]="dataSource"
+            multiTemplateDataRows
+            matSort
+            class="mat-elevation-z8"
+          >
+            <ng-container matColumnDef="select">
+              <th mat-header-cell *matHeaderCellDef>
+                <mat-checkbox
+                  (change)="$event ? masterToggle() : null"
+                  [checked]="selection.hasValue() && isAllSelected()"
+                  [indeterminate]="selection.hasValue() && !isAllSelected()"
+                  [aria-label]="checkboxLabel()"
+                >
+                </mat-checkbox>
+              </th>
+              <td mat-cell *matCellDef="let row">
+                <!-- <mat-checkbox
+                  (click)="$event.stopPropagation()"
+                  (change)="$event ? selection.toggle(row) : null"
+                  [checked]="selection.isSelected(row)"
+                  [aria-label]="checkboxLabel(row)"
+                >
+                </mat-checkbox> -->
+                <mat-checkbox
+                  (click)="$event.stopPropagation()"
+                  (change)="onCheckboxChange($event, row)"
+                  [checked]="selection.isSelected(row)"
+                  [aria-label]="checkboxLabel(row)"
+                >
+                </mat-checkbox>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="licenciaCode">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.licenciaCode }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="licenseTypeName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.licenseTypeName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="aplicacionName">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                Aplicación
+              </th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.aplicacionName }}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="order">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+              <td mat-cell *matCellDef="let element">
+                {{ element.order }}
+              </td>
+            </ng-container>
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns; sticky: true"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let element; columns: displayedColumns"
+              class="mat-custom-element-row"
+            ></tr>
+          </table>
+        </section>
+      </div>
+      <div class="col-xxl-7 col-xl-7 col-lg-7 col-md-7 col-sm-12 col-12">
+        <app-tabulator
+          [columnNames]="columnNames"
+          [tableData]="suscripcionDetalle"
+          [reactiveData]="reactiveData"
+        ></app-tabulator>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-xxl-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="warningMessage">Advertencia (Cobros):</label>
+          <textarea
+            name="warningMessage"
+            id="warningMessage"
+            class="form-control"
+            rows="3"
+            [(ngModel)]="data.warningMessage"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      icon="save"
+      text="Guardar"
+      id="suscripcionForm"
+    >
+    </acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      icon="close"
+      text="Cancelar"
+      (handleClick)="dialogClose()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

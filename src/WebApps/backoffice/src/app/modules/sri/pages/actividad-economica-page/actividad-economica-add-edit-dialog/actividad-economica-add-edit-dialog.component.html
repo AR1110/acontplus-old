@@ -1,0 +1,107 @@
+<form
+  id="actividadEconomicaForm"
+  [formGroup]="activityForm"
+  (ngSubmit)="onSave()"
+  autocomplete="off"
+>
+  <mat-dialog-content>
+    <div class="row">
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+          <label for="codigo">Código:</label>
+          <input
+            type="text"
+            id="codigo"
+            formControlName="codigo"
+            class="form-control"
+            minlength="1"
+            maxlength="9"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
+        <div class="form-group">
+          <label for="codTarifaImpuesto">Tarifa del IVA:</label>
+          <select
+            formControlName="codTarifaImpuesto"
+            id="codTarifaImpuesto"
+            class="form-select"
+          >
+            <option value="">Seleccione una tarifa del IVA</option>
+            @for (item of tarifas; track $index) {
+              <option [value]="item.codigo">{{ item.descripcion }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <input
+            type="text"
+            id="descripcion"
+            formControlName="descripcion"
+            class="form-control"
+            minlength="1"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-3 col-12">
+        <div class="form-group">
+          <label for="codGrupo">Código Grupo:</label>
+          <input
+            type="text"
+            id="codGrupo"
+            formControlName="codGrupo"
+            class="form-control"
+            minlength="1"
+            maxlength="9"
+            required
+          />
+        </div>
+      </div>
+      <div class="col-md-9 col-12">
+        <div class="form-group">
+          <label for="grupo">Grupo:</label>
+          <input
+            type="text"
+            id="grupo"
+            formControlName="grupo"
+            class="form-control"
+            minlength="1"
+            required
+          />
+        </div>
+      </div>
+    </div>
+    @if (data.idActividadEconomica > 0) {
+      <div class="row mb-3">
+        <div class="col">
+          <mat-slide-toggle formControlName="estado"> Activa </mat-slide-toggle>
+        </div>
+      </div>
+    }
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      form="actividadEconomicaForm"
+      [disabled]="activityForm.invalid"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="dialogClose()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

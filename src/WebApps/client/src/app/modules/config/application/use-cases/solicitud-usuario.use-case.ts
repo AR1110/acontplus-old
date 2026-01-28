@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { SolicitudUsuarioRepository } from '@modules/config/domain/repositories/solicitud-usuario.repository';
+import { SolicitudUsuarioRepository } from '@modules/config/data/repositories/solicitud-usuario.repository';
 
 @Injectable({
   providedIn: 'root',

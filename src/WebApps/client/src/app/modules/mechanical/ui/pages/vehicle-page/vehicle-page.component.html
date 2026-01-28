@@ -13,51 +13,58 @@
       <div class="col"></div>
       <div class="col">
         <div class="d-flex flex-row gap-1 justify-content-end">
-          <button
-            mat-icon-button
-            aria-label="Editar"
+          <acp-button
+            variant="success"
+            icon="add"
+            matStyle="icon"
             (resultModalHandler)="resultModal($event)"
             appVehicleAddEdit
             [disabled]="isLoading()"
-          >
-            <mat-icon>add</mat-icon>
-          </button>
-          <button mat-icon-button (click)="refresh()" [disabled]="isLoading()">
-            <mat-icon>refresh</mat-icon>
-          </button>
+          />
+          <acp-button
+            variant="secondary"
+            icon="refresh"
+            matStyle="icon"
+            (handleClick)="refresh()"
+            [disabled]="isLoading()"
+          />
         </div>
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [tableData]="dataSource()"
-      [isLoadingData]="isLoading()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
-      [templateOp]="templateOp"
-      [paginationConfig]="pagination()"
-      [enablePagination]="true"
-      (pageEvent)="handlePageEvent($event)"
+    <acp-data-grid
+      [data]="dataSource()"
+      [columns]="columns"
+      [loading]="isLoading()"
+      [length]="pagination().totalRecords"
+      [pageIndex]="pagination().pageIndex"
+      [pageSize]="pagination().pageSize"
+      (page)="handlePageEvent($event)"
+      [cellTemplate]="{
+        op: templateOp,
+        nomEstado: statusTemplate,
+      }"
     />
 
-    <ng-template #templateOp let-item="item">
-      <button
-        mat-icon-button
-        aria-label="Editar"
+    <ng-template #templateOp let-data>
+      <acp-button
+        variant="info"
+        icon="edit"
+        matStyle="icon"
         (resultModalHandler)="resultModal($event)"
-        [params]="{ id: item.id }"
+        [params]="{ id: data.id }"
         appVehicleAddEdit
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
-
-      <button mat-icon-button aria-label="Delete" (click)="askToDelete(item.id)">
-        <mat-icon>delete</mat-icon>
-      </button>
+      />
+      <acp-button
+        variant="danger"
+        icon="delete"
+        matStyle="icon"
+        (handleClick)="askToDelete(data.id)"
+      />
     </ng-template>
 
-    <ng-template #statusTemplate let-item>
-      <mat-slide-toggle (change)="putState(item.id, item.enabled)" [(ngModel)]="item.enabled" />
+    <ng-template #statusTemplate let-data>
+      <mat-slide-toggle (change)="putState(data.id, data.enabled)" [(ngModel)]="data.enabled" />
     </ng-template>
   </ng-container>
 </acp-dynamic-card>

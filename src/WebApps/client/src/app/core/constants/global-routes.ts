@@ -7,15 +7,15 @@ export enum GlobalRoutes {
   ConfigEstablishment = 'config/establishment',
   ConfigGeneralConfig = 'config/general-config',
   ConfigUserProfile = 'config/user-profile-page',
-  ConfigUserCustomer = 'config/user-customer',
-  ConfigUserCustomerRequest = 'config/solicitud-autorizacion',
+  ConfigUser = 'config/user',
+  ConfigUserRequest = 'config/solicitud-autorizacion',
   ConfigImportacion = 'config/excel-import',
   FirmaElectronica = 'config/electronic-signature',
   TiempoCredito = 'config/credit-time',
   //Configuration End
 
   //Facturación start
-  FactElectAts = 'billing/ats',
+  FactElectAts = 'billing/ats-page',
   FactElectGuiaRemision = 'billing/guia-remision',
   //Facturacion end
 
@@ -95,7 +95,7 @@ export enum GlobalRoutes {
   ComprasFacturaCompra = 'purchase/factura-fisica',
 
   //Customer
-  Cliente = 'customer/company-customer',
+  Cliente = 'customer/company-customer-page',
   CommonEmailQueue = 'common/email-queue',
 
   //BarberShop

@@ -1,0 +1,59 @@
+<form
+  id="licenseAccessForm"
+  [formGroup]="licenciaAccesoForm"
+  (ngSubmit)="save()"
+>
+  <mat-dialog-content>
+    <div class="row row-cols-2">
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Licencia: </mat-label>
+          <mat-select
+            formControlName="licenciaId"
+            (selectionChange)="licenseChange()"
+            aria-label="Licencia"
+          >
+            <mat-option disabled selected>::SELECCIONE::</mat-option>
+            @for (item of licenses(); track $index) {
+              <mat-option [value]="item.id">
+                {{ item.code }} - {{ item.licenseType }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col">
+        <mat-form-field class="w-100">
+          <mat-label>Rol: </mat-label>
+          <mat-select
+            formControlName="roleId"
+            aria-label="Role"
+          >
+            <mat-option disabled selected>::SELECCIONE::</mat-option>
+            @for (item of roles(); track $index) {
+              <mat-option [value]="item.id">
+                {{ item.code }} - {{ item.name }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <acp-mat-theme-button
+      type="submit"
+      variant="success"
+      text="Guardar"
+      icon="save"
+      id="licenseAccessForm"
+    ></acp-mat-theme-button>
+    <acp-mat-theme-button
+      variant="dark"
+      text="Cancelar"
+      icon="close"
+      (handleClick)="close()"
+    ></acp-mat-theme-button>
+  </mat-dialog-actions>
+</form>

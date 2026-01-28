@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -13,30 +13,22 @@
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <ItemGroup>
-
-    <PackageReference Include="Acontplus.Infrastructure" />
-
-    <PackageReference Include="Acontplus.Persistence.SqlServer" />
     <PackageReference Include="Acontplus.ApiDocumentation" />
     <PackageReference Include="Acontplus.Logging" />
     <PackageReference Include="Acontplus.Services" />
-    <PackageReference Include="Acontplus.Utilities" />
-    <PackageReference Include="Mapster" />
     <PackageReference Include="Scrutor" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build;</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build;</IncludeAssets>
+      <IncludeAssets>runtime; build</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Identity.Application\Identity.Application.csproj" />
+    <ProjectReference Include="..\Identity.Infrastructure\Identity.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

@@ -10,7 +10,8 @@
     <DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json" Link="SharedSettings\sharedsettings.Development.json" />
+    <Content Include="C:\Acontplus\Shared\sharedsettings.Development.json"
+      Link="SharedSettings\sharedsettings.Development.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Acontplus.Infrastructure" />
@@ -21,7 +22,7 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build;</IncludeAssets>
+      <IncludeAssets>runtime; build</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Scrutor" />
     <PackageReference Include="Serilog.AspNetCore" />

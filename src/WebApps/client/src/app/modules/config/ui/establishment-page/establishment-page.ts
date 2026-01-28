@@ -3,7 +3,7 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { PuntoEmisionRead } from '@core/models/punto-emision.model';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { EstablishmentRead } from '@modules/config/domain/models/sri/establishment.model';
+import { EstablishmentRead } from '@modules/config/data/models/establishment.model';
 import { PuntoEmisionAddEditModalComponent } from '@modules/config/ui/establishment-page/punto-emision-add-edit-modal/punto-emision-add-edit-modal.component';
 import { EstablishmentService } from '@modules/config/services/sri/establishment.service';
 import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';

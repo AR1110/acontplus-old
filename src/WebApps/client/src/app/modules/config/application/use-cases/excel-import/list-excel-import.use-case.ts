@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BaseUseCase } from '@core/base-use-case';
 import { Observable } from 'rxjs';
-import { ImportacionResponse } from '@modules/config/domain/models/importacion.model';
-import { ExcelImportRepository } from '@modules/config/domain/repositories/excel-import.repository';
+import { ImportacionResponse } from '@modules/config/data/models/importacion.model';
+import { ExcelImportRepository } from '@modules/config/data/repositories/excel-import.repository';
 
 @Injectable({
   providedIn: 'root',

@@ -1,12 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [title]="'Nuevo Pago'"
-  [loading]="comprobanteEgresoStore.isLoading()"
-  (close)="closeDialog()"
-/>
-
-<ng-template #containerTemplate>
+<mat-dialog-content>
   <div class="d-grid gap-4">
     <div
       class="row row-cols-xxl-2 row-cols-xl-2 row-cols-lg-2 row-cols-md-2 row-cols-sm-1 row-cols-1 g-4"
@@ -213,11 +205,11 @@
       </div>
     </div>
   </div>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #actionsTemplate>
+<mat-dialog-actions>
   <button mat-flat-button (click)="save()">
     <mat-icon>save</mat-icon>
     Guardar
   </button>
-</ng-template>
+</mat-dialog-actions>

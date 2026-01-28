@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormField, MatLabel } from '@angular/material/form-field';
@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import {
   CustomerSearchResult,
   MealScheduleForCustomer,
-} from '@restaurant/domain/models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 import { CreateMealConsumptionForOtherDateUseCase } from '@restaurant/application/use-cases/meal-consumption/create-meal-consumption-for-other-date.use-case';
 import { PrintMealConsumptionUseCase } from '@restaurant/application/use-cases/meal-consumption/print-meal-consumption.use-case';
 
@@ -26,7 +26,6 @@ interface DialogData {
   selector: 'app-meal-consumption-other-dates-dialog',
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatDialogModule,
     MatFormField,
@@ -34,8 +33,8 @@ interface DialogData {
     MatInput,
     MatButton,
     MatIcon,
-    MatProgressSpinner,
-  ],
+    MatProgressSpinner
+],
   templateUrl: './meal-consumption-other-dates-dialog.html',
   styleUrl: './meal-consumption-other-dates-dialog.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

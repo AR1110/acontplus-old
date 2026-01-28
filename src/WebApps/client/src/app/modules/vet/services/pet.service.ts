@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { PATHS_API } from '@core/constants/global.constants';
 import { API_ENDPOINTS } from '@modules/vet/constants/vet.constants';
 import { map, Observable } from 'rxjs';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { Pet } from '@modules/vet/models/pet.model';
 
@@ -40,9 +39,7 @@ export class PetService {
       pageSize: 20,
     };
     return this.http
-      .get(`${this.url}?json=${JSON.stringify(query)}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.url}?json=${JSON.stringify(query)}` )
       .pipe(
         map((response) => {
           if (isApiResponse(response)) {

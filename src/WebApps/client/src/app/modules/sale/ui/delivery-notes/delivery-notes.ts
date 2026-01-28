@@ -1,6 +1,5 @@
 import { Component, inject, model, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,26 +11,30 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { formatDateToString } from '@core/utils/date.util';
 import { getValidId } from '@core/utils/utils';
 import { NotaEntregaDetalleDialogDirective } from '@sale/ui/directives/nota-entrega-detalle-dialog.directive';
 import { NotaEntregaService } from '@sale/data/services/nota-entrega.service';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination, DynamicCard } from '@acontplus/ng-components';
+import {
+  Pagination,
+  DynamicCard,
+  DataGrid,
+  Button,
+  DataGridColumn,
+} from '@acontplus/ng-components';
 import { finalize, switchMap, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-delivery-notes',
   imports: [
     DynamicCard,
+    DataGrid,
+    Button,
     FormsModule,
     MatCardModule,
-    MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
@@ -41,8 +44,6 @@ import { finalize, switchMap, throwError } from 'rxjs';
     MatInputModule,
     //components
     BreadcrumbComponent,
-    CustomTableContainerComponent,
-    MatDynamicTableComponent,
     DateRangeSelectionComponent,
     //Directives
     NotaEntregaDetalleDialogDirective,
@@ -52,7 +53,7 @@ import { finalize, switchMap, throwError } from 'rxjs';
 })
 export class DeliveryNotes implements OnInit {
   private notaEntregaSvc = inject(NotaEntregaService);
-  private tS = inject(ToastrNotificationService);
+  private tS = inject(NotificationService);
 
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] = [];
@@ -60,19 +61,18 @@ export class DeliveryNotes implements OnInit {
   isSearchAdvanced = signal(false);
   isLoadingResults = signal(false);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'fechaVencimiento', label: 'Fecha Vcto', type: 'string' },
-    { key: 'razonSocialComprador', label: 'Cliente', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'abono', label: 'Abono', type: 'number' },
-    { key: 'saldo', label: 'Saldo', type: 'number' },
-    { key: 'estadoNom', label: 'Estado', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Serie', field: 'serieComprobante', sortable: true },
+    { header: 'Fecha Emisión', field: 'fechaEmision', sortable: true },
+    { header: 'Fecha Vcto', field: 'fechaVencimiento', sortable: true },
+    { header: 'Cliente', field: 'razonSocialComprador', sortable: true },
+    { header: 'Total', field: 'total', sortable: true, type: 'number' },
+    { header: 'Abono', field: 'abono', sortable: true, type: 'number' },
+    { header: 'Saldo', field: 'saldo', sortable: true, type: 'number' },
+    { header: 'Estado', field: 'estadoNom', sortable: true },
+    { header: 'Usuario', field: 'usuario', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   dataSource = new MatTableDataSource<any>();
 
@@ -161,10 +161,7 @@ export class DeliveryNotes implements OnInit {
               };
             });
           } else {
-            this.tS.show({
-              type: 'warning',
-              message: 'No tienes asignado Establecimiento!',
-            });
+            this.tS.warning({ message: 'No tienes asignado Establecimiento!' });
             return throwError(() => new Error('No tienes asignado Establecimiento'));
           }
 
@@ -200,10 +197,7 @@ export class DeliveryNotes implements OnInit {
       );
       this.refresh();
     } else {
-      this.tS.show({
-        type: 'warning',
-        message: 'No tiene puntos de emisión asignados',
-      });
+      this.tS.warning({ message: 'No tiene puntos de emisión asignados' });
     }
   }
 

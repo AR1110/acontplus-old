@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
 import {
   CustomerSearchResult,
   MealScheduleForCustomer,
-} from '@restaurant/domain/models/meal-consumption';
+} from '@restaurant/data/models/meal-consumption';
 
 export interface SearchCustomerRequest {
   searchTerm: string;

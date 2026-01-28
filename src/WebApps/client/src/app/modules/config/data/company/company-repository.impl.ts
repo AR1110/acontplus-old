@@ -1,10 +1,10 @@
 import { inject, Injectable, OnInit } from '@angular/core';
-import { CompanyRepository } from '@modules/config/domain/repositories/company.repository';
+import { CompanyRepository } from '@modules/config/data/repositories/company.repository';
 import { HttpClient } from '@angular/common/http';
 import { PATHS_API, SEPARADORES_REGEX } from '@core/constants/global.constants';
-import { CONFIG_PATHS } from '@modules/config/domain/enums/config.enums';
+import { CONFIG_PATHS } from '@modules/config/config-const';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ListCompanyResponse, CompanyList } from '@modules/config/domain/models/company.model';
+import { ListCompanyResponse, CompanyList } from '@modules/config/data/models/company.model';
 import { map, Observable } from 'rxjs';
 
 @Injectable({

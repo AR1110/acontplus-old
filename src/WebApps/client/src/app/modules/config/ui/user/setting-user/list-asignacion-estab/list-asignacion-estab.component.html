@@ -1,0 +1,34 @@
+<acp-data-grid
+  [data]="dataSource()"
+  [columns]="columnsDefs"
+  [cellTemplate]="{
+    op: templateOp,
+    predeterminado: statusTemplate,
+  }"
+  [showPaginator]="false"
+/>
+
+<ng-template #templateOp let-data>
+  @if (data.idEstab_Asig > 0) {
+    <acp-button
+      variant="danger"
+      icon="delete_outline"
+      matStyle="icon"
+      (handleClick)="addEstab(data)"
+    />
+    <acp-button
+      variant="info"
+      icon="settings"
+      matStyle="icon"
+      (handleClick)="openAsigBodegaPtoEmision(data)"
+    />
+  } @else {
+    <acp-button variant="success" icon="save" matStyle="icon" (handleClick)="addEstab(data)" />
+  }
+</ng-template>
+
+<ng-template #statusTemplate let-data>
+  @if (data.estado) {
+    <mat-slide-toggle [(ngModel)]="data.defaultEstab" (change)="onChangeDefault(data)" />
+  }
+</ng-template>

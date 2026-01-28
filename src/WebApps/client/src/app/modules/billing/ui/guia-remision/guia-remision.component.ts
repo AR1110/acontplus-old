@@ -1,5 +1,11 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { DynamicCard } from '@acontplus/ng-components';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  DynamicCard,
+  DataGrid,
+  DataGridColumn,
+  Button,
+  Pagination,
+} from '@acontplus/ng-components';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,16 +14,13 @@ import { DateRangeSelectionComponent } from '@core/components/date-range-selecti
 import { CompanyCustomerSearchComponent } from '@company-customer/presentation/components/company-customer-search/company-customer-search.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { GetGuiaRemisionFilterDataUseCase } from '@modules/billing/domain/use-cases/guia-remision/get-guia-remision-filter-data.use-case';
 import { ListGuiasRemisionUseCase } from '@modules/billing/domain/use-cases/guia-remision/list-guias-remision.use-case';
 import { finalize } from 'rxjs';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { getValidId, isValidField, ValidatorUtils } from '@core/utils/utils';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { FormsModule } from '@angular/forms';
 import { formatDateToString } from '@core/utils/date.util';
 import { GuiaRemisionList } from '@billing/domain/models/guia-remision/guia-remision.model';
@@ -40,21 +43,21 @@ import { AddEditGuiaRemisionComponent } from '@billing/ui/guia-remision/componen
     MatMenuModule,
     BreadcrumbComponent,
     DynamicCard,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
     DateRangeSelectionComponent,
     CompanyCustomerSearchComponent,
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
-    MatMenuModule,
     ProductKardexModalDirective,
   ],
   templateUrl: './guia-remision.component.html',
-  styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiaRemisionComponent implements OnInit {
   private $getGuiaRemisionFilterDataUseCase = inject(GetGuiaRemisionFilterDataUseCase);
   private $listGuiasRemisionUseCase = inject(ListGuiasRemisionUseCase);
-  private tS = inject(ToastrNotificationService);
+  private notificationSvc = inject(NotificationService);
   private _dialogSvc = inject(DialogService);
 
   estabs = signal<GroupedEstab[]>([]);
@@ -74,38 +77,37 @@ export class GuiaRemisionComponent implements OnInit {
     fromDate: formatDateToString(new Date()),
   };
 
-  loading = false;
+  loading = signal(false);
   isFilterAdvanced = signal(false);
 
   dataSource = signal<GuiaRemisionList[]>([]);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie Comprobante', type: 'string' },
-    { key: 'razonSocialDestinatario', label: 'Cliente', type: 'string' },
-    { key: 'fechaInicio', label: 'Fecha Inicio', type: 'string' },
-    { key: 'fechaFin', label: 'Fecha Llegada', type: 'string' },
-    { key: 'serieComprobanteInvoice', label: 'Doc', type: 'string' },
-    { key: 'razonSocialTransportista', label: 'Transportista', type: 'string' },
-    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'index', header: '#' },
+    { field: 'op', header: 'Op.' },
+    { field: 'fechaEmision', header: 'Fecha Emisión' },
+    { field: 'serieComprobante', header: 'Serie Comprobante' },
+    { field: 'razonSocialDestinatario', header: 'Cliente' },
+    { field: 'fechaInicio', header: 'Fecha Inicio' },
+    { field: 'fechaFin', header: 'Fecha Llegada' },
+    { field: 'serieComprobanteInvoice', header: 'Doc' },
+    { field: 'razonSocialTransportista', header: 'Transportista' },
+    { field: 'nomUsuario', header: 'Usuario' },
+    { field: 'nomEstado', header: 'Estado' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
   private getParams() {
     if (!isValidField(this.dataSearch.codEstab)) {
-      this.tS.show({
+      this.notificationSvc.show({
         type: 'warning',
         message: 'Establecimiento no seleccionado',
       });
     }
 
     if (!getValidId(this.dataSearch.puntoEmisionId)) {
-      this.tS.show({
+      this.notificationSvc.show({
         type: 'warning',
         message: 'Punto Emisión no seleccionado',
       });
@@ -117,11 +119,10 @@ export class GuiaRemisionComponent implements OnInit {
       pageSize: this.pagination().pageSize,
       codEstab: this.dataSearch.codEstab,
       idPuntoEmision: this.dataSearch.puntoEmisionId,
-      checkBoxDate: this.dataSearch.filterByDate, // Usamos el nuevo nombre
+      checkBoxDate: this.dataSearch.filterByDate,
       idCliente: isValidField(this.dataSearch.clienteId),
       codEstado: isValidField(this.dataSearch.codEstado),
       byUsuario: isValidField(this.dataSearch.usuarioId),
-      // Solo incluir las fechas si filterByDate es true
       fechaInicio: this.dataSearch.filterByDate ? isValidField(this.dataSearch.fromDate) : null,
       fechaFin: this.dataSearch.filterByDate ? isValidField(this.dataSearch.toDate) : null,
       secuencial: ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial),
@@ -133,8 +134,8 @@ export class GuiaRemisionComponent implements OnInit {
   }
 
   private getGuiasRemision() {
-    if (this.loading) {
-      this.tS.show({
+    if (this.loading()) {
+      this.notificationSvc.show({
         type: 'warning',
         message: 'Esta cargando los datos...',
       });
@@ -144,7 +145,7 @@ export class GuiaRemisionComponent implements OnInit {
     if (isValidField(this.dataSearch.nroSecuencial)) {
       if (!ValidatorUtils.validAndFormatedRangeSequential(this.dataSearch.nroSecuencial)) {
         this.dataSearch.filterByDate = true;
-        this.tS.show({
+        this.notificationSvc.show({
           type: 'error',
           message: 'Define correctamente el número de secuencial o el rango de número secuencial!',
         });
@@ -165,10 +166,10 @@ export class GuiaRemisionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loading = true;
+    this.loading.set(true);
     this.$getGuiaRemisionFilterDataUseCase
       .execute()
-      .pipe(finalize(() => (this.loading = false)))
+      .pipe(finalize(() => this.loading.set(false)))
       .subscribe((filterData) => {
         this.estabs.set(filterData.estabs);
         this.estadosDoc = filterData.estadosDoc;
@@ -177,12 +178,12 @@ export class GuiaRemisionComponent implements OnInit {
         if (this.estabs().length > 0) {
           const dataEstab = this.estabs().find((item) => item.defaultEstab);
 
-          this.dataSearch.codEstab = dataEstab?.codEstab || '';
-          this.puntosEmision.set(dataEstab?.puntosEmision || []);
+          this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
+          this.puntosEmision.set(dataEstab?.puntosEmision ?? []);
           if (this.puntosEmision().length > 0) {
             const dataPuntoEmision = this.puntosEmision().find((item) => item.defaultPtoEmi);
 
-            this.dataSearch.puntoEmisionId = dataPuntoEmision?.idPuntoEmision || 0;
+            this.dataSearch.puntoEmisionId = dataPuntoEmision?.idPuntoEmision ?? 0;
           }
           this.refresh();
         }

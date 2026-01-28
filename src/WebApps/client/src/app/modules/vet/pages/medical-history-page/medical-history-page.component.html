@@ -31,33 +31,38 @@
           <mat-label>Buscar mascota o cliente</mat-label>
           <input matInput [(ngModel)]="dataSearch.textSearch" />
           <ng-container matSuffix>
-            <button type="button" mat-icon-button (click)="refresh()">
-              <mat-icon>refresh</mat-icon>
-            </button>
+            <acp-button
+              variant="secondary"
+              icon="refresh"
+              matStyle="icon"
+              (handleClick)="refresh()"
+            />
           </ng-container>
         </mat-form-field>
       </div>
     </div>
   </div>
 
-  <app-mat-dynamic-table
-    [tableData]="dataSource()"
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [templateOp]="templateOp"
-    [paginationConfig]="pagination()"
-    [enablePagination]="true"
-    (pageEvent)="handlePageEvent($event)"
+  <acp-data-grid
+    [data]="dataSource()"
+    [columns]="columns"
+    [length]="pagination().totalRecords"
+    [pageIndex]="pagination().pageIndex"
+    [pageSize]="pagination().pageSize"
+    (page)="handlePageEvent($event)"
+    [cellTemplate]="{
+      op: templateOp,
+    }"
   />
 
-  <ng-template #templateOp let-item="item">
-    <acp-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(item)" />
-    <acp-button variant="warning" icon="delete " matStyle="icon" (handleClick)="onDelete(item)" />
+  <ng-template #templateOp let-data>
+    <acp-button variant="primary" [icon]="'edit'" matStyle="icon" (handleClick)="onEdit(data)" />
+    <acp-button variant="warning" icon="delete " matStyle="icon" (handleClick)="onDelete(data)" />
     <acp-button
       matStyle="icon"
       variant="secondary"
       icon="download"
-      (handleClick)="onReport(item)"
+      (handleClick)="onReport(data)"
     />
   </ng-template>
 </acp-dynamic-card>

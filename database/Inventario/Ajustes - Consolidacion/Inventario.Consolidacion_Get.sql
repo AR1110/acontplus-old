@@ -217,6 +217,8 @@ BEGIN
 	              ,@rucProveedor = rucProveedor
 	              ,@idSubFamilia = idSubFamilia
 	              ,@nroDocumento = nroDocumento
+                  ,@pageIndex    = pageIndex
+                  ,@pageSize     = pageSize
 	        FROM OPENJSON (@json) WITH 
             (
 	            opcion       INT  
@@ -224,15 +226,20 @@ BEGIN
 	           ,rucProveedor VARCHAR(25) 
 	           ,idSubFamilia INT 
 	           ,nroDocumento VARCHAR(25)
+               ,pageIndex     INT
+               ,pageSize      INT
 	        )
 
             SET @params = '@idEntidad INT,
 				           @idArticulo INT,
 				           @rucProveedor VARCHAR(25),
 				           @idSubFamilia INT,
-				           @nroDocumento VARCHAR(25) '
+				           @nroDocumento VARCHAR(25),
+                           @pageIndex INT,
+                           @pageSize INT
+                           '
 
-	        SET @sql = 'SELECT TOP 100
+	        SET @sql = 'SELECT  
                                a.idArticulo
 				              ,codigo
 				              ,codigoAuxiliar
@@ -277,6 +284,7 @@ BEGIN
                                     FOR JSON PATH
 
                                 ),''[]'') as principal
+                                ,COUNT(*) OVER() AS totalRecords
 				         FROM Inventario.v_Articulo a 
 				         WHERE a.estado = 1 
 				           AND a.idEntidad = @idEntidad
@@ -316,28 +324,28 @@ BEGIN
 					INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
 					WHERE ci.idEntidad = @idEntidad 
 					AND ep.codigo = 'AC';
-
-					-- Agregar condiciones para filtrar artículos que no están en la tabla temporal
+                     
 					SET @sql += ' AND a.importacion = 1 
 									AND a.stock > 0
 									AND NOT EXISTS (
 										SELECT 1 FROM #ArticulosSinConsolidar tc WHERE tc.idArticulo = a.idArticulo
-									) ';
-
-               --     SET @sql = @sql + 'AND a.importacion = 1 
-               --                        AND a.stock > 0
-               --                         AND NOT EXISTS (
-													  -- SELECT 1 
-													  -- FROM   dbo.ConsolidacionInventario ci WITH (NOLOCK)
-													  -- INNER JOIN dbo.EstadoPago ep WITH (NOLOCK) ON ep.idEstadoPago = ci.idEstadoDocumento
-													  -- INNER JOIN dbo.ConsolidacionInventarioDetalle cd WITH (NOLOCK) ON cd.idConsolidacionInventario = ci.idConsolidacionInventario
-													  -- WHERE  ci.idEntidad = @idEntidad 
-													  -- AND    ep.codigo = ''AC'' 
-													  -- AND    cd.idArticulo = a.idArticulo
-												   --) '
+									) '; 
                 END 
 
 		    SET @sql = @sql + 'ORDER BY a.idArticulo ASC '
+
+           IF @pageIndex IS NOT NULL 
+               AND @pageSize IS NOT NULL
+               AND @pageSize > 0
+            BEGIN
+                SET @sql += '
+                    OFFSET @pageSize*(@pageIndex-1) ROWS FETCH NEXT @pageSize ROWS ONLY';
+            END
+            ELSE
+            BEGIN
+                SET @sql = REPLACE(@sql, 'SELECT', 'SELECT TOP 100');
+            END
+
 		
 		    EXEC sp_executesql @sql,@params
 							       ,@idEntidad    = @idEntidad 
@@ -345,6 +353,8 @@ BEGIN
 							       ,@idSubFamilia = @idSubFamilia
 							       ,@rucProveedor = @rucProveedor
 							       ,@nroDocumento = @nroDocumento
+                                   ,@pageIndex    = @pageIndex
+                                   ,@pageSize     = @pageSize;
 
             -- Limpiar la tabla temporal si ya no es necesaria
 				DROP TABLE IF EXISTS #ArticulosSinConsolidar;

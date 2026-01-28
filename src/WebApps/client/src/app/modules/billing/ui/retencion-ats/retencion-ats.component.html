@@ -14,24 +14,15 @@
   <div class="row mb-3">
     <div class="col">
       @if (this.retenciones().length > 0) {
-        <div class="table-responsive">
-          <app-mat-dynamic-table
-            [templateOp]="templateOp"
-            [tableData]="retenciones()"
-            [columnDefinitions]="columnsDefs"
-            [visibleColumns]="columns"
-            [showSelectBox]="true"
-          />
-        </div>
-
-        <mat-paginator
-          [length]="pagination().totalRecords"
+        <acp-data-grid
+          [data]="retenciones()"
+          [columns]="columns"
           [pageIndex]="pagination().pageIndex"
           [pageSize]="pagination().pageSize"
-          [pageSizeOptions]="pagination().pageSizeOptions"
           (page)="onPageChanged($event)"
-          showFirstLastButtons
-          aria-label="Select page"
+          [cellTemplate]="{
+            op: templateOp,
+          }"
         />
       } @else {
         <h5>No hay registros</h5>
@@ -39,27 +30,27 @@
     </div>
   </div>
 
-  <ng-template #templateOp let-item="item">
+  <ng-template #templateOp let-data>
     <mat-menu #menu="matMenu">
-      @if ([0, 1, 2, 5, 7, 8].includes(item.codEstado)) {
-        <button mat-menu-item (click)="edit(item)">
+      @if ([0, 1, 2, 5, 7, 8].includes(data.codEstado)) {
+        <button mat-menu-item (click)="edit(data)">
           <mat-icon>edit</mat-icon>
           Editar
         </button>
       }
 
-      @if ([2, 3, 7].includes(item.codEstado)) {
-        <button mat-menu-item (click)="authorize(item)" matTooltip="Autorizar en el SRI">
+      @if ([2, 3, 7].includes(data.codEstado)) {
+        <button mat-menu-item (click)="authorize(data)" matTooltip="Autorizar en el SRI">
           <mat-icon>send</mat-icon>
           Autorizar
         </button>
       }
-      <button mat-menu-item (click)="getRide(item)" matTooltip="Ver PDF de la retención">
+      <button mat-menu-item (click)="getRide(data)" matTooltip="Ver PDF de la retención">
         <mat-icon>picture_as_pdf</mat-icon>
         Ride
       </button>
-      @if (item.codEstado === 4) {
-        <button (click)="downloadXml(item)" mat-menu-item>
+      @if (data.codEstado === 4) {
+        <button (click)="downloadXml(data)" mat-menu-item>
           <mat-icon>download</mat-icon>
           Descargar Xml
         </button>
@@ -67,20 +58,20 @@
       <button
         mat-menu-item
         appSendMailDialog
-        [data]="sendEmail(item)"
+        [data]="sendEmail(data)"
         [notificationSri]="true"
         matTooltip="Enviar por correo"
       >
         <mat-icon>mail</mat-icon>
         Correo
       </button>
-      <button mat-menu-item (click)="sendWhatsApp(item)">
+      <button mat-menu-item (click)="sendWhatsApp(data)">
         <mat-icon>chat</mat-icon>
         Whatsapp
       </button>
 
-      @if (item.codEstado === 4) {
-        <button mat-menu-item (click)="cancel(item)">
+      @if (data.codEstado === 4) {
+        <button mat-menu-item (click)="cancel(data)">
           <mat-icon>undo</mat-icon>
           Anular
         </button>

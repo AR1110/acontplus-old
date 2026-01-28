@@ -7,8 +7,7 @@ import { FormsModule } from '@angular/forms';
 import {DataGrid, DataGridColumn, Pagination} from '@acontplus/ng-components';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { Button } from '@acontplus/ng-components';
-import { DialogService } from '@core/services/dialog.service';
+import { Button, AdvancedDialogService } from '@acontplus/ng-components';
 import { ItemAddEdit } from '@restaurant/ui/items/item-add-edit/item-add-edit';
 import { finalize } from 'rxjs/operators';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
@@ -39,7 +38,7 @@ import {MatTooltip} from "@angular/material/tooltip";
 })
 export class Items implements OnInit {
   private _listUseCase = inject(ItemListUseCase);
-  private _dgSvc = inject(DialogService);
+  private _dgSvc = inject(AdvancedDialogService);
 
   columns: DataGridColumn[] = [
     { header: 'Op.', field: 'op'},
@@ -107,16 +106,24 @@ export class Items implements OnInit {
       });
   }
 
-  onEdit(rowData: any) {
-    this._dgSvc.open(ItemAddEdit, {
-      size: 'xl',
+  async onEdit(rowData: any) {
+    const ref = await this._dgSvc.openInWrapper( {
+      component: ItemAddEdit,
+      icon: 'build',
+      title: rowData.acronymCategory==='RES'?'Editar Datos del Producto': 'Editar Datos del Menú',
+      showCloseButton: true,
       data: {
         id: rowData.id,
         acronymCategory: rowData.acronymCategory,
       },
-    }).subscribe(result=>{
+    },
+    {
+      size: 'xl'
+    })
+    ref.afterClosed().subscribe(result=>{
       if(result && typeof result === 'object') this.getList()
     })
+
   }
 
 

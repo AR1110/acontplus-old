@@ -15,12 +15,11 @@
           </mat-form-field>
         </div>
         <div class="col">
-          <app-date-range-selection
-            (onChangeDateRange)="onDateRangeSelection($event)"
-            (onCheckboxChange)="refresh()"
-            [(checkbox)]="dataSearch().checkBoxDate"
-            [showInputMaterial]="true"
-            [showMatPrefix]="true"
+          <acp-date-range-picker
+          [showCheckbox]="true"
+          [(checkboxChecked)]="dataSearch().checkBoxDate"
+          (dateRangeSelected)="onDateRangeSelection($event)"
+
           />
         </div>
         <div class="col">

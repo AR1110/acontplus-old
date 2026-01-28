@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { InventarioModeloRepository } from '@inventory/data/repositories/inventario-modelo.repository';
 import { InventarioModeloMapper } from '@inventory/data/mappers/inventario-modelo.mapper';
 
@@ -21,9 +20,7 @@ export class InventarioModeloHttp implements InventarioModeloRepository {
       ...obj,
     });
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {
@@ -43,9 +40,7 @@ export class InventarioModeloHttp implements InventarioModeloRepository {
     return this._http.post<ApiResponseLegacy>(
       `${this._url}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
 
@@ -53,9 +48,7 @@ export class InventarioModeloHttp implements InventarioModeloRepository {
     return this._http.put<ApiResponseLegacy>(
       `${this._url}${id}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
 

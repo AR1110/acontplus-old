@@ -1,0 +1,30 @@
+[
+    {
+        "NumberDay": 1,
+        "Name": "Lunes"
+    },
+    {
+        "NumberDay": 2,
+        "Name": "Martes"
+    },
+    {
+        "NumberDay": 3,
+        "Name": "Miércoles"
+    },
+    {
+        "NumberDay": 4,
+        "Name": "Jueves"
+    },
+    {
+        "NumberDay": 5,
+        "Name": "Viernes"
+    },
+    {
+        "NumberDay": 6,
+        "Name": "Sábado"
+    },
+    {
+        "NumberDay": 7,
+        "Name": "Domingo"
+    }
+]

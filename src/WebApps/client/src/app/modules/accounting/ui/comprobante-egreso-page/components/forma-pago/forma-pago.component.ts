@@ -1,7 +1,6 @@
-import { Component, computed, inject, model } from '@angular/core';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
+import { Component, computed, inject, model, ChangeDetectionStrategy } from '@angular/core';
 
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,15 +11,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import {
   ComprobanteEgresoStore,
   getDataFormaPagoState,
-} from '@accounting/comprobante-egreso/application/store/comprobante-egreso.store';
+} from '@accounting/store/comprobante-egreso.store';
 import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { CitySearchComponent } from '@accounting/ui/comprobante-egreso-page/components/city-search/city-search.component';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatTableDataSource } from '@angular/material/table';
+import { DataGrid, DataGridColumn } from '@acontplus/ng-components';
 
 @Component({
   selector: 'app-forma-pago',
@@ -32,16 +29,18 @@ import { MatTableDataSource } from '@angular/material/table';
     MatSelectModule,
     MatDatepickerModule,
     MatAutocompleteModule,
-    MatCustomDialogComponent,
     FormsModule,
     MatSlideToggleModule,
     NgxMaskDirective,
     CitySearchComponent,
-    MatDynamicTableComponent,
+    DataGrid,
+    MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: './forma-pago.component.html',
   providers: [provideNativeDateAdapter()],
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormaPagoComponent {
   readonly dialogRef = inject(MatDialogRef<FormaPagoComponent>);
@@ -51,16 +50,15 @@ export class FormaPagoComponent {
 
   valorAbono = model(this.comprobanteEgresoStore.saldo());
 
-  docDataSource = new MatTableDataSource<any>([]);
+  docDataSource: unknown[] = [];
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'nombreDoc', label: 'Tipo Doc.', type: 'string' },
-    { key: 'nroDoc', label: 'Nro. Doc.', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'total', label: 'Total', type: 'number' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'op', header: 'Op.' },
+    { field: 'nombreDoc', header: 'Tipo Doc.' },
+    { field: 'nroDoc', header: 'Nro. Doc.' },
+    { field: 'fechaEmision', header: 'Fecha Emisión' },
+    { field: 'total', header: 'Total' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   close() {
     this.comprobanteEgresoStore.updateDataFormaPago(getDataFormaPagoState());

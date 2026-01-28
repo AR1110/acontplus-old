@@ -10,6 +10,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DataGrid, DataGridColumn, Button } from '@acontplus/ng-components';
 import { DialogService } from '@core/services/dialog.service';
 
+import {AdvancedDialogService} from '@acontplus/ng-components'
 @Component({
   selector: 'app-category-page',
   imports: [
@@ -28,7 +29,7 @@ export class CategoryPage implements OnInit {
   categories = signal<Category[]>([]);
   data: Category = {} as Category;
   private _categoryHttp = inject(CATEGORY_HTTP_TOKEN);
-  private readonly modalService = inject(DialogService);
+  private readonly modalService = inject(AdvancedDialogService);
 
   columnsDefs: DataGridColumn[] = [
     { field: 'op', header: 'Opciones' },
@@ -57,13 +58,17 @@ export class CategoryPage implements OnInit {
     this.get();
   }
 
-  onModalOpen() {
-    const modalRef = this.modalService.open(CategoryModalComponent, {
-      size: 'sm',
+  async onModalOpen() {
+    const modalRef = await this.modalService.openInWrapper({
+      component: CategoryModalComponent,
+      title: this.data.id>0?'Editar Categoria': 'Nuevo Categoria',
       data: this.data.id > 0 ? structuredClone(this.data) : {},
+
+    }, {
+      size: 'sm',
     });
 
-    modalRef.subscribe((response) => {
+    modalRef.afterClosed().subscribe((response:any) => {
       if (response !== null && typeof response === 'object') {
         this.get();
       }

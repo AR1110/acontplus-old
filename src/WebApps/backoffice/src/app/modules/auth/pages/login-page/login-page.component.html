@@ -1,0 +1,69 @@
+<section
+  id="wrapper"
+  class="d-flex justify-content-center align-items-center min-vh-100"
+>
+  <mat-card class="mat-elevation-z8 p-4 rounded">
+    <mat-card-header>
+      <mat-card-title class="text-center">Acontplus Admin</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form
+        [formGroup]="signinForm"
+        (ngSubmit)="signIn()"
+        class="d-flex flex-column gap-3"
+      >
+        <mat-form-field class="w-100">
+          <mat-label>Usuario</mat-label>
+          <input
+            matInput
+            type="text"
+            placeholder="Ingrese su usuario"
+            formControlName="email"
+          />
+        </mat-form-field>
+
+        <mat-form-field class="w-100">
+          <mat-label>Contraseña</mat-label>
+          <input
+            matInput
+            type="password"
+            placeholder="Ingrese su contraseña"
+            formControlName="password"
+          />
+        </mat-form-field>
+
+        <div class="d-flex justify-content-center mt-3">
+          <button
+            mat-raised-button
+            color="primary"
+            [disabled]="!signinForm.valid"
+            type="submit"
+            class="w-100"
+          >
+            Ingresar <mat-icon>login</mat-icon>
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+    <mat-card-footer>
+      <div class="row mt-3">
+        <div class="col-xs-12 col-sm-12 col-md-12 m-t-10 text-center">
+          <div class="social">
+            <a
+              mat-button
+              color="primary"
+              matTooltip="Ir a Acontplus Web"
+              aria-label="Acontplus"
+              href="https://app.acontplus.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <mat-icon>arrow_outward</mat-icon>
+              Acontplus Web
+            </a>
+          </div>
+        </div>
+      </div>
+    </mat-card-footer>
+  </mat-card>
+</section>

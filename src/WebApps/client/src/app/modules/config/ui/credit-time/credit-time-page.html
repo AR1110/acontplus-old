@@ -1,0 +1,55 @@
+<app-breadcrumb />
+
+<acp-data-grid
+  [showToolbar]="true"
+  [toolbarTemplate]="headerToolbar"
+  [columns]="columnsDefs"
+  [data]="dataSource()"
+  [length]="pageCount"
+  [pageIndex]="page"
+  [pageSize]="pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: opTpl,
+  }"
+/>
+
+<ng-template #opTpl let-data>
+  <acp-button
+    type="button"
+    icon="edit"
+    variant="info"
+    matStyle="icon"
+    (handleClick)="openModalAddUpdate(data)"
+  />
+  @if (data.estado) {
+    <acp-button
+      type="button"
+      icon="delete"
+      variant="danger"
+      matStyle="icon"
+      (handleClick)="askToDelete(data)"
+    />
+  }
+</ng-template>
+
+<ng-template #headerToolbar>
+  <div class="d-flex flex-row gap-2">
+    <acp-button
+      type="button"
+      icon="add"
+      variant="success"
+      matStyle="filled"
+      text="Nuevo"
+      (handleClick)="openModalAddUpdate()"
+    />
+
+    <acp-button
+      type="button"
+      icon="refresh"
+      variant="secondary"
+      matStyle="icon"
+      (handleClick)="refresh()"
+    />
+  </div>
+</ng-template>

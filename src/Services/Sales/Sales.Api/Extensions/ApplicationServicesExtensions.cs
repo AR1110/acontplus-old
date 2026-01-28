@@ -25,7 +25,7 @@ public static class ApplicationServicesExtensions
 
         JsonConfigurationService.RegisterJsonConfiguration(services);
 
-        services.AddInfrastructure(configuration);
+        services.AddSalesInfrastructure(configuration);
 
         services.AddCachingServices(configuration);
 
@@ -45,6 +45,7 @@ public static class ApplicationServicesExtensions
             .WithTransientLifetime()
         );
 
+        services.AddLookupService();
         return services;
     }
 }

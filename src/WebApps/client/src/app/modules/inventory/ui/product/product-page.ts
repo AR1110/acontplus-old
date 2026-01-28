@@ -1,16 +1,22 @@
 import {
+  AcpPopover,
+  AcpPopoverTrigger,
+  DataGrid,
+  DataGridColumn,
+  DynamicCard,
+} from '@acontplus/ng-components';
+import {
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
+  OnInit,
   QueryList,
   signal,
   ViewChildren,
-  OnInit,
-  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { DataGrid, DataGridColumn, DynamicCard } from '@acontplus/ng-components';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,22 +27,25 @@ import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.comp
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { getValidId, isValidField } from '@core/utils/utils';
+import { PRODUCT_SERVICE, STOCK_SERVICE } from '@inventory/data/inventory-token';
+import { ProductKardexModalDirective } from '@inventory/ui/product/components/directives/product-kardex-modal.directive';
 import { ProductPhotoComponent } from '@inventory/ui/product/components/product-photo/product-photo.component';
 import { SubCategoryGroup } from '@inventory/ui/sub-category/components/sub-category-group/sub-category-group';
-import { ProductKardexModalDirective } from '@inventory/ui/product/components/directives/product-kardex-modal.directive';
-import { STOCK_SERVICE, PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 
-import { ProductList } from '@inventory/data/models/product.entity';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
-import { DialogService } from '@core/services/dialog.service';
-import { MtxPopoverModule } from '@ng-matero/extensions/popover';
-import { ProductStock } from '@inventory/ui/product/components/product-stock/product-stock';
-import { HasPermissionDirective } from '@core/directives/permission';
-import { INVENTORY_MODULES_CODE } from '@inventory/inventory.const';
 import { ACTION_ALIASES } from '@core/constants/permission-actions';
+import { HasPermissionDirective } from '@core/directives/permission';
+import { DialogService } from '@core/services/dialog.service';
+import { ProductList } from '@inventory/data/models/product.entity';
+import { INVENTORY_MODULES_CODE } from '@inventory/inventory.const';
+import { AddEditProductDirective } from '@inventory/ui/product/components/directives/add-edit-product.directive';
+import { ProductStock } from '@inventory/ui/product/components/product-stock/product-stock';
+import { CompraHabitualHistorialDirective } from '@purchases/shared/directives/compra-habitual-historial.directive';
+import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
+import { finalize, forkJoin } from 'rxjs';
+import Swal from 'sweetalert2';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,10 +68,11 @@ import { ACTION_ALIASES } from '@core/constants/permission-actions';
     AddEditProductDirective,
     CompraHabitualHistorialDirective,
     ProductKardexModalDirective,
-    MtxPopoverModule,
     ProductStock,
     DataGrid,
     HasPermissionDirective,
+    AcpPopoverTrigger,
+    AcpPopover,
   ],
   templateUrl: './product-page.html',
   styles: `
@@ -319,7 +329,3 @@ export class ProductPage implements OnInit {
     this.refresh();
   }
 }
-import { CompraHabitualHistorialDirective } from '@purchases/shared/directives/compra-habitual-historial.directive';
-import { PrimaryStatusPipe } from '@shared/pipes/primary-status.pipe';
-import { finalize, forkJoin } from 'rxjs';
-import Swal from 'sweetalert2';

@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { MeasureRepository } from '@inventory/data/repositories/measure.repository';
 import { MeasureRead } from '@inventory/data/models/measure.model';
 
@@ -21,9 +20,7 @@ export class MeasureHttp implements MeasureRepository {
       tipo: 1,
     });
     return this._http
-      .get(`${this._url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this._url}?json=${json}` )
       .pipe(
         map((response: any) => {
           let results: MeasureRead[] = [];
@@ -38,18 +35,14 @@ export class MeasureHttp implements MeasureRepository {
     return this._http.post<ApiResponseLegacy>(
       `${this._url}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
   put<T>(id: number, data: T) {
     return this._http.put<ApiResponseLegacy>(
       `${this._url}${id}`,
       { data },
-      {
-        context: getNoLoader(),
-      },
+
     );
   }
 

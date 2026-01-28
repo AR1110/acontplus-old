@@ -2,10 +2,7 @@
   @if (orderStatusCode === 2) {
     <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 col-12">
       <div class="form-group">
-        <button type="button" mat-raised-button (click)="onModalOpen()">
-          <mat-icon>add</mat-icon>
-          Nueva
-        </button>
+        <acp-button variant="success" icon="add" text="Nueva" (handleClick)="onModalOpen()" />
       </div>
     </div>
   }
@@ -46,51 +43,50 @@
   </div>
 </div>
 
-<app-mat-dynamic-table
-  [tableData]="orders()"
-  [columnDefinitions]="columnsDefs"
-  [visibleColumns]="columns"
-  [templateOp]="templateOp"
-  [paginationConfig]="pagination()"
-  [enablePagination]="true"
-  (pageEvent)="handlePageEvent($event)"
+<acp-data-grid
+  [data]="orders()"
+  [columns]="columns"
+  [pageIndex]="pagination().pageIndex"
+  [pageSize]="pagination().pageSize"
+  (page)="handlePageEvent($event)"
+  [cellTemplate]="{
+    op: templateOp,
+  }"
 />
 
-<ng-template #templateOp let-item="item">
-  <button mat-button [matMenuTriggerFor]="menu">
-    <mat-icon>more_vert</mat-icon>
-  </button>
+<ng-template #templateOp let-data>
+  <acp-button variant="secondary" icon="more_vert" matStyle="icon" [matMenuTriggerFor]="menu" />
   <mat-menu #menu="matMenu">
     @if (orderStatusCode === 2 || orderStatusCode === 3) {
-      <button mat-menu-item (click)="openModalMaintenance(item)" title="Iniciar Reparaciones">
+      <button mat-menu-item (click)="openModalMaintenance(data)" title="Iniciar Reparaciones">
         <mat-icon>settings</mat-icon>
         Mantenimiento
       </button>
     }
     @if (orderStatusCode === 2 || orderStatusCode === 3) {
-      <button mat-menu-item (click)="onEdit(item)" title="Editar">
+      <button mat-menu-item (click)="onEdit(data)" title="Editar">
         <mat-icon>edit</mat-icon>
         Editar
       </button>
     }
     @if (orderStatusCode === 2) {
-      <button mat-menu-item (click)="askToCancel(item)" title="Anular">
+      <button mat-menu-item (click)="askToCancel(data)" title="Anular">
         <mat-icon>lock</mat-icon>
         Anular
       </button>
     }
-    <button mat-menu-item (click)="getReport(item)" title="Reporte">
+    <button mat-menu-item (click)="getReport(data)" title="Reporte">
       <mat-icon>download</mat-icon>Reporte
     </button>
 
     @if (orderStatusCode === 4) {
-      <button mat-menu-item (click)="askToDelivery(item)" title="Entregar">
+      <button mat-menu-item (click)="askToDelivery(data)" title="Entregar">
         <mat-icon>place_item</mat-icon>
         Entregar
       </button>
     }
     @if (orderStatusCode === 4 || orderStatusCode === 5) {
-      <button mat-menu-item (click)="onOpenDocument(item)" title="Documento">
+      <button mat-menu-item (click)="onOpenDocument(data)" title="Documento">
         <mat-icon>settings</mat-icon>
         Documento vinculado
       </button>

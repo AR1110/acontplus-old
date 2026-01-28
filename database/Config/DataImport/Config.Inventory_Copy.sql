@@ -24,8 +24,8 @@ BEGIN
 
     BEGIN TRY
         -- Retrieve company IDs based on provided RUCs
-        SET @companyOrigenId = (SELECT idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucOrigen);
-        SET @companyDestinoId = (SELECT idEntidad FROM Acontplus.dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucDestino);
+        SET @companyOrigenId = (SELECT idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucOrigen);
+        SET @companyDestinoId = (SELECT idEntidad FROM dbo.Entidad WITH (NOLOCK) WHERE ruc = @rucDestino);
 
         -- Validate company IDs
         IF @companyOrigenId IS NULL OR @companyDestinoId IS NULL

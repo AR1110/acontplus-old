@@ -1,0 +1,89 @@
+[
+    {
+        "Code": "LITE_FREE",
+        "Name": "Lite Gratis",
+        "Description": "Plan Lite gratuito con funcionalidades básicas",
+        "LicenseTypeId": 1,
+        "SubscriptionTypeId": 1,
+        "BasePrice": 0.00,
+        "IsTrial": true,
+        "TrialDays": 30
+    },
+    {
+        "Code": "LITE_MEN",
+        "Name": "Lite Mensual",
+        "Description": "Plan Lite con pago mensual",
+        "LicenseTypeId": 1,
+        "SubscriptionTypeId": 2,
+        "BasePrice": 9.99
+    },
+    {
+        "Code": "LITE_ANU",
+        "Name": "Lite Anual",
+        "Description": "Plan Lite con pago anual y descuento",
+        "LicenseTypeId": 1,
+        "SubscriptionTypeId": 5,
+        "BasePrice": 119.88,
+        "DiscountRate": 20
+    },
+    {
+        "Code": "BASIC_MEN",
+        "Name": "Básica Mensual",
+        "Description": "Plan Básica con pago mensual",
+        "LicenseTypeId": 2,
+        "SubscriptionTypeId": 2,
+        "BasePrice": 19.99
+    },
+    {
+        "Code": "BASIC_ANU",
+        "Name": "Básica Anual",
+        "Description": "Plan Básica con pago anual y descuento",
+        "LicenseTypeId": 2,
+        "SubscriptionTypeId": 5,
+        "BasePrice": 239.88,
+        "DiscountRate": 20
+    },
+    {
+        "Code": "STAND_MEN",
+        "Name": "Comercios Mensual",
+        "Description": "Plan Comercios con pago mensual",
+        "LicenseTypeId": 3,
+        "SubscriptionTypeId": 2,
+        "BasePrice": 39.99
+    },
+    {
+        "Code": "STAND_ANU",
+        "Name": "Comercios Anual",
+        "Description": "Plan Comercios con pago anual y descuento",
+        "LicenseTypeId": 3,
+        "SubscriptionTypeId": 5,
+        "BasePrice": 479.88,
+        "DiscountRate": 20
+    },
+    {
+        "Code": "PREM_MEN",
+        "Name": "Premium Mensual",
+        "Description": "Plan Premium con pago mensual",
+        "LicenseTypeId": 4,
+        "SubscriptionTypeId": 2,
+        "BasePrice": 79.99
+    },
+    {
+        "Code": "PREM_ANU",
+        "Name": "Premium Anual",
+        "Description": "Plan Premium con pago anual y descuento",
+        "LicenseTypeId": 4,
+        "SubscriptionTypeId": 5,
+        "BasePrice": 959.88,
+        "DiscountRate": 20
+    },
+    {
+        "Code": "ENTERPRISE",
+        "Name": "Enterprise",
+        "Description": "Plan Enterprise personalizado",
+        "LicenseTypeId": 4,
+        "SubscriptionTypeId": 5,
+        "BasePrice": 0.00,
+        "IsCustomPlan": true
+    }
+]

@@ -5,6 +5,7 @@ import { ControlCajaRepository } from '@accounting/data/repositories/control-caj
 import { CategoryRepository } from '@accounting/data/repositories/category.repository';
 import { SubEntidadFinancieraRepository } from '@accounting/data/repositories/sub-entidad-financiera.repository';
 import { SubCategoryRepository } from '@accounting/data/repositories/sub-category.repository';
+import { ComprobanteEgresoRepository } from '@accounting/data/repositories/comprobante-egreso.repository';
 
 export const CAJA_HTTP_TOKEN = new InjectionToken<CajaRepository>('CAJA_HTTP_TOKEN');
 
@@ -24,4 +25,8 @@ export const SUB_ENTIDAD_FINANCIERA_HTTP_TOKEN = new InjectionToken<SubEntidadFi
 
 export const SUB_CATEGORY_HTTP_TOKEN = new InjectionToken<SubCategoryRepository>(
   'SUB_CATEGORY_HTTP_TOKEN',
+);
+
+export const COMPROBANTE_EGRESO_HTTP_TOKEN = new InjectionToken<ComprobanteEgresoRepository>(
+  'COMPROBANTE_EGRESO_HTTP_TOKEN',
 );

@@ -1,21 +1,16 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { CustomTableContainerComponent } from '@core/components/custom-table-container/custom-table-container.component';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
+import { DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-product-hist-purchase-modal',
   imports: [
-    MatDynamicTableComponent,
-    CustomTableContainerComponent,
+    DataGrid,
+    Button,
     MatIconModule,
-    MatButtonModule,
-    MatCustomDialogComponent,
+    MatDialogContent,
   ],
   templateUrl: './product-hist-purchase-modal.component.html',
   styles: ``,
@@ -29,14 +24,13 @@ export class ProductHistPurchaseModalComponent implements OnInit {
   historyComprasArticle = [];
 
   documentos: any[] = [];
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'index', label: 'Nro.', type: 'string' },
-    { key: 'codigoProveedor', label: 'Código Proveedor', type: 'string' },
-    { key: 'ruc', label: 'Ruc', type: 'string' },
-    { key: 'proveedor', label: 'Proveedor', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Nro.', field: 'index', sortable: false },
+    { header: 'Código Proveedor', field: 'codigoProveedor', sortable: true },
+    { header: 'Ruc', field: 'ruc', sortable: true },
+    { header: 'Proveedor', field: 'proveedor', sortable: true },
   ];
-  columns: string[] = ['index', 'op', 'codigoProveedor', 'ruc', 'proveedor'];
   isLoadingResults = false;
 
   isRefresh = false;

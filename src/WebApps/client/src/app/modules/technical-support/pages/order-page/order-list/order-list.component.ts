@@ -2,7 +2,6 @@ import { Component, inject, Input, OnInit, signal } from '@angular/core';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 
 import { ORDER_STATUS_CODE } from '@modules/technical-support/constants/tech-support.constants';
 import { OrderService } from '@modules/technical-support/services/order.service';
@@ -10,19 +9,16 @@ import swal from 'sweetalert2';
 
 import { OrderMaintenanceModalComponent } from '../order-maintenance-modal/order-maintenance-modal.component';
 import { OrderModalComponent } from '../order-modal/order-modal.component';
-import { MatTableModule } from '@angular/material/table';
-import { Pagination } from '@acontplus/ng-components';
+import { Pagination, DataGrid, Button, DataGridColumn } from '@acontplus/ng-components';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { OrderDocumentComponent } from '../order-document/order-document.component';
 import { DateRangeSelectionComponent } from '@core/components/date-range-selection/date-range-selection.component';
 import { FormsModule } from '@angular/forms';
 import { OrderDeliveryModalComponent } from '../order-delivery-modal/order-delivery-modal.component';
 import { formatDateToString } from '@core/utils/date.util';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { DialogService } from '@core/services/dialog.service';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
 import { PageEvent } from '@angular/material/paginator';
 
 @Component({
@@ -30,13 +26,12 @@ import { PageEvent } from '@angular/material/paginator';
   imports: [
     DateRangeSelectionComponent,
     FormsModule,
-    MatTableModule,
-    MatButton,
+    DataGrid,
+    Button,
     MatMenuTrigger,
     MatIcon,
     MatMenu,
     MatMenuItem,
-    MatDynamicTableComponent,
   ],
   templateUrl: './order-list.component.html',
   styles: `
@@ -73,21 +68,20 @@ export class OrderListComponent implements OnInit {
   private modalService = inject(DialogService);
   private orderService = inject(OrderService);
   private sharedService = inject(SharedService);
-  private tS = inject(ToastrNotificationService);
+  private notification = inject(NotificationService);
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'serie', label: 'Serie Comprobante', type: 'string' },
-    { key: 'razonSocialComprador', label: 'Cliente', type: 'string' },
-    { key: 'discount', label: 'Descuento', type: 'number' },
-    { key: 'total', label: 'Total', type: 'number' },
-    { key: 'userName', label: 'Usuario Asignado', type: 'string' },
-    { key: 'orderStatusName', label: 'Estado Orden', type: 'string' },
-    { key: 'nombreEstado', label: 'Estado', type: 'string' },
+  columns: DataGridColumn[] = [
+    { header: '#', field: 'index', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Fecha Emisión', field: 'fechaEmision', sortable: true },
+    { header: 'Serie Comprobante', field: 'serie', sortable: true },
+    { header: 'Cliente', field: 'razonSocialComprador', sortable: true },
+    { header: 'Descuento', field: 'discount', sortable: true },
+    { header: 'Total', field: 'total', sortable: true },
+    { header: 'Usuario Asignado', field: 'userName', sortable: true },
+    { header: 'Estado Orden', field: 'orderStatusName', sortable: true },
+    { header: 'Estado', field: 'nombreEstado', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
@@ -105,12 +99,11 @@ export class OrderListComponent implements OnInit {
       this.orderService.delete(item.id).subscribe({
         next: (response) => {
           if (isApiResponse(response)) {
-            this.tS.show({
-              type: response.code == '1' ? 'success' : 'warning',
-              message: response.message,
-            });
             if (response.code == '1') {
+              this.notification.success({ message: response.message });
               this.get();
+            } else {
+              this.notification.warning({ message: response.message });
             }
           }
         },
@@ -218,8 +211,7 @@ export class OrderListComponent implements OnInit {
 
   openModalMaintenance(item: any) {
     if (!(item.assignedUserId > 0)) {
-      return this.tS.show({
-        type: 'warning',
+      return this.notification.warning({
         message: 'Debe asignar esta orden a un responsable, antes de empezar los mantenimientos',
       });
     }

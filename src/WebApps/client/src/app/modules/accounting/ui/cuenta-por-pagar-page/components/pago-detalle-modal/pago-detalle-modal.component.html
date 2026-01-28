@@ -1,15 +1,4 @@
-<app-mat-custom-dialog
-  [containerTemplate]="containerTemplate"
-  [actionsTemplate]="actionsTemplate"
-  [showHeader]="false"
-/>
+<mat-dialog-content>
+  <acp-data-grid [data]="dataSource" [columns]="columnsDefs" />
+</mat-dialog-content>
 
-<ng-template #containerTemplate>
-  <app-mat-dynamic-table
-    [columnDefinitions]="columnsDefs"
-    [visibleColumns]="columns"
-    [tableData]="dataSource.data"
-  />
-</ng-template>
-
-<ng-template #actionsTemplate />

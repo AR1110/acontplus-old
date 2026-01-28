@@ -1,0 +1,57 @@
+<app-breadcrumb />
+
+<mat-card>
+  <mat-card-content>
+    <div class="row mb-3">
+      <div class="col hstack gap-2">
+        <button (click)="openDialog()" mat-icon-button type="button">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-icon-button type="button" (click)="refresh()">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Op.</th>
+            <th>N°</th>
+            <th>Código</th>
+            <th>Report Path</th>
+            <th>Content Type</th>
+            <th>Stored Procedure</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of reports; track $index) {
+            <tr>
+              <td>
+                <div class="hstack gap-2">
+                  <button mat-icon-button  (click)="openDialog(item)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+
+                  <button mat-icon-button   (click)="askToDelete(item)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+              <td>{{ item.idReporte }}</td>
+              <td>{{ item.codigo }}</td>
+              <td>{{ item.reportPath }}</td>
+              <td>{{ item.contentType }}</td>
+              <td>{{ item.storedProcedure }}</td>
+              <td>
+                <div [innerHTML]="item.estado | statusDisplay"></div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </mat-card-content>
+</mat-card>

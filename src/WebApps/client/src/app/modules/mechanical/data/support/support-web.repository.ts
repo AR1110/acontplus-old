@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { MECHANICAL_PATHS } from '@mechanical/domain/enums/mechanical.enum';
@@ -22,9 +21,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 1,
     });
     return this.#http
-      .get(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.#url}?json=${json}`)
       .pipe(map((response: any) => SupportMapper.fromApiGetAll(response)));
   }
 
@@ -40,9 +37,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 2,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}` )
       .pipe(map((response) => SupportMapper.fromApiDataForm(response)));
   }
 
@@ -52,9 +47,7 @@ export class SupportWebRepository extends SupportRepository {
       tipo: 3,
     });
     return this.#http
-      .get(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get(`${this.#url}?json=${json}` )
       .pipe(map((response: any) => SupportMapper.fromApiGetId(response)));
   }
 
@@ -112,9 +105,7 @@ export class SupportWebRepository extends SupportRepository {
       textSearch: obj.textSearch,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`)
       .pipe(map((response) => SupportMapper.fromApiSearch(response)));
   }
 

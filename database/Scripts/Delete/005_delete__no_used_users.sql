@@ -3,7 +3,7 @@ go
 ------ANALIZAR BIEN EN PRODUCCION ANTES DE EJECUTAR
 -----********CAMBIAR POR UPDATES
 
-----select * from Acontplus.dbo.Usuario where correo = 'ifer343@gmail.com'
+----select * from dbo.Usuario where correo = 'ifer343@gmail.com'
 
 
 --delete cid from dbo.ConsolidacionInventarioDetalle cid with(rowlock)
@@ -20,16 +20,16 @@ go
 --where idUsarioRegister  not in (select idUsuario from App.UsuarioRol with(nolock))
 --go
 
---delete from Acontplus.dbo.MovimientoCaja with(rowlock)
+--delete from dbo.MovimientoCaja with(rowlock)
 --where idUsuarioRegister not in (select idUsuario from App.UsuarioRol with(nolock))
 --go
 
---delete td from Acontplus.Inventario.TransaccionDetalle td with(rowlock)
---inner join Acontplus.Inventario.Transaccion t with(nolock) on td.idTransaccion = t.idTransaccion
+--delete td from Inventario.TransaccionDetalle td with(rowlock)
+--inner join Inventario.Transaccion t with(nolock) on td.idTransaccion = t.idTransaccion
 --where t.idUsuario not in (select idUsuario from App.UsuarioRol with(nolock))
 --go
 
---delete from Acontplus.Inventario.Transaccion with(rowlock)
+--delete from Inventario.Transaccion with(rowlock)
 --where idUsuario not in (select idUsuario from App.UsuarioRol with(nolock))
 --go
 
@@ -209,7 +209,7 @@ go
 --go
 
 
---delete from Acontplus.dbo.Usuario with(rowlock)
+--delete from dbo.Usuario with(rowlock)
 --where idUsuario not in (select idUsuario from App.UsuarioRol with(nolock)) and idUsuario not in (select idUsuario from Contabilidad.CuentaPorCobrar)
 --go
 

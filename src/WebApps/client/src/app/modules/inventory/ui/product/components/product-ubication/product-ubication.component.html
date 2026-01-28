@@ -34,36 +34,36 @@
           </mat-form-field>
 
           <div class="hstack gap-1">
-            <button type="button" mat-mini-fab aria-label="Add || Edit" (click)="save()">
-              @if (productUbicationId > 0) {
-                <mat-icon>edit</mat-icon>
-              } @else {
-                <mat-icon>save</mat-icon>
-              }
-            </button>
-            <button mat-mini-fab aria-label="Clear" (click)="clear()">
-              <mat-icon>clear</mat-icon>
-            </button>
+            <acp-button
+              variant="primary"
+              [icon]="productUbicationId > 0 ? 'edit' : 'save'"
+              matStyle="icon"
+              (handleClick)="save()"
+            />
+            <acp-button variant="secondary" icon="clear" matStyle="icon" (handleClick)="clear()" />
           </div>
         </div>
       </div>
     </div>
 
-    <app-mat-dynamic-table
-      [templateOp]="templateOp"
-      [tableData]="dataSource()"
-      [columnDefinitions]="columnsDefs"
-      [visibleColumns]="columns"
+    <acp-data-grid
+      [data]="dataSource()"
+      [columns]="columns"
+      [showPaginator]="false"
+      [cellTemplate]="{
+        op: templateOp,
+      }"
     />
 
-    <ng-template #templateOp let-item="item">
+    <ng-template #templateOp let-data>
       <div class="d-flex gap-1">
-        <button type="button" mat-icon-button (click)="edit(item)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button type="button" mat-icon-button (click)="askToDelete(item)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <acp-button variant="info" icon="edit" matStyle="icon" (handleClick)="edit(data)" />
+        <acp-button
+          variant="danger"
+          icon="delete"
+          matStyle="icon"
+          (handleClick)="askToDelete(data)"
+        />
       </div>
     </ng-template>
   </div>

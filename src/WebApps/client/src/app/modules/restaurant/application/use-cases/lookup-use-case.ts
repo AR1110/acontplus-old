@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { LookupRepository } from '@restaurant/domain/repositories/lookup-repository';
+import { LookupRepository } from '@restaurant/data/repositories/lookup-repository';
 import { BaseUseCase } from '@core/base-use-case';
 import { LookupType } from '@core/models/lookup-type';
 import { Observable } from 'rxjs';

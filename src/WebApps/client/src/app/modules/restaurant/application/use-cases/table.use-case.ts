@@ -1,4 +1,4 @@
-import { TableRepository } from '@restaurant/domain/repositories/table.repository';
+import { TableRepository } from '@restaurant/data/repositories/table.repository';
 import { Injectable, inject } from '@angular/core';
 
 @Injectable({

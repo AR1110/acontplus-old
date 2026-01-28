@@ -1,0 +1,66 @@
+<mat-dialog-content>
+  <div class="my-2">
+    <acp-button
+      variant="info"
+      icon="add"
+      (handleClick)="addRow()"
+      text="Agregar Fila"
+      matStyle="filled"
+    />
+  </div>
+
+  <acp-data-grid
+    [data]="dataSource()"
+    [columns]="columnsDefs"
+    [cellTemplate]="{
+      op: templateOp,
+      nombre: templateName,
+      valor: templateValue,
+      politicaCredito: templatePoliticaCredito,
+    }"
+    ,
+    [showPaginator]="false"
+  />
+
+  <ng-template #templateOp let-data>
+    <acp-button
+      variant="danger"
+      icon="delete_outline"
+      matStyle="icon"
+      (handleClick)="askToDelete(data)"
+    />
+  </ng-template>
+
+  <ng-template #templateName let-data>
+    <mat-form-field class="w-100">
+      <input matInput placeholder="..." [(ngModel)]="data.nombre" />
+    </mat-form-field>
+  </ng-template>
+
+  <ng-template #templateValue let-data>
+    <mat-form-field class="w-100 m-1">
+      <textarea matInput [(ngModel)]="data.valor"></textarea>
+    </mat-form-field>
+  </ng-template>
+
+  <ng-template #templatePoliticaCredito let-data>
+    <mat-slide-toggle [(ngModel)]="data.politicaCredito" />
+  </ng-template>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <acp-button
+    variant="success"
+    icon="save"
+    text="Guardar"
+    (handleClick)="save()"
+    matStyle="filled"
+  />
+  <acp-button
+    variant="dark"
+    icon="close"
+    text="Cerrar"
+    (handleClick)="closeDg()"
+    matStyle="filled"
+  />
+</mat-dialog-actions>

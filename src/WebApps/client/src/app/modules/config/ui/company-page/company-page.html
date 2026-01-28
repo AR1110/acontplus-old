@@ -1,0 +1,6 @@
+<app-breadcrumb />
+
+<acp-data-grid [data]="dataSource()" [columns]="columnsDefs" [cellTemplate]="{ op: templateOp }" />
+<ng-template #templateOp let-data>
+  <acp-button variant="info" icon="edit" matStyle="icon" (handleClick)="openModalEdit(data)" />
+</ng-template>

@@ -1,10 +1,10 @@
-import { Component, inject, signal, ViewEncapsulation, OnInit } from '@angular/core';
+import { ControlCaja } from '@accounting/data/models/caja';
+import { Component, inject, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { CODE_ESTADO, REPORT_CODE, REPORT_FORMAT } from '@core/constants/global.constants';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { SharedService } from '@core/services/shared.service';
 import { isValidField } from '@core/utils/utils';
-import { ControlCaja } from '@accounting/data/models/caja';
-import { UserPermissionService } from '@modules/config/services/user-customer/user-permission.service';
+import { UserPermissionService } from '@modules/config/services/user/user-permission.service';
 
 import {
   PermissionCashAccounting,
@@ -12,25 +12,38 @@ import {
 } from '@shared/store/user-role-state.service';
 import Swal from 'sweetalert2';
 
-import { CierreCajaModalComponent } from '@accounting/ui/caja-page/components/cierre-caja-modal/cierre-caja-modal.component';
-import { FiltroDetalleCajaReportModal } from '@accounting/ui/caja-page/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal.component';
-import { FormsModule } from '@angular/forms';
-import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
-import { DetalleArqueoControlCaja } from '@accounting/ui/caja-page/components/detalle-arqueo-control-caja/detalle-arqueo-control-caja';
-import { formatDateToString } from '@core/utils/date.util';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
-import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatOptionModule } from '@angular/material/core';
-import { Button, DataGrid, DataGridColumn, DateRangePicker } from '@acontplus/ng-components';
+import { CierreCajaModal } from '@accounting/ui/caja-page/components/cierre-caja-modal/cierre-caja-modal';
+import { DetalleArqueoControlCaja } from '@accounting/ui/caja-page/components/detalle-arqueo-control-caja/detalle-arqueo-control-caja';
+import { FiltroDetalleCajaReportModal } from '@accounting/ui/caja-page/components/filtro-detalle-caja-report-modal/filtro-detalle-cajar-report-modal';
+import { ReportFacade, ReportParamsBuilder, SALE_CODE_REPORT } from '@acontplus/ng-common';
+import {
+  AdvancedDialogService,
+  Button,
+  DataGrid,
+  DataGridColumn,
+  DateRangePicker,
+  DateRangeValue,
+} from '@acontplus/ng-components';
 import { NotificationService } from '@acontplus/ng-notifications';
-import { PageEvent } from '@angular/material/paginator';
-import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
-import { DialogService } from '@core/services/dialog.service';
-import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogContent,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { PageEvent } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+import { DialogService } from '@core/services/dialog.service';
+import { formatDateToString } from '@core/utils/date.util';
+import { TokenUseCase } from '@modules/auth/domain/use-cases/token.use-case';
+import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 
 @Component({
   selector: 'app-caja-page-modal',
@@ -47,6 +60,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatDialogContent,
     DataGrid,
     DateRangePicker,
+    MatDialogActions,
   ],
   templateUrl: './control-caja-modal.html',
   encapsulation: ViewEncapsulation.None,
@@ -54,8 +68,10 @@ import { MatButtonModule } from '@angular/material/button';
 export class ControlCajaModal implements OnInit {
   private dialogRef = inject(MatDialogRef<ControlCajaModal>);
   readonly params = inject<{
-    idCaja: number;
-    idUsuario: number;
+    data: {
+      idCaja: number;
+      idUsuario: number;
+    };
   }>(MAT_DIALOG_DATA);
   dataPermisosCaja: PermissionCashAccounting = {
     cerrarCaja: false,
@@ -139,16 +155,21 @@ export class ControlCajaModal implements OnInit {
   BUTTON_TRANSACTION_PENDING = 'BUTTON_TRANSACTION_PENDING';
   private _controlCajaUseCase = inject(CONTROL_CAJA_HTTP_TOKEN);
   private dialogSvc = inject(DialogService);
+  private dgSvc = inject(AdvancedDialogService);
   private userPermissionSvc = inject(UserPermissionService);
   private sharedSvc = inject(SharedService);
   private notificationSvc = inject(NotificationService);
   private pS = inject(UserRoleStateService);
   private _tokenUseCase = inject(TokenUseCase);
+  private reportFacade = inject(ReportFacade);
   private format = REPORT_FORMAT.PDF;
+  private get getParams() {
+    return this.params.data;
+  }
 
   getMovimientosCaja() {
     const dataSearch = {
-      idCaja: this.params.idCaja,
+      idCaja: this.getParams.idCaja,
       pageIndex: this.page + 1,
       pageSize: this.pageSize,
       checkBoxDate: this.dataSearch.checkBoxDate,
@@ -184,9 +205,9 @@ export class ControlCajaModal implements OnInit {
     }
   }
 
-  onDateRangeSelection({ startDate, endDate }: { startDate: Date; endDate: Date }) {
-    this.dataSearch.fromDate = formatDateToString(startDate);
-    this.dataSearch.toDate = formatDateToString(endDate);
+  onDateRangeSelection({ from, to }: DateRangeValue<true>) {
+    this.dataSearch.fromDate = from;
+    this.dataSearch.toDate = to;
     this.getMovimientosCaja();
   }
 
@@ -281,10 +302,19 @@ export class ControlCajaModal implements OnInit {
       }
 
       if (isOpenModal) {
-        const modalRef = this.dialogSvc.open(CierreCajaModalComponent, {
-          data: params || {},
-        });
-        modalRef.subscribe((result) => {
+        const modalRef = await this.dgSvc.openInWrapper(
+          {
+            component: CierreCajaModal,
+            title: 'Cerrar Caja',
+            icon: 'payments',
+            showCloseButton: true,
+            data: params ?? {},
+          },
+          {
+            size: 'xl',
+          },
+        );
+        modalRef.afterClosed().subscribe((result) => {
           if (result && typeof result === 'object') {
             this.isReloadCaja = true;
             this.getMovimientosCaja();
@@ -419,86 +449,86 @@ export class ControlCajaModal implements OnInit {
   }
 
   getReportTransactionPending(format: 'pdf' | 'excel') {
-    try {
-      if (!(this.params.idUsuario > 0)) {
-        this.notificationSvc.warning({
-          message: 'idUsuario no proporcionado!',
-        });
-        return;
-      }
-      let toDate;
-      if (
-        this.dataMovientoControCaja.fechaCierre &&
-        !isValidField(this.dataMovientoControCaja.fechaCierre)
-      ) {
-        toDate = new Date(this.dataMovientoControCaja.fechaCierre);
-      } else {
-        toDate = new Date();
-      }
-
-      const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
-      const dateParts: number[] = parts[0].split('/').map((part) => parseInt(part, 10));
-      const timeParts: number[] = parts[1].split(':').map((part) => parseInt(part, 10));
-
-      const convertedFromDate: Date = new Date(
-        dateParts[2],
-        dateParts[1] - 1,
-        dateParts[0],
-        timeParts[0],
-        timeParts[1],
-      );
-
-      const dataParams = {
-        tipo: 2,
-        ckFecha: true,
-        codDoc: null,
-        codEstab: null,
-        codEstado: this.dataSearch.codEstado,
-        fechaInicio: formatDateToString(convertedFromDate),
-        fechaFin: formatDateToString(toDate),
-        identificacion: null,
-        idUsuario: this.params.idUsuario,
-        idCliente: null,
-
-        userRoleId: this._tokenUseCase.getUserRoleId(),
-      };
-
-      const parameters = {
-        hasService: true,
-        reportParams: JSON.stringify({
-          hasParams: false,
-          codigo: REPORT_CODE.FG,
-          format,
-          aditionalParams: [],
-        }),
-        dataParams: JSON.stringify(dataParams),
-      };
-
-      this.sharedSvc.getReport({
-        data: parameters,
-        format: format,
+    if (!(this.getParams.idUsuario > 0)) {
+      this.notificationSvc.warning({
+        message: 'idUsuario no proporcionado!',
       });
-    } catch (error) {
-      console.log(error);
+      return;
     }
+    let toDate;
+    if (
+      this.dataMovientoControCaja.fechaCierre &&
+      !isValidField(this.dataMovientoControCaja.fechaCierre)
+    ) {
+      toDate = new Date(this.dataMovientoControCaja.fechaCierre);
+    } else {
+      toDate = new Date();
+    }
+
+    const parts: string[] = this.dataMovientoControCaja.fechaApertura.split(' ');
+    const dateParts: number[] = parts[0].split('/').map((part) => parseInt(part, 10));
+    const timeParts: number[] = parts[1].split(':').map((part) => parseInt(part, 10));
+
+    const convertedFromDate: Date = new Date(
+      dateParts[2],
+      dateParts[1] - 1,
+      dateParts[0],
+      timeParts[0],
+      timeParts[1],
+    );
+
+    const dataParams = {
+      tipo: 2,
+      ckFecha: true,
+      codDoc: undefined,
+      codEstab: undefined,
+      codEstado: this.dataSearch.codEstado,
+      fechaInicio: formatDateToString(convertedFromDate),
+      fechaFin: formatDateToString(toDate),
+      identificacion: null,
+      idUsuario: this.getParams.idUsuario,
+      idCliente: null,
+
+      userRoleId: this._tokenUseCase.getUserRoleId(),
+    };
+
+    const reportOptions = ReportParamsBuilder.build({
+      codeReport: SALE_CODE_REPORT.FG,
+      data: dataParams,
+      format,
+    });
+    this.reportFacade.open(reportOptions).subscribe();
   }
 
   // --> Modal Filtro Reporte Detalle Caja
   openModalReporteFiltroDetalleCaja(params: ControlCaja) {
-    this.dialogSvc.open(FiltroDetalleCajaReportModal, {
-      data: params || {},
-    });
+    this.dgSvc.openInWrapper(
+      {
+        component: FiltroDetalleCajaReportModal,
+        title: 'Reporte Detalle Caja',
+        icon: 'view_list',
+        showCloseButton: true,
+        data: params || {},
+      },
+      {
+        size: 'md',
+      },
+    );
   }
 
   // --> Modal Detalle ArqueoCaja
   openModalDetalleArqureoCaja(params: ControlCaja) {
-    try {
-      this.dialogSvc.open(DetalleArqueoControlCaja, {
+    this.dgSvc.openInWrapper(
+      {
+        component: DetalleArqueoControlCaja,
+        title: 'Detalle Arqueo Caja',
+        showCloseButton: true,
         data: params || {},
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      },
+      {
+        size: 'lg',
+      },
+    );
   }
 
   handlePageEvent(e: PageEvent) {

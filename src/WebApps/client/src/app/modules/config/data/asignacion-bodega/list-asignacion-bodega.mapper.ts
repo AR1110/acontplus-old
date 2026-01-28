@@ -1,7 +1,7 @@
 import {
   AsignacionBodegaList,
   AsignacionBodegaResponse,
-} from '@modules/config/domain/models/user-customer/asignacion-bodega.model';
+} from '@modules/config/data/models/user/asignacion-bodega.model';
 
 export class ListAsignacionBodegaMapper {
   static toJson(parameters: Partial<AsignacionBodegaList>) {

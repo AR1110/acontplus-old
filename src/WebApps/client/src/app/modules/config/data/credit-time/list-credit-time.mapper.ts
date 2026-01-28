@@ -1,5 +1,5 @@
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
-import { ListCreditTimeResponse } from '@modules/config/domain/models/tiempo-credito.model';
+import { ListCreditTimeResponse } from '@modules/config/data/models/tiempo-credito.model';
 
 export class ListCreditTimeMapper {
   static toJson(params: any) {

@@ -1,13 +1,12 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { CONTROL_CAJA_HTTP_TOKEN } from '@accounting/data/accounting-token';
 import { Button, DataGrid, DataGridColumn } from '@acontplus/ng-components';
-import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } from '@angular/material/dialog';
 import { SharedService } from '@core/services/shared.service';
 
 @Component({
   selector: 'app-detalle-arqueo-caja-page-modal-modal',
-  imports: [Button, MatCustomDialogComponent, DataGrid],
+  imports: [Button, DataGrid, MatDialogContent, MatDialogActions],
   templateUrl: './detalle-arqueo-control-caja.html',
 })
 export class DetalleArqueoControlCaja implements OnInit {
@@ -48,7 +47,7 @@ export class DetalleArqueoControlCaja implements OnInit {
   ];
 
   getList() {
-    this._controlCajaUseCase.getArqueoCaja(this.params.id).subscribe((response) => {
+    this._controlCajaUseCase.getArqueoCaja(this.params.data.id).subscribe((response) => {
       this.arqueoCajaDetalle.set(response.data || []);
       this.total = this.arqueoCajaDetalle().reduce(
         (acc: number, current: any) => acc + current.total,

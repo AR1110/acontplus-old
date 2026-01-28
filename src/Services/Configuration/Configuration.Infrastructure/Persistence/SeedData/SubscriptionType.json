@@ -1,0 +1,32 @@
+[
+    {
+        "Code": "FREE",
+        "Name": "Gratis",
+        "Quantity": 0,
+        "Duration": 0
+    },
+    {
+        "Code": "MEN",
+        "Name": "Mensual",
+        "Quantity": 1,
+        "Duration": 30
+    },
+    {
+        "Code": "TRI",
+        "Name": "Trimestral",
+        "Quantity": 3,
+        "Duration": 90
+    },
+    {
+        "Code": "SEM",
+        "Name": "Semestral",
+        "Quantity": 6,
+        "Duration": 180
+    },
+    {
+        "Code": "ANU",
+        "Name": "Anual",
+        "Quantity": 12,
+        "Duration": 365
+    }
+]

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import { MealConsumption, MealConsumptionUpdate } from '@restaurant/domain/models/meal-consumption';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
+import { MealConsumption, MealConsumptionUpdate } from '@restaurant/data/models/meal-consumption';
 
 export interface UpdateMealConsumptionParams {
   id: number;

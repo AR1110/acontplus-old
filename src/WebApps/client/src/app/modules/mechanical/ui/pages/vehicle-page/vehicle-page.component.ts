@@ -9,19 +9,21 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatTableModule } from '@angular/material/table';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 
 import { VehicleList } from '@mechanical/domain/models/vehicle.model';
 import { VehicleAddEditDirective } from '@mechanical/ui/directives/vehicle-add-edit.directive';
-import { Pagination, DynamicCard } from '@acontplus/ng-components';
+import {
+  Pagination,
+  DynamicCard,
+  DataGrid,
+  Button,
+  DataGridColumn,
+} from '@acontplus/ng-components';
 import Swal from 'sweetalert2';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { PageEvent } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { VehicleUseCase } from '@mechanical/application/use-cases/vehicle.use-case';
 import { finalize } from 'rxjs';
 import { ListVehicleUseCase } from '@mechanical/application/use-cases/vehicle/list-vehicle.use-case';
@@ -30,16 +32,13 @@ import { ListVehicleUseCase } from '@mechanical/application/use-cases/vehicle/li
   selector: 'app-vehicle-page',
   imports: [
     FormsModule,
-    MatTableModule,
-
     MatSlideToggleModule,
     MatIconModule,
-    MatButtonModule,
     BreadcrumbComponent,
     VehicleAddEditDirective,
-
     DynamicCard,
-    MatDynamicTableComponent,
+    DataGrid,
+    Button,
   ],
   templateUrl: './vehicle-page.component.html',
   styles: ``,
@@ -47,22 +46,21 @@ import { ListVehicleUseCase } from '@mechanical/application/use-cases/vehicle/li
 export class VehiclePageComponent implements OnInit, AfterViewInit {
   private vehicleUseCase = inject(VehicleUseCase);
   private $listUseCase = inject(ListVehicleUseCase);
-  tS = inject(ToastrNotificationService);
+  private tS = inject(NotificationService);
 
   dataSource = signal<VehicleList[]>([]);
 
   @ViewChild('statusTemplate') statusTemplate!: TemplateRef<any>;
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'index', label: '#', type: 'string' },
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'vehicleType', label: 'Tipo Vehiculo', type: 'string' },
-    { key: 'licensePlate', label: 'Placa', type: 'string' },
-    { key: 'idCard', label: 'Identificación', type: 'string' },
-    { key: 'tradeName', label: 'Cliente/Conductor', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'template', templateOutlet: null },
+  columns: DataGridColumn[] = [
+    { header: '#', field: 'index', width: '60px', sortable: false },
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Tipo Vehiculo', field: 'vehicleType', sortable: true },
+    { header: 'Placa', field: 'licensePlate', sortable: true },
+    { header: 'Identificación', field: 'idCard', sortable: true },
+    { header: 'Cliente/Conductor', field: 'tradeName', sortable: true },
+    { header: 'Estado', field: 'nomEstado', sortable: false },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   pagination = signal(new Pagination());
 
@@ -105,12 +103,7 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Asignar el template después de que la vista se haya inicializado
-    this.columnsDefs.forEach((col) => {
-      if (col.type === 'template') {
-        col.templateOutlet = this.statusTemplate;
-      }
-    });
+    // Templates se asignan automáticamente en acp-data-grid
   }
 
   pageChanged(): void {
@@ -137,16 +130,10 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
       if (result.isConfirmed) {
         this.vehicleUseCase.remove(id).subscribe((response) => {
           if (response.code === '0') {
-            this.tS.show({
-              type: 'warning',
-              message: response.message,
-            });
+            this.tS.warning({ message: response.message });
           }
           if (response.code === '1') {
-            this.tS.show({
-              type: 'success',
-              message: response.message,
-            });
+            this.tS.success({ message: response.message });
             this.getVehicles();
           }
         });
@@ -158,15 +145,9 @@ export class VehiclePageComponent implements OnInit, AfterViewInit {
   putState(id: number, state: boolean) {
     this.vehicleUseCase.putState(id, state).subscribe((response) => {
       if (response) {
-        this.tS.show({
-          type: 'success',
-          message: 'Actualizado correctamente',
-        });
+        this.tS.success({ message: 'Actualizado correctamente' });
       } else {
-        this.tS.show({
-          type: 'warning',
-          message: 'Error en actualizar el estado',
-        });
+        this.tS.warning({ message: 'Error en actualizar el estado' });
       }
       this.getVehicles();
     });

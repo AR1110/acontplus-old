@@ -6,7 +6,6 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, throwError } from 'rxjs';
 import { FacturaFisicaLista } from '@purchases/data/models/factura-fisica.interface';
 import { FacturaFisicaRepositoryMapper } from '@purchases/data/mappers/factura-fisica.repository.mapper';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -81,9 +80,7 @@ export class FacturaFisicaRepository {
     });
 
     return this.http
-      .get<ApiResponseLegacy>(`${this.url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.url}Get?json=${json}` )
       .pipe(
         map((response) => {
           if (response.code === '1') {

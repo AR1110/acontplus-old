@@ -4,7 +4,6 @@ import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map, Observable } from 'rxjs';
 import { INVENTORY_PATHS } from '@inventory/inventory.const';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ProductRepository } from '@inventory/data/repositories/product.repository';
 import { GroupedEstab } from '@core/models/estab.model';
 import {
@@ -58,9 +57,7 @@ export class ProductHttp implements ProductRepository {
   getDataFilter() {
     const params = JSON.stringify({ tipo: 11 });
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}?json=${params}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}?json=${params}` )
       .pipe(
         map((response) => {
           let data = {
@@ -103,9 +100,7 @@ export class ProductHttp implements ProductRepository {
   ): Observable<any> {
     const json = ProductSearchMapper.toJson(data);
     return this._http
-      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this._url}Search?json=${json}` )
       .pipe(map((response) => ProductSearchMapper.fromJson(response)));
   }
 
@@ -223,7 +218,6 @@ export class ProductHttp implements ProductRepository {
         params: {
           json,
         },
-        context: getNoLoader(),
       })
       .pipe(map((response) => GetProductEstabsStockMapper.fromJson(response)));
   }

@@ -1,15 +1,7 @@
-<app-mat-custom-dialog
-  (close)="close()"
-  [containerTemplate]="body"
-  [actionsTemplate]="footer"
-  cardcardTitle="Detalle Consolidación"
-/>
-
-<ng-template #body>
+<mat-dialog-content>
   <acp-dynamic-card>
     <div class="row mb-4">
       <div class="col-sm-6">
-        <!--          <h3 class="text-dark mb-1">Nro. Doc #BBB10234</h3>-->
         <div><span class="text-muted">Tipo Doc:</span> {{ header.tipoDocNombre }}</div>
         <div><span class="text-muted">Movimiento:</span> {{ header.movimientoNombre }}</div>
         <div><span class="text-muted">Fecha Registro:</span> {{ header.fechaEmision }}</div>
@@ -61,28 +53,15 @@
         </tbody>
       </table>
     </div>
-    <!--      <div class="row">-->
-    <!--        <div class="col-lg-4 col-sm-5">-->
-    <!--        </div>-->
-    <!--        <div class="col-lg-4 col-sm-5 ml-auto">-->
-    <!--          <table class="table table-clear">-->
-    <!--            <tbody>-->
-
-    <!--            <tr>-->
-    <!--              <td class="left">-->
-    <!--                <strong class="text-dark">Total</strong>-->
-    <!--              </td>-->
-    <!--              <td class="right">-->
-    <!--                <strong class="text-dark">{{ header.total }}</strong>-->
-    <!--              </td>-->
-    <!--            </tr>-->
-    <!--            </tbody>-->
-    <!--          </table>-->
-    <!--        </div>-->
-    <!--      </div>-->
   </acp-dynamic-card>
-</ng-template>
+</mat-dialog-content>
 
-<ng-template #footer>
-  <acp-button icon="table_view" text="Exportar a Excel" (handleClick)="exportToExcel()" />
-</ng-template>
+<mat-dialog-actions>
+  <acp-button
+    variant="info"
+    icon="table_view"
+    text="Exportar a Excel"
+    matStyle="filled"
+    (handleClick)="exportToExcel()"
+  />
+</mat-dialog-actions>

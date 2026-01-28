@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { PATHS_API } from '@core/constants/global.constants';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
 
@@ -22,9 +21,7 @@ export class NotaEntregaService {
       tipo: 3,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(
         map((response) => {
           const resultData = {
@@ -54,9 +51,7 @@ export class NotaEntregaService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(
         map((response) => {
           const result = {
@@ -82,9 +77,7 @@ export class NotaEntregaService {
       id,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}Get?json=${json}` )
       .pipe(
         map((response) => {
           let result = {} as any;

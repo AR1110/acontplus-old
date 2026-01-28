@@ -9,7 +9,7 @@ GO
 -- Author:		Ignacio Manchu
 -- Create date: 2023-13-10
 -- Description: sp for update restaurant menus
--- Restaurant.Menu_Update 139, 2, '{"id":2,"productId":77502,"title":"COMBO POLLO AHUMADO","summary":"COMBO POLLO AHUMADO - TESTING","menuTypeId":2,"content":"DATOS DE PRUEBA - TEST HOLAS","createdAt":"2023-09-07T16:22:38.2166667","updatedAt":null,"enabled":true,"deleted":false,"userId":115,"startDate":null,"endDate":null,"s3ObjectUrl":"https://acontplus.s3.us-east-2.amazonaws.com/0703885640001/articulos/10b599ba-39ee-4b7b-9a88-c7a12d7f67dc.png","menuItems":[{"id":2,"itemId":30,"productId":77509,"costPrice":2.6,"descripcion":"PLATO DE POLLO","menuId":2,"quantity":2,"percentageDiscount":12,"total":0},{"id":3,"itemId":24,"productId":77503,"costPrice":6.2,"descripcion":"PORCION PAPAS FRITAS","menuId":2,"quantity":3,"percentageDiscount":2,"total":0}]}'
+-- Restaurant.Menu_Update 139, 2, '{"id":2,"productId":77502,"title":"COMBO POLLO AHUMADO","summary":"COMBO POLLO AHUMADO - TESTING","menuTypeId":2,"content":"DATOS DE PRUEBA - TEST HOLAS","createdAt":"2023-09-07T16:22:38.2166667","updatedAt":null,"enabled":true,"deleted":false,"userId":115,"startDate":null,"endDate":null,"s3ObjectUrl":"https://s3.us-east-2.amazonaws.com/0703885640001/articulos/10b599ba-39ee-4b7b-9a88-c7a12d7f67dc.png","menuItems":[{"id":2,"itemId":30,"productId":77509,"costPrice":2.6,"descripcion":"PLATO DE POLLO","menuId":2,"quantity":2,"percentageDiscount":12,"total":0},{"id":3,"itemId":24,"productId":77503,"costPrice":6.2,"descripcion":"PORCION PAPAS FRITAS","menuId":2,"quantity":3,"percentageDiscount":2,"total":0}]}'
 -- =============================================
 CREATE OR ALTER PROCEDURE Restaurant.Menu_Update
 @userRoleId INT
@@ -71,7 +71,7 @@ BEGIN
             EXEC Restaurant.MenuItem_Insert @userRoleId, @id, @menuItem, @response OUTPUT
                                              
         COMMIT TRAN
-        SELECT '1' code, 'Éxitos al actualizar' as 'message'
+        SELECT '1' code, 'ï¿½xitos al actualizar' as 'message'
    END TRY
    BEGIN CATCH
         SELECT '0' code, 'Error al actualizar el Menu' as 'message'

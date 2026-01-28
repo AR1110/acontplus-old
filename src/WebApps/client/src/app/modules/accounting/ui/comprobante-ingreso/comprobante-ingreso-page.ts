@@ -1,32 +1,24 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
 import { finalize } from 'rxjs';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DataGrid, DataGridColumn, Button, Pagination } from '@acontplus/ng-components';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Pagination } from '@acontplus/ng-components';
 import { PageEvent } from '@angular/material/paginator';
 import { ComprobanteIngresoUseCase } from '@accounting/data/comprobante-ingreso.use-case';
 import { EstablecimientoSelectHtmlOnly } from '@core/models/estab.model';
 import { ComprobanteIngreso } from '@accounting/data/models/comp-ingreso.model';
 import { formatDateToString } from '@core/utils/date.util';
 import { SharedService } from '@core/services/shared.service';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { isValidField } from '@core/utils/utils';
 
 @Component({
   selector: 'app-comprobante-ingreso',
-  imports: [
-    DynamicCard,
-    MatButtonModule,
-    MatIconModule,
-    BreadcrumbComponent,
-    MatDynamicTableComponent,
-  ],
+  imports: [MatButtonModule, MatIconModule, BreadcrumbComponent, DataGrid, Button],
   templateUrl: './comprobante-ingreso-page.html',
   styles: ``,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComprobanteIngresoPage implements OnInit {
   private _comprobanteIngresoUseCase = inject(ComprobanteIngresoUseCase);
@@ -34,19 +26,18 @@ export class ComprobanteIngresoPage implements OnInit {
   loading = signal(false);
   pagination = signal(new Pagination());
 
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'nroDoc', label: 'Nro. Doc', type: 'string' },
-    { key: 'fechaRegistro', label: 'Fecha Registro', type: 'string' },
-    { key: 'nroIdentificacion', label: 'Nro. Identificación', type: 'string' },
-    { key: 'nomCliente', label: 'Cliente', type: 'string' },
-    { key: 'total', label: 'Total', type: 'string' },
-    { key: 'abono', label: 'Abono', type: 'string' },
-    { key: 'cambio', label: 'Cambio', type: 'string' },
-    { key: 'nomEstado', label: 'Estado', type: 'string' },
-    { key: 'nomUsuario', label: 'Usuario', type: 'string' },
+  columnsDefs: DataGridColumn[] = [
+    { field: 'op', header: 'Op.' },
+    { field: 'nroDoc', header: 'Nro. Doc' },
+    { field: 'fechaRegistro', header: 'Fecha Registro' },
+    { field: 'nroIdentificacion', header: 'Nro. Identificación' },
+    { field: 'nomCliente', header: 'Cliente' },
+    { field: 'total', header: 'Total' },
+    { field: 'abono', header: 'Abono' },
+    { field: 'cambio', header: 'Cambio' },
+    { field: 'nomEstado', header: 'Estado' },
+    { field: 'nomUsuario', header: 'Usuario' },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
   establecimientos: EstablecimientoSelectHtmlOnly[] = [];
   comprobantesIngreso: ComprobanteIngreso[] = [];
   dataSearch = {
@@ -58,7 +49,7 @@ export class ComprobanteIngresoPage implements OnInit {
     totalRecords: 0,
     maxSize: 5,
     byTipoPersona: '',
-    identificacionComprador: null,
+    identificacionComprador: null as string | null,
     byEstado: '',
   };
   moreSearchOptions = false;
@@ -74,7 +65,7 @@ export class ComprobanteIngresoPage implements OnInit {
   showEmpleado = false;
   isSearchEmployeeSimple = true;
   private sharedSvc = inject(SharedService);
-  private tS = inject(ToastrNotificationService);
+  private notificationSvc = inject(NotificationService);
 
   refresh() {
     this.getComprobantesIngreso();
@@ -111,7 +102,7 @@ export class ComprobanteIngresoPage implements OnInit {
       this.establecimientos = establecimientos as EstablecimientoSelectHtmlOnly[];
       if (this.establecimientos.length > 0) {
         const dataEstab = this.establecimientos.find((estab) => estab.predeterminado);
-        this.dataSearch.codEstab = dataEstab?.codEstab || '';
+        this.dataSearch.codEstab = dataEstab?.codEstab ?? '';
         this.getComprobantesIngreso();
       }
     });
@@ -151,13 +142,15 @@ export class ComprobanteIngresoPage implements OnInit {
     }
   }
 
-  onCustomerSelected<T extends { data: any }>($event: T) {
+  onCustomerSelected<
+    T extends { data: { identificacionComprador: string; razonSocialComprador: string } },
+  >($event: T) {
     const { data } = $event;
     this.dataSearch.identificacionComprador = data.identificacionComprador;
     this.companyCustomerSearchName = data.razonSocialComprador;
   }
 
-  resultCustomerEmptyInput($event: any) {
+  resultCustomerEmptyInput(_$event: unknown) {
     this.dataSearch.identificacionComprador = null;
     this.companyCustomerSearchName = '';
   }
@@ -165,8 +158,7 @@ export class ComprobanteIngresoPage implements OnInit {
   filterValidation() {
     if (typeof this.dataSearch.byTipoPersona === 'number') {
       if (!isValidField(this.dataSearch.identificacionComprador)) {
-        this.tS.show({
-          type: 'warning',
+        this.notificationSvc.warning({
           message: 'Seleccione el cliente o el empleado',
         });
         return;
@@ -176,13 +168,15 @@ export class ComprobanteIngresoPage implements OnInit {
     this.getComprobantesIngreso();
   }
 
-  onEmployeeSelected<T extends { data: any }>($event: T) {
+  onEmployeeSelected<T extends { data: { nroIdentificacion: string; nombreCompleto: string } }>(
+    $event: T,
+  ) {
     const { data } = $event;
     this.dataSearch.identificacionComprador = data.nroIdentificacion;
     this.companyCustomerSearchName = data.nombreCompleto;
   }
 
-  employeeclearSearch($event: any) {
+  employeeclearSearch(_$event: unknown) {
     this.dataSearch.identificacionComprador = null;
     this.companyCustomerSearchName = '';
   }
@@ -194,5 +188,13 @@ export class ComprobanteIngresoPage implements OnInit {
       return updated;
     });
     this.refresh();
+  }
+
+  viewDetails(_data: ComprobanteIngreso) {
+    // Implementar lógica para ver detalles
+  }
+
+  printDocument(_data: ComprobanteIngreso) {
+    // Implementar lógica para imprimir documento
   }
 }

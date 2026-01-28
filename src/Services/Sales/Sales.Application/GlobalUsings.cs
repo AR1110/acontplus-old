@@ -1,6 +1,12 @@
 global using Acontplus.Core.Abstractions.Persistence;
+global using Acontplus.Core.Domain.Common.Results;
 global using Acontplus.Core.Dtos.Responses;
 global using Acontplus.Core.Validation;
 global using Acontplus.Utilities.Data;
+global using Mapster;
+global using MapsterMapper;
+global using Microsoft.Extensions.Logging;
+global using Sales.Application.Dtos;
 global using Sales.Application.Interfaces;
+global using Sales.Domain.Entities;
 global using System.Data;

@@ -1,16 +1,14 @@
 import { Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BreadcrumbComponent } from '@core/components/breadcrumb/breadcrumb.component';
-import { DynamicCard } from '@acontplus/ng-components';
+import { DynamicCard, DataGrid, DataGridColumn } from '@acontplus/ng-components';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import {
   RetencionAts,
   RetencionAtsList,
 } from '@billing/domain/models/retencion-ats/retencion-ats.model';
-import { ColumnDefinition } from '@shared/models/mat-table-models/column-definition.model';
 import { Pagination } from '@acontplus/ng-components';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { DialogService } from '@core/services/dialog.service';
@@ -20,7 +18,7 @@ import { SharedService } from '@core/services/shared.service';
 import { REPORT_CODE } from '@core/constants/global.constants';
 import { SendMailDialogDirective } from '@shared/directives/send-mail-dialog.directive';
 import Swal from 'sweetalert2';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
+import { NotificationService } from '@acontplus/ng-notifications';
 import { DocumentoElectronicoUseCase } from '@billing/domain/use-cases/documento-electronico.use-case';
 import { isApiResponse } from '@core/models/api-response-legacy';
 import { DocElectFiltersComponent } from '@shared/components/doc-elect-filters/doc-elect-filters.component';
@@ -41,8 +39,7 @@ import { PersonType } from '@customer/shared/enums/customer.enum';
     MatIcon,
     MatMenuItem,
     MatMenu,
-    MatDynamicTableComponent,
-    MatPaginator,
+    DataGrid,
     MatTooltip,
     SendMailDialogDirective,
     DocElectFiltersComponent,
@@ -55,25 +52,25 @@ export class RetencionAtsComponent implements OnInit {
 
   showMoreOptions = signal(false);
   dataSearch = signal<any>({});
-  columnsDefs: ColumnDefinition[] = [
-    { key: 'op', label: 'Op.', type: 'string' },
-    { key: 'estado', label: 'Estado', type: 'string' },
-    { key: 'fechaEmision', label: 'Fecha Emisión', type: 'string' },
-    { key: 'serieComprobante', label: 'Serie', type: 'string' },
-    { key: 'rucReceptor', label: 'Ruc Receptor', type: 'string' },
-    { key: 'razonSocial', label: 'Razón Social ', type: 'string' },
-    { key: 'claveAcceso', label: 'No. Aut.', type: 'string' },
-    { key: 'fechaAutorizacion', label: 'F. Aut.', type: 'string' },
-    { key: 'usuario', label: 'Usuario', type: 'string' },
-    { key: 'importeTotal', label: 'Total Retenido', type: 'number' },
+
+  columns: DataGridColumn[] = [
+    { header: 'Op.', field: 'op', sortable: false },
+    { header: 'Estado', field: 'estado', sortable: true },
+    { header: 'Fecha Emisión', field: 'fechaEmision', sortable: true },
+    { header: 'Serie', field: 'serieComprobante', sortable: true },
+    { header: 'Ruc Receptor', field: 'rucReceptor', sortable: true },
+    { header: 'Razón Social', field: 'razonSocial', sortable: true },
+    { header: 'No. Aut.', field: 'claveAcceso', sortable: true },
+    { header: 'F. Aut.', field: 'fechaAutorizacion', sortable: true },
+    { header: 'Usuario', field: 'usuario', sortable: true },
+    { header: 'Total Retenido', field: 'importeTotal', sortable: true },
   ];
-  columns: string[] = this.columnsDefs.map((colDef) => colDef.key);
 
   private readonly _dialogService = inject(DialogService);
   private readonly _documentoElectronicoUseCase = inject(DocumentoElectronicoUseCase);
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
   private readonly _sharedService = inject(SharedService);
-  private readonly _tS = inject(ToastrNotificationService);
+  private readonly _notification = inject(NotificationService);
 
   pagination = signal(new Pagination());
 
@@ -145,12 +142,11 @@ export class RetencionAtsComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this._retencionAtsUseCase.cancel(item.idDocumentoElectronico).subscribe((response) => {
-          this._tS.show({
-            type: response.code === '1' ? 'success' : 'warning',
-            message: response.message,
-          });
           if (response.code === '1') {
+            this._notification.success({ message: response.message });
             this.loadData();
+          } else {
+            this._notification.warning({ message: response.message });
           }
         });
       }
@@ -170,12 +166,11 @@ export class RetencionAtsComponent implements OnInit {
         this._documentoElectronicoUseCase
           .authorize(item.idDocumentoElectronico)
           .subscribe((response) => {
-            this._tS.show({
-              type: response.code === '1' ? 'success' : 'warning',
-              message: response.message,
-            });
             if (response.code === '1') {
+              this._notification.success({ message: response.message });
               this.loadData();
+            } else {
+              this._notification.warning({ message: response.message });
             }
           });
       }

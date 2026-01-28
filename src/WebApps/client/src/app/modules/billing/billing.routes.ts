@@ -10,9 +10,9 @@ export const routes: Route[] = [
     data: { breadcrumb: 'Facturación' },
   },
   {
-    path: 'ats',
+    path: 'ats-page',
     title: 'Ats',
-    loadComponent: () => import('@billing/ui/ats/ats.component').then((m) => m.AtsComponent),
+    loadComponent: () => import('@billing/ui/ats-page/ats-page').then((m) => m.AtsPage),
     data: {
       breadcrumb: 'Ats',
     },
@@ -43,7 +43,7 @@ export const routes: Route[] = [
   {
     path: 'invoices',
     title: 'Factura',
-    loadComponent: () => import('@billing/ui/invoice/invoice').then((m) => m.Invoice),
+    loadComponent: () => import('@billing/ui/invoice-page/invoice-page').then((m) => m.InvoicePage),
     data: {
       breadcrumb: 'Factura',
     },

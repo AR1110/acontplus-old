@@ -1,4 +1,4 @@
-import { ConfigurationStep, SetupStatus } from '@modules/config/domain/models/configuration.model';
+import { ConfigurationStep, SetupStatus } from '@modules/config/data/models/configuration.model';
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ConfigurationService } from '../../services/configuration.service';
 import { ShepherdTourService } from '../../services/shepherd-tour.service';

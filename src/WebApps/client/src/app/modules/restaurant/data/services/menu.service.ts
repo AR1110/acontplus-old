@@ -4,7 +4,6 @@ import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
 import { HttpClient } from '@angular/common/http';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { map } from 'rxjs';
-import { getNoLoader } from '@core/interceptors/loader.interceptor';
 
 @Injectable({
   providedIn: 'root',
@@ -41,9 +40,7 @@ export class MenuService {
       ...obj,
     });
     return this.#http
-      .get<ApiResponseLegacy>(`${this.#url}?json=${json}`, {
-        context: getNoLoader(),
-      })
+      .get<ApiResponseLegacy>(`${this.#url}?json=${json}` )
       .pipe(
         map((response) => {
           const result = {

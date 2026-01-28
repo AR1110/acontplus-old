@@ -2,8 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseUseCase } from '@core/base-use-case';
 import { PagedResult, PaginationParams } from '@acontplus/core';
-import { MealConsumptionRepository } from '@restaurant/domain/repositories/meal-consumption-repository';
-import { MealConsumption } from '@restaurant/domain/models/meal-consumption';
+import { MealConsumptionRepository } from '@restaurant/data/repositories/meal-consumption-repository';
+import { MealConsumption } from '@restaurant/data/models/meal-consumption';
 
 @Injectable({
   providedIn: 'root',

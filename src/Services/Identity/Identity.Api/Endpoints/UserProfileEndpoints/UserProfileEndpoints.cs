@@ -1,3 +1,6 @@
+using Identity.Domain.Repositories;
+using Microsoft.AspNetCore.Mvc;
+
 namespace Identity.Api.Endpoints.UserProfileEndpoints;
 
 public static class UserProfileEndpoints
@@ -19,9 +22,9 @@ public static class UserProfileEndpoints
 
         // GET user profile by userId
         userProfileGroup.MapGet("/{userId:int}", async (
-            int userId,
-            IUserService userService,
-            ILogger<IUserService> logger) =>
+            [FromRoute] int userId,
+            [FromServices] IUserRepository userService,
+            [FromServices] ILogger<IUserRepository> logger) =>
         {
             try
             {
@@ -47,10 +50,10 @@ public static class UserProfileEndpoints
 
         // PUT update user profile
         userProfileGroup.MapPut("/{userId:int}", async (
-            int userId,
-            UserProfileUpdateDto updateDto,
-            IUserService userService,
-            ILogger<IUserService> logger) =>
+            [FromRoute] int userId,
+            [FromBody] UserProfileUpdateDto updateDto,
+            [FromServices] IUserRepository userService,
+            [FromServices] ILogger<IUserRepository> logger) =>
         {
             try
             {
@@ -83,6 +86,66 @@ public static class UserProfileEndpoints
         .WithSummary("Update user profile")
         .WithDescription("Updates a user profile for the specified user ID")
         .WithName("UpdateUserProfile");
+
+        // Configuration-style endpoints for backward compatibility
+        MapConfigurationStyleEndpoints(userProfileGroup);
+    }
+
+    private static void MapConfigurationStyleEndpoints(RouteGroupBuilder group)
+    {
+        // GET user profile (Configuration style)
+        group.MapGet("/config", async (
+            [FromServices] IUserProfileService userProfileService,
+            [FromServices] IUserContext userContext,
+            [FromServices] ILogger<IUserProfileService> logger) =>
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "userRoleId", userContext.GetClaimValue<int>("userRoleId") }
+                };
+
+                var response = await userProfileService.GetAsync(parameters);
+                return response == null ? Results.NoContent() : Results.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error retrieving user profile (config style)");
+                return Results.Problem("Internal server error", statusCode: 500);
+            }
+        })
+        .WithName("GetUserProfileConfig")
+        .WithSummary("Get user profile (Configuration style)")
+        .WithDescription("Retrieves user profile using Configuration service pattern");
+
+        // PUT update user profile (Configuration style)
+        group.MapPut("/config/{id:int}", async (
+            [FromRoute] int id,
+            [FromBody] UserProfileDto dto,
+            [FromServices] IUserProfileService userProfileService,
+            [FromServices] ILogger<IUserProfileService> logger) =>
+        {
+            try
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "id", id },
+                    { "json", SqlStringParam.Sanitize(DataConverters.SerializeObjectCustom<UserProfileDto>(dto)) }
+                };
+
+                var response = await userProfileService.UpdateAsync(parameters);
+                return response == null ? Results.NoContent() : Results.Ok(response);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error updating user profile (config style) for ID {Id}", id);
+                return Results.Problem("Internal server error", statusCode: 500);
+            }
+        })
+        .WithName("UpdateUserProfileConfig")
+        .WithSummary("Update user profile (Configuration style)")
+        .WithDescription("Updates user profile using Configuration service pattern");
     }
 
     #region Private Helper Methods
