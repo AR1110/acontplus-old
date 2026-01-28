@@ -40,7 +40,7 @@ BEGIN
             @cc VARCHAR(100);
 
     BEGIN TRY
-        -- Obtener configuraci髇 b醩ica
+        -- Obtener configuraci贸n b谩sica
         SELECT TOP 1
             @notificationTypeId = Id
         FROM Common.NotificationType
@@ -53,7 +53,7 @@ BEGIN
         FROM App.UsuarioRol WITH (NOLOCK)
         WHERE idUsuarioRol = @userRoleId;
 
-        -- Selecci髇 de configuraci髇 de correo
+        -- Selecci贸n de configuraci贸n de correo
         SELECT TOP 1 @emailSenderConfigId = Id
         FROM Config.EmailSenderConfig
         WHERE (CompanyId = @idEntidad OR (IsGlobal = 1 AND IsActive = 1))
@@ -61,7 +61,7 @@ BEGIN
 
         IF (@emailSenderConfigId IS NULL OR @emailSenderConfigId = 0)
         BEGIN
-            SELECT '0' code, 'No existe una configuraci髇 para el env韔 de correo' AS message;
+            SELECT '0' code, 'No existe una configuraci贸n para el env铆o de correo' AS message;
             RETURN;
         END
 
@@ -102,27 +102,27 @@ BEGIN
             RETURN;
         END
 
-        -- Validar existencia de ID si el c骴igo lo requiere
+        -- Validar existencia de ID si el c贸digo lo requiere
         IF @codigo IN ('PR', 'RNE', 'CI') AND (@id IS NULL OR @id <= 0)
         BEGIN
             SELECT '0' code, 'El campo "params.spParams.id" es obligatorio y debe ser mayor a 0 para el tipo ' + @codigo AS message;
             RETURN;
         END
 
-        -- Validar receptor si no es tipo "autom醫ico"
+        -- Validar receptor si no es tipo "autom谩tico"
         IF @codigo NOT IN ('RCC', 'FG', 'CDA', 'CDAA') AND (@receptor IS NULL OR LTRIM(RTRIM(@receptor)) = '')
         BEGIN
             SELECT '0' code, 'El campo "receptor" es obligatorio para el tipo ' + @codigo AS message;
             RETURN;
         END
-        -- Casos por tipo de c骴igo
+        -- Casos por tipo de c贸digo
         IF @codigo IN ('RCC', 'FG', 'CDA', 'CDAA')
         BEGIN
             SELECT @receptor = STRING_AGG(TRIM(correo), '|')
             FROM (
                 SELECT DISTINCT correo
                 FROM Sri.Establecimiento
-                WHERE idEntidad = @idEntidad AND NULLIF(TRIM(correo), '') IS NOT NULL
+                WHERE estado = 1 AND idEntidad = @idEntidad AND NULLIF(TRIM(correo), '') IS NOT NULL
             ) AS sub;
 
             SET @body = (
@@ -140,7 +140,7 @@ BEGIN
         BEGIN
             IF @id IS NULL
             BEGIN
-                SELECT '0' code, 'Id No V醠ido para Proforma' AS message;
+                SELECT '0' code, 'Id No V谩lido para Proforma' AS message;
                 RETURN;
             END
 
@@ -166,7 +166,7 @@ BEGIN
         BEGIN
             IF @id IS NULL
             BEGIN
-                SELECT '0' code, 'Id No V醠ido para Nota de Entrega' AS message;
+                SELECT '0' code, 'Id No V谩lido para Nota de Entrega' AS message;
                 RETURN;
             END
 
@@ -226,7 +226,7 @@ BEGIN
 
         COMMIT TRAN;
 
-        SELECT '1' code, 'Notificaci髇 Enviada Correctamente!' AS message;
+        SELECT '1' code, 'Notificaci贸n Enviada Correctamente!' AS message;
     END TRY
     BEGIN CATCH
         IF @@TRANCOUNT > 0 ROLLBACK TRAN;
