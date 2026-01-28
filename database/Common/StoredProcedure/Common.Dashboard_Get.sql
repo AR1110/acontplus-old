@@ -76,44 +76,64 @@ BEGIN
         VALUES('Factura Física',  (SELECT COUNT(*) FROM dbo.FacturaCompra WITH(NOLOCK) WHERE idEntidad = @idEntidad AND estado = 1));
          
         INSERT INTO @ReceivedDocsTbl
-        SELECT td.descripcion as document
-              ,count(*)       as total
-        FROM Compra.Documento_Ingreso di
-        INNER JOIN dbo.TipoDocumento  td ON td.codigo = di.codDoc 
-        WHERE di.idEntidad = @idEntidad
+        SELECT td.descripcion document
+                 ,count(*) total
+        FROM Compra.Documento_Ingreso di WITH(NOLOCK)
+            INNER JOIN
+                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON di.codDoc = td.codigo
+        WHERE
+             di.idEntidad = @idEntidad
         GROUP BY td.codigo
                 ,td.descripcion
 
         SELECT * FROM @TempResults
 
-        SELECT su.warningMessage
-              ,st.Name
-			  ,st.Code
-			  ,su.MaxPaymentDate
-        FROM App.UsuarioRol                                ur 
-        INNER JOIN Entidad                                 en ON en.idEntidad     = ur.idEntidad
-        INNER JOIN AcontplusAdmin.Config.Company           co ON co.uuid          = en.uuid 
-        INNER JOIN AcontplusAdmin.Sales.Suscripcion        su ON su.CompanyId     = co.Id AND (su.Paid IS NULL OR su.Paid = 0) AND su.[IsActive] = 1 AND su.IsDeleted = CAST(0 AS BIT)
-		INNER JOIN AcontplusAdmin.Config.SubscriptionType  st ON st.Id            = su.SubscriptionTypeId
-        WHERE ur.idUsuarioRol = @userRoleId
-          AND ur.estado = 1
-		  AND ((st.Code = 'A' AND GETDATE() >= DATEADD(DAY, -30, su.MaxPaymentDate)) OR (st.Code = 'M' AND GETDATE() >= DATEADD(DAY, -5, su.MaxPaymentDate)))
-          --AND @expired = 1
+        SELECT 
+            CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'yyyy-MM-dd')) AS maxPaymentDate,
+            IIF(@expired = 1, 'Su licencia ha expirado, por favor comuníquese con el departamento de ventas', REPLACE(
+                REPLACE(
+                    REPLACE(s.warningMessage, '$Costo', CONVERT(VARCHAR, CAST(s.total AS NUMERIC(18, 2)))), 
+                    '$FechaMaximaPago', CONVERT(VARCHAR, FORMAT(s.MaxPaymentDate, 'dd/MM/yyyy'))
+                ), 
+                '$Tipo', lt.[Name]
+            )) AS warningMessage,
+            lt.[Name] + ' - ' + a.[Name] AS licenseType,
+            l.code AS licenseCode,
+            sd.total,
+            st.[Name] AS subscriptionType,
+            s.total AS totalGlobal,
+               CAST(@expired AS BIT) AS expired
+                FROM App.UsuarioRol ur WITH (NOLOCK)
+                INNER JOIN Entidad e WITH (NOLOCK) ON ur.idEntidad = e.idEntidad
+                INNER JOIN AcontplusAdmin.Config.Company c WITH (NOLOCK) ON e.uuid = c.uuid 
+                INNER JOIN AcontplusAdmin.Sales.Suscripcion s WITH (NOLOCK) ON c.id = s.CompanyId
+                                    AND (s.Paid IS NULL OR s.Paid = 0)
+                AND s.[IsActive] = 1
+                AND s.IsDeleted = CAST(0 AS BIT)
+                INNER JOIN AcontplusAdmin.Sales.SuscripcionDetalle sd ON s.Id = sd.SuscripcionId
+                INNER JOIN AcontplusAdmin.Config.LicenciaDetalle ld ON sd.LicenciaDetalleId = ld.Id
+                INNER JOIN AcontplusAdmin.Config.Licencia l WITH (NOLOCK) ON ld.LicenciaId = l.Id
+                INNER JOIN AcontplusAdmin.Config.LicenseType lt ON l.LicenseTypeId = lt.Id
+                INNER JOIN AcontplusAdmin.Config.SubscriptionType st WITH (NOLOCK) ON s.SubscriptionTypeId = st.Id
+                INNER JOIN AcontplusAdmin.Config.Aplicacion a ON ld.AplicacionId = a.Id
+                WHERE ur.idUsuarioRol = @userRoleId
+                  --AND dbo.ufnGetDateEcuador() <= s.MaxPaymentDate
+                  AND ur.estado = 1
 
-        SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
-        FROM AcontplusAdmin.Config.DemoStep ds
-        WHERE ds.Id NOT IN (
-            SELECT cds.DemoStepId 
-            FROM AcontplusAdmin.Config.CompanyDemoStep cds
-            INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
-            WHERE c.Uuid = @uuid
-        )
-        AND EXISTS (
-            SELECT 1
-            FROM AcontplusAdmin.Config.CompanyDemoStep cds
-            INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
-            WHERE c.Uuid = @uuid
-        )
+            SELECT ds.Id, ds.Code, ds.[Name], ds.Mandatory, ds.[Description]
+            FROM AcontplusAdmin.Config.DemoStep ds
+            WHERE ds.Id NOT IN (
+                SELECT cds.DemoStepId 
+                FROM AcontplusAdmin.Config.CompanyDemoStep cds
+                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                WHERE c.Uuid = @uuid
+            )
+            AND EXISTS (
+                SELECT 1
+                FROM AcontplusAdmin.Config.CompanyDemoStep cds
+                INNER JOIN AcontplusAdmin.Config.Company c ON cds.CompanyId = c.Id
+                WHERE c.Uuid = @uuid
+            )
 
        SELECT nombreArchivo,
                 CASE 
@@ -133,15 +153,15 @@ BEGIN
                 td.descripcion, 
                 td.codigoSri
             FROM 
-                Acontplus.dbo.DocumentoElectronico de WITH(NOLOCK)
+                dbo.DocumentoElectronico de WITH(NOLOCK)
             INNER JOIN 
-                Acontplus.dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
+                dbo.TipoDocumento td WITH(NOLOCK) ON de.idTipoDocumento = td.idTipoDocumento
             INNER JOIN 
-                Acontplus.dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
+                dbo.PuntoEmision pe WITH(NOLOCK) ON de.idPuntoEmision = pe.idPuntoEmision
             INNER JOIN 
-                Acontplus.Sri.Establecimiento e ON pe.idEstablecimiento = e.idEstablecimiento
+                Sri.Establecimiento e ON pe.idEstablecimiento = e.idEstablecimiento
             INNER JOIN 
-                Acontplus.FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
+                FactElect.EstadoServicio es WITH(NOLOCK) ON de.idEstadoServicio = es.idEstadoServicio
             WHERE 
                 es.codigo = 4
                 AND e.idEntidad = @idEntidad
