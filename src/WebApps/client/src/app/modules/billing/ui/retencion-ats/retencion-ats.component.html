@@ -28,8 +28,8 @@
 
           <mat-paginator
             [length]="pagination().totalRecords"
-            [pageIndex]="pagination().pageIndex"
-            [pageSize]="pagination().pageSize"
+            [pageIndex]="pageIndex()"
+            [pageSize]="pageSize()"
             [pageSizeOptions]="pagination().pageSizeOptions"
             (page)="onPageChanged($event)"
             showFirstLastButtons

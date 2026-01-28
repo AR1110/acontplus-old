@@ -6,6 +6,11 @@
   (close)="onClose()"
 />
 <ng-template #contentTemplate>
+  <p>
+    Seleccione los documentos del proveedor {{ data.idCard }} - {{ data.idProveedor }} emitidos en
+    {{ fechaEmision() | date: 'MM/yyyy' }}
+  </p>
+  <span class="text-danger">{{ messageTextError() }}</span>
   <app-mat-dynamic-table
     [templateOp]="templateOp"
     [tableData]="documents()"
@@ -18,7 +23,7 @@
 <ng-template #templateOp let-item="item"></ng-template>
 <ng-template #actionsTemplate>
   @if (this.documentsSelected().length > 0) {
-    <button mat-raised-button (click)="selectDocuments()">
+    <button mat-raised-button (click)="selectDocuments()" [disabled]="!!messageTextError()">
       <mat-icon aria-hidden="false" aria-label="Check Icon" fontIcon="check"></mat-icon>
       Seleccionar Documentos
     </button>
