@@ -73,12 +73,16 @@ export class RetencionAtsComponent implements OnInit {
   private readonly _notification = inject(NotificationService);
 
   pagination = signal(new Pagination());
+  pageIndex = signal(0);
+  pageSize = signal(10);
 
   loadData() {
     this.pagination().pageIndex = 1;
     const obj = {
       ...this.pagination(),
       ...this.dataSearch(),
+      pageIndex: this.pageIndex() + 1,
+      pageSize: this.pageSize(),
     };
     this._retencionAtsUseCase.getAll(obj).subscribe((response) => {
       if (response.retenciones.length > 0) {
@@ -105,8 +109,8 @@ export class RetencionAtsComponent implements OnInit {
   }
 
   onPageChanged($event: PageEvent) {
-    this.pagination().pageIndex = $event.pageIndex + 1;
-    this.pagination().pageSize = $event.pageSize;
+    this.pageIndex.set($event.pageIndex);
+    this.pageSize.set($event.pageSize);
     this.loadData();
   }
 

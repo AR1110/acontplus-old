@@ -41,6 +41,7 @@ import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import { formatDate } from '@core/utils/date.util';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-retencion-ats-add-edit',
@@ -80,13 +81,12 @@ export class RetencionAtsAddEditComponent implements OnInit {
     identificacionSujetoRetenido: [''],
     idProveedor: [0],
     periodoFiscal: [''],
-    fechaEmision: [''],
+    fechaEmision: [{ value: '', disabled: true }],
     documentosSustento: this._fb.array([]),
     infoAdicional: this._fb.array([]),
   });
 
   idDocumentoElectronico = 0;
-  isDisabledEmitionDate: boolean = true;
   estabs: GroupedEstab[] = [];
   puntosEmision: GroupedEstabPuntoEmision[] | undefined = [];
   subContribuyente = '';
@@ -257,7 +257,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.infoAdicional.forEach((info) => {
         this.addInfoAdicionalWithValues(info);
       });
-      this.isDisabledEmitionDate = false;
+      this.retencionAtsForm.get('fechaEmision')?.enable();
     } else {
       this.retencionAtsForm.get('fechaEmision')?.setValue(formatDate(new Date()).toISOString());
 
@@ -292,16 +292,23 @@ export class RetencionAtsAddEditComponent implements OnInit {
     // Implementation
   }
 
-  getPeriod() {
-    const fechaEmision = this.retencionAtsForm.get('fechaEmision')?.value;
-    if (fechaEmision) {
-      const date = new Date(fechaEmision);
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
-      const period = month < 10 ? `0${month}/${year}` : `${month}/${year}`;
-      this.retencionAtsForm.get('periodoFiscal')?.setValue(period);
-    }
-  }
+getPeriod(fechaEmisionDocSustento?: string) {
+  const fechaEmision = this.retencionAtsForm.get('fechaEmision')?.value;
+
+  const fechaBase = fechaEmisionDocSustento ?? fechaEmision;
+  if (!fechaBase) return;
+
+  const date = new Date(fechaBase);
+
+  if (isNaN(date.getTime())) return; // evita fechas inválidas
+
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  const period = `${month}/${year}`;
+  this.retencionAtsForm.get('periodoFiscal')?.setValue(period);
+}
+
 
   onSupplierSelected(data: SupplierSearch) {
     this.retencionAtsForm
@@ -323,6 +330,17 @@ export class RetencionAtsAddEditComponent implements OnInit {
   }
 
   searchDocs() {
+    //  const   fechaEmision = this.retencionAtsForm.get('fechaEmision')?.value;
+
+    //  if(fechaEmision==null || fechaEmision=='' || fechaEmision==undefined){
+    //   Swal.fire({
+    //     icon: 'warning',
+    //     title: 'Fecha de emisión requerida',
+    //     text: 'La fecha de emisión es requerida para buscar documentos.',
+    //   });
+    //   return;
+    //  }
+
     const dialogRef = this._dialogService.open(SupplierDocsComponent, {
       size: 'lg',
       data: {
@@ -335,6 +353,9 @@ export class RetencionAtsAddEditComponent implements OnInit {
       if (typeof response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
+          const fechaEmisionDocSustento = documents[0].fechaEmisionDocSustento;
+          this.getPeriod(fechaEmisionDocSustento);
+
           this.retAtsDocSustentos = documents;
           this.retAtsDocSustentos.forEach((doc) => {
             this.addDocSustento(doc);
@@ -343,6 +364,10 @@ export class RetencionAtsAddEditComponent implements OnInit {
       }
     });
   }
+
+
+
+
 
   onSave() {
     if (this._data && this._data.idRetencionAts > 0) {
