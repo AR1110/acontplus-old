@@ -9,9 +9,10 @@ GO
 -- Create date: 2022-02-21
 -- Description: sp for update retencion ats
 -- =============================================
-CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Update @userRoleId INT
-,@id INT
-,@json VARCHAR(MAX) 
+CREATE OR ALTER PROCEDURE FactElect.RetencionAts_Update
+     @userRoleId INT
+    ,@id INT
+    ,@json VARCHAR(MAX) 
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -45,7 +46,7 @@ BEGIN
 		,tipoSujetoRetenido VARCHAR(2) NULL
 		,parteRel VARCHAR(2) NOT NULL
 		,razonSocialSujetoRetenido VARCHAR(300) NULL 
-		,periodoFiscal VARCHAR(8) NULL
+		,periodoFiscal VARCHAR(8) NOT NULL
 	) 
 
 	BEGIN TRY
@@ -58,8 +59,8 @@ BEGIN
 		SELECT @id           ,idPuntoEmision,idProveedor,fechaEmision,contribuyentEspecial,obligadoContabilidad,tipoIdentificacionSujetoRetenido,tipoSujetoRetenido,parteRel,razonSocialSujetoRetenido,periodoFiscal
 		FROM OPENJSON(@json) WITH
         (
-             idPuntoEmision                 INT
-            ,idProveedor                        INT
+             idPuntoEmision                   INT
+            ,idProveedor                      INT
             ,secuencial                       VARCHAR(6)
             ,fechaEmision                     DATETIME2
             ,contribuyentEspecial             VARCHAR(13)
@@ -166,7 +167,7 @@ BEGIN
 			      ,ret.parteRel           = t.parteRel
 			      ,ret.idUsuario          = @idUsuario
 			      ,ret.idProveedor        = @idProveedor
-                  ,ret.periodoFiscal = FORMAT(@fechaEmision, 'MM/yyyy')
+                  ,ret.periodoFiscal      = t.periodoFiscal
 			FROM FactElect.RetencionAts ret
 			INNER JOIN @tblInfoCompRet    t on ret.idRetencionAts = t.idRetencionAts
 
