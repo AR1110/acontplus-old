@@ -40,7 +40,7 @@ import { RetencionAtsInfoAdicionalAddEditComponent } from '@billing/ui/retencion
 import { groupEstabUtil } from '@core/utils/group-estab.util';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { ToastrNotificationService } from '@core/services/toastr-notification.service';
-import { formatDate } from '@core/utils/date.util';
+import { formatDate, formatDateOnly } from '@core/utils/date.util';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -84,7 +84,7 @@ export class RetencionAtsAddEditComponent implements OnInit {
     identificacionSujetoRetenido: [''],
     idProveedor: [0],
     periodoFiscal: [''],
-    fechaEmision: [{ value: '', disabled: true }],
+    fechaEmision: [''],
     documentosSustento: this._fb.array([]),
     infoAdicional: this._fb.array([]),
   });
@@ -260,7 +260,6 @@ export class RetencionAtsAddEditComponent implements OnInit {
       this.infoAdicional.forEach(info => {
         this.addInfoAdicionalWithValues(info);
       });
-      this.retencionAtsForm.get('fechaEmision')?.enable();
     } else {
       this.retencionAtsForm.get('fechaEmision')?.setValue(formatDate(new Date()).toISOString());
 
@@ -356,8 +355,8 @@ getPeriod(fechaEmisionDocSustento?: string) {
       if (typeof response !== 'undefined') {
         const { documents } = response;
         if (documents.length > 0) {
-          const fechaEmisionDocSustento = documents[0].fechaEmisionDocSustento;
-          this.getPeriod(fechaEmisionDocSustento);
+         // const fechaEmisionDocSustento = documents[0].fechaEmisionDocSustento;
+        //  this.getPeriod(fechaEmisionDocSustento);
 
           this.retAtsDocSustentos = documents;
           this.retAtsDocSustentos.forEach(doc => {
@@ -372,10 +371,20 @@ getPeriod(fechaEmisionDocSustento?: string) {
 
 
 
+
+
   onSave() {
+
+    const fechaEmision = this.retencionAtsForm.value.fechaEmision;
+
+      const formData = {
+      ...this.retencionAtsForm.value,
+      fechaEmision: formatDateOnly(fechaEmision!),
+    };
+
     if (this._data && this._data.idRetencionAts > 0) {
       this._retencionAtsUseCase
-        .update(this._data.idRetencionAts, this.retencionAtsForm.value)
+        .update(this._data.idRetencionAts, formData)
         .subscribe(response => {
           this._tS.show({
             type: response.code === '1' ? 'success' : 'warning',
@@ -386,7 +395,7 @@ getPeriod(fechaEmisionDocSustento?: string) {
           }
         });
     } else {
-      this._retencionAtsUseCase.create(this.retencionAtsForm.value).subscribe(response => {
+      this._retencionAtsUseCase.create(formData).subscribe(response => {
         this._tS.show({
           type: response.code === '1' ? 'success' : 'warning',
           message: response.message,
