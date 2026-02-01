@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDynamicTableComponent } from '@shared/components/mat-dynamic-table/mat-dynamic-table.component';
@@ -6,16 +6,17 @@ import { ColumnDefinition } from '@shared/models/mat-table-models/column-definit
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-supplier-docs',
-  imports: [MatCustomDialogComponent, MatDynamicTableComponent, MatButton, MatIcon],
+  imports: [MatCustomDialogComponent, MatDynamicTableComponent, MatButton, MatIcon, DatePipe],
   templateUrl: './supplier-docs.component.html',
   styles: ``,
 })
 export class SupplierDocsComponent implements OnInit {
   documents = signal<unknown[]>([]);
-  documentsSelected = signal<unknown[]>([]);
+  documentsSelected = signal<{fechaEmisionDocSustento: string} []>([]);
   columnsDefs: ColumnDefinition[] = [
     { key: 'op', label: 'Op.', type: 'string' },
     { key: 'fechaEmisionDocSustento', label: 'Fecha Emisión', type: 'string' },
@@ -27,9 +28,42 @@ export class SupplierDocsComponent implements OnInit {
   dialogIcon = signal('list');
   dialogTitle = signal('Documentos del Proveedor');
 
-  readonly data = inject<unknown>(MAT_DIALOG_DATA);
+  readonly data = inject<{fechaEmision: Date, idCard: string, idProveedor: number}>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject(MatDialogRef<SupplierDocsComponent>);
   private readonly _retencionAtsUseCase = inject(RetencionAtsUseCase);
+
+  fechaEmision = computed(() => {
+
+    return this.documentsSelected().length > 0
+      ? new Date(this.documentsSelected()[0].fechaEmisionDocSustento) : null
+
+  });
+
+
+  messageTextError = computed(() => {
+    if(this.documentsSelected().length>0 && this.fechaEmision()){
+
+      const docs = this.documentsSelected();
+      const invalidDocs = docs.filter(doc => {
+        const docDate = new Date((doc as any).fechaEmisionDocSustento);
+        return !this.hasDocSamePeriodoFiscal(docDate, this.fechaEmision()!);
+      });
+
+      if (invalidDocs.length > 0) {
+        return `Todos los documentos deben pertenecer al mismo período fiscal`;
+      }
+
+    }
+    return null;
+  });
+
+  private hasDocSamePeriodoFiscal = (docDate: Date, targetDate: Date): boolean => {
+    const docMonth = docDate.getMonth();
+    const docYear = docDate.getFullYear();
+    const targetMonth = targetDate.getMonth();
+    const targetYear = targetDate.getFullYear();
+    return docMonth === targetMonth && docYear === targetYear;
+  };
 
   ngOnInit() {
     this._retencionAtsUseCase.getDocs(this.data).subscribe(response => {
@@ -68,6 +102,11 @@ export class SupplierDocsComponent implements OnInit {
   }
 
   selectDocuments() {
+
+    if(this.messageTextError()){
+      return;
+    }
+
     this.dialogRef.close({ documents: this.documentsSelected() });
   }
 }

@@ -250,25 +250,40 @@ BEGIN
                           ,@idMarca      INT
                           ,@idTipoIva    INT'
 
-			SET @sql = 'SELECT ar.idArticulo
-							  ,ar.descripcion
-							  ,ar.codigo
-							  ,ar.subfamilia
-							  ,CAST(ar.precioCosto AS NUMERIC(18,2)) as precioCosto
-							  ,ar.idBodega
-							  ,ar.bodega
-							  ,CAST(ar.cantidad as numeric(15, 2)) as stock
-							  ,FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') as fechaCaducidad
-							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) as numeric(15, 2)) as stockTotal
-							  ,CAST(SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo) * ar.precioCosto as numeric(15, 2)) as totalInventario
-                              ,ar.idEstablecimiento
-                              ,ar.nombreComercial
-                              ,ar.marca
-                              ,ar.stockMinimo
-                              ,ar.medida
+			SET @sql = 'SELECT  
+							  ar.idArticulo
+							, ar.descripcion
+							, ar.codigo
+							, ar.subfamilia
+							, CAST(ar.precioCosto AS NUMERIC(18,2)) AS precioCosto
+							, ar.idBodega
+							, ar.bodega
+							, CAST(ar.cantidad AS NUMERIC(15,2)) AS stock
+							, FORMAT(ar.fechaCaducidad, ''dd/MM/yyyy'') AS fechaCaducidad
+
+							-- Stock total por artículo
+							, CAST(
+								SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo)
+							  AS NUMERIC(15,2)) AS stockTotal
+
+							-- Total inventario correcto
+							, CAST(
+								SUM(ar.cantidad) OVER(PARTITION BY ar.idArticulo)
+								* MAX(ar.precioCosto) OVER(PARTITION BY ar.idArticulo)
+							  AS NUMERIC(15,2)) AS totalInventario
+
+							, ar.idEstablecimiento
+							, ar.nombreComercial
+							, ar.marca
+							, ar.stockMinimo
+							, ar.medida
+
 						FROM Inventario.v_Articulo_Stock ar
-                        INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = ar.idTipoIva
-						WHERE ar.estado = 1 AND ar.idEntidad = @idEntidad '
+						INNER JOIN dbo.TipoIva ti WITH (NOLOCK) 
+							ON ti.idTipoIva = ar.idTipoIva
+
+						WHERE ar.estado = 1
+						  AND ar.idEntidad = @idEntidad '
 
 			IF @rucClienteProveedor IS NOT NULL
 				BEGIN
