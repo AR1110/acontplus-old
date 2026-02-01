@@ -294,7 +294,24 @@ acontplus-prd-snet-private-b
 acontplus-prd-igw
 acontplus-prd-nat-a
 acontplus-prd-nat-b
+acontplus-prd-rtb-public
+acontplus-prd-rtb-private
 ```
+
+### Elastic IPs
+
+EIPs should include the associated resource name to identify their purpose:
+
+```
+acontplus-prd-eip-nat-a              # EIP for NAT Gateway in AZ-a
+acontplus-prd-eip-nat-b              # EIP for NAT Gateway in AZ-b
+acontplus-prd-eip-ec2-bastion        # EIP for Bastion EC2 instance
+acontplus-prd-eip-ec2-legacy-01      # EIP for Legacy EC2 instance
+acontplus-prd-eip-ec2-legacy-02      # EIP for Legacy EC2 instance
+acontplus-prd-eip-nlb                # EIP for Network Load Balancer
+```
+
+> **Pattern:** `{prefix}-{env}-eip-{resource-type}-{resource-name}[-{qualifier}]`
 
 ### CloudFront Distributions
 

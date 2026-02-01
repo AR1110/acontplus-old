@@ -72,6 +72,15 @@ All AWS resources follow the standard naming convention documented in:
 | `sg-0337c2488dcfd66c0` | `acontplus-prd-sg-default` | Default VPC |
 | `sg-01bd9aa3b3f732718` | `acontplus-prd-api-reports-sg` | Reports API |
 
+### Elastic IPs (Production)
+
+| Allocation ID | Name | Public IP | Associated Resource |
+|---------------|------|-----------|---------------------|
+| `eipalloc-05f4e3bdfd930df3a` | `acontplus-prd-eip-alb-erp-01` | 3.228.106.70 | ALB `acontplus-erp` (ENI 1) |
+| `eipalloc-008a1df01be534557` | `acontplus-prd-eip-alb-erp-02` | 52.73.39.33 | ALB `acontplus-erp` (ENI 2) |
+
+> **Note:** Both EIPs are associated with the ALB for high availability across AZs.
+
 ---
 
 ## 🔧 Environment Configuration
