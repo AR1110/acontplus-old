@@ -30,6 +30,8 @@ docs/
 │   ├── ecs/                                  Amazon ECS configs
 │   │   ├── service-definitions/
 │   │   └── task-definitions/
+│   ├── s3-cloudfront/                        ⭐ Angular Client Hosting
+│   │   └── s3-cloudfront-deployment-guide.md
 │   ├── ses/                                  Amazon SES (Email)
 │   │   ├── dkim/
 │   │   └── dmarc-change-batch.json
@@ -72,7 +74,7 @@ docs/
 |-------|--------|-----------|
 | **Analytics** | `Analytics/` | Statistics-Localization-Guide.md |
 | **Database** | `Database/` | Connection-String-Guide.md, SQL-Server-Naming-Convention.md |
-| **Deployment** | `Deployment/` | ec2/, ecs/, ses/, Configurations/ |
+| **Deployment** | `Deployment/` | ec2/, ecs/, s3-cloudfront/, ses/, Configurations/ |
 | **Docker** | `Docker/` | Docker-Compose-Guide.md, Docker-Workflow.md |
 | **Services** | `Restaurant/` | EVENT_DRIVEN_ARCHITECTURE.md |
 

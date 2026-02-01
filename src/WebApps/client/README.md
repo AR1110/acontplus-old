@@ -6,6 +6,7 @@ AcontPlus is a modern, modular business management platform built with Angular 2
 
 - [Features](#features)
 - [Getting Started](#getting-started)
+- [Deployment](#-deployment)
 - [Hybrid Authentication (Legacy Migration)](#-hybrid-authentication-legacy-migration)
 - [Running Tests](#running-tests-jest--angular-20)
 - [Project Structure](#project-structure)
@@ -67,7 +68,62 @@ npm run production
 
 ---
 
-## 🔐 Hybrid Authentication (Legacy Migration)
+## � Deployment
+
+This application is deployed to **AWS S3 + CloudFront** using **Azure Pipelines** for CI/CD.
+
+### Production URL
+
+- **Domain**: [https://client.acontplus.com](https://client.acontplus.com)
+
+### AWS Resources
+
+| Resource | Name | Purpose |
+|----------|------|---------|
+| S3 Bucket | `acontplus-prd-web-client-s3` | Hosts static build artifacts |
+| CloudFront | `acp-prd-web-client-cf` | CDN distribution |
+
+### CI/CD Pipeline
+
+The deployment is fully automated via Azure Pipelines:
+
+- **Trigger**: Push to `main` branch (only changes in `src/WebApps/client/**`)
+- **Pipeline file**: [azure-pipelines-client.yml](../../../azure-pipelines-client.yml)
+- **Documentation**: [Azure DevOps Setup Guide](docs/azure-devops-setup.md)
+
+### Manual Deployment
+
+For manual deployment (emergencies only):
+
+```bash
+# Build production bundle
+pnpm run production
+
+# Sync to S3 (static assets with long cache)
+aws s3 sync dist/client s3://acontplus-prd-web-client-s3 \
+  --delete \
+  --cache-control "max-age=31536000,public" \
+  --exclude "index.html" \
+  --exclude "*.json"
+
+# Upload index.html (no cache)
+aws s3 cp dist/client/index.html s3://acontplus-prd-web-client-s3/index.html \
+  --cache-control "no-cache,no-store,must-revalidate"
+
+# Invalidate CloudFront cache
+aws cloudfront create-invalidation \
+  --distribution-id DISTRIBUTION_ID \
+  --paths "/*"
+```
+
+### Deployment Documentation
+
+- **Infrastructure Guide**: [S3 + CloudFront Deployment Guide](../../docs/Deployment/s3-cloudfront/s3-cloudfront-deployment-guide.md)
+- **CI/CD Setup**: [Azure DevOps Setup](docs/azure-devops-setup.md)
+
+---
+
+## �🔐 Hybrid Authentication (Legacy Migration)
 
 This application implements a **hybrid authentication system** that allows coexistence of legacy Razor Pages and modern Angular during the migration process.
 
