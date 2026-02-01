@@ -1,14 +1,22 @@
 # 🚀 Guía de Optimización de Connection Strings - AcontPlus
 
+> ⚠️ **LEGACY DOCUMENTATION** - Este documento contiene configuraciones históricas.
+> Para producción en AWS, use **AWS Secrets Manager** para almacenar credenciales.
+> Ver [AWS Naming Convention](../AWS-Naming-Convention.md) para estándares de nombres.
+>
+> **Secrets Manager Paths:**
+> - `acontplus/prd/db/main/connection-string`
+> - `acontplus/stg/db/main/connection-string`
+
 ## 📋 Resumen de Cambios
 
 Se han aplicado optimizaciones CRÍTICAS a las connection strings de todos los ambientes de AcontPlus para:
 
-✅ **Eliminar MARS** (MultipleActiveResultSets) - Mejora transacciones  
-✅ **Optimizar Connection Pooling** - Reduce uso de memoria y CPU  
-✅ **Agregar Connection Resilience** - Auto-retry en fallos transitorios  
-✅ **Configurar por Ambiente** - Parámetros específicos para Dev/Staging/Prod  
-✅ **Habilitar Monitoreo Granular** - Application Names únicos por servicio  
+✅ **Eliminar MARS** (MultipleActiveResultSets) - Mejora transacciones
+✅ **Optimizar Connection Pooling** - Reduce uso de memoria y CPU
+✅ **Agregar Connection Resilience** - Auto-retry en fallos transitorios
+✅ **Configurar por Ambiente** - Parámetros específicos para Dev/Staging/Prod
+✅ **Habilitar Monitoreo Granular** - Application Names únicos por servicio
 
 ---
 
@@ -201,8 +209,8 @@ EXEC sp_configure 'max worker threads', 512;  -- Suficiente para 355 conexiones
 RECONFIGURE;
 
 -- Verificar configuración
-SELECT name, value_in_use 
-FROM sys.configurations 
+SELECT name, value_in_use
+FROM sys.configurations
 WHERE name IN ('user connections', 'max worker threads');
 ```
 
@@ -257,10 +265,10 @@ try
 {
     using var connection = new SqlConnection(connectionString);
     await connection.OpenAsync();
-    
+
     using var command = new SqlCommand("SELECT @@SPID, PROGRAM_NAME()", connection);
     using var reader = await command.ExecuteReaderAsync();
-    
+
     if (await reader.ReadAsync())
     {
         Console.WriteLine($"✅ Connected! Session ID: {reader[0]}");
@@ -281,7 +289,7 @@ Ejecuta esta query en SQL Server:
 
 ```sql
 -- Ver todas las conexiones de AcontPlus
-SELECT 
+SELECT
     program_name AS Application,
     COUNT(*) AS ActiveConnections,
     AVG(cpu_time) AS AvgCPU_ms,
@@ -324,7 +332,7 @@ WHERE program_name LIKE 'AcontPlus-PRD-%'
 IF @CurrentConnections > @Threshold
 BEGIN
     -- Enviar alerta (integrar con tu sistema de notificaciones)
-    RAISERROR('WARNING: Connection pool usage high (%d/%d connections)', 16, 1, 
+    RAISERROR('WARNING: Connection pool usage high (%d/%d connections)', 16, 1,
               @CurrentConnections, @MaxConnections);
 END
 ```
@@ -480,6 +488,6 @@ Si encuentras problemas:
 
 ---
 
-**Última Actualización:** Diciembre 2025  
-**Versión:** 2.0  
-**Autor:** DevOps Team - AcontPlus  
+**Última Actualización:** Diciembre 2025
+**Versión:** 2.0
+**Autor:** DevOps Team - AcontPlus

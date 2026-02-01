@@ -1,12 +1,19 @@
 # PowerShell Script: Generate Production appsettings for all services
 # Author: DevOps Team
 # Description: Creates appsettings.Production.json for all API projects with optimized connection strings
+#
+# IMPORTANT: This script uses placeholders. Replace with actual values before running:
+#   - SqlServerIP: Your RDS or EC2 database endpoint
+#   - SqlUser/SqlPassword: From AWS Secrets Manager
+#
+# AWS Naming Convention: acontplus-{env}-db-main-rds
+# See docs/AWS-Naming-Convention.md for full reference
 
 param(
-    [string]$SqlServerIP = "54.211.156.95",
+    [string]$SqlServerIP = "{DB_ENDPOINT}",  # e.g., acontplus-prd-db-main-rds.xxxxx.us-east-1.rds.amazonaws.com
     [string]$DatabaseName = "Acontplus",
-    [string]$SqlUser = "sa",
-    [string]$SqlPassword = "Acontplus.c0m",
+    [string]$SqlUser = "{DB_USER}",          # Retrieve from Secrets Manager: acontplus/prd/db/main/credentials
+    [string]$SqlPassword = "{DB_PASSWORD}",  # Retrieve from Secrets Manager: acontplus/prd/db/main/credentials
     [string]$SolutionRoot = "C:\Users\ifer7\source\repos\AcontPlus"
 )
 

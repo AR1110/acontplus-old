@@ -150,9 +150,11 @@ npm test
 
 - **Local Development:** Individual developer workstations
 - **Docker Development:** Containerized environment with docker-compose
-- **AWS Development:** Shared development server (18.222.175.220)
-- **Staging:** Ngrok tunnel for QA testing
-- **Production:** AWS EC2 (54.211.156.95)
+- **AWS Development:** Shared development server (`acontplus-dev-ec2`)
+- **Staging:** QA testing environment (`acontplus-stg-ecs`)
+- **Production:** AWS ECS Fargate (`acontplus-prd-ecs`)
+
+> See [AWS Naming Convention](docs/AWS-Naming-Convention.md) for resource naming standards.
 
 ## 📦 Package Management
 
@@ -182,5 +184,5 @@ For issues or questions:
 
 ---
 
-**Last Updated:** December 2025
+**Last Updated:** February 2026
 **Version:** .NET 10.0 / Angular 20+

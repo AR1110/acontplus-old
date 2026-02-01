@@ -1,5 +1,11 @@
 # Configuraciones de Connection String por Ambiente
 
+> ⚠️ **LEGACY DOCUMENTATION** - Este documento contiene configuraciones históricas.
+> Para producción en AWS, use **AWS Secrets Manager** para almacenar credenciales.
+> Ver [AWS Naming Convention](../AWS-Naming-Convention.md) para estándares de nombres de recursos.
+>
+> **Secrets Manager Path:** `acontplus/{env}/db/main/connection-string`
+
 ## 📋 Resumen de Configuraciones
 
 Este documento explica las configuraciones optimizadas para cada ambiente de AcontPlus.
@@ -337,8 +343,8 @@ RECONFIGURE;
 
 ```sql
 -- Ver conexiones por ambiente
-SELECT 
-    CASE 
+SELECT
+    CASE
         WHEN program_name LIKE '%LocalDev%' THEN 'Local Development'
         WHEN program_name LIKE '%Dev-%' THEN 'AWS Development'
         WHEN program_name LIKE '%Staging%' THEN 'Staging'
@@ -353,8 +359,8 @@ SELECT
 FROM sys.dm_exec_sessions
 WHERE program_name LIKE 'AcontPlus-%'
     AND is_user_process = 1
-GROUP BY 
-    CASE 
+GROUP BY
+    CASE
         WHEN program_name LIKE '%LocalDev%' THEN 'Local Development'
         WHEN program_name LIKE '%Dev-%' THEN 'AWS Development'
         WHEN program_name LIKE '%Staging%' THEN 'Staging'
@@ -370,7 +376,7 @@ ORDER BY Environment, ActiveConnections DESC;
 #### **Production**
 ```sql
 -- Alerta: Conexiones > 280 (80% del máximo 355)
-IF (SELECT COUNT(*) FROM sys.dm_exec_sessions 
+IF (SELECT COUNT(*) FROM sys.dm_exec_sessions
     WHERE program_name LIKE 'AcontPlus-PRD-%') > 280
 BEGIN
     -- Enviar alerta crítica
@@ -381,7 +387,7 @@ END
 #### **Staging**
 ```sql
 -- Alerta: Conexiones > 150
-IF (SELECT COUNT(*) FROM sys.dm_exec_sessions 
+IF (SELECT COUNT(*) FROM sys.dm_exec_sessions
     WHERE program_name LIKE 'AcontPlus-Staging-%') > 150
 BEGIN
     -- Enviar alerta warning
@@ -467,6 +473,6 @@ sudo dpkg -i amazon-cloudwatch-agent.deb
 
 ---
 
-**Última Actualización:** Diciembre 2025  
-**Versión:** 2.0  
+**Última Actualización:** Diciembre 2025
+**Versión:** 2.0
 **Mantenido por:** Equipo DevOps AcontPlus
