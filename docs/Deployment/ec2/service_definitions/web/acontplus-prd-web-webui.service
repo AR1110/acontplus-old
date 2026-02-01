@@ -1,0 +1,18 @@
+[Unit]
+Description=AcontPlus WebUI - Production
+After=network.target
+
+[Service]
+WorkingDirectory=/home/acontplus/services/acontplus-web-webui
+ExecStart=/usr/bin/dotnet /home/acontplus/services/acontplus-web-webui/WebUI.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=acontplus-web-webui
+User=acontplus
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=ASPNETCORE_URLS=http://0.0.0.0:8003
+
+[Install]
+WantedBy=multi-user.target
