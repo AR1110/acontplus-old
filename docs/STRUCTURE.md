@@ -8,6 +8,7 @@
 docs/
 │
 ├── 📄 README.md                              ⭐ START HERE - Main documentation index
+├── 📄 AWS-Naming-Convention.md               AWS resource naming standards
 ├── 📄 Configuration-Guide.md                 Local dev setup, User Secrets
 ├── 📄 Ocelot-Configuration.md                API Gateway configuration
 ├── 📄 MINIMAL_API_STATISTICS_PATTERN.md      Analytics API pattern
@@ -42,12 +43,7 @@ docs/
 │   └── EVENT_DRIVEN_ARCHITECTURE.md          Event-driven patterns
 │
 └── 📦 Legacy/                                Archived Documentation
-    ├── ConnectionStringConfigurationByEnvironment.md
-    ├── README-ConnectionStringOptimization.md
-    ├── ConnectionPoolValidationTesting.md
-    ├── DatabaseConnectionPoolMonitoring.md
-    ├── Statistics-Localization-Guide.md
-    ├── Facturacion Electronica/              PDFs, executables, XML
+    ├── Facturacion Electronica/              SRI electronic invoicing (PDFs, XML)
     └── Guía de Nomenclatura SQL Server - ERP Ecuador.pdf
 ```
 
@@ -65,6 +61,7 @@ docs/
 | **Configure database** | [Database/Connection-String-Guide.md](Database/Connection-String-Guide.md) |
 | **Run with Docker** | [Docker/Docker-Compose-Guide.md](Docker/Docker-Compose-Guide.md) |
 | **Deploy to AWS** | [Deployment/README.md](Deployment/README.md) |
+| **AWS naming standards** | [AWS-Naming-Convention.md](AWS-Naming-Convention.md) |
 | **Add statistics API** | [MINIMAL_API_STATISTICS_PATTERN.md](MINIMAL_API_STATISTICS_PATTERN.md) |
 | **Add multi-language** | [Analytics/Statistics-Localization-Guide.md](Analytics/Statistics-Localization-Guide.md) |
 | **Configure API Gateway** | [Ocelot-Configuration.md](Ocelot-Configuration.md) |

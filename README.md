@@ -68,8 +68,9 @@ Modern microservices-based ERP solution built with .NET 10 and Angular 20+.
 ### Architecture & Patterns
 - [Minimal API Statistics Pattern](docs/MINIMAL_API_STATISTICS_PATTERN.md) - High-performance analytics endpoints
 - [Ocelot Gateway Configuration](docs/Ocelot-Configuration.md) - API Gateway routing and security
-- [SQL Server Naming Conventions](docs/SQL-Server-Naming-Convention.md) - Database standards
-- [Connection String Optimization](docs/README-ConnectionStringOptimization.md) - Performance tuning
+- [SQL Server Naming Conventions](docs/Database/SQL-Server-Naming-Convention.md) - Database standards
+- [Connection String Guide](docs/Database/Connection-String-Guide.md) - Database connection optimization
+- [AWS Naming Convention](docs/AWS-Naming-Convention.md) - AWS resource naming standards
 
 ### Service-Specific Documentation
 - [Restaurant API](src/Services/Restaurant/Restaurant.Api/README.md) - Database schema and migrations
