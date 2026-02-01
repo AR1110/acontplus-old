@@ -1,15 +1,15 @@
 {
-  "family": "acontplus-services-identity-api",
-  "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::866150703026:role/ecsTaskRole",
+  "family": "acontplus-prd-api-identity-task",
+  "executionRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
+  "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "identity-api",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/identity-api:latest",
+      "name": "acontplus-api-identity",
+      "image": "{ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-identity:{ENV}-latest",
       "portMappings": [
         {
-          "name": "identity-api",
+          "name": "acontplus-api-identity",
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp",
@@ -37,15 +37,15 @@
       "secrets": [
         {
           "name": "JwtSettings__SecurityKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/auth/jwt-secret"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/db/main/connection-string"
         },
         {
           "name": "ApiGateways__Acontplus",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_API_GATEWAY_PRD-CoHQu7"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/api-gateway/url"
         }
       ],
       "essential": true,
@@ -54,8 +54,8 @@
         "options": {
           "awslogs-region": "us-east-1",
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/acontplus-services-identity-api",
-          "awslogs-stream-prefix": "identity-api"
+          "awslogs-group": "/acontplus/prd/api/identity",
+          "awslogs-stream-prefix": "ecs"
         }
       }
     }

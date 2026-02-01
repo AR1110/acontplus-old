@@ -1,0 +1,52 @@
+{
+  "family": "acontplus-prd-api-mechanical-task",
+  "executionRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
+  "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "acontplus-api-mechanical",
+      "image": "{ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-mechanical:{ENV}-latest",
+      "portMappings": [
+        {
+          "name": "acontplus-api-mechanical",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        {
+          "name": "ASPNETCORE__ENVIRONMENT",
+          "value": "${ENVIRONMENT}"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "JwtSettings__SecurityKey",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/auth/jwt-secret"
+        },
+        {
+          "name": "ConnectionStrings__DefaultConnection",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/db/main/connection-string"
+        }
+      ],
+      "essential": true,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-region": "us-east-1",
+          "awslogs-create-group": "true",
+          "awslogs-group": "/acontplus/prd/api/mechanical",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512"
+}

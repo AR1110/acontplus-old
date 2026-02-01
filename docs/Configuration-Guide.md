@@ -221,3 +221,24 @@ Rebuild the containers after changing environment variables:
 docker-compose down
 docker-compose up -d --build
 ```
+
+## AWS Production Configuration
+
+For AWS ECS deployments, configuration is managed through:
+
+### Secrets Manager
+Sensitive data like connection strings and API keys:
+```
+acontplus/{env}/db/main/connection-string
+acontplus/{env}/auth/jwt-secret
+acontplus/{env}/aws/access-key
+```
+
+### Parameter Store (SSM)
+Non-sensitive configuration:
+```
+/acontplus/{env}/config/environment
+/acontplus/{env}/api/billing/feature-flags
+```
+
+See [AWS Naming Convention](AWS-Naming-Convention.md) and [ECS Deployment Guide](../scripts/aws/ecs-deployment-guide.md) for details.

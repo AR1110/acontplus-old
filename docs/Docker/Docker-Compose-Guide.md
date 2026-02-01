@@ -209,9 +209,15 @@ docker-compose exec identity.api bash
 Set `DOCKER_REGISTRY` to push images to a registry:
 
 ```bash
-export DOCKER_REGISTRY=myregistry.azurecr.io/
+# For AWS ECR (following naming convention):
+export DOCKER_REGISTRY={ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-
 docker-compose build
 docker-compose push
+
+# Image names will be:
+# {ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-billing
+# {ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-sales
+# {ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-gtw-ocelot
 ```
 
 ## Notes
@@ -220,3 +226,9 @@ docker-compose push
 - All images run as non-root users
 - Development uses User Secrets for sensitive configuration
 - Production should use environment variables or secret management services
+
+## Related Documentation
+
+- [AWS Naming Convention](../AWS-Naming-Convention.md) - Resource naming standards
+- [ECS Deployment Guide](../../scripts/aws/ecs-deployment-guide.md) - AWS ECS deployment
+- [ALB Configuration Guide](../../scripts/aws/alb-configuration-guide.md) - Load balancer setup

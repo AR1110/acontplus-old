@@ -1,15 +1,15 @@
 {
-  "family": "acontplus-services-restaurant-api",
-  "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::866150703026:role/ecsTaskRole",
+  "family": "acontplus-prd-api-restaurant-task",
+  "executionRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
+  "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "restaurant-api",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/restaurant-api:latest",
+      "name": "acontplus-api-restaurant",
+      "image": "{ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-restaurant:{ENV}-latest",
       "portMappings": [
         {
-          "name": "restaurant-api",
+          "name": "acontplus-api-restaurant",
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp",
@@ -27,7 +27,7 @@
         },
         {
           "name": "S3Bucket__Name",
-          "value": "acontplusprd"
+          "value": "acontplus-prd-str-uploads-s3"
         },
         {
           "name": "S3Bucket__Region",
@@ -37,19 +37,19 @@
       "secrets": [
         {
           "name": "JwtSettings__SecurityKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/auth/jwt-secret"
         },
         {
           "name": "ConnectionStrings__DefaultConnection",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_CONN_STRING_PRD-sw4due"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/db/main/connection-string"
         },
         {
           "name": "AwsConfiguration__AWSAccessKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:AWS_ACCESS_KEY_PRD-brGgAt"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/aws/access-key"
         },
         {
           "name": "AwsConfiguration__AWSSecretKey",
-          "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:AWS_SECRET_KEY_PRD-sSGTMu"
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/aws/secret-key"
         }
       ],
       "essential": true,
@@ -58,8 +58,8 @@
         "options": {
           "awslogs-region": "us-east-1",
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/acontplus-services-restaurant-api",
-          "awslogs-stream-prefix": "restaurant-api"
+          "awslogs-group": "/acontplus/prd/api/restaurant",
+          "awslogs-stream-prefix": "ecs"
         }
       }
     }

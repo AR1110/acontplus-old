@@ -1,15 +1,15 @@
 {
-  "family": "acontplus-services-ocelot-api",
-  "executionRoleArn": "arn:aws:iam::866150703026:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::866150703026:role/ecsTaskRole",
+  "family": "acontplus-prd-gtw-ocelot-task",
+  "executionRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
+  "taskRoleArn": "arn:aws:iam::{ACCOUNT_ID}:role/acontplus-prd-ecs-task-role",
   "networkMode": "awsvpc",
   "containerDefinitions": [
     {
-      "name": "ocelot-api",
-      "image": "866150703026.dkr.ecr.us-east-1.amazonaws.com/ocelot-api:latest",
+      "name": "acontplus-gtw-ocelot",
+      "image": "{ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-gtw-ocelot:{ENV}-latest",
       "portMappings": [
         {
-          "name": "ocelot-api",
+          "name": "acontplus-gtw-ocelot",
           "containerPort": 8080,
           "hostPort": 8080,
           "protocol": "tcp",
@@ -30,18 +30,20 @@
           "value": "${ACONTPLUS_JWT_SETTINGS_EXPIRATION_IN_MINUTES}"
         }
       ],
-      "secrets": {
-        "name": "JwtSettings__SecurityKey",
-        "valueFrom": "arn:aws:secretsmanager:us-east-1:866150703026:secret:ACONTPLUS_JWT_SETTINGS_SECURITY_KEY-ekCllZ"
-      },
+      "secrets": [
+        {
+          "name": "JwtSettings__SecurityKey",
+          "valueFrom": "arn:aws:secretsmanager:us-east-1:{ACCOUNT_ID}:secret:acontplus/prd/auth/jwt-secret"
+        }
+      ],
       "essential": true,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-region": "us-east-1",
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/acontplus-services-ocelot-api",
-          "awslogs-stream-prefix": "ocelot-api"
+          "awslogs-group": "/acontplus/prd/gtw/ocelot",
+          "awslogs-stream-prefix": "ecs"
         }
       }
     }

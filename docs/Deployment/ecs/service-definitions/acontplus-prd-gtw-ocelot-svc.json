@@ -1,8 +1,8 @@
 {
-  "cluster": "acontplus-erp",
+  "cluster": "acontplus-prd-ecs",
   "deploymentConfiguration": {
     "maximumPercent": 200,
-    "minimumHealthyPercent": 0
+    "minimumHealthyPercent": 50
   },
   "deploymentController": {
     "type": "ECS"
@@ -23,12 +23,12 @@
   },
   "platformVersion": "LATEST",
   "propagateTags": "SERVICE",
-  "serviceName": "acontplus-services-ocelot-api-service",
+  "serviceName": "acontplus-prd-gtw-ocelot-svc",
   "serviceConnectConfiguration": {
     "enabled": true,
     "services": [
       {
-        "portName": "ocelot-api",
+        "portName": "acontplus-gtw-ocelot",
         "clientAliases": [
           {
             "port": 80
@@ -40,11 +40,11 @@
       "logDriver": "awslogs",
       "options": {
         "awslogs-create-group": "true",
-        "awslogs-group": "/ecs/acontplus-services-ocelot-api",
+        "awslogs-group": "/acontplus/prd/gtw/ocelot",
         "awslogs-region": "us-east-1",
-        "awslogs-stream-prefix": "acontplus-services-ocelot-api"
+        "awslogs-stream-prefix": "ecs"
       }
     }
   },
-  "taskDefinition": "acontplus-services-ocelot-api"
+  "taskDefinition": "acontplus-prd-gtw-ocelot-task"
 }
