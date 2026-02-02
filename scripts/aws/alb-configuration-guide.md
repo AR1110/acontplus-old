@@ -6,50 +6,24 @@ This guide provides AWS CLI commands for configuring Application Load Balancers 
 
 ---
 
-## ⚠️ IMPORTANT: DO NOT Use Static IPs (Elastic IPs) with ALB
+## ℹ️ Note: ALB IP Address Management
 
-### The Problem
+### ServiceManaged EIPs (Normal Behavior)
 
-**Application Load Balancers should NOT be configured with Elastic IPs (static IPs).**
+As of 2024, **all internet-facing ALBs automatically create ServiceManaged Elastic IPs**. This is normal AWS behavior:
 
-When you assign EIPs to an ALB using `set-subnets` with `AllocationId`:
+- AWS creates one EIP per Availability Zone where the ALB is deployed
+- These EIPs are marked as `ServiceManaged: alb` in your account
+- **They do NOT count against your EIP quota**
+- **They have NO additional cost** (as long as the ALB is active)
+- They are automatically released when the ALB is deleted
 
-1. AWS marks those EIPs as `ServiceManaged: alb`
-2. You **CANNOT** release or disassociate these EIPs manually
-3. When the ALB scales or changes subnets, AWS **automatically creates MORE EIPs**
-4. These orphaned EIPs cost **~$3.72/month each** (as of 2026)
-
-### The Solution
-
-- **Use dynamic IPs** (default behavior) - They are FREE
-- If you need static IPs for whitelisting, put a **Network Load Balancer (NLB)** in front of the ALB
-- Or use **AWS Global Accelerator** for static anycast IPs
-
-### Correct ALB Creation (No Static IPs)
-
+You can verify this with:
 ```bash
-# ✅ CORRECT - Uses dynamic IPs (free)
-aws elbv2 create-load-balancer \
-  --name acp-prd-erp-alb \
-  --subnets subnet-xxx subnet-yyy \
-  --security-groups sg-xxx \
-  --scheme internet-facing \
-  --type application
-
-# ❌ WRONG - Do NOT use --subnet-mappings with AllocationId
-aws elbv2 set-subnets \
-  --load-balancer-arn {ARN} \
-  --subnet-mappings SubnetId=subnet-xxx,AllocationId=eipalloc-xxx  # DON'T DO THIS!
+aws ec2 describe-addresses --query "Addresses[?ServiceManaged=='alb']"
 ```
 
-### Migration Script
-
-If you have an ALB with ServiceManaged EIPs, use the migration script:
-
-```bash
-# Run the migration script
-.\scripts\aws\alb-migration-remove-static-ips.ps1
-```
+> **Reference:** [AWS Documentation - Application Load Balancer IP Address Management](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html#ip-address-management)
 
 ---
 
