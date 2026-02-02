@@ -36,11 +36,10 @@
         <input type="number" matInput [min]="1" formControlName="capacity" id="capacity" required />
       </mat-form-field>
 
-      @if (params.id > 0 && !params.enabled) {
+
         <mat-slide-toggle formControlName="enabled">
           {{ tableForm.value.enabled ? 'Activo' : 'Inactivo' }}
         </mat-slide-toggle>
-      }
     </div>
   </form>
 </ng-template>
