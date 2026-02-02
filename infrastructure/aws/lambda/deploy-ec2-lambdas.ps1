@@ -197,9 +197,9 @@ foreach ($lambda in $Lambdas) {
 
     if ($functionExists -and $functionExists -ne "") {
         # Update existing function
-        aws lambda update-function-code --function-name $FunctionName --zip-file "fileb://$ZipFile" --profile $Profile --no-cli-pager | Out-Null
+        aws lambda update-function-code --function-name $FunctionName --zip-file "fileb://$ZipFile" --architectures arm64 --profile $Profile --no-cli-pager | Out-Null
         Start-Sleep -Seconds 2
-        aws lambda update-function-configuration --function-name $FunctionName --handler $Handler --profile $Profile --no-cli-pager | Out-Null
+        aws lambda update-function-configuration --function-name $FunctionName --handler $Handler --runtime python3.13 --profile $Profile --no-cli-pager | Out-Null
         Write-Host "    [OK] Updated" -ForegroundColor Green
     }
     else {
@@ -207,7 +207,8 @@ foreach ($lambda in $Lambdas) {
         $timeout = if ($lambda.Action -in @("scaleup", "scaledown")) { 180 } else { 120 }
         aws lambda create-function `
             --function-name $FunctionName `
-            --runtime python3.12 `
+            --runtime python3.13 `
+            --architectures arm64 `
             --role $LambdaRoleArn `
             --handler $Handler `
             --zip-file "fileb://$ZipFile" `
