@@ -8,6 +8,7 @@
 docs/
 │
 ├── 📄 README.md                              ⭐ START HERE - Main documentation index
+├── 📄 AWS-Naming-Convention.md               AWS resource naming standards
 ├── 📄 Configuration-Guide.md                 Local dev setup, User Secrets
 ├── 📄 Ocelot-Configuration.md                API Gateway configuration
 ├── 📄 MINIMAL_API_STATISTICS_PATTERN.md      Analytics API pattern
@@ -29,6 +30,8 @@ docs/
 │   ├── ecs/                                  Amazon ECS configs
 │   │   ├── service-definitions/
 │   │   └── task-definitions/
+│   ├── s3-cloudfront/                        ⭐ Angular Client Hosting
+│   │   └── s3-cloudfront-deployment-guide.md
 │   ├── ses/                                  Amazon SES (Email)
 │   │   ├── dkim/
 │   │   └── dmarc-change-batch.json
@@ -42,12 +45,7 @@ docs/
 │   └── EVENT_DRIVEN_ARCHITECTURE.md          Event-driven patterns
 │
 └── 📦 Legacy/                                Archived Documentation
-    ├── ConnectionStringConfigurationByEnvironment.md
-    ├── README-ConnectionStringOptimization.md
-    ├── ConnectionPoolValidationTesting.md
-    ├── DatabaseConnectionPoolMonitoring.md
-    ├── Statistics-Localization-Guide.md
-    ├── Facturacion Electronica/              PDFs, executables, XML
+    ├── Facturacion Electronica/              SRI electronic invoicing (PDFs, XML)
     └── Guía de Nomenclatura SQL Server - ERP Ecuador.pdf
 ```
 
@@ -65,6 +63,7 @@ docs/
 | **Configure database** | [Database/Connection-String-Guide.md](Database/Connection-String-Guide.md) |
 | **Run with Docker** | [Docker/Docker-Compose-Guide.md](Docker/Docker-Compose-Guide.md) |
 | **Deploy to AWS** | [Deployment/README.md](Deployment/README.md) |
+| **AWS naming standards** | [AWS-Naming-Convention.md](AWS-Naming-Convention.md) |
 | **Add statistics API** | [MINIMAL_API_STATISTICS_PATTERN.md](MINIMAL_API_STATISTICS_PATTERN.md) |
 | **Add multi-language** | [Analytics/Statistics-Localization-Guide.md](Analytics/Statistics-Localization-Guide.md) |
 | **Configure API Gateway** | [Ocelot-Configuration.md](Ocelot-Configuration.md) |
@@ -75,7 +74,7 @@ docs/
 |-------|--------|-----------|
 | **Analytics** | `Analytics/` | Statistics-Localization-Guide.md |
 | **Database** | `Database/` | Connection-String-Guide.md, SQL-Server-Naming-Convention.md |
-| **Deployment** | `Deployment/` | ec2/, ecs/, ses/, Configurations/ |
+| **Deployment** | `Deployment/` | ec2/, ecs/, s3-cloudfront/, ses/, Configurations/ |
 | **Docker** | `Docker/` | Docker-Compose-Guide.md, Docker-Workflow.md |
 | **Services** | `Restaurant/` | EVENT_DRIVEN_ARCHITECTURE.md |
 

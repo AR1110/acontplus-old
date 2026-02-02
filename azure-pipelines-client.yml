@@ -1,0 +1,149 @@
+# AcontPlus Angular Client - CI/CD Pipeline
+# Deploys to AWS S3 + CloudFront on main branch only
+# Domain: client.acontplus.com
+#
+# STATUS: DISABLED - Pending AWS infrastructure standardization
+# TODO: Enable trigger when S3 bucket and CloudFront are configured
+
+trigger: none  # Disabled until infrastructure is ready
+
+# Future trigger configuration:
+# trigger:
+#   branches:
+#     include:
+#       - main
+#   paths:
+#     include:
+#       - src/WebApps/client/**
+#     exclude:
+#       - src/WebApps/client/docs/**
+#       - src/WebApps/client/*.md
+
+pr: none  # Disable PR triggers - only deploy from main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: acontplus-aws-credentials  # Contains AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+  - name: nodeVersion
+    value: '22.x'
+  - name: pnpmVersion
+    value: '9'
+  - name: workingDirectory
+    value: 'src/WebApps/client'
+  - name: s3Bucket
+    value: 'acontplus-prd-web-client-s3'
+  - name: cloudFrontDistributionId
+    value: '$(CLOUDFRONT_DISTRIBUTION_ID)'  # From variable group
+  - name: awsRegion
+    value: 'us-east-1'
+
+stages:
+  - stage: Build
+    displayName: 'Build Angular Application'
+    jobs:
+      - job: Build
+        displayName: 'Build'
+        steps:
+          - checkout: self
+            fetchDepth: 1
+
+          - task: NodeTool@0
+            displayName: 'Install Node.js $(nodeVersion)'
+            inputs:
+              versionSpec: '$(nodeVersion)'
+
+          - task: Cache@2
+            displayName: 'Cache pnpm store'
+            inputs:
+              key: 'pnpm | "$(Agent.OS)" | $(workingDirectory)/pnpm-lock.yaml'
+              restoreKeys: |
+                pnpm | "$(Agent.OS)"
+              path: $(Pipeline.Workspace)/.pnpm-store
+
+          - script: |
+              corepack enable
+              corepack prepare pnpm@$(pnpmVersion) --activate
+              pnpm config set store-dir $(Pipeline.Workspace)/.pnpm-store
+            displayName: 'Setup pnpm'
+
+          - script: pnpm install --frozen-lockfile
+            displayName: 'Install dependencies'
+            workingDirectory: $(workingDirectory)
+
+          - script: pnpm run lint
+            displayName: 'Run linting'
+            workingDirectory: $(workingDirectory)
+            continueOnError: true
+
+          - script: pnpm run production
+            displayName: 'Build for production'
+            workingDirectory: $(workingDirectory)
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish build artifacts'
+            inputs:
+              targetPath: '$(workingDirectory)/dist/client'
+              artifact: 'angular-build'
+              publishLocation: 'pipeline'
+
+  - stage: Deploy
+    displayName: 'Deploy to S3 + CloudFront'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - deployment: DeployToS3
+        displayName: 'Deploy to AWS'
+        environment: 'production-frontend'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: current
+                  artifact: angular-build
+                  displayName: 'Download build artifacts'
+
+                - task: AWSCLI@1
+                  displayName: 'Sync static assets to S3 (long cache)'
+                  inputs:
+                    awsCredentials: 'acontplus-aws-service-connection'
+                    regionName: '$(awsRegion)'
+                    awsCommand: 's3'
+                    awsSubCommand: 'sync'
+                    awsArguments: '$(Pipeline.Workspace)/angular-build s3://$(s3Bucket) --delete --cache-control "max-age=31536000,public" --exclude "index.html" --exclude "*.json"'
+
+                - task: AWSCLI@1
+                  displayName: 'Upload index.html (no cache)'
+                  inputs:
+                    awsCredentials: 'acontplus-aws-service-connection'
+                    regionName: '$(awsRegion)'
+                    awsCommand: 's3'
+                    awsSubCommand: 'cp'
+                    awsArguments: '$(Pipeline.Workspace)/angular-build/index.html s3://$(s3Bucket)/index.html --cache-control "no-cache,no-store,must-revalidate"'
+
+                - task: AWSCLI@1
+                  displayName: 'Upload config files (short cache)'
+                  inputs:
+                    awsCredentials: 'acontplus-aws-service-connection'
+                    regionName: '$(awsRegion)'
+                    awsCommand: 's3'
+                    awsSubCommand: 'sync'
+                    awsArguments: '$(Pipeline.Workspace)/angular-build s3://$(s3Bucket) --exclude "*" --include "*.json" --cache-control "max-age=300,public"'
+
+                - task: AWSCLI@1
+                  displayName: 'Invalidate CloudFront cache'
+                  inputs:
+                    awsCredentials: 'acontplus-aws-service-connection'
+                    regionName: '$(awsRegion)'
+                    awsCommand: 'cloudfront'
+                    awsSubCommand: 'create-invalidation'
+                    awsArguments: '--distribution-id $(cloudFrontDistributionId) --paths "/*"'
+
+                - script: |
+                    echo "##[section]Deployment Summary"
+                    echo "✅ Deployed to: https://client.acontplus.com"
+                    echo "📦 S3 Bucket: $(s3Bucket)"
+                    echo "🌐 CloudFront Distribution: $(cloudFrontDistributionId)"
+                    echo "🔄 Cache invalidation triggered"
+                  displayName: 'Deployment Summary'

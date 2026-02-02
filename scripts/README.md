@@ -5,7 +5,36 @@
 
 ## 📂 Contenido
 
-### 🐳 **Scripts de Docker** (NUEVOS - Desarrollo Eficiente)
+### ☁️ **Scripts de AWS** (Deployment a la Nube)
+
+#### 📁 Carpeta: `aws/`
+
+| Archivo | Descripción |
+|---------|-------------|
+| `ecs-deployment-guide.md` | Guía completa de despliegue a ECS Fargate |
+| `alb-configuration-guide.md` | Configuración de Application Load Balancer |
+
+**Uso típico:**
+```bash
+# Login a ECR
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin {ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+
+# Push imagen a ECR
+docker push {ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/acontplus-api-billing:prd-1.0.0
+
+# Actualizar servicio ECS
+aws ecs update-service --cluster acontplus-prd-ecs --service acontplus-prd-api-billing-svc --force-new-deployment
+```
+
+**Naming Convention:** Todos los recursos siguen el formato:
+```
+acontplus-{env}-{app-type}-{service}-{aws-service}
+```
+Ver [AWS Naming Convention](../docs/AWS-Naming-Convention.md) para más detalles.
+
+---
+
+### 🐳 **Scripts de Docker** (Desarrollo Local)
 
 #### 1. `docker-profiles.ps1` ⭐ PERFILES DE DOCKER
 - **Propósito:** Ejecutar builds y deployments selectivos por módulo

@@ -1,0 +1,18 @@
+[Unit]
+Description=AcontPlus Technical Support API - Production
+After=network.target
+
+[Service]
+WorkingDirectory=/home/acontplus/services/acontplus-api-techsupport
+ExecStart=/usr/bin/dotnet /home/acontplus/services/acontplus-api-techsupport/TechnicalSupport.Api.dll
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=acontplus-api-techsupport
+User=acontplus
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5012
+
+[Install]
+WantedBy=multi-user.target
