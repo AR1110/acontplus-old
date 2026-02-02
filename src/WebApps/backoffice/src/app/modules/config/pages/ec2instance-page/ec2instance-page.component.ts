@@ -91,18 +91,43 @@ export class Ec2instancePageComponent {
     }
   }
 
+  // API Gateway URLs por ambiente
+  private readonly apiGatewayUrls: Record<string, { start: string; stop: string }> = {
+    dev: {
+      start: 'https://yfkgzblozc.execute-api.us-east-1.amazonaws.com/v1/ec2/start',
+      stop: 'https://yfkgzblozc.execute-api.us-east-1.amazonaws.com/v1/ec2/stop',
+    },
+    stg: {
+      start: 'https://k5wxydswyf.execute-api.us-east-1.amazonaws.com/v1/ec2/start',
+      stop: 'https://k5wxydswyf.execute-api.us-east-1.amazonaws.com/v1/ec2/stop',
+    },
+  };
+
+  // Mapeo de instanceId a ambiente
+  private readonly instanceEnvMap: Record<string, string> = {
+    'i-06deac55680284806': 'dev',  // acontplus-dev-ec2-01
+    'i-0062da774c359130d': 'stg',  // acontplus-stg-db-ec2-01
+    'i-0babc4241fc457a3d': 'stg',  // acontplus-stg-reports-ec2-01
+  };
+
   getAll() {
     const self = this;
 
     this._ec2InstanceService.getAll().subscribe({
       next(response) {
-        const licenses =
+        const instances =
           response &&
-          response.map((license: any, index: number) => ({
-            ...license,
-            position: index + 1,
-          }));
-        self.dataSource = new MatTableDataSource(licenses);
+          response.map((instance: any, index: number) => {
+            const env = self.instanceEnvMap[instance.instanceId];
+            const urls = env ? self.apiGatewayUrls[env] : null;
+            return {
+              ...instance,
+              position: index + 1,
+              urlStart: urls?.start || instance.urlStart,
+              urlStop: urls?.stop || instance.urlStop,
+            };
+          });
+        self.dataSource = new MatTableDataSource(instances);
         self.dataSource.paginator = self.paginator;
         self.dataSource.sort = self.sort;
       },
