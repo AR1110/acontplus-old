@@ -6,6 +6,53 @@ This guide provides AWS CLI commands for configuring Application Load Balancers 
 
 ---
 
+## ⚠️ IMPORTANT: DO NOT Use Static IPs (Elastic IPs) with ALB
+
+### The Problem
+
+**Application Load Balancers should NOT be configured with Elastic IPs (static IPs).**
+
+When you assign EIPs to an ALB using `set-subnets` with `AllocationId`:
+
+1. AWS marks those EIPs as `ServiceManaged: alb`
+2. You **CANNOT** release or disassociate these EIPs manually
+3. When the ALB scales or changes subnets, AWS **automatically creates MORE EIPs**
+4. These orphaned EIPs cost **~$3.72/month each** (as of 2026)
+
+### The Solution
+
+- **Use dynamic IPs** (default behavior) - They are FREE
+- If you need static IPs for whitelisting, put a **Network Load Balancer (NLB)** in front of the ALB
+- Or use **AWS Global Accelerator** for static anycast IPs
+
+### Correct ALB Creation (No Static IPs)
+
+```bash
+# ✅ CORRECT - Uses dynamic IPs (free)
+aws elbv2 create-load-balancer \
+  --name acp-prd-erp-alb \
+  --subnets subnet-xxx subnet-yyy \
+  --security-groups sg-xxx \
+  --scheme internet-facing \
+  --type application
+
+# ❌ WRONG - Do NOT use --subnet-mappings with AllocationId
+aws elbv2 set-subnets \
+  --load-balancer-arn {ARN} \
+  --subnet-mappings SubnetId=subnet-xxx,AllocationId=eipalloc-xxx  # DON'T DO THIS!
+```
+
+### Migration Script
+
+If you have an ALB with ServiceManaged EIPs, use the migration script:
+
+```bash
+# Run the migration script
+.\scripts\aws\alb-migration-remove-static-ips.ps1
+```
+
+---
+
 ## 1. Target Group Management
 
 ### Create Target Group
