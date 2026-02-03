@@ -10,6 +10,15 @@ import Swal from 'sweetalert2';
 import { ToastrNotificationService } from './toastr-notification.service';
 import * as XLSX from 'xlsx';
 
+// Check if running inside an iframe
+const isInIframe = (): boolean => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+};
+
 interface ReportParams<T> {
   data: T;
   format?: string;
@@ -101,6 +110,26 @@ export class SharedService {
       allowOutsideClick: false,
     });
     if (isConfirmed) {
+      // If running inside iframe, delegate print to parent window (AngularJS app)
+      // This bypasses Private Network Access restrictions for iframe context
+      if (isInIframe() && window.parent) {
+        window.parent.postMessage(
+          {
+            type: 'ACONTPLUS_PRINT_REQUEST',
+            payload: {
+              parameters: parameters,
+            },
+          },
+          'https://app.acontplus.com'
+        );
+        this.tS.show({
+          type: 'info',
+          message: 'Solicitud de impresión enviada...',
+        });
+        return;
+      }
+
+      // Direct print when not in iframe
       const url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
       console.log(parameters);
 

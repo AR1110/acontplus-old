@@ -79,6 +79,51 @@ app.run(function ($window, $rootScope) {
     }
 });
 
+// Listen for print requests from Angular iframe (client.acontplus.com)
+// This handles Private Network Access restrictions by allowing the parent window to make the print request
+window.addEventListener('message', function(event) {
+    // Only accept messages from trusted origins
+    const trustedOrigins = ['https://client.acontplus.com', 'https://app.acontplus.com'];
+    if (!trustedOrigins.includes(event.origin)) {
+        return;
+    }
+
+    const { type, payload } = event.data || {};
+
+    if (type === 'ACONTPLUS_PRINT_REQUEST' && payload && payload.parameters) {
+        // Get commonService to handle printing
+        const injector = angular.element(document.body).injector();
+        if (injector && injector.has('commonService')) {
+            const commonService = injector.get('commonService');
+            commonService.askToPrint({ parameters: payload.parameters });
+        } else {
+            console.warn('commonService not available for iframe print request');
+            // Fallback: try direct print
+            const mainService = injector && injector.get('mainService');
+            if (mainService) {
+                const printData = JSON.parse(payload.parameters);
+                mainService.print('POST', 'https://acontplusprint.com/Print', printData)
+                    .then(function(response) {
+                        if (response && response.code === '1') {
+                            toastr.success(response.message, '', {
+                                positionClass: 'toast-bottom-right',
+                                closeButton: true
+                            });
+                        } else if (response && response.code === '0') {
+                            toastr.warning(response.message, '', {
+                                positionClass: 'toast-bottom-right',
+                                closeButton: true
+                            });
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Print error from iframe request:', error);
+                    });
+            }
+        }
+    }
+}, false);
+
 function alertSessionExpiring() {
     let timerInterval;
     Swal.fire({
