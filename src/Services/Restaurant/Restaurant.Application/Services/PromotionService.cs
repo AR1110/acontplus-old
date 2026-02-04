@@ -4,12 +4,13 @@ namespace Restaurant.Application.Services;
 
 public class PromotionService(IAdoRepository repository) : IPromotionService
 {
+    private const string baseSpName = "Restaurant.Promotion";
     public async Task<Result<PagedResult<PromotionItem>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
             var response =
-                await repository.GetPagedFromStoredProcedureAsync<PromotionItem>("Restaurant.GetPromotion",
+                await repository.GetPagedFromStoredProcedureAsync<PromotionItem>($"{baseSpName}Get",
                     paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
@@ -30,7 +31,7 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
 
     public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Restaurant.GetByIdPromotion", parameters);
+        var ds = await repository.GetDataSetAsync($"{baseSpName}GetById", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new SpResponse { Code = "0", Message = "Data not found" }
             : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
@@ -38,11 +39,11 @@ public class PromotionService(IAdoRepository repository) : IPromotionService
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.InsertPromotion", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Insert", parameters);
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdatePromotion", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Update", parameters);
     }
 }

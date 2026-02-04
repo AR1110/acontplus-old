@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { GroupedEstab, GroupedEstabPuntoEmision } from '@core/models/estab.model';
 import { RetencionAtsUseCase } from '@billing/domain/use-cases/retencion-ats/retencion-ats.use-case';
-import { DynamicCard } from '@acontplus/ng-components';
 import { MatAccordion } from '@angular/material/expansion';
 import { SupplierSearchComponent } from '@customer/ui/supplier/components/supplier-search/supplier-search.component';
 import { SupplierSearch } from '@customer/domain/models/supplier.interface';
