@@ -224,8 +224,8 @@ BEGIN
         );
 
 		INSERT INTO ErroresSistema WITH (ROWLOCK)
-            (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
-		SELECT NEWID(),@Method,ERROR_NUMBER(),ERROR_SEVERITY(),ERROR_STATE(),@ErrorProcedure,ERROR_LINE(),ERROR_MESSAGE(),GETDATE(),@UserId;
+              (token,method,errorNumber,errorSeverity,errorState,errorProcedure,errorLine,errorMessage,errorDate,idUsuario)
+		SELECT @Token,@Method,@ErrorNumber,@ErrorSeverity,@ErrorState,@ErrorProcedure,@ErrorLine,@ErrorMessage,GETDATE(),@UserId;
 
     END CATCH
 

@@ -10,7 +10,7 @@ GO
 -- Create date: 2021-11-24
 -- Description:	SP para registrar facturas
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.ConvertOrder
+CREATE OR ALTER PROCEDURE Restaurant.OrderConvert
     @UserRoleId INT
    ,@OrderId INT
    ,@Json VARCHAR(MAX)

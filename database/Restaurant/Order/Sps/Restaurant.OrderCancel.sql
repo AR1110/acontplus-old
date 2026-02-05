@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE Restaurant.CancelOrder
+CREATE OR ALTER PROCEDURE Restaurant.OrderCancel
      @UserRoleId INT
     ,@Id INT
     ,@Json VARCHAR(MAX)

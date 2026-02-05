@@ -11,7 +11,7 @@ GO
 -- Description: sp for get restaurant menus
 -- Restaurant.Promotion_Get 139, '{"tipo": 2}', ''
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.InsertPromotion
+CREATE OR ALTER PROCEDURE Restaurant.PromotionInsert
      @UserRoleId INT
     ,@Json VARCHAR(MAX)
     ,@ImageUrl VARCHAR(800) = NULL
