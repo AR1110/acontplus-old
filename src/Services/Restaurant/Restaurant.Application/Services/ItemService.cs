@@ -4,12 +4,13 @@ namespace Restaurant.Application.Services;
 
 public class ItemService(IAdoRepository adoRepository) : IItemService
 {
+    private  const string baseSpName = "Restaurant.Item";
     public async Task<Result<PagedResult<ItemItem>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
             var response =
-                await adoRepository.GetPagedFromStoredProcedureAsync<ItemItem>("Restaurant.GetItem", paginationRequest);
+                await adoRepository.GetPagedFromStoredProcedureAsync<ItemItem>($"{baseSpName}Get", paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
             {
@@ -29,7 +30,7 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
 
     public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await adoRepository.GetDataSetAsync("Restaurant.GetByIdItem", parameters);
+        var ds = await adoRepository.GetDataSetAsync($"{baseSpName}GetById", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new SpResponse { Code = "0", Message = "Data not found" }
             : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
@@ -37,6 +38,6 @@ public class ItemService(IAdoRepository adoRepository) : IItemService
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdateItem", parameters);
+        return await adoRepository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Update", parameters);
     }
 }

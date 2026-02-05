@@ -8,13 +8,18 @@ export LD_LIBRARY_PATH="/opt/mssql/lib:$LD_LIBRARY_PATH"
 # --- CONFIGURACIÓN ---
 DATE=$(date +%Y-%m-%d_%H-%M-%S)
 BACKUP_DIR="/var/opt/mssql/backups"
-S3_BUCKET="acontplusbackups"
+
+# AWS S3 Configuration
+# Naming Convention: acontplus-{env}-str-{purpose}-s3
+# See docs/AWS-Naming-Convention.md
+S3_BUCKET="acontplus-prd-str-backups-s3"
 S3_PREFIX="mssql/prd"
 MAX_LOCAL_BACKUPS=1  # Máximo de backups locales a conservar si falla S3
 
-# Credenciales
+# Credenciales - Use AWS Secrets Manager in production
+# Secrets Manager: acontplus/prd/db/main/credentials
 SQL_USER="sa"
-SQL_PASSWORD=""
+SQL_PASSWORD=""  # Set via environment variable or Secrets Manager
 SQL_SERVER="localhost"
 
 # Bases de datos

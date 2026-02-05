@@ -1,0 +1,1139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: |
+  AcontPlus VPC Infrastructure (Multi-Environment)
+  Following naming convention: {prefix}-{environment}-{aws-service}[-{qualifier}]
+  Supports: IPv6 Dual-Stack, VPC Flow Logs, IPAM-ready
+  Version: 2.0.0
+  Created: 2026-02-01
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Environment Configuration
+        Parameters:
+          - Environment
+          - ProjectName
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - VpcCidr
+          - EnableIPv6
+          - PublicSubnetACidr
+          - PublicSubnetBCidr
+          - PrivateSubnetACidr
+          - PrivateSubnetBCidr
+          - PrivateSubnetDbACidr
+          - PrivateSubnetDbBCidr
+      - Label:
+          default: NAT Gateway Configuration
+        Parameters:
+          - EnableNatGateway
+          - SingleNatGateway
+      - Label:
+          default: Monitoring & Logging
+        Parameters:
+          - EnableFlowLogs
+          - FlowLogsRetentionDays
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: acontplus
+    Description: Project name prefix for all resources
+
+  Environment:
+    Type: String
+    Default: stg
+    AllowedValues:
+      - dev
+      - stg
+      - prd
+    Description: Deployment environment
+
+  VpcCidr:
+    Type: String
+    Default: 10.1.0.0/16
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Description: CIDR block for the VPC
+
+  EnableIPv6:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable IPv6 dual-stack for the VPC
+
+  PublicSubnetACidr:
+    Type: String
+    Default: 10.1.1.0/24
+    Description: CIDR block for public subnet in AZ-a
+
+  PublicSubnetBCidr:
+    Type: String
+    Default: 10.1.2.0/24
+    Description: CIDR block for public subnet in AZ-b
+
+  PrivateSubnetACidr:
+    Type: String
+    Default: 10.1.10.0/24
+    Description: CIDR block for private subnet in AZ-a
+
+  PrivateSubnetBCidr:
+    Type: String
+    Default: 10.1.11.0/24
+    Description: CIDR block for private subnet in AZ-b
+
+  PrivateSubnetDbACidr:
+    Type: String
+    Default: 10.1.20.0/24
+    Description: CIDR block for database subnet in AZ-a
+
+  PrivateSubnetDbBCidr:
+    Type: String
+    Default: 10.1.21.0/24
+    Description: CIDR block for database subnet in AZ-b
+
+  EnableNatGateway:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable NAT Gateway for private subnets
+
+  SingleNatGateway:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Use single NAT Gateway (cost savings for non-prod)
+
+  EnableFlowLogs:
+    Type: String
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable VPC Flow Logs for network monitoring
+
+  FlowLogsRetentionDays:
+    Type: Number
+    Default: 30
+    AllowedValues:
+      - 7
+      - 14
+      - 30
+      - 60
+      - 90
+      - 180
+      - 365
+    Description: Retention period for VPC Flow Logs in CloudWatch
+
+  EnableVpcEndpoints:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable Interface VPC Endpoints (ECR, ECS, SSM, etc). Only needed for ECS/Fargate in private subnets without NAT Gateway. Costs ~$2.40/day per endpoint.
+
+Conditions:
+  CreateNatGateway: !Equals [!Ref EnableNatGateway, 'true']
+  CreateSecondNatGateway: !And
+    - !Equals [!Ref EnableNatGateway, 'true']
+    - !Equals [!Ref SingleNatGateway, 'false']
+  EnableIPv6Condition: !Equals [!Ref EnableIPv6, 'true']
+  EnableFlowLogsCondition: !Equals [!Ref EnableFlowLogs, 'true']
+  EnableVpcEndpointsCondition: !Equals [!Ref EnableVpcEndpoints, 'true']
+  IsProduction: !Equals [!Ref Environment, 'prd']
+
+Resources:
+  #============================================================================
+  # VPC with IPv6 Dual-Stack Support
+  #============================================================================
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-vpc
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+        - Key: CreatedDate
+          Value: '2026-02-01'
+
+  # IPv6 CIDR Block (Amazon-provided)
+  IPv6CidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Condition: EnableIPv6Condition
+    Properties:
+      VpcId: !Ref VPC
+      AmazonProvidedIpv6CidrBlock: true
+
+  #============================================================================
+  # VPC Flow Logs for Network Monitoring
+  #============================================================================
+  FlowLogsLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: EnableFlowLogsCondition
+    Properties:
+      LogGroupName: !Sub /aws/vpc/${ProjectName}-${Environment}-vpc-flow-logs
+      RetentionInDays: !Ref FlowLogsRetentionDays
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  FlowLogsRole:
+    Type: AWS::IAM::Role
+    Condition: EnableFlowLogsCondition
+    Properties:
+      RoleName: !Sub ${ProjectName}-${Environment}-vpc-flow-logs-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: vpc-flow-logs.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: FlowLogsPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStreams
+                Resource: !GetAtt FlowLogsLogGroup.Arn
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  VPCFlowLog:
+    Type: AWS::EC2::FlowLog
+    Condition: EnableFlowLogsCondition
+    Properties:
+      DeliverLogsPermissionArn: !GetAtt FlowLogsRole.Arn
+      LogDestinationType: cloud-watch-logs
+      LogGroupName: !Ref FlowLogsLogGroup
+      ResourceId: !Ref VPC
+      ResourceType: VPC
+      TrafficType: ALL
+      MaxAggregationInterval: 60
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-vpc-flow-log
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+
+  #============================================================================
+  # Internet Gateway
+  #============================================================================
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-igw
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  # Egress-Only Internet Gateway for IPv6
+  EgressOnlyInternetGateway:
+    Type: AWS::EC2::EgressOnlyInternetGateway
+    Condition: EnableIPv6Condition
+    Properties:
+      VpcId: !Ref VPC
+
+  #============================================================================
+  # Public Subnets (Dual-Stack)
+  #============================================================================
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetACidr
+      MapPublicIpOnLaunch: true
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [0, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-public-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: public
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PublicSubnetBCidr
+      MapPublicIpOnLaunch: true
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [1, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-public-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: public
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # Private Subnets - Application (Dual-Stack)
+  #============================================================================
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetACidr
+      MapPublicIpOnLaunch: false
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [2, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-private-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: private
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetBCidr
+      MapPublicIpOnLaunch: false
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [3, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-private-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: private
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # Private Subnets - Database (Dual-Stack)
+  #============================================================================
+  PrivateSubnetDbA:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [0, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetDbACidr
+      MapPublicIpOnLaunch: false
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [4, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-db-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: database
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PrivateSubnetDbB:
+    Type: AWS::EC2::Subnet
+    DependsOn: IPv6CidrBlock
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [1, !GetAZs '']
+      CidrBlock: !Ref PrivateSubnetDbBCidr
+      MapPublicIpOnLaunch: false
+      AssignIpv6AddressOnCreation: !If [EnableIPv6Condition, true, false]
+      Ipv6CidrBlock: !If
+        - EnableIPv6Condition
+        - !Select [5, !Cidr [!Select [0, !GetAtt VPC.Ipv6CidrBlocks], 8, 64]]
+        - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-snet-db-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Type
+          Value: database
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # NAT Gateway
+  #============================================================================
+  NatGatewayEipA:
+    Type: AWS::EC2::EIP
+    Condition: CreateNatGateway
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-eip-nat-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  NatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Condition: CreateNatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEipA.AllocationId
+      SubnetId: !Ref PublicSubnetA
+      ConnectivityType: public
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-nat-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  # Optional second NAT Gateway for high availability (production)
+  NatGatewayEipB:
+    Type: AWS::EC2::EIP
+    Condition: CreateSecondNatGateway
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-eip-nat-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  NatGatewayB:
+    Type: AWS::EC2::NatGateway
+    Condition: CreateSecondNatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEipB.AllocationId
+      SubnetId: !Ref PublicSubnetB
+      ConnectivityType: public
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-nat-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # Route Tables - Public (Dual-Stack)
+  #============================================================================
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-rtb-public
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicRouteIPv6:
+    Type: AWS::EC2::Route
+    Condition: EnableIPv6Condition
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationIpv6CidrBlock: ::/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+
+  #============================================================================
+  # Route Tables - Private A (Dual-Stack)
+  #============================================================================
+  PrivateRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-rtb-private-a
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PrivateRouteA:
+    Type: AWS::EC2::Route
+    Condition: CreateNatGateway
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayA
+
+  PrivateRouteAIPv6:
+    Type: AWS::EC2::Route
+    Condition: EnableIPv6Condition
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableA
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+
+  PrivateSubnetARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTableA
+
+  #============================================================================
+  # Route Tables - Private B (Dual-Stack)
+  #============================================================================
+  PrivateRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-rtb-private-b
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  PrivateRouteB:
+    Type: AWS::EC2::Route
+    Condition: CreateNatGateway
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !If
+        - CreateSecondNatGateway
+        - !Ref NatGatewayB
+        - !Ref NatGatewayA
+
+  PrivateRouteBIPv6:
+    Type: AWS::EC2::Route
+    Condition: EnableIPv6Condition
+    Properties:
+      RouteTableId: !Ref PrivateRouteTableB
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+
+  PrivateSubnetBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTableB
+
+  #============================================================================
+  # Route Tables - Database (Isolated with IPv6 egress)
+  #============================================================================
+  DatabaseRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-rtb-db
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  DatabaseRouteIPv6:
+    Type: AWS::EC2::Route
+    Condition: EnableIPv6Condition
+    Properties:
+      RouteTableId: !Ref DatabaseRouteTable
+      DestinationIpv6CidrBlock: ::/0
+      EgressOnlyInternetGatewayId: !Ref EgressOnlyInternetGateway
+
+  PrivateSubnetDbARouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetDbA
+      RouteTableId: !Ref DatabaseRouteTable
+
+  PrivateSubnetDbBRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetDbB
+      RouteTableId: !Ref DatabaseRouteTable
+
+  #============================================================================
+  # DB Subnet Group
+  #============================================================================
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub ${ProjectName}-${Environment}-db-snetgrp
+      DBSubnetGroupDescription: !Sub Subnet group for ${ProjectName} ${Environment} databases
+      SubnetIds:
+        - !Ref PrivateSubnetDbA
+        - !Ref PrivateSubnetDbB
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-db-snetgrp
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # Security Groups
+  #============================================================================
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ProjectName}-${Environment}-alb-sg
+      GroupDescription: Security group for Application Load Balancer
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+          Description: Allow HTTP from anywhere (IPv4)
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+          Description: Allow HTTPS from anywhere (IPv4)
+        - !If
+          - EnableIPv6Condition
+          - IpProtocol: tcp
+            FromPort: 80
+            ToPort: 80
+            CidrIpv6: ::/0
+            Description: Allow HTTP from anywhere (IPv6)
+          - !Ref AWS::NoValue
+        - !If
+          - EnableIPv6Condition
+          - IpProtocol: tcp
+            FromPort: 443
+            ToPort: 443
+            CidrIpv6: ::/0
+            Description: Allow HTTPS from anywhere (IPv6)
+          - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-alb-sg
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  EcsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ProjectName}-${Environment}-ecs-sg
+      GroupDescription: Security group for ECS tasks
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !Ref AlbSecurityGroup
+          Description: Allow HTTP from ALB
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !Ref AlbSecurityGroup
+          Description: Allow 8080 from ALB
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-ecs-sg
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  # Allow ECS tasks to communicate with each other
+  EcsSecurityGroupSelfIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref EcsSecurityGroup
+      IpProtocol: -1
+      SourceSecurityGroupId: !Ref EcsSecurityGroup
+      Description: Allow all traffic between ECS tasks
+
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ProjectName}-${Environment}-db-sg
+      GroupDescription: Security group for RDS databases
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 1433
+          ToPort: 1433
+          SourceSecurityGroupId: !Ref EcsSecurityGroup
+          Description: Allow SQL Server from ECS tasks
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref EcsSecurityGroup
+          Description: Allow PostgreSQL from ECS tasks
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref EcsSecurityGroup
+          Description: Allow MySQL from ECS tasks
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-db-sg
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  VpcEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${ProjectName}-${Environment}-vpce-sg
+      GroupDescription: Security group for VPC Endpoints
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref VpcCidr
+          Description: Allow HTTPS from VPC (IPv4)
+        - !If
+          - EnableIPv6Condition
+          - IpProtocol: tcp
+            FromPort: 443
+            ToPort: 443
+            CidrIpv6: !Select [0, !GetAtt VPC.Ipv6CidrBlocks]
+            Description: Allow HTTPS from VPC (IPv6)
+          - !Ref AWS::NoValue
+      Tags:
+        - Key: Name
+          Value: !Sub ${ProjectName}-${Environment}-vpce-sg
+        - Key: Project
+          Value: !Ref ProjectName
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: ManagedBy
+          Value: cloudformation
+
+  #============================================================================
+  # VPC Endpoints - Gateway (S3, DynamoDB)
+  #============================================================================
+  S3VpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.s3
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref PublicRouteTable
+        - !Ref PrivateRouteTableA
+        - !Ref PrivateRouteTableB
+        - !Ref DatabaseRouteTable
+
+  DynamoDbVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.dynamodb
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref PrivateRouteTableA
+        - !Ref PrivateRouteTableB
+
+  #============================================================================
+  # VPC Endpoints - Interface (ECR, CloudWatch, Secrets, SSM)
+  #============================================================================
+  EcrApiVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.api
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  EcrDkrVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.dkr
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  LogsVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.logs
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  SecretsManagerVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.secretsmanager
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  # SSM Endpoints for ECS Exec and Parameter Store
+  SsmVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  SsmMessagesVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  Ec2MessagesVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  # ECS Telemetry endpoint
+  EcsTelemetryVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs-telemetry
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  # ECS Agent endpoint
+  EcsAgentVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs-agent
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  # ECS endpoint
+  EcsVpcEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs
+      VpcEndpointType: Interface
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      SecurityGroupIds:
+        - !Ref VpcEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+#============================================================================
+# Outputs
+#============================================================================
+Outputs:
+  VpcId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-vpc-id
+
+  VpcCidr:
+    Description: VPC CIDR block
+    Value: !Ref VpcCidr
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-vpc-cidr
+
+  VpcIpv6Cidr:
+    Description: VPC IPv6 CIDR block
+    Condition: EnableIPv6Condition
+    Value: !Select [0, !GetAtt VPC.Ipv6CidrBlocks]
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-vpc-ipv6-cidr
+
+  PublicSubnetA:
+    Description: Public Subnet A ID
+    Value: !Ref PublicSubnetA
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-public-a-id
+
+  PublicSubnetB:
+    Description: Public Subnet B ID
+    Value: !Ref PublicSubnetB
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-public-b-id
+
+  PrivateSubnetA:
+    Description: Private Subnet A ID
+    Value: !Ref PrivateSubnetA
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-private-a-id
+
+  PrivateSubnetB:
+    Description: Private Subnet B ID
+    Value: !Ref PrivateSubnetB
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-private-b-id
+
+  PrivateSubnetDbA:
+    Description: Database Subnet A ID
+    Value: !Ref PrivateSubnetDbA
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-db-a-id
+
+  PrivateSubnetDbB:
+    Description: Database Subnet B ID
+    Value: !Ref PrivateSubnetDbB
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-snet-db-b-id
+
+  PublicSubnets:
+    Description: List of public subnet IDs
+    Value: !Join [',', [!Ref PublicSubnetA, !Ref PublicSubnetB]]
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-public-subnets
+
+  PrivateSubnets:
+    Description: List of private subnet IDs
+    Value: !Join [',', [!Ref PrivateSubnetA, !Ref PrivateSubnetB]]
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-private-subnets
+
+  DatabaseSubnets:
+    Description: List of database subnet IDs
+    Value: !Join [',', [!Ref PrivateSubnetDbA, !Ref PrivateSubnetDbB]]
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-db-subnets
+
+  DatabaseSubnetGroup:
+    Description: RDS DB Subnet Group name
+    Value: !Ref DatabaseSubnetGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-db-subnet-group
+
+  AlbSecurityGroup:
+    Description: ALB Security Group ID
+    Value: !Ref AlbSecurityGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-alb-sg-id
+
+  EcsSecurityGroup:
+    Description: ECS Security Group ID
+    Value: !Ref EcsSecurityGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-ecs-sg-id
+
+  DatabaseSecurityGroup:
+    Description: Database Security Group ID
+    Value: !Ref DatabaseSecurityGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-db-sg-id
+
+  VpcEndpointSecurityGroup:
+    Description: VPC Endpoint Security Group ID
+    Value: !Ref VpcEndpointSecurityGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-vpce-sg-id
+
+  AvailabilityZones:
+    Description: List of Availability Zones used
+    Value: !Join [',', [!Select [0, !GetAZs ''], !Select [1, !GetAZs '']]]
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-availability-zones
+
+  FlowLogsLogGroup:
+    Description: VPC Flow Logs CloudWatch Log Group
+    Condition: EnableFlowLogsCondition
+    Value: !Ref FlowLogsLogGroup
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-flow-logs-group
+
+  NatGatewayAIp:
+    Description: NAT Gateway A Public IP
+    Condition: CreateNatGateway
+    Value: !Ref NatGatewayEipA
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-nat-a-ip
+
+  NatGatewayBIp:
+    Description: NAT Gateway B Public IP
+    Condition: CreateSecondNatGateway
+    Value: !Ref NatGatewayEipB
+    Export:
+      Name: !Sub ${ProjectName}-${Environment}-nat-b-ip

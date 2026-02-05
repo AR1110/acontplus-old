@@ -45,6 +45,10 @@
 
               <div class="node-info">
                 <span class="node-name">{{ node.description }}</span>
+
+                @if (node.type=='table' && !node.enabled) {
+                 <span class="text-danger">Inactivo</span>
+                }
                 @if (node.capacity) {
                   <span class="node-capacity">
                     <mat-icon class="capacity-icon">people</mat-icon>

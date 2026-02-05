@@ -4,12 +4,13 @@ namespace Restaurant.Application.Services;
 
 public class OrderService(IAdoRepository repository) : IOrderService
 {
+    private const string baseSpName = "Restaurant.Order";
     public async Task<Result<PagedResult<OrderItemDto>, DomainError>> GetAsync(PaginationRequest paginationRequest)
     {
         try
         {
             var response =
-                await repository.GetPagedFromStoredProcedureAsync<OrderItemDto>("Restaurant.GetOrder",
+                await repository.GetPagedFromStoredProcedureAsync<OrderItemDto>($"{baseSpName}Get",
                     paginationRequest);
 
             if (response == null || response.Items == null || !response.Items.Any())
@@ -30,7 +31,7 @@ public class OrderService(IAdoRepository repository) : IOrderService
 
     public async Task<SpResponse> GetByIdAsync(Dictionary<string, object> parameters)
     {
-        var ds = await repository.GetDataSetAsync("Restaurant.GetByIdOrder", parameters);
+        var ds = await repository.GetDataSetAsync($"{baseSpName}GetById", parameters);
         return DataValidation.DataSetIsNull(ds, true)
             ? new SpResponse { Code = "0", Message = "Data not found" }
             : new SpResponse { Code = "1", Payload = DataConverters.DataSetToJson(ds) };
@@ -38,16 +39,16 @@ public class OrderService(IAdoRepository repository) : IOrderService
 
     public async Task<SpResponse> AddAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.InsertOrder", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Insert", parameters);
     }
 
     public async Task<SpResponse> UpdateAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.UpdateOrder", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Update", parameters);
     }
 
     public async Task<SpResponse> CancelAsync(Dictionary<string, object> parameters)
     {
-        return await repository.QuerySingleOrDefaultAsync<SpResponse>("Restaurant.CancelOrder", parameters);
+        return await repository.QuerySingleOrDefaultAsync<SpResponse>($"{baseSpName}Cancel", parameters);
     }
 }

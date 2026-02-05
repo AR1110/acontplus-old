@@ -2,36 +2,125 @@
 
 > **AWS deployment guides and infrastructure configuration**
 
-## 📦 Deployment Platforms
+## � Naming Conventions
 
-### Amazon EC2
-- [EC2 Deployment Guide](ec2/commands-deploy.md) - Deployment commands and procedures
-- [Service Definitions](ec2/service_definitions/) - EC2 service configurations
+All AWS resources follow the standard naming convention documented in:
+- **[AWS Naming Convention Guide](../AWS-Naming-Convention.md)** - Complete reference
 
-### Amazon ECS (Container Orchestration)
-- [ECS Service Definitions](ecs/service-definitions/) - Container service definitions
-- [ECS Task Definitions](ecs/task-definitions/) - Task configuration files
+### Quick Reference
 
-### Amazon SES (Email Service)
-- [DKIM Configuration](ses/dkim/) - DomainKeys Identified Mail setup
-- [DMARC Settings](ses/dmarc-change-batch.json) - Email authentication policy
-- [AWS CLI SES Commands](ses/aws%20cli%20ses.txt) - Command reference
+```
+{prefix}-{environment}-{app-type}-{service-name}-{aws-service}[-{qualifier}]
+```
 
-## 🔧 Environment-Specific Configuration
-
-Environment variables and secrets are managed via:
-- **Development:** User Secrets + `docker-compose.override.yml`
-- **Staging:** Environment variables in `docker-compose.staging.yml`
-- **Production:** AWS Parameter Store / Secrets Manager
-
-See [Configuration Guide](../Configuration-Guide.md) for details.
-
-## 📚 Related Documentation
-
-- [Docker Compose Guide](../Docker-Compose-Guide.md) - Multi-environment Docker setup
-- [Docker Workflow](../Docker-Workflow.md) - Development workflows
-- [Configuration Guide](../Configuration-Guide.md) - Environment configuration
+| Component | Values |
+|-----------|--------|
+| Prefix | `acontplus` (or `acp` for 32-char limits) |
+| Environment | `prd`, `stg`, `dev` |
+| App Type | `api`, `web`, `wrk`, `gtw`, `db` |
+| AWS Service | `ecs`, `svc`, `task`, `ecr`, `alb`, `tg`, etc. |
 
 ---
 
-**Last Updated:** December 18, 2025
+## 📦 Deployment Platforms
+
+### Amazon ECS (Container Orchestration) - Recommended
+
+- **[ECS Deployment Guide](../../scripts/aws/ecs-deployment-guide.md)** - Complete CLI commands
+- **[ALB Configuration Guide](../../scripts/aws/alb-configuration-guide.md)** - Load balancer setup
+- [Task Definitions](ecs/task-definitions/) - Container task configurations
+- [Service Definitions](ecs/service-definitions/) - ECS service configurations
+
+### Amazon EC2 (Legacy)
+
+- [EC2 Deployment Guide](ec2/commands-deploy.md) - Systemd service deployment
+
+### Amazon SES (Email Service)
+
+- [SES Configuration Guide](ses/ses-configuration-guide.md) - Email identity setup
+- [DKIM Configuration](ses/dkim/) - DomainKeys Identified Mail
+
+---
+
+## 🏗️ Infrastructure Resources
+
+### Production Environment (`prd`)
+
+| Resource Type | Resource ID | Name |
+|---------------|-------------|------|
+| VPC | `vpc-02176c456642a9383` | `acontplus-prd-vpc` |
+| ECS Cluster | - | `acontplus-prd-ecs` |
+| ECR Registry | `{ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com` | - |
+
+### Subnets (Production)
+
+| Subnet ID | AZ | Name |
+|-----------|----|------|
+| `subnet-07500f3abec27f804` | us-east-1a | `acontplus-prd-snet-public-a` |
+| `subnet-0b9c5c1185466f2c8` | us-east-1b | `acontplus-prd-snet-public-b` |
+| `subnet-057b2f56f51de62ee` | us-east-1c | `acontplus-prd-snet-public-c` |
+| `subnet-042ea48a0330849dc` | us-east-1d | `acontplus-prd-snet-public-d` |
+| `subnet-0c4a8c8754df52a55` | us-east-1e | `acontplus-prd-snet-public-e` |
+| `subnet-042881445c370b0aa` | us-east-1f | `acontplus-prd-snet-public-f` |
+
+### Security Groups (Production)
+
+| Security Group ID | Name | Purpose |
+|-------------------|------|---------|
+| `sg-0b97cddbc968046e6` | `acontplus-prd-ecs-sg` | ECS services |
+| `sg-0122fa572251b26d4` | `acontplus-prd-db-sg` | Database access |
+| `sg-0337c2488dcfd66c0` | `acontplus-prd-sg-default` | Default VPC |
+| `sg-01bd9aa3b3f732718` | `acontplus-prd-api-reports-sg` | Reports API |
+
+### Elastic IPs (Production)
+
+| Allocation ID | Name | Public IP | Associated Resource |
+|---------------|------|-----------|---------------------|
+| `eipalloc-05f4e3bdfd930df3a` | `acontplus-prd-eip-alb-erp-01` | 3.228.106.70 | ALB `acontplus-erp` (ENI 1) |
+| `eipalloc-008a1df01be534557` | `acontplus-prd-eip-alb-erp-02` | 52.73.39.33 | ALB `acontplus-erp` (ENI 2) |
+
+> **Note:** Both EIPs are associated with the ALB for high availability across AZs.
+
+---
+
+## 🔧 Environment Configuration
+
+| Environment | Configuration Source |
+|-------------|---------------------|
+| Development | User Secrets + `docker-compose.override.yml` |
+| Staging | Environment variables in `docker-compose.staging.yml` |
+| Production | AWS Secrets Manager + Parameter Store |
+
+### Secrets Manager Naming Convention
+
+```
+acontplus/{env}/{category}/{name}
+```
+
+Examples:
+- `acontplus/prd/db/main/connection-string`
+- `acontplus/prd/auth/jwt-secret`
+- `acontplus/prd/api/billing/secrets`
+
+### Parameter Store Naming Convention
+
+```
+/acontplus/{env}/{category}/{name}
+```
+
+Examples:
+- `/acontplus/prd/config/environment`
+- `/acontplus/prd/api/billing/feature-flags`
+
+---
+
+## 📚 Related Documentation
+
+- [Docker Compose Guide](../Docker/Docker-Compose-Guide.md) - Multi-environment Docker setup
+- [Docker Workflow](../Docker/Docker-Workflow.md) - Development workflows
+- [Configuration Guide](../Configuration-Guide.md) - Environment configuration
+- [AWS Naming Convention](../AWS-Naming-Convention.md) - Complete naming standards
+
+---
+
+**Last Updated:** February 2026
