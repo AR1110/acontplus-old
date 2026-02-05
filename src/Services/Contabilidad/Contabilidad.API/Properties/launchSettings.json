@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Contabilidad.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:11462;http://localhost:11463"
+    }
+  }
+}

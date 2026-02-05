@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Compras.API": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:11454;http://localhost:11455"
+    }
+  }
+}
