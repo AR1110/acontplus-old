@@ -1,6 +1,5 @@
 import { Provider } from '@angular/core';
-import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
-import { FloorWebService } from '@restaurant/data/https/floor-web.service';
+import { FloorHttp } from '@restaurant/data/https/floor-http';
 import { RoomRepository } from '@restaurant/data/repositories/room.repository';
 import { RoomWebService } from '@restaurant/data/https/room-web.service';
 import { TableRepository } from '@restaurant/data/repositories/table.repository';
@@ -15,6 +14,7 @@ import { PromotionRepository } from '@restaurant/data/repositories/promotion-rep
 import { PromotionHttpRepository } from '@restaurant/data/https/promotion-http-repository';
 import { LookupRepository } from '@restaurant/data/repositories/lookup-repository';
 import { LookupHttpRepository } from './https/lookup-http-repository';
+import { FLOOR_HTTP_TOKEN } from '@restaurant/data/restaurant-token';
 
 export const DATA_RESTAURANT_IOC: Provider[] = [
   {
@@ -26,8 +26,8 @@ export const DATA_RESTAURANT_IOC: Provider[] = [
     useClass: ItemHttpRepository,
   },
   {
-    provide: FloorRepository,
-    useClass: FloorWebService,
+    provide: FLOOR_HTTP_TOKEN,
+    useClass: FloorHttp,
   },
   {
     provide: RoomRepository,

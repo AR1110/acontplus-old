@@ -34,8 +34,8 @@ export const routes: Route[] = [
     path: 'infrastructure',
     title: 'Restaurant Infrastructure',
     loadComponent: () =>
-      import('@restaurant/ui/pages/infrastructure-page/infrastructure-page.component').then(
-        (m) => m.InfrastructurePageComponent,
+      import('@restaurant/ui/infrastructure-page/infrastructure-page').then(
+        (m) => m.InfrastructurePage,
       ),
     data: {
       breadcrumb: 'Configuración del Restaurante',

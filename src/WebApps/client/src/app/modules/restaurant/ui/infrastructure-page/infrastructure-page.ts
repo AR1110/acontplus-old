@@ -8,7 +8,6 @@ import { FormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgClass } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -16,15 +15,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { Button } from '@acontplus/ng-components';
 import { SharedService } from '@core/services/shared.service';
-import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
-import { GetFloorsByEstabIdUseCase } from '@restaurant/application/use-cases/floor/get-floors-by-estab-id.use-case';
 import { Floor, FloorTreeNode } from '@restaurant/data/models/floor.model';
 import { DialogService } from '@core/services/dialog.service';
-import { FloorAddEditModalComponent } from '@restaurant/ui/components/floor-add-edit-modal/floor-add-edit-modal.component';
-import { RoomAddEditModalComponent } from '@restaurant/ui/components/room-add-edit-modal/room-add-edit-modal.component';
+import { FloorAddEditModal } from '@restaurant/ui/infrastructure-page/floor-add-edit-modal/floor-add-edit-modal';
+import { RoomAddEditModalComponent } from '@restaurant/ui/infrastructure-page/room-add-edit-modal/room-add-edit-modal.component';
 import Swal from 'sweetalert2';
-import { TableAddEditModalComponent } from '@restaurant/ui/components/table-add-edit-modal/table-add-edit-modal.component';
+import { TableAddEditModalComponent } from '@restaurant/ui/infrastructure-page/table-add-edit-modal/table-add-edit-modal.component';
 import { TableUseCase } from '@restaurant/application/use-cases/table.use-case';
+import {FLOOR_HTTP_TOKEN} from "@restaurant/data/restaurant-token";
 
 @Component({
   selector: 'app-infrastructure-page',
@@ -44,21 +42,18 @@ import { TableUseCase } from '@restaurant/application/use-cases/table.use-case';
     MatToolbarModule,
     Button,
   ],
-  templateUrl: './infrastructure-page.component.html',
-  styleUrl: './infrastructure-page.component.scss',
+  templateUrl: './infrastructure-page.html',
+  styleUrl: './infrastructure-page.scss',
 })
-export class InfrastructurePageComponent implements OnInit {
-  private dialog = inject(MatDialog);
+export class InfrastructurePage implements OnInit {
 
   private $sharedSvc = inject(SharedService);
-  private $getFloorsUseCase = inject(GetFloorsByEstabIdUseCase);
   private _dialogSvc = inject(DialogService);
-  private _floorUseCase = inject(FloorUseCase);
+  private floorHttp = inject(FLOOR_HTTP_TOKEN);
   private _tableUseCase = inject(TableUseCase);
   estabs = signal<EstablecimientoSelectHtmlOnly[]>([]);
   estabId = model(0);
 
-  private nextId = 15;
 
   dataSource = signal<FloorTreeNode[]>([]);
 
@@ -66,10 +61,6 @@ export class InfrastructurePageComponent implements OnInit {
 
   hasChild = (_: number, node: FloorTreeNode) => !!node.children && node.children.length > 0;
 
-  /** Inserted by Angular inject() migration for backwards compatibility */
-  constructor(...args: unknown[]);
-
-  constructor() {}
 
   ngOnInit() {
     this.$sharedSvc.getEstabAsign().subscribe((response) => {
@@ -81,7 +72,7 @@ export class InfrastructurePageComponent implements OnInit {
   }
 
   getFloors() {
-    this.$getFloorsUseCase.execute(this.estabId()).subscribe((res) => {
+    this.floorHttp.getByEstablishmentId(this.estabId()).subscribe((res) => {
       // this.floors = res;
       console.log(res);
       this.dataSource.set(res.floors);
@@ -91,7 +82,7 @@ export class InfrastructurePageComponent implements OnInit {
   addEditFloor(data?: FloorTreeNode) {
     const codEstab =
       this.estabs().find((x) => x.idEstablecimiento === this.estabId())?.codEstab || null;
-    const ref = this._dialogSvc.open(FloorAddEditModalComponent, {
+    const ref = this._dialogSvc.open(FloorAddEditModal, {
       data: {
         codEstab,
         establecimientoId: this.estabId(),
@@ -118,7 +109,7 @@ export class InfrastructurePageComponent implements OnInit {
       showCancelButton: true,
     }).then((response) => {
       if (response.isConfirmed) {
-        this._floorUseCase.remove(item.id).subscribe((result) => {
+        this.floorHttp.remove(item.id).subscribe((result) => {
           Swal.fire({
             icon: result.code == '1' ? 'success' : 'warning',
             html: result.message,
