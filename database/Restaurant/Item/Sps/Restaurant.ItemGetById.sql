@@ -12,7 +12,7 @@ GO
 -- Create date: 2023-08-14 
 -- Description:	Get Item
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.GetByIdItem
+CREATE OR ALTER PROCEDURE Restaurant.ItemGetById
     @UserRoleId INT
    ,@Id INT
    ,@TableNames NVARCHAR(MAX) OUTPUT

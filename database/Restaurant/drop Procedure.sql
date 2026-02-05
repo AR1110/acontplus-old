@@ -1,0 +1,27 @@
+use [Acontplus]
+go 
+
+drop procedure [Restaurant].[Ingredient_Get]
+drop procedure [Restaurant].[Ingredient_Insert]
+drop procedure [Restaurant].[Item_Get]
+drop procedure [Restaurant].[Item_Update]
+drop procedure [Restaurant].[Menu_Get]
+drop procedure [Restaurant].[Menu_Update]
+drop procedure [Restaurant].[MenuItem_Get]
+drop procedure [Restaurant].[MenuItem_Get_Id]
+drop procedure [Restaurant].[MenuItem_Insert]
+drop procedure [Restaurant].[Order_Document_Insert]
+drop procedure [Restaurant].[Order_Get]
+drop procedure [Restaurant].[Order_Insert]
+drop procedure [Restaurant].[Order_Print]
+drop procedure [Restaurant].[Order_Report]
+drop procedure [Restaurant].[Order_Update]
+drop procedure [Restaurant].[Promotion_Get]
+drop procedure [Restaurant].[Promotion_Menu_Get_By_Id]
+drop procedure [Restaurant].[Promotion_Menu_Insert]
+drop procedure [Restaurant].[Promotion_Post]
+drop procedure [Restaurant].[Promotion_Update]
+drop procedure [Restaurant].[Recipe_Get_By_Item]
+drop procedure [Restaurant].[Report_Item_Ingredients]
+
+

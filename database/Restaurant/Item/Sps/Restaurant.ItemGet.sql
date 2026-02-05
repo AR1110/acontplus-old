@@ -9,7 +9,7 @@ GO
 -- Author:		IGNACIO MANCHU
 -- Create date: 2023-08-14
 -- Description:	Get Item
-CREATE OR ALTER PROCEDURE Restaurant.GetItem
+CREATE OR ALTER PROCEDURE Restaurant.ItemGet
     @Filters NVARCHAR(MAX) 
    ,@PageIndex INT = 1
    ,@PageSize INT = 10

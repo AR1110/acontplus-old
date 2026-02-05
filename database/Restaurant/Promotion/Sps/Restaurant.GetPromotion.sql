@@ -11,7 +11,7 @@ GO
 -- Description: sp for get restaurant menus
 -- Restaurant.Promotion_Get 139, '{"tipo": 2}', ''
 -- =============================================
-CREATE OR ALTER PROCEDURE Restaurant.GetPromotion
+CREATE OR ALTER PROCEDURE Restaurant.PromotionGet
     @Filters NVARCHAR(MAX) 
    ,@PageIndex INT = 1
    ,@PageSize INT = 10

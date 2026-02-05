@@ -6,7 +6,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-CREATE OR ALTER PROCEDURE Restaurant.InsertOrder
+CREATE OR ALTER PROCEDURE Restaurant.OrderInsert
      @UserRoleId INT
     ,@Json VARCHAR(MAX)
 
@@ -214,7 +214,7 @@ BEGIN
 
             IF EXISTS (SELECT 1 FROM @tbOrder WHERE IsQuickSale = 1)
                 BEGIN
-                    EXEC Restaurant.ConvertOrder @UserRoleId ,@OrderId ,@DataDoc ,@Payload = @Payload OUT
+                    EXEC Restaurant.OrderConvert @UserRoleId ,@OrderId ,@DataDoc ,@Payload = @Payload OUT
                 END 
 
         COMMIT TRAN

@@ -4,15 +4,15 @@ go
 
 --> Migracion de menus a la table item
 --INSERT INTO Restaurant.Item
---      ([ProductId], [Summary], [Cooking], [Recipe], [Instructions], [Content], [CreatedAt], [UpdatedAt], [Unit], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [ForPromotion], [IsMobileRequest], [Quantity], [Title], [UpdatedBy])
---SELECT [ProductId], [Summary], 0, NULL, NULL                      , [Content], [CreatedAt], [UpdatedAt], NULL  , [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [ForPromotion], [IsMobileRequest], NULL      , [Title], [UpdatedBy]
+--      ([ProductId], [Summary], [CreatedAt], [UpdatedAt], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [IsMobileRequest], [UpdatedBy])
+--SELECT [ProductId], [Summary], [CreatedAt], [UpdatedAt], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [IsMobileRequest], [UpdatedBy]
 --FROM Restaurant.Menu
 
 
 --> Migracion de ingredientes a la table item
 --INSERT INTO Restaurant.Item
---      ([ProductId], [Summary], [Cooking], [Recipe], [Instructions], [Content], [CreatedAt], [UpdatedAt], [Unit], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [ForPromotion], [IsMobileRequest], [Quantity], [Title], [UpdatedBy])
---SELECT [ProductId], [Summary], 0, NULL, NULL                      , [Content], [CreatedAt], [UpdatedAt], NULL  , [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], 0             , [IsMobileRequest], NULL      , null   , [UpdatedBy]
+--      ([ProductId], [Summary], [CreatedAt], [UpdatedAt], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [IsMobileRequest], [UpdatedBy])
+--SELECT [ProductId], [Summary], [CreatedAt], [UpdatedAt], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [IsMobileRequest], [UpdatedBy]
 --FROM Restaurant.Ingredient
 
 --select it.Id ,it.Summary ,it.Title ,fa.siglas ,fa.descripcion
@@ -54,7 +54,7 @@ go
     --     )
     --select ar.idMedida
     --      ,re.ItemId                                                                as [ParentItemId]
-    --      ,(SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = ig.ProductId) as [ChildItemId]
+    --      ,(SELECT top 1 it.Id FROM Restaurant.Item it WHERE it.ProductId = ig.ProductId) as [ChildItemId]
     --      ,re.Quantity                                                              as Quantity
     --      ,re.Quantity * 0                                                          as TotalPrice
     --      ,re.Quantity * CostPrice                                                  as TotalCost
@@ -91,7 +91,7 @@ go
 --      ,IsOptional
 --    )
 
---SELECT (SELECT it.Id FROM Restaurant.Item it WHERE it.ProductId = me.ProductId)                       as ParentItemId
+--SELECT (SELECT top 1 it.Id FROM Restaurant.Item it WHERE it.ProductId = me.ProductId)                       as ParentItemId
 --      ,mi.ItemId                                                                                      as ChildItemId
 --      ,mi.FeeId
 --      ,ar.idMedida                                                                                    as [MeasureId]
