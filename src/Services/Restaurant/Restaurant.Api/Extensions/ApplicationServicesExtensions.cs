@@ -3,10 +3,13 @@ using Acontplus.Infrastructure.Extensions;
 using Acontplus.Infrastructure.Messaging;
 using Acontplus.S3Application.Models;
 using Acontplus.Services.Extensions.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Restaurant.Application.BackgroundServices;
 using Restaurant.Application.Mapping;
 using Restaurant.Infrastructure.Extensions;
 using Scrutor;
+using System.Text;
 
 namespace Restaurant.Api.Extensions;
 
@@ -19,7 +22,32 @@ public static class ApplicationServicesExtensions
 
         services.AddAdvancedLoggingOptions(configuration);
 
-        services.AddJwtAuthentication(configuration);
+#if DEBUG
+        services.AddJwtAuthentication(configuration); //USAR ESTO A FUTURO
+#else
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+           .AddJwtBearer(options =>
+           {
+               options.TokenValidationParameters = new TokenValidationParameters
+               {
+                   RequireExpirationTime = true,
+                   ValidateIssuer = false,
+                   ValidateAudience = false,
+                   ValidateLifetime = true,
+                   ValidateIssuerSigningKey = true,
+                   ClockSkew = TimeSpan.FromSeconds(0),
+                   IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecurityKey"] ?? throw new InvalidOperationException()))
+               };
+           });
+
+        services.AddAuthorization();
+        services.AddAuthorizationBuilder();
+
+#endif
 
         services.AddOpenApi();
 

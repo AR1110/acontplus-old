@@ -132,6 +132,14 @@ Parameters:
       - 365
     Description: Retention period for VPC Flow Logs in CloudWatch
 
+  EnableVpcEndpoints:
+    Type: String
+    Default: 'false'
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Description: Enable Interface VPC Endpoints (ECR, ECS, SSM, etc). Only needed for ECS/Fargate in private subnets without NAT Gateway. Costs ~$2.40/day per endpoint.
+
 Conditions:
   CreateNatGateway: !Equals [!Ref EnableNatGateway, 'true']
   CreateSecondNatGateway: !And
@@ -139,6 +147,7 @@ Conditions:
     - !Equals [!Ref SingleNatGateway, 'false']
   EnableIPv6Condition: !Equals [!Ref EnableIPv6, 'true']
   EnableFlowLogsCondition: !Equals [!Ref EnableFlowLogs, 'true']
+  EnableVpcEndpointsCondition: !Equals [!Ref EnableVpcEndpoints, 'true']
   IsProduction: !Equals [!Ref Environment, 'prd']
 
 Resources:
@@ -853,6 +862,7 @@ Resources:
   #============================================================================
   EcrApiVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.api
@@ -866,6 +876,7 @@ Resources:
 
   EcrDkrVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ecr.dkr
@@ -879,6 +890,7 @@ Resources:
 
   LogsVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.logs
@@ -892,6 +904,7 @@ Resources:
 
   SecretsManagerVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.secretsmanager
@@ -906,6 +919,7 @@ Resources:
   # SSM Endpoints for ECS Exec and Parameter Store
   SsmVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ssm
@@ -919,6 +933,7 @@ Resources:
 
   SsmMessagesVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ssmmessages
@@ -932,6 +947,7 @@ Resources:
 
   Ec2MessagesVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ec2messages
@@ -946,6 +962,7 @@ Resources:
   # ECS Telemetry endpoint
   EcsTelemetryVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs-telemetry
@@ -960,6 +977,7 @@ Resources:
   # ECS Agent endpoint
   EcsAgentVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs-agent
@@ -974,6 +992,7 @@ Resources:
   # ECS endpoint
   EcsVpcEndpoint:
     Type: AWS::EC2::VPCEndpoint
+    Condition: EnableVpcEndpointsCondition
     Properties:
       VpcId: !Ref VPC
       ServiceName: !Sub com.amazonaws.${AWS::Region}.ecs
