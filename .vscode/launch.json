@@ -213,7 +213,6 @@
     {
       "name": "AcontPlus MacOs",
       "configurations": [
-        "LegacyFrontEnd",
         "GatewayApi",
         "ConfiguracionApi",
         "IdentityApi",

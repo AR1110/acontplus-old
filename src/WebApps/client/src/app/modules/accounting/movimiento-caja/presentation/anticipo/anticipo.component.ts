@@ -157,15 +157,17 @@ export class AnticipoComponent implements OnInit {
   }
 
   getPrint(data: AnticipoRead) {
-    const parameters = {
-      idDocument: data.idAnticipo,
-      idTipoDocumento: data.idTipoDocumento,
-      codEstab: data.codEstab,
-      codDoc: data.codDoc,
-      nroIdentificacion: data.identificacionUsuario,
-    };
+    // const parameters = {
+    //   idDocument: data.idAnticipo,
+    //   idTipoDocumento: data.idTipoDocumento,
+    //   codEstab: data.codEstab,
+    //   codDoc: data.codDoc,
+    //   nroIdentificacion: data.identificacionUsuario,
+    // };
     this.sharedSvc.askToPrint({
-      parameters: JSON.stringify(parameters),
+      id: data.idAnticipo,
+      codDoc: data.codDoc,
+      codEstab: data.codEstab,
     });
   }
 

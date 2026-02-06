@@ -107,3 +107,13 @@ export class ValidatorUtils {
     return formatoValidoFinal.test(cadena) ? cadena : null;
   }
 }
+
+
+
+export const isInIframe = (): boolean => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+};

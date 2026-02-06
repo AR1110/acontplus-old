@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 import Swal from 'sweetalert2';
 import { ToastrNotificationService } from './toastr-notification.service';
 import * as XLSX from 'xlsx';
+import { isInIframe } from '@core/utils/utils';
 
 interface ReportParams<T> {
   data: T;
@@ -16,6 +17,13 @@ interface ReportParams<T> {
   isOldVersion?: boolean;
   downloadOnly?: boolean;
   openInModal?: boolean;
+}
+
+interface ParamsPrint {
+  id: number;
+  //tipo: 1 | 2 | 3 | 4 | 5 | 6;
+  codDoc: string;
+  codEstab?: string;
 }
 
 @Injectable({
@@ -90,8 +98,25 @@ export class SharedService {
       });
   }
 
-  async askToPrint<T extends { parameters: string }>(obj: T) {
-    const { parameters } = obj;
+  async askToPrint(obj: ParamsPrint) {
+        // If running inside iframe, delegate print to parent window (AngularJS app)
+      // This bypasses Private Network Access restrictions for iframe context
+      if (isInIframe() && window.parent) {
+        window.parent.postMessage(
+          {
+            type: 'ACONTPLUS_PRINT_REQUEST',
+            payload: {
+              parameters: JSON.stringify(obj),
+            },
+          },
+          'https://app.acontplus.com'
+        );
+        this.tS.show({
+          type: 'info',
+          message: 'Solicitud de impresión enviada...',
+        });
+        return;
+      }
     const { isConfirmed } = await Swal.fire({
       icon: 'warning',
       html: `<small>Desea Imprimir este comprobante?</small>`,
@@ -101,106 +126,157 @@ export class SharedService {
       allowOutsideClick: false,
     });
     if (isConfirmed) {
-      const url = `${PATHS_API.PRINT_SERVER}${PATHS.PRINT}`;
-      console.log(parameters);
 
-      this.http
-        .post(url, JSON.parse(parameters), {
-          context: customUrl(),
-        })
-        .subscribe({
-          next: response => {
-            if (isApiResponse(response)) {
-              if (response.code === '1') {
-                this.tS.show({
-                  type: 'success',
-                  message: response.message,
-                });
-              } else {
-                this.tS.show({
-                  type: 'warning',
-                  message: response.message,
-                });
-              }
-            }
-          },
-          error(err) {
-            console.log('Hubo un problema al imprimir:' + err?.message);
-          },
-        });
-      //this.getPrinter(parameters)
+      this.getPrintConfig(obj);
+
     }
   }
 
-  getPrinter<T>(parameters: T) {
-    try {
-      const url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
-      this.http.get(url).subscribe({
+  getPrintConfig(obj: ParamsPrint) {
+    const json = JSON.stringify({
+      codDoc: obj.codDoc,
+      getUrlPrintServer: true,
+      id: obj.id,
+      codEstab: obj.codEstab,
+    });
+    this.http.get<any>(`${PATHS_API.CONFIG}Print/?json=${json}`).subscribe({
+      next: response => {
+        if (isApiResponse(response)) {
+          if (response.code === '0') {
+            this.tS.show({
+              type: 'warning',
+              message: response.message,
+            });
+          }
+          if (response.code === '1') {
+            this.print(response.payload as string, obj);
+          }
+        }
+      },
+      error: err => {
+        console.log(err);
+      },
+    });
+  }
+
+  print(urlPrinter: string, paramsToPrint: ParamsPrint) {
+    this.http
+      .post<any>(`${urlPrinter}/Print`, paramsToPrint, {
+        context: customUrl(),
+      })
+      .subscribe({
         next: response => {
           if (isApiResponse(response)) {
-            if (response.code === '0') {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
-            }
-            if (response.code === '1') {
-              this.print(JSON.parse(response.payload as string));
-            }
+            this.tS.show({
+              type: response.code === '1' ? 'success' : 'warning',
+              message: response.message,
+            });
           }
         },
-        error(err) {
+        error: err => {
           console.log(err);
         },
       });
-    } catch (error) {
-      console.log(error);
-      this.tS.show({
-        type: 'warning',
-        message: error as string,
-      });
-    }
   }
 
-  async print<
-    T extends {
-      urlPrinter: string;
-      rdlcProps: string;
-      dataSources: string;
-      rdlcParams: string;
-    },
-  >(params: T[]) {
-    try {
-      const urlPrinter = `${params[0].urlPrinter}?rdlcProps=${
-        params[0].rdlcProps
-      }&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${
-        params[0].rdlcParams
-      }`;
+  // createInvoicePrint(id: number, documentoId: number) {
+  //   this.getPrintConfig({
+  //     id,
+  //     documentoId,
+  //     tipo: 3,
+  //     codDoc: 'FV', // Debería usar DOC_TYPE.FV pero para evitar errores de importación lo dejo literal o verifico enums
+  //   });
+  // }
 
-      this.http.post(urlPrinter, null).subscribe({
-        next: response => {
-          if (isApiResponse(response)) {
-            if (response.code === '1') {
-              this.tS.show({
-                type: 'success',
-                message: response.message,
-              });
-            } else {
-              this.tS.show({
-                type: 'warning',
-                message: response.message,
-              });
-            }
-          }
-        },
-        error(err) {
-          console.log('Hubo un problema al imprimir:' + err?.message);
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // createNotaEntregaPrint(id: number, documentoId: number) {
+  //   this.getPrintConfig({
+  //     id,
+  //     documentoId,
+  //     tipo: 4,
+  //     codDoc: 'NE',
+  //   });
+  // }
+
+  // printerDoc(data: any, codDoc: string) {
+  //   if (data.printerAutomatic) {
+  //     if (codDoc === 'FV') {
+  //       this.createInvoicePrint(data.orderId, data.idDocumento);
+  //     }
+  //     if (codDoc === 'NE') {
+  //       this.createNotaEntregaPrint(data.orderId, data.idDocumento);
+  //     }
+  //   }
+  // }
+
+  // getPrinter<T>(parameters: T) {
+  //   try {
+  //     const url = `${PATHS_API.CONFIG}${PATHS.PRINT}?json=${parameters}`;
+  //     this.http.get(url).subscribe({
+  //       next: response => {
+  //         if (isApiResponse(response)) {
+  //           if (response.code === '0') {
+  //             this.tS.show({
+  //               type: 'warning',
+  //               message: response.message,
+  //             });
+  //           }
+  //           if (response.code === '1') {
+  //             this.print(response.payload as string, parameters);
+  //           }
+  //         }
+  //       },
+  //       error(err) {
+  //         console.log(err);
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     this.tS.show({
+  //       type: 'warning',
+  //       message: error as string,
+  //     });
+  //   }
+  // }
+
+  // async print<
+  //   T extends {
+  //     urlPrinter: string;
+  //     rdlcProps: string;
+  //     dataSources: string;
+  //     rdlcParams: string;
+  //   },
+  // >(params: T[]) {
+  //   try {
+  //     const urlPrinter = `${params[0].urlPrinter}?rdlcProps=${
+  //       params[0].rdlcProps
+  //     }&dataSources=${encodeURIComponent(params[0].dataSources)}&rdlcParams=${
+  //       params[0].rdlcParams
+  //     }`;
+
+  //     this.http.post(urlPrinter, null).subscribe({
+  //       next: response => {
+  //         if (isApiResponse(response)) {
+  //           if (response.code === '1') {
+  //             this.tS.show({
+  //               type: 'success',
+  //               message: response.message,
+  //             });
+  //           } else {
+  //             this.tS.show({
+  //               type: 'warning',
+  //               message: response.message,
+  //             });
+  //           }
+  //         }
+  //       },
+  //       error(err) {
+  //         console.log('Hubo un problema al imprimir:' + err?.message);
+  //       },
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   getEstabAsign() {
     return this.http.get<any>('Config/EstabAsig/?json=' + JSON.stringify({ tipo: 1 })).pipe(

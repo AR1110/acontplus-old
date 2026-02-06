@@ -161,16 +161,21 @@ export class EgresoIngresoCajaComponent implements OnInit {
   }
 
   getPrint(item: MovimientoCajaList) {
-    const parameters = {
-      idDocument: item.idMovimientoCaja,
-      idTipoDocumento: item.idTipoDocumento,
+    // const parameters = {
+    //   idDocument: item.idMovimientoCaja,
+    //   idTipoDocumento: item.idTipoDocumento,
+    //   codEstab: item.codEstab,
+    //   codDoc: item.codDoc,
+    //   nroIdentificacion: item.nroIdentificacion,
+    // };
+
+    // this.sharedSvc.askToPrint({
+    //   parameters: JSON.stringify(parameters),
+    // });
+    this.sharedSvc.askToPrint({
+      id: item.idMovimientoCaja,
       codEstab: item.codEstab,
       codDoc: item.codDoc,
-      nroIdentificacion: item.nroIdentificacion,
-    };
-
-    this.sharedSvc.askToPrint({
-      parameters: JSON.stringify(parameters),
     });
   }
 

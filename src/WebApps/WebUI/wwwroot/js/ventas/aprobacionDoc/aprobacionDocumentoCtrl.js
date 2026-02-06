@@ -1426,7 +1426,10 @@
         $scope.docOrigenDesc = docOrigenDesc;
         $scope.docDestinoDesc = docDestinoDesc;
 
-        $scope.data = comprobante;
+        $scope.data = {
+          ...comprobante,
+          fechaEmision: new Date()
+        };
 
         $scope.mostrarFormasPago = $scope.data.docDestino === DOC_TYPE.FV_SRI;
 
