@@ -1,4 +1,4 @@
-import { Button, TabulatorTable } from '@acontplus/ng-components';
+import { AlertDialogService, Button, TabulatorTable } from '@acontplus/ng-components';
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { Component, inject, OnInit, signal } from '@angular/core';
@@ -8,7 +8,6 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogContent, MatDialogRef } fro
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltip } from '@angular/material/tooltip';
-import { ToastrNotificationService } from '@core/services/toastr-notification.service';
 import DecimalUtil from '@core/utils/decimal.util';
 import { PRODUCT_SERVICE } from '@inventory/data/inventory-token';
 import { ProductMeasure } from '@inventory/data/models/product-measure';
@@ -20,7 +19,7 @@ import { ItemComposition } from '@restaurant/data/models/item-composition';
 import { CATEGORY_ABBREVIATIONS } from '@restaurant/restaurant-const';
 import { ItemSearchDialog } from '@restaurant/ui/items/item-search-dialog/item-search-dialog';
 import { ItemSearch } from '@restaurant/ui/items/item-search/item-search';
-import Swal from 'sweetalert2';
+import { NotificationService } from '@acontplus/ng-notifications';
 
 @Component({
   selector: 'app-item-add-edit',
@@ -44,7 +43,8 @@ export class ItemAddEdit implements OnInit {
   private productService = inject(PRODUCT_SERVICE);
   private updateUseCase = inject(ItemUpdateUseCase);
   #modalRef = inject(MatDialogRef<ItemAddEdit>);
-  #tS = inject(ToastrNotificationService);
+  #tS = inject(NotificationService);
+  alertDg = inject(AlertDialogService)
   overlay = inject(Overlay);
 
   params = inject<{
@@ -549,15 +549,22 @@ export class ItemAddEdit implements OnInit {
   }
 
   async deleteRow(rowData: ItemComposition) {
-    const { isConfirmed } = await Swal.fire({
-      title: '¿Está seguro de eliminar este registro?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
-    });
+    const { isConfirmed } = await this.alertDg.confirm({
+      html: '¿Está seguro de eliminar este registro?',
+      buttons: {
+        confirm: {
+          text: 'Si',
+          variant: 'success',
+          style: 'filled'
+        },
+        cancel: {
+          text: 'No',
+          variant: 'danger',
+          style: 'filled'
+        }
+      }
+
+    })
 
     if (!isConfirmed) return;
 
@@ -590,8 +597,7 @@ export class ItemAddEdit implements OnInit {
 
   onSave() {
     if (this.itemForm.invalid) {
-      return this.#tS.show({
-        type: 'warning',
+      return this.#tS.warning({
         message: 'Revise los datos ingresados',
       });
     }
@@ -616,18 +622,13 @@ export class ItemAddEdit implements OnInit {
         data: dataToSave,
       })
       .subscribe((response) => {
-        Swal.fire({
-          icon: response.code === '1' ? 'success' : 'warning',
-          html: response.message,
-          timer: 1000,
+        this.#tS.show({
+          type: response.code === '1' ? 'success' : 'warning',
+          message: response.message,
         });
         if (response.code === '1') {
           this.#modalRef.close(response);
         }
       });
-  }
-
-  onModalClose() {
-    this.#modalRef.close();
   }
 }

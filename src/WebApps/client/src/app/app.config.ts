@@ -77,7 +77,7 @@ export const appConfig: ApplicationConfig = {
     },
     DatePipe,
     provideNotifications({
-      defaultProvider: 'sweetalert',
+      defaultProvider: 'snackbar',
     }),
     { provide: REPORT_PORT, useClass: ReportAdapter },
   ],

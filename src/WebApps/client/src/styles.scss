@@ -10,7 +10,9 @@
 @use 'ngx-toastr/toastr';
 @use 'app/modules/config/styles/shepherd-tour';
 @use '@ng-select/ng-select/themes/material.theme';
+@use "@acontplus/ng-notifications/src/styles";
 @import 'tabulator-tables/dist/css/tabulator.min.css';
+
 //@import 'tabulator-tables/dist/css/tabulator_semanticui.min.css';
 //@import 'tabulator-tables/dist/css/tabulator_materialize.min.css';
 

@@ -201,7 +201,7 @@ export class ItemUpdateMapper {
         itemId: item.itemId,
         parentCompositionId: item.parentCompositionId || null,
         //  parentCompositionId:  item.isOptional ? null: item.id || null,
-
+        feeId: item.feeId,
         childItemId: item.childItemId,
         quantity: item.quantity,
         price: item.price,
