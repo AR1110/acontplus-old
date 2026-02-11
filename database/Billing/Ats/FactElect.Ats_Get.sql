@@ -183,7 +183,7 @@ BEGIN
                   ,SUBSTRING(fc.serieComprobante, 5, 3)				  as puntoEmision
                   ,CAST(RIGHT(fc.serieComprobante, 9) AS VARCHAR(10)) as secuencial
             FROM Recepcion.DocumentoRecibido          fc 
-            LEFT JOIN FactElect.RetAtsDocSustento     ds ON ds.numAutDocSustento = fc.claveAcceso 
+            LEFT JOIN FactElect.RetAtsDocSustento     ds ON ds.numAutDocSustento = fc.claveAcceso AND ds.estado = 1 
             LEFT JOIN Sri.DocumentoSustentoTributario ss ON ss.Id                = ds.documentoSustentoTributarioId
             LEFT JOIN FactElect.RetencionAts          rt ON rt.idRetencionAts    = ds.idRetencionAts AND ISNULL(rt.anuladaSri,0) = 0
             LEFT JOIN Sri.SustentoTributario          st ON st.Id                = ss.SustentoTributarioId
@@ -248,7 +248,8 @@ BEGIN
             LEFT JOIN Sri.TipoRegimenFiscalExterior st ON st.Id                     = ds.tipoRegimenFiscalExteriorId
             WHERE es.idEntidad = @idEntidad
               AND ss.codigo = 4
-              AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+              AND ds.estado = 1
+              --AND CAST(de.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
             GROUP BY ds.numAutDocSustento
         ),
         DocumentosModificados AS 
@@ -322,363 +323,152 @@ BEGIN
         LEFT JOIN TipoIdentificacionProveedor tip ON tip.rucEmisor          = db.rucEmisor
         LEFT JOIN ImpuestosCalculados          ic ON ic.DocumentoRecibidoId = db.idDocumento
         LEFT JOIN RetencionesAgrupadas         ra ON ra.numAutDocSustento   = db.claveAcceso
-        LEFT JOIN DocumentosModificados        dm ON dm.idDocumentoRecibido = db.idDocumento
+        LEFT JOIN DocumentosModificados        dm ON dm.idDocumentoRecibido = db.idDocumento;
 
         --> Compras Nota de Ventas
+        WITH DocumentosBase AS
+        (
+            SELECT fc.idFacturaCompra
+                  ,fc.idProveedor
+                  ,cu.IDCard as rucEmisor
+                  ,fc.nroAutorizacion as claveAcceso
+                  ,fc.fechaEmision
+                  ,fc.puntoEmision
+                  ,fc.total as importeTotal
+                  ,fc.nroDocumento
+                  ,SUBSTRING(fc.puntoEmision, 1, 3) as establecimiento
+                  ,SUBSTRING(fc.puntoEmision, 5, 3) as puntoEmision_cod
+                  ,SUBSTRING(fc.puntoEmision, 1, 3) + SUBSTRING(fc.puntoEmision, 5, 3) + RIGHT('000000000' + CONVERT(VARCHAR(9), fc.nroDocumento), 9) as nroDocumentoCompleto
+                  ,REPLACE(fc.puntoEmision, '-', '') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)), 9) as numDocSustento
+            FROM FacturaCompra fc WITH (NOLOCK)
+            INNER JOIN Proveedor p WITH (NOLOCK) ON fc.idProveedor = p.idProveedor
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = p.CustomerId
+            WHERE fc.idEntidad = @idEntidad
+              AND CAST(fc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+              AND fc.nroAutorizacion NOT IN (
+                  SELECT claveAcceso 
+                  FROM Recepcion.DocumentoRecibido 
+                  WHERE identificacionReceptor = @rucReceptor
+              )
+              AND fc.isAutomatic = 0
+              AND fc.estado = 1
+        ),
+        TipoIdentificacionProveedor AS
+        (
+            SELECT cu.IDCard as rucEmisor
+                  ,CASE ti.codigoSri 
+                       WHEN '04' THEN '01' 
+                       WHEN '05' THEN '02' 
+                       ELSE '03' 
+                   END as tpIdProv
+            FROM Proveedor p WITH (NOLOCK)
+            INNER JOIN Customer.Customer cu WITH (NOLOCK) ON cu.Id = p.CustomerId
+            INNER JOIN TipoIdentificacion ti WITH (NOLOCK) ON ti.idTipoIdentificacion = cu.IdTypeId
+            WHERE p.idEntidad = @idEntidad
+        ),
+        ImpuestosCalculados AS
+        (
+            SELECT fci.FacturaCompraId
+                  ,CAST(SUM(CASE WHEN ti.codigoPorcentaje IN ('7','6') THEN fci.TaxBase ELSE 0 END) AS NUMERIC(18, 2)) as baseNoGraIva
+                  ,CAST(SUM(CASE WHEN ti.codigoPorcentaje = '0' THEN fci.TaxBase ELSE 0 END) AS NUMERIC(18, 2)) as baseImponible
+                  ,CAST(SUM(CASE WHEN ti.codigoPorcentaje IN ('2', '3', '4', '5', '8') THEN fci.TaxBase ELSE 0 END) AS NUMERIC(18, 2)) as baseImpGrav
+                  ,CAST(SUM(CASE WHEN ti.codigoPorcentaje = '7' THEN fci.TaxBase ELSE 0 END) AS NUMERIC(18, 2)) as baseImpExe
+                  ,CAST(SUM(CASE WHEN im.codigo = '3' THEN fci.TaxValue ELSE 0 END) AS NUMERIC(18, 2)) as montoIce
+                  ,CAST(SUM(CASE WHEN im.codigo = '2' THEN fci.TaxValue ELSE 0 END) AS NUMERIC(18, 2)) as montoIva
+            FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
+            INNER JOIN dbo.TipoIva ti WITH (NOLOCK) ON ti.idTipoIva = fci.TaxPercentId
+            LEFT JOIN dbo.Impuesto im WITH (NOLOCK) ON im.idImpuesto = fci.TaxId
+            INNER JOIN FacturaCompra fc WITH (NOLOCK) ON fc.idFacturaCompra = fci.FacturaCompraId
+            WHERE fc.idEntidad = @idEntidad
+              AND CAST(fc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+            GROUP BY fci.FacturaCompraId
+        ),
+        RetencionesAgrupadas AS
+        (
+            SELECT ds.numAutDocSustento
+                  ,ds.numDocSustento
+                  ,db.idProveedor
+                  ,MAX(rt.parteRel) as parteRel
+                  ,MAX(ds.pagoLocExt) as pagoLocExt
+                  ,MAX(ISNULL(st.Codigo, '00')) as tipoRegi
+                  ,MAX(ISNULL(ds.paisEfecPago, 'NA')) as paisEfecPago
+                  ,MAX(ISNULL(ds.aplicConvDobTrib, 'NA')) as aplicConvDobTrib
+                  ,MAX(ISNULL(ds.pagExtSujRetNorLeg, 'NA')) as pagExtSujRetNorLeg
+                  ,MAX(es.estab) as estabRetencion1
+                  ,MAX(pe.ptoEmi) as ptoEmiRetencion1
+                  ,MAX(de.nroDocumento) as secRetencion1
+                  ,MAX(de.claveAcceso) as autRetencion1
+                  ,MAX(CONVERT(VARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy'), 106)) as fechaEmiRet1
+                  ,MAX(ISNULL(sts.Codigo, '06')) as codSustento
+                  ,SUM(CASE WHEN ret.codigoRetencion = '9' AND sr.codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valRetBien10
+                  ,SUM(CASE WHEN ret.codigoRetencion = '10' AND sr.codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valRetServ20
+                  ,SUM(CASE WHEN ret.codigoRetencion = '1' AND sr.Codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valorRetBienes
+                  ,SUM(CASE WHEN ret.codigoRetencion = '11' AND sr.Codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valRetServ50
+                  ,SUM(CASE WHEN ret.codigoRetencion = '2' AND sr.Codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valorRetServicios
+                  ,SUM(CASE WHEN ret.codigoRetencion = '3' AND sr.Codigo = 1 THEN ret.valorRetenido ELSE 0 END) as valRetServ100
+            FROM DocumentosBase                       db
+            INNER JOIN FactElect.RetAtsDocSustento    ds WITH (NOLOCK) ON ds.numAutDocSustento      = db.claveAcceso AND ds.numDocSustento = db.numDocSustento AND ds.estado = 1
+            INNER JOIN FactElect.RetencionAts         rt WITH (NOLOCK) ON rt.idRetencionAts         = ds.idRetencionAts AND rt.anuladaSri = 0 AND rt.idProveedor = db.idProveedor
+            LEFT JOIN FactElect.RetencionAtsRet      ret WITH (NOLOCK) ON ret.idRetencionAts        = rt.idRetencionAts
+            LEFT JOIN Sri.ImpuestoRetencion           sr WITH (NOLOCK) ON sr.Id                     = ret.impuestoRetencionId
+            LEFT JOIN dbo.DocumentoElectronico        de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+            LEFT JOIN dbo.PuntoEmision                pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
+            LEFT JOIN Sri.Establecimiento             es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
+            LEFT JOIN Sri.TipoRegimenFiscalExterior   st WITH (NOLOCK) ON st.Id                     = ds.tipoRegimenFiscalExteriorId
+            LEFT JOIN Sri.DocumentoSustentoTributario ss WITH (NOLOCK) ON ss.Id                     = ds.documentoSustentoTributarioId
+            LEFT JOIN Sri.SustentoTributario         sts WITH (NOLOCK) ON sts.Id                    = ss.SustentoTributarioId
+            GROUP BY ds.numAutDocSustento, ds.numDocSustento, db.idProveedor
+        )
         INSERT INTO @ComprasAts
-	    SELECT 'FF' 
-               ,ISNULL
-                ((
-                    SELECT TOP 1 st.Codigo
-			        FROM FactElect.RetencionAts                rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento     ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.DocumentoSustentoTributario ss WITH (NOLOCK) ON ss.Id = ds.documentoSustentoTributarioId
-                    INNER JOIN Sri.SustentoTributario          st WITH (NOLOCK) ON st.Id = ss.SustentoTributarioId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
+        SELECT 'FF'                                                         as tipoDoc
+              ,ISNULL(ra.codSustento, '06')                                 as codSustento
+              ,ISNULL(tip.tpIdProv, '01')                                   as tpIdProv
+              ,db.rucEmisor                                                 as idProv
+              ,'02'                                                         as tipoComprobante
+              ,ISNULL(ra.parteRel, 'NO')                                    as parteRel
+              ,CONVERT(VARCHAR, FORMAT(db.fechaEmision, 'dd/MM/yyyy'), 106) as fechaRegistro
+              ,db.establecimiento
+              ,db.puntoEmision_cod as puntoEmision
+              ,db.nroDocumento as secuencial
+              ,CONVERT(VARCHAR, FORMAT(db.fechaEmision, 'dd/MM/yyyy'), 106) as fechaEmision
+              ,db.claveAcceso                                               as autorizacion
+              ,ISNULL(ic.baseNoGraIva, 0)                                   as baseNoGraIva
+              ,ISNULL(ic.baseImponible, 0)                                  as baseImponible
+              ,ISNULL(ic.baseImpGrav, 0)                                    as baseImpGrav
+              ,ISNULL(ic.baseImpExe, 0)                                     as baseImpExe
+              ,ISNULL(ic.montoIce, 0)                                       as montoIce
+              ,ISNULL(ic.montoIva, 0)                                       as montoIva
+              ,ISNULL(ra.valRetBien10, 0)                                   as valRetBien10
+              ,ISNULL(ra.valRetServ20, 0)                                   as valRetServ20
+              ,ISNULL(ra.valorRetBienes, 0)                                 as valorRetBienes
+              ,ISNULL(ra.valRetServ50, 0)                                   as valRetServ50
+              ,ISNULL(ra.valorRetServicios, 0)                              as valorRetServicios
+              ,ISNULL(ra.valRetServ100, 0)                                  as valRetServ100
+              ,0.00                                                         as totbasesImpReemb
+              ,ISNULL(ra.pagoLocExt, '01')                                  as pagoLocExt
+              ,ISNULL(ra.tipoRegi, '00')                                    as tipoRegi
+              ,'00000' as denopagoRegFis
+              ,ISNULL(ra.paisEfecPago, 'NA')                                as paisEfecPago
+              ,ISNULL(ra.aplicConvDobTrib, 'NA')                            as aplicConvDobTrib
+              ,ISNULL(ra.pagExtSujRetNorLeg, 'NA')                          as pagExtSujRetNorLeg
+              ,CASE WHEN db.importeTotal >= 500 THEN '20' ELSE '' END       as formaPago
+              ,db.nroDocumentoCompleto                                      as nroDocumento
+              ,ISNULL(ra.estabRetencion1, '')                               as estabRetencion1
+              ,ISNULL(ra.ptoEmiRetencion1, '')                              as ptoEmiRetencion1
+              ,ISNULL(ra.secRetencion1, '')                                 as secRetencion1
+              ,ISNULL(ra.autRetencion1, '')                                 as autRetencion1
+              ,ISNULL(ra.fechaEmiRet1, '')                                  as fechaEmiRet1
+              ,''                                                           as docModificado
+              ,''                                                           as estabModificado
+              ,''                                                           as ptoEmiModificado
+              ,''                                                           as secModificado
+              ,''                                                           as autModificado
+        FROM DocumentosBase db
+        LEFT JOIN TipoIdentificacionProveedor tip ON tip.rucEmisor        = db.rucEmisor
+        LEFT JOIN ImpuestosCalculados          ic ON ic.FacturaCompraId   = db.idFacturaCompra
+        LEFT JOIN RetencionesAgrupadas         ra ON ra.numAutDocSustento = db.claveAcceso AND ra.numDocSustento = db.numDocSustento AND ra.idProveedor = db.idProveedor
 
-			    ),'06') as codSustento 
-	            ,ISNULL((CASE WHEN ti.codigoSri IS NOT NULL THEN case when ti.codigoSri = '04' THEN '01' WHEN ti.codigoSri = '05' THEN '02' ELSE '03' END ELSE '01' END), '01') tpIdProv
-	            ,cu.IDCard                                                      as idProv
-	            ,'02'                                                           as tipoComprobante
-	            ,ISNULL
-                ((
-                    SELECT TOP 1 rt.parteRel
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-			    ),'NO')                                                         as parteRel
-	            ,CONVERT(VARCHAR, FORMAT(fc.fechaEmision, 'dd/MM/yyyy'), 106)   as fechaRegistro
-	            ,SUBSTRING(fc.puntoEmision, 1, 3)                               as establecimiento
-	            ,SUBSTRING(fc.puntoEmision, 5, 3)                               as puntoEmision
-	            ,fc.nroDocumento                                                as secuencial
-	            ,CONVERT(VARCHAR, FORMAT(fc.fechaEmision, 'dd/MM/yyyy'), 106)   as fechaEmision
-	            ,fc.nroAutorizacion                                             as autorizacion
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxBase) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.TipoIva       ti WITH (NOLOCK) ON ti.idTipoIva  = fci.TaxPercentId  
-			        WHERE fci.FacturaCompraId = fc.idFacturaCompra
-				       AND ti.codigoPorcentaje IN ('7','6')
-
-                ),0) as baseNoGraIva
-
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxBase) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.TipoIva       ti WITH (NOLOCK) ON ti.idTipoIva  = fci.TaxPercentId
-                    WHERE fci.FacturaCompraId = fc.idFacturaCompra
-                      AND ti.codigoPorcentaje = '0'
-
-                ),0) as baseImponible
-
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxBase) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.TipoIva       ti WITH (NOLOCK) ON ti.idTipoIva  = fci.TaxPercentId  
-                    WHERE fci.FacturaCompraId = fc.idFacturaCompra
-                       AND ti.codigoPorcentaje IN ('2', '3', '4', '5', '8')
-
-                ),0) as baseImpGrav
-
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxBase) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.TipoIva       ti WITH (NOLOCK) ON ti.idTipoIva  = fci.TaxPercentId
-                    INNER JOIN dbo.Impuesto      im WITH (NOLOCK) ON im.idImpuesto = fci.TaxId  
-                    WHERE fci.FacturaCompraId = fc.idFacturaCompra
-	                   AND ti.codigoPorcentaje = '7'
-
-                ),0) as baseImpExe
-
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxValue) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.Impuesto      im WITH (NOLOCK) ON im.idImpuesto = fci.TaxId  
-                    WHERE fci.FacturaCompraId = fc.idFacturaCompra
-	                    AND im.codigo = '3'
-
-                ),0) as montoIce
-	
-	            ,ISNULL
-                ((
-                    SELECT CAST(SUM(fci.TaxValue) AS NUMERIC(18,2)) 
-                    FROM Compra.FacturaImpuesto fci WITH (NOLOCK)
-                    INNER JOIN dbo.Impuesto      im WITH (NOLOCK) ON im.idImpuesto = fci.TaxId  
-                    WHERE fci.FacturaCompraId = fc.idFacturaCompra
-                      AND im.codigo = '2'
-
-                ),0) as montoIva
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND ir.codigoRetencion = '9'
-                      AND sr.codigo = 1
-
-	        ),0) as valRetBien10
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND ir.codigoRetencion = '10'
-                      AND sr.codigo = 1
-
-	        ),0) as valRetServ20
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND sr.Codigo = 1
-                      AND ir.codigoRetencion = '1'
-
-	        ),0) as valorRetBienes
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND sr.Codigo = 1
-                      AND ir.codigoRetencion = '11'
-
-	        ),0) as valRetServ50
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND sr.Codigo = 1
-                      AND ir.codigoRetencion = '2'
-
-	        ),0) as valorRetServicios
-
-	        ,ISNULL
-            ((
-                    SELECT CAST(SUM(ir.valorRetenido) as numeric(18,2))
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        INNER JOIN FactElect.RetencionAtsRet   ir WITH (NOLOCK) ON ir.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.ImpuestoRetencion       sr WITH (NOLOCK) ON sr.Id             = ir.impuestoRetencionId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-                      AND sr.Codigo = 1
-                      AND ir.codigoRetencion = '3'
-
-	        ),0) as valRetServ100
-
-	        ,0.00 totbasesImpReemb
-            ,ISNULL
-             ((
-                    SELECT TOP 1 ds.pagoLocExt
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-	         ),'01') as pagoLocExt
-
-            ,ISNULL
-             ((
-                    SELECT TOP 1 st.Codigo
-			        FROM FactElect.RetencionAts              rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento   ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-                    INNER JOIN Sri.TipoRegimenFiscalExterior st WITH (NOLOCK) ON st.Id             = ds.tipoRegimenFiscalExteriorId
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-	         ),'00') as tipoRegi
-	        ,'00000' denopagoRegFis
-	        ,ISNULL
-             ((
-                    SELECT TOP 1 ds.paisEfecPago
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-	         ),'NA') as paisEfecPago
-	        ,ISNULL
-             ((
-                    SELECT TOP 1 ds.aplicConvDobTrib
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-	         ),'NA') as aplicConvDobTrib
-	        ,ISNULL
-             ((
-                    SELECT TOP 1 ds.pagExtSujRetNorLeg
-			        FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-			        INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts = rt.idRetencionAts
-			        WHERE ds.numAutDocSustento = fc.nroAutorizacion
-	 			      AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                      AND ds.estado = 1  
-                      AND rt.anuladaSri = 0 
-				      AND rt.idProveedor = fc.idProveedor
-
-	         ),'NA') as pagExtSujRetNorLeg
-	        ,formaPago = CASE WHEN fc.total >= 500 THEN '20'  ELSE '' END 
-	        ,SUBSTRING(fc.puntoEmision, 1, 3) + SUBSTRING(fc.puntoEmision, 5, 3) +  +RIGHT('000000000'+convert(varchar(9), fc.nroDocumento),9) nroDocumento 
-	        ,ISNULL
-             ((
-            
-                SELECT TOP 1 es.estab
-			    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
-			    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
-                INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-                INNER JOIN Sri.Establecimiento         es WITH (NOLOCK) ON es.idEstablecimiento      = pe.idEstablecimiento
-			    WHERE ds.numAutDocSustento = fc.nroAutorizacion
-		          AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                  AND rt.anuladaSri = 0 
-                  AND rt.idProveedor = fc.idProveedor
-                  AND ds.estado = 1
-
-             ),'') as estabRetencion1
-            ,ISNULL
-             ((
-            
-                SELECT TOP 1 pe.ptoEmi
-			    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
-			    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
-                INNER JOIN dbo.PuntoEmision            pe WITH (NOLOCK) ON pe.idPuntoEmision         = de.idPuntoEmision
-			    WHERE ds.numAutDocSustento = fc.nroAutorizacion
-		          AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                  AND rt.anuladaSri = 0 
-                  AND rt.idProveedor = fc.idProveedor
-                  AND ds.estado = 1
-
-             ),'') as ptoEmiRetencion1 
-	        ,ISNULL
-             ((
-            
-                SELECT TOP 1 de.nroDocumento
-			    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
-			    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
-			    WHERE ds.numAutDocSustento = fc.nroAutorizacion
-		          AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                  AND rt.anuladaSri = 0 
-                  AND rt.idProveedor = fc.idProveedor
-                  AND ds.estado = 1
-
-             ),'') as secRetencion1
-	        ,ISNULL
-             ((
-            
-                SELECT TOP 1 de.claveAcceso
-			    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
-			    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
-			    WHERE ds.numAutDocSustento = fc.nroAutorizacion
-		          AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                  AND rt.anuladaSri = 0 
-                  AND rt.idProveedor = fc.idProveedor
-                  AND ds.estado = 1
-
-             ),'') as autRetencion1 
-            ,ISNULL
-             ((
-            
-                SELECT TOP 1 ISNULL(CONVERT(VARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy'), 106), '')
-			    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
-                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
-			    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
-			    WHERE ds.numAutDocSustento = fc.nroAutorizacion
-		          AND ds.numDocSustento = REPLACE(fc.puntoEmision,'-','') + RIGHT('000000000' + CAST(fc.nroDocumento AS VARCHAR(9)),9)
-                  AND rt.anuladaSri = 0 
-                  AND rt.idProveedor = fc.idProveedor
-                  AND ds.estado = 1
-
-             ),'') as fechaEmiRet1
-            ,docModificado = ''
-	        ,estabModificado = ''
-	        ,ptoEmiModificado = ''
-	        ,secModificado = ''
-	        ,autModificado = ''
-	    FROM FacturaCompra                    fc WITH (NOLOCK) 
-	    INNER JOIN Proveedor                   p WITH (NOLOCK) ON fc.idProveedor          = p.idProveedor
-        INNER JOIN Customer.Customer          cu WITH (NOLOCK) ON cu.Id                   = p.CustomerId
-	    INNER JOIN TipoIdentificacion         ti WITH (NOLOCK) on ti.idTipoIdentificacion = cu.IdTypeId
-        WHERE fc.idEntidad = @idEntidad
-          AND CAST(fc.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
-	      AND fc.nroAutorizacion NOT IN (SELECT claveAcceso FROM Recepcion.DocumentoRecibido where identificacionReceptor = @rucReceptor)
-	      AND fc.isAutomatic = 0
-	      AND fc.estado = 1
-
+       
         SELECT  tipoDoc
                ,codSustento
                ,tpIdProv
@@ -784,7 +574,7 @@ BEGIN
 			INNER JOIN Sri.Establecimiento         es ON es.idEstablecimiento   = dd.idEstablecimiento
 			WHERE dd.codDoc = '07'
 			  AND es.idEntidad = @idEntidad
-			  AND TRY_CAST(dd.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
+			  --AND TRY_CAST(dd.fechaEmision as date) BETWEEN CAST(@fromDate as date) AND CAST(@toDate as date)
 			GROUP BY dr.claveAcceso
 		)
         INSERT INTO @VentasATS

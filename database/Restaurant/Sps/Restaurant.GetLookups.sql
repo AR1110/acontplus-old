@@ -84,7 +84,7 @@ BEGIN
 
                 IF @Context = 'Filters'
                     BEGIN
-                        SELECT @Users = 1
+                        SELECT @Users = 1, @Tables = 1
                     END 
             END
 
