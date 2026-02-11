@@ -5,14 +5,13 @@ import { map, Observable } from 'rxjs';
 import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 import { FloorRepository } from '@restaurant/data/repositories/floor.repository';
 import { RESTAURANT_PATHS } from '@restaurant/restaurant-const';
-import { FloorMapper } from '@restaurant/data/mappers/floor.mapper';
-import { GetFloorsByEstabIdMapper } from '@restaurant/data/mappers/get-floors-by-estab-id.mapper';
+import { FloorMapper, GetFloorsByEstabIdMapper } from '@restaurant/data/mappers/floor-mapper';
 import { GetFloorsByEstabIdResponse } from '@restaurant/data/models/floor.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FloorWebService implements FloorRepository {
+export class FloorHttp implements FloorRepository {
   getByEstablishmentId(establishmentId: number): Observable<GetFloorsByEstabIdResponse> {
     return this.#http
       .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establishmentId}` )
@@ -33,7 +32,7 @@ export class FloorWebService implements FloorRepository {
   getByEstab(establecimientoId: number) {
     return this.#http
       .get<ApiResponseLegacy>(`${this.#url}GetByEstab/${establecimientoId}` )
-      .pipe(map((response) => FloorMapper.fromApiGetByEstab(response)));
+      .pipe(map((response) => FloorMapper.fromJson(response)));
   }
 
   post<T>(data: T) {

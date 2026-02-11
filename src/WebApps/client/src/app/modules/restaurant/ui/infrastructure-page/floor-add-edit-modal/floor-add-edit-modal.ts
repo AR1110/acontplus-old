@@ -8,12 +8,12 @@ import { ApiResponseLegacy } from '@core/models/api-response-legacy';
 
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { RoomService } from '@restaurant/data/services/room.service';
-import { FloorUseCase } from '@restaurant/application/use-cases/floor.use-case';
 import { Button } from '@acontplus/ng-components';
 import { MatCustomDialogComponent } from '@core/components/mat-custom-dialog/mat-custom-dialog.component';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { FLOOR_HTTP_TOKEN } from '@restaurant/data/restaurant-token';
 
 @Component({
   selector: 'app-floor-add-edit-modal',
@@ -26,10 +26,10 @@ import { MatInputModule } from '@angular/material/input';
     MatFormFieldModule,
     MatInputModule,
   ],
-  templateUrl: './floor-add-edit-modal.component.html',
+  templateUrl: './floor-add-edit-modal.html',
   styles: ``,
 })
-export class FloorAddEditModalComponent implements OnInit {
+export class FloorAddEditModal implements OnInit {
   roomColumns: any[] = [
     { title: 'ID', field: 'id', visible: false },
     { title: 'Código', field: 'code', editor: 'input' },
@@ -113,9 +113,9 @@ export class FloorAddEditModalComponent implements OnInit {
   modalTitle = 'Registrar Piso';
   rooms: Room[] = [];
 
-  private _floorUseCase = inject(FloorUseCase);
+  private floorHttp = inject(FLOOR_HTTP_TOKEN);
 
-  _modalRef = inject(MatDialogRef<FloorAddEditModalComponent>);
+  _modalRef = inject(MatDialogRef<FloorAddEditModal>);
   data = inject<any>(MAT_DIALOG_DATA);
   _roomService = inject(RoomService);
   _tS = inject(ToastrNotificationService);
@@ -166,11 +166,11 @@ export class FloorAddEditModalComponent implements OnInit {
     };
 
     if (this.data.id > 0) {
-      this._floorUseCase.put(this.data.id, dataToSave).subscribe((response) => {
+      this.floorHttp.put(this.data.id, dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     } else {
-      this._floorUseCase.post(dataToSave).subscribe((response) => {
+      this.floorHttp.post(dataToSave).subscribe((response) => {
         this.successResponse(response);
       });
     }

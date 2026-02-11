@@ -1,0 +1,263 @@
+<app-breadcrumb />
+
+<acp-dynamic-card>
+  <div class="infrastructure-container">
+    <!-- Header Controls -->
+    <div class="header-controls">
+      <div class="establishment-selector">
+        <mat-form-field class="w-100">
+          <mat-label>Establecimiento</mat-label>
+          <mat-select [(ngModel)]="estabId" (selectionChange)="getFloors()">
+            @for (item of estabs(); track $index) {
+              <mat-option [value]="item.idEstablecimiento">{{ item.nombreComercial }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="header-actions">
+        <acp-button
+          icon="add"
+          variant="success"
+          text="Añadir piso"
+          (handleClick)="addEditFloor()"
+          matStyle="filled"
+        />
+      </div>
+    </div>
+
+    <!-- Hierarchy Info -->
+    <div class="hierarchy-info">
+      <mat-icon class="hierarchy-icon">account_tree</mat-icon>
+      <span class="hierarchy-text">Piso → Sala → Mesa</span>
+    </div>
+
+    <!-- Tree Container -->
+    <div class="tree-container">
+      @if (dataSource().length > 0) {
+        <mat-tree
+          #tree
+          [dataSource]="dataSource()"
+          [childrenAccessor]="childrenAccessor"
+          class="infrastructure-tree"
+        >
+          <!-- Leaf Node Template -->
+          <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+            <div class="tree-node-wrapper">
+              <button mat-icon-button disabled class="spacer-button"></button>
+
+              <div class="tree-node" [ngClass]="'node-' + node.type">
+                <div class="node-content">
+                  <div class="node-icon-wrapper">
+                    <mat-icon class="node-icon" [ngClass]="'icon-' + node.type">
+                      {{ getNodeIcon(node.type) }}
+                    </mat-icon>
+                  </div>
+
+                  <div class="node-info">
+                    <div class="node-main-info">
+                      <span class="node-name">{{ node.description }}</span>
+                      @if (node.type === 'table' && !node.enabled) {
+                        <span class="status-chip inactive">Inactivo</span>
+                      }
+                    </div>
+
+                    @if (node.capacity) {
+                      <div class="node-capacity">
+                        <mat-icon class="capacity-icon">people</mat-icon>
+                        <span>{{ node.capacity }} personas</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="node-actions">
+                    @switch (node.type) {
+                      @case ('table') {
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          (click)="addEditTable(node, true)"
+                          matTooltip="Editar mesa"
+                          class="action-btn edit-btn"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          (click)="onTableDelete(node)"
+                          matTooltip="Eliminar mesa"
+                          class="action-btn delete-btn"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      }
+                      @case ('room') {
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          (click)="addEditRoom(node)"
+                          matTooltip="Editar sala"
+                          class="action-btn edit-btn"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          (click)="addEditTable(node)"
+                          matTooltip="Añadir mesa"
+                          class="action-btn add-btn"
+                        >
+                          <mat-icon>add</mat-icon>
+                        </button>
+                      }
+                      @case ('floor') {
+                        <acp-button
+                          type="button"
+                          icon="edit"
+                          variant="success"
+                          (handleClick)="addEditFloor(node)"
+                          matStyle="icon"
+                        />
+                        <acp-button
+                          type="button"
+                          icon="add"
+                          variant="info"
+                          (handleClick)="addEditRoom(node, true)"
+                          matStyle="icon"
+                          matTooltip="Añadir sala"
+                        />
+
+                        <acp-button
+                          type="button"
+                          icon="delete"
+                          variant="danger"
+                          (handleClick)="onFloorDelete(node)"
+                          matStyle="icon"
+                          matTooltip="Eliminar piso"
+                        />
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-tree-node>
+
+          <!-- Parent Node Template -->
+          <mat-tree-node
+            *matTreeNodeDef="let node; when: hasChild"
+            matTreeNodePadding
+            [cdkTreeNodeTypeaheadLabel]="node.description"
+          >
+            <div class="tree-node-wrapper">
+              <button
+                mat-icon-button
+                (click)="tree.toggle(node); $event.stopPropagation()"
+                [attr.aria-label]="'Toggle ' + node.description"
+                class="toggle-btn"
+              >
+                <mat-icon class="mat-icon-rtl-mirror toggle-icon">
+                  {{ tree.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
+                </mat-icon>
+              </button>
+
+              <div class="tree-node" [ngClass]="'node-' + node.type">
+                <div class="node-content">
+                  <div class="node-icon-wrapper">
+                    <mat-icon class="node-icon" [ngClass]="'icon-' + node.type">
+                      {{ getNodeIcon(node.type) }}
+                    </mat-icon>
+                  </div>
+
+                  <div class="node-info">
+                    <div class="node-main-info">
+                      <span class="node-name">{{ node.description }}</span>
+                      @if (node.children?.length > 0) {
+                        <span class="children-chip">
+                          {{ node.children.length }}
+                          {{ node.children.length === 1 ? 'elemento' : 'elementos' }}
+                        </span>
+                      }
+                    </div>
+
+                    @if (node.capacity) {
+                      <div class="node-capacity">
+                        <mat-icon class="capacity-icon">people</mat-icon>
+                        <span>{{ node.capacity }} personas</span>
+                      </div>
+                    }
+                  </div>
+
+                  <div class="node-actions">
+                    <h2>{{ node.type }}</h2>
+                    @switch (node.type) {
+                      @case ('floor') {
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          (click)="addEditFloor(node)"
+                          matTooltip="Editar piso"
+                          class="action-btn edit-btn"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          (click)="addEditRoom(node, true)"
+                          matTooltip="Añadir sala"
+                          matTooltipPosition="left"
+                          class="action-btn add-btn"
+                          aria-label="Añadir sala"
+                        >
+                          <mat-icon>add</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="warn"
+                          (click)="onFloorDelete(node)"
+                          matTooltip="Eliminar piso"
+                          class="action-btn delete-btn"
+                        >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      }
+                      @case ('room') {
+                        <button
+                          mat-icon-button
+                          color="primary"
+                          (click)="addEditRoom(node)"
+                          matTooltip="Editar sala"
+                          class="action-btn edit-btn"
+                        >
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <button
+                          mat-icon-button
+                          color="accent"
+                          (click)="addEditTable(node)"
+                          matTooltip="Añadir mesa"
+                          class="action-btn add-btn"
+                        >
+                          <mat-icon>add</mat-icon>
+                        </button>
+                      }
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-tree-node>
+        </mat-tree>
+      } @else {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">domain</mat-icon>
+          <h3>No hay infraestructura configurada</h3>
+          <p>Selecciona un establecimiento y añade pisos para comenzar</p>
+        </div>
+      }
+    </div>
+  </div>
+</acp-dynamic-card>

@@ -1547,6 +1547,7 @@
 
 
         $scope.handleItemSelect = function (item) {
+          console.log('Item seleccionado:', item);
             itemSvc.getId(item.id).then(async response => {
                 try {
                     const { menu, components } = response;
