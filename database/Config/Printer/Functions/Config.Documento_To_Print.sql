@@ -46,6 +46,7 @@ BEGIN
     DECLARE @saldo NUMERIC(18,2)
     DECLARE @idPuntoEmision INT;
     DECLARE @infoAdicional VARCHAR(MAX);
+	DECLARE @nroDocOrder VARCHAR(100)
 
     DECLARE @tbTaxes AS TABLE(
         descripcion VARCHAR(150) NOT NULL
@@ -83,6 +84,9 @@ BEGIN
 
 	IF @codDoc = 'FV'
 		BEGIN
+			SELECT top 1 @nroDocOrder = o.Serie  FROM Restaurant.OrderDocument od
+			INNER JOIN Restaurant.[Order] o ON o.Id = od.OrderId
+			WHERE od.DocumentoId = @idDocument AND O.Enabled =1
             
             SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM Ventas.v_Factura WITH (NOLOCK) WHERE idFactura = @idDocument
 
@@ -96,11 +100,15 @@ BEGIN
                                     );
 			SET @header = (
 					        SELECT 
-					             codDoc = 'FV'
-						        ,nroDoc = de.serieComprobante 
+					             codDoc = 'FV' 
+								,nroDoc = IIF(
+									@nroDocOrder IS NOT NULL AND @nroDocOrder <> '',
+									de.serieComprobante + ' Nro. Pedido ' + @nroDocOrder,
+									de.serieComprobante
+ 								)
 						        ,nroFactura = de.serieComprobante 
 						        ,labelNroDoc = 'FACTURA Nro. '
-						        ,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÓN', 'PRUEBAS')
+						        ,ambiente = IIF(pe.ambiente=2, 'PRODUCCIÃ“N', 'PRUEBAS')
 						        ,emision = IIF(f.emision=1, 'NORMAL', '')
 						        ,codigoAutorizacion = de.claveAcceso
 						        ,fechaEmision = CONVERT(NVARCHAR, FORMAT(de.fechaEmision, 'dd/MM/yyyy hh:mm')) 
@@ -200,6 +208,10 @@ BEGIN
 
 	IF @codDoc = 'NE'
 		BEGIN
+
+			SELECT top 1 @nroDocOrder = o.Serie  FROM Restaurant.OrderDocument od
+			INNER JOIN Restaurant.[Order] o ON o.Id = od.OrderId
+			WHERE od.DocumentoId = @idDocument AND O.Enabled =1
             
             SELECT TOP 1 @fechaEmision = fechaEmision, @idPuntoEmision = idPuntoEmision FROM dbo.NotaEntrega WITH (NOLOCK) WHERE idNotaEntrega = @idDocument
             
@@ -213,8 +225,14 @@ BEGIN
                                     );
 			SET @header = (SELECT 
 							
-							 codDoc = 'NE'
-							,nroDoc = dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)	
+							 codDoc = 'NE' 
+
+							,nroDoc = IIF(
+								@nroDocOrder IS NOT NULL AND @nroDocOrder <> '',
+								dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento) + ' Nro. Pedido ' + @nroDocOrder,
+								dbo.AFTGenerarNroDocumento(s.estab+pe.ptoEmi,ne.nroDocumento)
+							)
+
 							,labelNroDoc = 'NOTA DE ENTREGA Nro. '  
 							,tipoDoc = 'NOTA DE ENTREGA'
 							,razonSocial = e.razonSocial
