@@ -44,6 +44,7 @@ BEGIN
 
     --> Documento Recibido 
 	DECLARE @identificacionReceptor VARCHAR(20) ,@rucReceptor VARCHAR(15) ,@rucEmisor VARCHAR(13) ,@codEstab  VARCHAR(50) ,@idEstablecimiento INT ,@idDocumento INT ,@importeTotal NUMERIC(18,5)
+          ,@numDocSustento VARCHAR(20) ,@numAutDocSustento VARCHAR(50) ,@idCuentaPorCobrar INT
 
     DECLARE @tbDocumento AS TABLE(
         razonSocialEmisior VARCHAR(300) NOT NULL 
@@ -128,7 +129,7 @@ BEGIN
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')                as secuencial
                       ,x.y.value('(infoNotaCredito/identificacionComprador)[1]','VARCHAR(300)') as identificacionComprador
                       ,x.y.value('(infoNotaCredito/valorModificacion)[1]','NUMERIC(18,5)')      as importeTotal
-                      ,'Notas de CrÈdito'
+                      ,'Notas de Cr√©dito'
                 FROM @xmlQuery.nodes('//notaCredito') x(y)
 			END
         
@@ -185,20 +186,67 @@ BEGIN
                       ,x.y.value('(infoTributaria/ptoEmi)[1]','VARCHAR(25)')                           as ptoEmi
                       ,x.y.value('(infoTributaria/secuencial)[1]','VARCHAR(25)')                       as secuencial
                       ,x.y.value('(infoCompRetencion/identificacionSujetoRetenido)[1]','VARCHAR(300)') as identificacionComprador
-                      ,'Comprobante de RetenciÛn'
+                      ,'Comprobante de Retenci√≥n'
                 FROM @xmlQuery.nodes('//comprobanteRetencion') x(y)
 
                 IF @versionComp = '2.0.0'
                     BEGIN
                         SELECT @importeTotal = SUM(T.C.value('(valorRetenido)[1]', 'NUMERIC(18,5)')) 
                         FROM @xmlQuery.nodes('//comprobanteRetencion/docsSustento/docSustento/retenciones/retencion') AS T(C)
+
+                        SELECT @numDocSustento    = X.Y.value('(//docSustento/numDocSustento)[1]', 'VARCHAR(15)')
+		                      ,@numAutDocSustento = X.Y.value('(//docSustento/numAutDocSustento)[1]', 'VARCHAR(50)')
+	                    FROM @xmlQuery.nodes('//comprobanteRetencion/docSustento') X(Y);
                     END 
                      
                 IF @versionComp = '1.0.0'
                     BEGIN
                         SELECT @importeTotal = SUM(T.C.value('(valorRetenido)[1]', 'NUMERIC(18,5)')) 
                         FROM @xmlQuery.nodes('//comprobanteRetencion/impuestos/impuesto') AS T(C)
-                    END 
+                    END
+
+                IF @numAutDocSustento IS NOT NULL
+		            BEGIN
+			            SELECT @idCuentaPorCobrar = cc.idCuentaPorCobrar
+			            FROM DocumentoElectronico			    de
+			            INNER JOIN Factura					    fa ON fa.idDocumentoElectronico = de.idDocumentoElectronico
+			            INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idDocumento = fa.idFactura AND cc.codDoc = '01'
+			            WHERE de.claveAcceso = @numAutDocSustento
+		            END 
+	            ELSE 
+		            BEGIN
+			            SELECT @idCuentaPorCobrar = cc.idCuentaPorCobrar
+			            FROM DocumentoElectronico			    de
+			            INNER JOIN Factura					    fa ON fa.idDocumentoElectronico = de.idDocumentoElectronico
+			            INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idDocumento = fa.idFactura AND cc.codDoc = '01'
+			            WHERE REPLACE(de.serieComprobante,'-','') = @numDocSustento
+			              AND cc.idEntidad = @idEntidad 
+		            END
+
+
+                IF EXISTS 
+	            (
+		            SELECT 1
+		            FROM Contabilidad.Historial_Cobro		      hc
+		            INNER JOIN dbo.ComprobanteIngreso		      ci ON ci.idComprobanteIngreso = hc.idComprobanteIngreso 
+		            INNER JOIN dbo.Cobro                          co ON co.idComprobanteIngreso = ci.idComprobanteIngreso
+		            INNER JOIN dbo.EntidadFinanciera              ef ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+		            WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+			            AND ci.estado = 1
+			            AND ef.codigo = 'TAR'
+	            )
+	                BEGIN
+		                SELECT '0' as code
+		                      ,'No puedes importar esta retenci√≥n, la factura ' + cc.serieComprobante + ' con fecha ' + FORMAT(cc.fechaEmision, 'dd/MM/yyyy HH:mm')  + ' tiene un cobro con tarjeta' as 'message'
+		                FROM Contabilidad.Historial_Cobro		hc
+		                INNER JOIN Contabilidad.CuentaPorCobrar cc ON cc.idCuentaPorCobrar	  = hc.idCuentaPorCobrar
+		                INNER JOIN dbo.ComprobanteIngreso		ci ON ci.idComprobanteIngreso = hc.idComprobanteIngreso 
+		                INNER JOIN dbo.Cobro                    co ON co.idComprobanteIngreso = ci.idComprobanteIngreso
+		                INNER JOIN dbo.EntidadFinanciera        ef ON ef.idEntidadFinanciera  = co.idEntidadFinanciera
+		                WHERE hc.idCuentaPorCobrar = @idCuentaPorCobrar
+	                      AND ci.estado = 1
+	                      AND ef.codigo = 'TAR'
+	                END 
 			END
 
 
