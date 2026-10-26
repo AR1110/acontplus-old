@@ -246,6 +246,12 @@ BEGIN
                 RETURN 
             END
 
+        IF DATEDIFF(DAY, @fechaEmision, GETDATE()) > 0
+            BEGIN
+                SELECT '0' AS code, 'El documento encuentra fuera de la fecha permitida por el SRI' AS message;
+                RETURN;
+            END
+
 		BEGIN TRAN 
             --> Info Tributaria
             UPDATE DocumentoElectronico WITH (ROWLOCK)

@@ -104,9 +104,9 @@ BEGIN
                 RETURN
             END
 
-        IF @numeroIdentificacion = '9999999999999'
+        IF EXISTS (SELECT 1 FROM Customer.Customer WHERE Id = @customerId AND IdCard = '9999999999999')
             BEGIN
-                 SELECT  '0'code,'No puedes editar un consumidor final'[message] 
+                SELECT  '0'code,'No puedes editar un consumidor final'[message] 
                 RETURN
             END
 

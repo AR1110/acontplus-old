@@ -26,7 +26,6 @@ BEGIN
     --> Factura
     IF @tipo = 2
         BEGIN
-
             SELECT @codEstab       = codEstab
                   ,@idPuntoEmision = idPuntoEmision
                   ,@ckFecha        = ckFecha
@@ -35,7 +34,6 @@ BEGIN
                   ,@codEstado      = codEstado
                   ,@ckDevolucion   = ckDevolucion
                   ,@ckRetencion    = ckRetencion
-                  ,@codEstado      = codEstado
                   ,@identificacion = identificacion
                   ,@idUsuario      = idUsuario
             FROM OPENJSON(@json) WITH
@@ -59,154 +57,209 @@ BEGIN
                           ,@fechaFin        DATETIME2
                           ,@codEstado       INT
                           ,@identificacion  VARCHAR(20)
-                          ,@idUsuario       INT'
+                          ,@idUsuario       INT
+                          ,@idUsuarioRol    INT'
 
-            --> Comprobantes
+            --> CONSTRUCCIÓN DE LA CONSULTA DINÁMICA CON CTES
+            SET @sql = '
+            IF OBJECT_ID(''tempdb..#FacturasFiltradas'') IS NOT NULL DROP TABLE #FacturasFiltradas;
+            IF OBJECT_ID(''tempdb..#FacturasBase'') IS NOT NULL DROP TABLE #FacturasBase;
 
-            SET @sql = 'SELECT f.idFactura
-                              ,f.nombreComercial
-                              ,f.idEstablecimiento
-                              ,f.serieComprobante
-                              ,f.claveAcceso
-	                          ,Format(f.fechaEmision,''dd/MM/yyyy'')			 as fechaEmision
-	                          ,Format(f.fechaAutorizacion,''dd/MM/yyyy  HH:mm'') as fechaAutorizacion
-	                          ,f.razonSocialComprador
-	                          ,f.identificacionComprador
-	                          ,f.nombreUsuario								     as usuario
-	                          ,fi.tax										     as impuesto
-	                          ,CAST(SUM(fi.TaxBase) as numeric(18,2))		     as subTotal
-	                          ,CAST(SUM(fi.TaxValue) as numeric(18,2))		     as iva
-	                          ,CAST(nc.total as numeric(18,2))				     as devolucion
-	                          ,(
-                                    SELECT SUM(CAST(di.TaxValue as numeric(18,2)))
-                                    FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK)
-                                    WHERE di.DocumentoRecibidoId = dr.idDocumentoRecibido
-                                      AND di.code = ''1''
-                               )                                                 as retRenta
-                              ,(
-                                    SELECT SUM(CAST(di.TaxValue as numeric(18,2)))
-                                    FROM Recepcion.DocumentoImpuesto di WITH (NOLOCK)
-                                    WHERE di.DocumentoRecibidoId = dr.idDocumentoRecibido
-                                    AND di.code = ''2''
-                               )                                                 as retIva
-	                          ,CAST(f.totalDescuento as numeric(18,2))           as totalDescuento
-                            ,CAST(SUM(fi.TaxBase) as numeric(18,2)) + CAST(SUM(fi.TaxValue) as numeric(18,2)) as total
-	                          ,f.estadoSri
-                        FROM Ventas.v_Factura			       f WITH (NOLOCK)
-                        INNER JOIN Ventas.v_FacturaImpuesto    fi WITH (NOLOCK) ON fi.FacturaId   = f.idFactura
-                         LEFT JOIN Ventas.v_NotaCredito        nc WITH (NOLOCK) ON nc.idFactura   = f.idFactura
-                         LEFT JOIN FactElect.DocRelacionado    dr WITH (NOLOCK) ON dr.claveAcceso = f.claveAcceso
-                        WHERE f.idEntidad = @idEntidad
-                          AND fi.[Enabled] = 1 '
+            SELECT f.idFactura as Id
+                  ,f.nombreComercial
+                  ,f.idEstablecimiento
+                  ,f.serieComprobante
+                  ,f.claveAcceso
+                  ,CONVERT(VARCHAR(10), f.fechaEmision, 103)      as fechaEmision
+                  ,CONVERT(VARCHAR(10), f.fechaAutorizacion, 103) as fechaAutorizacion
+                  ,f.razonSocialComprador
+                  ,f.identificacionComprador
+                  ,CAST(f.totalDescuento as numeric(18,2)) as totalDescuento 
+                  ,CAST(f.total as numeric(18,2)) as total
+                  ,CAST(f.subTotalSinImpuestos as numeric(18,2)) as subTotalSinImpuestos
+                  ,f.nombreUsuario as usuario
+                  ,f.estadoSri
+            INTO #FacturasFiltradas
+            FROM Ventas.v_Factura f WITH (NOLOCK)
+            WHERE f.idEntidad = @idEntidad '
 
+            --> 2. Inyección de filtros dinámicos en la base
             IF @codEstab IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND f.codEstab = @codEstab '
-                END
+                SET @sql = @sql + 'AND f.codEstab = @codEstab '
 
             IF @idPuntoEmision > 0
-                BEGIN
-                    SET @sql = @sql + 'AND f.idPuntoEmision = @idPuntoEmision '
-                END
+                SET @sql = @sql + 'AND f.idPuntoEmision = @idPuntoEmision '
 
             IF @ckFecha = 1
-                BEGIN
-                    SET @sql = @sql + 'AND CAST(f.fechaEmision as date) BETWEEN CAST(@fechaInicio as date) AND CAST(@fechaFin as date) '
-                END
+                SET @sql = @sql + 'AND f.fechaEmision >= @fechaInicio AND f.fechaEmision <= @fechaFin '
 
             IF @codEstado >= 0
-                BEGIN
-                    IF @codEstado IN (4,6)
-                        BEGIN
-                            SET @sql = @sql + 'AND f.codEstado = @codEstado '
-                        END
-                    ELSE
-                        BEGIN
-                            SET @sql = @sql + 'AND f.codEstado NOT IN(4,6) '
-                        END
-                END
+            BEGIN
+                IF @codEstado IN (4,6)
+                    SET @sql = @sql + 'AND f.codEstado = @codEstado '
+                ELSE
+                    SET @sql = @sql + 'AND f.codEstado NOT IN (4,6) '
+            END
 
             IF @identificacion IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND f.identificacionComprador = @identificacion '
-                END
+                SET @sql = @sql + 'AND f.identificacionComprador = @identificacion '
 
             IF @idUsuario IS NOT NULL
-                BEGIN
-                    SET @sql = @sql + 'AND f.idUsuario = @idUsuario '
-                END
+                SET @sql = @sql + 'AND f.idUsuario = @idUsuario '
 
-            IF @ckDevolucion IN (0,1)
-                BEGIN
-                    IF @ckDevolucion = 1
-                        BEGIN
-                            SET @sql = @sql + 'AND nc.idNotaCredito > 0 '
-                        END
+            -- Indexamos la extracción primaria para acelerar los JOINs de Notas de Crédito y Retenciones
+            SET @sql = @sql + ';
+            CREATE CLUSTERED INDEX IX_#FacturasFiltradas_Id ON #FacturasFiltradas(Id);
 
-                    IF @ckDevolucion = 0
-                        BEGIN
-                            SET @sql = @sql + 'AND nc.idNotaCredito IS NULL '
-                        END
+            --> 3. Cierre de CoresInvoices y agregación de Notas de Crédito y Retenciones en la cadena
+            WITH CreditNotes AS
+            (
+                SELECT nc.idFactura
+                      ,CAST(SUM(nc.total) as numeric(18,2)) as devolucion
+                FROM Ventas.v_NotaCredito nc WITH (NOLOCK)
+                INNER JOIN #FacturasFiltradas iv ON iv.Id = nc.idFactura
+                GROUP BY nc.idFactura
+            ),
+            WithholdingReceipts AS
+            (
+                SELECT iv.Id as FacturaId
+                      ,CAST(SUM(CASE WHEN di.code = ''1'' THEN di.TaxValue ELSE 0 END) as numeric(18,2)) as retRenta
+                      ,CAST(SUM(CASE WHEN di.code = ''2'' THEN di.TaxValue ELSE 0 END) as numeric(18,2)) as retIva
+                FROM FactElect.DocRelacionado          dr WITH (NOLOCK)
+                INNER JOIN #FacturasFiltradas          iv ON iv.claveAcceso = dr.claveAcceso
+                INNER JOIN Recepcion.DocumentoImpuesto di WITH (NOLOCK) ON di.DocumentoRecibidoId = dr.idDocumentoRecibido
+                WHERE di.code IN (''1'', ''2'')
+                GROUP BY iv.Id
+            )
+            SELECT iv.Id as idFactura
+                  ,iv.nombreComercial
+                  ,iv.idEstablecimiento
+                  ,iv.serieComprobante
+                  ,iv.claveAcceso
+                  ,iv.fechaEmision
+                  ,iv.fechaAutorizacion
+                  ,iv.razonSocialComprador
+                  ,iv.identificacionComprador
+                  ,iv.subTotalSinImpuestos
+                  ,iv.totalDescuento
+                  ,iv.total
+                  ,ISNULL(nc.devolucion, 0) as devolucion
+                  ,ISNULL(wr.retRenta, 0)  as retRenta
+                  ,ISNULL(wr.retIva, 0)    as retIva
+                  ,iv.usuario
+                  ,iv.estadoSri
+            INTO #FacturasBase
+            FROM #FacturasFiltradas       iv
+            LEFT JOIN CreditNotes         nc ON nc.idFactura = iv.Id
+            LEFT JOIN WithholdingReceipts wr ON wr.FacturaId = iv.Id
+            WHERE 1 = 1 '
 
-                END
+            --> Filtros de existencia condicional para Devolución y Retención
+            IF @ckDevolucion IS NOT NULL
+            BEGIN
+                IF @ckDevolucion = 1
+                    SET @sql = @sql + 'AND nc.devolucion IS NOT NULL '
+                ELSE
+                    SET @sql = @sql + 'AND nc.devolucion IS NULL '
+            END
 
+            IF @ckRetencion IS NOT NULL
+            BEGIN
+                IF @ckRetencion = 1
+                    SET @sql = @sql + 'AND (wr.retRenta IS NOT NULL OR wr.retIva IS NOT NULL) '
+                ELSE
+                    SET @sql = @sql + 'AND wr.retRenta IS NULL AND wr.retIva IS NULL '
+            END
 
-            IF @ckRetencion IN (1,0)
-                BEGIN
-                    IF @ckRetencion  = 1
-                        BEGIN
-                            SET @sql = @sql + 'AND dr.idDocRelacionado > 0 '
-                        END
-                    ELSE
-                        BEGIN
-                            SET @sql = @sql + 'AND dr.idDocRelacionado IS NULL '
-                        END
-                END
+            -- Indexamos la base consolidada para acelerar el destructor de rendimiento y calculamos los totales en variables internas
+            SET @sql = @sql + ';
+            CREATE CLUSTERED INDEX IX_#FacturasBase_idFactura ON #FacturasBase(idFactura);
 
-            SET @sql = @sql + 'GROUP BY f.idFactura
-                                       ,f.nombreComercial
-                                       ,f.serieComprobante
-                                       ,f.claveAcceso
-	                                   ,f.fechaEmision
-	                                   ,f.fechaAutorizacion
-	                                   ,f.razonSocialComprador
-	                                   ,f.identificacionComprador
-	                                   ,f.nombreUsuario
-		                               ,f.total
-		                               ,f.totalDescuento
-                                       ,f.idEstablecimiento
-		                               ,f.estadoSri
-		                               ,dr.valorRetenido
-                                       ,nc.total
-		                               ,fi.tax
-                                       ,dr.idDocumentoRecibido
-                                       ,dr.idDocumentoElectronico
-                                       ,f.idCuentaPorCobrar
-                                       ORDER BY f.serieComprobante,f.fechaEmision,f.identificacionComprador DESC '
+            DECLARE @totSubtotal   NUMERIC(18,2),
+                    @totDescuento  NUMERIC(18,2),
+                    @totFacturado  NUMERIC(18,2),
+                    @totDevol      NUMERIC(18,2),
+                    @totRenta      NUMERIC(18,2),
+                    @totIva        NUMERIC(18,2);
 
+            SELECT @totSubtotal  = ISNULL(SUM(subTotalSinImpuestos), 0)
+                  ,@totDescuento = ISNULL(SUM(totalDescuento), 0)
+                  ,@totFacturado = ISNULL(SUM(total), 0)
+                  ,@totDevol     = ISNULL(SUM(devolucion), 0)
+                  ,@totRenta     = ISNULL(SUM(retRenta), 0)
+                  ,@totIva       = ISNULL(SUM(retIva), 0)
+            FROM #FacturasBase;
 
+            --> RETORNO 1: Encabezado General del Reporte con Totales Fusionados
             SELECT entidad as razonSocial
                   ,rucEmpresa as ruc
                   ,telefono
                   ,nombreUsuario as usuario
-                  ,'Reporte Tributario - Factura' as nombreReporte
-                  ,FORMAT(@fechaInicio, 'dd/MM/yyyy') + ' a ' + FORMAT( @fechaFin, 'dd/MM/yyyy') as filtroFechas
+                  ,''Reporte Tributario - Factura'' as nombreReporte
+                  ,CONVERT(VARCHAR(10), ISNULL(@fechaInicio, GETDATE()), 103) + '' a '' + CONVERT(VARCHAR(10), ISNULL(@fechaFin, GETDATE()), 103) as filtroFechas
+                  ,@totSubtotal  as totalSubtotalSinImpuestos
+                  ,@totDescuento as totalDescuento
+                  ,@totFacturado as totalFacturado
+                  ,@totDevol     as totalDevoluciones
+                  ,@totRenta     as totalRetencionRenta
+                  ,@totIva       as totalRetencionIva
             FROM v_usuario
-            WHERE idUsuarioRol = @idUsuarioRol
+            WHERE idUsuarioRol = @idUsuarioRol;
 
+            --> RETORNO 2: LISTADO 1 - Detalle Completo Cruzado con Impuestos Dinámicos
+            WITH InvoicesTaxes as
+            (
+                SELECT fb.idFactura
+                      ,fi.codigoPorcentaje
+                      ,fi.tax as nombreImpuesto
+                      ,CAST(SUM(fi.TaxBase) as numeric(18,2))  as BaseImpuesto
+                      ,CAST(SUM(fi.TaxValue) as numeric(18,2)) as ValorImpuesto
+                FROM Ventas.v_FacturaImpuesto fi WITH (NOLOCK)
+                INNER JOIN #FacturasBase      fb ON fb.idFactura = fi.FacturaId
+                WHERE fi.[Enabled] = 1
+                GROUP BY fb.idFactura, fi.codigoPorcentaje, fi.tax
+            )
+            SELECT fa.idFactura
+                  ,fa.nombreComercial
+                  ,fa.idEstablecimiento
+                  ,fa.serieComprobante
+                  ,fa.claveAcceso
+                  ,fa.fechaEmision
+                  ,fa.fechaAutorizacion
+                  ,fa.razonSocialComprador
+                  ,fa.identificacionComprador
+                  ,fa.subTotalSinImpuestos
+                  ,fa.totalDescuento
+                  ,it.codigoPorcentaje
+                  ,it.nombreImpuesto
+                  ,it.baseImpuesto
+                  ,it.valorImpuesto
+                  ,fa.total
+                  ,fa.devolucion
+                  ,fa.retRenta
+                  ,fa.retIva
+                  ,fa.usuario
+                  ,fa.estadoSri
+            FROM #FacturasBase      fa
+            LEFT JOIN InvoicesTaxes it ON it.idFactura = fa.idFactura  
+            ORDER BY fa.serieComprobante ASC, fa.fechaEmision DESC;
+
+            IF OBJECT_ID(''tempdb..#FacturasFiltradas'') IS NOT NULL DROP TABLE #FacturasFiltradas;
+            IF OBJECT_ID(''tempdb..#FacturasBase'') IS NOT NULL DROP TABLE #FacturasBase;'
+
+            --> Ejecución de los Listados en Orden Estricto (1. Encabezado, 2. Detalle)
             EXEC sp_executesql @sql
-							  ,@params
-							  ,@idEntidad      = @idEntidad
-                              ,@codEstab       = @codEstab
-                              ,@idPuntoEmision = @idPuntoEmision
-                              ,@fechaInicio    = @fechaInicio
-                              ,@fechaFin       = @fechaFin
-                              ,@codEstado      = @codEstado
-                              ,@identificacion = @identificacion
-                              ,@idUsuario      = @idUsuario
-
-
-
+                              ,@params
+                              ,@idEntidad       = @idEntidad
+                              ,@codEstab        = @codEstab
+                              ,@idPuntoEmision  = @idPuntoEmision
+                              ,@fechaInicio     = @fechaInicio
+                              ,@fechaFin        = @fechaFin
+                              ,@codEstado       = @codEstado
+                              ,@identificacion  = @identificacion
+                              ,@idUsuario       = @idUsuario
+                              ,@idUsuarioRol    = @idUsuarioRol;
+            RETURN
         END
 
     --> Nota Credito

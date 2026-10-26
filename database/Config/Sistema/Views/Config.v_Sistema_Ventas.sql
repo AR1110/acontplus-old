@@ -1,23 +1,44 @@
-use [Acontplus]
-go 
+USE [Acontplus]
+GO 
 
 CREATE OR ALTER VIEW Config.v_Sistema_Ventas WITH SCHEMABINDING AS (
-	SELECT JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.idCliente')                                               as idCliente
-		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.idArticulo')                                              as idArticulo
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.searchCode') as bit)                                 as searchCode
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.printerAutomatic') as bit)                           as printerAutomatic
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.payAutomatic') as bit)                               as payAutomatic
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.multipleVendedor') as bit)                           as multipleVendedor
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.detailDuplicate') as bit)                            as detailDuplicate
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.idFormaPagoSri') as int)                             as idFormaPagoSri
-		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.cc')                                                      as cc
-		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.subject')                                                 as subject
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.configInteres') as bit)                              as configDeuda
-		  ,JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.tipoConfig')                                  as tipoConfig
-		  ,CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.interes') as numeric(18,5))              as interes
-		  ,ISNULL(CAST(JSON_VALUE(REPLACE((REPLACE(cs.jsonConfig,'[','')),']',''),'$.infoInteres.diasGracia') as INT),0) as diasGracia
-		  ,cs.idEntidad
-          ,cs.idSistema
-	FROM Config.Sistema     cs WITH (NOLOCK)
+	SELECT 
+		 j.idCliente
+		,j.idArticulo
+		,ISNULL(j.searchCode, 0)         AS searchCode
+		,ISNULL(j.printerAutomatic, 0)  AS printerAutomatic
+		,ISNULL(j.payAutomatic, 0)      AS payAutomatic
+		,ISNULL(j.multipleVendedor, 0)  AS multipleVendedor
+		,ISNULL(j.detailDuplicate, 0)   AS detailDuplicate
+		,ISNULL(j.idFormaPagoSri, 0)    AS idFormaPagoSri
+		,j.cc
+		,j.subject
+		,ISNULL(j.configDeuda, 0)        AS configDeuda
+		,j.tipoConfig
+		,j.interes
+		,ISNULL(j.diasGracia, 0)         AS diasGracia
+		,ISNULL(j.diasAntesCaducidad, 0) AS diasAntesCaducidad
+		,cs.idEntidad
+		,cs.idSistema
+	FROM Config.Sistema cs
+	CROSS APPLY OPENJSON(REPLACE(REPLACE(cs.jsonConfig, '[', ''), ']', ''))
+	WITH (
+		idCliente              VARCHAR(50)     '$.idCliente',
+		idArticulo             VARCHAR(50)     '$.idArticulo',
+		searchCode             BIT             '$.searchCode',
+		printerAutomatic       BIT             '$.printerAutomatic',
+		payAutomatic           BIT             '$.payAutomatic',
+		multipleVendedor       BIT             '$.multipleVendedor',
+		detailDuplicate        BIT             '$.detailDuplicate',
+		idFormaPagoSri         INT             '$.idFormaPagoSri',
+		cc                     VARCHAR(MAX)    '$.cc',
+		subject                VARCHAR(250)    '$.subject',
+		configDeuda            BIT             '$.configInteres',
+		tipoConfig             VARCHAR(50)     '$.infoInteres.tipoConfig',
+		interes                NUMERIC(18,5)   '$.infoInteres.interes',
+		diasGracia             INT             '$.infoInteres.diasGracia',
+		diasAntesCaducidad     INT             '$.diasAntesCaducidad'
+	) j
 	WHERE cs.codConfig = 'CV'
 )
+GO

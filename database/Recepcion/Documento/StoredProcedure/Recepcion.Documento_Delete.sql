@@ -11,8 +11,7 @@ GO
 -- Description:	SP PARA ELIMINAR LOS COMPROBANTES ELECTRONICOS DEL SRI
 -- =============================================
 
-CREATE OR ALTER PROCEDURE Recepcion.Documento_Delete @userRoleId INT
-,@idDocumento INT
+CREATE OR ALTER PROCEDURE Recepcion.Documento_Delete @userRoleId INT ,@idDocumento INT
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -21,57 +20,88 @@ BEGIN
     DECLARE @idUsuario INT 
     
     --> Contabilidad 
-    DECLARE @codDoc VARCHAR(10) ,@idEstadoPago INT 
+    DECLARE @codDoc VARCHAR(10) ,@idEstadoPago INT ,@numAutDocSustento NVARCHAR(50)
 
 	
 	BEGIN TRY
         --> Variables
         SELECT TOP 1 @idUsuario = idUsuario FROM v_usuario WHERE idUsuarioRol = @userRoleId
 
-        SELECT TOP 1 @codDoc = ISNULL(codDoc,'00') FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @idDocumento
+        SELECT TOP 1 @codDoc = ISNULL(codDoc,'00') ,@numAutDocSustento = claveAcceso FROM Recepcion.DocumentoRecibido  WHERE idDocumento = @idDocumento
 
-        SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
+        IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE idDocumento = @idDocumento AND estado = 1)
+            BEGIN 
+                SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'A'
+            END
+        ELSE
+            BEGIN
+                SELECT TOP 1 @idEstadoPago = idEstadoPago FROM EstadoPago WITH (NOLOCK) WHERE codigo = 'PE'
+            END 
 
-        
-
+        --> Validaciones
         IF @codDoc IN ('04','01')
             BEGIN
-                IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento AND codEstado NOT IN ('PE'))
+                 IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE complete = 1 AND inventarioAnulado = 0 AND idDocumento = @idDocumento)
                     BEGIN
-				        SELECT '0' code, 'Esta Documento tiene un proceso contable no puede ser eliminado' as 'message'
+                        SELECT '0' code, 'Este Documento tiene un proceso de inventario no puede ser anulado' as 'message'
+				        RETURN
+                    END 
+
+                IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento AND codEstado NOT IN ('PE','A'))
+                    BEGIN
+                        SELECT '0' code, 'Este Documento se encuentra ' + estado + ' no puede ser anulado' as 'message'
+                        FROM v_CuentaPorPagar
+                        WHERE uniqueId = @numAutDocSustento 
 				        RETURN
 			         END
+
+                IF @codDoc = '01'
+                    BEGIN
+                        IF EXISTS (SELECT 1 FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+                                            INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+			                                INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
+			                                WHERE ds.numAutDocSustento = @numAutDocSustento
+				                                AND rt.anuladaSri = 0 
+                                                AND ds.estado = 1)
+                            BEGIN
+                                SELECT '0' code, 'Documento vinculado al comprobante de retención Nro.' + de.serieComprobante  as 'message'
+			                    FROM FactElect.RetencionAts            rt WITH (NOLOCK)
+                                INNER JOIN dbo.DocumentoElectronico    de WITH (NOLOCK) ON de.idDocumentoElectronico = rt.idDocumentoElectronico
+			                    INNER JOIN FactElect.RetAtsDocSustento ds WITH (NOLOCK) ON ds.idRetencionAts         = rt.idRetencionAts
+			                    WHERE ds.numAutDocSustento = @numAutDocSustento
+				                    AND rt.anuladaSri = 0 
+                                    AND ds.estado = 1
+				                RETURN
+			                END
+                    END 
             END 
 
         IF @codDoc IN ('07')
             BEGIN
-                IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @idDocumento AND codEstado NOT IN ('PE'))
+                IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @idDocumento AND codEstado NOT IN ('PE','A'))
                     BEGIN
-				        SELECT '0' code, 'Esta Documento tiene un proceso contable no puede ser eliminado' as 'message'
+				        SELECT '0' code, 'Este documento se encuentra aplicado a un cobro, no puede ser anulado' as 'message'
 				        RETURN
-			         END
-            END 
-        
+			        END
+            END
 
 		BEGIN TRAN
+            UPDATE Recepcion.DocumentoRecibido SET estado =  IIF(estado = 1, 0, 1), fechaEdicion = GETDATE() ,idUsuarioEdicion = @idUsuario WHERE idDocumento = @idDocumento
+
             IF @codDoc IN ('04','01')
                 BEGIN
                     IF EXISTS (SELECT 1 FROM v_CuentaPorPagar WITH (NOLOCK) WHERE codDoc = @codDoc AND idDocumento = @idDocumento)
                         BEGIN
-				            UPDATE Recepcion.DocumentoRecibido SET estado = 0 WHERE idDocumento = @idDocumento
-			
                             UPDATE Contabilidad.CuentaPorPagar SET idEstadoPago = @idEstadoPago WHERE codDoc = @codDoc AND idDocumento = @idDocumento
-			             END
+			            END
                 END 
 
             IF @codDoc IN ('07')
                 BEGIN
                     IF EXISTS (SELECT 1 FROM v_CuentaPorCobrar WITH (NOLOCK) WHERE codDoc = '07' AND idDocumento = @idDocumento)
                         BEGIN
-				             UPDATE Recepcion.DocumentoRecibido SET estado = 0 WHERE idDocumento = @idDocumento
-
                              UPDATE Contabilidad.CuentaPorCobrar SET idEstadoPago = @idEstadoPago WHERE codDoc = @codDoc AND idDocumento = @idDocumento
-			             END
+			            END
                 END 
 
             IF @codDoc IN ('00')
@@ -82,7 +112,7 @@ BEGIN
                 END
 
 		COMMIT TRAN
-        SELECT '1' code, 'Eliminado Exitosamente' as 'message'
+        SELECT '1' code, 'Anulado Exitosamente' as 'message'
 	END TRY
 
 	BEGIN CATCH

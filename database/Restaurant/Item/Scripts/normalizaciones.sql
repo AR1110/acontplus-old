@@ -15,7 +15,7 @@ go
 --SELECT [ProductId], [Summary], [CreatedAt], [UpdatedAt], [CreatedByUserId], [DeletedAt], [DeletedByUserId], [IsActive], [IsDeleted], [UpdatedByUserId], [CreatedBy], [DeletedBy], [IsMobileRequest], [UpdatedBy]
 --FROM Restaurant.Ingredient
 
---select it.Id ,it.Summary ,it.Title ,fa.siglas ,fa.descripcion
+--select it.Id ,it.Summary ,fa.siglas ,fa.descripcion
 --from Restaurant.Item      it
 --inner join dbo.Articulo   ar on ar.idArticulo   = it.ProductId
 --inner join dbo.SubFamilia sf on sf.idSubFamilia = ar.idSubFamilia

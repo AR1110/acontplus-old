@@ -15,6 +15,8 @@ go
 
 --> NUEVA TABLE PARA RELACIONAR LOS DETALLES DE LA PROMOCION Y FK
 
+--DELETE FROM Restaurant.Promotion WHERE EstablishmentId = 0
+
 --ALTER TABLE Restaurant.Promotion ADD CONSTRAINT FK_Promotion_Establecimiento_EstablishmentId FOREIGN KEY(EstablishmentId) REFERENCES Sri.Establecimiento(idEstablecimiento)
 
 --ALTER TABLE Restaurant.PromotionDetail ADD CONSTRAINT FK_PromotionDetail_Tarifa_FeeId FOREIGN KEY(FeeId) REFERENCES dbo.Tarifa(idTarifa)
@@ -30,9 +32,9 @@ go
 --            ,FeeId
 --            ,TaxId
 --            ,[MeasureId]
---            ,[Quantity]
---            ,[Price]
---            ,[CostPrice]
+--            ,[RequiredQuantity]
+--            ,[UnitPrice]
+--            ,[PromotionalPrice]
 --            ,[DiscountPercent]
 --            ,[Discount]
 --            ,[Subtotal]

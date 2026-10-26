@@ -21,9 +21,9 @@ GO
 -- Description:	SP Para insertar los detalles temporales del comprobante importado
 -- =============================================
 CREATE OR ALTER PROCEDURE Recepcion.Doc_Detail_Temp_Insert
-@idRol INT
-,@jsonData NVARCHAR(MAX)
-,@method VARCHAR(200) = NULL
+    @idRol INT
+   ,@jsonData NVARCHAR(MAX)
+   ,@method VARCHAR(200) = NULL
 AS
 BEGIN
 	SET NOCOUNT ON; 
@@ -122,7 +122,7 @@ BEGIN
 
 			SET @payload = (SELECT * FROM Recepcion.Doc_Detalle_Temp WHERE idDocumento = (SELECT TOP 1 idDocumento FROM @tmp) order by idDetalle ASC FOR JSON AUTO) 
 
-			SELECT '1' AS code, @payload AS payload, 'Detalle añadido correctamente'  as 'message'
+			SELECT '1' AS code, @payload AS payload, 'Detalle aÃ±adido correctamente'  as 'message'
 			
 		COMMIT TRAN
 	END TRY

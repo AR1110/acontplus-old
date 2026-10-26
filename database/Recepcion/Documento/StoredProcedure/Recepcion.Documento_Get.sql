@@ -26,17 +26,19 @@ BEGIN
         @idUsuario INT
     
     --> Filter
-	DECLARE @codEstab VARCHAR(50),
-        @idEstablecimiento INT,
-        @codDoc VARCHAR(2),
-        @startDate DATETIME2,
-        @endDate DATETIME2,
-        @claveAcceso VARCHAR(50),
-        @serieComprobante VARCHAR(20),
-        @rucProveedor VARCHAR(25),
-        @id INT,
-        @ckBoxFecha BIT,
-        @subcategoryId INT
+	DECLARE @codEstab VARCHAR(50)
+           ,@idEstablecimiento INT
+           ,@codDoc VARCHAR(2)
+           ,@startDate DATETIME2
+           ,@endDate DATETIME2
+           ,@claveAcceso VARCHAR(50)
+           ,@serieComprobante VARCHAR(20)
+           ,@rucProveedor VARCHAR(25)
+           ,@id INT
+           ,@ckBoxFecha BIT
+           ,@subcategoryId INT
+           ,@detalles VARCHAR(MAX)
+           ,@idProveedor INT
 	
 	--> Sql
 	DECLARE @params NVARCHAR(MAX) ,@sql NVARCHAR(MAX) ,@pageIndex INT ,@pageSize INT
@@ -78,21 +80,15 @@ BEGIN
 		                      ,dr.[importeTotal]
 		                      ,CASE WHEN xmlCompressed IS NOT NULL THEN 1 ELSE 0 END hasXml
 		                      ,ISNULL(complete, 0) complete
-		                      ,CASE WHEN xmlCompressed IS NOT NULL AND complete = 0 THEN ''background-color: #FFF5BD;''
-			                        WHEN complete = 1                               THEN ''background-color: #03a9f3; cursor: pointer;''
-			                                                                        ELSE ''''
-			                   END                                                               as colorRow
-		                      ,CASE WHEN complete = 1 THEN ''background-color: #03a9f3;''
-			                                          ELSE ''''
-			                   END                                                               as colorCol
-		                      ,CASE WHEN complete = 1 THEN ''Documento Importado'' ELSE '''' END as hoverText
-                              ,COUNT(*) OVER()                                                   as totalRecords
+                              ,dr.inventarioAnulado
+                              ,dr.estado
+                              ,COUNT(*) OVER()  as totalRecords
                               ,ISNULL(s.[Name], '''') subcategoryName
-                              ,ISNULL(dr.subcategoryId, 0) subcategoryId
+                              ,ISNULL(cpp.subcategoryId, 0) subcategoryId
 	                    FROM Recepcion.DocumentoRecibido       dr WITH (NOLOCK)
 						INNER JOIN Sri.Establecimiento e WITH(NOLOCK) ON dr.idEstablecimiento = e.idEstablecimiento
                         LEFT JOIN Contabilidad.CuentaPorPagar cpp WITH (NOLOCK) ON dr.claveAcceso = cpp.uniqueId
-                        LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON dr.subcategoryId = s.Id
+                        LEFT JOIN Contabilidad.Subcategory      s WITH (NOLOCK) ON cpp.subcategoryId = s.Id
 						LEFT JOIN Customer.Customer c WITH(NOLOCK) ON dr.customerId = c.Id
 	                    WHERE dr.idEstablecimiento = @idEstablecimiento '
 
@@ -146,10 +142,6 @@ BEGIN
                 BEGIN
                     SET @sql = @sql + 'AND dr.claveAcceso = @claveAcceso '
                 END
-            ELSE 
-                BEGIN
-                    SET @sql = @sql + 'AND dr.estado = 1 '
-                END 
 
 
             IF @serieComprobante IS NOT NULL
@@ -160,7 +152,7 @@ BEGIN
 
             IF @subcategoryId > 0
                 BEGIN
-                     SET @sql = @sql + ' AND dr.subcategoryId = @subcategoryId ' 
+                     SET @sql = @sql + ' AND cpp.subcategoryId = @subcategoryId ' 
                 END
 
             SET @sql = @sql + ' ORDER BY idDocumento DESC OFFSET @pageSize * (@pageIndex -1 ) ROWS FETCH NEXT @pageSize ROWS ONLY '
@@ -200,7 +192,7 @@ BEGIN
 	IF @tipo = 3
 	    BEGIN
 		    
-            SET @tableNames = 'SustentoTributario,CategoriaCompra,Bodega,Medida'
+            SET @tableNames = 'SustentoTributario,CategoriaCompra,Bodega,Medida,Impuestos'
 
 		    SELECT *
 		    FROM SustentoTributario WITH (NOLOCK)
@@ -217,6 +209,17 @@ BEGIN
 		    FROM Medida WITH (NOLOCK)
 		    WHERE idEntidad = @idEntidad
 
+            SELECT ti.idTarifaImpuesto
+                  ,ti.idImpuesto
+			      ,ti.codigo           
+			      ,ti.descripcion
+                  ,ti.porcentaje
+	        FROM Sri.TarifaImpuesto ti
+            INNER JOIN Sri.Impuesto im ON im.idImpuesto = ti.idImpuesto
+	        WHERE ti.estado = 1
+              AND ti.estado = 1
+              AND im.codigo = 2
+
 		    RETURN
 	    END
 
@@ -230,10 +233,9 @@ BEGIN
 
 		    IF @codDoc = '01'
 		        BEGIN
-                    
                     SELECT TOP 1 @claveAcceso = claveAcceso FROM Recepcion.DocumentoRecibido WITH (NOLOCK) WHERE idDocumento = @id
 
-			        SELECT 'Retenci�n'                                                           as comprobante
+			        SELECT 'Retencion'                                                           as comprobante
 				           ,de.serieComprobante
 				           ,cu.IDCard                                                            as rucEmisor
 				           ,cu.TradeName                                                         as razonSocialEmisor
@@ -247,6 +249,7 @@ BEGIN
                     INNER JOIN Customer.Customer        cu WITH (NOLOCK) ON cu.Id                     = pr.CustomerId
 			        WHERE retDoc.numAutDocSustento = @claveAcceso
 			          AND rAts.anuladaSri = 0
+                      AND retDoc.estado = 1
 		        END
 
 		    IF @codDoc = '07' OR @codDoc = '04'
@@ -264,6 +267,81 @@ BEGIN
 
             RETURN 
 	    END
+
+    --> Compra no habitual de los detalles
+    IF @tipo = 5
+        BEGIN
+            SET @tableNames = 'InfoContribuyente,CompraHabitual'
+
+            SELECT @id = id
+                  ,@detalles = detalles
+            FROM OPENJSON(@json)
+            WITH
+            (   id INT
+               ,detalles NVARCHAR(MAX) AS JSON
+            )
+
+            SELECT @idProveedor  = pr.idProveedor
+                  ,@rucProveedor = cu.IdCard
+            FROM Recepcion.DocumentoRecibido dr
+            INNER JOIN Customer.Customer     cu ON cu.Id         = dr.customerId
+            INNER JOIN dbo.Proveedor         pr ON pr.CustomerId = cu.Id AND pr.idEntidad = @idEntidad
+            WHERE idDocumento = @id
+
+            SELECT dr.customerId
+                  ,pr.idProveedor
+                  ,cu.IdCard as ruc
+            FROM Recepcion.DocumentoRecibido dr
+            INNER JOIN Customer.Customer     cu ON cu.Id         = dr.customerId
+            INNER JOIN dbo.Proveedor         pr ON pr.CustomerId = cu.Id AND pr.idEntidad = @idEntidad
+            WHERE idDocumento = @id
+
+            SELECT  ca.idCompraHabitual
+                   ,ca.idProveedor   as idProveedor
+                   ,ca.ruc
+                   ,ca.codArticulo as codArticulo
+                   ,ca.idMedida  
+                   ,ar.idArticulo
+                   ,ar.codigo
+                   ,ar.codigoBarra
+                   ,ar.codigoAuxiliar
+                   ,ar.llevaInventario
+                   ,ar.descripcion
+                   ,ISNULL
+                   ((
+                        SELECT me.idMedida
+                              ,me.descripcion as medida
+                              ,sa.precioCosto
+                              ,af.precioCostoFraccionado as precioUnitario
+                              ,af.precioCostoFraccionado as precioCostoFraccionado
+                              ,af.conversion
+                        FROM ArticuloFraccionado af 
+                        INNER JOIN dbo.Articulo  sa ON sa.idArticulo = af.idArticulo
+                        INNER JOIN Medida        me ON me.idMedida   = af.idMedida 
+                        WHERE af.idArticulo = ar.idArticulo 
+                        FOR JSON PATH
+
+                    ),'[]') as fraccionado 
+
+                   ,(
+                        SELECT me.idMedida 
+                              ,me.descripcion as medida
+                              ,a.precioCosto 
+                              ,a.precioCosto  as precioUnitario
+                              ,a.precioCosto  as precioCostoFraccionado
+                              ,1 as conversion
+                        FROM Articulo      a WITH (NOLOCK) 
+                        INNER JOIN Medida me WITH (NOLOCK) ON me.idMedida = a.idMedida 
+                        WHERE a.idArticulo = ar.idArticulo 
+                        FOR JSON PATH
+
+                    ) as principal
+            FROM OPENJSON(@detalles)
+            WITH (codigoPrincipal VARCHAR(100)) as dt
+            INNER JOIN Recepcion.CompraHabitual    ca ON ca.codArticulo = dt.codigoPrincipal AND ca.idProveedor = @idProveedor
+            INNER JOIN dbo.Articulo                ar ON ar.idArticulo  = ca.idArticulo
+
+        END
 END
 GO
 

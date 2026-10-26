@@ -113,7 +113,7 @@ BEGIN
         
         SET @uuid = (SELECT TOP 1 uuid FROM v_usuario WHERE idUsuarioRol = @userRoleId);
 
-        SET @companyId = (SELECT Id FROM Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
+        SET @companyId = (SELECT Id FROM AcontplusAdmin.Config.Company WITH(NOLOCK) WHERE Uuid = @uuid);
 
 		BEGIN TRAN
 
@@ -266,10 +266,10 @@ BEGIN
 
                     IF (@demoStepId > 0)
                         BEGIN
-                            IF NOT EXISTS (SELECT TOP 1 1 FROM Config.CompanyDemoStep WITH (NOLOCK) 
+                            IF NOT EXISTS (SELECT TOP 1 1 FROM AcontplusAdmin.Config.CompanyDemoStep WITH (NOLOCK) 
                                                             WHERE Uuid = @uuid AND DemoStepId = @demoStepId)
                                 BEGIN
-                                    INSERT INTO Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
+                                    INSERT INTO AcontplusAdmin.Config.CompanyDemoStep(DemoStepId, CompanyId, Uuid, IsMobileRequest, CreatedBy)
                                     VALUES(@demoStepId, @companyId, @uuid, @fromMobile, @username);
                                 END
 
@@ -424,8 +424,8 @@ BEGIN
 
                                 IF NOT EXISTS (SELECT TOP 1 1 FROM dbo.Caja WITH(NOLOCK) WHERE idEntidad = @idEntidad)
                                     BEGIN
-                                        INSERT INTO dbo.Caja(descripcion, estado, fechaRegistro, idUsuario, idEntidad, actividad)
-                                        VALUES ('PRINCIPAL', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad, 1);
+                                        INSERT INTO dbo.Caja(descripcion, estado, fechaRegistro, idUsuario, idEntidad)
+                                        VALUES ('PRINCIPAL', 1, dbo.ufnGetDateEcuador(), @idUsuario, @idEntidad);
                                 
                                         SET @idCaja = SCOPE_IDENTITY()
 

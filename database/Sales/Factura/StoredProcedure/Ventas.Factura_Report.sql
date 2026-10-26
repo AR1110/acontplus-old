@@ -53,7 +53,7 @@ BEGIN
 		  ,cl.direccion                                                                                                   as direccionComprador
           ,cl.correo                                                                                                      as emailComprador
           ,cl.telefono                                                                                                    as telefonoComprador
-		  ,ISNULL(cl.configValorBruto,0)                                                                                  as configValorBruto
+		  ,ISNULL(CAST(1 AS BIT),0)                                                                                       as configValorBruto
           ,CAST(fa.subTotalSinImpuestos as numeric(18,2))                                                                 as subTotalSinImpuestos 
 		  ,CAST(fa.totalDescuento as numeric(18,2))                                                                       as totalDescuento
 		  ,CAST(fa.propina as numeric(15,2))                                                                              as propina

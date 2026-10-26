@@ -997,6 +997,7 @@ BEGIN
             FROM Contabilidad.CuotaPorCobrar cx WITH (NOLOCK) 
             WHERE cx.idCuentaPorCobrar = @id
               AND cx.estado = 1
+            ORDER BY cx.nroCuota ASC
 
 
             RETURN 

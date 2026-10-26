@@ -10,110 +10,243 @@ GO
 -- Author: Ivan Paz
 -- Create date: 2022-09-01
 -- Description: SP FOR INSERT COMPRA HABITUAL
+--ALTER TABLE Inventario.TransaccionDetalle  ADD descuento NUMERIC(18,5)
+--ALTER TABLE Recepcion.CompraHabitual  ADD idMedida INT
 -- =============================================
 CREATE OR ALTER PROCEDURE Recepcion.CompraHabitual_Insert
-    @idUsuarioRol INT
+     @idUsuarioRol INT
     ,@json NVARCHAR(MAX)
     ,@method VARCHAR(200) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @codEstab VARCHAR(50)
-    DECLARE @idUsuario INT
-    DECLARE @idEntidad INT
+    DECLARE @idUsuario INT ,@idEntidad INT
 
-    DECLARE @tmp AS TABLE(
-        idProveedor INT NOT NULL
+    --> Data Json
+    DECLARE @infoComprobante VARCHAR(MAX) ,@detalles VARCHAR(MAX) ,@compraHabitual AS VARCHAR(MAX) ,@proceso NVARCHAR(100)
+
+    --> Inventario
+    DECLARE @idTipoTransaccion  INT ,@idTipoDocumento INT ,@idTransaccion INT ,@fechaEmision DATETIME2 ,@CustomerId INT
+
+    --> Recepcion
+    DECLARE @Id INT
+
+    DECLARE @TbCompraHabitual AS TABLE(
+         idProveedor INT NOT NULL
+        ,idMedida INT NOT NULL
+        ,codEstab VARCHAR(50) NOT NULL
         ,ruc VARCHAR(13) NULL
         ,idArticulo INT NOT NULL
         ,codArticulo VARCHAR(100) NULL
-    ) 
+    )
+
+    DECLARE @Transaccion AS TABLE
+    (
+        idTipoTransaccion INT NOT NULL
+       ,idTipoDocumento INT NOT NULL
+       ,idDocumento INT NOT NULL
+       ,CustomerId INT NOT NULL
+       ,idUsuario INT NOT NULL
+       ,idEntidad INT NOT NULL
+       ,fechaEmision DATETIME2
+       ,serieComprobante NVARCHAR(25) NOT NULL
+    )
+
+    DECLARE @TransaccionDetalle AS TABLE
+    (
+        idArticulo INT NOT NULL
+       ,idBodega INT NOT NULL
+       ,idMedida INT NOT NULL
+       ,cantidad NUMERIC(18,5) NOT NULL
+       ,conversion NUMERIC(18,5) NOT NULL
+       ,cantidadTransaccion NUMERIC(18,5) NOT NULL
+       ,precioUnitario NUMERIC(18,5) NOT NULL
+       ,descuento NUMERIC(18,5) NOT NULL
+       ,precioCosto NUMERIC(18,5) NOT NULL
+       ,precioCostoFraccionado NUMERIC(18,5) NOT NULL
+       ,total NUMERIC(18,5) NOT NULL
+       ,llevaInventario BIT NOT NULL
+    )
+
     BEGIN TRY
-
-        SELECT @idEntidad = idEntidad, @idUsuario = idUsuario FROM v_usuario WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
-
-        SELECT @codEstab = codEstab FROM Config.Estab_Asig WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol AND predeterminado = 1
-
-        INSERT INTO @tmp(idProveedor, ruc, idArticulo, codArticulo)
-        SELECT idProveedor, ruc, idArticulo, LTRIM(RTRIM(codArticulo)) 
-        FROM OPENJSON(@json) 
-        WITH (
-            idProveedor INT '$.idProveedor'
-            ,ruc VARCHAR(13) '$.ruc'
-            ,idArticulo INT '$.idArticulo'
-            ,codArticulo VARCHAR(100) '$.codArticulo'
+         --> Data Json
+        SELECT @infoComprobante = infoComprobante
+              ,@detalles        = detalles
+              ,@compraHabitual  = compraHabitual
+              ,@proceso         = proceso
+        FROM OPENJSON(@json) WITH 
+        (
+             infoComprobante NVARCHAR(MAX) as json
+            ,detalles        NVARCHAR(MAX) as json 
+            ,compraHabitual  NVARCHAR(MAX) as json
+            ,proceso         NVARCHAR(20)
         )
 
-        IF (SELECT COUNT(1) FROM @tmp) = 0
-        BEGIN
-            RETURN
-        END
+        --> Variables Globales
+        SELECT TOP 1 @idEntidad = idEntidad, @idUsuario = idUsuario FROM App.UsuarioRol WITH (NOLOCK) WHERE idUsuarioRol = @idUsuarioRol
 
-        IF NOT EXISTS (
-            SELECT 1 
-            FROM @tmp t 
-            INNER JOIN Articulo a WITH (NOLOCK) ON t.idArticulo = a.idArticulo AND a.llevaInventario = 1
-        )
-        BEGIN
-            SELECT '0' code, 'Este articulo no esta configurado para llevar inventario' AS 'message'
-            RETURN
-        END
+        IF @proceso = 'ADD_INVENTORY'
+            BEGIN
+                --> variables
+                SELECT @Id = idDocumento FROM OPENJSON(@infoComprobante) WITH(idDocumento INT)
 
-       IF EXISTS (
-            SELECT 1 
-            FROM @tmp 
-            WHERE LEN(RTRIM(LTRIM(ISNULL(codArticulo, '')))) = 0
-        )
-        BEGIN
-            SELECT '0' code, 'El campo codArticulo no puede ser nulo o vacío' AS 'message'
-            RETURN
-        END
+                SELECT TOP 1 @CustomerId = customerId FROM Recepcion.DocumentoRecibido WHERE idDocumento = @Id
 
+                SELECT TOP 1 @idTipoTransaccion = idTipoTransaccion FROM Inventario.TipoTransaccion WITH (NOLOCK) WHERE codigo = 'E'
 
-        IF EXISTS(
-            SELECT 1 
-            FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
-            INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
-            INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo AND ch.ruc = t.ruc
-        )
-        BEGIN
-            DECLARE @idArticleFounded INT 
-            DECLARE @articleFounded VARCHAR(600)
+                IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE codDoc = '01' AND idDocumento = @Id)
+                    BEGIN
+                        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'FE'
+                    END
+
+                IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE codDoc = '04' AND idDocumento = @Id)
+                    BEGIN
+                        SELECT TOP 1 @idTipoDocumento = idTipoDocumento FROM Inventario.TipoDocumento WITH (NOLOCK) WHERE codigo = 'NC'
+                    END
+
+                --> Data Json
+                INSERT INTO @Transaccion
+                       (idTipoTransaccion ,idTipoDocumento,idDocumento ,CustomerId ,idUsuario ,idEntidad,fechaEmision,serieComprobante)
+                SELECT @idTipoTransaccion,@idTipoDocumento,idDocumento,@CustomerId,@idUsuario,@idEntidad,fechaEmision,serieComprobante
+                FROM OPENJSON(@infoComprobante) WITH
+                (
+                    idDocumento      INT
+                   ,fechaEmision     DATETIME2
+                   ,serieComprobante NVARCHAR(25)
+                )
+
+                INSERT INTO @TransaccionDetalle
+                      (idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioUnitario,descuento,precioCosto,precioCostoFraccionado,total,llevaInventario)
+                SELECT idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioUnitario,descuento,precioCosto,precioCostoFraccionado,total,llevaInventario
+                FROM OPENJSON(@detalles) WITH
+                (
+                    idArticulo             INT
+                   ,idBodega               INT
+                   ,idMedida               INT
+                   ,cantidad               NUMERIC(18,5)
+                   ,conversion             NUMERIC(18,5)
+                   ,cantidadTransaccion    NUMERIC(18,5)
+                   ,precioUnitario         NUMERIC(18,5)
+                   ,descuento              NUMERIC(18,5)
+                   ,precioCosto            NUMERIC(18,5)
+                   ,precioCostoFraccionado NUMERIC(18,5)
+                   ,total                  NUMERIC(18,5) '$.precioTotalSinImpuesto'
+                   ,llevaInventario        BIT
+                )
+
+                --> Variables tablas temporales
+                SELECT TOP 1 @fechaEmision = fechaEmision FROM @Transaccion 
+
+                --> Validaciones
+                IF NOT EXISTS (SELECT 1 FROM @Transaccion)
+                    BEGIN
+                        SELECT '0' code, 'Error en la informacion del comprobante' AS 'message'
+                        RETURN
+                    END
+
+                IF NOT EXISTS (SELECT 1 FROM @TransaccionDetalle)
+                    BEGIN
+                        SELECT '0' code, 'Error en la informacion de los detalles' AS 'message'
+                        RETURN
+                    END
+
+                IF EXISTS (SELECT 1 FROM Recepcion.DocumentoRecibido WHERE complete = 1 AND idDocumento = @Id)
+                    BEGIN
+                        SELECT '0' code, 'Este documento ya fue cargado el inventario' AS 'message'
+                        RETURN
+                    END
+
+                IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE idEntidad = @idEntidad AND inventory != 'SI')
+		            BEGIN
+                        SELECT '0' code, 'Tu empresa debe estar configurada para llevar inventario' AS 'message'
+                        RETURN
+                    END
+            END 
+
+        IF @proceso = 'ADD_HISTORY'
+            BEGIN
+                --> Data Json
+                INSERT INTO @TbCompraHabitual
+                      (idProveedor,idMedida,codEstab,ruc,idArticulo,codArticulo)
+                SELECT idProveedor,idMedida,codEstab,ruc,idArticulo,codArticulo
+                FROM OPENJSON(@compraHabitual) WITH
+                (
+                     idProveedor INT          '$.idProveedor'
+                    ,idMedida INT
+                    ,codEstab VARCHAR(50)     '$.codEstab'
+                    ,ruc VARCHAR(13)          '$.ruc'
+                    ,idArticulo INT           '$.idArticulo'
+                    ,codArticulo VARCHAR(100) '$.codArticulo'
+                )
+
+                --> Validaciones
+                IF NOT EXISTS (SELECT 1 FROM @TbCompraHabitual)
+                    BEGIN
+                        SELECT '0' code, 'Error en la informacion de compra no habitual' AS 'message'
+                        RETURN
+                    END
+            END 
+
         
-            SET @idArticleFounded = (
-                SELECT TOP 1 ch.idArticulo 
-                FROM Recepcion.CompraHabitual ch WITH (NOLOCK) 
-                INNER JOIN Proveedor p ON ch.idProveedor = p.idProveedor AND p.idEntidad = @idEntidad
-                INNER JOIN @tmp t ON ch.codArticulo = t.codArticulo 
-                                     AND ch.ruc = t.ruc
-            )
-
-            SET @articleFounded = (
-                SELECT '(' + codigo + ') - ' + descripcion 
-                FROM Articulo WITH (NOLOCK) 
-                WHERE idArticulo = @idArticleFounded 
-            )
-
-            SELECT '1' code, 'El articulo ya se encuentra vinculado previamente con este proveedor: '  + @articleFounded AS 'message'
-            RETURN
-        END
 
         BEGIN TRAN
-            INSERT INTO Recepcion.CompraHabitual(codEstab,idProveedor, ruc, idArticulo, codArticulo, idUsuario)
-            SELECT @codEstab, idProveedor, ruc, idArticulo, codArticulo, @idUsuario 
-            FROM @tmp t
-            WHERE NOT EXISTS (
-                SELECT * 
-                FROM Recepcion.CompraHabitual ch
-                INNER JOIN @tmp t ON ch.idProveedor = t.idProveedor 
-                                   AND ch.idArticulo = t.idArticulo
-                                   AND ch.codArticulo = t.codArticulo
-                WHERE ch.codEstab = @codEstab
-            )
+            IF @proceso = 'ADD_HISTORY'
+                BEGIN
+                    IF EXISTS (SELECT 1 FROM @TbCompraHabitual)
+                        BEGIN 
+                            INSERT INTO Recepcion.CompraHabitual
+                                  (codEstab,idProveedor,idMedida,ruc,idArticulo,codArticulo, idUsuario)
+                            SELECT codEstab,idProveedor,idMedida,ruc,idArticulo,codArticulo, @idUsuario 
+                            FROM @TbCompraHabitual
+                        END
+                END 
 
-            SELECT '1' code, 'Exitos al guardar' AS 'message'
+            IF @proceso = 'ADD_INVENTORY'
+                BEGIN
+                    --> Transaccion
+                    INSERT INTO Inventario.Transaccion
+                          (idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante)
+                    SELECT idTipoTransaccion,fechaEmision,idTipoDocumento,idDocumento,CustomerId,idUsuario,idEntidad,serieComprobante 
+                    FROM @Transaccion 
+
+                    SET @idTransaccion = SCOPE_IDENTITY()
+
+                    --> Detalles
+                    INSERT INTO Inventario.TransaccionDetalle 
+                           (idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioUnitario,descuento,precioCosto,precioCostoFraccionado,total)
+			        SELECT @idTransaccion,idArticulo,idBodega,idMedida,cantidad,conversion,cantidadTransaccion,precioUnitario,descuento,precioCosto,precioCostoFraccionado,total 
+                    FROM @TransaccionDetalle 
+                    WHERE llevaInventario = 1
+
+                    EXEC dbo.Transaccion_Handler_Init @idTransaccion
+
+                    IF EXISTS (SELECT 1 FROM Config.v_Sistema_Inventario WITH (NOLOCK) WHERE codMetodoValoracion = 'UEPS' AND idEntidad = @idEntidad)
+                        BEGIN
+                            UPDATE ar SET
+                                    ar.fechaUltimoCosto = CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.fechaUltimoCosto
+                                                                                                        ELSE @fechaEmision
+                                                            END
+                                    ,ar.precioCosto     =  CASE WHEN ar.fechaUltimoCosto >= @fechaEmision THEN ar.precioCosto
+                                                                                                        ELSE IIF((SELECT TOP 1 MAX(td.precioUnitario) FROM @TransaccionDetalle td WHERE td.llevaInventario = 1 and td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida) >= (ar.precioCosto / 2)
+                                                                                                                ,(SELECT TOP 1 MAX(td.precioUnitario) FROM @TransaccionDetalle td WHERE td.llevaInventario = 1 and td.idArticulo = ar.idArticulo AND td.idMedida = ar.idMedida)
+                                                                                                                ,ar.precioCosto) 
+                                                                                                                 
+                                                            END
+                            FROM dbo.Articulo ar WITH (ROWLOCK)
+                            WHERE ar.idArticulo IN (SELECT idArticulo FROM @TransaccionDetalle td WHERE td.llevaInventario = 1)  
+
+                            UPDATE pv SET
+                                    pv.porcentajeUtilidad = ((pv.precioVenta / ar.precioCosto) * 100) - 100
+                            FROM dbo.ArticuloPvP    pv WITH (ROWLOCK)
+                            INNER JOIN dbo.Articulo ar WITH (ROWLOCK) ON ar.idArticulo = pv.idArticulo
+                            WHERE ar.idArticulo IN (SELECT idArticulo FROM @TransaccionDetalle td WHERE td.llevaInventario = 1)
+                        END
+
+                    UPDATE Recepcion.DocumentoRecibido SET complete = 1, fechaEdicion = GETDATE() ,idUsuarioEdicion = @idUsuario WHERE idDocumento = @Id
+                END 
         COMMIT TRAN
+        SELECT '1' code, 'Exitos al guardar' AS 'message'
     END TRY
     BEGIN CATCH
         SELECT '0' code, 'Error en base de datos: ' + ERROR_MESSAGE() AS 'message'
